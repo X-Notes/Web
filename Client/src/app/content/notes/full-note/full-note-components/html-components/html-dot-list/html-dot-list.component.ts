@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -18,15 +20,19 @@ import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { DotListService } from '../../html-business-logic/dot-list.service';
+import { BaseHtmlComponent } from '../../base-html-components';
+import { DotListService } from '../html-business-logic/dot-list.service';
 
 @Component({
   selector: 'app-html-dot-list',
   templateUrl: './html-dot-list.component.html',
   styleUrls: ['./html-dot-list.component.scss'],
   providers: [DotListService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class HtmlDotListComponent
+  extends BaseHtmlComponent
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   updateText = new EventEmitter<BaseText>();
 
@@ -42,6 +48,10 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
+  onFocus = new EventEmitter<HtmlDotListComponent>();
+
   @Input()
   content: BaseText;
 
@@ -50,24 +60,30 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   @Input()
   isSelected = false;
-  
+
   @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
 
-  constructor(public dotListService: DotListService, private host: ElementRef) {}
+  constructor(
+    public dotListService: DotListService,
+    private host: ElementRef,
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
-  
+
   getContent() {
     return this.content;
   }
@@ -100,13 +116,15 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   isFocusToNext = () => true;
-  
+
   setFocus(entity: SetFocus) {
     this.dotListService.setFocus(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   setFocusToEnd() {
     this.dotListService.setFocusToEnd(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   updateHTML(content: string) {
@@ -119,11 +137,14 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   mouseEnter($event) {
+    $event.preventDefault();
     this.dotListService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.dotListService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.dotListService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

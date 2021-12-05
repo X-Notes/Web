@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -18,18 +20,21 @@ import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { CheckListService } from '../../html-business-logic/check-list.service';
+import { BaseHtmlComponent } from '../../base-html-components';
+import { CheckListService } from '../html-business-logic/check-list.service';
 
 @Component({
   selector: 'app-html-check-list',
   templateUrl: './html-check-list.component.html',
   styleUrls: ['./html-check-list.component.scss'],
   providers: [CheckListService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-
+export class HtmlCheckListComponent
+  extends BaseHtmlComponent
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @ViewChild('contentHtml') contentHtml: ElementRef;
-  
+
   @Output()
   updateText = new EventEmitter<BaseText>();
 
@@ -44,6 +49,10 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
+
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
+  onFocus = new EventEmitter<HtmlCheckListComponent>();
 
   @Input()
   content: BaseText;
@@ -63,12 +72,18 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   destroy = new Subject<void>();
 
-  constructor(public checkListService: CheckListService, private host: ElementRef) {}
+  constructor(
+    public checkListService: CheckListService,
+    private host: ElementRef,
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
-  
+
   getContent() {
     return this.content;
   }
@@ -104,10 +119,12 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   setFocus(entity: SetFocus) {
     this.checkListService.setFocus(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   setFocusToEnd() {
     this.checkListService.setFocusToEnd(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   updateHTML(content: string) {
@@ -121,10 +138,12 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   mouseEnter($event) {
     this.checkListService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.checkListService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.checkListService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

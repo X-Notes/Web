@@ -5,7 +5,8 @@ export enum OperationResultAdditionalInfo {
   NoSupportExtension,
   NoAnyFile,
   RequestCancelled,
-  NotFound
+  NotFound,
+  AnotherError,
 }
 
 export interface OperationResult<T> {

@@ -32,14 +32,6 @@
     </div>
   </div>
 
-  <app-general-header-button
-    *ngIf="hideFor"
-    [tooltipMessage]="'header.video' | translate"
-    tooltipPosition="Bottom"
-    iconClass="video"
-    styleClasses="generic-2"
-  ></app-general-header-button>
-
   <app-menu
     class="menu-inner"
     [items]="buttonService.items | manageMenuButtons:(isOwner$ | async)"

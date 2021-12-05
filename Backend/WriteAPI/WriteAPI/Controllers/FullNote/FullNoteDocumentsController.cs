@@ -27,26 +27,6 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-        [HttpPost("upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<DocumentNoteDTO>>> UploadDocumentsToCollection(List<IFormFile> documents, Guid id, Guid contentId, CancellationToken cancellationToken)
-        {
-            if (documents.Count == 0) // TODO MOVE TO FILTER
-            {
-                return new OperationResult<List<DocumentNoteDTO>>().SetNoAnyFile();
-            }
-
-            var results = documents.Select(document => this.ValidateFile<List<DocumentNoteDTO>>(document, SupportFileContentTypes.Documents));
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
-            {
-                return result;
-            }
-
-            var command = new UploadDocumentsToCollectionCommand(id, contentId, documents);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command, cancellationToken);
-        }
-
         [HttpPost("remove")]
         public async Task<OperationResult<Unit>> RemoveDocument(UnlinkDocumentsCollectionCommand command)
         {

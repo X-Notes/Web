@@ -1,215 +1,127 @@
-<div class="playlist" appTheme>
-  <div class="playlist-options">
-    <div class="title">
-      <p
-        #titleHtml
-        (input)="onTitleChangeInput($event)"
-        (click)="clickAudioHandler(null)"
-        [textContent]="content?.name"
-        [attr.contenteditable]="!isReadOnlyMode"
-      ></p>
-      <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
-    </div>
-    <button
-      class="more-button"
-      type="button"
-      name="options"
-      #playlistOptions
-      [matMenuTriggerFor]="menu"
-    >
-      <div class="icon">
-        <mat-icon [inline]="true">more_horiz</mat-icon>
-      </div>
-      <div class="ripple-container" matRipple [matRippleTrigger]="playlistOptions"></div>
-    </button>
-    <mat-menu
-      #menu="matMenu"
-      appLazyTheme
-      themeClass="menu"
-      attributeName="panelClass"
-      [element]="menu"
-    >
-      <button
-        *ngIf="!isReadOnlyMode"
-        mat-menu-item
-        type="button"
-        name="add new audio"
-        (click)="uploadHandler()"
-      >
-        <mat-icon>video_library</mat-icon>
-        <span>{{ 'innerNote.menu.addVideo' | translate }}</span>
-      </button>
-      <button mat-menu-item type="button" name="Download">
-        <mat-icon>download</mat-icon>
-        <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
-      </button>
-      <button
-        (click)="deleteContentEvent.emit(this.content.id)"
-        mat-menu-item
-        type="button"
-        name="delete"
-      >
-        <mat-icon>delete</mat-icon>
-        <span>{{ 'innerNote.menu.delete' | translate }}</span>
-      </button>
-    </mat-menu>
-  </div>
-  <div
-    #videowrapper
-    (fullscreenchange)="onFullscreenChange()"
-    class="video-wrapper"
-    [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo.fileId) }"
-  >
-    <video
-      #videoplayer
-      oncontextmenu="return false"
-      preload="metadata"
-      controlslist="nodownload"
-      (ended)="isPlaying = false"
-      [src]="getMainVideo?.videoPath | getVideo: getMainVideo?.authorId"
-    ></video>
-    <div class="controls-blur"></div>
-    <div class="controls">
-      <div class="progress slider-controls">
-        <mat-slider
-          class="slider"
-          min="0"
-          [max]="video?.duration"
-          step="1"
-          [value]="video?.currentTime"
-          (input)="onSliderChangeEnd($event)"
-        ></mat-slider>
-      </div>
-      <div class="actions">
-        <div class="section-actions">
-          <button
-            class="audio-button"
-            type="button"
-            name="play"
-            #play
-            (click)="togglePlay()"
-            [CustomTooltip]="'innerNote.audio.play' | translate"
-          >
-            <div class="icon">
-              <mat-icon *ngIf="!isPlaying" [inline]="true">play_arrow</mat-icon>
-              <mat-icon *ngIf="isPlaying" [inline]="true">pause</mat-icon>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="play"></div>
-          </button>
-          <div class="section-volume">
-            <button
-              [CustomTooltip]="(video?.volume === 0 ? 'innerNote.audio.turnOnSound' :  'innerNote.audio.mute') | translate"
-              (click)="mute()"
-              class="audio-button"
-              type="button"
-              name="sound"
-              #volumeUp
-            >
-              <div class="icon">
-                <mat-icon [inline]="true" *ngIf="video?.volume >= 0.5">volume_up</mat-icon>
-                <mat-icon [inline]="true" *ngIf="video?.volume< 0.5 && video?.volume !== 0"
-                  >volume_down</mat-icon
-                >
-                <mat-icon [inline]="true" *ngIf="video?.volume === 0">volume_off</mat-icon>
-              </div>
-              <div class="ripple-container" matRipple [matRippleTrigger]="volumeUp"></div>
-            </button>
-            <div class="video-volume-slider">
-              <mat-slider
-                class="slider slider-prevent-min-width"
-                min="0"
-                max="1"
-                step="0.01"
-                (input)="onSliderVolumeChangeEnd($event)"
-                [value]="video?.volume"
-              ></mat-slider>
-            </div>
-          </div>
-        </div>
-        <div class="section-actions">
-          <!-- <button class="audio-button" type="button" name="Settings" #settings>
-          <div class="icon">
-            <mat-icon [inline]="true">settings</mat-icon>
-          </div>
-          <div class="ripple-container" matRipple [matRippleTrigger]="settings"></div>
-        </button> -->
-          <button
-            [CustomTooltip]="'innerNote.audio.miniPlayer' | translate"
-            (click)="togglePictureInPicture()"
-            class="audio-button"
-            type="button"
-            name="sound"
-            #miniPlayer
-          >
-            <div class="icon icon-smaller">
-              <mat-icon class="material-icons-outlined-important" [inline]="true"
-                >branding_watermark</mat-icon
-              >
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="miniPlayer"></div>
-          </button>
-          <!-- <button
-            [CustomTooltip]="(isWideScreen ? 'innerNote.audio.defaultPlayer': 'innerNote.audio.wideScreen') | translate"
-            (click)="toggleWideScreen()"
-            class="audio-button"
-            type="button"
-            name="sound"
-            #widePlayer
-          >
-            <div class="icon icon-smaller">
-              <mat-icon [inline]="true">video_label</mat-icon>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="widePlayer"></div>
-          </button> -->
-          <button
-            [CustomTooltip]="(isFullscreen ? '': 'innerNote.audio.fullscreen') | translate"
-            class="audio-button"
-            type="button"
-            name="sound"
-            #fullscreen
-            (click)="toggleFullscreen()"
-          >
-            <div class="icon">
-              <mat-icon *ngIf="!isFullscreen" [inline]="true">fullscreen</mat-icon>
-              <mat-icon *ngIf="isFullscreen" [inline]="true">fullscreen_exit</mat-icon>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="fullscreen"></div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="video-playlist" *ngIf="content.videos.length > 1">
+<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
+  <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  ></app-drag-drop-handler-container>
+  <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadVideos($event)">
+    <app-title-collection
+      [isReadOnlyMode]="isReadOnlyMode"
+      [textContent]="content?.name"
+      (changeTitleEvent)="onTitleChangeInput($event)"
+      (clickInputEvent)="clickVideoHandler(null)"
+      [menu]="menu"
+      [isShowButton]="isMouseOver"
+    ></app-title-collection>
     <div
-      #videoPlaylist
-      class="video-playlist-wrapper"
-      [ngStyle]="{'transform': 'translateX(' + translate + 'px)'}"
+      *ngIf="!isEmpty"
+      #videowrapper
+      (fullscreenchange)="onFullscreenChange()"
+      class="video-wrapper"
+      [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo?.fileId) }"
     >
-      <div
-        class="thumb-video-wrapper"
-        *ngFor="let item of content.videos; let i = index"
-        (click)="openThumbVideo(i)"
-      >
-        <div class="thumb-video">
-          <video
-            [ngClass]="{'is-selected': isClicked(item.fileId), 'thumb-active': i === indexVideo}"
-            disablecontrols
-            [src]="item?.videoPath | getVideo: item?.authorId"
-          ></video>
-          <div class="more-wrapper">
-            <button
-              (click)="$event.stopPropagation()"
-              class="more-button more-thumb-button"
-              type="button"
-              name="options"
-              #thumbOptions
-              [matMenuTriggerFor]="menu"
-            >
-              <div class="icon">
-                <mat-icon [inline]="true">more_vert</mat-icon>
+      <video
+        (click)="clickVideoHandler(getMainVideo?.fileId)"
+        #videoplayer
+        oncontextmenu="return false"
+        preload="metadata"
+        controlslist="nodownload"
+        (ended)="isPlaying = false"
+        [src]="getMainVideo?.videoPath | getVideo: getMainVideo?.authorId"
+      ></video>
+      <div class="controls">
+        <div class="progress slider-controls">
+          <mat-slider
+            class="slider"
+            min="0"
+            [max]="video?.duration"
+            step="1"
+            [value]="video?.currentTime"
+            (input)="onSliderChangeEnd($event)"
+          ></mat-slider>
+        </div>
+        <div class="actions">
+          <div class="section-actions">
+            <app-button-collection
+              [classes]="'light-static'"
+              *ngIf="!isPlaying"
+              [button]="'play_arrow'"
+              [tooltip]="'innerNote.audio.play' | translate"
+              (clickEvent)="togglePlay()"
+            ></app-button-collection>
+
+            <app-button-collection
+              [classes]="'light-static'"
+              *ngIf="isPlaying"
+              [button]="'pause'"
+              [tooltip]="'innerNote.audio.pause' | translate"
+              (clickEvent)="togglePlay()"
+            ></app-button-collection>
+
+            <div class="section-volume">
+              <app-button-collection
+                [classes]="'light-static'"
+                [button]="volumeIcon"
+                [tooltip]="(video?.volume === 0 ? 'innerNote.audio.turnOnSound' :  'innerNote.audio.mute') | translate"
+                (clickEvent)="mute()"
+              ></app-button-collection>
+
+              <div class="video-volume-slider">
+                <mat-slider
+                  class="slider slider-prevent-min-width"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  (input)="onSliderVolumeChangeEnd($event)"
+                  [value]="video?.volume"
+                ></mat-slider>
               </div>
-              <div class="ripple-container" matRipple [matRippleTrigger]="thumbOptions"></div>
-            </button>
+            </div>
+          </div>
+          <div class="section-actions">
+            <app-button-collection
+              [iconClasses]="'icon-smaller'"
+              [matIconClasses]="'material-icons-outlined-important'"
+              [classes]="'light-static'"
+              [button]="'branding_watermark'"
+              [tooltip]="'innerNote.audio.miniPlayer' | translate"
+              (clickEvent)="togglePictureInPicture()"
+            ></app-button-collection>
+
+            <app-button-collection
+              [classes]="'light-static'"
+              [button]="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+              [tooltip]="(isFullscreen ? '': 'innerNote.audio.fullscreen') | translate"
+              (clickEvent)="toggleFullscreen()"
+            ></app-button-collection>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="video-playlist" *ngIf="content.videos.length > 1">
+      <div
+        #videoPlaylist
+        class="video-playlist-wrapper"
+        [ngStyle]="{'transform': 'translateX(' + translate + 'px)'}"
+      >
+        <div
+          class="thumb-video-wrapper"
+          *ngFor="let item of content.videos; let i = index"
+          (click)="openThumbVideo(i)"
+        >
+          <div class="thumb-video">
+            <video
+              [ngClass]="{'is-selected': isClicked(item.fileId), 'thumb-active': i === indexVideo}"
+              disablecontrols
+              [src]="item?.videoPath | getVideo: item?.authorId"
+            ></video>
+            <app-button-collection
+              *ngIf="!isReadOnlyMode"
+              class="more-thumb-button"
+              [matMenuTriggerFor]="menu"
+              [button]="'more_vert'"
+              [classes]="'light-static'"
+              (clickEvent)="$event.stopPropagation()"
+            ></app-button-collection>
+
             <mat-menu
               #menu="matMenu"
               appLazyTheme
@@ -228,45 +140,86 @@
               </button>
             </mat-menu>
           </div>
-        </div>
-        <div class="video-title">
-          <p>{{ item.name }}</p>
+          <div class="video-title">
+            <p>{{ item.name }}</p>
+          </div>
         </div>
       </div>
+      <button
+        class="prev-button action-button"
+        *ngIf="counterSlider"
+        type="button"
+        name="To prev"
+        #toPrev
+        (click)="toPrevElement()"
+      >
+        <div class="icon">
+          <mat-icon fontSet="material-icons-round" [inline]="true">chevron_left</mat-icon>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="toPrev"></div>
+      </button>
+      <button
+        class="next-button action-button"
+        *ngIf="(itemsCount !== counterSlider + visibleItemsCount) && content.videos.length > visibleItemsCount"
+        type="button"
+        name="To next"
+        #toNext
+        (click)="toNextElement()"
+      >
+        <div class="icon">
+          <mat-icon fontSet="material-icons-round" [inline]="true">chevron_right</mat-icon>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="toNext"></div>
+      </button>
     </div>
-    <button
-      class="prev-button action-button"
-      *ngIf="counterSlider"
-      type="button"
-      name="To prev"
-      #toPrev
-      (click)="toPrevElement()"
-    >
-      <div class="icon">
-        <mat-icon fontSet="material-icons-round" [inline]="true">chevron_left</mat-icon>
-      </div>
-      <div class="ripple-container" matRipple [matRippleTrigger]="toPrev"></div>
-    </button>
-    <button
-      class="next-button action-button"
-      *ngIf="(itemsCount !== counterSlider + visibleItemsCount) && content.videos.length > visibleItemsCount"
-      type="button"
-      name="To next"
-      #toNext
-      (click)="toNextElement()"
-    >
-      <div class="icon">
-        <mat-icon fontSet="material-icons-round" [inline]="true">chevron_right</mat-icon>
-      </div>
-      <div class="ripple-container" matRipple [matRippleTrigger]="toNext"></div>
-    </button>
+    <app-empty-collection-items-placeholder
+      *ngIf="isEmpty"
+      [title]="'upload videos TODO'"
+    ></app-empty-collection-items-placeholder>
   </div>
 </div>
+
+<!-- Additional -->
+
 <input
-  #uploadAudiosRef
+  #uploadVideosRef
   type="file"
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadAudios($event)"
+  (change)="uploadVideos($event.target.files)"
 />
+
+<!-- Collection menu -->
+<mat-menu
+  #menu="matMenu"
+  appLazyTheme
+  themeClass="menu"
+  attributeName="panelClass"
+  [element]="menu"
+>
+  <button
+    *ngIf="!isReadOnlyMode"
+    mat-menu-item
+    type="button"
+    name="add new video"
+    (click)="uploadHandler()"
+  >
+    <mat-icon>video_library</mat-icon>
+    <span>{{ 'innerNote.menu.addVideo' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="Download">
+    <mat-icon>download</mat-icon>
+    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+  </button>
+  <button
+    *ngIf="!isReadOnlyMode"
+    (click)="deleteContentEvent.emit(this.content.id)"
+    mat-menu-item
+    type="button"
+    name="delete"
+  >
+    <mat-icon>delete</mat-icon>
+    <span>{{ 'innerNote.menu.delete' | translate }}</span>
+  </button>
+</mat-menu>

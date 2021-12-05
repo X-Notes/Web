@@ -32,6 +32,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("ContentType")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("FileTypeId")
                         .HasColumnType("integer");
 
@@ -75,9 +78,6 @@ namespace WriteContext.Migrations
                 {
                     b.Property<Guid>("AppFileId")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("LinkedDate")
                         .HasColumnType("timestamp with time zone");

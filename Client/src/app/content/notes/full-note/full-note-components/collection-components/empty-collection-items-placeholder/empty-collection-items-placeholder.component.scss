@@ -1,0 +1,15 @@
+.empty-block {
+  background-color: #26282d;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  p {
+    font-size: 0.875rem;
+    color: #7b7b7b;
+  }
+}
+
+.light.empty-block{
+  background-color: #ededed;
+}

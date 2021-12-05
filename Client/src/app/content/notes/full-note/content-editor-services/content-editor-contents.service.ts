@@ -1,9 +1,20 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { AudiosCollection, BaseText, ContentModel, ContentTypeENUM, DocumentsCollection, PhotosCollection, VideosCollection } from '../../models/content-model.model';
+import {
+  AudiosCollection,
+  BaseText,
+  ContentModel,
+  ContentTypeENUM,
+  DocumentsCollection,
+  PhotosCollection,
+  VideosCollection,
+} from '../../models/content-model.model';
 import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiNoteContentService } from '../services/api-note-content.service';
@@ -19,7 +30,7 @@ export interface ContentAndIndex<T extends ContentModel> {
 }
 
 @Injectable()
-export class ContentEditorContentsService{
+export class ContentEditorContentsService {
   private contentsSync: ContentModel[] = [];
 
   private contents: ContentModel[]; // TODO MAKE DICTIONARY
@@ -42,24 +53,33 @@ export class ContentEditorContentsService{
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
-  ) {
-  }
+  ) {}
 
-    // TODO 1. Worker
-    // TODO 2. File Content process change + ctrlx + z
-    //
+  // TODO 1. Worker
+  // TODO 2. File Content process change + ctrlx + z
+  //
 
   init(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
     this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
 
-   this.destroyAndInitSubject(); 
+    this.destroyAndInitSubject();
 
-    this.updateSubject.pipe(filter(x => x === true), debounceTime(200))
-        .subscribe(() => { this.processChanges();});
-    this.saveSubject.pipe(filter(x => x === true), debounceTime(200))
-        .subscribe(() => this.contentEditorMomentoStateService.save(this.getContents));
+    this.updateSubject
+      .pipe(
+        filter((x) => x === true),
+        debounceTime(200),
+      )
+      .subscribe(() => {
+        this.processChanges();
+      });
+    this.saveSubject
+      .pipe(
+        filter((x) => x === true),
+        debounceTime(200),
+      )
+      .subscribe(() => this.contentEditorMomentoStateService.save(this.getContents));
   }
 
   destroyAndInitSubject() {
@@ -97,129 +117,189 @@ export class ContentEditorContentsService{
   }
 
   private processChanges() {
-        const structureDiffs = this.getStructureDiffs(this.contentsSync, this.getContents);
-        if (structureDiffs.isAnyChanges()) {
-          this.apiNoteContentService
-          .syncContentsStructure(this.noteId, structureDiffs)
-          .pipe(take(1))
-          .subscribe(x => {
-            this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
-            this.processTextsChanges();
-            this.processFileEntities();
-          });
-        } else {
+    const structureDiffs = this.getStructureDiffs(this.contentsSync, this.getContents);
+    if (structureDiffs.isAnyChanges()) {
+      this.apiNoteContentService
+        .syncContentsStructure(this.noteId, structureDiffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
           this.processTextsChanges();
           this.processFileEntities();
-        }
+        });
+    } else {
+      this.processTextsChanges();
+      this.processFileEntities();
+    }
   }
 
-
-  private processFileEntities(){
+  private processFileEntities() {
     this.processPhotosChanges();
     this.processAudiosChanges();
     this.processDocumentsChanges();
     this.processVideosChanges();
   }
 
-  private processPhotosChanges(){
-    const diffs = this.getContentDiffs<PhotosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Photos);
-    if(diffs.length > 0) {
-      this.apiPhotos.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
-        (resp) => {
-          for(const diff of diffs){
-            const item = this.contentsSync.find(x => x.id === diff.id) as PhotosCollection;
+  private processPhotosChanges() {
+    const diffs = this.getContentDiffs<PhotosCollection>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Photos,
+    );
+    console.log('diffs: ', diffs);
+    console.log('sync: ', this.contentsSync);
+    if (diffs.length > 0) {
+      this.apiPhotos
+        .syncContents(this.noteId, diffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          for (const diff of diffs) {
+            const item = this.contentsSync.find((x) => x.id === diff.id) as PhotosCollection;
             item.update(diff);
           }
-      });
+        });
     }
   }
 
-  private processAudiosChanges(){
-    const diffs = this.getContentDiffs<AudiosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
-    if(diffs.length > 0) {
-      this.apiAudios.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
-        (resp) => {
-          for(const diff of diffs){
-            const item = this.contentsSync.find(x => x.id === diff.id) as AudiosCollection;
+  private processAudiosChanges() {
+    const diffs = this.getContentDiffs<AudiosCollection>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Audios,
+    );
+    if (diffs.length > 0) {
+      this.apiAudios
+        .syncContents(this.noteId, diffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          for (const diff of diffs) {
+            const item = this.contentsSync.find((x) => x.id === diff.id) as AudiosCollection;
             item.update(diff);
           }
-      });
+        });
     }
   }
 
-  private processDocumentsChanges(){
-    const diffs = this.getContentDiffs<DocumentsCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Documents);
-    if(diffs.length > 0) {
-      this.apiDocuments.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
-        (resp) => {
-          for(const diff of diffs){
-            const item = this.contentsSync.find(x => x.id === diff.id) as DocumentsCollection;
+  private processDocumentsChanges() {
+    const diffs = this.getContentDiffs<DocumentsCollection>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Documents,
+    );
+    if (diffs.length > 0) {
+      this.apiDocuments
+        .syncContents(this.noteId, diffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          for (const diff of diffs) {
+            const item = this.contentsSync.find((x) => x.id === diff.id) as DocumentsCollection;
             item.update(diff);
           }
-      });
+        });
     }
   }
 
-  private processVideosChanges(){
-    const diffs = this.getContentDiffs<VideosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
-    if(diffs.length > 0) {
-      this.apiVideos.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
-        (resp) => {
-          for(const diff of diffs){
-            const item = this.contentsSync.find(x => x.id === diff.id) as VideosCollection;
+  private processVideosChanges() {
+    const diffs = this.getContentDiffs<VideosCollection>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Videos,
+    );
+    if (diffs.length > 0) {
+      this.apiVideos
+        .syncContents(this.noteId, diffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          for (const diff of diffs) {
+            const item = this.contentsSync.find((x) => x.id === diff.id) as VideosCollection;
             item.update(diff);
           }
-      });
+        });
     }
   }
 
   private processTextsChanges() {
-    const textDiffs = this.getContentDiffs<BaseText>(this.contentsSync, this.getContents, ContentTypeENUM.Text);
-    if(textDiffs.length > 0) {
-      this.apiTexts.syncContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
-        (resp) => {
-          for(const text of textDiffs){
-            const item = this.contentsSync.find(x => x.id === text.id) as BaseText;
+    const textDiffs = this.getContentDiffs<BaseText>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Text,
+    );
+    if (textDiffs.length > 0) {
+      this.apiTexts
+        .syncContents(this.noteId, textDiffs)
+        .pipe(take(1))
+        .subscribe(() => {
+          for (const text of textDiffs) {
+            const item = this.contentsSync.find((x) => x.id === text.id) as BaseText;
             item.update(text);
           }
-      });
+        });
     }
   }
 
   // STRUCTURE
-  private patchStructuralChanges(itemsForPatch: ContentModel[], diffs: StructureDiffs): ContentModel[] {
-    if(diffs.removedItems.length > 0) {
-      itemsForPatch = itemsForPatch.filter(x => !diffs.removedItems.some(z => z.id === x.id))
+  // eslint-disable-next-line class-methods-use-this
+  private patchStructuralChanges(
+    itemsForPatch: ContentModel[],
+    diffs: StructureDiffs,
+  ): ContentModel[] {
+    if (diffs.removedItems.length > 0) {
+      itemsForPatch = itemsForPatch.filter((x) => !diffs.removedItems.some((z) => z.id === x.id));
     }
-    if(diffs.newItems.length > 0) {
-      for (const item of diffs.newItems) {
+    if (diffs.newTextItems.length > 0) {
+      for (const item of diffs.newTextItems) {
         itemsForPatch.push(item.copy());
       }
     }
-    if(diffs.positions.length > 0){
-      for(const pos of diffs.positions){
-        itemsForPatch.find(x => x.id === pos.id).order = pos.order;
+    if (diffs.photosCollectionItems.length > 0) {
+      for (const item of diffs.photosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.audiosCollectionItems.length > 0) {
+      for (const item of diffs.audiosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.videosCollectionItems.length > 0) {
+      for (const item of diffs.videosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.documentsCollectionItems.length > 0) {
+      for (const item of diffs.documentsCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.positions.length > 0) {
+      for (const pos of diffs.positions) {
+        itemsForPatch.find((x) => x.id === pos.id).order = pos.order;
       }
     }
     return itemsForPatch;
   }
 
-  private getStructureDiffs(oldContents: ContentModel[], newContents: ContentModel[]): StructureDiffs {
+  // eslint-disable-next-line class-methods-use-this
+  private getStructureDiffs(
+    oldContents: ContentModel[],
+    newContents: ContentModel[],
+  ): StructureDiffs {
     const diffs: StructureDiffs = new StructureDiffs();
 
-    for(const contentSync of oldContents) {
-      if(!newContents.some(x => x.id === contentSync.id)){
+    for (const contentSync of oldContents) {
+      if (!newContents.some((x) => x.id === contentSync.id)) {
         diffs.removedItems.push(new ItemForRemove(contentSync.id));
       }
     }
 
     for (let i = 0; i < newContents.length; i += 1) {
       const content = newContents[i];
-      if(!oldContents.some(x => x.id === content.id) && content.typeId === ContentTypeENUM.Text){
+      if (!oldContents.some((x) => x.id === content.id)) {
         content.order = i;
-        diffs.newItems.push(content as BaseText);
+        diffs.push(content);
       }
-      if(oldContents.some(x => x.id === content.id) && oldContents.find(x => x.id === content.id).order !== i) {
+      const oldContent = oldContents.find((x) => x.id === content.id);
+      if (oldContent && oldContent.order !== i) {
         diffs.positions.push(new PositionDiff(i, newContents[i].id));
       }
     }
@@ -229,90 +309,113 @@ export class ContentEditorContentsService{
 
   // TEXT
   private patchTextDiffs(texts: BaseText[]) {
-    texts.forEach(item => this.setSafe(item, item.id));
+    texts.forEach((item) => this.setSafe(item, item.id));
   }
 
   // FILES
   private patchFileContentDiffs(contents: ContentModel[]) {
-    contents.forEach(item => this.setSafe(item, item.id));
+    contents.forEach((item) => this.setSafe(item, item.id));
   }
 
-  private getContentDiffs<T extends ContentModel>(oldContents: ContentModel[], newContents: ContentModel[], type: ContentTypeENUM): T[] {
+  // eslint-disable-next-line class-methods-use-this
+  private getContentDiffs<T extends ContentModel>(
+    oldContents: ContentModel[],
+    newContents: ContentModel[],
+    type: ContentTypeENUM,
+  ): T[] {
     const contents: T[] = [];
-    for(const content of newContents.filter(x => x.typeId === type)){
-      const isNeedUpdate = oldContents.some(x => x.typeId === type && x.id === content.id && !content.isEqual(x));
-      if(isNeedUpdate){
-        contents.push(content as T)
+    for (const content of newContents.filter((x) => x.typeId === type)) {
+      const isNeedUpdate = oldContents.some(
+        (x) => x.typeId === type && x.id === content.id && !content.isEqual(x),
+      );
+      if (isNeedUpdate) {
+        contents.push(content as T);
       }
     }
     return contents;
   }
 
   // Restore Prev
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   restorePrev() {
-    if(this.contentEditorMomentoStateService.isEmpty()){
+    if (this.contentEditorMomentoStateService.isEmpty()) {
       return;
     }
     const prev = this.contentEditorMomentoStateService.getPrev();
-    if(!this.isContentsEquals(prev, this.contents)) { 
-
+    if (!this.isContentsEquals(prev, this.contents)) {
       let isNeedChange = false;
 
       // STRUCTURE
       const structureDiffs = this.getStructureDiffs(this.contents, prev);
-      if(structureDiffs.isAnyChanges()) {
+      if (structureDiffs.isAnyChanges()) {
         this.contents = this.patchStructuralChanges(this.contents, structureDiffs);
         isNeedChange = true;
       }
 
       // TEXTS
       const textDiffs = this.getContentDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
-      if(textDiffs && textDiffs.length > 0){
+      if (textDiffs && textDiffs.length > 0) {
         this.patchTextDiffs(textDiffs);
         isNeedChange = true;
       }
 
       // FILES
-      const audiosDiffs = this.getContentDiffs<AudiosCollection>(this.contents, prev, ContentTypeENUM.Audios);
-      if(audiosDiffs && audiosDiffs.length > 0){
+      const audiosDiffs = this.getContentDiffs<AudiosCollection>(
+        this.contents,
+        prev,
+        ContentTypeENUM.Audios,
+      );
+      if (audiosDiffs && audiosDiffs.length > 0) {
         this.patchFileContentDiffs(audiosDiffs);
         isNeedChange = true;
       }
 
-      const photosDiffs = this.getContentDiffs<PhotosCollection>(this.contents, prev, ContentTypeENUM.Photos);
-      if(photosDiffs && photosDiffs.length > 0){
+      const photosDiffs = this.getContentDiffs<PhotosCollection>(
+        this.contents,
+        prev,
+        ContentTypeENUM.Photos,
+      );
+      if (photosDiffs && photosDiffs.length > 0) {
         this.patchFileContentDiffs(photosDiffs);
         isNeedChange = true;
       }
 
-      const documentsDiffs = this.getContentDiffs<DocumentsCollection>(this.contents, prev, ContentTypeENUM.Documents);
-      if(documentsDiffs && documentsDiffs.length > 0){
+      const documentsDiffs = this.getContentDiffs<DocumentsCollection>(
+        this.contents,
+        prev,
+        ContentTypeENUM.Documents,
+      );
+      if (documentsDiffs && documentsDiffs.length > 0) {
         this.patchFileContentDiffs(documentsDiffs);
         isNeedChange = true;
       }
 
-      const videosDiffs = this.getContentDiffs<VideosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
-      if(videosDiffs && videosDiffs.length > 0){
+      const videosDiffs = this.getContentDiffs<VideosCollection>(
+        this.contentsSync,
+        this.getContents,
+        ContentTypeENUM.Videos,
+      );
+      if (videosDiffs && videosDiffs.length > 0) {
         this.patchFileContentDiffs(videosDiffs);
         isNeedChange = true;
       }
 
-      if(isNeedChange){
+      if (isNeedChange) {
         this.change();
       }
     }
   }
 
-  isContentsEquals(f: ContentModel[], s: ContentModel[]){
-    for(const content of f){
-      const itemForCompare = s.find(x => x.id === content.id);
-      if(!itemForCompare || !content.isEqual(itemForCompare)) {
+  isContentsEquals(f: ContentModel[], s: ContentModel[]) {
+    for (const content of f) {
+      const itemForCompare = s.find((x) => x.id === content.id);
+      if (!itemForCompare || !content.isEqual(itemForCompare)) {
         return false;
       }
     }
-    for(const content of s){
-      const itemForCompare = f.find(x => x.id === content.id);
-      if(!itemForCompare || !content.isEqual(itemForCompare)) {
+    for (const content of s) {
+      const itemForCompare = f.find((x) => x.id === content.id);
+      if (!itemForCompare || !content.isEqual(itemForCompare)) {
         return false;
       }
     }
@@ -342,7 +445,10 @@ export class ContentEditorContentsService{
     return null;
   }
 
-  findContentAndIndexById<T extends ContentModel>(contents: ContentModel[], contentId: string): ContentAndIndex<T> {
+  findContentAndIndexById<T extends ContentModel>(
+    contents: ContentModel[],
+    contentId: string,
+  ): ContentAndIndex<T> {
     for (let i = 0; i < contents.length; i += 1) {
       if (contents[i].id === contentId) {
         const obj: ContentAndIndex<T> = { index: i, content: contents[i] as T };
@@ -363,7 +469,7 @@ export class ContentEditorContentsService{
   // REMOVE
   deleteById(contentId: string, isDeleteInContentSync: boolean) {
     this.contents = this.contents.filter((x) => x.id !== contentId);
-    if(isDeleteInContentSync){
+    if (isDeleteInContentSync) {
       this.contentsSync = this.contentsSync.filter((x) => x.id !== contentId);
     }
   }
@@ -382,20 +488,20 @@ export class ContentEditorContentsService{
   setSafeContentsAndSyncContents(data: ContentModel, contentId: string): number {
     const obj = this.getContentAndIndexById(contentId);
     const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
-    if(obj && obj2){
+    if (obj && obj2) {
       this.contents[obj.index] = data;
       this.contentsSync[obj2.index] = data;
       return obj.index;
     }
-    throw new Error("Content not found");
+    throw new Error('Content not found');
   }
 
   setSafeSyncContents(data: ContentModel, contentId: string): void {
     const obj = this.findContentAndIndexById(this.contentsSync, contentId);
-    if(obj){
+    if (obj) {
       this.contentsSync[obj.index] = data;
     }
-    throw new Error("Content not found");
+    throw new Error('Content not found');
   }
 
   insertInto(data: ContentModel, index: number) {

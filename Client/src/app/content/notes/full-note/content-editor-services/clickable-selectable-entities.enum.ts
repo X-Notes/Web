@@ -1,5 +1,5 @@
 export enum ClickableSelectableEntities {
-  Photo,
+  Photo = 1,
   Video,
   Audio,
   Document,

@@ -9,33 +9,46 @@
   [ngStyle]="{'width': sliderService ? sliderService?.mainWidth : ''}"
   class="main-content"
 >
-  <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
-  <div class="labels-section">
-    <div
-      class="label"
-      *ngFor="let label of note?.labels | noDeletedLabels"
-      [ngStyle]="{ backgroundColor: label.color }"
-    >
-      <p>{{ label.name }}</p>
+  <div class="top-section">
+    <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
+    <div class="labels-section">
+      <div
+        class="label"
+        *ngFor="let label of note?.labels | noDeletedLabels"
+        [ngStyle]="{ backgroundColor: label.color }"
+      >
+        <p>{{ label.name }}</p>
+      </div>
+    </div>
+    <div class="title-section">
+      <div
+        #noteTitle
+        [attr.contenteditable]="!isReadOnlyMode"
+        (paste)="pasteCommandHandler($event)"
+        [textContent]="note?.title"
+        class="title"
+        (input)="onTitleInput($event)"
+        (keydown.enter)="handlerTitleEnter($event)"
+      ></div>
+      <div class="placeholder">Title</div>
+      <div class="left-border"></div>
     </div>
   </div>
-  <div class="title-section">
+
+  <div cdkDropList class="content-section" (cdkDropListDropped)="drop($event)">
     <div
-      #noteTitle
-      [attr.contenteditable]="!isReadOnlyMode"
-      (paste)="pasteCommandHandler($event)"
-      [textContent]="note?.title"
-      class="title"
-      (input)="onTitleInput($event)"
-      (keydown.enter)="handlerTitleEnter($event)"
-    ></div>
-    <div class="placeholder">Title</div>
-    <div class="left-border"></div>
-  </div>
-  <div class="content-section">
-    <div *ngFor="let item of contents; let i = index">
-      <div [ngSwitch]="item.typeId">
-        <ng-container *ngSwitchCase="contentType.Text">
+      cdkDrag
+      (cdkDragStarted)="dragStarted($event)"
+      (cdkDragEnded)="dragEnded($event)"
+      class="item"
+      *ngFor="let item of contents; let i = index"
+    >
+      <ng-container [ngSwitch]="item.typeId">
+        <div
+          [appDrop]="'is-placeholder-active'"
+          (fileDropped)="uploadRandomFiles($event, i, item.id)"
+          *ngSwitchCase="contentType.Text"
+        >
           <app-html-text-part
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Default"
@@ -49,7 +62,10 @@
             (transformTo)="transformToTypeText($event)"
             (transformToFile)="transformToFileType($event)"
             (updateText)="updateTextHandler($event)"
-          ></app-html-text-part>
+            (onFocus)="onFocusHandler($event)"
+          >
+            <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
+          </app-html-text-part>
           <app-html-number-list
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Numberlist"
@@ -64,6 +80,9 @@
             (deleteThis)="deleteRowHandler($event)"
             (updateText)="updateTextHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
+            (onFocus)="onFocusHandler($event)"
+          >
+            <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-number-list>
           <app-html-dot-list
             #htmlComp
@@ -77,6 +96,9 @@
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event)"
+            (onFocus)="onFocusHandler($event)"
+          >
+            <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-dot-list>
           <app-html-check-list
             #htmlComp
@@ -90,6 +112,9 @@
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event)"
+            (onFocus)="onFocusHandler($event)"
+          >
+            <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-check-list>
           <app-html-headings
             #htmlComp
@@ -102,8 +127,12 @@
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event)"
+            (onFocus)="onFocusHandler($event)"
+          >
+            <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-headings>
-        </ng-container>
+          <div class="custom-placeholder file-insert"></div>
+        </div>
         <app-photos
           #htmlComp
           *ngSwitchCase="contentType.Photos"
@@ -115,6 +144,7 @@
           (uploadEvent)="uploadPhotoToAlbumHandler($event, note.id)"
           (deleteContentEvent)="deletePhotosCollection($event)"
           (deletePhotoEvent)="deletePhotoHandler($event, item.id, note.id)"
+          ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-photos>
         <app-audio-note
           #htmlComp
@@ -127,6 +157,7 @@
           (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
           (changeTitleEvent)="changeAudiosCollectionName(item.id, note.id, $event)"
           (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
+          ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-audio-note>
         <app-video-note
           #htmlComp
@@ -139,6 +170,7 @@
           (changeTitleEvent)="changeVideosCollectionName(item.id, note.id, $event)"
           (deleteVideoEvent)="deleteVideoHandler($event, item.id, note.id)"
           (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
+          ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-video-note>
         <app-document-note
           #htmlComp
@@ -149,9 +181,12 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteDocumentsCollection($event)"
           (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
+          (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
+          ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>
-      </div>
+      </ng-container>
+      <div class="custom-placeholder" *cdkDragPlaceholder></div>
     </div>
     <div
       class="empty"

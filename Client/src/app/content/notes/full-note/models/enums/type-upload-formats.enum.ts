@@ -1,7 +1,7 @@
 export enum TypeUploadFormats {
-  photos = 'image/jpeg,image/png',
-  audios = 'audio/mp3,audio/ogg,audio/wav,audio/*;capture=microphone',
-  videos = 'video/mp4',
+  photos = '.png,.jpg,.jpeg',
+  audios = '.mp3,.ogg,.wav',
+  videos = '.mp4',
   documents = '.pdf,.doc,.docx,.txt,.rtf,.xlsx,.xls,.xlsm,.xlsb,.ppt,.pptx,.pptm,.ppsm,.ppsx',
 }
 

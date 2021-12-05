@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -18,18 +20,20 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { CollectionService } from '../collection-services/collection.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotosComponent
+  extends CollectionService
   implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
@@ -39,22 +43,10 @@ export class PhotosComponent
   noteId: string;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deletePhotoEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFilesToEntity>();
 
   @Input()
   content: PhotosCollection;
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;
@@ -77,6 +69,8 @@ export class PhotosComponent
 
   changeHeightSubject = new Subject<string>();
 
+  nameCollectionChanged: Subject<string> = new Subject<string>();
+
   changeSizeAlbumHalder = combineLatest([this.changeWidthSubject, this.changeHeightSubject]);
 
   constructor(
@@ -87,7 +81,10 @@ export class PhotosComponent
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
-  ) {}
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateHeightByNativeOffset();
@@ -102,19 +99,18 @@ export class PhotosComponent
     this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
-  deleteContentHandler() {
-    this.deleteContentEvent.emit(this.content.id);
-  }
-
   uploadHandler = () => {
     this.uploadPhoto.nativeElement.click();
   };
 
-  async uploadImages(event) {
-    const files = event.target.files as File[];
+  async uploadImages(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
+  }
+
+  onTitleChangeInput($event) {
+    this.nameCollectionChanged.next($event.target.innerText);
   }
 
   clickPhotoHandler(photoId: string) {
@@ -214,6 +210,7 @@ export class PhotosComponent
   }
 
   initPhotos() {
+    this.content.countInRow = this.content.countInRow === 0 ? 2 : this.content.countInRow;
     this.mainBlocks = [];
     this.lastBlock = [];
     const photoLength = this.content.photos.length;
@@ -271,15 +268,12 @@ export class PhotosComponent
   };
 
   isFocusToNext(entity: SetFocus) {
-    if (entity.itemId) {
-      if (entity.status === FocusDirection.Up) {
-        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-        return index === 0;
-      }
-      if (entity.status === FocusDirection.Down) {
-        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-        return index === this.content.photos.length - 1;
-      }
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.photos.length - 1;
     }
     return false;
   }
@@ -289,14 +283,26 @@ export class PhotosComponent
 
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-      this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+      if (index === 0) {
+        this.titleComponent.focusOnTitle();
+        this.clickPhotoHandler(null);
+      } else {
+        this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.photos.length > 0) {
+      this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
-      this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
-      (document.activeElement as HTMLInputElement).blur();
+    if (entity.status === FocusDirection.Up && this.content.photos.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickPhotoHandler(null);
+      return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
@@ -307,8 +313,14 @@ export class PhotosComponent
     }
 
     if (entity.status === FocusDirection.Down) {
-      this.clickPhotoHandler(this.content.photos[0].fileId);
-      (document.activeElement as HTMLInputElement).blur();
+      if (this.titleComponent.isFocusedOnTitle) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickPhotoHandler(this.content.photos[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleComponent.focusOnTitle();
+        this.clickPhotoHandler(null);
+      }
     }
   };
 
@@ -326,9 +338,13 @@ export class PhotosComponent
     return this.host;
   }
 
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

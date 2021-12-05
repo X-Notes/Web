@@ -1,128 +1,125 @@
 @import 'innerNote';
 
-.container {
-  position: relative;
+:host {
   display: flex;
   border-radius: 5px;
-  margin-top: 0.625rem;
-  padding: 0 0.75rem 0.5rem 0;
-  min-height: 150px;
-  
-  &:hover {
-    .action {
-      button[type='button'] {
-        opacity: 1;
-      }
-    }
-  }
+}
 
-  .content-photos {
+.photo-content {
+  display: flex;
+  width: 100%;
+
+  .photo-container {
     display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
+    width: 100%;
+    border-radius: 5px;
 
-    &:hover {
-      .slider {
-        opacity: 0.4;
-      }
-    }
-    .blocks {
-      height: 100%;
-      padding: 0.13rem;
+    .content-photos {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
 
-      .block {
-        display: flex;
-        height: 100%;
+      .blocks-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        &:hover{
+          .slider {
+            opacity: 0.4;
+          }
+        }
+        .blocks {
+          height: 100%;
+          padding: 0.13rem;
 
-        app-photo {
-          margin-right: 0.3rem;
+          .block {
+            display: flex;
+            height: 100%;
 
-          &:last-child {
-            margin-right: 0;
+            app-photo {
+              margin-right: 0.3rem;
+
+              &:last-child {
+                margin-right: 0;
+              }
+            }
+          }
+
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+
+        .slider {
+          cursor: pointer;
+          display: block;
+          position: absolute;
+          border-radius: 20px;
+          background-color: #cacaca;
+          opacity: 0;
+          transition: 0.15s ease;
+        }
+
+        .slider-right {
+          right: 10px;
+          top: calc(37.5%);
+          width: 6px;
+          height: 25%;
+        }
+        .slider-bottom {
+          bottom: 10px;
+          left: calc(37.5%);
+          width: 25%;
+          height: 6px;
+        }
+        .fouth-child {
+          app-photo {
+            &:nth-child(1) {
+              flex: 1 1 23%;
+            }
+            &:nth-child(2) {
+              flex: 1 1 23%;
+            }
+            &:nth-child(3) {
+              flex: 1 1 23%;
+            }
+            &:nth-child(4) {
+              flex: 1 1 23%;
+            }
+          }
+        }
+        .three-child {
+          app-photo {
+            &:nth-child(1) {
+              flex: 1 1 23%;
+            }
+            &:nth-child(2) {
+              flex: 1 1 23%;
+            }
+            &:nth-child(3) {
+              flex: 1 1 48%;
+            }
+          }
+        }
+        .one-child,
+        .two-child {
+          app-photo {
+            flex: 1;
           }
         }
       }
-
-      &:first-child {
-        margin-top: 0;
-      }
     }
 
-    .slider {
-      cursor: pointer;
-      display: block;
-      position: absolute;
-      border-radius: 20px;
-      background-color: #cacaca;
-      opacity: 0;
-      transition: 0.15s ease;
-    }
-
-    .slider-right {
-      right: 10px;
-      top: calc(37.5%);
-      width: 6px;
-      height: 25%;
-    }
-    .slider-bottom {
-      bottom: 10px;
-      left: calc(37.5%);
-      width: 25%;
-      height: 6px;
-    }
-    .fouth-child {
-      app-photo {
-        &:nth-child(1) {
-          flex: 1 1 23%;
-        }
-        &:nth-child(2) {
-          flex: 1 1 23%;
-        }
-        &:nth-child(3) {
-          flex: 1 1 23%;
-        }
-        &:nth-child(4) {
-          flex: 1 1 23%;
-        }
-      }
-    }
-    .three-child {
-      app-photo {
-        &:nth-child(1) {
-          flex: 1 1 23%;
-        }
-        &:nth-child(2) {
-          flex: 1 1 23%;
-        }
-        &:nth-child(3) {
-          flex: 1 1 48%;
-        }
-      }
-    }
-    .one-child,
-    .two-child {
-      app-photo {
-        flex: 1;
-      }
+    .spinner-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 38px;
     }
   }
 
-  .action {
-    position: absolute;
-    right: -18px;
-
-    button[type='button'] {
-      height: 40px;
-      width: 20px;
-    }
-  }
-
-  .spinner-container{
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 38px;
+  .drop-active {
+    outline: 1px solid white;
   }
 }

@@ -2,19 +2,21 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { generateFormData, nameForUploadVideos } from 'src/app/core/defaults/form-data-generator';
+import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { VideosCollection } from '../../../models/content-model.model';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { FileNoteTypes } from '../../models/file-note-types.enum';
+import { ApiNoteFilesService } from '../../services/api-note-files.service';
 
 @Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +28,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     contentEditorContentsService: ContentEditorContentsService,
     private apiVideos: ApiVideosService,
+    private apiFiles: ApiNoteFilesService,
   ) {
     super(
       store,
@@ -53,6 +56,16 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     }
   }
 
+  insertNewContent(contentId: string, isFocusToNext: boolean) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    const nContent = VideosCollection.getNew();
+    this.contentsService.insertInto(nContent, index);
+    return { index, content: nContent };
+  }
+
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {
@@ -66,13 +79,14 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file], nameForUploadVideos);
+      const formData = generateFormData([file]);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Video,
         file.name,
       );
-      return this.apiVideos.uploadVideosToCollection(formData, noteId, $event.contentId).pipe(
+
+      return this.apiFiles.uploadFilesToNote(formData, noteId, FileNoteTypes.Video).pipe(
         finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
         takeUntil(mini.obs),
         (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
@@ -90,13 +104,16 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       return;
     }
 
+    const videosMapped = videos.map(
+      (x) => new VideoModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+    );
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     const prev = prevCollection.videos ?? [];
 
     const newCollection = new VideosCollection(prevCollection);
-    newCollection.videos = [...prev, ...videos];
+    newCollection.videos = [...prev, ...videosMapped];
 
-    this.contentsService.setSafeContentsAndSyncContents(newCollection, $event.contentId);
+    this.contentsService.setSafe(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };
@@ -124,7 +141,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       } else {
         const newCollection = prevCollection.copy();
         newCollection.videos = newCollection.videos.filter((x) => x.fileId !== videoId);
-        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
+        this.contentsService.setSafe(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
@@ -137,7 +154,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     if (resp.success) {
       const collection = this.contentsService.getContentById<VideosCollection>(contentId);
       collection.name = name;
-      this.contentsService.setSafeContentsAndSyncContents(collection, collection.id);
+      this.contentsService.setSafe(collection, collection.id);
     }
   }
 }

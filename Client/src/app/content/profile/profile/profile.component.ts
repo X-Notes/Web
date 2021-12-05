@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, DoCheck } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -7,7 +7,6 @@ import {
   ChangeLanguage,
   ChangeFontSize,
   ChangeTheme,
-  UpdateUserName,
   UpdateUserPhoto,
   SetDefaultBackground,
   UpdatePersonalization,
@@ -26,7 +25,6 @@ import {
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
-import { hideForDemo } from 'src/environments/demo';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Personalization } from 'src/app/shared/enums/personalization.enum';
@@ -41,7 +39,7 @@ import { ResetFolders } from '../../folders/state/folders-actions';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSizeENUM>;
 
@@ -64,8 +62,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   settingsInit: PersonalizationSetting;
 
-  hideFor = hideForDemo;
-
   fontSize = FontSizeENUM;
 
   themes = ThemeENUM;
@@ -78,10 +74,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     .filter((x) => typeof x === 'string')
     .map((z: string) => z.toLowerCase());
 
-  userName;
-
-  public photoError = false;
-
   destroy = new Subject<void>();
 
   constructor(
@@ -91,9 +83,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private snackbarTranslateHelper: SnackBarTranlateHelperService,
   ) {}
 
+  ngDoCheck(): void {
+    // console.log('profile');
+  }
+
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
-    this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
     this.store
       .select(AppStore.appLoaded)
@@ -135,12 +130,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  updateName() {
-    const oldName = this.store.selectSnapshot(UserStore.getUser).name;
-    if (oldName !== this.userName) {
-      this.store.dispatch(new UpdateUserName(this.userName));
-    }
-  }
 
   async changePersonalizationSettings(value: any, type: Personalization) {
     const types = Personalization;
@@ -253,9 +242,5 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.destroy.next();
     this.destroy.complete();
-  }
-
-  changeSource() {
-    this.photoError = true;
   }
 }

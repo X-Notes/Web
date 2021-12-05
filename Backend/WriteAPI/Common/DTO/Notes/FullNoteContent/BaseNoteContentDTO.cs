@@ -5,7 +5,7 @@ using Common.DatabaseModels.Models.NoteContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public abstract class BaseNoteContentDTO
+    public class BaseNoteContentDTO
     {
         [ValidationGuidAttribute]
         public Guid Id { set; get; }

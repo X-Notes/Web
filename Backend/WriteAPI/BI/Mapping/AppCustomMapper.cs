@@ -47,28 +47,29 @@ namespace BI.Mapping
                         }
                     case PhotosCollectionNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, 
+                                item.PathPhotoMedium, item.PathPhotoBig, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case AudiosCollectionNote playlistNote:
                         {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.Order, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case VideosCollectionNote videoNote:
                         {
-                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
+                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.Order, videoNote.UpdatedAt, videoNote.Name, videosDTO);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case DocumentsCollectionNote documentNote:
                         {
-                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, item.PathNonPhotoContent, item.Id, item.UserId)).ToList();
+                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, item.PathNonPhotoContent, item.Id, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
                             resultList.Add(collectionDTO);
                             break;

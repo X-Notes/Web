@@ -21,14 +21,6 @@
   border-radius: 5px;
   overflow: hidden;
 
-  &:hover {
-    .action {
-      button[type='button'] {
-        opacity: 1;
-      }
-    }
-  }
-
   img {
     object-fit: cover;
     height: 100%;
@@ -38,13 +30,18 @@
     -webkit-user-drag: none;
   }
 
-  .action {
-    top: 8px;
-    right: 10px;
+  .more-thumb-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+  }
 
-    button[type='button'] {
-      width: 40px;
-      height: 20px;
+  &:hover{
+    app-button-collection {
+      opacity: 1;
     }
+  }
+  app-button-collection {
+    opacity: 0;
   }
 }

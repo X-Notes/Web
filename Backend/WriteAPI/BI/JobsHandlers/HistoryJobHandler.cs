@@ -32,7 +32,7 @@ namespace BI.JobsHandlers
         }
 
         public async Task MakeHistoryHandler()
-        {
+        {    
             try
             {
                 Console.WriteLine("Start make history");

@@ -2,19 +2,21 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { generateFormData, nameForUploadPhotos } from 'src/app/core/defaults/form-data-generator';
+import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { PhotosCollection, Photo } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
+import { ApiNoteFilesService } from '../../services/api-note-files.service';
+import { FileNoteTypes } from '../../models/file-note-types.enum';
 
 @Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +28,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiAlbum: ApiPhotosService,
     contentEditorContentsService: ContentEditorContentsService,
+    private apiFiles: ApiNoteFilesService,
   ) {
     super(
       store,
@@ -37,11 +40,23 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
   }
 
+  insertNewContent(contentId: string, isFocusToNext: boolean) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    const nContent = PhotosCollection.getNew();
+    this.contentsService.insertInto(nContent, index);
+    return { index, content: nContent };
+  }
+
   async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
     const collectionResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
-      collectionResult.data.photos = collectionResult.data.photos ? collectionResult.data.photos : [];
+      collectionResult.data.photos = collectionResult.data.photos
+        ? collectionResult.data.photos
+        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadPhotoToAlbumHandler({ contentId: collectionResult.data.id, files }, noteId);
       collectionResult.data.isLoading = false;
@@ -61,13 +76,13 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file], nameForUploadPhotos);
+      const formData = generateFormData([file]);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Image,
         file.name,
       );
-      return this.apiAlbum.uploadPhotosToAlbum(formData, noteId, $event.contentId).pipe(
+      return this.apiFiles.uploadFilesToNote(formData, noteId, FileNoteTypes.Photo).pipe(
         finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
         takeUntil(mini.obs),
         (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
@@ -85,8 +100,21 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
       return;
     }
 
+    const photosMapped = photos.map(
+      (x) =>
+        new Photo(
+          x.id,
+          x.pathPhotoSmall,
+          x.pathPhotoMedium,
+          x.pathPhotoBig,
+          false,
+          x.name,
+          x.authorId,
+          x.createdAt,
+        ),
+    );
     const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
-    this.insertPhotosToAlbum(photos, collection, $event.contentId);
+    this.insertPhotosToAlbum(photosMapped, collection, $event.contentId);
 
     this.afterUploadFilesToCollection(photosResult);
   };
@@ -102,6 +130,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           false,
           x.name,
           x.authorId,
+          x.uploadAt,
         ),
     );
     const prev = prevCollection.photos ?? [];
@@ -109,10 +138,13 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     const newCollection = new PhotosCollection(prevCollection);
     newCollection.photos = [...prev, ...newPhotos];
 
-    this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
+    this.contentsService.setSafe(newCollection, contentId);
   }
 
-  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
+  deleteContentHandler = async (
+    contentId: string,
+    noteId: string,
+  ): Promise<OperationResult<any>> => {
     const resp = await this.apiAlbum.removeCollection(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
@@ -131,7 +163,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
         const newCollection = prevCollection.copy();
         newCollection.photos = newCollection.photos.filter((x) => x.fileId !== photoId);
 
-        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
+        this.contentsService.setSafe(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }

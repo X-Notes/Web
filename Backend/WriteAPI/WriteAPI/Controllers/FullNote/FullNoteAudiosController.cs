@@ -47,27 +47,6 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPost("upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToCollection(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
-        {
-            if (audios.Count == 0) // TODO MOVE TO FILTER
-            {
-                return new OperationResult<List<AudioNoteDTO>>().SetNoAnyFile();
-            }
-
-            var results = audios.Select(audio => this.ValidateFile<List<AudioNoteDTO>>(audio, SupportFileContentTypes.Audios));
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
-            {
-                return result;
-            }
-
-            var command = new UploadAudiosToCollectionCommand(id, contentId, audios);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command, cancellationToken);        
-        }
-
-
         [HttpPatch("name")]
         public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNameAudiosCollectionCommand command)
         {

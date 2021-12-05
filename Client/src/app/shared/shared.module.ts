@@ -15,6 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { MatSliderModule } from '@angular/material/slider';
+import { RouterModule } from '@angular/router';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -62,7 +65,8 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section-wrapper.component';
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
-import { RouterModule } from '@angular/router';
+import { ButtonCollectionComponent } from '../content/notes/full-note/ui-components/button-collection/button-collection.component';
+import { DropDirective } from '../content/profile/drop/drop.directive';
 
 @NgModule({
   declarations: [
@@ -111,6 +115,8 @@ import { RouterModule } from '@angular/router';
     LeftSectionWrapperComponent,
     NavMenuItemComponent,
     NavProfileItemComponent,
+    ButtonCollectionComponent,
+    DropDirective,
   ],
   imports: [
     CommonModule,
@@ -131,6 +137,8 @@ import { RouterModule } from '@angular/router';
     NgxDocViewerModule,
     MatSliderModule,
     RouterModule,
+    VirtualScrollerModule,
+    DragDropModule,
   ],
   exports: [
     TranslateModule,
@@ -183,6 +191,10 @@ import { RouterModule } from '@angular/router';
     LeftSectionWrapperComponent,
     NavMenuItemComponent,
     NavProfileItemComponent,
+    VirtualScrollerModule,
+    DragDropModule,
+    ButtonCollectionComponent,
+    DropDirective,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

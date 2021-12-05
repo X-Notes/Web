@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -17,15 +19,19 @@ import { BaseText, HeadingTypeENUM } from '../../../../models/content-model.mode
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
-import { HeadingService } from '../../html-business-logic/heading.service';
+import { BaseHtmlComponent } from '../../base-html-components';
+import { HeadingService } from '../html-business-logic/heading.service';
 
 @Component({
   selector: 'app-html-headings',
   templateUrl: './html-headings.component.html',
   styleUrls: ['./html-headings.component.scss'],
   providers: [HeadingService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class HtmlHeadingsComponent
+  extends BaseHtmlComponent
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   updateText = new EventEmitter<BaseText>();
 
@@ -38,6 +44,10 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
+  onFocus = new EventEmitter<HtmlHeadingsComponent>();
+
   @Input()
   content: BaseText;
 
@@ -46,12 +56,12 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @Input()
   isSelected = false;
-  
+
   @Input()
   theme: ThemeENUM;
-  
+
   themeE = ThemeENUM;
-  
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   hType = HeadingTypeENUM;
@@ -60,13 +70,19 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   destroy = new Subject<void>();
 
-  constructor(public headingService: HeadingService, private host: ElementRef) {}
+  constructor(
+    public headingService: HeadingService,
+    private host: ElementRef,
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
   getContent() {
     return this.content;
   }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
 
@@ -96,13 +112,15 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   isFocusToNext = () => true;
-  
+
   setFocus(entity: SetFocus) {
     this.headingService.setFocus(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   setFocusToEnd() {
     this.headingService.setFocusToEnd(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   updateHTML(content: string) {
@@ -116,10 +134,12 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   mouseEnter($event) {
     this.headingService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.headingService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.headingService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

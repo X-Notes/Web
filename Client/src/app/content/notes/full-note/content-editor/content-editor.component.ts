@@ -1,6 +1,9 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  DoCheck,
   ElementRef,
   Input,
   OnDestroy,
@@ -16,6 +19,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import {
   BaseText,
@@ -45,6 +49,7 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -52,7 +57,7 @@ import { UploadFileToEntity } from '../models/upload-files-to-entity';
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService],
 })
-export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -66,7 +71,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input()
   note: FullNote | NoteSnapshot;
-  
+
   @Input() set contents(contents: ContentModel[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
@@ -107,6 +112,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public contentEditorTextService: ContentEditorTextService,
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit(): void {
@@ -119,6 +125,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.destroy.complete();
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
+  }
+
+  ngDoCheck(): void {
+    // console.log('do check');
   }
 
   ngOnInit(): void {
@@ -135,9 +145,32 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       });
 
+    this.contentEditorElementsListenersService.onPressCtrlASubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        const ids = this.contents.map((x) => x.id);
+        this.selectionService.selectItems(ids);
+      });
+
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.contentEditorContentsService.restorePrev());
+
+    this.contentEditorListenerService.onPressEnterSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe((contentId: string) => {
+        if (contentId) {
+          this.enterHandler({
+            breakModel: { isFocusToNext: true },
+            nextItemType: NoteTextTypeENUM.Default,
+            contentId,
+          });
+        }
+      });
+  }
+
+  onFocusHandler(content: ParentInteraction) {
+    this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
   }
 
   onTitleInput($event) {
@@ -171,13 +204,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   enterHandler(value: EnterEvent) {
-    const index = this.contentEditorTextService.insertNewContent(
+    const obj = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
       value.breakModel.nextText,
     );
-    setTimeout(() => this.elements?.toArray()[index].setFocus());
+    setTimeout(() => this.elements?.toArray()[obj.index].setFocus());
     this.postAction();
   }
 
@@ -211,6 +244,23 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
+  changeDetectionChecker() {
+    console.log('Check contents');
+  }
+
+  drop(event: CdkDragDrop<ContentModel[]>) {
+    moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
+    this.postAction();
+  }
+
+  dragStarted(event: CdkDragStart) {
+    console.log(event);
+  }
+
+  dragEnded(event: CdkDragEnd) {
+    console.log(event);
+  }
+
   postAction(): void {
     const native = this.elements?.last?.getEditableNative();
     if (native?.textContent.length !== 0) {
@@ -233,7 +283,49 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   mouseOut($event) {
-    this.elements?.last?.mouseOut($event);
+    this.elements?.last?.mouseLeave($event);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async uploadRandomFiles(files: File[], index: number, contentId: string) {
+    const formats = files.map((x) => `.${x.name.split('.').pop()}`);
+    const photosFormats = TypeUploadFormats.photos.split(',');
+    const audiosFormats = TypeUploadFormats.audios.split(',');
+    const videosFormats = TypeUploadFormats.videos.split(',');
+    const documentsFormats = TypeUploadFormats.documents.split(',');
+    if (formats.every((z) => photosFormats.some((x) => x === z))) {
+      const cont = this.contentEditorAlbumService.insertNewContent(contentId, false);
+      this.postAction();
+      await this.contentEditorAlbumService.uploadPhotoToAlbumHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
+    }
+    if (formats.every((z) => audiosFormats.some((x) => x === z))) {
+      const cont = this.contentEditorPlaylistService.insertNewContent(contentId, false);
+      this.postAction();
+      await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
+    }
+    if (formats.every((z) => videosFormats.some((x) => x === z))) {
+      const cont = this.contentEditorVideosService.insertNewContent(contentId, false);
+      this.postAction();
+      await this.contentEditorVideosService.uploadVideosToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
+    }
+    if (formats.every((z) => documentsFormats.some((x) => x === z))) {
+      const cont = this.contentEditorDocumentsService.insertNewContent(contentId, false);
+      this.postAction();
+      await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
+    }
+    this.postAction();
   }
 
   // FILE CONTENTS
@@ -312,6 +404,12 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.postAction();
     }
   }
+
+  uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
+    this.postAction();
+  };
+
 
   // AUDIOS
   async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {

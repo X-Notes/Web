@@ -9,13 +9,12 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Subject } from 'rxjs';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
@@ -23,46 +22,33 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { CollectionService } from '../collection-services/collection.service';
 
 @Component({
   selector: 'app-video-note',
   templateUrl: './video-note.component.html',
   styleUrls: ['./video-note.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
+export class VideoNoteComponent
+  extends CollectionService
+  implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
 
-  @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
+  @ViewChild('uploadVideosRef') uploadVideosRef: ElementRef;
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
-
-  @ViewChild('titleHtml') titleHtml: ElementRef;
-
+  
   @Input()
   content: VideosCollection;
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deleteVideoEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFileToEntity>();
-
-  @Output()
-  changeTitleEvent = new EventEmitter<string>();
 
   video: HTMLVideoElement;
 
@@ -84,13 +70,14 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
 
   destroy = new Subject<void>();
 
-  titleCollectionChanged: Subject<string> = new Subject<string>();
-
   constructor(
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
-  ) {}
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
@@ -102,18 +89,12 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     this.translate = width;
   };
 
-  onTitleChangeInput($event) {
-    this.titleCollectionChanged.next($event.target.innerText);
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
   }
 
-  ngOnInit(): void {
-    this.titleCollectionChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => {
-        this.content.name = name;
-        this.changeTitleEvent.emit(name);
-      });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;
@@ -129,6 +110,18 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
       await document.exitPictureInPicture();
     }
   };
+
+  get volumeIcon(): string {
+    if (this.video?.volume === 0) {
+      return 'volume_off';
+    }
+    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
+      return 'volume_down';
+    }
+    if (this.video?.volume >= 0.5) {
+      return 'volume_up';
+    }
+  }
 
   togglePlay() {
     this.isPlaying = this.video.paused;
@@ -195,16 +188,14 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     }
   }
 
-  clickAudioHandler(videoId: string) {
+  clickVideoHandler(videoId: string) {
     this.clickableContentService.set(ClickableSelectableEntities.Video, videoId, this.content.id);
   }
 
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
 
-  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
-  
   isFocusToNext(entity: SetFocus) {
-    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
     }
     if (entity.status === FocusDirection.Down) {
@@ -215,41 +206,47 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.videos.some((x) => x.fileId === entity.itemId);
+    const isExist = this.content.videos.some((x) => x.fileId === entity?.itemId);
 
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleHtml.nativeElement.focus();
-        this.clickAudioHandler(null);
+        this.titleComponent.focusOnTitle();
+        this.clickVideoHandler(null);
       } else {
-        this.clickAudioHandler(this.content.videos[index - 1].fileId);
+        this.clickVideoHandler(this.content.videos[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
-      this.clickAudioHandler(this.content.videos[this.content.videos.length - 1].fileId);
+    if (entity.status === FocusDirection.Up && this.content.videos.length > 0) {
+      this.clickVideoHandler(this.content.videos[this.content.videos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.videos.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickVideoHandler(null);
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
-      this.clickAudioHandler(this.content.videos[index + 1].fileId);
+      this.clickVideoHandler(this.content.videos[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
 
     if (entity.status === FocusDirection.Down) {
-      if (this.isTitleFocused()) {
+      if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickAudioHandler(this.content.videos[0].fileId);
+        this.clickVideoHandler(this.content.videos[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleHtml.nativeElement.focus();
-        this.clickAudioHandler(null);
+        this.titleComponent.focusOnTitle();
+        this.clickVideoHandler(null);
       }
     }
   };
@@ -278,7 +275,7 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
   }
 
   uploadHandler = () => {
-    this.uploadAudiosRef.nativeElement.click();
+    this.uploadVideosRef.nativeElement.click();
   };
 
   // may is need in further
@@ -324,8 +321,7 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     this.indexVideo = index;
   }
 
-  async uploadAudios(event) {
-    const files = event.target.files as File[];
+  async uploadVideos(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
@@ -372,11 +368,13 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

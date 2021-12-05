@@ -13,12 +13,15 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public Guid AuthorId { set; get; }
 
-        public DocumentNoteDTO(string name, string documentPath, Guid fileId, Guid userId)
+        public DateTimeOffset UploadAt { set; get; }
+
+        public DocumentNoteDTO(string name, string documentPath, Guid fileId, Guid userId, DateTimeOffset uploadAt)
         {
             FileId = fileId;
             Name = name;
             DocumentPath = documentPath;
             AuthorId = userId;
+            UploadAt = uploadAt;
         }
     }
 }

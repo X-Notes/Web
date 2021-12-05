@@ -1,3 +1,7 @@
+:host {
+    border-radius: 5px;
+}
+
 @mixin is-selected {
     box-shadow: 0 0 0 2px #0887a7;
   }
@@ -6,11 +10,34 @@
     @include is-selected;
 }
   
-
-.spinner-container{
-    position: relative;
+.document-content {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 38px;
+    width: 100%;   
+    
+    .playlist {
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 30px);
+        border-radius: 5px;
+    
+        .spinner-container {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 38px;
+        }
+    }
+    
+    .spinner-container{
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 38px;
+    }
+
+    .drop-active{
+        outline: 1px solid white;
+    }
 }

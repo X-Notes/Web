@@ -3,9 +3,12 @@
   class="main-container"
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
-  (mouseout)="mouseOut($event)"
+  (mouseleave)="mouseLeave($event)"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
+  <app-drag-drop-handler-container [isShow]="isMouseOver"
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  ></app-drag-drop-handler-container>
   <div
     class="dot-list"
     [ngClass]="{
@@ -24,7 +27,7 @@
         (input)="onInput($event)"
         [textContent]="content?.content"
       ></p>
-      <p class="no-content-list" *ngIf="isActive">Item</p>
+      <p class="no-content-list" *ngIf="isActive">Text</p>
     </div>
   </div>
 </div>

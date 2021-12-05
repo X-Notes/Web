@@ -28,14 +28,6 @@
         border-bottom: none;
       }
 
-      .header {
-        display: flex;
-        width: 100%;
-        font-size: 1.25rem;
-        font-weight: 500;
-        margin-bottom: 1.25rem;
-      }
-
       .generic-section {
         display: flex;
         width: 100%;
@@ -98,124 +90,10 @@
         font-size: 0.75rem;
       }
 
-      .user-info {
-        margin-bottom: 1rem;
-
-        .photo {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 150px;
-          height: 150px;
-          border-radius: 50%;
-          overflow: hidden;
-          transition: 0.2s ease;
-
-          > .photo-error {
-            height: 5rem;
-            width: 5rem;
-          }
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-
-          input[type='file'] {
-            display: none;
-          }
-
-          &:hover {
-            .change-photo {
-              opacity: 1;
-            }
-          }
-
-          .change-photo {
-            position: absolute;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.7);
-            opacity: 0;
-            transition: 0.3s ease;
-            cursor: pointer;
-
-            .icon {
-              position: relative;
-              z-index: 5;
-              display: flex;
-              height: 24px;
-              width: 24px;
-              user-select: none;
-            }
-          }
-        }
-
-        .new-photo {
-          animation: glow 2s;
-          animation-iteration-count: infinite;
-        }
-
-        @keyframes glow {
-          0% {
-            box-shadow: 0 0 0 rgba(100, 100, 100, 0.5);
-          }
-
-          50% {
-            box-shadow: 0 0 25px rgba(100, 100, 100, 0.5);
-          }
-
-          100% {
-            box-shadow: 0 0 0 rgba(100, 100, 100, 0.5);
-          }
-        }
-
-        .fields {
-          margin-left: 2.5vw;
-
-          .field {
-            .field-name {
-              width: 100%;
-              margin-bottom: 0.5rem;
-            }
-
-            input[type='text'] {
-              height: 32px;
-              width: 100%;
-              padding-left: 0.75rem;
-              border-radius: 5px;
-              border: 0.7px solid #c5c5c5;
-              outline: none;
-              color: $text-color;
-              font-weight: 700;
-
-              &:disabled {
-                background-color: white;
-                color: grey;
-              }
-            }
-          }
-        }
-      }
-
       .managment-buttons {
         button[type='button'] {
           width: 150px;
-
-          &:first-child {
-            border-color: #c5c5c5;
-          }
-
-          &:last-child {
-            background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
-            margin-left: 2.5vw;
-          }
+          border-color: #c5c5c5;
 
           .content-button {
             font-weight: 500;
@@ -368,10 +246,7 @@
       background-color: rgba(255, 255, 255, 0.85);
 
       .sections {
-        .header {
-          color: $text-color;
-        }
-
+        
         .help-info {
           color: $text-color;
         }
@@ -438,15 +313,6 @@
   .content-inner-profile {
     .main {
       .sections {
-        .user-info {
-          flex-direction: column;
-          align-items: center;
-
-          .fields {
-            width: 100%;
-            margin-left: 0;
-          }
-        }
 
         .managment-buttons {
           justify-content: space-between;

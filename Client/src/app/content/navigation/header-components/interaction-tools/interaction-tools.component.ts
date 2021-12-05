@@ -14,7 +14,6 @@ import {
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
 import { SearchService } from 'src/app/shared/services/search.service';
-import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -35,8 +34,6 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @ViewChild('searchInput') searchInput: ElementRef;
 
   searchStrChanged: Subject<string> = new Subject<string>();
-
-  hideFor = hideForDemo;
 
   searchResult = [];
 

@@ -2,59 +2,64 @@
   appTheme
   class="main-container"
   (mouseover)="mouseEnter($event)"
-  (mouseleave)="mouseOut($event)"
+  (mouseleave)="mouseLeave($event)"
   (click)="setFocus($event)"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
-  <p
-    #contentHtml
-    class="block-generic default-text-size"
-    (input)="onInput($event)"
-    [attr.contenteditable]="!isReadOnlyMode"
-    [ngClass]="{
+  <app-drag-drop-handler-container [isShow]="isMouseOver"
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  ></app-drag-drop-handler-container>
+  <div class="text-content">
+    <p
+      #contentHtml
+      class="block-generic default-text-size"
+      (input)="onInput($event)"
+      [attr.contenteditable]="!isReadOnlyMode"
+      [ngClass]="{
       bold: content.isBold,
       italic: content.isItalic
     }"
-    [textContent]="content?.content"
-  ></p>
-  <div *ngIf="isActive && !isReadOnlyMode" class="no-content">
-    <p>Text</p>
-    <div class="buttons" (mousedown)="preventClick($event)">
-      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
-        <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
-        <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
-        <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="setBoldStyle($event)">
-        <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="setItalicStyle($event)">
-        <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
-        <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
-        <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
-        <mat-icon svgIcon="list" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.photos, true)">
-        <mat-icon svgIcon="image" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.documents, false)">
-        <mat-icon svgIcon="file" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.videos, false)">
-        <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
-      </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.audios, true)">
-        <mat-icon [inline]="true">library_music</mat-icon>
+      [textContent]="content?.content"
+    ></p>
+    <div *ngIf="isFocused && !isReadOnlyMode" class="no-content">
+      <p>Text</p>
+      <div class="buttons" (mousedown)="preventClick($event)">
+        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
+          <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
+          <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
+          <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="setBoldStyle($event)">
+          <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="setItalicStyle($event)">
+          <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
+          <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
+          <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
+          <mat-icon svgIcon="list" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.photos, true)">
+          <mat-icon svgIcon="image" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.documents, false)">
+          <mat-icon svgIcon="file" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.videos, false)">
+          <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
+        </div>
+        <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.audios, true)">
+          <mat-icon [inline]="true">library_music</mat-icon>
+        </div>
       </div>
     </div>
   </div>

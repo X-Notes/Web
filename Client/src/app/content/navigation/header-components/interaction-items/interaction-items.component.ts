@@ -1,21 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SelectAllNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { SelectAllFolder, UnSelectAllFolder } from 'src/app/content/folders/state/folders-actions';
-import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MatMenu } from '@angular/material/menu';
-import { hideForDemo } from 'src/environments/demo';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UpdatePersonalization } from 'src/app/core/stateUser/user-action';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 
 @Component({
   selector: 'app-interaction-items',
@@ -77,14 +74,20 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  get isAnyItemOnPage(){
-    if(this.store.selectSnapshot(AppStore.isNote)){
+  get isAnyItemOnPage() {
+    if (this.store.selectSnapshot(AppStore.isNote)) {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      return this.store.selectSnapshot(NoteStore.getNotes).find(x => x.typeNotes === noteType)?.count > 0;
+      return (
+        this.store.selectSnapshot(NoteStore.getNotes).find((x) => x.typeNotes === noteType)?.count >
+        0
+      );
     }
-    if(this.store.selectSnapshot(AppStore.isFolder)){
+    if (this.store.selectSnapshot(AppStore.isFolder)) {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      return this.store.selectSnapshot(FolderStore.getFolders).find(x => x.typeFolders === folderType)?.count > 0;
+      return (
+        this.store.selectSnapshot(FolderStore.getFolders).find((x) => x.typeFolders === folderType)
+          ?.count > 0
+      );
     }
     return false;
   }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { PhotosCollection, Photo } from '../../models/content-model.model';
+import { PhotosCollection } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiPhotosService {
@@ -27,14 +27,6 @@ export class ApiPhotosService {
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/photos/remove`,
       obj,
-    );
-  }
-
-  uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<Photo[]>>(
-      `${environment.writeAPI}/api/note/inner/photos/upload/${id}/${contentId}`,
-      data,
-      { reportProgress: true, observe: 'events' },
     );
   }
 
@@ -72,7 +64,7 @@ export class ApiPhotosService {
   syncContents(noteId: string, photos: PhotosCollection[]) {
     const obj = {
       noteId,
-      photos
+      photos,
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/photos/sync`,

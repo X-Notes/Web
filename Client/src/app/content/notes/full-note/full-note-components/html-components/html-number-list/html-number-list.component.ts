@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -23,15 +25,18 @@ import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { NumberListService } from '../../html-business-logic/numberList.service';
+import { BaseHtmlComponent } from '../../base-html-components';
+import { NumberListService } from '../html-business-logic/numberList.service';
 
 @Component({
   selector: 'app-html-number-list',
   templateUrl: './html-number-list.component.html',
   styleUrls: ['./html-number-list.component.scss'],
   providers: [NumberListService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlNumberListComponent
+  extends BaseHtmlComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
   @Output()
   updateText = new EventEmitter<BaseText>();
@@ -47,6 +52,10 @@ export class HtmlNumberListComponent
 
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
+
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
+  onFocus = new EventEmitter<HtmlNumberListComponent>();
 
   @Input()
   prevContent: BaseText;
@@ -74,7 +83,13 @@ export class HtmlNumberListComponent
 
   destroy = new Subject<void>();
 
-  constructor(public numberService: NumberListService, private host: ElementRef) {}
+  constructor(
+    public numberService: NumberListService,
+    private host: ElementRef,
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
   getContent() {
     return this.content;
@@ -127,10 +142,12 @@ export class HtmlNumberListComponent
   
   setFocus(entity: SetFocus) {
     this.numberService.setFocus(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   setFocusToEnd() {
     this.numberService.setFocusToEnd(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   updateHTML(content: string) {
@@ -144,10 +161,12 @@ export class HtmlNumberListComponent
 
   mouseEnter($event) {
     this.numberService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.numberService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.numberService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

@@ -1,7 +1,7 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
-import { EnterEvent } from '../../models/enter-event.model';
-import { TransformContent } from '../../models/transform-content.model';
+import { BaseText, NoteTextTypeENUM } from '../../../../models/content-model.model';
+import { EnterEvent } from '../../../models/enter-event.model';
+import { TransformContent } from '../../../models/transform-content.model';
 import { HtmlService } from './html.service';
 
 @Injectable()

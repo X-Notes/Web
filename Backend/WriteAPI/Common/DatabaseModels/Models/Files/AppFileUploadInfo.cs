@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Common.DatabaseModels.Models.Files
 {
     [Table(nameof(AppFileUploadInfo), Schema = SchemeConfig.File)]
-    public class AppFileUploadInfo : BaseEntity<Guid>, IDateCreator
+    public class AppFileUploadInfo : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }
@@ -19,11 +19,8 @@ namespace Common.DatabaseModels.Models.Files
         public DateTimeOffset? LinkedDate { set; get; }
         public DateTimeOffset? UnLinkedDate { set; get; }
 
-        public DateTimeOffset CreatedAt { set; get; }
-
         public AppFileUploadInfo()
         {
-            CreatedAt = DateTimeOffset.UtcNow;
         }
 
         public AppFileUploadInfo SetLinked()

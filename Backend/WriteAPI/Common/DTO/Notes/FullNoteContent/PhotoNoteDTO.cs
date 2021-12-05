@@ -16,7 +16,9 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public Guid AuthorId { set; get; }
 
-        public PhotoNoteDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig, Guid userId)
+        public DateTimeOffset UploadAt { set; get; }
+
+        public PhotoNoteDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig, Guid userId, DateTimeOffset uploadAt)
         {
             Name = name;
             FileId = fileId;
@@ -24,6 +26,7 @@ namespace Common.DTO.Notes.FullNoteContent
             PhotoPathMedium = photoPathMedium;
             PhotoPathBig = photoPathBig;
             AuthorId = userId;
+            UploadAt = uploadAt;
         }
     }
 }

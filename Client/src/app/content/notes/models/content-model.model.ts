@@ -175,9 +175,18 @@ export class AudiosCollection extends ContentModel {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new AudioModel(z.name, z.audioPath, z.fileId, z.authorId),
+            new AudioModel(z.name, z.audioPath, z.fileId, z.authorId, z.uploadAt),
         )
       : [];
+  }
+
+  static getNew(): AudiosCollection {
+    const obj: Partial<AudiosCollection> = {
+      typeId: ContentTypeENUM.Audios,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new AudiosCollection(obj);
   }
 
   update(entity: AudiosCollection) {
@@ -232,11 +241,14 @@ export class AudioModel {
 
   authorId: string;
 
-  constructor(name: string, audioPath: string, fileId: string, authorId: string) {
+  uploadAt: Date;
+
+  constructor(name: string, audioPath: string, fileId: string, authorId: string, uploadAt: Date) {
     this.name = name;
     this.audioPath = audioPath;
     this.fileId = fileId;
     this.authorId = authorId;
+    this.uploadAt = uploadAt;
   }
 
   isEqual(content: AudioModel): boolean {
@@ -264,9 +276,18 @@ export class VideosCollection extends ContentModel {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new VideoModel(z.name, z.videoPath, z.fileId, z.authorId),
+            new VideoModel(z.name, z.videoPath, z.fileId, z.authorId, z.uploadAt),
         )
       : [];
+  }
+
+  static getNew(): VideosCollection {
+    const obj: Partial<VideosCollection> = {
+      typeId: ContentTypeENUM.Videos,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new VideosCollection(obj);
   }
 
   copy(): VideosCollection {
@@ -321,11 +342,14 @@ export class VideoModel {
 
   authorId: string;
 
-  constructor(name: string, videoPath: string, fileId: string, authorId: string) {
+  uploadAt: Date;
+
+  constructor(name: string, videoPath: string, fileId: string, authorId: string, uploadAt: Date) {
     this.name = name;
     this.videoPath = videoPath;
     this.fileId = fileId;
     this.authorId = authorId;
+    this.uploadAt = uploadAt;
   }
 
   isEqual(content: VideoModel): boolean {
@@ -353,9 +377,18 @@ export class DocumentsCollection extends ContentModel {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
+            new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId, z.uploadAt),
         )
       : [];
+  }
+
+  static getNew(): DocumentsCollection {
+    const obj: Partial<DocumentsCollection> = {
+      typeId: ContentTypeENUM.Documents,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new DocumentsCollection(obj);
   }
 
   update(entity: DocumentsCollection) {
@@ -410,11 +443,20 @@ export class DocumentModel {
 
   authorId: string;
 
-  constructor(name: string, documentPath: string, fileId: string, authorId: string) {
+  uploadAt: Date;
+
+  constructor(
+    name: string,
+    documentPath: string,
+    fileId: string,
+    authorId: string,
+    uploadAt: Date,
+  ) {
     this.name = name;
     this.documentPath = documentPath;
     this.fileId = fileId;
     this.authorId = authorId;
+    this.uploadAt = uploadAt;
   }
 
   isEqual(content: DocumentModel): boolean {
@@ -459,9 +501,20 @@ export class PhotosCollection extends ContentModel {
               z.loaded,
               z.name,
               z.authorId,
+              z.uploadAt,
             ),
         )
       : [];
+  }
+
+  static getNew(): PhotosCollection {
+    const obj: Partial<PhotosCollection> = {
+      typeId: ContentTypeENUM.Photos,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+      countInRow: 2,
+    };
+    return new PhotosCollection(obj);
   }
 
   update(entity: PhotosCollection) {
@@ -494,7 +547,7 @@ export class PhotosCollection extends ContentModel {
     obj.countInRow = null;
     return obj;
   }
-  
+
   private isEqualPhotos(content: PhotosCollection): boolean {
     if (content.photos.length !== this.photos.length) {
       return false;
@@ -532,6 +585,8 @@ export class Photo {
 
   loaded: boolean;
 
+  uploadAt: Date;
+
   get photoFromBig() {
     return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
   }
@@ -548,6 +603,7 @@ export class Photo {
     loaded: boolean,
     name: string,
     authorId: string,
+    uploadAt: Date,
   ) {
     this.fileId = fileId;
     this.photoPathSmall = photoPathSmall;
@@ -556,6 +612,7 @@ export class Photo {
     this.loaded = loaded;
     this.name = name;
     this.authorId = authorId;
+    this.uploadAt = uploadAt;
   }
 
   isEqual(content: Photo): boolean {

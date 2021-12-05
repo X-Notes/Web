@@ -1,24 +1,29 @@
 @import 'innerNote';
 
-.h1{
-    font-size: 2rem;
-    line-height: 2.2rem;
+.h1 {
+  font-size: 2rem;
+  line-height: 2.2rem;
 }
 
-.h2{
-    font-size: 1.5rem;
-    line-height: 1.7rem;
+.h2 {
+  font-size: 1.5rem;
+  line-height: 1.7rem;
 }
-.h3{
-    font-size: 1.3rem;
-    line-height: 1.5rem;
+.h3 {
+  font-size: 1.3rem;
+  line-height: 1.5rem;
 }
 
-.no-content {
+.text-content {
+  position: relative;
+  width: calc(100% - 30px);
+  .no-content {
     margin-left: 4px;
     width: 100%;
     position: absolute;
-    color: #6B6B6B;               
+    bottom: 0;
+    color: #6b6b6b;
     font-weight: 300;
     line-height: 25px;
+  }
 }

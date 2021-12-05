@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -9,15 +11,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
 import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
-import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
@@ -27,31 +26,15 @@ import { ClickableSelectableEntities } from '../../content-editor-services/click
   selector: 'app-audio-note',
   templateUrl: './audio-note.component.html',
   styleUrls: ['./audio-note.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioNoteComponent
   extends CollectionService
   implements ParentInteraction, OnInit, OnDestroy {
-  @ViewChild('titleHtml') titleHtml: ElementRef;
-
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deleteAudioEvent = new EventEmitter<string>();
-
-  @Output()
-  changeTitleEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFileToEntity>();
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;
@@ -65,15 +48,14 @@ export class AudioNoteComponent
 
   formats = TypeUploadFormats.audios;
 
-  namePlaylistChanged: Subject<string> = new Subject<string>();
-
   constructor(
     private audioService: AudioService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
+    cdr: ChangeDetectorRef,
   ) {
-    super();
+    super(cdr);
   }
 
   getHost() {
@@ -85,14 +67,7 @@ export class AudioNoteComponent
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
-    this.namePlaylistChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => {
-        this.content.name = name;
-        this.changeTitleEvent.emit(name);
-      });
-  }
+  ngOnInit(): void {}
 
   clickAudioHandler(audioId: string) {
     this.clickableContentService.set(ClickableSelectableEntities.Audio, audioId, this.content.id);
@@ -108,8 +83,7 @@ export class AudioNoteComponent
     this.uploadAudiosRef.nativeElement.click();
   };
 
-  async uploadAudios(event) {
-    const files = event.target.files as File[];
+  async uploadAudios(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
@@ -154,10 +128,8 @@ export class AudioNoteComponent
     this.deleteAudioEvent.emit(audioId);
   }
 
-  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
-
   isFocusToNext(entity: SetFocus) {
-    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
     }
     if (entity.status === FocusDirection.Down) {
@@ -173,7 +145,7 @@ export class AudioNoteComponent
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       } else {
         this.clickAudioHandler(this.content.audios[index - 1].fileId);
@@ -182,9 +154,15 @@ export class AudioNoteComponent
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
+    if (entity.status === FocusDirection.Up && this.content.audios.length > 0) {
       this.clickAudioHandler(this.content.audios[this.content.audios.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.audios.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickAudioHandler(null);
       return;
     }
 
@@ -196,12 +174,12 @@ export class AudioNoteComponent
     }
 
     if (entity.status === FocusDirection.Down) {
-      if (this.isTitleFocused()) {
+      if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
         this.clickAudioHandler(this.content.audios[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       }
     }
@@ -218,14 +196,17 @@ export class AudioNoteComponent
     return this.content;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
-  onTitleChangeInput($event) {
-    this.namePlaylistChanged.next($event.target.innerText);
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
   }
 
   // eslint-disable-next-line class-methods-use-this
