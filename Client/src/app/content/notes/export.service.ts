@@ -10,22 +10,16 @@ import {
   FileProcessTracker,
   SnackBarFileProcessHandlerService,
 } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
-import {
-  PhotosCollection,
-  AudioModel,
-  DocumentsCollection,
-  Photo,
-  AudiosCollection,
-  VideosCollection,
-  DocumentModel,
-  VideoModel,
-} from './models/content-model.model';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../long-term-operations-handler/models/long-terms.icons';
 import {
   LongTermOperation,
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
+import { Photo, PhotosCollection } from './models/editor-models/photos-collection';
+import { AudioModel, AudiosCollection } from './models/editor-models/audios-collection';
+import { DocumentsCollection, DocumentModel } from './models/editor-models/documents-collection';
+import { VideosCollection, VideoModel } from './models/editor-models/videos-collection';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BaseText } from '../../models/content-model.model';
+import { BaseText } from '../../models/editor-models/base-text';
 
 @Component({
   selector: 'app-note-preview-text',

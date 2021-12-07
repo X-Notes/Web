@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
-import { ContentTypeENUM } from '../models/content-model.model';
+import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
 
 @Component({
   selector: 'app-note',
@@ -33,6 +33,8 @@ export class NoteComponent {
   }
 
   get noteFolders() {
-    return this.note.additionalInfo?.noteFolderInfos?.filter(folder => folder.folderId !== this.currentFolderId)
+    return this.note.additionalInfo?.noteFolderInfos?.filter(
+      (folder) => folder.folderId !== this.currentFolderId,
+    );
   }
 }

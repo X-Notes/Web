@@ -12,13 +12,16 @@ import {
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
-import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
+import {
+  DocumentModel,
+  DocumentsCollection,
+} from '../../../models/editor-models/documents-collection';
 
 @Component({
   selector: 'app-document-note',
@@ -31,7 +34,7 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
 
   @Output()
   deleteDocumentEvent = new EventEmitter<string>();
-  
+
   @Input()
   content: DocumentsCollection;
 

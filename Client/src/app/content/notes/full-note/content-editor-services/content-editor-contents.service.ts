@@ -6,15 +6,13 @@ import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import {
-  AudiosCollection,
-  BaseText,
-  ContentModel,
-  ContentTypeENUM,
-  DocumentsCollection,
-  PhotosCollection,
-  VideosCollection,
-} from '../../models/content-model.model';
+import { AudiosCollection } from '../../models/editor-models/audios-collection';
+import { BaseText } from '../../models/editor-models/base-text';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
+import { DocumentsCollection } from '../../models/editor-models/documents-collection';
+import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { VideosCollection } from '../../models/editor-models/videos-collection';
 import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiNoteContentService } from '../services/api-note-content.service';
@@ -24,16 +22,16 @@ import { ApiVideosService } from '../services/api-videos.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { StructureDiffs, PositionDiff, ItemForRemove } from './models/structure-diffs';
 
-export interface ContentAndIndex<T extends ContentModel> {
+export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
   content: T;
 }
 
 @Injectable()
 export class ContentEditorContentsService {
-  private contentsSync: ContentModel[] = [];
+  private contentsSync: ContentModelBase[] = [];
 
-  private contents: ContentModel[]; // TODO MAKE DICTIONARY
+  private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
   private timer: NodeJS.Timeout;
 
@@ -59,7 +57,7 @@ export class ContentEditorContentsService {
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  init(contents: ContentModel[], noteId: string) {
+  init(contents: ContentModelBase[], noteId: string) {
     this.noteId = noteId;
     this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
@@ -89,12 +87,12 @@ export class ContentEditorContentsService {
     this.saveSubject = new BehaviorSubject<boolean>(false);
   }
 
-  initOnlyRead(contents: ContentModel[], noteId: string) {
+  initOnlyRead(contents: ContentModelBase[], noteId: string) {
     this.noteId = noteId;
     this.contents = contents;
   }
 
-  private initContent(contents: ContentModel[]) {
+  private initContent(contents: ContentModelBase[]) {
     this.contents = contents;
     this.contentsSync = [];
     for (const item of contents) {
@@ -240,9 +238,9 @@ export class ContentEditorContentsService {
   // STRUCTURE
   // eslint-disable-next-line class-methods-use-this
   private patchStructuralChanges(
-    itemsForPatch: ContentModel[],
+    itemsForPatch: ContentModelBase[],
     diffs: StructureDiffs,
-  ): ContentModel[] {
+  ): ContentModelBase[] {
     if (diffs.removedItems.length > 0) {
       itemsForPatch = itemsForPatch.filter((x) => !diffs.removedItems.some((z) => z.id === x.id));
     }
@@ -281,8 +279,8 @@ export class ContentEditorContentsService {
 
   // eslint-disable-next-line class-methods-use-this
   private getStructureDiffs(
-    oldContents: ContentModel[],
-    newContents: ContentModel[],
+    oldContents: ContentModelBase[],
+    newContents: ContentModelBase[],
   ): StructureDiffs {
     const diffs: StructureDiffs = new StructureDiffs();
 
@@ -313,14 +311,14 @@ export class ContentEditorContentsService {
   }
 
   // FILES
-  private patchFileContentDiffs(contents: ContentModel[]) {
+  private patchFileContentDiffs(contents: ContentModelBase[]) {
     contents.forEach((item) => this.setSafe(item, item.id));
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private getContentDiffs<T extends ContentModel>(
-    oldContents: ContentModel[],
-    newContents: ContentModel[],
+  private getContentDiffs<T extends ContentModelBase>(
+    oldContents: ContentModelBase[],
+    newContents: ContentModelBase[],
     type: ContentTypeENUM,
   ): T[] {
     const contents: T[] = [];
@@ -406,7 +404,7 @@ export class ContentEditorContentsService {
     }
   }
 
-  isContentsEquals(f: ContentModel[], s: ContentModel[]) {
+  isContentsEquals(f: ContentModelBase[], s: ContentModelBase[]) {
     for (const content of f) {
       const itemForCompare = s.find((x) => x.id === content.id);
       if (!itemForCompare || !content.isEqual(itemForCompare)) {
@@ -431,11 +429,11 @@ export class ContentEditorContentsService {
     throw new Error('Not found');
   }
 
-  getIndexByContent(content: ContentModel) {
+  getIndexByContent(content: ContentModelBase) {
     return this.contents.indexOf(content);
   }
 
-  getContentAndIndexById<T extends ContentModel>(contentId: string): ContentAndIndex<T> {
+  getContentAndIndexById<T extends ContentModelBase>(contentId: string): ContentAndIndex<T> {
     for (let i = 0; i < this.contents.length; i += 1) {
       if (this.contents[i].id === contentId) {
         const obj: ContentAndIndex<T> = { index: i, content: this.contents[i] as T };
@@ -445,8 +443,8 @@ export class ContentEditorContentsService {
     return null;
   }
 
-  findContentAndIndexById<T extends ContentModel>(
-    contents: ContentModel[],
+  findContentAndIndexById<T extends ContentModelBase>(
+    contents: ContentModelBase[],
     contentId: string,
   ): ContentAndIndex<T> {
     for (let i = 0; i < contents.length; i += 1) {
@@ -458,11 +456,11 @@ export class ContentEditorContentsService {
     return null;
   }
 
-  getContentById<T extends ContentModel>(contentId: string): T {
+  getContentById<T extends ContentModelBase>(contentId: string): T {
     return this.contents.find((x) => x.id === contentId) as T;
   }
 
-  getContentByIndex<T extends ContentModel>(index: number): T {
+  getContentByIndex<T extends ContentModelBase>(index: number): T {
     return this.contents[index] as T;
   }
 
@@ -475,17 +473,17 @@ export class ContentEditorContentsService {
   }
 
   // INSERT, UPDATE
-  setUnsafe(data: ContentModel, index: number): void {
+  setUnsafe(data: ContentModelBase, index: number): void {
     this.contents[index] = data;
   }
 
-  setSafe(data: ContentModel, contentId: string): number {
+  setSafe(data: ContentModelBase, contentId: string): number {
     const obj = this.getContentAndIndexById(contentId);
     this.contents[obj.index] = data;
     return obj.index;
   }
 
-  setSafeContentsAndSyncContents(data: ContentModel, contentId: string): number {
+  setSafeContentsAndSyncContents(data: ContentModelBase, contentId: string): number {
     const obj = this.getContentAndIndexById(contentId);
     const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
     if (obj && obj2) {
@@ -496,7 +494,7 @@ export class ContentEditorContentsService {
     throw new Error('Content not found');
   }
 
-  setSafeSyncContents(data: ContentModel, contentId: string): void {
+  setSafeSyncContents(data: ContentModelBase, contentId: string): void {
     const obj = this.findContentAndIndexById(this.contentsSync, contentId);
     if (obj) {
       this.contentsSync[obj.index] = data;
@@ -504,15 +502,15 @@ export class ContentEditorContentsService {
     throw new Error('Content not found');
   }
 
-  insertInto(data: ContentModel, index: number) {
+  insertInto(data: ContentModelBase, index: number) {
     this.contents.splice(index, 0, data);
   }
 
-  insertToEnd(data: ContentModel) {
+  insertToEnd(data: ContentModelBase) {
     this.contents.push(data);
   }
 
-  insertToStart(data: ContentModel) {
+  insertToStart(data: ContentModelBase) {
     this.contents.unshift(data);
   }
 }

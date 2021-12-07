@@ -17,12 +17,12 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Subject } from 'rxjs';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
-import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
+import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
 
 @Component({
   selector: 'app-video-note',

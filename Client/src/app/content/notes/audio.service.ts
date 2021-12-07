@@ -8,8 +8,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import * as mm from 'music-metadata-browser';
 import { StreamAudioState } from './models/stream-audio-state.model';
 import { AudioEvents } from './models/enums/audio-events.enum';
-import { AudioModel } from './models/content-model.model';
 import { NoteStore } from './state/notes-state';
+import { AudioModel } from './models/editor-models/audios-collection';
 
 @Injectable({
   providedIn: 'root',

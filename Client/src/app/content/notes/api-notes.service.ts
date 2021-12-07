@@ -12,11 +12,14 @@ import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
 import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
-import { ContentModel } from './models/content-model.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
-import { LongTermOperation, OperationDetailMini } from '../long-term-operations-handler/models/long-term-operation';
+import {
+  LongTermOperation,
+  OperationDetailMini,
+} from '../long-term-operations-handler/models/long-term-operation';
+import { ContentModelBase } from './models/editor-models/content-model-base';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -203,9 +206,9 @@ export class ApiServiceNotes {
 
   // CONTENTS
 
-  getContents(noteId: string): Observable<ContentModel[]> {
+  getContents(noteId: string): Observable<ContentModelBase[]> {
     return this.httpClient
-      .get<ContentModel[]>(`${environment.writeAPI}/api/note/inner/contents/${noteId}`)
+      .get<ContentModelBase[]>(`${environment.writeAPI}/api/note/inner/contents/${noteId}`)
       .pipe(map((x) => TransformNoteUtil.transformContent(x)));
   }
 

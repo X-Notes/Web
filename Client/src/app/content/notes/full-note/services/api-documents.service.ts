@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { DocumentsCollection } from '../../models/content-model.model';
+import { DocumentsCollection } from '../../models/editor-models/documents-collection';
 
 @Injectable()
 export class ApiDocumentsService {

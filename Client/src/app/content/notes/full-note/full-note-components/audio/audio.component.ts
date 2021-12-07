@@ -3,9 +3,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SafeUrl } from '@angular/platform-browser';
 import { AudioService } from '../../../audio.service';
-import { AudioModel } from '../../../models/content-model.model';
 import { StreamAudioState } from '../../../models/stream-audio-state.model';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { AudioModel } from '../../../models/editor-models/audios-collection';
 
 @Component({
   selector: 'app-audio',

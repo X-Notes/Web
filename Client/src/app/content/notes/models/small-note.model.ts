@@ -1,10 +1,10 @@
 import { BottomNoteContent } from './bottom-note-content.model';
-import { ContentModel } from './content-model.model';
+import { ContentModelBase } from './editor-models/content-model-base';
 import { FullNote } from './full-note.model';
 
 // TODO MAKE CLASS
 export interface SmallNote extends FullNote {
-  contents: ContentModel[];
+  contents: ContentModelBase[];
   order: number;
   userId: string;
   isSelected?: boolean;

@@ -463,8 +463,7 @@ namespace BI.Services.Notes
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteSnapshot(tN.Content, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.IsBold, tN.IsItalic,
-                                                    tN.Order, tN.ContentTypeId, tN.UpdatedAt);
+                            var tNDTO = new TextNoteSnapshot(tN.Contents, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
                             result.TextNoteSnapshots.Add(tNDTO);
                             break;
                         }

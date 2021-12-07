@@ -1,6 +1,6 @@
 import { ElementRef } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ContentModel } from '../../models/content-model.model';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { SetFocus } from './set-focus';
 
 export interface ParentInteraction {
@@ -13,7 +13,7 @@ export interface ParentInteraction {
   updateHTML(content: string);
   getEditableNative();
   getHost(): ElementRef<HTMLElement>;
-  getContent(): ContentModel;
+  getContent(): ContentModelBase;
   mouseEnter($event);
   mouseLeave($event);
   backspaceUp();

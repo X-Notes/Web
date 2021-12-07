@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
-import { Photo } from '../../../models/content-model.model';
+import { Photo } from '../../../models/editor-models/photos-collection';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 
 @Component({

@@ -114,9 +114,7 @@ namespace BI.Services.Notes
                     textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
                     textForUpdate.HTypeId = text.HeadingTypeId;
                     textForUpdate.Checked = text.Checked;
-                    textForUpdate.Content = text.Content;
-                    textForUpdate.IsBold = text.IsBold;
-                    textForUpdate.IsItalic = text.IsItalic;
+                    textForUpdate.Contents = text.Contents;
                 }
             }
             // UPDATING
@@ -132,9 +130,7 @@ namespace BI.Services.Notes
                 textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
                 textForUpdate.HTypeId = text.HeadingTypeId;
                 textForUpdate.Checked = text.Checked;
-                textForUpdate.Content = text.Content;
-                textForUpdate.IsBold = text.IsBold;
-                textForUpdate.IsItalic = text.IsItalic;
+                textForUpdate.Contents = text.Contents;
             }
             await textNotesRepository.UpdateAsync(textForUpdate);
         }

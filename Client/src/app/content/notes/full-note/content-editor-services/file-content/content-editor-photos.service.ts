@@ -10,13 +10,13 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { PhotosCollection, Photo } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
+import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
 
 @Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {

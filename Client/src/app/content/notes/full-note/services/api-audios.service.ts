@@ -2,13 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { AudiosCollection } from '../../models/content-model.model';
+import { AudiosCollection } from '../../models/editor-models/audios-collection';
 
 @Injectable()
 export class ApiAudiosService {
-
   constructor(private httpClient: HttpClient) {}
-  
+
   transformToPlaylist(noteId: string, contentId: string) {
     const obj = {
       noteId,

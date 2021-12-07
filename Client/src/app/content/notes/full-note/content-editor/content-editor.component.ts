@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DoCheck,
@@ -21,12 +20,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import {
-  BaseText,
-  ContentModel,
-  ContentTypeENUM,
-  NoteTextTypeENUM,
-} from '../../models/content-model.model';
+import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
 import { UpdateTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -50,6 +44,8 @@ import { ContentEditorElementsListenerService } from '../content-editor-services
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
 
 @Component({
   selector: 'app-content-editor',
@@ -72,7 +68,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   @Input()
   note: FullNote | NoteSnapshot;
 
-  @Input() set contents(contents: ContentModel[]) {
+  @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
     } else {
@@ -248,7 +244,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     console.log('Check contents');
   }
 
-  drop(event: CdkDragDrop<ContentModel[]>) {
+  drop(event: CdkDragDrop<ContentModelBase[]>) {
     moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
     this.postAction();
   }
@@ -409,7 +405,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
     this.postAction();
   };
-
 
   // AUDIOS
   async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {

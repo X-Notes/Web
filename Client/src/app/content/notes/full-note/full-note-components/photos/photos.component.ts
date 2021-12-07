@@ -18,7 +18,6 @@ import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
-import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
@@ -26,6 +25,7 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
+import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',

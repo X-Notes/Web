@@ -11,7 +11,7 @@ import {
 } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
-import { ContentModel } from '../../../models/content-model.model';
+import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
 export class ContentEditorFilesBase {
@@ -24,7 +24,7 @@ export class ContentEditorFilesBase {
     protected contentsService: ContentEditorContentsService,
   ) {}
 
-  protected transformContentToOrWarning<T extends ContentModel>(
+  protected transformContentToOrWarning<T extends ContentModelBase>(
     result: OperationResult<T>,
     contentId: string,
   ): void {

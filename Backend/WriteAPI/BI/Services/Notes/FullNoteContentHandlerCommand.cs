@@ -247,9 +247,7 @@ namespace BI.Services.Notes
             textDb.NoteTextTypeId = textDto.NoteTextTypeId;
             textDb.HTypeId = textDto.HeadingTypeId;
             textDb.Checked = textDto.Checked;
-            textDb.Content = textDto.Content;
-            textDb.IsBold = textDto.IsBold;
-            textDb.IsItalic = textDto.IsItalic;
+            textDb.Contents = textDto.Contents;
 
             return textDb;
         }

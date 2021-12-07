@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { ChangeStateRelatedNote } from '../models/change-state-related-note.model';
-import { ContentTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
+import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { RelatedNote } from '../../models/related-note.model';
+import { NoteTextTypeENUM } from '../../models/editor-models/base-text';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',

@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
-import { BaseText, ContentTypeENUM } from '../../models/content-model.model';
+import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { SelectionService } from '../content-editor-services/selection.service';
+import { BaseText } from '../../models/editor-models/base-text';
 
 @Directive({
   selector: '[appMenuSelection]',

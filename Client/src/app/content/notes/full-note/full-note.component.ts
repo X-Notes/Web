@@ -11,21 +11,16 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { SignalRService } from 'src/app/core/signal-r.service';
-import {
-  DeleteCurrentNote,
-  LoadFullNote,
-  LoadNotes,
-  LoadOnlineUsersOnNote,
-} from '../state/notes-actions';
+import { DeleteCurrentNote, LoadFullNote, LoadNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { FullNoteSliderService } from './services/full-note-slider.service';
-import { ContentModel } from '../models/content-model.model';
 import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
+import { ContentModelBase } from '../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-full-note',
@@ -58,7 +53,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   note: FullNote;
 
-  contents: ContentModel[];
+  contents: ContentModelBase[];
 
   id: string;
 

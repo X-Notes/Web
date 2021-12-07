@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { PhotosCollection } from '../../models/content-model.model';
+import { PhotosCollection } from '../../models/editor-models/photos-collection';
 
 @Injectable()
 export class ApiPhotosService {
