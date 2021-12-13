@@ -191,7 +191,9 @@ export class AudioNoteComponent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHTML = (content: string) => {};
 
-  getEditableNative = () => {};
+  getEditableNative = () => {
+    return null;
+  };
 
   getContent(): ContentModelBase {
     return this.content;

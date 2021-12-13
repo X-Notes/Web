@@ -9,18 +9,14 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { BaseText } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { BaseHtmlComponent } from '../../base-html-components';
+import { HtmlBaseService } from '../html-base.service';
 import { CheckListService } from '../html-business-logic/check-list.service';
 
 @Component({
@@ -31,12 +27,8 @@ import { CheckListService } from '../html-business-logic/check-list.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlCheckListComponent
-  extends BaseHtmlComponent
+  extends HtmlBaseService
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  @Output()
-  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -55,9 +47,6 @@ export class HtmlCheckListComponent
   onFocus = new EventEmitter<HtmlCheckListComponent>();
 
   @Input()
-  content: BaseText;
-
-  @Input()
   isReadOnlyMode = false;
 
   @Input()
@@ -67,10 +56,6 @@ export class HtmlCheckListComponent
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
 
   constructor(
     public checkListService: CheckListService,
@@ -105,14 +90,8 @@ export class HtmlCheckListComponent
   }
 
   ngOnInit(): void {
+    this.initBaseHTML();
     this.checkListService.transformTo = this.transformTo;
-
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => {
-        this.content.contentSG = str;
-        this.updateText.emit(this.content);
-      });
   }
 
   isFocusToNext = () => true;
@@ -125,11 +104,6 @@ export class HtmlCheckListComponent
   setFocusToEnd() {
     this.checkListService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  updateHTML(content: string) {
-    this.content.contentSG = content;
-    this.contentHtml.nativeElement.innerHTML = content;
   }
 
   getEditableNative() {
@@ -150,10 +124,6 @@ export class HtmlCheckListComponent
     return this.checkListService.isActive(this.contentHtml);
   }
 
-  onInput($event) {
-    this.textChanged.next($event.target.innerText);
-  }
-
   clickHandler($event: Event) {
     if (this.isReadOnlyMode) {
       $event.preventDefault();
@@ -162,7 +132,7 @@ export class HtmlCheckListComponent
 
   async changeCheckBox() {
     this.content.checkedSG = !this.content.checkedSG;
-    this.textChanged.next(this.content.contentSG);
+    // this.textChanged.next(this.content.contentSG); TODO
   }
 
   // eslint-disable-next-line class-methods-use-this

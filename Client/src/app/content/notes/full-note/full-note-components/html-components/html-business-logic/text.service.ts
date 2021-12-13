@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../../models/content-model.model';
+import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { HtmlService } from './html.service';
 
@@ -27,19 +27,18 @@ export class TextService extends HtmlService {
   ) {
     $event.preventDefault();
     const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
-    content.contentSG = contentHtml.nativeElement.textContent;
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, content.id);
     enterEvent.emit(event);
   }
 
-  checkForDelete(
+  checkForDeleteOrConcatWithPrev(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDelete($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
   backUp = (e: any) => {

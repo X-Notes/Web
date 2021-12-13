@@ -4,7 +4,7 @@ import { ApiBrowserTextService } from '../../api-browser-text.service';
 export interface BreakEnterModel {
   isFocusToNext: boolean;
   nextContent?: DocumentFragment;
-  nextText?: string;
+  nextHtml?: string;
 }
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ContentEditableService {
   pressEnterHandler(e): BreakEnterModel {
     let isFocusToNext = false;
     let nextContent: DocumentFragment;
-    let nextText: string;
+    let nextHtml: string;
     const el = e as Node;
     const sel = this.apiBrowserService.getSelection();
     if (sel.rangeCount) {
@@ -38,10 +38,10 @@ export class ContentEditableService {
         range.selectNodeContents(el);
         range.setStart(selRange.endContainer, selRange.startOffset);
         nextContent = range.extractContents();
-        nextText = nextContent.textContent;
+        nextHtml = (nextContent.firstChild as HTMLElement).innerHTML;
       }
     }
-    return { isFocusToNext, nextText, nextContent };
+    return { isFocusToNext, nextHtml, nextContent };
   }
 
   // eslint-disable-next-line consistent-return

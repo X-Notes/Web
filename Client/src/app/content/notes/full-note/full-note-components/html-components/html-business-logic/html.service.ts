@@ -31,7 +31,7 @@ export abstract class HtmlService {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  checkForDelete(
+  checkForDeleteOrConcatWithPrev(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
@@ -90,7 +90,7 @@ export abstract class HtmlService {
       contentHtml.nativeElement,
       'keydown.backspace',
       (e) => {
-        this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+        this.checkForDeleteOrConcatWithPrev(e, content, contentHtml, concatThisWithPrev, deleteThis);
       },
     );
     const keyupBackspace = this.renderer.listen(
@@ -101,7 +101,7 @@ export abstract class HtmlService {
       },
     );
     const keydownDelete = this.renderer.listen(contentHtml.nativeElement, 'keydown.delete', (e) => {
-      this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+      this.checkForDeleteOrConcatWithPrev(e, content, contentHtml, concatThisWithPrev, deleteThis);
     });
     this.listeners.push(
       blur,

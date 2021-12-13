@@ -29,4 +29,8 @@ export class CollectionService extends BaseHtmlComponent {
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
   }
+
+  syncHtmlWithLayout() {
+    // TODO
+  }
 }

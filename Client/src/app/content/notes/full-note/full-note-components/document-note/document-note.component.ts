@@ -120,7 +120,9 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
 
   updateHTML = (content: string) => {};
 
-  getEditableNative = () => {};
+  getEditableNative = () => {
+    return null;
+  };
 
   getHost() {
     return this.host;

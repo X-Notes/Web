@@ -7,22 +7,17 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   BaseText,
   HeadingTypeENUM,
   NoteTextTypeENUM,
-} from '../../../../models/content-model.model';
+} from 'src/app/content/notes/models/editor-models/base-text';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -31,7 +26,7 @@ import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../html-business-logic/text.service';
 import { SetFocus } from '../../../models/set-focus';
-import { BaseHtmlComponent } from '../../base-html-components';
+import { HtmlBaseService } from '../html-base.service';
 
 @Component({
   selector: 'app-html-text-part',
@@ -41,7 +36,7 @@ import { BaseHtmlComponent } from '../../base-html-components';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent
-  extends BaseHtmlComponent
+  extends HtmlBaseService
   implements OnInit, OnDestroy, AfterViewInit, DoCheck, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
@@ -53,9 +48,6 @@ export class HtmlTextPartComponent
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
-  updateText = new EventEmitter<BaseText>();
-
-  @Output()
   deleteThis = new EventEmitter<string>();
 
   @Output()
@@ -65,12 +57,7 @@ export class HtmlTextPartComponent
   @Output()
   onFocus = new EventEmitter<HtmlTextPartComponent>();
 
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
   @ViewChild('uploadFile') uploadFile: ElementRef;
-
-  @Input()
-  content: BaseText;
 
   @Input()
   isReadOnlyMode = false;
@@ -87,10 +74,6 @@ export class HtmlTextPartComponent
 
   headingType = HeadingTypeENUM;
 
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
-
   typeUpload = TypeUploadFile;
 
   formats: string;
@@ -100,6 +83,7 @@ export class HtmlTextPartComponent
   constructor(public textService: TextService, private host: ElementRef, cdr: ChangeDetectorRef) {
     super(cdr);
   }
+
   ngDoCheck(): void {
     // console.log('do check text');
   }
@@ -138,12 +122,7 @@ export class HtmlTextPartComponent
   }
 
   ngOnInit(): void {
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => {
-        this.content.contentSG = str;
-        this.updateText.emit(this.content);
-      });
+    this.initBaseHTML();
   }
 
   transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
@@ -162,18 +141,6 @@ export class HtmlTextPartComponent
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());
-  }
-
-  setBoldStyle($event) {
-    $event.preventDefault();
-    this.content.isBoldSG = !this.content.isBoldSG;
-    this.updateText.emit(this.content);
-  }
-
-  setItalicStyle($event) {
-    $event.preventDefault();
-    this.content.isItalicSG = !this.content.isItalicSG;
-    this.updateText.emit(this.content);
   }
 
   preventClick = ($event) => {
@@ -198,18 +165,13 @@ export class HtmlTextPartComponent
     this.onFocus.emit(this);
   }
 
-  changeDetectionChecker() {
+  changeDetectionChecker(): void {
     console.log('Check text');
   }
 
   setFocusToEnd() {
     this.textService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  updateHTML(content: string) {
-    this.content.contentSG = content;
-    this.contentHtml.nativeElement.innerHTML = content;
   }
 
   getEditableNative() {
@@ -237,10 +199,6 @@ export class HtmlTextPartComponent
     }
     return url.protocol === 'http:' || url.protocol === 'https:';
   };
-
-  onInput($event) {
-    this.textChanged.next($event.target.innerText);
-  }
 
   async uploadFiles(event) {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;

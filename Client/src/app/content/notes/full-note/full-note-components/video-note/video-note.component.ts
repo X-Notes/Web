@@ -256,7 +256,9 @@ export class VideoNoteComponent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHTML = (content: string) => {};
 
-  getEditableNative = () => {};
+  getEditableNative = () => {
+    return null;
+  };
 
   getHost() {
     return this.host;

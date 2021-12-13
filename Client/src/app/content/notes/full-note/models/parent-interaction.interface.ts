@@ -11,7 +11,8 @@ export interface ParentInteraction {
   setFocus(entity?: SetFocus);
   setFocusToEnd();
   updateHTML(content: string);
-  getEditableNative();
+  syncHtmlWithLayout();
+  getEditableNative(): HTMLElement | Element;
   getHost(): ElementRef<HTMLElement>;
   getContent(): ContentModelBase;
   mouseEnter($event);

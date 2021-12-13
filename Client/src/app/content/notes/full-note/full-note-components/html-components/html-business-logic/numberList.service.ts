@@ -1,12 +1,11 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../../models/content-model.model';
+import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { TransformContent } from '../../../models/transform-content.model';
 import { HtmlService } from './html.service';
 
 @Injectable()
 export class NumberListService extends HtmlService {
-  
   transformTo = new EventEmitter<TransformContent>();
 
   onBlur = (e: any) => {
@@ -36,26 +35,20 @@ export class NumberListService extends HtmlService {
       });
     } else {
       const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
-      content.contentSG = contentHtml.nativeElement.textContent;
-      const event = super.eventEventFactory(
-        breakModel,
-        NoteTextTypeENUM.Numberlist,
-        content.id,
-      );
+      const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Numberlist, content.id);
       enterEvent.emit(event);
     }
   }
 
-  checkForDelete(
+  checkForDeleteOrConcatWithPrev(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDelete($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
-  backUp = (e: any) => {
-  };
+  backUp = (e: any) => {};
 }

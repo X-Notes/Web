@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -46,6 +47,9 @@ import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
+import { UpdateTextStyles } from '../../models/update-text-styles';
+import { DeltaConverter } from './converter/delta-converter';
 
 @Component({
   selector: 'app-content-editor',
@@ -200,14 +204,18 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   enterHandler(value: EnterEvent) {
+    const curEl = this.elements?.toArray().find((x) => x.getContent().id === value.contentId);
+    curEl.syncHtmlWithLayout();
     const obj = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
-      value.breakModel.nextText,
     );
-    setTimeout(() => this.elements?.toArray()[obj.index].setFocus());
-    this.postAction();
+    setTimeout(() => {
+      const el = this.elements?.toArray()[obj.index];
+      el.updateHTML(value.breakModel.nextHtml ?? '');
+      el.setFocus();
+    });
   }
 
   deleteRowHandler(id: string) {
@@ -217,7 +225,19 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   concatThisWithPrev(id: string) {
-    const index = this.contentEditorTextService.concatContentWithPrevContent(id);
+    const data = this.contentEditorContentsService.getContentAndIndexById<BaseText>(id);
+    const index = data.index - 1;
+    const prevContent = this.contentEditorContentsService.getContentByIndex<BaseText>(index);
+    const currentHtml = this.elements
+      .toArray()
+      .find((x) => x.getContent().id === id)
+      .getEditableNative();
+    const prevHtml = this.elements.toArray().find((x) => x.getContent().id === prevContent.id);
+    const resContent =
+      (prevHtml.getEditableNative().firstChild as any).innerHTML + (currentHtml as any).innerHTML;
+    prevHtml.updateHTML(resContent);
+    this.contentEditorContentsService.deleteById(id, false);
+
     setTimeout(() => {
       const prevItemHtml = this.elements?.toArray()[index];
       prevItemHtml.setFocusToEnd();
@@ -236,9 +256,30 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateTextHandler(content: BaseText) {
+  updateHtmlHandler(model: InputHtmlEvent) {
+    const delta = DeltaConverter.convertHTMLToDelta(model.html);
+    model.content.contents = DeltaConverter.convertToTextBlocks(delta);
     this.postAction();
   }
+
+  updateTextStyles = (styles: UpdateTextStyles) => {
+    const el = this.elements.toArray().find((x) => x.getContent() === styles.content);
+    if (!el) {
+      return;
+    }
+    const textBlocks = DeltaConverter.convertToDelta(styles.content.contents);
+    const html = DeltaConverter.convertDeltaToHtml(textBlocks);
+    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
+    const resultHtml = DeltaConverter.setStyles(
+      html,
+      pos.start,
+      pos.end - pos.start,
+      styles.textStyle,
+    );
+    if (el) {
+      el.updateHTML(resultHtml);
+    }
+  };
 
   changeDetectionChecker() {
     console.log('Check contents');

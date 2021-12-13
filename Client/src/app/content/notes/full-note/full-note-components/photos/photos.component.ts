@@ -328,7 +328,9 @@ export class PhotosComponent
 
   updateHTML = (content: string) => {};
 
-  getEditableNative = () => {};
+  getEditableNative = () => {
+    return null;
+  };
 
   getContent() {
     return this.content;
