@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { UpdateTextStyles } from '../../models/update-text-styles';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
-import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
 
 @Component({
@@ -14,7 +15,7 @@ export class TextEditMenuComponent {
   eventTransform = new EventEmitter<TransformContent>();
 
   @Output()
-  updateText = new EventEmitter<BaseText>();
+  updateText = new EventEmitter<UpdateTextStyles>();
 
   textType = NoteTextTypeENUM;
 
@@ -54,19 +55,14 @@ export class TextEditMenuComponent {
   setBoldStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    content.isBoldSG = !content.isBoldSG;
-    this.updateText.emit(content);
-    const selection = this.apiBrowserService.getSelection();
-    selection.removeAllRanges();
+    this.updateText.emit({ content, textStyle: 'bold' });
+
   }
 
   setItalicStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    content.isItalicSG = !content.isItalicSG;
-    this.updateText.emit(content);
-    const selection = this.apiBrowserService.getSelection();
-    selection.removeAllRanges();
+    this.updateText.emit({ content, textStyle: 'italic' });
   }
 
   getIsActive(type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {

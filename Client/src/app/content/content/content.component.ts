@@ -6,6 +6,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { AudioService } from '../notes/audio.service';
+import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
 
 @Component({
   selector: 'app-content',
@@ -31,6 +32,7 @@ export class ContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    DeltaConverter.initQuill();
     this.store
       .select(AppStore.isTokenUpdated)
       .pipe(takeUntil(this.destroy))

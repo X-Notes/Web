@@ -57,7 +57,7 @@ export class BaseText extends ContentModelBase {
     if (blockF == null || blockS == null) return false;
     if (blockF.length !== blockS.length) return false;
 
-    for (let i = 0; i < blockF.length; i += 1) {
+    for (let i = 0; i < blockF.length; i += 1) { // TODO CHANGES
       if (blockF[i] !== blockS[i]) return false;
     }
 
@@ -76,7 +76,7 @@ export class BaseText extends ContentModelBase {
     return this.contents;
   }
 
-  set contentSG(contents: TextBlock[]) {
+  set contentSG2(contents: TextBlock[]) {
     this.contents = contents;
     this.updateDate();
   }

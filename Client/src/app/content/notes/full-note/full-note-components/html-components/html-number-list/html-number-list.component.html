@@ -9,13 +9,7 @@
   <app-drag-drop-handler-container [isShow]="isMouseOver"
     ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
-  <div
-    class="number-list"
-    [ngClass]="{
-      bold: content.isBold,
-      italic: content.isItalic
-    }"
-  >
+  <div class="number-list">
     <div class="number-container">
       <div class="number">{{ content.number }}.</div>
     </div>
@@ -24,8 +18,8 @@
         class="block-generic default-text-size"
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
+        [innerHTML]="viewHtml"
         (input)="onInput($event)"
-        [textContent]="content?.content"
       ></p>
       <p class="no-content-list" *ngIf="isActive">Text</p>
     </div>

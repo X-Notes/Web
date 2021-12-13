@@ -23,10 +23,8 @@
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
         (input)="onInput($event)"
-        [textContent]="content?.content"
+        [innerHTML]="viewHtml"
         [ngClass]="{
-          bold: content.isBold,
-          italic: content.isItalic,
           'checked-item': content.checked
         }"
       ></p>

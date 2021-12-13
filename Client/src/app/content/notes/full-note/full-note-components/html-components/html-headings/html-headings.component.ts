@@ -9,17 +9,13 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { BaseText, HeadingTypeENUM } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
-import { BaseHtmlComponent } from '../../base-html-components';
+import { HtmlBaseService } from '../html-base.service';
 import { HeadingService } from '../html-business-logic/heading.service';
 
 @Component({
@@ -30,11 +26,8 @@ import { HeadingService } from '../html-business-logic/heading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlHeadingsComponent
-  extends BaseHtmlComponent
+  extends HtmlBaseService
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-  @Output()
-  updateText = new EventEmitter<BaseText>();
-
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
@@ -49,9 +42,6 @@ export class HtmlHeadingsComponent
   onFocus = new EventEmitter<HtmlHeadingsComponent>();
 
   @Input()
-  content: BaseText;
-
-  @Input()
   isReadOnlyMode = false;
 
   @Input()
@@ -62,13 +52,7 @@ export class HtmlHeadingsComponent
 
   themeE = ThemeENUM;
 
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
   hType = HeadingTypeENUM;
-
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
 
   constructor(
     public headingService: HeadingService,
@@ -103,12 +87,7 @@ export class HtmlHeadingsComponent
   }
 
   ngOnInit(): void {
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => {
-        this.content.contentSG = str;
-        this.updateText.emit(this.content);
-      });
+    this.initBaseHTML();
   }
 
   isFocusToNext = () => true;
@@ -121,11 +100,6 @@ export class HtmlHeadingsComponent
   setFocusToEnd() {
     this.headingService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  updateHTML(content: string) {
-    this.content.contentSG = content;
-    this.contentHtml.nativeElement.innerHTML = content;
   }
 
   getEditableNative() {
@@ -144,10 +118,6 @@ export class HtmlHeadingsComponent
 
   get isActive() {
     return this.headingService.isActive(this.contentHtml);
-  }
-
-  onInput($event) {
-    this.textChanged.next($event.target.innerText);
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -47,6 +47,7 @@ import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-han
 import { DocumentItemComponent } from './full-note-components/document-item/document-item.component';
 import { CollectionService } from './full-note-components/collection-services/collection.service';
 import { EmptyCollectionItemsPlaceholderComponent } from './full-note-components/collection-components/empty-collection-items-placeholder/empty-collection-items-placeholder.component';
+import { HtmlBaseService } from './full-note-components/html-components/html-base.service';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { EmptyCollectionItemsPlaceholderComponent } from './full-note-components
     ContentEditorVideosCollectionService,
     ContentEditorTextService,
     ContentEditorMomentoStateService,
-    CollectionService
+    CollectionService,
+    HtmlBaseService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

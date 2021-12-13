@@ -61,7 +61,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (transformTo)="transformToTypeText($event)"
             (transformToFile)="transformToFileType($event)"
-            (updateText)="updateTextHandler($event)"
+            (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
@@ -78,7 +78,7 @@
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
-            (updateText)="updateTextHandler($event)"
+            (inputHtmlEvent)="updateHtmlHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (onFocus)="onFocusHandler($event)"
           >
@@ -95,7 +95,7 @@
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event)"
+            (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -111,7 +111,7 @@
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event)"
+            (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -126,7 +126,7 @@
             (enterEvent)="enterHandler($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event)"
+            (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -201,6 +201,6 @@
   [style.left.px]="menuSelectionService.left"
   [style.visibility]="menuSelectionService.menuActive ? 'visible' : 'hidden'"
   (eventTransform)="transformToTypeText($event)"
-  (updateText)="updateTextHandler($event)"
+  (updateText)="updateTextStyles($event)"
 >
 </app-text-edit-menu>
