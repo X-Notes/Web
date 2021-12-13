@@ -108,6 +108,17 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
+  getConcatedText(): string {
+    return this.contents
+      .map((z) => z.text)
+      .filter((x) => x.length > 0)
+      .reduce((pv, cv) => pv + cv);
+  }
+
+  isHaveText(): boolean {
+    return this.contents?.some((z) => z.text.length > 0);
+  }
+
   private updateDate() {
     this.updatedAt = new Date();
   }
