@@ -42,23 +42,25 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const left = (coords.left + coords.right) / 2;
       const top = coords.top - 48;
 
-      this.menuSelectionService.currentTextItem = this.getCurrentItem();
+      this.menuSelectionService.currentTextItem = this.getCurrentItem().getContent() as BaseText;
+      this.menuSelectionService.currentHtmlItem = this.getCurrentItem().getEditableNative().innerHTML;
       this.menuSelectionService.left = left;
       this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
     } else {
       this.menuSelectionService.currentTextItem = null;
+      this.menuSelectionService.currentHtmlItem = null;
     }
   }
 
-  getCurrentItem(): BaseText {
+  getCurrentItem(): ParentInteraction {
     for (const item of this.appMenuSelection) {
       const contentItem = item.getContent();
       if (
         contentItem.typeId === ContentTypeENUM.Text &&
         item.getEditableNative() === document.activeElement
       ) {
-        return contentItem as BaseText;
+        return item;
       }
     }
     throw new Error('Element was not founded');

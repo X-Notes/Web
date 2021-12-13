@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/editor-models/base-text';
-import { UpdateTextStyles } from '../../models/update-text-styles';
+import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { TransformContent } from '../models/transform-content.model';
 
@@ -55,27 +55,47 @@ export class TextEditMenuComponent {
   setBoldStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    this.updateText.emit({ content, textStyle: 'bold' });
-
+    this.updateText.emit({
+      content,
+      textStyle: 'bold',
+      updateMode: this.getIsBold() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
+    });
   }
 
   setItalicStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    this.updateText.emit({ content, textStyle: 'italic' });
+    this.updateText.emit({
+      content,
+      textStyle: 'italic',
+      updateMode: this.getIsItalic() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
+    });
   }
 
-  getIsActive(type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+  getIsActiveHeader(type: NoteTextTypeENUM, heading: HeadingTypeENUM): boolean {
     const item = this.menuSelectionService.currentTextItem;
     if (!item) {
-      return;
+      return null;
     }
-
     if (type === NoteTextTypeENUM.Heading && item.noteTextTypeIdSG === type) {
-      // eslint-disable-next-line consistent-return
-      return heading === item.headingTypeIdSG ? 'active' : '';
+      return heading === item.headingTypeIdSG;
     }
-    // eslint-disable-next-line consistent-return
-    return type === item.noteTextTypeIdSG ? 'active' : '';
+    return type === item.noteTextTypeIdSG;
   }
+
+  getIsActiveType(type: NoteTextTypeENUM): boolean {
+    const item = this.menuSelectionService.currentTextItem;
+    if (!item) {
+      return null;
+    }
+    return type === item.noteTextTypeIdSG;
+  }
+
+  getIsBold = (): boolean => {
+    return this.menuSelectionService.currentHtmlItem?.includes('<strong>');
+  };
+
+  getIsItalic = (): boolean => {
+    return this.menuSelectionService.currentHtmlItem?.includes('<em>');
+  };
 }

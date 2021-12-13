@@ -48,7 +48,7 @@ import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
 import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
-import { UpdateTextStyles } from '../../models/update-text-styles';
+import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
 
 @Component({
@@ -275,6 +275,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       pos.start,
       pos.end - pos.start,
       styles.textStyle,
+      styles.updateMode === UpdateStyleMode.Add,
     );
     if (el) {
       el.updateHTML(resultHtml);

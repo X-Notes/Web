@@ -55,10 +55,16 @@ export class DeltaConverter {
     return result;
   };
 
-  static setStyles(html: string, index: number, length: number, format: string): string {
+  static setStyles(
+    html: string,
+    index: number,
+    length: number,
+    format: string,
+    value: boolean,
+  ): string {
     const delta = this.convertHTMLToDelta(html);
     DeltaConverter.quillInstance.setContents(delta);
-    const deltaT = DeltaConverter.quillInstance.formatText(index, length, format, true);
+    const deltaT = DeltaConverter.quillInstance.formatText(index, length, format, value);
     const formatted = { ...DeltaConverter.getFormated };
     DeltaConverter.quillInstance.setContents(null);
     return this.convertDeltaToHtml(formatted);

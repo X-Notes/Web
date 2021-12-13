@@ -5,6 +5,8 @@ import { BaseText } from '../../models/editor-models/base-text';
 export class MenuSelectionService {
   public currentTextItem: BaseText;
 
+  public currentHtmlItem: string;
+
   public startTop = 0;
 
   public startScroll = 0;
