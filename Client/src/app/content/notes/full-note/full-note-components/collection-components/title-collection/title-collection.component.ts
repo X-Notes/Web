@@ -50,8 +50,9 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
       });
   }
 
-  onTitleChangeInput($event) {
-    this.nameCollectionChanged.next($event.target.innerText);
+  onTitleChangeInput($event: InputEvent) {
+    const text = ($event.target as HTMLInputElement).innerText;
+    this.nameCollectionChanged.next(text);
   }
 
   ngOnDestroy(): void {
@@ -66,4 +67,8 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
   }
+
+  preventEnter = ($event: KeyboardEvent): void => {
+    $event.preventDefault();
+  };
 }

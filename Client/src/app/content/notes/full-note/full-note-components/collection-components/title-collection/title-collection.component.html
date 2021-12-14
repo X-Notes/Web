@@ -6,6 +6,7 @@
       (click)="clickInputEvent.emit()"
       [textContent]="textContent"
       [attr.contenteditable]="!isReadOnlyMode"
+      (keydown.enter)="preventEnter($event)"
     ></p>
     <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
   </div>

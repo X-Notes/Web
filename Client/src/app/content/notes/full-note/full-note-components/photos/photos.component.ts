@@ -69,8 +69,6 @@ export class PhotosComponent
 
   changeHeightSubject = new Subject<string>();
 
-  nameCollectionChanged: Subject<string> = new Subject<string>();
-
   changeSizeAlbumHalder = combineLatest([this.changeWidthSubject, this.changeHeightSubject]);
 
   constructor(
@@ -109,8 +107,9 @@ export class PhotosComponent
     }
   }
 
-  onTitleChangeInput($event) {
-    this.nameCollectionChanged.next($event.target.innerText);
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
   }
 
   clickPhotoHandler(photoId: string) {
