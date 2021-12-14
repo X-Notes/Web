@@ -21,6 +21,7 @@ namespace WriteContext.Repositories.Notifications
             return await entities
                 .Include(x => x.UserFrom)
                 .ThenInclude(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .Where(x => x.UserToId == userId)
                 .OrderByDescending(x => x.Date).ToListAsync();
         }

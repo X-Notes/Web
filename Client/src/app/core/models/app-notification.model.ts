@@ -1,7 +1,8 @@
 export interface AppNotification {
   id: string;
-  userFromPhotoId: string;
+  userFromId: string;
   userFromName: string;
+  userFromPhotoPath: string;
   isSystemMessage: boolean;
   isRead: boolean;
   message: string;
