@@ -67,10 +67,6 @@ export class HtmlDotListComponent
     return this.host;
   }
 
-  getContent() {
-    return this.content;
-  }
-
   ngAfterViewInit(): void {
     this.dotListService.setHandlers(
       this.content,
@@ -104,9 +100,7 @@ export class HtmlDotListComponent
     this.onFocus.emit(this);
   }
 
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
-  }
+
 
   mouseEnter($event) {
     $event.preventDefault();

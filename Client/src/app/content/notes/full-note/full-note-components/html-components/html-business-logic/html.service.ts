@@ -90,7 +90,13 @@ export abstract class HtmlService {
       contentHtml.nativeElement,
       'keydown.backspace',
       (e) => {
-        this.checkForDeleteOrConcatWithPrev(e, content, contentHtml, concatThisWithPrev, deleteThis);
+        this.checkForDeleteOrConcatWithPrev(
+          e,
+          content,
+          contentHtml,
+          concatThisWithPrev,
+          deleteThis,
+        );
       },
     );
     const keyupBackspace = this.renderer.listen(

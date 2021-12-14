@@ -61,13 +61,13 @@ export class DeltaConverter {
     length: number,
     format: string,
     value: boolean,
-  ): string {
+  ): DeltaStatic {
     const delta = this.convertHTMLToDelta(html);
     DeltaConverter.quillInstance.setContents(delta);
-    const deltaT = DeltaConverter.quillInstance.formatText(index, length, format, value);
+    DeltaConverter.quillInstance.formatText(index, length, format, value);
     const formatted = { ...DeltaConverter.getFormated };
     DeltaConverter.quillInstance.setContents(null);
-    return this.convertDeltaToHtml(formatted);
+    return formatted;
   }
 
   static convertHTMLToDelta(html: string): DeltaStatic {

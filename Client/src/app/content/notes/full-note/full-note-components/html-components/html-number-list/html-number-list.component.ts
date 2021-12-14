@@ -73,10 +73,6 @@ export class HtmlNumberListComponent
     super(cdr);
   }
 
-  getContent() {
-    return this.content;
-  }
-
   getHost() {
     return this.host;
   }
@@ -124,10 +120,6 @@ export class HtmlNumberListComponent
   setFocusToEnd() {
     this.numberService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
   }
 
   mouseEnter($event) {

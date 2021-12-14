@@ -326,14 +326,16 @@ export class PhotosComponent
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {};
-
   getEditableNative = () => {
     return null;
   };
 
-  getContent() {
+  getContent(): PhotosCollection {
     return this.content;
+  }
+
+  getContentId(): string {
+    return this.content.id;
   }
 
   getHost() {

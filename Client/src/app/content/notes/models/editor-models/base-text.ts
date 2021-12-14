@@ -5,13 +5,13 @@ import { ContentModelBase } from './content-model-base';
 export class BaseText extends ContentModelBase {
   number?: number;
 
-  contents: TextBlock[];
-
   headingTypeId?: HeadingTypeENUM;
 
   noteTextTypeId: NoteTextTypeENUM;
 
   checked?: boolean;
+
+  contents: TextBlock[];
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt);
@@ -72,17 +72,9 @@ export class BaseText extends ContentModelBase {
     this.updatedAt = text.updatedAt;
   }
 
-  get contentsSG(): TextBlock[] {
-    return this.contents;
-  }
-
-  set contentSG2(contents: TextBlock[]) {
+  set contentSG(contents: TextBlock[]) {
     this.contents = contents;
     this.updateDate();
-  }
-
-  get headingTypeIdSG(): HeadingTypeENUM {
-    return this.headingTypeId;
   }
 
   set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
@@ -90,22 +82,14 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
-  get noteTextTypeIdSG(): NoteTextTypeENUM {
-    return this.noteTextTypeId;
-  }
-
   set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
     this.noteTextTypeId = noteTextTypeId;
     this.updateDate();
   }
 
-  get checkedSG(): boolean {
-    return this.checked;
-  }
-
   set checkedSG(_checked: boolean) {
     this.checked = _checked;
-    this.updateDate();
+    this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
   getConcatedText(): string {

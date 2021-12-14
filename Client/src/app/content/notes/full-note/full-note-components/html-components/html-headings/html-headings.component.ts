@@ -62,10 +62,6 @@ export class HtmlHeadingsComponent
     super(cdr);
   }
 
-  getContent() {
-    return this.content;
-  }
-
   getHost() {
     return this.host;
   }
@@ -100,10 +96,6 @@ export class HtmlHeadingsComponent
   setFocusToEnd() {
     this.headingService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
   }
 
   mouseEnter($event) {

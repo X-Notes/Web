@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
-  BaseText,
   HeadingTypeENUM,
   NoteTextTypeENUM,
 } from 'src/app/content/notes/models/editor-models/base-text';
@@ -97,9 +96,6 @@ export class HtmlTextPartComponent
   // eslint-disable-next-line class-methods-use-this
   deleteDown() {}
 
-  getContent() {
-    return this.content;
-  }
 
   ngAfterViewInit(): void {
     this.textService.setHandlers(
@@ -172,10 +168,6 @@ export class HtmlTextPartComponent
   setFocusToEnd() {
     this.textService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
   }
 
   get isFocused() {

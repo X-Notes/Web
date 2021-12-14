@@ -188,15 +188,16 @@ export class AudioNoteComponent
 
   setFocusToEnd = () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateHTML = (content: string) => {};
-
   getEditableNative = () => {
     return null;
   };
 
-  getContent(): ContentModelBase {
+  getContent(): AudiosCollection {
     return this.content;
+  }
+
+  getContentId(): string {
+    return this.content.id;
   }
 
   mouseEnter = ($event: any) => {

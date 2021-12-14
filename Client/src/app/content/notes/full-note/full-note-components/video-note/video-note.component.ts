@@ -253,9 +253,6 @@ export class VideoNoteComponent
 
   setFocusToEnd = () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateHTML = (content: string) => {};
-
   getEditableNative = () => {
     return null;
   };
@@ -264,8 +261,12 @@ export class VideoNoteComponent
     return this.host;
   }
 
-  getContent() {
+  getContent(): VideosCollection {
     return this.content;
+  }
+
+  getContentId(): string {
+    return this.content.id;
   }
 
   async exportVideos(videos: VideosCollection) {

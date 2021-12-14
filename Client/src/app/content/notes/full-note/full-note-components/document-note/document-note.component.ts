@@ -118,8 +118,6 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {};
-
   getEditableNative = () => {
     return null;
   };
@@ -128,8 +126,12 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     return this.host;
   }
 
-  getContent() {
+  getContent(): DocumentsCollection {
     return this.content;
+  }
+
+  getContentId(): string {
+    return this.content.id;
   }
 
   async exportDocument(document: DocumentModel) {

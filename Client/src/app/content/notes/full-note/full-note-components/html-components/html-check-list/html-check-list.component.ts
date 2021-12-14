@@ -10,7 +10,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -69,10 +68,6 @@ export class HtmlCheckListComponent
     return this.host;
   }
 
-  getContent() {
-    return this.content;
-  }
-
   ngAfterViewInit(): void {
     this.checkListService.setHandlers(
       this.content,
@@ -104,10 +99,6 @@ export class HtmlCheckListComponent
   setFocusToEnd() {
     this.checkListService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
   }
 
   mouseEnter($event) {

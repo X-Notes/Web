@@ -188,6 +188,10 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
+  getElementById(id: string): ParentInteraction {
+    return this.elements.find((z) => z.getContentId() === id);
+  }
+
   selectionHandler(secondRect: DOMRect) {
     this.selectionService.selectionHandler(secondRect, this.elements);
   }
@@ -204,7 +208,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   enterHandler(value: EnterEvent) {
-    const curEl = this.elements?.toArray().find((x) => x.getContent().id === value.contentId);
+    const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
     curEl.syncHtmlWithLayout();
     const obj = this.contentEditorTextService.insertNewContent(
       value.contentId,
@@ -213,7 +217,9 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     );
     setTimeout(() => {
       const el = this.elements?.toArray()[obj.index];
-      el.updateHTML(value.breakModel.nextHtml ?? '');
+      const delta = DeltaConverter.convertHTMLToDelta(value.breakModel.nextHtml);
+      const model = DeltaConverter.convertToTextBlocks(delta);
+      el.updateHTML(model);
       el.setFocus();
     });
   }
@@ -226,20 +232,21 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
 
   concatThisWithPrev(id: string) {
     const data = this.contentEditorContentsService.getContentAndIndexById<BaseText>(id);
-    const index = data.index - 1;
-    const prevContent = this.contentEditorContentsService.getContentByIndex<BaseText>(index);
-    const currentHtml = this.elements
-      .toArray()
-      .find((x) => x.getContent().id === id)
-      .getEditableNative();
-    const prevHtml = this.elements.toArray().find((x) => x.getContent().id === prevContent.id);
-    const resContent =
-      (prevHtml.getEditableNative().firstChild as any).innerHTML + (currentHtml as any).innerHTML;
-    prevHtml.updateHTML(resContent);
+    const indexPrev = data.index - 1;
+
+    const prevContent = this.contentEditorContentsService.getContentByIndex<BaseText>(indexPrev);
+
+    const currentElement = this.getElementById(id);
+    const prevElement = this.getElementById(prevContent.id);
+
+    const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
+    console.log('resContent: ', resContent);
+    const prevRef = this.elements.find((z) => z.getContentId() === prevContent.id);
+    prevRef.updateHTML(resContent);
     this.contentEditorContentsService.deleteById(id, false);
 
     setTimeout(() => {
-      const prevItemHtml = this.elements?.toArray()[index];
+      const prevItemHtml = this.elements?.toArray()[indexPrev];
       prevItemHtml.setFocusToEnd();
     });
     this.postAction();
@@ -270,7 +277,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const textBlocks = DeltaConverter.convertToDelta(styles.content.contents);
     const html = DeltaConverter.convertDeltaToHtml(textBlocks);
     const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
-    const resultHtml = DeltaConverter.setStyles(
+    const resultDelta = DeltaConverter.setStyles(
       html,
       pos.start,
       pos.end - pos.start,
@@ -278,7 +285,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       styles.updateMode === UpdateStyleMode.Add,
     );
     if (el) {
-      el.updateHTML(resultHtml);
+      el.updateHTML(DeltaConverter.convertToTextBlocks(resultDelta));
     }
   };
 
