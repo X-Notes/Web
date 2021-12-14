@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { AudioService } from 'src/app/content/notes/audio.service';
-import { AudioModel } from 'src/app/content/notes/models/content-model.model';
+import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
 
 @Component({
   selector: 'app-audio-small',
@@ -13,8 +13,8 @@ export class AudioSmallComponent implements OnInit {
 
   metadataParsed: Record<string, SafeUrl> = {
     duration: '',
-    imageUrl: ''
-  }
+    imageUrl: '',
+  };
 
   constructor(public audioService: AudioService) {}
 

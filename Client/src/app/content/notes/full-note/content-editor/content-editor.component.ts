@@ -1,6 +1,6 @@
+/* eslint-disable no-param-reassign */
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DoCheck,
@@ -21,12 +21,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import {
-  BaseText,
-  ContentModel,
-  ContentTypeENUM,
-  NoteTextTypeENUM,
-} from '../../models/content-model.model';
+import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
 import { UpdateTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -50,6 +45,11 @@ import { ContentEditorElementsListenerService } from '../content-editor-services
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
+import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
+import { DeltaConverter } from './converter/delta-converter';
 
 @Component({
   selector: 'app-content-editor',
@@ -72,7 +72,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   @Input()
   note: FullNote | NoteSnapshot;
 
-  @Input() set contents(contents: ContentModel[]) {
+  @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
     } else {
@@ -188,6 +188,10 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
+  getElementById(id: string): ParentInteraction {
+    return this.elements.find((z) => z.getContentId() === id);
+  }
+
   selectionHandler(secondRect: DOMRect) {
     this.selectionService.selectionHandler(secondRect, this.elements);
   }
@@ -204,14 +208,20 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   enterHandler(value: EnterEvent) {
+    const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
+    curEl.syncHtmlWithLayout();
     const obj = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
-      value.breakModel.nextText,
     );
-    setTimeout(() => this.elements?.toArray()[obj.index].setFocus());
-    this.postAction();
+    setTimeout(() => {
+      const el = this.elements?.toArray()[obj.index];
+      const delta = DeltaConverter.convertHTMLToDelta(value.breakModel.nextHtml);
+      const model = DeltaConverter.convertToTextBlocks(delta);
+      el.updateHTML(model);
+      el.setFocus();
+    });
   }
 
   deleteRowHandler(id: string) {
@@ -221,9 +231,22 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   concatThisWithPrev(id: string) {
-    const index = this.contentEditorTextService.concatContentWithPrevContent(id);
+    const data = this.contentEditorContentsService.getContentAndIndexById<BaseText>(id);
+    const indexPrev = data.index - 1;
+
+    const prevContent = this.contentEditorContentsService.getContentByIndex<BaseText>(indexPrev);
+
+    const currentElement = this.getElementById(id);
+    const prevElement = this.getElementById(prevContent.id);
+
+    const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
+    console.log('resContent: ', resContent);
+    const prevRef = this.elements.find((z) => z.getContentId() === prevContent.id);
+    prevRef.updateHTML(resContent);
+    this.contentEditorContentsService.deleteById(id, false);
+
     setTimeout(() => {
-      const prevItemHtml = this.elements?.toArray()[index];
+      const prevItemHtml = this.elements?.toArray()[indexPrev];
       prevItemHtml.setFocusToEnd();
     });
     this.postAction();
@@ -240,15 +263,37 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateTextHandler(content: BaseText) {
+  updateHtmlHandler(model: InputHtmlEvent) {
+    const delta = DeltaConverter.convertHTMLToDelta(model.html);
+    model.content.contents = DeltaConverter.convertToTextBlocks(delta);
     this.postAction();
   }
+
+  updateTextStyles = (styles: UpdateTextStyles) => {
+    const el = this.elements.toArray().find((x) => x.getContent() === styles.content);
+    if (!el) {
+      return;
+    }
+    const textBlocks = DeltaConverter.convertToDelta(styles.content.contents);
+    const html = DeltaConverter.convertDeltaToHtml(textBlocks);
+    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
+    const resultDelta = DeltaConverter.setStyles(
+      html,
+      pos.start,
+      pos.end - pos.start,
+      styles.textStyle,
+      styles.updateMode === UpdateStyleMode.Add,
+    );
+    if (el) {
+      el.updateHTML(DeltaConverter.convertToTextBlocks(resultDelta));
+    }
+  };
 
   changeDetectionChecker() {
     console.log('Check contents');
   }
 
-  drop(event: CdkDragDrop<ContentModel[]>) {
+  drop(event: CdkDragDrop<ContentModelBase[]>) {
     moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
     this.postAction();
   }
@@ -409,7 +454,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
     this.postAction();
   };
-
 
   // AUDIOS
   async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {

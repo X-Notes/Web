@@ -73,7 +73,7 @@ namespace BI.Services.Folders
                 else
                 {
                     allNotes = allNotes.Where(x => SearchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.Search))
+                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
                     || folderdNotesIds.Contains(x.Id)
                     ).ToList();
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, folderdNotesIds);

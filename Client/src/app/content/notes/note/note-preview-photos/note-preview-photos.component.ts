@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { PhotosCollection } from '../../models/content-model.model';
+import { Component, Input } from '@angular/core';
+import { PhotosCollection } from '../../models/editor-models/photos-collection';
 
 @Component({
   selector: 'app-note-preview-photos',

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BaseText } from '../../models/content-model.model';
+import { BaseText } from '../../models/editor-models/base-text';
 
 @Injectable()
 export class MenuSelectionService {
   public currentTextItem: BaseText;
+
+  public currentHtmlItem: string;
 
   public startTop = 0;
 

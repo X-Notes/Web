@@ -65,7 +65,7 @@ namespace BI.Services.RelatedNotes
                 {
                     allNotes = allNotes.Where(x =>
                     SearchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.Search))
+                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
                     || relatedNotesIds.Contains(x.Id)
                     ).ToList();
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

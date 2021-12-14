@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
+using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -1149,17 +1150,11 @@ namespace WriteContext.Migrations
                     b.Property<bool?>("Checked")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
+                    b.Property<List<TextBlock>>("Contents")
+                        .HasColumnType("jsonb");
 
                     b.Property<int?>("HTypeId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsBold")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsItalic")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("NoteTextTypeId")
                         .HasColumnType("integer");

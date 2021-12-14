@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { TextBlock } from "../../../models/editor-models/base-text";
 import { UploadFileToEntity } from "../../models/upload-files-to-entity";
 import { BaseHtmlComponent } from "../base-html-components";
 import { TitleCollectionComponent } from "../collection-components/title-collection/title-collection.component";
@@ -28,5 +29,17 @@ export class CollectionService extends BaseHtmlComponent {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
+  }
+
+  syncHtmlWithLayout() {
+    // TODO
+  }
+
+  updateHTML = (content: TextBlock[]) => {
+    return null;
+  };
+
+  getTextBlocks(): TextBlock[] {
+    return null;
   }
 }

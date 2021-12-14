@@ -114,7 +114,7 @@ namespace BI.Services.History
         }
 
         private TextNoteDTO ConvertText(TextNoteSnapshot text) => 
-            new TextNoteDTO(text.Content, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, text.IsBold, text.IsItalic, text.UpdatedAt);
+            new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt);
 
         private PhotosCollectionNoteDTO ConvertPhotosCollection(PhotosCollectionNoteSnapshot photos, List<AppFile> files)
         {

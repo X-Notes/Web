@@ -1,11 +1,12 @@
 import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
+import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
+import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
 import {
   BreakEnterModel,
   ContentEditableService,
 } from '../../../content-editor-services/content-editable.service';
 import { MenuSelectionService } from '../../../content-editor-services/menu-selection.service';
-import { BaseText, ContentModel, NoteTextTypeENUM } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { SelectionService } from '../../../content-editor-services/selection.service';
 import { ClickableSelectableEntities } from '../../../content-editor-services/clickable-selectable-entities.enum';
@@ -30,7 +31,7 @@ export abstract class HtmlService {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  checkForDelete(
+  checkForDeleteOrConcatWithPrev(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
@@ -89,7 +90,13 @@ export abstract class HtmlService {
       contentHtml.nativeElement,
       'keydown.backspace',
       (e) => {
-        this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+        this.checkForDeleteOrConcatWithPrev(
+          e,
+          content,
+          contentHtml,
+          concatThisWithPrev,
+          deleteThis,
+        );
       },
     );
     const keyupBackspace = this.renderer.listen(
@@ -100,7 +107,7 @@ export abstract class HtmlService {
       },
     );
     const keydownDelete = this.renderer.listen(contentHtml.nativeElement, 'keydown.delete', (e) => {
-      this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+      this.checkForDeleteOrConcatWithPrev(e, content, contentHtml, concatThisWithPrev, deleteThis);
     });
     this.listeners.push(
       blur,
@@ -151,17 +158,17 @@ export abstract class HtmlService {
     return eventModel;
   }
 
-  setFocus(contentHtml: ElementRef<any>, contentModel: ContentModel) {
+  setFocus(contentHtml: ElementRef<any>, contentModel: ContentModelBase) {
     this.getNativeElement(contentHtml).focus();
     this.setFocusedElement(contentModel);
   }
 
-  setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModel) {
+  setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModelBase) {
     this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
     this.setFocusedElement(contentModel);
   }
 
-  setFocusedElement(contentModel: ContentModel) {
+  setFocusedElement(contentModel: ContentModelBase) {
     this.clickableService.setSontent(contentModel.id, null, ClickableSelectableEntities.Text);
   }
 

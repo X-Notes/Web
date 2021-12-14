@@ -13,7 +13,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { FullNoteSliderService } from '../../notes/full-note/services/full-note-slider.service';
-import { ContentModel } from '../../notes/models/content-model.model';
+import { ContentModelBase } from '../../notes/models/editor-models/content-model-base';
 import { FullNote } from '../../notes/models/full-note.model';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { LoadFullNote, LoadOnlineUsersOnNote } from '../../notes/state/notes-actions';
@@ -50,7 +50,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   note: FullNote;
 
-  contents: ContentModel[];
+  contents: ContentModelBase[];
 
   private folderId: string;
 

@@ -7,9 +7,7 @@
   [ngClass]="{
     h1: content.headingTypeId === hType.H1,
     h2: content.headingTypeId === hType.H2,
-    h3: content.headingTypeId === hType.H3,
-    bold: content.isBold,
-    italic: content.isItalic
+    h3: content.headingTypeId === hType.H3
   }"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
@@ -21,8 +19,8 @@
       #contentHtml
       class="block-generic"
       [attr.contenteditable]="!isReadOnlyMode"
+      [innerHTML]="viewHtml"
       (input)="onInput($event)"
-      [textContent]="content?.content"
     ></p>
     <p class="no-content" *ngIf="isActive">Heading todo add translate</p>
   </div>

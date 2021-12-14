@@ -9,18 +9,13 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { BaseText } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { BaseHtmlComponent } from '../../base-html-components';
+import { HtmlBaseService } from '../html-base.service';
 import { DotListService } from '../html-business-logic/dot-list.service';
 
 @Component({
@@ -31,11 +26,8 @@ import { DotListService } from '../html-business-logic/dot-list.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlDotListComponent
-  extends BaseHtmlComponent
+  extends HtmlBaseService
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-  @Output()
-  updateText = new EventEmitter<BaseText>();
-
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -53,9 +45,6 @@ export class HtmlDotListComponent
   onFocus = new EventEmitter<HtmlDotListComponent>();
 
   @Input()
-  content: BaseText;
-
-  @Input()
   isReadOnlyMode = false;
 
   @Input()
@@ -65,12 +54,6 @@ export class HtmlDotListComponent
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
 
   constructor(
     public dotListService: DotListService,
@@ -82,10 +65,6 @@ export class HtmlDotListComponent
 
   getHost() {
     return this.host;
-  }
-
-  getContent() {
-    return this.content;
   }
 
   ngAfterViewInit(): void {
@@ -105,14 +84,8 @@ export class HtmlDotListComponent
   }
 
   ngOnInit(): void {
+    this.initBaseHTML();
     this.dotListService.transformTo = this.transformTo;
-
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => {
-        this.content.contentSG = str;
-        this.updateText.emit(this.content);
-      });
   }
 
   isFocusToNext = () => true;
@@ -127,14 +100,7 @@ export class HtmlDotListComponent
     this.onFocus.emit(this);
   }
 
-  updateHTML(content: string) {
-    this.content.contentSG = content;
-    this.contentHtml.nativeElement.innerHTML = content;
-  }
 
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
-  }
 
   mouseEnter($event) {
     $event.preventDefault();
@@ -149,10 +115,6 @@ export class HtmlDotListComponent
 
   get isActive() {
     return this.dotListService.isActive(this.contentHtml);
-  }
-
-  onInput($event) {
-    this.textChanged.next($event.target.innerText);
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContentModel } from '../../models/content-model.model';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ClickableSelectableEntities } from './clickable-selectable-entities.enum';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ClickableContentService {
     this.setTime = new Date();
   }
 
-  isEqual(content: ContentModel): boolean {
+  isEqual(content: ContentModelBase): boolean {
     return content.id === this.currentContentId;
   }
 

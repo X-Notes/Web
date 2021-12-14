@@ -10,22 +10,15 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import {
-  BaseText,
-  ContentTypeENUM,
-  NoteTextTypeENUM,
-} from '../../../../models/content-model.model';
+import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { BaseHtmlComponent } from '../../base-html-components';
+import { HtmlBaseService } from '../html-base.service';
 import { NumberListService } from '../html-business-logic/numberList.service';
 
 @Component({
@@ -36,10 +29,8 @@ import { NumberListService } from '../html-business-logic/numberList.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlNumberListComponent
-  extends BaseHtmlComponent
+  extends HtmlBaseService
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
-  @Output()
-  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -64,24 +55,15 @@ export class HtmlNumberListComponent
   prevType: ContentTypeENUM;
 
   @Input()
-  content: BaseText;
-
-  @Input()
   isReadOnlyMode = false;
 
   @Input()
   isSelected = false;
-  
+
   @Input()
   theme: ThemeENUM;
-  
+
   themeE = ThemeENUM;
-  
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
 
   constructor(
     public numberService: NumberListService,
@@ -91,11 +73,7 @@ export class HtmlNumberListComponent
     super(cdr);
   }
 
-  getContent() {
-    return this.content;
-  }
-
-  getHost(){
+  getHost() {
     return this.host;
   }
 
@@ -120,14 +98,8 @@ export class HtmlNumberListComponent
   }
 
   ngOnInit(): void {
+    this.initBaseHTML();
     this.numberService.transformTo = this.transformTo;
-
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => {
-        this.content.contentSG = str;
-        this.updateText.emit(this.content);
-      });
   }
 
   setNumber() {
@@ -139,7 +111,7 @@ export class HtmlNumberListComponent
   }
 
   isFocusToNext = () => true;
-  
+
   setFocus(entity: SetFocus) {
     this.numberService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -148,15 +120,6 @@ export class HtmlNumberListComponent
   setFocusToEnd() {
     this.numberService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  updateHTML(content: string) {
-    this.content.contentSG = content;
-    this.contentHtml.nativeElement.innerHTML = content;
-  }
-
-  getEditableNative() {
-    return this.contentHtml?.nativeElement;
   }
 
   mouseEnter($event) {
@@ -171,10 +134,6 @@ export class HtmlNumberListComponent
 
   get isActive() {
     return this.numberService.isActive(this.contentHtml);
-  }
-
-  onInput($event) {
-    this.textChanged.next($event.target.innerText);
   }
 
   // eslint-disable-next-line class-methods-use-this

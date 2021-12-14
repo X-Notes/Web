@@ -1,5 +1,7 @@
-﻿using Common.Interfaces.Note;
+﻿using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.Interfaces.Note;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
@@ -7,7 +9,8 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
     [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
     public class TextNote : BaseNoteContent, INoteText
     {
-        public string Content { set; get; }
+        [Column(TypeName = "jsonb")]
+        public List<TextBlock> Contents { set; get; }
 
         public NoteTextTypeENUM NoteTextTypeId { set; get; }
         public NoteTextType NoteTextType { set; get; }
@@ -16,10 +19,6 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
         public HType HType { set; get; }
 
         public bool? Checked { set; get; }
-
-        public bool IsBold { set; get; }
-
-        public bool IsItalic { set; get; }
 
         public TextNote()
         {
@@ -33,29 +32,10 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
 
             Order = text.Order;
 
-            Content = text.Content;
+            Contents = text.Contents;
             NoteTextTypeId = text.NoteTextTypeId;
             HTypeId = text.HTypeId;
             Checked = text.Checked;
-
-            ContentTypeId = ContentTypeENUM.Text;
-        }
-
-        public TextNote(Guid noteId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
-        {
-            NoteId = noteId;
-
-            this.NoteTextTypeId = NoteTextTypeId;
-            this.Content = Content;
-            this.Order = Order;
-
-            ContentTypeId = ContentTypeENUM.Text;
-        }
-
-        public TextNote(NoteTextTypeENUM NoteTextTypeId, string Content = null)
-        {
-            this.NoteTextTypeId = NoteTextTypeId;
-            this.Content = Content;
 
             ContentTypeId = ContentTypeENUM.Text;
         }

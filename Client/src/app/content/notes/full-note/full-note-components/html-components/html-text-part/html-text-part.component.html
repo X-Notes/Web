@@ -15,11 +15,7 @@
       class="block-generic default-text-size"
       (input)="onInput($event)"
       [attr.contenteditable]="!isReadOnlyMode"
-      [ngClass]="{
-      bold: content.isBold,
-      italic: content.isItalic
-    }"
-      [textContent]="content?.content"
+      [innerHTML]="viewHtml"
     ></p>
     <div *ngIf="isFocused && !isReadOnlyMode" class="no-content">
       <p>Text</p>
@@ -32,12 +28,6 @@
         </div>
         <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
           <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
-        </div>
-        <div class="icon" (mousedown)="setBoldStyle($event)">
-          <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
-        </div>
-        <div class="icon" (mousedown)="setItalicStyle($event)">
-          <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
         </div>
         <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
           <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>

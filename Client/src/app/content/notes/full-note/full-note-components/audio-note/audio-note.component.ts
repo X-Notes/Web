@@ -14,13 +14,14 @@ import { Subject } from 'rxjs';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
-import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
+import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-audio-note',
@@ -187,13 +188,16 @@ export class AudioNoteComponent
 
   setFocusToEnd = () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateHTML = (content: string) => {};
+  getEditableNative = () => {
+    return null;
+  };
 
-  getEditableNative = () => {};
-
-  getContent(): ContentModel {
+  getContent(): AudiosCollection {
     return this.content;
+  }
+
+  getContentId(): string {
+    return this.content.id;
   }
 
   mouseEnter = ($event: any) => {

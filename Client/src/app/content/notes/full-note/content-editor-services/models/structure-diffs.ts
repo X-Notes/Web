@@ -1,4 +1,6 @@
-import { BaseText, ContentModel, ContentTypeENUM } from '../../../models/content-model.model';
+import { BaseText } from '../../../models/editor-models/base-text';
+import { ContentModelBase } from '../../../models/editor-models/content-model-base';
+import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
 
 export class PositionDiff {
   id: string;
@@ -26,15 +28,15 @@ export class StructureDiffs {
 
   newTextItems: BaseText[] = [];
 
-  photosCollectionItems: ContentModel[] = [];
+  photosCollectionItems: ContentModelBase[] = [];
 
-  audiosCollectionItems: ContentModel[] = [];
+  audiosCollectionItems: ContentModelBase[] = [];
 
-  videosCollectionItems: ContentModel[] = [];
+  videosCollectionItems: ContentModelBase[] = [];
 
-  documentsCollectionItems: ContentModel[] = [];
+  documentsCollectionItems: ContentModelBase[] = [];
 
-  push(content: ContentModel): void {
+  push(content: ContentModelBase): void {
     switch (content.typeId) {
       case ContentTypeENUM.Text: {
         this.newTextItems.push(content as BaseText);

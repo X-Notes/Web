@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
-import { ContentModel } from '../../models/content-model.model';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { Stack } from './models/stack-contents';
 
 @Injectable()
 export class ContentEditorMomentoStateService {
 
-  private state = new Stack<ContentModel[]>();
+  prev: ContentModelBase[];
 
-  constructor() { }
+  private state = new Stack<ContentModelBase[]>();
 
-  prev: ContentModel[];
-
-  save(nState: ContentModel[]): void {
-    if(this.prev) {
+  save(nState: ContentModelBase[]): void {
+    if (this.prev) {
       this.state.push(this.prev);
     }
-    this.prev = nState.map(a => a.copy());
+    this.prev = nState.map((a) => a.copy());
   }
 
-  getPrev(): ContentModel[] {
-    if(this.state.size() === 0) {
-      throw new Error("collection is empty");
+  getPrev(): ContentModelBase[] {
+    if (this.state.size() === 0) {
+      throw new Error('collection is empty');
     }
-    if(this.state.size() === 1) {
+    if (this.state.size() === 1) {
       return this.state.peek();
     }
     return this.state.pop();
@@ -36,7 +34,7 @@ export class ContentEditorMomentoStateService {
     return this.size() === 0;
   }
 
-  print(): void{
+  print(): void {
     this.state.print();
   }
 }
