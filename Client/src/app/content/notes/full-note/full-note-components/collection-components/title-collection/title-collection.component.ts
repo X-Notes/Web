@@ -38,11 +38,14 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   @Input()
   textContent = '';
 
+  title = '';
+
   destroy = new Subject<void>();
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
   ngOnInit(): void {
+    this.title = this.textContent;
     this.nameCollectionChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((name) => {
