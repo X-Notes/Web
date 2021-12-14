@@ -22,7 +22,7 @@ namespace BI.Services.Notes
     public class FullNoteAudiosCollectionHandlerCommand : FullNoteBaseCollection,
                 IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>,
-                IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>,
+                IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>,
                 IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
                 IRequestHandler<UpdateAudiosContentsCommand, OperationResult<Unit>>
     {
@@ -112,7 +112,7 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(ChangeNameAudiosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UpdateAudiosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

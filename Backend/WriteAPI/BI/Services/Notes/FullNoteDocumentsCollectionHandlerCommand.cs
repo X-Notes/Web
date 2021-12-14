@@ -23,7 +23,8 @@ namespace BI.Services.Notes
         IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
-        IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>
+        IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdateDocumentsCollectionInfoCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -110,6 +111,32 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
+        public async Task<OperationResult<Unit>> Handle(UpdateDocumentsCollectionInfoCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                var collection = await documentNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+
+                if (collection != null)
+                {
+                    collection.Name = request.Name;
+                    collection.UpdatedAt = DateTimeOffset.Now;
+
+                    await documentNoteRepository.UpdateAsync(collection);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                    return new OperationResult<Unit>(success: true, Unit.Value);
+                }
+
+                return new OperationResult<Unit>().SetNotFound();
+            }
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
 
         public async Task<OperationResult<DocumentsCollectionNoteDTO>> Handle(TransformToDocumentsCollectionCommand request, CancellationToken cancellationToken)
         {

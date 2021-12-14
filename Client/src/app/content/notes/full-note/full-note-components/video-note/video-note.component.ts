@@ -23,6 +23,7 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
+import { ContentEditorVideosCollectionService } from '../../content-editor-services/file-content/content-editor-videos.service';
 
 @Component({
   selector: 'app-video-note',
@@ -40,7 +41,10 @@ export class VideoNoteComponent
   @ViewChild('uploadVideosRef') uploadVideosRef: ElementRef;
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
-  
+
+  @Input()
+  noteId: string;
+
   @Input()
   content: VideosCollection;
 
@@ -75,6 +79,7 @@ export class VideoNoteComponent
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    private contentEditorVideosService: ContentEditorVideosCollectionService,
   ) {
     super(cdr);
   }
@@ -89,9 +94,8 @@ export class VideoNoteComponent
     this.translate = width;
   };
 
-  onTitleChangeInput(name: string) {
-    this.content.name = name;
-    this.changeTitleEvent.emit(name);
+  async onTitleChangeInput(name: string) {
+    await this.contentEditorVideosService.updateCollectionInfo(this.content.id, this.noteId, name);
   }
 
   ngOnInit(): void {}

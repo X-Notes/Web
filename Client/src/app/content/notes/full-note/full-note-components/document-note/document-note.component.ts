@@ -22,6 +22,7 @@ import {
   DocumentModel,
   DocumentsCollection,
 } from '../../../models/editor-models/documents-collection';
+import { ContentEditorDocumentsCollectionService } from '../../content-editor-services/file-content/content-editor-documents.service';
 
 @Component({
   selector: 'app-document-note',
@@ -34,6 +35,9 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
 
   @Output()
   deleteDocumentEvent = new EventEmitter<string>();
+
+  @Input()
+  noteId: string;
 
   @Input()
   content: DocumentsCollection;
@@ -51,6 +55,7 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     private host: ElementRef,
     private clickableService: ClickableContentService,
     cdr: ChangeDetectorRef,
+    private contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
   ) {
     super(cdr);
   }
@@ -142,9 +147,12 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     this.deleteDocumentEvent.emit(documentId);
   }
 
-  onTitleChangeInput(name: string) {
-    this.content.name = name;
-    this.changeTitleEvent.emit(name);
+  async onTitleChangeInput(name: string) {
+    await this.contentEditorDocumentsService.updateCollectionInfo(
+      this.content.id,
+      this.noteId,
+      name,
+    );
   }
 
   uploadHandler = () => {

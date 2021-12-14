@@ -26,7 +26,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    private apiAlbum: ApiPhotosService,
+    private apiPhotos: ApiPhotosService,
     contentEditorContentsService: ContentEditorContentsService,
     private apiFiles: ApiNoteFilesService,
   ) {
@@ -51,7 +51,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
-    const collectionResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
+    const collectionResult = await this.apiPhotos.transformToAlbum(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
       collectionResult.data.photos = collectionResult.data.photos
@@ -145,7 +145,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     contentId: string,
     noteId: string,
   ): Promise<OperationResult<any>> => {
-    const resp = await this.apiAlbum.removeCollection(noteId, contentId).toPromise();
+    const resp = await this.apiPhotos.removeCollection(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
@@ -153,7 +153,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
   };
 
   async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
-    const resp = await this.apiAlbum.removePhotoFromAlbum(noteId, contentId, photoId).toPromise();
+    const resp = await this.apiPhotos.removePhotoFromAlbum(noteId, contentId, photoId).toPromise();
 
     if (resp.success) {
       const prevCollection = this.contentsService.getContentById<PhotosCollection>(contentId);
@@ -167,5 +167,27 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
+  }
+
+  async updateCollectionInfo(
+    contentId: string,
+    noteId: string,
+    name: string,
+    count: number,
+    width: string,
+    height: string,
+  ): Promise<OperationResult<any>> {
+    const resp = await this.apiPhotos
+      .updateCollectionInfo(noteId, contentId, name, count, width, height)
+      .toPromise();
+    if (resp.success) {
+      const collection = this.contentsService.getContentById<PhotosCollection>(contentId);
+      collection.name = name;
+      collection.width = width;
+      collection.height = height;
+      collection.countInRow = count;
+      this.contentsService.setSafe(collection, collection.id);
+    }
+    return resp;
   }
 }

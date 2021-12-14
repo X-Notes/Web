@@ -59,7 +59,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("info")]
-        public async Task<OperationResult<Unit>> UpdateVideosCollectionInfo(UpdateVideosCollectionInfoCommand command)
+        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdateVideosCollectionInfoCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

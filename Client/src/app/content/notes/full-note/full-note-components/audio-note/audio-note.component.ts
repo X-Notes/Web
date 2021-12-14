@@ -22,6 +22,7 @@ import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
+import { ContentEditorAudiosCollectionService } from '../../content-editor-services/file-content/content-editor-audios.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -36,6 +37,9 @@ export class AudioNoteComponent
 
   @Output()
   deleteAudioEvent = new EventEmitter<string>();
+
+  @Input()
+  noteId: string;
 
   @Input()
   theme: ThemeENUM;
@@ -55,6 +59,7 @@ export class AudioNoteComponent
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    private contentEditorAudiosService: ContentEditorAudiosCollectionService,
   ) {
     super(cdr);
   }
@@ -208,9 +213,8 @@ export class AudioNoteComponent
     this.isMouseOver = false;
   };
 
-  onTitleChangeInput(name: string) {
-    this.content.name = name;
-    this.changeTitleEvent.emit(name);
+  async onTitleChangeInput(name: string) {
+    await this.contentEditorAudiosService.updateCollectionInfo(this.content.id, this.noteId, name);
   }
 
   // eslint-disable-next-line class-methods-use-this

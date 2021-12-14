@@ -149,14 +149,19 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
   }
 
-  async changeAudiosCollectionName(contentId: string, noteId: string, name: string): Promise<void> {
+  async updateCollectionInfo(
+    contentId: string,
+    noteId: string,
+    name: string,
+  ): Promise<OperationResult<any>> {
     const resp = await this.apiAudiosCollection
-      .changePlaylistName(noteId, contentId, name)
+      .updateCollectionInfo(noteId, contentId, name)
       .toPromise();
     if (resp.success) {
       const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
       collection.name = name;
       this.contentsService.setSafe(collection, collection.id);
     }
+    return resp;
   }
 }

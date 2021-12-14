@@ -138,4 +138,18 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
   deleteDocumentHandler(documentId: string, contentId: string, noteId: string) {
     // TODO
   }
+
+  async updateCollectionInfo(
+    contentId: string,
+    noteId: string,
+    name: string,
+  ): Promise<OperationResult<any>> {
+    const resp = await this.apiDocuments.updateCollectionInfo(noteId, contentId, name).toPromise();
+    if (resp.success) {
+      const collection = this.contentsService.getContentById<DocumentsCollection>(contentId);
+      collection.name = name;
+      this.contentsService.setSafe(collection, collection.id);
+    }
+    return resp;
+  }
 }

@@ -47,14 +47,6 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPatch("name")]
-        public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNameAudiosCollectionCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-
         [HttpPost("transform")]
         public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
         {
@@ -67,6 +59,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("info")]
+        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdateAudiosCollectionInfoCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
     }
 

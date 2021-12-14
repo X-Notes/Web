@@ -20,12 +20,12 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../content-editor-services/selection.service';
-import { ApiPhotosService } from '../../services/api-photos.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
+import { ContentEditorPhotosCollectionService } from '../../content-editor-services/file-content/content-editor-photos.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -75,11 +75,11 @@ export class PhotosComponent
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
-    private api: ApiPhotosService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    private contentEditorPhotosService: ContentEditorPhotosCollectionService,
   ) {
     super(cdr);
   }
@@ -107,9 +107,15 @@ export class PhotosComponent
     }
   }
 
-  onTitleChangeInput(name: string) {
-    this.content.name = name;
-    this.changeTitleEvent.emit(name);
+  async onTitleChangeInput(name: string) {
+    await this.contentEditorPhotosService.updateCollectionInfo(
+      this.content.id,
+      this.noteId,
+      name,
+      this.content.countInRow,
+      this.content.width,
+      this.content.height,
+    );
   }
 
   clickPhotoHandler(photoId: string) {
@@ -166,7 +172,14 @@ export class PhotosComponent
       .subscribe(async (values) => {
         const [width, height] = values;
         if (width && height && (this.content.height !== height || this.content.width !== width)) {
-          await this.api.updateAlbumSize(this.noteId, this.content.id, width, height).toPromise();
+          await this.contentEditorPhotosService.updateCollectionInfo(
+            this.noteId,
+            this.content.id,
+            this.content.name,
+            this.content.countInRow,
+            width,
+            height,
+          );
         }
       });
 
@@ -176,9 +189,15 @@ export class PhotosComponent
   }
 
   async setPhotosInRow(count: number) {
-    const resp = await this.api.updateCountInRow(this.noteId, this.content.id, count).toPromise();
+    const resp = await this.contentEditorPhotosService.updateCollectionInfo(
+      this.noteId,
+      this.content.id,
+      this.content.name,
+      count,
+      this.content.width,
+      this.content.height,
+    );
     if (resp.success) {
-      this.content.countInRow = count;
       this.setFalseLoadedForAllPhotos();
       this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
       this.changeHeightSubject.next(`height`);
