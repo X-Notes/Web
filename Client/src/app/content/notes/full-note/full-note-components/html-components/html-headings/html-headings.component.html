@@ -22,6 +22,6 @@
       [innerHTML]="viewHtml"
       (input)="onInput($event)"
     ></p>
-    <p class="no-content" *ngIf="isActive">Heading todo add translate</p>
+    <p class="no-content" *ngIf="isActive">{{'innerNote.heading' | translate}}</p>
   </div>
 </div>

@@ -90,19 +90,19 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     // LEFT SECTION
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     this.linkNotes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
-    await this.store.dispatch(new LoadFullNote(this.noteId)).toPromise();
-
     await this.signalRService.joinNote(this.noteId);
-    this.store.dispatch(new LoadOnlineUsersOnNote(this.noteId));
-    this.signalRService.updateContentEvent
-      .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.loadContent());
   }
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.noteId)).toPromise();
-    await this.loadContent();
-    this.note = this.store.selectSnapshot(NoteStore.oneFull);
+    const isCanView = this.store.selectSnapshot(NoteStore.canView);
+    if (isCanView) {
+      await this.loadContent();
+      this.note = this.store.selectSnapshot(NoteStore.oneFull);
+      this.signalRService.updateContentEvent
+        .pipe(takeUntil(this.destroy))
+        .subscribe(() => this.loadContent());
+    }
     this.loaded = true;
   }
 

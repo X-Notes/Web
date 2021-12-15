@@ -21,7 +21,7 @@
         [innerHTML]="viewHtml"
         (input)="onInput($event)"
       ></p>
-      <p class="no-content-list" *ngIf="isActive">Text</p>
+      <p class="no-content-list" *ngIf="isActive">{{'innerNote.text' | translate}}</p>
     </div>
   </div>
 </div>

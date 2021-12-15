@@ -3,13 +3,14 @@
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
-    <p>open note or file</p>
+    <p>{{'innerNote.openNoteOrFile' | translate}}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
   </div>
   <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
     <ng-scrollbar class="history-records" [visibility]="'hover'" [appearance]="'compact'">
       <div class="content-inner-history">
         <app-history-record
+          [noteId]="note.id"
           [history]="item"
           *ngFor="let item of histories"
         ></app-history-record></div

@@ -14,6 +14,8 @@ export class HistoryRecordComponent implements OnInit {
 
   @ViewChild('scrollbar') scrollbar: ElementRef;
 
+  @Input() noteId: string;
+  
   @Input() history: NoteHistory;
 
   public positions = [

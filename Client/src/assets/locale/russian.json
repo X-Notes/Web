@@ -147,6 +147,10 @@
       }
     },
     "innerNote": {
+      "title": "Заглавие",
+      "openNoteOrFile": "Откройте заметку или файл",
+      "text": "Текст",
+      "heading": "Заголовок",
       "menu": {
         "addVideo": "Загрузить новое видео",
         "add": "Загрузить новое аудио",
@@ -178,7 +182,17 @@
         "wideScreen": "Широкий экран",
         "defaultPlayer": "Обычный экран",
         "fullscreen": "Во весь экран",
-        "miniPlayer": "Мини-проигрыватель"
+        "miniPlayer": "Мини-проигрыватель",
+        "plsUpload": "Загрузите аудиодорожку"
+      },
+      "video": {
+        "plsUpload": "Загрузите видео"
+      },
+      "document": {
+        "plsUpload": "Загрузите документ"
+      },
+      "photo": {
+        "plsUpload": "Загрузите фото"
       }
     },
     "noResult": {
@@ -230,8 +244,8 @@
     },
     "placeholder": {
       "folderNote": "Заметка без названия",
-      "folderSmall": "Название папки",
-      "noteSmall": "Добавьте название к заметке",
+      "folderSmall": "Заглавие папки",
+      "noteSmall": "Заглавие заметки",
       "playlist": "Название плейлиста",
       "labelPage": "Название ярлыка"
     }

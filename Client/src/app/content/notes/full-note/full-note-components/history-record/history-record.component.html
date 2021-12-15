@@ -52,7 +52,12 @@
       </div>
     </ng-template>
   </div>
-  <a class="redirect" [routerLink]="['history', history.noteVersionId]" target="_blank" #redirect>
+  <a
+    class="redirect"
+    [routerLink]="['/notes', noteId, 'history', history.noteVersionId]"
+    target="_blank"
+    #redirect
+  >
     <div class="icon">
       <mat-icon fontSet="material-icons-round" [inline]="true">history</mat-icon>
     </div>

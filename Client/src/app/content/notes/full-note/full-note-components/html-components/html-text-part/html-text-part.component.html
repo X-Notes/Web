@@ -18,7 +18,7 @@
       [innerHTML]="viewHtml"
     ></p>
     <div *ngIf="isFocused && !isReadOnlyMode" class="no-content">
-      <p>Text</p>
+      <p>{{'innerNote.text' | translate}}</p>
       <div class="buttons" (mousedown)="preventClick($event)">
         <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
           <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
