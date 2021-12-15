@@ -123,13 +123,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pService.setSpinnerState(false);
             this.loaded = true;
 
-            if (this.folder) {
-              this.loadSideBar();
-            }
-            const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-            const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
-            const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
-            this.store.dispatch(actions);
+            this.loadSideBar();
           }
         });
     });
@@ -220,7 +214,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.folder.folderTypeId);
+    if (this.folder.folderTypeId) {
+      await this.setSideBarNotes(this.folder.folderTypeId);
+    }
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {
