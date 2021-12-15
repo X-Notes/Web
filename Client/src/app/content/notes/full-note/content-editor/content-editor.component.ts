@@ -197,7 +197,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   selectionStartHandler($event: DOMRect) {
-    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.elements);
+    const isSelectionInZone = this.selectionService.isSelectionInZone(
+      $event,
+      this.elements,
+      this.noteTitleEl,
+    );
     if (isSelectionInZone) {
       this.selectionService.isSelectionInside = true;
       this.selectionDirective.div.style.opacity = '0';

@@ -1,4 +1,4 @@
-import { Injectable, QueryList } from '@angular/core';
+import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
@@ -53,7 +53,14 @@ export class SelectionService {
     this.selectedItemsSet.delete(id);
   }
 
-  isSelectionInZone(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
+  isSelectionInZone(
+    secondRect: DOMRect,
+    elements: QueryList<ParentInteraction>,
+    title: ElementRef<HTMLElement>,
+  ) {
+    if (this.isRectToRect(title.nativeElement.getBoundingClientRect(), secondRect)) {
+      return true;
+    }
     for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();

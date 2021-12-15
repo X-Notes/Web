@@ -44,7 +44,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private selectionService: SelectionService,
-    private clickableService: ClickableContentService
+    private clickableService: ClickableContentService,
   ) {}
 
   @HostListener('mousedown', ['$event'])
@@ -79,13 +79,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
     );
     this.listeners.push(mousewheelEventListener);
 
-    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e) =>
-      this.mouseDown(e),
-    );
+    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e) => this.mouseDown(e));
     const mouseUpListener = this.renderer.listen(document, 'mouseup', (e) => this.mouseUp(e));
-    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e) =>
-      this.mouseMove(e),
-    );
+    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e) => this.mouseMove(e));
     this.listeners.push(mouseDownListener, mouseMoveListener, mouseUpListener);
   }
 

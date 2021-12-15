@@ -10,12 +10,11 @@
   transition: 0.2s background-color ease;
   height: 100%;
 
-  .top-section{
+  .top-section {
     display: flex;
     flex-direction: column;
-    height: 80px;
     padding: 0 30px;
-
+    margin-bottom: 1rem;
     .note-color {
       width: 40px;
       height: 40px;
@@ -31,17 +30,14 @@
       margin-left: 0.5rem;
       font-size: 2.5rem;
       font-weight: 700;
-      height: 50px;
+      min-height: 50px;
   
       .title {
-        display: flex;
-        flex-wrap: wrap;
         width: 100%;
         padding-left: 0.625rem;
-        word-break: break-all;
-        white-space: pre-wrap;
         outline: none;
-  
+        overflow-wrap: anywhere;
+
         &:empty {
           padding-left: 0;
         }
@@ -72,8 +68,9 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 0 0 0 10px;
+    padding: 0 15px 0 15px;
     overflow-y: scroll;
+    scrollbar-width: thin;
     .empty {
       min-height: 150px;
       height: 100%;
