@@ -104,8 +104,8 @@
       </div>
     </div>
     <app-no-results-illustration
-      *ngIf="loaded && !isHaveNotes"
-      [isShow]="loaded && !isHaveNotes"
+      *ngIf="loaded && !ffnService.isAnyEntityInLayout"
+      [isShow]="loaded && !ffnService.isAnyEntityInLayout"
       [message]="'noResult.folderNotes' | translate"
       [illustration]="pService.icon.notesInnerFolder"
       typeClass="type-module"
