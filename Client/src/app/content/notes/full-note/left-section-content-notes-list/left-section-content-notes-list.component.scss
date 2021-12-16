@@ -24,6 +24,10 @@
       @include text-overflow;
     }
 
+    .empty-placeholder{
+      color: #808080;
+    }
+
     &:last-child {
       margin-bottom: 0.875rem;
     }

@@ -9,7 +9,10 @@
       [ngStyle]="{'backgroundColor': item.color}"
       [routerLink]="['/folders/', item.id]"
     >
-      <p>{{ item.title | replace: 'note' }}</p>
+      <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
+      <p *ngIf="!item.title" class="empty-placeholder">
+        {{'placeholder.unnamedFolder' | translate}}
+      </p>
     </div>
   </ng-scrollbar>
 </app-left-section-wrapper>

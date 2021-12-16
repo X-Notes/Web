@@ -77,9 +77,13 @@
         background-color: $red-label;
         font-size: 0.75rem;
 
-        p:first-child {
+        .label-item-title {
           @include text-overflow;
           width: calc(100% - 0.75rem);
+        }
+
+        .empty-placeholder{
+          color: #808080;
         }
       }
     }

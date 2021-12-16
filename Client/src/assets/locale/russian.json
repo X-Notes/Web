@@ -247,6 +247,9 @@
       "folderSmall": "Заглавие папки",
       "noteSmall": "Заглавие заметки",
       "playlist": "Название плейлиста",
-      "labelPage": "Название ярлыка"
+      "labelPage": "Название ярлыка",
+      "unnamedNote": "Без названия",
+      "unnamedFolder": "Без названия",
+      "unnamedLabel": "Без названия"
     }
   }

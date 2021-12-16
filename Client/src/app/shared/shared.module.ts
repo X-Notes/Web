@@ -21,7 +21,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
-import { ReplacePipe } from './pipes/replace.pipe';
 import { LabelComponent } from '../content/labels/label/label.component';
 import { SearchLabelPipe } from './pipes/search-label.pipe';
 import { OrderService } from './services/order.service';
@@ -72,7 +71,6 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
   declarations: [
     ChangeColorComponent,
     EditingLabelsNoteComponent,
-    ReplacePipe,
     LabelComponent,
     SearchLabelPipe,
     NoDeletedLabelsPipe,
@@ -145,7 +143,6 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
     MatRippleModule,
     MatDialogModule,
     HammerModule,
-    ReplacePipe,
     FormsModule,
     LabelComponent,
     SearchLabelPipe,
