@@ -14,17 +14,16 @@ import { PersonalizationService } from '../personalization.service';
 })
 export class SnackBarWrapperService {
   constructor(
-    private snackService: SnackbarService, 
+    private snackService: SnackbarService,
     private store: Store,
-    private prService: PersonalizationService) {
-
-    this.store.select(AppStore.getSnackBarNotification)
-    .subscribe(message => {
-      if(message){
+    private prService: PersonalizationService,
+  ) {
+    this.store.select(AppStore.getSnackBarNotification).subscribe((message) => {
+      if (message) {
         this.buildNotification(message, null, null);
         this.store.dispatch(new ShowSnackNotification(null));
       }
-    })
+    });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -240,14 +239,14 @@ export class SnackBarWrapperService {
     const snackbarRef = this.buildSnackBarRef(message, undoMessage);
     this.prService.isSnackBarActive$.next(true);
     snackbarRef
-    .afterDismissed()
-    .pipe(take(1))
-    .subscribe((x) => {
-      this.prService.isSnackBarActive$.next(false);
-      if (x.dismissedByAction && callback) {
-        callback();
-      }
-    });
+      .afterDismissed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        this.prService.isSnackBarActive$.next(false);
+        if (x.dismissedByAction && callback) {
+          callback();
+        }
+      });
     return snackbarRef;
   }
 

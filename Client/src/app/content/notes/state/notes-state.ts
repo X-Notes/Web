@@ -60,6 +60,7 @@ import { ApiNoteHistoryService } from '../full-note/services/api-note-history.se
 import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -410,10 +411,15 @@ export class NoteStore {
   @Action(SetDeleteNotes)
   async deleteNotes(
     { dispatch }: StateContext<NoteState>,
-    { selectedIds, isAddingToDom }: SetDeleteNotes,
+    { selectedIds, isAddingToDom, successCalback }: SetDeleteNotes,
   ) {
-    await this.api.setDeleteNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
+    const resp = await this.api.setDeleteNotes(selectedIds).toPromise();
+    if (resp.success) {
+      dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && successCalback) {
+      successCalback();
+    }
   }
 
   @Action(ArchiveNotes)

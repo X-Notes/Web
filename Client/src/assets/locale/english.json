@@ -250,5 +250,8 @@
     "unnamedNote": "Unnamed note",
     "unnamedFolder": "Unnamed folder",
     "unnamedLabel": "Unnamed label"
+  },
+  "snackBar": {
+    "saved": "Saved"
   }
 }

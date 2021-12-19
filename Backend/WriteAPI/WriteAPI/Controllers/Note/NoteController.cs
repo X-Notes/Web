@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Notes;
+using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
@@ -46,11 +47,11 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpPatch("delete")]
-        public async Task SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
+        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
 

@@ -251,5 +251,8 @@
       "unnamedNote": "Без названия",
       "unnamedFolder": "Без названия",
       "unnamedLabel": "Без названия"
+    },
+    "snackBar": {
+      "saved": "Cохранено"
     }
   }

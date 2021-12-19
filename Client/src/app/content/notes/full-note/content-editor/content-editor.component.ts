@@ -156,6 +156,10 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.contentEditorContentsService.restorePrev());
 
+    this.contentEditorElementsListenersService.onPressCtrlSSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.contentEditorContentsService.changeImmediately());
+
     this.contentEditorListenerService.onPressEnterSubject
       .pipe(takeUntil(this.destroy))
       .subscribe((contentId: string) => {
