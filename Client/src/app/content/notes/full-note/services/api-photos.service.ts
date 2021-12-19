@@ -36,31 +36,6 @@ export class ApiPhotosService {
     );
   }
 
-  updateCountInRow(noteId: string, contentId: string, count: number) {
-    const obj = {
-      noteId,
-      contentId,
-      count,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/row/count`,
-      obj,
-    );
-  }
-
-  updateAlbumSize(noteId: string, contentId: string, width: string, height: string) {
-    const obj = {
-      noteId,
-      contentId,
-      width,
-      height,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/size`,
-      obj,
-    );
-  }
-
   syncContents(noteId: string, photos: PhotosCollection[]) {
     const obj = {
       noteId,
@@ -68,6 +43,28 @@ export class ApiPhotosService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/photos/sync`,
+      obj,
+    );
+  }
+
+  updateCollectionInfo(
+    noteId: string,
+    contentId: string,
+    name: string,
+    count: number,
+    width: string,
+    height: string,
+  ) {
+    const obj = {
+      noteId,
+      contentId,
+      name,
+      count,
+      width,
+      height,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/photos/info`,
       obj,
     );
   }

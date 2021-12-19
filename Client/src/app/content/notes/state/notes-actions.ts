@@ -73,6 +73,8 @@ export class BaseChangeTypeSmallNote {
 
   public isAddingToDom: boolean;
 
+  public successCalback: () => void;
+  
   get isMany() {
     return this.selectedIds.length > 1;
   }

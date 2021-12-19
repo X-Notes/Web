@@ -21,8 +21,7 @@ namespace BI.Services.Notes
     public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>,
-        IRequestHandler<ChangePhotosCollectionRowCountCommand, OperationResult<Unit>>,
-        IRequestHandler<ChangePhotosCollectionSizeCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>,
         IRequestHandler<UpdatePhotosContentsCommand, OperationResult<Unit>>
     {
@@ -114,7 +113,8 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(ChangePhotosCollectionRowCountCommand request, CancellationToken cancellationToken)
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePhotosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -125,35 +125,11 @@ namespace BI.Services.Notes
 
                 if (collection != null)
                 {
-                    collection.CountInRow = request.Count;
-                    collection.UpdatedAt = DateTimeOffset.Now;
-                    await photosCollectionNoteRepository.UpdateAsync(collection);
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        public async Task<OperationResult<Unit>> Handle(ChangePhotosCollectionSizeCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
-            {
-                var collection = await photosCollectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-
-                if(collection != null)
-                {
                     collection.Height = request.Height;
                     collection.Width = request.Width;
+                    collection.CountInRow = request.Count;
+                    collection.Name = request.Name;
+
                     collection.UpdatedAt = DateTimeOffset.Now;
                     await baseNoteContentRepository.UpdateAsync(collection);
 

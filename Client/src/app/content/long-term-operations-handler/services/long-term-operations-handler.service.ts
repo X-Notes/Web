@@ -19,7 +19,12 @@ export class LongTermOperationsHandlerService {
       'uploader.uploading',
       'uploader.uploadingPhotosNote',
     );
-    this.getNewMini(op, LongTermsIcons.Audio, 'KEK');
+    this.getNewMini(op, LongTermsIcons.Audio, 'Audio');
+    this.getNewMini(op, LongTermsIcons.Video, 'Video');
+    this.getNewMini(op, LongTermsIcons.Document, 'Document');
+    this.getNewMini(op, LongTermsIcons.Image, 'Image');
+    this.getNewMini(op, LongTermsIcons.Export, 'Export');
+
     this.addNewExportOperation('uploader.exportVideos');
     this.addNewCopingOperation('uploader.copyNotes');
     this.addNewProfilePhotoChangingOperation();

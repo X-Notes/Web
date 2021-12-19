@@ -13,7 +13,7 @@ export class FeaturesEntitiesService<
     super(murriService);
   }
 
-  orderBy<T extends SmallNote | SmallFolder>(entities: T[], sortType: SortedByENUM): T[] {
+  orderBy = <T extends SmallNote | SmallFolder>(entities: T[], sortType: SortedByENUM): T[] => {
     switch (sortType) {
       case SortedByENUM.AscDate: {
         return entities.sort(

@@ -20,6 +20,7 @@ import {
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
 import { ContentModelBase } from './models/editor-models/content-model-base';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -93,7 +94,10 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/delete`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/delete`,
+      obj,
+    );
   }
 
   makePrivateNotes(ids: string[]) {

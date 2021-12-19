@@ -41,14 +41,18 @@
         [ngClass]="item.selected ? 'active-label' : ''"
       >
         <div class="label-item" [ngStyle]="{'backgroundColor': item.label.color}">
-          <p>{{ item.label.name | replace: 'label' }}</p>
+          <p *ngIf="item.label.name && item.label.name.length > 0" class="label-item-title">
+            {{ item.label.name }}
+          </p>
+          <p *ngIf="!item.label.name" class="label-item-title empty-placeholder">
+            {{'placeholder.unnamedLabel' | translate}}
+          </p>
           <p>{{ item.label.countNotes }}</p>
           <div class="dot" [ngStyle]="{'backgroundColor': item.label.color}"></div>
         </div>
       </div>
     </ng-scrollbar>
   </div>
-
 </app-left-section-wrapper>
 
 <div

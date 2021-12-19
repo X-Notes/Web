@@ -35,6 +35,7 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
+
         [HttpDelete("{noteId}/{contentId}/{photoId}")]
         public async Task<OperationResult<Unit>> RemovePhotoFromAlbum(Guid noteId, Guid contentId, Guid photoId)
         {
@@ -43,19 +44,6 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
-        [HttpPatch("row/count")]
-        public async Task<OperationResult<Unit>> ChangeAlbumCountRow(ChangePhotosCollectionRowCountCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-        [HttpPatch("size")]
-        public async Task<OperationResult<Unit>> ChangeAlbumSize(ChangePhotosCollectionSizeCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
 
         [HttpPost("transform")]
         public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)
@@ -69,6 +57,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("info")]
+        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdatePhotosCollectionInfoCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
     }
 

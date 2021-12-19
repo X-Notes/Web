@@ -105,10 +105,10 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     private store: Store,
     public menuSelectionService: MenuSelectionService,
     public contentEditorContentsService: ContentEditorContentsService,
-    public contentEditorAlbumService: ContentEditorPhotosCollectionService,
+    public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
-    public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
+    public contentEditorAudiosService: ContentEditorAudiosCollectionService,
     public contentEditorTextService: ContentEditorTextService,
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
@@ -156,6 +156,10 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.contentEditorContentsService.restorePrev());
 
+    this.contentEditorElementsListenersService.onPressCtrlSSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.contentEditorContentsService.changeImmediately());
+
     this.contentEditorListenerService.onPressEnterSubject
       .pipe(takeUntil(this.destroy))
       .subscribe((contentId: string) => {
@@ -197,7 +201,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   selectionStartHandler($event: DOMRect) {
-    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.elements);
+    const isSelectionInZone = this.selectionService.isSelectionInZone(
+      $event,
+      this.elements,
+      this.noteTitleEl,
+    );
     if (isSelectionInZone) {
       this.selectionService.isSelectionInside = true;
       this.selectionDirective.div.style.opacity = '0';
@@ -240,7 +248,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const prevElement = this.getElementById(prevContent.id);
 
     const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
-    console.log('resContent: ', resContent);
+
     const prevRef = this.elements.find((z) => z.getContentId() === prevContent.id);
     prevRef.updateHTML(resContent);
     this.contentEditorContentsService.deleteById(id, false);
@@ -339,17 +347,17 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const videosFormats = TypeUploadFormats.videos.split(',');
     const documentsFormats = TypeUploadFormats.documents.split(',');
     if (formats.every((z) => photosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorAlbumService.insertNewContent(contentId, false);
+      const cont = this.contentEditorPhotosService.insertNewContent(contentId, false);
       this.postAction();
-      await this.contentEditorAlbumService.uploadPhotoToAlbumHandler(
+      await this.contentEditorPhotosService.uploadPhotoToAlbumHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
     }
     if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorPlaylistService.insertNewContent(contentId, false);
+      const cont = this.contentEditorAudiosService.insertNewContent(contentId, false);
       this.postAction();
-      await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler(
+      await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
@@ -379,7 +387,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   async transformToFileType(event: TransformToFileContent) {
     switch (event.typeFile) {
       case TypeUploadFile.photos: {
-        await this.contentEditorAlbumService.transformToPhotosCollection(
+        await this.contentEditorPhotosService.transformToPhotosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -387,7 +395,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
         break;
       }
       case TypeUploadFile.audios: {
-        await this.contentEditorPlaylistService.transformToAudiosCollection(
+        await this.contentEditorAudiosService.transformToAudiosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -429,11 +437,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     this.postAction();
   }
 
-  async changeVideosCollectionName(contentId: string, noteId: string, name: string) {
-    await this.contentEditorVideosService.changeVideosCollectionName(contentId, noteId, name);
-    this.postAction();
-  }
-
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorVideosService.uploadVideosToCollectionHandler($event, noteId);
     this.postAction();
@@ -456,46 +459,38 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   };
 
   // AUDIOS
-  async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {
-    await this.contentEditorPlaylistService.changeAudiosCollectionName(contentId, noteId, name);
-    this.postAction();
-  }
-
   async deleteAudiosCollection(contentId: string) {
-    const res = await this.contentEditorPlaylistService.deleteContentHandler(
-      contentId,
-      this.note.id,
-    );
+    const res = await this.contentEditorAudiosService.deleteContentHandler(contentId, this.note.id);
     if (res.success) {
       this.postAction();
     }
   }
 
   async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {
-    await this.contentEditorPlaylistService.deleteAudioHandler(audioId, contentId, noteId);
+    await this.contentEditorAudiosService.deleteAudioHandler(audioId, contentId, noteId);
     this.postAction();
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, noteId);
+    await this.contentEditorAudiosService.uploadAudiosToCollectionHandler($event, noteId);
     this.postAction();
   };
 
   // PHOTOS
   async deletePhotosCollection(contentId: string) {
-    const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
+    const res = await this.contentEditorPhotosService.deleteContentHandler(contentId, this.note.id);
     if (res.success) {
       this.postAction();
     }
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    await this.contentEditorAlbumService.uploadPhotoToAlbumHandler($event, noteId);
+    await this.contentEditorPhotosService.uploadPhotoToAlbumHandler($event, noteId);
     this.postAction();
   };
 
   async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
-    await this.contentEditorAlbumService.deletePhotoHandler(photoId, contentId, noteId);
+    await this.contentEditorPhotosService.deletePhotoHandler(photoId, contentId, noteId);
     this.postAction();
   }
 }

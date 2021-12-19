@@ -147,7 +147,11 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     }
   }
 
-  async changeVideosCollectionName(contentId: string, noteId: string, name: string): Promise<void> {
+  async updateCollectionInfo(
+    contentId: string,
+    noteId: string,
+    name: string,
+  ): Promise<OperationResult<any>> {
     const resp = await this.apiVideos
       .updateVideosCollectionInfo(noteId, contentId, name)
       .toPromise();
@@ -156,5 +160,6 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       collection.name = name;
       this.contentsService.setSafe(collection, collection.id);
     }
+    return resp;
   }
 }

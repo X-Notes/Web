@@ -36,14 +36,14 @@ export class ApiAudiosService {
     );
   }
 
-  changePlaylistName(noteId: string, contentId: string, name: string) {
+  updateCollectionInfo(noteId: string, contentId: string, name: string) {
     const obj = {
       noteId,
       contentId,
       name,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/audios/name`,
+      `${environment.writeAPI}/api/note/inner/audios/info`,
       obj,
     );
   }

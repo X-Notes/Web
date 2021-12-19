@@ -38,11 +38,14 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   @Input()
   textContent = '';
 
+  title = '';
+
   destroy = new Subject<void>();
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
   ngOnInit(): void {
+    this.title = this.textContent;
     this.nameCollectionChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((name) => {
@@ -50,8 +53,9 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
       });
   }
 
-  onTitleChangeInput($event) {
-    this.nameCollectionChanged.next($event.target.innerText);
+  onTitleChangeInput($event: InputEvent) {
+    const text = ($event.target as HTMLInputElement).innerText;
+    this.nameCollectionChanged.next(text);
   }
 
   ngOnDestroy(): void {
@@ -66,4 +70,8 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
   }
+
+  preventEnter = ($event: KeyboardEvent): void => {
+    $event.preventDefault();
+  };
 }

@@ -136,7 +136,7 @@ namespace WriteAPI.ConfigureAPP
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, Unit>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
@@ -172,15 +172,14 @@ namespace WriteAPI.ConfigureAPP
             // FULL NOTE ALBUM
             services.AddScoped<IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangePhotosCollectionRowCountCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangePhotosCollectionSizeCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdatePhotosContentsCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
 
             // FULL NOTE AUDIOS
             services.AddScoped<IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateAudiosContentsCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
 
@@ -196,6 +195,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateDocumentsCollectionInfoCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
 
             // FULL NOTE FILES
             services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();

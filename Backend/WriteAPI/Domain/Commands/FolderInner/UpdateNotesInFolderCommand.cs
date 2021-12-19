@@ -12,7 +12,6 @@ namespace Domain.Commands.FolderInner
         [ValidationGuid]
         public Guid FolderId { set; get; }
         
-        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
     }
 }

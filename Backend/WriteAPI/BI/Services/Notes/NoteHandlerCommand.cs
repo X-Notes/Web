@@ -16,6 +16,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
+using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
@@ -34,7 +35,7 @@ namespace BI.Services.Notes
     public class NoteHandlerCommand :
         IRequestHandler<NewPrivateNoteCommand, SmallNote>,
         IRequestHandler<ChangeColorNoteCommand, Unit>,
-        IRequestHandler<SetDeleteNoteCommand, Unit>,
+        IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>,
         IRequestHandler<DeleteNotesCommand, Unit>,
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
@@ -126,22 +127,21 @@ namespace BI.Services.Notes
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            if (notes.Count == request.Ids.Count)
+            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);;
+            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
+            if (isCanDelete)
             {
+                var notes = permissions.Select(x => x.Item2.Note).ToList();
                 notes.ForEach(note => note.DeletedAt = DateTimeOffset.Now);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Deleted);
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Domain.Commands.NoteInner.FileContent.Audios
 {
-    public class ChangeNameAudiosCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateAudiosCollectionInfoCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

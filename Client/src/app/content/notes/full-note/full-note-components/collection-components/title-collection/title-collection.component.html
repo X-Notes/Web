@@ -4,8 +4,9 @@
       #titleHtml
       (input)="onTitleChangeInput($event)"
       (click)="clickInputEvent.emit()"
-      [textContent]="textContent"
+      [textContent]="title"
       [attr.contenteditable]="!isReadOnlyMode"
+      (keydown.enter)="preventEnter($event)"
     ></p>
     <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
   </div>

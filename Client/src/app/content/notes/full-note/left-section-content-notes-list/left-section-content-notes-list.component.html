@@ -9,7 +9,8 @@
       [ngStyle]="{'backgroundColor': item.color}"
       (click)="notesService.toNote(item)"
     >
-      <p>{{ item.title | replace: 'note' }}</p>
+      <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
+      <p *ngIf="!item.title" class="empty-placeholder">{{'placeholder.unnamedNote' | translate}}</p>
     </div>
   </ng-scrollbar>
 </app-left-section-wrapper>

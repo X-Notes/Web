@@ -14,6 +14,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
   constructor(public murriService: MurriService) {}
 
   initState() {
+    // eslint-disable-next-line no-return-assign
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
   }
 
@@ -41,39 +42,10 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     this.murriService.muuriDestroy();
   }
 
-  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {
-    for (const el of elements) {
-      if (!this.state[el.id]) {
-        this.state[el.id] = this.entities.find((x) => x.id === el.id);
-        this.murriService.grid.add(document.getElementById(el.id), {
-          index: isAddToEnd ? -1 : 0,
-          layout: true,
-        });
-      }
-    }
-  }
-
   getIsFirstInit(z: any): boolean {
     return (
       z.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
     );
-  }
-
-  private async deleteItemChecker(elements: HTMLElement[]) {
-    let flag = false;
-    for (const key in this.state) {
-      const item = this.state[key];
-      const htmlItem = elements.find((x) => x.id === item.id);
-
-      if (!htmlItem) {
-        flag = true;
-        delete this.state[key];
-      }
-    }
-
-    if (flag) {
-      await this.murriService.refreshLayoutAsync();
-    }
   }
 
   addToDom(ents: Entity[]) {
@@ -86,5 +58,37 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     if (ids.length > 0) {
       this.entities = this.entities.filter((x) => !ids.some((z) => z === x.id));
     }
+  }
+
+  private async deleteItemChecker(elements: HTMLElement[]) {
+    let flag = false;
+    // eslint-disable-next-line guard-for-in
+    for (const key in this.state) {
+      const item = this.state[key];
+      const htmlItem = elements.find((x) => x.id === item.id);
+      if (!htmlItem) {
+        flag = true;
+        delete this.state[key];
+      }
+    }
+    if (flag) {
+      await this.murriService.refreshLayoutAsync();
+    }
+  }
+
+  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {
+    for (const el of elements) {
+      if (!this.state[el.id]) {
+        this.state[el.id] = this.entities.find((x) => x.id === el.id);
+        this.murriService.grid.add(document.getElementById(el.id), {
+          index: isAddToEnd ? -1 : 0,
+          layout: true,
+        });
+      }
+    }
+  }
+
+  get isAnyEntityInLayout(): boolean {
+    return this.entities.length > 0;
   }
 }

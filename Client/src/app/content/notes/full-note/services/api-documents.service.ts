@@ -30,6 +30,12 @@ export class ApiDocumentsService {
     );
   }
 
+  removeDocumentFromCollection(noteId: string, contentId: string, documentId: string) {
+    return this.httpClient.delete<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/dcouments/${noteId}/${contentId}/${documentId}`,
+    );
+  }
+
   syncContents(noteId: string, documents: DocumentsCollection[]) {
     const obj = {
       noteId,
@@ -37,6 +43,18 @@ export class ApiDocumentsService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/documents/sync`,
+      obj,
+    );
+  }
+
+  updateCollectionInfo(noteId: string, contentId: string, name: string) {
+    const obj = {
+      noteId,
+      contentId,
+      name,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/documents/info`,
       obj,
     );
   }

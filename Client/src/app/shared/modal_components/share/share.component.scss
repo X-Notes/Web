@@ -389,6 +389,10 @@
           @include text-overflow;
         }
 
+        .empty-placeholder {
+          color: #808080;
+        }
+
         &:first-child {
           margin-top: 0;
         }

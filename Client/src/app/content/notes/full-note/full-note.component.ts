@@ -89,9 +89,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.signalRService.joinNote(this.id);
-    this.signalRService.updateContentEvent
-      .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.loadContent());
   }
 
   async loadContent() {
@@ -100,8 +97,14 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    await this.loadContent();
-    this.note = this.store.selectSnapshot(NoteStore.oneFull);
+    const isCanView = this.store.selectSnapshot(NoteStore.canView);
+    if (isCanView) {
+      await this.loadContent();
+      this.note = this.store.selectSnapshot(NoteStore.oneFull);
+      this.signalRService.updateContentEvent
+        .pipe(takeUntil(this.destroy))
+        .subscribe(() => this.loadContent());
+    }
     this.loaded = true;
   }
 

@@ -2,10 +2,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
@@ -39,11 +41,14 @@ export class ContentEditorContentsService {
 
   private updateSubject: BehaviorSubject<boolean>;
 
+  private updateImmediatelySubject: BehaviorSubject<boolean>;
+
   private saveSubject: BehaviorSubject<boolean>;
 
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
+    private snackService: SnackBarWrapperService,
     private apiNoteContentService: ApiNoteContentService,
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
     private apiTexts: ApiTextService,
@@ -51,6 +56,7 @@ export class ContentEditorContentsService {
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
+    private translateService: TranslateService,
   ) {}
 
   // TODO 1. Worker
@@ -72,6 +78,12 @@ export class ContentEditorContentsService {
       .subscribe(() => {
         this.processChanges();
       });
+    //
+    this.updateImmediatelySubject.pipe(filter((x) => x === true)).subscribe(() => {
+      this.processChanges();
+      this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
+    });
+    //
     this.saveSubject
       .pipe(
         filter((x) => x === true),
@@ -83,8 +95,12 @@ export class ContentEditorContentsService {
   destroyAndInitSubject() {
     this.updateSubject?.complete();
     this.updateSubject = new BehaviorSubject<boolean>(false);
+    //
     this.saveSubject?.complete();
     this.saveSubject = new BehaviorSubject<boolean>(false);
+    //
+    this.updateImmediatelySubject?.complete();
+    this.updateImmediatelySubject = new BehaviorSubject<boolean>(false);
   }
 
   initOnlyRead(contents: ContentModelBase[], noteId: string) {
@@ -112,6 +128,10 @@ export class ContentEditorContentsService {
 
   change() {
     this.updateSubject.next(true);
+  }
+
+  changeImmediately() {
+    this.updateImmediatelySubject.next(true);
   }
 
   private processChanges() {

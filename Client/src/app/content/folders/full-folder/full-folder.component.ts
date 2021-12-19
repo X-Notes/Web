@@ -69,8 +69,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
-  isHaveNotes = false;
-
   private routeSubscription: Subscription;
 
   private id: string;
@@ -118,9 +116,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.folder) {
               const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
               const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
-              if (notes && notes.length) {
-                this.isHaveNotes = true;
-              }
               await this.ffnService.initializeEntities(notes);
             }
 
@@ -128,13 +123,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pService.setSpinnerState(false);
             this.loaded = true;
 
-            if (this.folder) {
-              this.loadSideBar();
-            }
-            const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-            const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
-            const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
-            this.store.dispatch(actions);
+            this.loadSideBar();
           }
         });
     });
@@ -205,8 +194,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe(async (resp) => {
             if (resp) {
               const ids = resp.map((x) => x.id);
-              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-              ids.length ? (this.isHaveNotes = true) : (this.isHaveNotes = false);
               await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
               await this.ffnService.updateNotesLayout(this.folder.id);
             }
@@ -227,7 +214,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.folder.folderTypeId);
+    if (this.folder.folderTypeId) {
+      await this.setSideBarNotes(this.folder.folderTypeId);
+    }
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {

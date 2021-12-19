@@ -11,7 +11,9 @@ export class ContentEditorElementsListenerService {
   onPressCtrlZSubject = new Subject();
 
   onPressCtrlASubject = new Subject();
-  
+
+  onPressCtrlSSubject = new Subject();
+
   private renderer: Renderer2;
 
   constructor(rendererFactory: RendererFactory2) {
@@ -51,10 +53,18 @@ export class ContentEditorElementsListenerService {
       }
       return true;
     });
-    
-    this.listeners.push(keydownBackspace, keydownDelete, keydownCtrlZ, keydownCtrlA);
+
+    const keydownCtrlS = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.code === 'KeyS') {
+        e.preventDefault();
+        this.onPressCtrlSSubject.next();
+        return false;
+      }
+      return true;
+    });
+
+    this.listeners.push(keydownBackspace, keydownDelete, keydownCtrlZ, keydownCtrlA, keydownCtrlS);
   }
- 
 
   destroysListeners() {
     for (const destroyFunc of this.listeners) {

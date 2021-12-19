@@ -34,6 +34,16 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
+
+        [HttpDelete("{noteId}/{contentId}/{documentId}")]
+        public async Task<OperationResult<Unit>> RemoveVideoFromCollection(Guid noteId, Guid contentId, Guid documentId)
+        {
+            var command = new RemoveDocumentFromCollectionCommand(noteId, contentId, documentId);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+
         [HttpPost("transform")]
         public async Task<OperationResult<DocumentsCollectionNoteDTO>> TransformToDocuments(TransformToDocumentsCollectionCommand command)
         {
@@ -46,6 +56,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("info")]
+        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdateDocumentsCollectionInfoCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
     }
 

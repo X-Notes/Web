@@ -30,7 +30,7 @@
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"
       ></div>
-      <div class="placeholder">Title</div>
+      <div class="placeholder">{{'innerNote.title' | translate}}</div>
       <div class="left-border"></div>
     </div>
   </div>
@@ -152,10 +152,10 @@
           [isSelected]="selectionService.isSelected(item.id)"
           [theme]="theme$ | async"
           [content]="item"
+          [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
           (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
-          (changeTitleEvent)="changeAudiosCollectionName(item.id, note.id, $event)"
           (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-audio-note>
@@ -165,9 +165,9 @@
           [isSelected]="selectionService.isSelected(item.id)"
           [theme]="theme$ | async"
           [content]="item"
+          [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteVideosCollection($event)"
-          (changeTitleEvent)="changeVideosCollectionName(item.id, note.id, $event)"
           (deleteVideoEvent)="deleteVideoHandler($event, item.id, note.id)"
           (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -178,6 +178,7 @@
           [isSelected]="selectionService.isSelected(item.id)"
           [theme]="theme$ | async"
           [content]="item"
+          [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteDocumentsCollection($event)"
           (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
