@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Notes;
+using Common.DTO.WebSockets;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BI.SignalR
@@ -15,13 +18,14 @@ namespace BI.SignalR
         }
 
         public async Task SendNewNotification(string receiverEmail, bool flag)
-        {
+        {         
             await context.Clients.User(receiverEmail).SendAsync("newNotification", flag);
         }
 
-        public async Task UpdateGeneralFullNote(FullNote note)
+        public async Task UpdateNotesInManyUsers(IEnumerable<UpdateNoteWS> updates, IEnumerable<string> emails)
         {
-            await context.Clients.Group(note.Id.ToString()).SendAsync("updateNoteGeneral", note);
+            var list = new ReadOnlyCollection<string>(emails.ToList());
+            await context.Clients.Users(list).SendAsync("updateNotesGeneral", updates);
         }
 
         public async Task UpdateContent(Guid noteId, string email)

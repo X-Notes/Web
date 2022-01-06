@@ -253,6 +253,25 @@
       "unnamedLabel": "Без назви"
     },
     "snackBar": {
-      "saved": "Збережено"
+      "saved": "Збережено",
+      "onlyAuthorCanMoveIt": "Тільки автор нотатки може її перемістити",
+      "archive": "архів",
+      "toBin": "кошик",
+      "toShared": "спільні",
+      "toPrivate": "особисті",
+      "undo": "Відмінити",
+      "all": "всі",
+      "notes": "Нотатки",
+      "note": "Нотаток",
+      "folders": "Папки",
+      "folder": "Папка",
+      "labels": "Ярлики",
+      "label": "Ярлик",
+      "notePermDeleted": "Нотаток видален безповоротно",
+      "notesPermDeleted": "Нотатки видалені безповоротно",
+      "folderPermDeleted": "Папка видалена безповоротно",
+      "foldersPermDeleted": "Папки видалені безповоротно",
+      "movedToMany" : " переміщені в ",
+      "movedToSingle" : " переміщений в "
     }
   }

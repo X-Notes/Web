@@ -265,7 +265,9 @@ export class FolderStore {
         resp = await this.api.makePrivate(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }
@@ -273,7 +275,9 @@ export class FolderStore {
         resp = await this.api.setDelete(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }
@@ -281,7 +285,9 @@ export class FolderStore {
         resp = await this.api.archive(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }

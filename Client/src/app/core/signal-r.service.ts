@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FullNote } from '../content/notes/models/full-note.model';
 import { LoadOnlineUsersOnNote, UpdateOneFullNote } from '../content/notes/state/notes-actions';
+import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 
@@ -56,8 +57,9 @@ export class SignalRService {
       this.store.dispatch(new LoadOnlineUsersOnNote(noteId));
     });
 
-    this.hubConnection.on('updateNoteGeneral', (note: FullNote) => {
-      this.store.dispatch(new UpdateOneFullNote(note));
+    this.hubConnection.on('updateNotesGeneral', (updates: UpdateNoteWS[]) => {
+      console.log('updates: ', updates); // TODO
+      // this.store.dispatch(new UpdateOneFullNote(note));
     });
 
     this.hubConnection.on('updateNoteContent', () => {

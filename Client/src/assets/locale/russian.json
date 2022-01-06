@@ -253,6 +253,25 @@
       "unnamedLabel": "Без названия"
     },
     "snackBar": {
-      "saved": "Cохранено"
+      "saved": "Cохранено",
+      "onlyAuthorCanMoveIt": "Только создатель заметки может ее переместить",
+      "archive": "архив",
+      "toBin": "корзину",
+      "toShared": "общие",
+      "toPrivate": "личные",
+      "undo": "Отменить",
+      "all": "все",
+      "notes": "Заметки",
+      "note": "Заметка",
+      "folders": "Папки",
+      "folder": "Папка",
+      "labels": "Ярлыки",
+      "label": "Ярлык",
+      "notePermDeleted": "Заметка удалена безвозвратно",
+      "notesPermDeleted": "Заметки удалены безвозвратно",
+      "folderPermDeleted": "Папка удалена безвозвратно",
+      "foldersPermDeleted": "Папки удалены безвозвратно",
+      "movedToMany" : " перенесены в ",
+      "movedToSingle" : " перенесена в "
     }
   }

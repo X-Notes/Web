@@ -304,7 +304,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         new UpdateOneNote(this.currentNote, NoteTypeENUM.Shared),
       ]);
     } else {
-      await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
+      await this.apiNote.makePrivate([this.currentNote.id]).toPromise();
       this.currentNote.noteTypeId = NoteTypeENUM.Private;
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Private;
       this.store.dispatch([
@@ -329,7 +329,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Shared),
       ]);
     } else {
-      await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
+      await this.apiFolder.makePrivate([this.currentFolder.id]).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Private;
       this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId =
         FolderTypeENUM.Private;

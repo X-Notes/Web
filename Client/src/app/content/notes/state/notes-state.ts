@@ -424,7 +424,9 @@ export class NoteStore {
         resp = await this.api.makePrivate(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeNotes(NoteTypeENUM.Private, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }
@@ -432,7 +434,9 @@ export class NoteStore {
         resp = await this.api.setDelete(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }
@@ -440,7 +444,9 @@ export class NoteStore {
         resp = await this.api.archive(selectedIds).toPromise();
         if (resp.success) {
           dispatch(new TransformTypeNotes(NoteTypeENUM.Archive, selectedIds, isAddingToDom));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }
         break;
       }

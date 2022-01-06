@@ -252,6 +252,25 @@
     "unnamedLabel": "Unnamed label"
   },
   "snackBar": {
-    "saved": "Saved"
+    "saved": "Saved",
+    "onlyAuthorCanMoveIt": "Only the creator of the note can move it",
+    "archive": "archive",
+    "toBin": "bin",
+    "toShared": "shared",
+    "toPrivate": "private",
+    "undo": "Undo",
+    "all": "all",
+    "notes": "Notes",
+    "note": "Note",
+    "folders": "Folders",
+    "folder": "Folder",
+    "labels": "Labels",
+    "label": "Label",
+    "notePermDeleted": "Note deleted permanently",
+    "notesPermDeleted": "Notes deleted permanently",
+    "folderPermDeleted": "Folder deleted permanently",
+    "foldersPermDeleted": "Folders deleted permanently",
+    "movedToMany" :  "moved to ",
+    "movedToSingle" : " moved to "
   }
 }
