@@ -93,7 +93,7 @@ export class ApiServiceNotes {
     );
   }
 
-  setDeleteNotes(ids: string[]) {
+  setDelete(ids: string[]) {
     const obj = {
       ids,
     };
@@ -103,7 +103,7 @@ export class ApiServiceNotes {
     );
   }
 
-  makePrivateNotes(ids: string[]) {
+  makePrivate(ids: string[]) {
     const obj = {
       ids,
     };
@@ -136,7 +136,7 @@ export class ApiServiceNotes {
     return this.httpClient.patch(`${environment.writeAPI}/api/note/delete/permanently`, obj);
   }
 
-  archiveNotes(ids: string[]) {
+  archive(ids: string[]) {
     const obj = {
       ids,
     };

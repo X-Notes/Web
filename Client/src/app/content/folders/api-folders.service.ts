@@ -84,7 +84,7 @@ export class ApiFoldersService {
     return this.httpClient.get<SmallFolder>(`${environment.writeAPI}/api/folder/new`);
   }
 
-  archiveFolder(ids: string[]) {
+  archive(ids: string[]) {
     const obj = {
       ids,
     };
@@ -94,7 +94,7 @@ export class ApiFoldersService {
     );
   }
 
-  setDeleteFolder(ids: string[]) {
+  setDelete(ids: string[]) {
     const obj = {
       ids,
     };
@@ -126,7 +126,7 @@ export class ApiFoldersService {
     return this.httpClient.patch(`${environment.writeAPI}/api/folder/color`, obj);
   }
 
-  makePrivateFolders(ids: string[]) {
+  makePrivate(ids: string[]) {
     const obj = {
       ids,
     };

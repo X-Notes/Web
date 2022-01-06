@@ -15,6 +15,7 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { LabelStore } from '../state/labels-state';
 import { LabelsService } from '../labels.service';
 import {
@@ -48,6 +49,7 @@ export class DeletedComponent implements OnInit, AfterViewInit {
     private store: Store,
     public labelService: LabelsService,
     private sbws: SnackBarWrapperService,
+    private translateService: TranslateService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -96,12 +98,11 @@ export class DeletedComponent implements OnInit, AfterViewInit {
     await this.store.dispatch(new RestoreLabel(label)).toPromise();
 
     this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
-    this.sbws.buildLabel(
-      () => this.callBackOnRestore(label),
-      this.sbws.getLabelsNaming,
-      this.sbws.getAllLabelsEntityName,
-      false,
-    );
+    const message =
+      this.sbws.getLabelsNaming(false) +
+      this.sbws.getMoveToMessage(false) +
+      this.translateService.instant('snackBar.all');
+    this.sbws.build(() => this.callBackOnRestore(label), message);
   }
 
   async callBackOnRestore(label: Label) {

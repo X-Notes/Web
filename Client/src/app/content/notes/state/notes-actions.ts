@@ -7,7 +7,6 @@ import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { FullNote } from '../models/full-note.model';
 
-
 export class ResetNotes {
   static type = '[Notes] Reset notes';
 }
@@ -68,55 +67,38 @@ export class DeleteNotesPermanently {
   constructor(public selectedIds: string[], public typeNote: NoteTypeENUM) {}
 }
 
-export class BaseChangeTypeSmallNote {
+export class ChangeTypeNote {
+  static type = '[Notes] change type notes';
+
+  public typeTo: NoteTypeENUM;
+
+  public refTypeId: RefTypeENUM;
+
   public selectedIds: string[];
 
   public isAddingToDom: boolean;
 
-  public successCalback: () => void;
-  
+  public errorCallback?: () => void;
+
+  public successCallback?: () => void;
+
   get isMany() {
     return this.selectedIds.length > 1;
   }
 
-  constructor(isAddingToDom: boolean) {
+  constructor(
+    typeTo: NoteTypeENUM,
+    selectedIds: string[],
+    isAddingToDom: boolean,
+    errorCallback?: () => void,
+    successCallback?: () => void,
+    refTypeId?: RefTypeENUM,
+  ) {
+    this.typeTo = typeTo;
+    this.selectedIds = selectedIds;
     this.isAddingToDom = isAddingToDom;
-  }
-}
-
-export class SetDeleteNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] SetDelete notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-export class ArchiveNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] Archive notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakePrivateNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] MakePrivate notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakeSharedNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] MakeShared notes';
-
-  refTypeId: RefTypeENUM;
-
-  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
-    super(isAddingToDom);
+    this.errorCallback = errorCallback;
+    this.successCallback = successCallback;
     this.refTypeId = refTypeId;
   }
 }

@@ -3,6 +3,10 @@ import { Injectable } from '@angular/core';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
+import {
+  OperationResult,
+  OperationResultAdditionalInfo,
+} from 'src/app/shared/models/operation-result.model';
 import { SmallFolder } from '../models/folder.model';
 import { ApiFoldersService } from '../api-folders.service';
 import { FullFolder } from '../models/full-folder.model';
@@ -13,15 +17,13 @@ import {
   UnSelectIdFolder,
   UnSelectAllFolder,
   SelectAllFolder,
-  ArchiveFolders,
+  ChangeTypeFolder,
   RemoveFromDomMurri,
   ChangeColorFolder,
   ClearColorFolders,
-  SetDeleteFolders,
   DeleteFoldersPermanently,
   CopyFolders,
   ClearAddToDomFolders,
-  MakePrivateFolders,
   PositionFolder,
   UpdateFolders,
   UpdateTitle,
@@ -32,7 +34,6 @@ import {
   GetInvitedUsersToFolder,
   ChangeColorFullFolder,
   AddToDomFolders,
-  MakeSharedFolders,
   ResetFolders,
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/update-color.model';
@@ -70,7 +71,7 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private orderService: OrderService) { }
+  constructor(private api: ApiFoldersService, private orderService: OrderService) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -187,15 +188,6 @@ export class FolderStore {
     patchState({ updateColorEvent: [] });
   }
 
-  @Action(SetDeleteFolders)
-  async setDeleteFolders(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: SetDeleteFolders,
-  ) {
-    await this.api.setDeleteFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
-  }
-
   @Action(CopyFolders)
   async copyFolders(
     { getState, dispatch }: StateContext<FolderState>,
@@ -255,24 +247,58 @@ export class FolderStore {
     dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
   }
 
-  @Action(MakePrivateFolders)
-  async MakePrivateFolder(
+  @Action(ChangeTypeFolder)
+  async changeTypeFolder(
     { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: MakePrivateFolders,
+    {
+      typeTo,
+      selectedIds,
+      isAddingToDom,
+      errorCallback,
+      successCallback,
+      refTypeId,
+    }: ChangeTypeFolder,
   ) {
-    await this.api.makePrivateFolders(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
-  }
-
-  @Action(MakeSharedFolders)
-  async makeSharedNotes(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom, refTypeId }: MakeSharedFolders,
-  ) {
-    await this.api.makePublic(refTypeId, selectedIds).toPromise();
-    dispatch(
-      new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
-    );
+    let resp: OperationResult<any>;
+    switch (typeTo) {
+      case FolderTypeENUM.Private: {
+        resp = await this.api.makePrivate(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case FolderTypeENUM.Deleted: {
+        resp = await this.api.setDelete(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case FolderTypeENUM.Archive: {
+        resp = await this.api.archive(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case FolderTypeENUM.Shared: {
+        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        dispatch(
+          new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
+        );
+        break;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
+    }
   }
 
   @Action(PositionFolder)
@@ -280,7 +306,7 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { order, typeFolder }: PositionFolder,
   ) {
-    let folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
+    const folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
     const changedFolder = folders.find((x) => x.id === order.entityId);
     const flag = folders.indexOf(changedFolder);
     if (flag + 1 !== order.position) {
@@ -417,15 +443,6 @@ export class FolderStore {
     const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
     const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
     dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
-  }
-
-  @Action(ArchiveFolders)
-  async archiveFolders(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: ArchiveFolders,
-  ) {
-    await this.api.archiveFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
   }
 
   @Action(ChangeColorFolder)

@@ -21,54 +21,42 @@ export class AddFolder {
   static type = '[Folders] Add folder';
 }
 
-export class BaseChangeTypeSmallFolder {
+export class ChangeTypeFolder {
+  static type = '[Folders] change type folders';
+
+  typeTo: FolderTypeENUM;
+
+  public refTypeId: RefTypeENUM;
+
   public selectedIds: string[];
 
   public isAddingToDom: boolean;
+
+  public errorCallback?: () => void;
+
+  public successCallback?: () => void;
 
   get isMany() {
     return this.selectedIds.length > 1;
   }
 
-  constructor(isAddingToDom: boolean) {
+  constructor(
+    typeTo: FolderTypeENUM,
+    selectedIds: string[],
+    isAddingToDom: boolean,
+    errorCallback?: () => void,
+    successCallback?: () => void,
+    refTypeId?: RefTypeENUM,
+  ) {
+    this.typeTo = typeTo;
+    this.selectedIds = selectedIds;
     this.isAddingToDom = isAddingToDom;
-  }
-}
-
-export class ArchiveFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] Archive folders';
-
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakePrivateFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] MakePrivate folders';
-
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakeSharedFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] MakeShared folders';
-
-  refTypeId: RefTypeENUM;
-
-  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
-    super(isAddingToDom);
+    this.errorCallback = errorCallback;
+    this.successCallback = successCallback;
     this.refTypeId = refTypeId;
   }
 }
 
-export class SetDeleteFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] SetDelete folder';
-
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
 
 // COLORS
 export class ChangeColorFullFolder {

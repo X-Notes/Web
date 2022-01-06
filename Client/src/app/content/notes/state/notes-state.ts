@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { OperationResult, OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
@@ -15,11 +16,8 @@ import {
   SelectAllNote,
   UpdateNotes,
   ClearColorNotes,
-  SetDeleteNotes,
   DeleteNotesPermanently,
-  ArchiveNotes,
   RemoveFromDomMurri,
-  MakePrivateNotes,
   CopyNotes,
   ClearAddToDomNotes,
   CancelAllSelectedLabels,
@@ -42,9 +40,9 @@ import {
   UpdateOneFullNote,
   ChangeIsLockedFullNote,
   AddToDomNotes,
-  MakeSharedNotes,
   LoadSnapshotNote,
   ResetNotes,
+  ChangeTypeNote,
 } from './notes-actions';
 import { UpdateColor } from './update-color.model';
 import { SmallNote } from '../models/small-note.model';
@@ -60,7 +58,6 @@ import { ApiNoteHistoryService } from '../full-note/services/api-note-history.se
 import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
-import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -407,46 +404,60 @@ export class NoteStore {
     }
   }
 
-  // Set deleting
-  @Action(SetDeleteNotes)
-  async deleteNotes(
+  // change note type
+
+  @Action(ChangeTypeNote)
+  async changeTypeNote(
     { dispatch }: StateContext<NoteState>,
-    { selectedIds, isAddingToDom, successCalback }: SetDeleteNotes,
+    {
+      typeTo,
+      selectedIds,
+      isAddingToDom,
+      errorCallback,
+      successCallback,
+      refTypeId,
+    }: ChangeTypeNote,
   ) {
-    const resp = await this.api.setDeleteNotes(selectedIds).toPromise();
-    if (resp.success) {
-      dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
+    let resp: OperationResult<any>;
+    switch (typeTo) {
+      case NoteTypeENUM.Private: {
+        resp = await this.api.makePrivate(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeNotes(NoteTypeENUM.Private, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case NoteTypeENUM.Deleted: {
+        resp = await this.api.setDelete(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case NoteTypeENUM.Archive: {
+        resp = await this.api.archive(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeNotes(NoteTypeENUM.Archive, selectedIds, isAddingToDom));
+          successCallback();
+        }
+        break;
+      }
+      case NoteTypeENUM.Shared: {
+        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        dispatch(
+          new TransformTypeNotes(NoteTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
+        );
+        break;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && successCalback) {
-      successCalback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
     }
-  }
-
-  @Action(ArchiveNotes)
-  async archiveNotes(
-    { dispatch }: StateContext<NoteState>,
-    { selectedIds, isAddingToDom }: ArchiveNotes,
-  ) {
-    await this.api.archiveNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(NoteTypeENUM.Archive, selectedIds, isAddingToDom));
-  }
-
-  @Action(MakePrivateNotes)
-  async makePrivateNotes(
-    { dispatch }: StateContext<NoteState>,
-    { selectedIds, isAddingToDom }: MakePrivateNotes,
-  ) {
-    await this.api.makePrivateNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(NoteTypeENUM.Private, selectedIds, isAddingToDom));
-  }
-
-  @Action(MakeSharedNotes)
-  async makeSharedNotes(
-    { dispatch }: StateContext<NoteState>,
-    { selectedIds, isAddingToDom, refTypeId }: MakeSharedNotes,
-  ) {
-    await this.api.makePublic(refTypeId, selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(NoteTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId));
   }
 
   // Color change
