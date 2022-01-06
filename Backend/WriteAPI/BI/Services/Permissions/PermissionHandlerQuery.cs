@@ -46,7 +46,7 @@ namespace BI.Services.Permissions
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var note = await noteRepository.GetForCheckPermission(request.NoteId); // TODO CHECK AUTHOR
+                var note = await noteRepository.GetForCheckPermission(request.NoteId);
                 return GetNotePermission(note, user);
             }
             return new UserPermissionsForNote().SetUserNotFounded();

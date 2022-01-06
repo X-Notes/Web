@@ -123,7 +123,10 @@ export class ApiFoldersService {
       ids,
       color,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/color`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/color`,
+      obj,
+    );
   }
 
   makePrivate(ids: string[]) {

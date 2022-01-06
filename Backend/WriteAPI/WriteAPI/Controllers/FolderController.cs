@@ -87,11 +87,11 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("color")]
-        public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
+        public async Task<OperationResult<Unit>> ChangeColor([FromBody]ChangeColorFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("copy")]

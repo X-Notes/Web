@@ -55,12 +55,5 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
-
-        [HttpPatch("remove/notes")]
-        public async Task<OperationResult<Unit>> RemoveNotesFromFolder(RemoveNotesFromFolderCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
     }
 }

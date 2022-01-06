@@ -127,6 +127,7 @@ namespace WriteContext.Repositories.Folders
         public async Task<Folder> GetForCheckPermission(Guid id)
         {
             return await context.Folders
+                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -134,6 +135,7 @@ namespace WriteContext.Repositories.Folders
         public async Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
         {
             return await context.Folders
+                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
@@ -170,7 +172,7 @@ namespace WriteContext.Repositories.Folders
         public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId, PersonalizationSettingDTO settings)
         {
             var result = await GetFoldersByUserIdAndTypeIdNotesIncludeNote(userId, typeId);
-            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.Take(settings.NotesInFolderCount).ToList());
+            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.OrderBy(x => x.Order).Take(settings.NotesInFolderCount).ToList());
             return result;
         }
 
@@ -180,7 +182,7 @@ namespace WriteContext.Repositories.Folders
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => folderIds.Contains(x.Id)).ToListAsync();
-            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.Take(settings.NotesInFolderCount).ToList());
+            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.OrderBy(x => x.Order).Take(settings.NotesInFolderCount).ToList());
             return result;
         }
 

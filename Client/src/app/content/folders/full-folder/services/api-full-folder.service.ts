@@ -44,12 +44,4 @@ export class ApiFullFolderService {
     };
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/update/notes`, obj);
   }
-
-  removeNotesInFolder(noteIds: string[], folderId: string) {
-    const obj = {
-      noteIds,
-      folderId,
-    };
-    return this.httpClient.post<OperationResult<any>>(`${this.controllerApi}/remove/notes`, obj);
-  }
 }
