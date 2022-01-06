@@ -10,6 +10,7 @@ using Domain.Commands.Share.Notes;
 using Domain.Queries.Sharing;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
+using Common.DTO;
 
 namespace WriteAPI.Controllers
 {
@@ -24,13 +25,14 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
+        // FOLDERS
 
         [HttpPost("folders/share")]
-        public async Task ToPublicEditShareFolders(ChangeRefTypeFolders command)
+        public async Task<OperationResult<Unit>> ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/permission")]
@@ -65,13 +67,14 @@ namespace WriteAPI.Controllers
         }
 
 
+        // NOTES 
 
         [HttpPost("notes/share")]
-        public async Task ToPublicEditShareNotes(ChangeRefTypeNotes command)
+        public async Task<OperationResult<Unit>> ToPublicEditShareNotes(ChangeRefTypeNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
 

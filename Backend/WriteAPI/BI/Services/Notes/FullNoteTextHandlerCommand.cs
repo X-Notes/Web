@@ -8,11 +8,13 @@ using BI.Services.History;
 using BI.SignalR;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.WebSockets;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.Services.Notes
 {
@@ -33,6 +35,7 @@ namespace BI.Services.Notes
 
         private readonly TextNotesRepository textNotesRepository;
 
+        private readonly UserRepository userRepository;
 
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
@@ -40,7 +43,8 @@ namespace BI.Services.Notes
             HistoryCacheService historyCacheService,
             AppCustomMapper appCustomMapper,
             AppSignalRService appSignalRService,
-            TextNotesRepository textNotesRepository)
+            TextNotesRepository textNotesRepository,
+            UserRepository userRepository)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
@@ -48,6 +52,7 @@ namespace BI.Services.Notes
             this.appCustomMapper = appCustomMapper;
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -62,11 +67,16 @@ namespace BI.Services.Notes
                 note.UpdatedAt = DateTimeOffset.Now;
                 await noteRepository.UpdateAsync(note);
 
-                var fullNote = await noteRepository.GetFull(note.Id);
-                var noteForUpdating = appCustomMapper.MapNoteToFullNote(fullNote);
-
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
+
+                // WS UPDATES
+                var userIds = new List<Guid>() { note.UserId };
+                userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
+                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
+                var emails = users.Select(x => x.Email);
+                var updates = new List<UpdateNoteWS> { new UpdateNoteWS { Title = note.Title, NoteId = note.Id } };
+                await appSignalRService.UpdateNotesInManyUsers(updates, emails);
+                //
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

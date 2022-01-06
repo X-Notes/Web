@@ -57,9 +57,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       });
   }
 
-  abstract toNote(note: SmallNote);
-  abstract navigateFunc(note: SmallNote): Promise<boolean>;
-
   baseToNote(note: SmallNote, navigateFunc: () => Promise<boolean>) {
     const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0;
     if (isSelectedMode) {
@@ -75,7 +72,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
 
   async loadAdditionNoteInformation() {
     const noteIds = this.entities.map((x) => x.id);
-    if(noteIds.length > 0){
+    if (noteIds.length > 0) {
       const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
       for (const info of additionalInfo) {
         const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
@@ -91,4 +88,8 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       this.store.dispatch(new UnSelectIdNote(note.id));
     }
   }
+
+  abstract toNote(note: SmallNote);
+
+  abstract navigateFunc(note: SmallNote): Promise<boolean>;
 }

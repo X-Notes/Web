@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
+using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.Personalization;
 using Domain.Commands.Folders;
@@ -61,32 +62,32 @@ namespace WriteAPI.Controllers
         // Commands 
 
         [HttpPatch("archive")]
-        public async Task ArchiveFolder([FromBody]ArchiveFolderCommand command)
+        public async Task<OperationResult<Unit>> ArchiveFolder([FromBody]ArchiveFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
-        }
-
-        [HttpPatch("color")]
-        public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
-        }
-
-
-        [HttpPatch("restore")]
-        public async Task RestoreNotes([FromBody] MakePrivateFolderCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("delete")]
-        public async Task SetDeleteNotes([FromBody]SetDeleteFolderCommand command)
+        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("ref/private")]
+        public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
+        }
+
+
+        [HttpPatch("color")]
+        public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
@@ -103,15 +104,6 @@ namespace WriteAPI.Controllers
 
         [HttpPatch("delete/permanently")]
         public async Task DeleteNotes([FromBody]DeleteFoldersCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
-        }
-
-
-        [HttpPatch("ref/private")]
-        public async Task MakePrivate([FromBody]MakePrivateFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;

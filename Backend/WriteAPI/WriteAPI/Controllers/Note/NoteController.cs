@@ -38,22 +38,12 @@ namespace WriteAPI.Controllers.Note
         // Commands
 
         [HttpPatch("color")]
-        public async Task ChangeColor([FromBody] ChangeColorNoteCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await _mediator.Send(command);
-        }
-
-
-        [HttpPatch("delete")]
-        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
+        public async Task<OperationResult<Unit>> ChangeColor([FromBody] ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
             return await _mediator.Send(command);
         }
-
 
         [HttpPatch("delete/permanently")]
         public async Task DeleteNotes([FromBody] DeleteNotesCommand command)
@@ -62,7 +52,6 @@ namespace WriteAPI.Controllers.Note
             command.Email = email;
             await _mediator.Send(command);
         }
-
 
         [HttpPatch("copy")]
         public async Task<List<Guid>> CopyNote([FromBody] CopyNoteCommand command)
@@ -74,20 +63,27 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpPatch("archive")]
-        public async Task ArchiveNote([FromBody] ArchiveNoteCommand command)
+        public async Task<OperationResult<Unit>> ArchiveNote([FromBody] ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
-
-        [HttpPatch("ref/private")]
-        public async Task MakePrivate([FromBody] MakePrivateNoteCommand command)
+        [HttpPatch("delete")]
+        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
+        }
+
+        [HttpPatch("ref/private")]
+        public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await _mediator.Send(command);
         }
 
 

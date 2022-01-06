@@ -65,6 +65,7 @@ namespace WriteContext.Repositories.Notes
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
+
         public async Task<Note> GetFull(Guid id)
         {
             return await context.Notes

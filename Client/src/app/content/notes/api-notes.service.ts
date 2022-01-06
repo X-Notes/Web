@@ -87,7 +87,10 @@ export class ApiServiceNotes {
       ids,
       color,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/color`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/color`,
+      obj,
+    );
   }
 
   setDeleteNotes(ids: string[]) {
@@ -104,7 +107,10 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/ref/private`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/ref/private`,
+      obj,
+    );
   }
 
   copyNotes(ids: string[], mini: OperationDetailMini, operation: LongTermOperation) {
@@ -134,7 +140,10 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/archive`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/archive`,
+      obj,
+    );
   }
 
   get(id: string) {
@@ -171,7 +180,10 @@ export class ApiServiceNotes {
       refTypeId,
       ids,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/notes/share`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/share`,
+      obj,
+    );
   }
 
   sendInvitesToNote(
