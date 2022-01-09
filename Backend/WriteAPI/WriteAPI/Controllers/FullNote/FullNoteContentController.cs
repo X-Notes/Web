@@ -27,7 +27,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet("{noteId}")]
-        public async Task<List<BaseNoteContentDTO>> GetNoteContents(Guid noteId)
+        public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
         {
             var email = this.GetUserEmail();
             var command = new GetNoteContentsQuery(email, noteId);

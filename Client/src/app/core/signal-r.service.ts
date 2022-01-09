@@ -1,10 +1,18 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { FullNote } from '../content/notes/models/full-note.model';
-import { LoadOnlineUsersOnNote, UpdateOneFullNote } from '../content/notes/state/notes-actions';
+import { ChangeColorFolder, UpdateFolderTitle } from '../content/folders/state/folders-actions';
+import {
+  ChangeColorNote,
+  LoadOnlineUsersOnNote,
+  UpdateNoteTitle,
+} from '../content/notes/state/notes-actions';
+import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
+import { UpdaterEntitiesService } from './entities-updater.service';
+import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
@@ -17,7 +25,7 @@ export class SignalRService {
 
   public updateContentEvent = new Subject();
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
 
   init() {
     this.startConnection();
@@ -58,8 +66,34 @@ export class SignalRService {
     });
 
     this.hubConnection.on('updateNotesGeneral', (updates: UpdateNoteWS[]) => {
-      console.log('updates: ', updates); // TODO
-      // this.store.dispatch(new UpdateOneFullNote(note));
+      updates.forEach((item) => {
+        if (item.color) {
+          this.store.dispatch(new ChangeColorNote(item.color, [item.noteId], false));
+        }
+        if (item.title) {
+          this.store.dispatch(new UpdateNoteTitle(item.title, item.noteId, false));
+        }
+      });
+      const updateNotesInFolder = updates.map((item) => {
+        const result = new UpdateNoteUI();
+        result.id = item.noteId;
+        result.title = item.title;
+        result.color = item.color;
+        result.labels = item.labels;
+        return result;
+      });
+      this.updaterEntitiesService.updateNotesInFolder$.next(updateNotesInFolder);
+    });
+
+    this.hubConnection.on('updateFoldersGeneral', (updates: UpdateFolderWS[]) => {
+      updates.forEach((item) => {
+        if (item.color) {
+          this.store.dispatch(new ChangeColorFolder(item.color, [item.folderId], false));
+        }
+        if (item.title) {
+          this.store.dispatch(new UpdateFolderTitle(item.title, item.folderId, false));
+        }
+      });
     });
 
     this.hubConnection.on('updateNoteContent', () => {

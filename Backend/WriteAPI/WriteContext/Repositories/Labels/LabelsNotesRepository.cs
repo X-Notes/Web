@@ -17,12 +17,11 @@ namespace WriteContext.Repositories.Labels
 
         }
 
-        public async Task<List<Label>> GetLabelsAsync(Guid noteId)
+        public async Task<List<LabelsNotes>> GetLabelsAsync(Guid noteId)
         {
             return await entities
                 .Include(x => x.Label)
-                .Where(x => x.NoteId == noteId)
-                .Select(x => x.Label).ToListAsync();
+                .Where(x => x.NoteId == noteId).ToListAsync();
         }
     }
 }

@@ -123,7 +123,7 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpPost("many")]
-        public async Task<List<SmallNote>> GetNoteByIds(GetNotesByNoteIdsQuery query)
+        public async Task<OperationResult<List<SmallNote>>> GetNoteByIds(GetNotesByNoteIdsQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);

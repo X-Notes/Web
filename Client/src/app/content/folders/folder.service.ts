@@ -5,15 +5,15 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { ClearAddToDomFolders, LoadFolders, UpdateOneFolder } from './state/folders-actions';
-import { FolderStore } from './state/folders-state';
-import { SmallFolder } from './models/folder.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FeaturesEntitiesService } from 'src/app/shared/services/features-entities.service';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { SmallFolder } from './models/folder.model';
+import { FolderStore } from './state/folders-state';
+import { ClearAddToDomFolders, LoadFolders, UpdateOneFolder } from './state/folders-actions';
 import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */
@@ -35,9 +35,11 @@ export class FolderService
     super(store, murriService);
 
     this.store
-      .select(FolderStore.updateColorEvent)
+      .select(FolderStore.updateFolderEvents)
       .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.changeColorHandler(x));
+      .subscribe(async (values) => {
+        await this.updateFolders(values);
+      });
 
     this.store
       .select(FolderStore.removeFromMurriEvent)
@@ -108,9 +110,7 @@ export class FolderService
     this.updateService.foldersIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
       if (ids.length > 0) {
         const folders = await this.apiFolders.getFoldersMany(ids, pr).toPromise();
-        const actionsForUpdate = folders.map(
-          (folder) => new UpdateOneFolder(folder, folder.folderTypeId),
-        );
+        const actionsForUpdate = folders.map((folder) => new UpdateOneFolder(folder));
         this.store.dispatch(actionsForUpdate);
         const transformFolders = this.transformSpread(folders);
         transformFolders.forEach((folder) => {
@@ -137,7 +137,7 @@ export class FolderService
     await this.store.dispatch(new LoadFolders(typeENUM, pr)).toPromise();
 
     const types = Object.values(FolderTypeENUM).filter(
-      (z) => typeof z == 'number' && z !== typeENUM,
+      (z) => typeof z === 'number' && z !== typeENUM,
     );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);
@@ -181,7 +181,7 @@ export class FolderService
   }
 
   async initializeEntities(folders: SmallFolder[]) {
-    let tempFolders = this.transformSpread(folders);
+    const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);
     super.initState();
   }

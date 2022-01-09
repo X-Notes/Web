@@ -1,6 +1,11 @@
 import { Label } from '../../labels/models/label.model';
 
-export interface UpdateLabelEvent {
+export class UpdateNoteUI {
   id: string;
+
+  color: string;
+
+  title: string;
+  
   labels: Label[];
 }

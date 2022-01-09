@@ -165,7 +165,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
+            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email); // TODO REFACTOR
             var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
             var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 

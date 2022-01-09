@@ -1,10 +1,16 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { OperationResult, OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import {
+  OperationResult,
+  OperationResultAdditionalInfo,
+} from 'src/app/shared/models/operation-result.model';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
@@ -15,7 +21,7 @@ import {
   UnSelectAllNote,
   SelectAllNote,
   UpdateNotes,
-  ClearColorNotes,
+  ClearUpdatesUINotes,
   DeleteNotesPermanently,
   RemoveFromDomMurri,
   CopyNotes,
@@ -24,30 +30,26 @@ import {
   UpdateSelectLabel,
   AddLabelOnNote,
   RemoveLabelFromNote,
-  ClearUpdatelabelEvent,
   UpdateLabelOnNote,
   UpdateOneNote,
   PositionNote,
   LoadFullNote,
   DeleteCurrentNote,
-  UpdateTitle,
-  ChangeColorFullNote,
+  UpdateNoteTitle,
   GetInvitedUsersToNote,
   TransformTypeNotes,
   UpdateLabelFullNote,
   ChangeTypeFullNote,
   LoadOnlineUsersOnNote,
-  UpdateOneFullNote,
   ChangeIsLockedFullNote,
   AddToDomNotes,
   LoadSnapshotNote,
   ResetNotes,
   ChangeTypeNote,
 } from './notes-actions';
-import { UpdateColor } from './update-color.model';
+import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
 import { Label } from '../../labels/models/label.model';
-import { UpdateLabelEvent } from './update-labels.model';
 import { Notes } from './notes.model';
 import { FullNote } from '../models/full-note.model';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
@@ -72,8 +74,7 @@ interface NoteState {
   fullNoteState: FullNoteState;
   snapshotState: NoteSnapshotState;
   selectedIds: string[];
-  updateColorEvent: UpdateColor[];
-  updateLabelsOnNoteEvent: UpdateLabelEvent[];
+  updateNoteEvent: UpdateNoteUI[];
   removeFromMurriEvent: string[];
   notesAddingToDom: SmallNote[];
   selectedLabelsFilter: string[];
@@ -89,8 +90,7 @@ interface NoteState {
     fullNoteState: null,
     snapshotState: null,
     selectedIds: [],
-    updateColorEvent: [],
-    updateLabelsOnNoteEvent: [],
+    updateNoteEvent: [],
     removeFromMurriEvent: [],
     notesAddingToDom: [],
     selectedLabelsFilter: [],
@@ -179,13 +179,8 @@ export class NoteStore {
   }
 
   @Selector()
-  static updateColorEvent(state: NoteState): UpdateColor[] {
-    return state.updateColorEvent;
-  }
-
-  @Selector()
-  static updateLabelOnNoteEvent(state: NoteState): UpdateLabelEvent[] {
-    return state.updateLabelsOnNoteEvent;
+  static updateNotesEvent(state: NoteState): UpdateNoteUI[] {
+    return state.updateNoteEvent;
   }
 
   @Selector()
@@ -336,10 +331,10 @@ export class NoteStore {
     );
   }
 
-  @Action(ClearColorNotes)
+  @Action(ClearUpdatesUINotes)
   // eslint-disable-next-line class-methods-use-this
-  clearColorNotes({ patchState }: StateContext<NoteState>) {
-    patchState({ updateColorEvent: [] });
+  clearUpdatesNotes({ patchState }: StateContext<NoteState>) {
+    patchState({ updateNoteEvent: [] });
   }
 
   // Deleting
@@ -470,32 +465,31 @@ export class NoteStore {
   @Action(ChangeColorNote)
   async changeColor(
     { patchState, getState, dispatch }: StateContext<NoteState>,
-    { color, selectedIds }: ChangeColorNote,
+    { color, selectedIds, isCallApi, errorCallback }: ChangeColorNote,
   ) {
-    await this.api.changeColor(selectedIds, color).toPromise();
-
-    for (const notes of getState().notes) {
-      const newNotes = notes.notes.map((x) => {
-        const note = { ...x };
-        if (selectedIds.some((z) => z === note.id)) {
-          note.color = color;
-        }
-        return note;
-      });
-
-      const notesForUpdate = notes.notes
-        .filter((x) => selectedIds.some((z) => z === x.id))
-        .map((x) => {
-          const note = { ...x, color };
-          return note;
-        });
-      const updateColor = notesForUpdate.map((note) => this.mapFromNoteToUpdateColor(note));
-      patchState({ updateColorEvent: updateColor });
-      dispatch([
-        new UpdateNotes(new Notes(notes.typeNotes, newNotes), notes.typeNotes),
-        UnSelectAllNote,
-        ClearColorNotes,
-      ]);
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi) {
+      resp = await this.api.changeColor(selectedIds, color).toPromise();
+    }
+    if (resp.success) {
+      const fullNote = getState().fullNoteState?.note;
+      if (fullNote && selectedIds.some(id => id === fullNote.id)) {
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: {...fullNote, color }}});
+      }
+      const notesForUpdate = this.getNotesByIds(getState, selectedIds);
+      console.log('otesForUpdate: ', notesForUpdate);
+      if(notesForUpdate && notesForUpdate.length > 0) {
+        notesForUpdate.forEach((note) => note.color = color);
+        const updatesUI = notesForUpdate.map((note) =>
+          this.toUpdateNoteUI(note.id, note.color, null, null),
+        );
+        patchState({ updateNoteEvent: updatesUI });
+        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
+        dispatch([UnSelectAllNote]);
+      }
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
     }
   }
 
@@ -529,14 +523,6 @@ export class NoteStore {
     }
   }
 
-  @Action(ClearUpdatelabelEvent)
-  // eslint-disable-next-line class-methods-use-this
-  clearUpdateEventLabel({ patchState }: StateContext<NoteState>) {
-    patchState({
-      updateLabelsOnNoteEvent: [],
-    });
-  }
-
   @Action(AddLabelOnNote)
   async addLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
@@ -551,7 +537,7 @@ export class NoteStore {
         return { ...note };
       });
 
-    const labelUpdate: UpdateLabelEvent[] = [];
+    const updateNoteEvent: UpdateNoteUI[] = [];
     notesForUpdate.forEach((x) => {
       if (!x.labels.some((z) => z.id === label.id)) {
         // eslint-disable-next-line no-param-reassign
@@ -565,10 +551,10 @@ export class NoteStore {
             countNotes: 0,
           },
         ];
-        labelUpdate.push({ id: x.id, labels: x.labels });
+        updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, x.labels, null));
       }
     });
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
+    patchState({ updateNoteEvent });
 
     const notesForStore = notes.map((x) => {
       const note = { ...x };
@@ -603,14 +589,13 @@ export class NoteStore {
 
     const notesForUpdate = notes.filter((x) => this.itemsFromFilterArray(selectedIds, x));
 
-    const labelUpdate: UpdateLabelEvent[] = [];
+    const updateNoteEvent: UpdateNoteUI[] = [];
     notesForUpdate.forEach((x: SmallNote) => {
       // eslint-disable-next-line no-param-reassign
       const labels = x.labels.filter((z) => z.id !== label.id);
-      labelUpdate.push({ id: x.id, labels });
+      updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, labels, null));
     });
-
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
+    patchState({ updateNoteEvent });
 
     const notesForStore = notes.map((x) => {
       const note = { ...x };
@@ -628,14 +613,17 @@ export class NoteStore {
     { patchState, getState, dispatch }: StateContext<NoteState>,
     { label }: UpdateLabelOnNote,
   ) {
-    let labelUpdate: UpdateLabelEvent[] = [];
+    let updateNoteEvent: UpdateNoteUI[] = [];
     for (const notes of getState().notes) {
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       const notesUpdate = notes.notes.map((x) => {
         let note = { ...x };
         if (note.labels.some((z) => z.id === label.id)) {
           note = this.updateLabel(note, label);
-          labelUpdate = [{ id: note.id, labels: note.labels }, ...labelUpdate];
+          updateNoteEvent = [
+            this.toUpdateNoteUI(note.id, null, note.labels, null),
+            ...updateNoteEvent,
+          ];
         } else {
           note = { ...note };
         }
@@ -650,7 +638,7 @@ export class NoteStore {
         patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
       }
     }
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
+    patchState({ updateNoteEvent });
   }
 
   @Action(RemoveFromDomMurri)
@@ -695,29 +683,23 @@ export class NoteStore {
     }
   }
 
-  @Action(UpdateOneFullNote)
-  // eslint-disable-next-line class-methods-use-this
-  updateOneFullNote(
-    { patchState, getState }: StateContext<NoteState>,
-    { note }: UpdateOneFullNote,
-  ) {
-    patchState({ fullNoteState: { ...getState().fullNoteState, note } });
-  }
-
   @Action(UpdateOneNote)
-  updateOneSmallNote(
-    { dispatch, getState }: StateContext<NoteState>,
-    { note, typeNote }: UpdateOneNote,
-  ) {
-    let notes = this.getNotesByType(getState, typeNote);
-    notes = notes.map((x) => {
-      let nt = { ...x };
-      if (nt.id === note.id) {
-        nt = { ...note };
+  updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note }: UpdateOneNote) {
+    console.log('note: ', note);
+    for(const noteState of getState().notes) {
+      let isUpdate = false;
+      const notes = noteState.notes.map((x) => {
+        let nt = { ...x };
+        if (nt.id === note.id) {
+          nt = { ...note };
+          isUpdate = true;
+        }
+        return nt;
+      });
+      if(isUpdate){
+        dispatch(new UpdateNotes(new Notes(note.noteTypeId, [...notes]), note.noteTypeId));
       }
-      return nt;
-    });
-    dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
+    }
   }
 
   @Action(LoadFullNote)
@@ -771,34 +753,33 @@ export class NoteStore {
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
     const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
+    dispatch(new UpdateOneNote(noteUpdate));
   }
 
-  @Action(UpdateTitle)
+  @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { str }: UpdateTitle,
+    { str, isCallApi, noteId, errorCallback }: UpdateNoteTitle,
   ) {
-    const { note } = getState().fullNoteState;
-    const newNote: FullNote = { ...note, title: str };
-    patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    await this.apiText.updateTitle(str, note.id).toPromise();
-    const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
-  }
-
-  @Action(ChangeColorFullNote)
-  async changeColorFullNote(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
-    { color }: ChangeColorFullNote,
-  ) {
-    await this.api.changeColor([getState().fullNoteState.note.id], color).toPromise();
-
-    const { note } = getState().fullNoteState;
-    const newNote: FullNote = { ...note, color };
-    patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi) {
+      resp = await this.apiText.updateTitle(str, noteId).toPromise();
+    }
+    if (resp.success) {
+      const fullNote = getState().fullNoteState?.note;
+      if (fullNote && fullNote.id === noteId) {
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: {...fullNote, title: str} } });
+      }
+      const noteUpdate = this.getNoteById(getState, noteId);
+      if(noteUpdate){
+        noteUpdate.title = str;
+        patchState({ updateNoteEvent: [this.toUpdateNoteUI(noteUpdate.id, null, null, noteUpdate.title)] });
+        dispatch(new UpdateOneNote(noteUpdate));
+      }
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
+    }
   }
 
   @Action(ChangeTypeFullNote)
@@ -926,11 +907,38 @@ export class NoteStore {
     }
   }
 
-  mapFromNoteToUpdateColor = (note: SmallNote) => {
-    const obj: UpdateColor = {
-      id: note.id,
-      color: note.color,
-    };
+  getNoteById = (getState: () => NoteState, id: string): SmallNote => {
+    for(const notes of getState().notes) {
+      for(const x of notes.notes){
+        const note = { ...x };
+        if (id === note.id) {
+          return note;
+        }
+      }
+    }
+    return null;
+  };
+
+  getNotesByIds = (getState: () => NoteState, ids: string[]): SmallNote[] => {
+    const result: SmallNote[] = [];
+    getState().notes.forEach((notes) => {
+      console.log('notes: ', notes);
+      for (const x of notes.notes) {
+        const note = { ...x };
+        if (ids.some((z) => z === note.id)) {
+          result.push(note);
+        }
+      }
+    });
+    return result;
+  };
+
+  toUpdateNoteUI = (id: string, color: string, labels: Label[], title: string) => {
+    const obj = new UpdateNoteUI();
+    obj.id = id;
+    obj.color = color;
+    obj.labels = labels;
+    obj.title = title;
     return obj;
   };
 

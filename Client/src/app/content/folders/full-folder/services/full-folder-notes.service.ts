@@ -6,6 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -26,6 +28,7 @@ export class FullFolderNotesService
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     private router: Router,
+    private updateService: UpdaterEntitiesService,
   ) {
     super(dialogsManageService, store, murriService, apiNoteService);
   }
@@ -61,9 +64,21 @@ export class FullFolderNotesService
       if (this.getIsFirstInit(z)) {
         await this.murriService.initFolderNotesAsync();
         await this.setInitMurriFlagShowLayout();
+        this.updateUpdatesSubs();
       }
       await this.synchronizeState(refElements, false);
     });
+  }
+
+  updateUpdatesSubs() {
+    this.updateService.updateNotesInFolder$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (values: UpdateNoteUI[]) => {
+        if (values && values.length > 0) {
+          await this.updateNotes(values);
+          this.updateService.updateNotesInFolder$.next([]);
+        }
+      });
   }
 
   navigateFunc(note: SmallNote) {

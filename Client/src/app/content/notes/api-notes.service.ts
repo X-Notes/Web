@@ -8,6 +8,7 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
@@ -20,7 +21,6 @@ import {
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
 import { ContentModelBase } from './models/editor-models/content-model-base';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -52,8 +52,15 @@ export class ApiServiceNotes {
     };
 
     return this.httpClient
-      .post<SmallNote[]>(`${environment.writeAPI}/api/note/many`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .post<OperationResult<SmallNote[]>>(`${environment.writeAPI}/api/note/many`, obj)
+      .pipe(
+        map((z) => {
+          if (z.success) {
+            return TransformNoteUtil.transformNotes(z.data);
+          }
+          return [];
+        }),
+      );
   }
 
   getAdditionalInfos(noteIds: string[]) {
@@ -224,8 +231,17 @@ export class ApiServiceNotes {
 
   getContents(noteId: string): Observable<ContentModelBase[]> {
     return this.httpClient
-      .get<ContentModelBase[]>(`${environment.writeAPI}/api/note/inner/contents/${noteId}`)
-      .pipe(map((x) => TransformNoteUtil.transformContent(x)));
+      .get<OperationResult<ContentModelBase[]>>(
+        `${environment.writeAPI}/api/note/inner/contents/${noteId}`,
+      )
+      .pipe(
+        map((x) => {
+          if (x.success) {
+            return TransformNoteUtil.transformContent(x.data);
+          }
+          return [];
+        }),
+      );
   }
 
   // LINKS

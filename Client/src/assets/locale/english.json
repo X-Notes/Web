@@ -254,6 +254,7 @@
   "snackBar": {
     "saved": "Saved",
     "onlyAuthorCanMoveIt": "Only the creator of the note can move it",
+    "noPermissionsForEdit": "No rights to edit",
     "archive": "archive",
     "toBin": "bin",
     "toShared": "shared",

@@ -183,7 +183,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = false;
         this.store.dispatch(new ChangeIsLockedFullNote(false));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote));
         this.dialogRef.close();
       }
       return;
@@ -194,7 +194,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = true;
         this.store.dispatch(new ChangeIsLockedFullNote(true));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote));
         const route = this.fullNote.noteTypeId;
         if (route && route !== NoteTypeENUM.Private) {
           this.router.navigate([`notes/${route}`]);
@@ -213,7 +213,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = false;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
+        this.store.dispatch(new UpdateOneNote(updatedNote));
         this.dialogRef.close();
       }
       return;
@@ -230,7 +230,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = true;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
+        this.store.dispatch(new UpdateOneNote(updatedNote));
         this.dialogRef.close();
       }
     }

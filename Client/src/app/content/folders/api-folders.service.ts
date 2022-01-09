@@ -10,6 +10,7 @@ import { SmallFolder } from './models/folder.model';
 import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiFoldersService {
@@ -34,12 +35,21 @@ export class ApiFoldersService {
     );
   }
 
-  getFoldersMany(folderIds: string[], settings: PersonalizationSetting) {
+  getFoldersMany(folderIds: string[], settings: PersonalizationSetting): Observable<SmallFolder[]> {
     const obj = {
       folderIds,
       settings,
     };
-    return this.httpClient.post<SmallFolder[]>(`${environment.writeAPI}/api/folder/many`, obj);
+    return this.httpClient
+      .post<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/many`, obj)
+      .pipe(
+        map((z) => {
+          if (z.success) {
+            return z.data;
+          }
+          return [];
+        }),
+      );
   }
 
   changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {
@@ -157,6 +167,9 @@ export class ApiFoldersService {
       title,
       id,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/fullfolder/title`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullfolder/title`,
+      obj,
+    );
   }
 }

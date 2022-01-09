@@ -255,6 +255,7 @@
     "snackBar": {
       "saved": "Cохранено",
       "onlyAuthorCanMoveIt": "Только создатель заметки может ее переместить",
+      "noPermissionsForEdit": "Нет прав для редактирования",
       "archive": "архив",
       "toBin": "корзину",
       "toShared": "общие",

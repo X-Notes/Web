@@ -7,7 +7,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
+import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 
@@ -41,8 +41,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
         if (title) {
-          const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
-          this.store.dispatch(new UpdateTitle(title, this.folder.id, typeRoad));
+          this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
         }
       });
   }

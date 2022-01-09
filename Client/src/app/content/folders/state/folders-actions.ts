@@ -56,26 +56,25 @@ export class ChangeTypeFolder {
     this.refTypeId = refTypeId;
   }
 }
-
-
-// COLORS
-export class ChangeColorFullFolder {
-  static type = '[Folders] change color fullFolder';
-
-  constructor(public color: string) {}
-}
-
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
+  isCallApi = true;
+
+  public errorCallback?: () => void;
+
   constructor(
     public color: string,
-    public typeFolder: FolderTypeENUM,
     public selectedIds: string[],
-  ) {}
+    isCallApi = true,
+    errorCallback?: () => void,
+  ) {
+    this.isCallApi = isCallApi;
+    this.errorCallback = errorCallback;
+  }
 }
 
-export class ClearColorFolders {
+export class ClearUpdatesUIFolders {
   static type = '[Folders] Clear color folder';
 }
 
@@ -143,16 +142,21 @@ export class SelectAllFolder {
   constructor(public typeFolder: FolderTypeENUM) {}
 }
 
-export class UpdateTitle {
+export class UpdateFolderTitle {
   static type = '[Folders] update title';
 
-  constructor(public str: string, public id: string, public typeFolder: FolderTypeENUM) {}
+  constructor(
+    public str: string,
+    public folderId: string,
+    public isCallApi = true,
+    public errorCallback?: () => void,
+  ) {}
 }
 
 export class UpdateOneFolder {
   static type = '[Folders] update one one';
 
-  constructor(public folder: SmallFolder, public typeFolder: FolderTypeENUM) {}
+  constructor(public folder: SmallFolder) {}
 }
 
 export class LoadFullFolder {

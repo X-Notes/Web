@@ -13,11 +13,11 @@
     (panend)="panEnd($event)"
   >
     <app-content-editor
-      [note]="note"
+      [note]="note$ | async"
       [isReadOnlyMode]="false"
       [contents]="contents"
     ></app-content-editor>
-    <app-right-section-content [note]="note" [wrap]="wrap"></app-right-section-content>
+    <app-right-section-content [note]="note$ | async" [wrap]="wrap"></app-right-section-content>
   </div>
   <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
     <app-no-results-illustration

@@ -45,13 +45,14 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  public notesLink: SmallNote[];
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
 
+  public notesLink: SmallNote[];
+  
   loaded = false;
 
   destroy = new Subject<void>();
-
-  note: FullNote;
 
   contents: ContentModelBase[];
 
@@ -100,7 +101,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     const isCanView = this.store.selectSnapshot(NoteStore.canView);
     if (isCanView) {
       await this.loadContent();
-      this.note = this.store.selectSnapshot(NoteStore.oneFull);
       this.signalRService.updateContentEvent
         .pipe(takeUntil(this.destroy))
         .subscribe(() => this.loadContent());
@@ -114,7 +114,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
 
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note?.noteTypeId);
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    await this.setSideBarNotes(note.noteTypeId);
   }
 
   async ngOnInit() {

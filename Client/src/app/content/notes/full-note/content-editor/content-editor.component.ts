@@ -23,7 +23,7 @@ import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
-import { UpdateTitle } from '../../state/notes-actions';
+import { UpdateNoteTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
@@ -134,7 +134,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   ngOnInit(): void {
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
+      .subscribe((title) => this.store.dispatch(new UpdateNoteTitle(title, this.note.id)));
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))

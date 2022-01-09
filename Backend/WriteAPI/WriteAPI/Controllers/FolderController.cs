@@ -45,7 +45,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("many")]
-        public async Task<List<SmallFolder>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
+        public async Task<OperationResult<List<SmallFolder>>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
