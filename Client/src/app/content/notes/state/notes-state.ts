@@ -38,7 +38,6 @@ import {
   UpdateNoteTitle,
   GetInvitedUsersToNote,
   TransformTypeNotes,
-  UpdateLabelFullNote,
   ChangeTypeFullNote,
   LoadOnlineUsersOnNote,
   ChangeIsLockedFullNote,
@@ -477,11 +476,10 @@ export class NoteStore {
         patchState({ fullNoteState: { ...getState().fullNoteState, note: {...fullNote, color }}});
       }
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      console.log('otesForUpdate: ', notesForUpdate);
       if(notesForUpdate && notesForUpdate.length > 0) {
         notesForUpdate.forEach((note) => note.color = color);
         const updatesUI = notesForUpdate.map((note) =>
-          this.toUpdateNoteUI(note.id, note.color, null, null),
+          this.toUpdateNoteUI(note.id, note.color, null, null, null, null),
         );
         patchState({ updateNoteEvent: updatesUI });
         notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
@@ -526,42 +524,25 @@ export class NoteStore {
   @Action(AddLabelOnNote)
   async addLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { label, typeNote, selectedIds }: AddLabelOnNote,
+    { label, selectedIds, isCallApi, errorCallback }: AddLabelOnNote,
   ) {
-    await this.api.addLabel(label.id, selectedIds).toPromise();
-    const notes = this.getNotesByType(getState, typeNote);
-
-    const notesForUpdate = notes
-      .filter((x) => this.itemsFromFilterArray(selectedIds, x))
-      .map((note) => {
-        return { ...note };
-      });
-
-    const updateNoteEvent: UpdateNoteUI[] = [];
-    notesForUpdate.forEach((x) => {
-      if (!x.labels.some((z) => z.id === label.id)) {
-        // eslint-disable-next-line no-param-reassign
-        x.labels = [
-          ...x.labels,
-          {
-            id: label.id,
-            color: label.color,
-            name: label.name,
-            isDeleted: label.isDeleted,
-            countNotes: 0,
-          },
-        ];
-        updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, x.labels, null));
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi){
+      resp = await this.api.addLabel(label.id, selectedIds).toPromise();
+    }
+    if(resp.success){
+      let note = getState().fullNoteState?.note;
+      if(note && selectedIds.some(id => id === note.id)){
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...note, labels: [...note.labels, label] } } });
       }
-    });
-    patchState({ updateNoteEvent });
-
-    const notesForStore = notes.map((x) => {
-      const note = { ...x };
-      if (selectedIds.indexOf(note.id) !== -1) {
-        if (!note.labels.some((z) => z.id === label.id)) {
-          note.labels = [
-            ...note.labels,
+      // Updates small notes
+      const notesForUpdate = this.getNotesByIds(getState, selectedIds);
+      const updateNoteEvent: UpdateNoteUI[] = [];
+      notesForUpdate.forEach((x) => {
+        if (!x.labels.some((z) => z.id === label.id)) {
+          // eslint-disable-next-line no-param-reassign
+          x.labels = [
+            ...x.labels,
             {
               id: label.id,
               color: label.color,
@@ -570,42 +551,46 @@ export class NoteStore {
               countNotes: 0,
             },
           ];
+          updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
         }
-      }
-      return note;
-    });
-    dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
-    dispatch(new UpdateLabelCount(label));
+      });
+      patchState({ updateNoteEvent });
+      notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
+      dispatch([new UpdateLabelCount(label.id)]);
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
+    }
   }
 
   @Action(RemoveLabelFromNote)
   async removeLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { label, typeNote, selectedIds }: RemoveLabelFromNote,
+    { labelId, selectedIds, isCallApi, errorCallback }: RemoveLabelFromNote,
   ) {
-    await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
-
-    const notes = this.getNotesByType(getState, typeNote);
-
-    const notesForUpdate = notes.filter((x) => this.itemsFromFilterArray(selectedIds, x));
-
-    const updateNoteEvent: UpdateNoteUI[] = [];
-    notesForUpdate.forEach((x: SmallNote) => {
-      // eslint-disable-next-line no-param-reassign
-      const labels = x.labels.filter((z) => z.id !== label.id);
-      updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, labels, null));
-    });
-    patchState({ updateNoteEvent });
-
-    const notesForStore = notes.map((x) => {
-      const note = { ...x };
-      if (selectedIds.indexOf(note.id) !== -1) {
-        note.labels = note.labels.filter((z) => z.id !== label.id);
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi){
+      resp = await this.api.removeLabel(labelId, selectedIds).toPromise();
+    }
+    if(resp.success){
+      let note = getState().fullNoteState?.note;
+      if(note && selectedIds.some(id => id === note.id)){
+        note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
+        patchState({ fullNoteState: { ...getState().fullNoteState, note }});
       }
-      return note;
-    });
-    dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
-    dispatch(new UpdateLabelCount(label));
+      const notesForUpdate = this.getNotesByIds(getState, selectedIds);  
+      const updateNoteEvent: UpdateNoteUI[] = [];
+      notesForUpdate.forEach((x: SmallNote) => {
+        x.labels = x.labels.filter((z) => z.id !== labelId);
+        updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
+      });
+      patchState({ updateNoteEvent });
+      notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
+      dispatch([new UpdateLabelCount(labelId)]);
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
+      errorCallback();
+    }
   }
 
   @Action(UpdateLabelOnNote)
@@ -621,7 +606,7 @@ export class NoteStore {
         if (note.labels.some((z) => z.id === label.id)) {
           note = this.updateLabel(note, label);
           updateNoteEvent = [
-            this.toUpdateNoteUI(note.id, null, note.labels, null),
+            this.toUpdateNoteUI(note.id, null, null, null, note.labels, null),
             ...updateNoteEvent,
           ];
         } else {
@@ -685,7 +670,6 @@ export class NoteStore {
 
   @Action(UpdateOneNote)
   updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note }: UpdateOneNote) {
-    console.log('note: ', note);
     for(const noteState of getState().notes) {
       let isUpdate = false;
       const notes = noteState.notes.map((x) => {
@@ -736,25 +720,6 @@ export class NoteStore {
     patchState({ fullNoteState: null });
   }
 
-  @Action(UpdateLabelFullNote)
-  async updateLabelFullNote(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
-    { label, remove }: UpdateLabelFullNote,
-  ) {
-    const { note } = getState().fullNoteState;
-    let newNote: FullNote = { ...note, labels: [...note.labels, label] };
-    if (remove) {
-      await this.api.removeLabel(label.id, [note.id]).toPromise();
-      newNote = { ...note, labels: note.labels.filter((z) => z.id !== label.id) };
-      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    } else {
-      await this.api.addLabel(label.id, [note.id]).toPromise();
-      newNote = { ...note, labels: [...note.labels, label] };
-      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    }
-    const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate));
-  }
 
   @Action(UpdateNoteTitle)
   async updateTitle(
@@ -773,7 +738,7 @@ export class NoteStore {
       const noteUpdate = this.getNoteById(getState, noteId);
       if(noteUpdate){
         noteUpdate.title = str;
-        patchState({ updateNoteEvent: [this.toUpdateNoteUI(noteUpdate.id, null, null, noteUpdate.title)] });
+        patchState({ updateNoteEvent: [this.toUpdateNoteUI(noteUpdate.id, null, null, null, null, noteUpdate.title)] });
         dispatch(new UpdateOneNote(noteUpdate));
       }
     }
@@ -922,7 +887,6 @@ export class NoteStore {
   getNotesByIds = (getState: () => NoteState, ids: string[]): SmallNote[] => {
     const result: SmallNote[] = [];
     getState().notes.forEach((notes) => {
-      console.log('notes: ', notes);
       for (const x of notes.notes) {
         const note = { ...x };
         if (ids.some((z) => z === note.id)) {
@@ -933,11 +897,13 @@ export class NoteStore {
     return result;
   };
 
-  toUpdateNoteUI = (id: string, color: string, labels: Label[], title: string) => {
+  toUpdateNoteUI = (id: string, color: string, removeLabelIds: string[], addLabels: Label[], labels: Label[], title: string) => {
     const obj = new UpdateNoteUI();
     obj.id = id;
     obj.color = color;
-    obj.labels = labels;
+    obj.removeLabelIds = removeLabelIds;
+    obj.allLabels = labels;
+    obj.addLabels = addLabels;
     obj.title = title;
     return obj;
   };

@@ -32,7 +32,7 @@ export class FeaturesEntitiesService<
         return entities.sort((a, b) => a.order - b.order);
       }
       default: {
-        throw new Error('Incorrec type');
+        throw new Error('Incorrect type');
       }
     }
   };
@@ -41,7 +41,15 @@ export class FeaturesEntitiesService<
     for (const value of updates) {
       const note = this.entities.find((x) => x.id === value.id) as SmallNote;
       if (note !== undefined) {
-        note.labels = value.labels ?? note.labels;
+        if(value.removeLabelIds && value.removeLabelIds.length > 0){
+          note.labels = note.labels.filter(x => !value.removeLabelIds.some(id => x.id === id));
+        }
+        if(value.addLabels && value.addLabels.length > 0){
+          note.labels = [...value.addLabels, ...note.labels];
+        }
+        if(value.allLabels){
+          note.labels = value.allLabels;
+        }
         note.color = value.color ?? note.color;
         note.title = value.title ?? note.title;
       }

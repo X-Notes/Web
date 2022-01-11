@@ -31,18 +31,12 @@ export class UpdateNotes {
 export class ChangeColorNote {
   static type = '[Notes] Change color note';
 
-  isCallApi = true;
-
-  public errorCallback?: () => void;
-
   constructor(
     public color: string,
     public selectedIds: string[],
-    isCallApi = true,
-    errorCallback?: () => void,
+    public isCallApi = true,
+    public errorCallback?: () => void,
   ) {
-    this.isCallApi = isCallApi;
-    this.errorCallback = errorCallback;
   }
 }
 
@@ -106,13 +100,23 @@ export class UpdateLabelOnNote {
 export class AddLabelOnNote {
   static type = '[Notes] Add label';
 
-  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
+  constructor(
+    public label: Label, 
+    public selectedIds: string[],
+    public isCallApi = true,
+    public errorCallback?: () => void
+    ) {}
 }
 
 export class RemoveLabelFromNote {
   static type = '[Notes] Remove label';
 
-  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
+  constructor(
+    public labelId: string, 
+    public selectedIds: string[],
+    public isCallApi = true,
+    public errorCallback?: () => void
+    ) {}
 }
 
 export class RemoveFromDomMurri {
@@ -207,13 +211,6 @@ export class UpdateNoteTitle {
     public errorCallback?: () => void,
   ) {}
 }
-
-export class UpdateLabelFullNote {
-  static type = '[Notes] update label full note';
-
-  constructor(public label: Label, public remove: boolean) {}
-}
-
 export class ChangeTypeFullNote {
   static type = '[Notes] change type fullNote';
 

@@ -25,7 +25,7 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesFullContent(Guid id)
         {
-            return await context.ReletatedNoteToInnerNotes
+            return await context.ReletatedNoteToInnerNotes // TODO OPTIMIZATION
                 .Where(x => x.NoteId == id)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)

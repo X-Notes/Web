@@ -78,7 +78,10 @@ export class ApiServiceNotes {
       labelId,
       noteIds,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/label/add`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/label/add`,
+      obj,
+    );
   }
 
   removeLabel(labelId: string, noteIds: string[]) {
@@ -86,7 +89,10 @@ export class ApiServiceNotes {
       labelId,
       noteIds,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/label/remove`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/label/remove`,
+      obj,
+    );
   }
 
   changeColor(ids: string[], color: string) {

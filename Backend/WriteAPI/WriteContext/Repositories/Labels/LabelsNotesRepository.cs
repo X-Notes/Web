@@ -23,5 +23,12 @@ namespace WriteContext.Repositories.Labels
                 .Include(x => x.Label)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
+
+        public async Task<List<LabelsNotes>> GetLabelsAsync(IEnumerable<Guid> noteIds)
+        {
+            return await entities
+                .Include(x => x.Label)
+                .Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
+        }
     }
 }

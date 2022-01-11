@@ -12,6 +12,7 @@ using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Personalization;
 using Common.DTO.Users;
 using Domain.Queries.Notes;
 using Domain.Queries.Permissions;
@@ -74,10 +75,7 @@ namespace BI.Services.Notes
 
                 if (NoteTypeENUM.Shared == request.TypeId)
                 {
-                    var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == user.Id);
-                    var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-                    var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
-                    sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
+                    var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
                     notes.AddRange(sharedNotes);
                     notes = notes.DistinctBy(x => x.Id).ToList();
                 }
@@ -86,6 +84,15 @@ namespace BI.Services.Notes
                 return appCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
             throw new Exception("User not found");
+        }
+
+        private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
+        {
+            var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
+            var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
+            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, settings);
+            sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
+            return sharedNotes;
         }
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
@@ -143,6 +150,10 @@ namespace BI.Services.Notes
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
+                var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
+                notes.AddRange(sharedNotes);
+                notes = notes.DistinctBy(x => x.Id).ToList();
+
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return appCustomMapper.MapNotesToSmallNotesDTO(notes);

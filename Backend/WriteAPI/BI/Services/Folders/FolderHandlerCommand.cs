@@ -108,18 +108,16 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateRangeAsync(foldersForUpdate);
 
                 // WS UPDATES
-                var folders = permissions.Select(x => x.perm.Folder);
-                var userIds = folders.SelectMany(x =>
+                foreach (var folder in permissions.Select(x => x.perm.Folder))
                 {
-                    var list = new List<Guid>() { x.UserId };
-                    list.AddRange(x.UsersOnPrivateFolders.Select(x => x.UserId));
-                    return list;
-                });
-                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                var emails = users.Select(x => x.Email);
-                var updates = folders.Select(x => new UpdateFolderWS { Color = x.Color, FolderId = x.Id });
-                await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
-                //
+                    var userIds = new List<Guid>() { folder.UserId };
+                    userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
+                    var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
+                    var emails = users.Select(x => x.Email);
+                    var updates = new UpdateFolderWS { Color = folder.Color, FolderId = folder.Id };
+                    await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
+                }
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
             return new OperationResult<Unit>().SetNoPermissions();

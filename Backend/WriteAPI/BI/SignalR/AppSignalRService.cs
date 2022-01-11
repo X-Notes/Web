@@ -22,13 +22,13 @@ namespace BI.SignalR
             await signalRContext.Clients.User(receiverEmail).SendAsync("newNotification", flag);
         }
 
-        public async Task UpdateNotesInManyUsers(IEnumerable<UpdateNoteWS> updates, IEnumerable<string> emails)
+        public async Task UpdateNotesInManyUsers(UpdateNoteWS updates, IEnumerable<string> emails)
         {
             var list = new ReadOnlyCollection<string>(emails.ToList());
             await signalRContext.Clients.Users(list).SendAsync("updateNotesGeneral", updates);
         }
 
-        public async Task UpdateFoldersInManyUsers(IEnumerable<UpdateFolderWS> updates, IEnumerable<string> emails)
+        public async Task UpdateFoldersInManyUsers(UpdateFolderWS updates, IEnumerable<string> emails)
         {
             var list = new ReadOnlyCollection<string>(emails.ToList());
             await signalRContext.Clients.Users(list).SendAsync("updateFoldersGeneral", updates);

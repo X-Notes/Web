@@ -119,7 +119,7 @@ namespace WriteContext.Repositories.Notes
                 .Include(z => (z as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents).ToListAsync();
+                .Include(x => (x as DocumentsCollectionNote).Documents).AsSplitQuery().ToListAsync();
 
             var contentLookUp = contents.ToLookup(x => x.NoteId);
             notes.ForEach(note => note.Contents = contentLookUp[note.Id].OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList());

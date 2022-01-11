@@ -42,8 +42,8 @@ namespace BI.Services.Notes
         IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>,
         IRequestHandler<CopyNoteCommand, List<Guid>>,
         IRequestHandler<MakeNoteHistoryCommand, Unit>,
-        IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
-        IRequestHandler<AddLabelOnNoteCommand, Unit>
+        IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>,
+        IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>
     {
 
         private readonly UserRepository userRepository;
@@ -55,12 +55,14 @@ namespace BI.Services.Notes
         private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
+        private readonly LabelRepository labelRepository;
 
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository,
             AppCustomMapper noteCustomMapper, IMediator _mediator, LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService, NoteSnapshotRepository noteSnapshotRepository)
+            HistoryCacheService historyCacheService, NoteSnapshotRepository noteSnapshotRepository,
+            LabelRepository labelRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -71,6 +73,7 @@ namespace BI.Services.Notes
             this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
             this.noteSnapshotRepository = noteSnapshotRepository;
+            this.labelRepository = labelRepository;
         }
 
 
@@ -128,18 +131,15 @@ namespace BI.Services.Notes
                 }
 
                 // WS UPDATES
-                var notes = permissions.Select(x => x.perm.Note);
-                var userIds = notes.SelectMany(x =>
+                foreach (var note in permissions.Select(x => x.perm.Note))
                 {
-                    var list = new List<Guid>() { x.UserId };
-                    list.AddRange(x.UsersOnPrivateNotes.Select(x => x.UserId));
-                    return list;
-                });
-                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                var emails = users.Select(x => x.Email);
-                var updates = notes.Select(x => new UpdateNoteWS { Color = x.Color, NoteId = x.Id });
-                await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                //
+                    var userIds = new List<Guid>() { note.UserId };
+                    userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
+                    var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
+                    var emails = users.Select(x => x.Email);
+                    var updates = new UpdateNoteWS { Color = note.Color, NoteId = note.Id };
+                    await appSignalRService.UpdateNotesInManyUsers(updates, emails);
+                }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -385,78 +385,97 @@ namespace BI.Services.Notes
             return resultIds;
         }
 
-        public async Task<Unit> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
         {
-            foreach (var id in request.NoteIds)
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            var isAuthor = permissions.All(x => x.perm.IsOwner);
+            if (isAuthor)
             {
-                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
+                var noteIds = permissions.Select(x => x.noteId);
+                var notes = permissions.Select(x => x.perm.Note).ToList();
+                var values = await labelsNotesRepository.GetWhereAsync(x => x.LabelId == request.LabelId && noteIds.Contains(x.NoteId));
 
-                if (permissions.CanWrite)
+                if (values.Any())
                 {
-                    var note = permissions.Note;
-                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
-                    if (value != null)
+                    await labelsNotesRepository.RemoveRangeAsync(values);
+
+                    notes.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
+                    await noteRepository.UpdateRangeAsync(notes);
+
+                    permissions.ForEach(x =>
                     {
-                        await labelsNotesRepository.RemoveAsync(value);
+                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.User.Id, x.perm.Author.Email);
+                    });
 
-                        note.UpdatedAt = DateTimeOffset.Now;
-                        await noteRepository.UpdateAsync(note);
-
-                        historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
-                        var labels = await labelsNotesRepository.GetLabelsAsync(note.Id);
-                        // WS UPDATES
+                    // WS UPDATES
+                    foreach (var note in permissions.Select(x => x.perm.Note))
+                    {
                         var userIds = new List<Guid>() { note.UserId };
                         userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
                         var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
                         var emails = users.Select(x => x.Email);
-                        var updates = new List<UpdateNoteWS> { new UpdateNoteWS { Labels = appCustomMapper.MapLabelsToLabelsDTO(labels), NoteId = note.Id } };
+                        var updates = new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = note.Id };
                         await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                        //
                     }
+                    //
                 }
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(AddLabelOnNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(AddLabelOnNoteCommand request, CancellationToken cancellationToken)
         {
-            foreach (var id in request.NoteIds)
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            var isAuthor = permissions.All(x => x.perm.IsOwner);
+            if (isAuthor)
             {
-                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
+                var noteIds = permissions.Select(x => x.noteId);
+                var notes = permissions.Select(x => x.perm.Note).ToList();
+                var existValues = await labelsNotesRepository.GetWhereAsync(x => x.LabelId == request.LabelId && noteIds.Contains(x.NoteId));
+                var noteIdsWithLabel = existValues.Select(x => x.NoteId);
 
-                if (permissions.CanWrite)
+                var labelsToAdd = request.NoteIds.Select(id => new LabelsNotes() { LabelId = request.LabelId, NoteId = id, AddedAt = DateTimeOffset.Now });
+                labelsToAdd = labelsToAdd.Where(x => !noteIdsWithLabel.Contains(x.NoteId));
+
+                if (labelsToAdd.Any())
                 {
-                    var note = permissions.Note;
+                    await labelsNotesRepository.AddRangeAsync(labelsToAdd);
 
-                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
+                    notes.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
+                    await noteRepository.UpdateRangeAsync(notes);
 
-                    if (value == null)
+                    permissions.ForEach(x =>
                     {
-                        var noteLabel = new LabelsNotes() { LabelId = request.LabelId, NoteId = note.Id, AddedAt = DateTimeOffset.Now };
+                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.User.Id, x.perm.Author.Email);
+                    });
 
-                        await labelsNotesRepository.AddAsync(noteLabel);
-
-                        note.UpdatedAt = DateTimeOffset.Now;
-                        await noteRepository.UpdateAsync(note);
-
-                        historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
-                        var labels = await labelsNotesRepository.GetLabelsAsync(note.Id);
-                        // WS UPDATES
-                        var userIds = new List<Guid>() { note.UserId };
-                        userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
-                        var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                        var emails = users.Select(x => x.Email);
-                        var updates = new List<UpdateNoteWS> { new UpdateNoteWS { Labels = appCustomMapper.MapLabelsToLabelsDTO(labels), NoteId = note.Id } };
-                        await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                        //;
+                    // WS UPDATES
+                    var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.LabelId);
+                    foreach(var noteId in labelsToAdd.Select(x => x.NoteId))
+                    {
+                        var noteToUpdate = permissions.FirstOrDefault(x => x.noteId == noteId);
+                        if (noteToUpdate.perm != null)
+                        {
+                            var note = noteToUpdate.perm.Note;
+                            var userIds = new List<Guid>() { note.UserId };
+                            userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
+                            var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
+                            var emails = users.Select(x => x.Email);
+                            var labels = appCustomMapper.MapLabelsToLabelsDTO(new List<Label> { label });
+                            var updates = new UpdateNoteWS { AddLabels = labels, NoteId = note.Id };
+                            await appSignalRService.UpdateNotesInManyUsers(updates, emails);
+                        }
                     }
+                    //
                 }
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)

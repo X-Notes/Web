@@ -15,11 +15,11 @@ import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import {
   AddLabelOnNote,
   RemoveLabelFromNote,
-  UpdateLabelFullNote,
 } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
-import { RestoreLabel } from '../state/labels-actions';
 import { Label } from '../models/label.model';
+import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-label',
@@ -53,6 +53,8 @@ export class LabelComponent implements OnInit, OnDestroy {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
+    private sbws: SnackBarWrapperService,
+    private apiTranslate: TranslateService,
     @Optional() private murriService: MurriService,
   ) {}
 
@@ -75,19 +77,19 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   select() {
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    let ids = this.store.selectSnapshot(NoteStore.selectedIds);
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-      this.store.dispatch(new UpdateLabelFullNote(this.label, this.isSelected));
+      ids = [...ids, this.store.selectSnapshot(NoteStore.oneFull).id]
+    }
+    if (!this.isSelected) {
+      this.store.dispatch(new AddLabelOnNote(this.label, ids, true, this.permissionsErrorCallback));
     } else {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      if (!this.isSelected) {
-        this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
-      } else {
-        this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
-      }
+      this.store.dispatch(new RemoveLabelFromNote(this.label.id, ids, true, this.permissionsErrorCallback));
     }
   }
+
+  private permissionsErrorCallback = () => this.sbws.buildNotification(this.apiTranslate.instant('snackBar.noPermissionsForEdit'), null);
 
   openColors() {
     this.isUpdate = !this.isUpdate;

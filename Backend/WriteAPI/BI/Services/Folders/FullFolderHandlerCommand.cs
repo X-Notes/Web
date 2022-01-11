@@ -57,7 +57,7 @@ namespace BI.Services.Folders
                 userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
                 var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
                 var emails = users.Select(x => x.Email);
-                var updates = new List<UpdateFolderWS> { new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id } };
+                var updates = new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id };
                 await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
                 //
 
@@ -99,7 +99,7 @@ namespace BI.Services.Folders
                 userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
                 var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
                 var emails = users.Select(x => x.Email);
-                var updates = new List<UpdateFolderWS> { new UpdateFolderWS {  PreviewNotes = notes.Select(x => new NotePreviewInFolder {  Title = x.Title }).ToList(), FolderId = folder.Id } };
+                var updates = new UpdateFolderWS { PreviewNotes = notes.Select(x => new NotePreviewInFolder { Title = x.Title }).ToList(), FolderId = folder.Id };
                 await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
                 //
 

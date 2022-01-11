@@ -74,7 +74,7 @@ namespace BI.Services.Notes
                 userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
                 var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
                 var emails = users.Select(x => x.Email);
-                var updates = new List<UpdateNoteWS> { new UpdateNoteWS { Title = note.Title, NoteId = note.Id } };
+                var updates = new UpdateNoteWS { Title = note.Title, NoteId = note.Id };
                 await appSignalRService.UpdateNotesInManyUsers(updates, emails);
                 //
 
