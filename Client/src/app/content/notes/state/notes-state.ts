@@ -11,6 +11,7 @@ import {
   OperationResult,
   OperationResultAdditionalInfo,
 } from 'src/app/shared/models/operation-result.model';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
@@ -407,7 +408,7 @@ export class NoteStore {
       typeTo,
       selectedIds,
       isAddingToDom,
-      errorCallback,
+      errorPermissionMessage,
       successCallback,
       refTypeId,
     }: ChangeTypeNote,
@@ -455,8 +456,8 @@ export class NoteStore {
         throw new Error('Incorrect type');
       }
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
@@ -464,7 +465,7 @@ export class NoteStore {
   @Action(ChangeColorNote)
   async changeColor(
     { patchState, getState, dispatch }: StateContext<NoteState>,
-    { color, selectedIds, isCallApi, errorCallback }: ChangeColorNote,
+    { color, selectedIds, isCallApi, errorPermissionMessage }: ChangeColorNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -486,8 +487,8 @@ export class NoteStore {
         dispatch([UnSelectAllNote]);
       }
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
@@ -524,14 +525,14 @@ export class NoteStore {
   @Action(AddLabelOnNote)
   async addLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { label, selectedIds, isCallApi, errorCallback }: AddLabelOnNote,
+    { label, selectedIds, isCallApi, errorPermissionMessage }: AddLabelOnNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi){
       resp = await this.api.addLabel(label.id, selectedIds).toPromise();
     }
     if(resp.success){
-      let note = getState().fullNoteState?.note;
+      const note = getState().fullNoteState?.note;
       if(note && selectedIds.some(id => id === note.id)){
         patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...note, labels: [...note.labels, label] } } });
       }
@@ -555,18 +556,18 @@ export class NoteStore {
         }
       });
       patchState({ updateNoteEvent });
-      notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
+      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
       dispatch([new UpdateLabelCount(label.id)]);
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
   @Action(RemoveLabelFromNote)
   async removeLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { labelId, selectedIds, isCallApi, errorCallback }: RemoveLabelFromNote,
+    { labelId, selectedIds, isCallApi, errorPermissionMessage }: RemoveLabelFromNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi){
@@ -585,11 +586,11 @@ export class NoteStore {
         updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
       });
       patchState({ updateNoteEvent });
-      notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
+      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
       dispatch([new UpdateLabelCount(labelId)]);
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
@@ -724,7 +725,7 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { str, isCallApi, noteId, errorCallback }: UpdateNoteTitle,
+    { str, isCallApi, noteId, errorPermissionMessage }: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -742,8 +743,8 @@ export class NoteStore {
         dispatch(new UpdateOneNote(noteUpdate));
       }
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 

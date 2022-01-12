@@ -24,54 +24,28 @@ export class AddFolder {
 export class ChangeTypeFolder {
   static type = '[Folders] change type folders';
 
-  typeTo: FolderTypeENUM;
-
-  public refTypeId: RefTypeENUM;
-
-  public selectedIds: string[];
-
-  public isAddingToDom: boolean;
-
-  public errorCallback?: () => void;
-
-  public successCallback?: () => void;
-
   get isMany() {
     return this.selectedIds.length > 1;
   }
 
   constructor(
-    typeTo: FolderTypeENUM,
-    selectedIds: string[],
-    isAddingToDom: boolean,
-    errorCallback?: () => void,
-    successCallback?: () => void,
-    refTypeId?: RefTypeENUM,
-  ) {
-    this.typeTo = typeTo;
-    this.selectedIds = selectedIds;
-    this.isAddingToDom = isAddingToDom;
-    this.errorCallback = errorCallback;
-    this.successCallback = successCallback;
-    this.refTypeId = refTypeId;
-  }
+    public typeTo: FolderTypeENUM,
+    public selectedIds: string[],
+    public isAddingToDom: boolean,
+    public errorPermissionMessage?: string,
+    public successCallback?: () => void,
+    public refTypeId?: RefTypeENUM,
+  ) {}
 }
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
-  isCallApi = true;
-
-  public errorCallback?: () => void;
-
   constructor(
     public color: string,
     public selectedIds: string[],
-    isCallApi = true,
-    errorCallback?: () => void,
-  ) {
-    this.isCallApi = isCallApi;
-    this.errorCallback = errorCallback;
-  }
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class ClearUpdatesUIFolders {
@@ -149,7 +123,7 @@ export class UpdateFolderTitle {
     public str: string,
     public folderId: string,
     public isCallApi = true,
-    public errorCallback?: () => void,
+    public errorPermissionMessage?: string,
   ) {}
 }
 

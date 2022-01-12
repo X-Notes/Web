@@ -80,7 +80,7 @@ export class MenuButtonsNotesService {
       NoteTypeENUM.Deleted,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
@@ -98,7 +98,7 @@ export class MenuButtonsNotesService {
       NoteTypeENUM.Private,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
@@ -116,14 +116,14 @@ export class MenuButtonsNotesService {
       NoteTypeENUM.Archive,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
   };
 
-  private permissionsErrorCallback = () =>
-    this.sbws.buildNotification(this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt'), null);
+  private permissionsErrorMessage = (): string =>
+    this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
   private getSelectedNoteIds(): string[] {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {

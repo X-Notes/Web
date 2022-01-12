@@ -56,12 +56,12 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
       if (this.store.selectSnapshot(AppStore.isNoteInner)) {
         const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
         await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorCallback))
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
           .toPromise();
       } else {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
         await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorCallback))
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
           .toPromise();
       }
     }
@@ -70,12 +70,12 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
       if (this.store.selectSnapshot(AppStore.isFolderInner)) {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
         await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorCallback))
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
           .toPromise();
       } else {
         const ids = this.store.selectSnapshot(FolderStore.selectedIds);
         await this.store
-          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorCallback))
+          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorMessage()))
           .toPromise();
       }
     }
@@ -94,6 +94,6 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UnSelectAllNote());
   }
 
-  private permissionsErrorCallback = () =>
-    this.sbws.buildNotification(this.apiTranslate.instant('snackBar.noPermissionsForEdit'), null);
+  private permissionsErrorMessage = (): string =>
+    this.apiTranslate.instant('snackBar.noPermissionsForEdit');
 }

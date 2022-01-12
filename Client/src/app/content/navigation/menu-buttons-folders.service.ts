@@ -41,7 +41,7 @@ export class MenuButtonsFoldersService {
       FolderTypeENUM.Deleted,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
@@ -64,7 +64,7 @@ export class MenuButtonsFoldersService {
       FolderTypeENUM.Private,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
@@ -87,7 +87,7 @@ export class MenuButtonsFoldersService {
       FolderTypeENUM.Archive,
       ids,
       false,
-      this.permissionsErrorCallback,
+      this.permissionsErrorMessage(),
       successCallback,
     );
     this.store.dispatch(command);
@@ -118,8 +118,8 @@ export class MenuButtonsFoldersService {
     return this.sbws.buildNotification(message, null);
   }
 
-  private permissionsErrorCallback = () =>
-    this.sbws.buildNotification(this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt'), null);
+  private permissionsErrorMessage = (): string =>
+    this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
   private successFolderCallback = (
     ids: string[],

@@ -10,6 +10,7 @@ import {
   OperationResult,
   OperationResultAdditionalInfo,
 } from 'src/app/shared/models/operation-result.model';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { SmallFolder } from '../models/folder.model';
 import { ApiFoldersService } from '../api-folders.service';
 import { FullFolder } from '../models/full-folder.model';
@@ -254,7 +255,7 @@ export class FolderStore {
       typeTo,
       selectedIds,
       isAddingToDom,
-      errorCallback,
+      errorPermissionMessage,
       successCallback,
       refTypeId,
     }: ChangeTypeFolder,
@@ -302,8 +303,8 @@ export class FolderStore {
         throw new Error('Incorrect type');
       }
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
@@ -454,7 +455,7 @@ export class FolderStore {
   @Action(ChangeColorFolder)
   async changeColor(
     { patchState, getState, dispatch }: StateContext<FolderState>,
-    { color, selectedIds, isCallApi, errorCallback }: ChangeColorFolder,
+    { color, selectedIds, isCallApi, errorPermissionMessage }: ChangeColorFolder,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -474,8 +475,8 @@ export class FolderStore {
       foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder)));
       dispatch([UnSelectAllFolder]);
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 
@@ -497,7 +498,7 @@ export class FolderStore {
   @Action(UpdateFolderTitle)
   async updateTitleFolder(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { str, folderId, isCallApi, errorCallback }: UpdateFolderTitle,
+    { str, folderId, isCallApi, errorPermissionMessage }: UpdateFolderTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -513,8 +514,8 @@ export class FolderStore {
       patchState({ updateFolderEvent: [this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title)] });
       dispatch(new UpdateOneFolder(folderUpdate));
     }
-    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorCallback) {
-      errorCallback();
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
   }
 

@@ -35,9 +35,8 @@ export class ChangeColorNote {
     public color: string,
     public selectedIds: string[],
     public isCallApi = true,
-    public errorCallback?: () => void,
-  ) {
-  }
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class ClearUpdatesUINotes {
@@ -83,7 +82,7 @@ export class ChangeTypeNote {
     public typeTo: NoteTypeENUM,
     public selectedIds: string[],
     public isAddingToDom: boolean,
-    public errorCallback?: () => void,
+    public errorPermissionMessage?: string,
     public successCallback?: () => void,
     public refTypeId?: RefTypeENUM,
   ) {}
@@ -101,22 +100,22 @@ export class AddLabelOnNote {
   static type = '[Notes] Add label';
 
   constructor(
-    public label: Label, 
+    public label: Label,
     public selectedIds: string[],
     public isCallApi = true,
-    public errorCallback?: () => void
-    ) {}
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class RemoveLabelFromNote {
   static type = '[Notes] Remove label';
 
   constructor(
-    public labelId: string, 
+    public labelId: string,
     public selectedIds: string[],
     public isCallApi = true,
-    public errorCallback?: () => void
-    ) {}
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class RemoveFromDomMurri {
@@ -208,7 +207,7 @@ export class UpdateNoteTitle {
     public str: string,
     public noteId: string,
     public isCallApi = true,
-    public errorCallback?: () => void,
+    public errorPermissionMessage?: string,
   ) {}
 }
 export class ChangeTypeFullNote {

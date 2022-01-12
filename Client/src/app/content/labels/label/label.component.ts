@@ -12,14 +12,11 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import {
-  AddLabelOnNote,
-  RemoveLabelFromNote,
-} from '../../notes/state/notes-actions';
-import { NoteStore } from '../../notes/state/notes-state';
-import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AddLabelOnNote, RemoveLabelFromNote } from '../../notes/state/notes-actions';
+import { NoteStore } from '../../notes/state/notes-state';
+import { Label } from '../models/label.model';
 
 @Component({
   selector: 'app-label',
@@ -80,16 +77,18 @@ export class LabelComponent implements OnInit, OnDestroy {
     let ids = this.store.selectSnapshot(NoteStore.selectedIds);
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-      ids = [...ids, this.store.selectSnapshot(NoteStore.oneFull).id]
+      ids = [...ids, this.store.selectSnapshot(NoteStore.oneFull).id];
     }
     if (!this.isSelected) {
-      this.store.dispatch(new AddLabelOnNote(this.label, ids, true, this.permissionsErrorCallback));
+      this.store.dispatch(
+        new AddLabelOnNote(this.label, ids, true, this.permissionsErrorMessage()),
+      );
     } else {
-      this.store.dispatch(new RemoveLabelFromNote(this.label.id, ids, true, this.permissionsErrorCallback));
+      this.store.dispatch(
+        new RemoveLabelFromNote(this.label.id, ids, true, this.permissionsErrorMessage()),
+      );
     }
   }
-
-  private permissionsErrorCallback = () => this.sbws.buildNotification(this.apiTranslate.instant('snackBar.noPermissionsForEdit'), null);
 
   openColors() {
     this.isUpdate = !this.isUpdate;
@@ -125,4 +124,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   changed(text: string) {
     this.nameChanged.next(text);
   }
+
+  private permissionsErrorMessage = (): string =>
+    this.apiTranslate.instant('snackBar.noPermissionsForEdit');
 }
