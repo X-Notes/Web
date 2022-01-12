@@ -180,6 +180,10 @@ export class FolderService
     return this.sortFolderType;
   }
 
+  get isAnySelected(): boolean {
+    return this.entities.some((z) => z.isSelected === true);
+  }
+
   async initializeEntities(folders: SmallFolder[]) {
     const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);

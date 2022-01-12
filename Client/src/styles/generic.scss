@@ -26,6 +26,10 @@
   }
 }
 
+.cdk-global-scrollblock {
+  overflow-y: hidden;
+}
+
 .sharing-modal {
   mat-dialog-container {
     background-color: transparent;
