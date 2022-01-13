@@ -123,6 +123,17 @@ export class FolderService
     });
   }
 
+  async loadAdditionInformation() {
+    const folderIds = this.entities.map((x) => x.id);
+    if (folderIds.length > 0) {
+      const additionalInfo = await this.apiFolders.getAdditionalInfos(folderIds).toPromise();
+      for (const info of additionalInfo) {
+        const noteIndex = this.entities.findIndex((x) => x.id === info.folderId);
+        this.entities[noteIndex].additionalInfo = info;
+      }
+    }
+  }
+
   async changeOrderTypeHandler(sortType: SortedByENUM) {
     await this.destroyGridAsync();
     this.entities = this.orderBy(this.entities, sortType);
@@ -188,5 +199,7 @@ export class FolderService
     const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);
     super.initState();
+
+    await this.loadAdditionInformation();
   }
 }

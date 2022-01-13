@@ -90,20 +90,20 @@
         margin-bottom: 0.625rem;
         outline: none;
         min-height: 40px;
-        
+
         .note {
           display: flex;
           align-items: center;
           width: 100%;
           margin-top: 0.5rem;
           color: $light-text-color;
-  
+
           .icon {
             height: 15px;
             width: 15px;
             color: $light-text-color;
           }
-  
+
           p {
             @include text-overflow;
             margin-left: 0.5rem;
@@ -111,18 +111,40 @@
         }
 
         .no-title {
-          .icon, .placeholder {
+          .icon,
+          .placeholder {
             color: #808080;
           }
         }
       }
-  
-      .bottom-section{
+
+      .bottom-section {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 0.75rem;
         .date {
           display: flex;
           color: #a1a1a1;
           font-size: 0.875rem;
+        }
+        .help-icons {
+          display: flex;
+          font-size: 1.125rem;
+
+          .icon {
+            height: 18px;
+            width: 18px;
+            display: flex;
+            margin-left: 1.25rem;
+            color: #969696;
+            transform: 0.2s ease;
+            &:hover {
+              color: darken(#969696, 20%);
+            }
+            &:first-child {
+              margin-left: 0;
+            }
+          }
         }
       }
     }
@@ -140,7 +162,7 @@
         .note {
           font-size: 1.125rem;
           margin-top: 0.625rem;
-  
+
           .icon {
             height: 18px;
             width: 18px;

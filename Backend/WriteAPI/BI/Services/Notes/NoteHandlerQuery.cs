@@ -25,7 +25,7 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Notes
 {
     public class NoteHandlerQuery :
-        IRequestHandler<GetAdditionalContentInfoQuery, List<BottomNoteContent>>,
+        IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>,
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
         IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
@@ -187,7 +187,7 @@ namespace BI.Services.Notes
             return new OperationResult<List<SmallNote>>().SetNotFound();
         }
 
-        public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentInfoQuery request, CancellationToken cancellationToken)
+        public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
         {
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);

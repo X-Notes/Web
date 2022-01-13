@@ -6,12 +6,12 @@ using Common.Attributes;
 
 namespace Domain.Queries.Notes
 {
-    public class GetAdditionalContentInfoQuery : BaseQueryEntity, IRequest<List<BottomNoteContent>>
+    public class GetAdditionalContentNoteInfoQuery : BaseQueryEntity, IRequest<List<BottomNoteContent>>
     {
         [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
 
-        public GetAdditionalContentInfoQuery(List<Guid> noteIds)
+        public GetAdditionalContentNoteInfoQuery(List<Guid> noteIds)
         {
             NoteIds = noteIds;
         }

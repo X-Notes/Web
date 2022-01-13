@@ -19,6 +19,8 @@ import { SmallFolder } from '../models/folder.model';
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
 
+  @Input() isSelectedMode: boolean;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
@@ -51,6 +53,12 @@ export class FolderComponent implements OnInit, OnDestroy {
     return exist !== undefined;
   }
 
+  handelEntityClick($event: MouseEvent, id: string) {
+    if (this.isSelectedMode) {
+      this.highlight(id);
+    }
+  }
+
   highlight(id: string) {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     if (!this.folder.isSelected) {
@@ -60,7 +68,9 @@ export class FolderComponent implements OnInit, OnDestroy {
     }
   }
 
-  toFolder() {
+  toFolder($event: MouseEvent) {
+    $event.stopPropagation();
+    $event.preventDefault();
     const flag = this.store.selectSnapshot(FolderStore.selectedCount) > 0;
     if (flag) {
       this.highlight(this.folder.id);

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
+using Common.DTO.Folders.AdditionalContent;
+using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
 using Domain.Commands.Folders;
 using Domain.Queries.Folders;
@@ -108,6 +110,13 @@ namespace WriteAPI.Controllers
             var email = this.GetUserEmail();
             command.Email = email;
             await this._mediator.Send(command);
+        }
+
+        [HttpPost("additional")]
+        public async Task<List<BottomFolderContent>> GetAdditionalInfo(GetAdditionalContentFolderInfoQuery query)
+        {
+            query.Email = this.GetUserEmail();
+            return await _mediator.Send(query);
         }
     }
 }

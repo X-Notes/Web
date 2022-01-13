@@ -116,7 +116,7 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpPost("additional")]
-        public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentInfoQuery query)
+        public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentNoteInfoQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);

@@ -11,6 +11,7 @@ import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
 import { Observable } from 'rxjs';
+import { BottomFolderContent } from './models/bottom-folder-content.model';
 
 @Injectable()
 export class ApiFoldersService {
@@ -169,6 +170,16 @@ export class ApiFoldersService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/fullfolder/title`,
+      obj,
+    );
+  }
+
+  getAdditionalInfos(folderIds: string[]) {
+    const obj = {
+      folderIds,
+    };
+    return this.httpClient.post<BottomFolderContent[]>(
+      `${environment.writeAPI}/api/folder/additional`,
       obj,
     );
   }
