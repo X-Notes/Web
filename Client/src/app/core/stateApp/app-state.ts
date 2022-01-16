@@ -39,9 +39,7 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
-  constructor(
-    authService: AuthService, 
-    public notificationService: NotificationServiceAPI) {
+  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
     authService.init();
   }
 
@@ -282,7 +280,7 @@ export class AppStore {
         return NoteTypeENUM.Shared;
       }
       default: {
-        if(state.routing){
+        if (state.routing) {
           console.log(state.routing);
           throw new Error('Incorrect type');
         }
@@ -306,7 +304,7 @@ export class AppStore {
         return FolderTypeENUM.Archive;
       }
       default: {
-        if(state.routing){
+        if (state.routing) {
           throw new Error('Incorrect type');
         }
       }
@@ -384,9 +382,12 @@ export class AppStore {
   }
 
   @Action(ShowSnackNotification)
-  async showSnackNotifications({ getState, patchState }: StateContext<AppState>, {notification}: ShowSnackNotification){
+  async showSnackNotifications(
+    { getState, patchState }: StateContext<AppState>,
+    { notification }: ShowSnackNotification,
+  ) {
     patchState({
-      snackNotification: notification
+      snackNotification: notification,
     });
   }
 }

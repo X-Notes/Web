@@ -16,7 +16,6 @@ import { TitleCollectionComponent } from '../collection-components/title-collect
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class CollectionService extends BaseHtmlComponent {
-  
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 

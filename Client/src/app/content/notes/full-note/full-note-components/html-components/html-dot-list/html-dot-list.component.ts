@@ -27,7 +27,8 @@ import { DotListService } from '../html-business-logic/dot-list.service';
 })
 export class HtmlDotListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
+{
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -99,8 +100,6 @@ export class HtmlDotListComponent
     this.dotListService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
   }
-
-
 
   mouseEnter($event) {
     $event.preventDefault();

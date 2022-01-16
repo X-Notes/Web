@@ -1,4 +1,3 @@
-
 export enum ContentTypeENUM {
   Text = 1,
   Photos = 2,
@@ -6,4 +5,3 @@ export enum ContentTypeENUM {
   Audios = 4,
   Videos = 5,
 }
-

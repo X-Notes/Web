@@ -5,7 +5,6 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class HeadingService extends HtmlService {
-
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
@@ -37,9 +36,14 @@ export class HeadingService extends HtmlService {
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev(
+      $event,
+      content,
+      contentHtml,
+      concatThisWithPrev,
+      deleteThis,
+    );
   }
 
-  backUp = (e: any) => {
-  };
+  backUp = (e: any) => {};
 }

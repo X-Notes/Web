@@ -4,7 +4,10 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { PersonalizationService, timeSidenavAnimation } from '../../services/personalization.service';
+import {
+  PersonalizationService,
+  timeSidenavAnimation,
+} from '../../services/personalization.service';
 
 @Component({
   selector: 'app-nav-profile-item',

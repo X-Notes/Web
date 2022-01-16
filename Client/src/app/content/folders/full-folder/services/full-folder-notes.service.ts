@@ -17,7 +17,8 @@ import { ApiFullFolderService } from './api-full-folder.service';
 @Injectable()
 export class FullFolderNotesService
   extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
+{
   constructor(
     store: Store,
     murriService: MurriService,

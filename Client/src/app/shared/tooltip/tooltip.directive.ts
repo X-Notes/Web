@@ -66,7 +66,7 @@ export class TooltipDirective implements OnDestroy {
   }
 
   @HostListener('mousedown')
-  hideOnClick (){
+  hideOnClick() {
     this.overlayRef?.detach();
   }
 

@@ -47,7 +47,13 @@ export class DotListService extends HtmlService {
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev(
+      $event,
+      content,
+      contentHtml,
+      concatThisWithPrev,
+      deleteThis,
+    );
   }
 
   backUp = (e: any) => {};

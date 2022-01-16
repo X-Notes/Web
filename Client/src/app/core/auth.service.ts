@@ -27,20 +27,24 @@ export class AuthService {
 
   authGoogle() {
     return this.afAuth
-    .signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
-    .then((result) => {console.log('result: ', result)})
-    .catch((error) => {
-      window.alert(error);
-    });
+      .signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
+      .then((result) => {
+        console.log('result: ', result);
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
   }
 
   authFacebook() {
     return this.afAuth
-    .signInWithRedirect(new firebase.default.auth.FacebookAuthProvider())
-    .then((result) => {console.log('result: ', result)})
-    .catch((error) => {
-      window.alert(error);
-    });
+      .signInWithRedirect(new firebase.default.auth.FacebookAuthProvider())
+      .then((result) => {
+        console.log('result: ', result);
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
   }
 
   logout = async () => {
@@ -86,5 +90,4 @@ export class AuthService {
     };
     return temp;
   };
-
 }

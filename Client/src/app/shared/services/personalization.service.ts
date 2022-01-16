@@ -16,8 +16,13 @@ export const timeSidenavAnimation = 200; // TODO move to constant file
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
-  transition(':enter', [style({ transform: 'translateX(-100%)' }), animate(`${timeSidenavAnimation}ms ease`)]),
-  transition(':leave', [animate(`${timeSidenavAnimation}ms ease`, style({ transform: 'translateX(-100%)' }))]),
+  transition(':enter', [
+    style({ transform: 'translateX(-100%)' }),
+    animate(`${timeSidenavAnimation}ms ease`),
+  ]),
+  transition(':leave', [
+    animate(`${timeSidenavAnimation}ms ease`, style({ transform: 'translateX(-100%)' })),
+  ]),
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [

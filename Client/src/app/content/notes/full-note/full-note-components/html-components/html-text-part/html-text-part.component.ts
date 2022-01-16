@@ -36,7 +36,8 @@ import { HtmlBaseService } from '../html-base.service';
 })
 export class HtmlTextPartComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, DoCheck, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, DoCheck, ParentInteraction
+{
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -95,7 +96,6 @@ export class HtmlTextPartComponent
 
   // eslint-disable-next-line class-methods-use-this
   deleteDown() {}
-
 
   ngAfterViewInit(): void {
     this.textService.setHandlers(

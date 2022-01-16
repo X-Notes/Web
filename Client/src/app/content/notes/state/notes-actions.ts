@@ -7,7 +7,6 @@ import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { FullNote } from '../models/full-note.model';
 
-
 export class ResetNotes {
   static type = '[Notes] Reset notes';
 }
@@ -74,7 +73,7 @@ export class BaseChangeTypeSmallNote {
   public isAddingToDom: boolean;
 
   public successCalback: () => void;
-  
+
   get isMany() {
     return this.selectedIds.length > 1;
   }

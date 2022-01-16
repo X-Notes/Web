@@ -27,7 +27,6 @@ import { ApiFullFolderService } from '../full-folder/services/api-full-folder.se
   providers: [FullNoteSliderService],
 })
 export class FullFolderNoteComponent implements OnInit, OnDestroy {
-
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

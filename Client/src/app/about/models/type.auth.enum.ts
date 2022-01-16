@@ -1,6 +1,6 @@
-export enum TypeAuthEnum{
-    Google,
-    Facebook,
-    Git,
-    Twitter
+export enum TypeAuthEnum {
+  Google,
+  Facebook,
+  Git,
+  Twitter,
 }

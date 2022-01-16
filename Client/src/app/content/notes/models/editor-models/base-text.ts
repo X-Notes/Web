@@ -57,7 +57,8 @@ export class BaseText extends ContentModelBase {
     if (blockF == null || blockS == null) return false;
     if (blockF.length !== blockS.length) return false;
 
-    for (let i = 0; i < blockF.length; i += 1) { // TODO CHANGES
+    for (let i = 0; i < blockF.length; i += 1) {
+      // TODO CHANGES
       if (blockF[i] !== blockS[i]) return false;
     }
 

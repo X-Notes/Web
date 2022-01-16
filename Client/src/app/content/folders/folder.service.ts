@@ -20,7 +20,8 @@ import { ApiFoldersService } from './api-folders.service';
 @Injectable()
 export class FolderService
   extends FeaturesEntitiesService<SmallFolder>
-  implements OnDestroy, IMurriEntityService<SmallFolder, FolderTypeENUM> {
+  implements OnDestroy, IMurriEntityService<SmallFolder, FolderTypeENUM>
+{
   destroy = new Subject<void>();
 
   prevSortedFolderByTypeId: SortedByENUM = null;
@@ -181,7 +182,7 @@ export class FolderService
   }
 
   async initializeEntities(folders: SmallFolder[]) {
-    let tempFolders = this.transformSpread(folders);
+    const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);
     super.initState();
   }
