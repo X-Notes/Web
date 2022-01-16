@@ -51,3 +51,5 @@ Thumbs.db
 !.yarn/sdks
 !.yarn/versions
 !.yarn/patches
+
+.angular
