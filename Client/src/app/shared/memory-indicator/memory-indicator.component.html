@@ -6,7 +6,7 @@
     </div>
     <div class="progress-bar">
       <div
-        [ngStyle]="{ width: procent, 'background-color': indicatorColor }"
+        [ngStyle]="{ width: procent, 'background-color': getIndicatorColor(theme$ | async) }"
         class="indicator"
       ></div>
     </div>

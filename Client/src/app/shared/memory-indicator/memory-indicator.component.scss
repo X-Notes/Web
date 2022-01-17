@@ -8,7 +8,7 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  padding: 0 1.5rem;
+  padding: 0 1.2rem;
 
   .billing {
     display: none;
@@ -18,12 +18,12 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-top: 5px;
 
     .text {
-      font-weight: 300;
-      font-size: 0.625rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      margin-bottom: 0.3125rem;
+      margin-bottom: 6px;
       transition: 0.2s ease;
     }
 
@@ -46,6 +46,9 @@
   .progress-bar-section {
     .text {
       color: $light-text-color;
+    }
+    .progress-bar{
+      background-color: white;
     }
   }
 }
