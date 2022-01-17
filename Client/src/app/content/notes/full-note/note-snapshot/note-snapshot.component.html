@@ -13,13 +13,13 @@
       [isReadOnlyMode]="true"
     ></app-content-editor>
   </div>
-  <div *ngIf="!(snapshotState$ | async)?.canView" class="wrapper">
+  <div *ngIf="!isLoading &&!(snapshotState$ | async)?.canView" class="wrapper">
     <app-no-results-illustration
       [isShow]="true"
-      [message]="'noResult.noAccessView' | translate"
-      [illustration]="pService.icon.noAccessView"
+      [message]="'noResult.noAccessViewNote' | translate"
+      [illustration]="pService.icon.noAccessViewNote"
       typeClass="type-module"
     ></app-no-results-illustration>
   </div>
-  <app-spinner *ngIf="!(snapshotState$ | async)?.noteSnapshot"></app-spinner>
+  <app-spinner *ngIf="isLoading"></app-spinner>
 </div>

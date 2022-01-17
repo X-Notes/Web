@@ -209,7 +209,8 @@
     "notification": "No unread notifications",
     "notificationAll": "You have no notifications",
     "history": "There is no history in the note yet",
-    "noAccessView": "You do not have permission to view the note"
+    "noAccessViewNote": "You do not have permission to view the note",
+    "noAccessViewFolder": "You do not have permission to view the folder"
   },
   "notification": {
     "title": "Notification",
