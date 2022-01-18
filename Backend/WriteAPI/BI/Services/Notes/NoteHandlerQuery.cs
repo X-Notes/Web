@@ -97,24 +97,42 @@ namespace BI.Services.Notes
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
-            var permissions = await _mediator.Send(command);
+            var isCanWrite = false;
+            var isCanRead = false;
+            var isOwner = false;
 
-            if (permissions.CanWrite)
+            if (request.FolderId.HasValue)
             {
-                var note = await noteRepository.GetFull(request.Id);
-                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.Email);
+                var permissions = await _mediator.Send(command);
+                isCanWrite = permissions.CanWrite;
+                isCanRead = permissions.CanRead;
+                isOwner = permissions.IsOwner;
+            }
+            else
+            {
+                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+                var permissions = await _mediator.Send(command);
+                isCanWrite = permissions.CanWrite;
+                isCanRead = permissions.CanRead;
+                isOwner = permissions.IsOwner;
             }
 
-            if (permissions.CanRead)
+            if (isCanWrite)
             {
-                var note = await noteRepository.GetFull(request.Id);
+                var note = await noteRepository.GetFull(request.NoteId);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                return new FullNoteAnswer(isOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
             }
 
-            return new FullNoteAnswer(permissions.IsOwner, false, false, null, null);
+            if (isCanRead)
+            {
+                var note = await noteRepository.GetFull(request.NoteId);
+                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
+                return new FullNoteAnswer(isOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+            }
+
+            return new FullNoteAnswer(isOwner, false, false, null, null);
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)

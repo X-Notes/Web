@@ -36,11 +36,11 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("folders/user/permission")]
-        public async Task ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
+        public async Task<OperationResult<Unit>> ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/remove")]
@@ -79,11 +79,11 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("notes/user/permission")]
-        public async Task ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
+        public async Task<OperationResult<Unit>> ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("notes/user/remove")]

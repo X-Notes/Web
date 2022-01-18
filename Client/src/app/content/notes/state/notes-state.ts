@@ -217,6 +217,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static canEdit(state: NoteState): boolean {
+    return state.fullNoteState?.canEdit;
+  }
+  
+  @Selector()
   static canView(state: NoteState): boolean {
     return state.fullNoteState?.canView;
   }
@@ -688,12 +693,12 @@ export class NoteStore {
   }
 
   @Action(LoadFullNote)
-  async loadFull({ patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
-    const request = await this.api.get(id).toPromise();
+  async loadFull({ patchState }: StateContext<NoteState>, { noteId, folderId }: LoadFullNote) {
+    const request = await this.api.get(noteId, folderId).toPromise();
     patchState({
       fullNoteState: {
         canView: request.canView,
-        canEdit: request.caEdit,
+        canEdit: request.canEdit,
         note: request.fullNote,
         isOwner: request.isOwner,
         authorId: request.authorId,

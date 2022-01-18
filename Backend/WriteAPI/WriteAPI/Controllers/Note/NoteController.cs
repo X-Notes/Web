@@ -136,11 +136,11 @@ namespace WriteAPI.Controllers.Note
             return await _mediator.Send(query);
         }
 
-        [HttpGet("{id}")]
-        public async Task<FullNoteAnswer> Get(Guid id)
+        [HttpGet("{noteId}")]
+        public async Task<FullNoteAnswer> Get(Guid noteId, [FromQuery] Guid? folderId)
         {
             var email = this.GetUserEmail();
-            var query = new GetFullNoteQuery(email, id);
+            var query = new GetFullNoteQuery(email, noteId, folderId);
             return await _mediator.Send(query);
         }
     }

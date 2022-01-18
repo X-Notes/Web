@@ -1,11 +1,12 @@
 ﻿using System;
 using Common.Attributes;
 using Common.DatabaseModels.Models.Systems;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.Share.Folders
 {
-    public class PermissionUserOnPrivateFolders : BaseCommandEntity, IRequest<Unit>
+    public class PermissionUserOnPrivateFolders : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid FolderId { set; get; }

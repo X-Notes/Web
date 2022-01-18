@@ -23,12 +23,12 @@ namespace BI.Services.Sharing
     public class SharingHandlerCommand :
         IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>,
         IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>,
-        IRequestHandler<PermissionUserOnPrivateFolders, Unit>,
+        IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateFolders, Unit>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
         IRequestHandler<SendInvitesToUsersNotes, Unit>,
         IRequestHandler<RemoveUserFromPrivateNotes, Unit>,
-        IRequestHandler<PermissionUserOnPrivateNotes, Unit>
+        IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
@@ -118,7 +118,7 @@ namespace BI.Services.Sharing
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -127,22 +127,14 @@ namespace BI.Services.Sharing
             {
                 var access = await usersOnPrivateFoldersRepository
                     .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
-                if (access != null)
-                {
-                    access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateFoldersRepository.UpdateAsync(access);
-                }
-                else
-                {
-                    var perm = new UsersOnPrivateFolders()
-                    {
-                        AccessTypeId = request.AccessTypeId,
-                        FolderId = request.FolderId,
-                        UserId = request.UserId
-                    };
-                    await usersOnPrivateFoldersRepository.AddAsync(perm);
 
+                if (access == null)
+                {
+                    return new OperationResult<Unit>().SetNotFound();
                 }
+
+                access.AccessTypeId = request.AccessTypeId;
+                await usersOnPrivateFoldersRepository.UpdateAsync(access);
 
                 var notification = new Notification() // TODO MOVE TO SERVICE
                 {
@@ -156,12 +148,14 @@ namespace BI.Services.Sharing
 
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -170,22 +164,14 @@ namespace BI.Services.Sharing
             {
                 var access = await usersOnPrivateNotesRepository
                     .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
-                if (access != null)
+
+                if (access == null)
                 {
-                    access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateNotesRepository.UpdateAsync(access);
-                }
-                else
-                {
-                    var perm = new UsersOnPrivateFolders()
-                    {
-                        AccessTypeId = request.AccessTypeId,
-                        FolderId = request.NoteId,
-                        UserId = request.UserId
-                    };
-                    await usersOnPrivateFoldersRepository.AddAsync(perm);
+                    return new OperationResult<Unit>().SetNotFound();
                 }
 
+                access.AccessTypeId = request.AccessTypeId;
+                await usersOnPrivateNotesRepository.UpdateAsync(access);
 
                 var notification = new Notification()
                 {
@@ -200,8 +186,9 @@ namespace BI.Services.Sharing
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)

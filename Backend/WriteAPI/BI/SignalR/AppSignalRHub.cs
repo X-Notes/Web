@@ -71,7 +71,7 @@ namespace BI.SignalR
             if (isCanAdd)
             {
                 var refTypeNote = await this.noteRepository.FirstOrDefaultAsync(x => x.Id == parsedNoteId);
-                var connectUser = new UserOnPrivateNotes()
+                var connectUser = new UserOnPrivateNotes() // TODO REFACTOR
                 {
                     UserId = userId,
                     NoteId = parsedNoteId,

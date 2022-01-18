@@ -14,7 +14,7 @@
   >
     <app-content-editor
       [note]="note"
-      [isReadOnlyMode]="false"
+      [isReadOnlyMode]="(canEdit$ | async) === false"
       [contents]="contents"
     ></app-content-editor>
     <app-right-section-content [note]="note" [wrap]="wrap"></app-right-section-content>

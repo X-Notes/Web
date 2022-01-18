@@ -6,11 +6,11 @@ import { map } from 'rxjs/operators';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
+import { Observable } from 'rxjs';
 import { SmallFolder } from './models/folder.model';
 import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
-import { Observable } from 'rxjs';
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 
 @Injectable()
@@ -59,7 +59,10 @@ export class ApiFoldersService {
       userId,
       accessTypeId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/permission`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/user/permission`,
+      obj,
+    );
   }
 
   sendInvitesToFolder(

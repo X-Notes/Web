@@ -159,8 +159,14 @@ export class ApiServiceNotes {
     );
   }
 
-  get(id: string) {
-    return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${id}`);
+  get(noteId: string, folderId: string = null) {
+    let params = new HttpParams();
+    if (folderId) {
+      params = params.append('folderId', folderId);
+    }
+    return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${noteId}`, {
+      params,
+    });
   }
 
   getAll(settings: PersonalizationSetting) {
@@ -230,7 +236,10 @@ export class ApiServiceNotes {
       userId,
       accessTypeId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/permission`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/user/permission`,
+      obj,
+    );
   }
 
   // CONTENTS

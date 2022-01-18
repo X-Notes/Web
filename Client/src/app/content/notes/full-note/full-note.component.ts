@@ -36,6 +36,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
 
+  @Select(NoteStore.canEdit)
+  public canEdit$: Observable<boolean>;
+
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 

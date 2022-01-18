@@ -187,7 +187,7 @@ export class UpdateSelectLabel {
 export class LoadFullNote {
   static type = '[Notes] Load full note';
 
-  constructor(public id: string) {}
+  constructor(public noteId: string, public folderId: string = null) {}
 }
 
 export class LoadSnapshotNote {
