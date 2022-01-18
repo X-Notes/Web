@@ -20,6 +20,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
+import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
@@ -113,7 +114,8 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private htmlTitleService: HtmlTitleService,
+  ) { }
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elements);
@@ -132,9 +134,15 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   ngOnInit(): void {
+
+    this.htmlTitleService.setCustomOrDefault(this.note.title, 'titles.note');
+
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((title) => this.store.dispatch(new UpdateNoteTitle(title, this.note.id)));
+      .subscribe((title) => {
+        this.store.dispatch(new UpdateNoteTitle(title, this.note.id));
+        this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
+      });
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))

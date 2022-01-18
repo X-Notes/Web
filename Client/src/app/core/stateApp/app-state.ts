@@ -18,6 +18,7 @@ import {
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/app-notification.model';
+import { HtmlTitleService } from '../html-title.service';
 
 interface AppState {
   routing: EntityType;
@@ -39,8 +40,13 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
-  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
+  constructor(
+    authService: AuthService,
+    public notificationService: NotificationServiceAPI,
+    private htmlTitleService: HtmlTitleService,
+  ) {
     authService.init();
+    htmlTitleService.init();
   }
 
   @Selector()

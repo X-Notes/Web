@@ -34,6 +34,7 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
+import { HtmlTitleService } from 'src/app/core/html-title.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -84,6 +85,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
     private router: Router,
+    private htmlTitleService: HtmlTitleService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -118,6 +120,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
               const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
               await this.ffnService.initializeEntities(notes);
             }
+
+            this.htmlTitleService.setCustomOrDefault(this.folder.title, 'titles.folder');
 
             await this.pService.waitPreloading();
             this.pService.setSpinnerState(false);

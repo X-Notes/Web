@@ -274,5 +274,14 @@
     "foldersPermDeleted": "Folders deleted permanently",
     "movedToMany" :  "moved to ",
     "movedToSingle" : " moved to "
+  },
+  "titles": {
+    "labels": "Labels",
+    "notes": "Notes",
+    "folders": "Folders",
+    "profile": "Profile",
+    "history": "History",
+    "note": "Note",
+    "folder": "Folder"
   }
 }

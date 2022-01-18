@@ -275,5 +275,14 @@
       "foldersPermDeleted": "Папки удалены безвозвратно",
       "movedToMany" : " перенесены в ",
       "movedToSingle" : " перенесена в "
+    },
+    "titles": {
+      "labels": "Ярлыки",
+      "notes": "Заметки",
+      "folders": "Папки",
+      "profile": "Профиль",
+      "history": "История",
+      "note": "Заметка",
+      "folder": "Папка"
     }
   }
