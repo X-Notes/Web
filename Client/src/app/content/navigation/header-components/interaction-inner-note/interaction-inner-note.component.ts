@@ -19,6 +19,10 @@ import { MenuButtonsService } from '../../menu-buttons.service';
   animations: [showMenuLeftRight],
 })
 export class InteractionInnerNoteComponent {
+
+  @Select(NoteStore.canView)
+  canView$: Observable<boolean>;
+
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
