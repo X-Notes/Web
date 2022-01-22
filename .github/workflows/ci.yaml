@@ -2,10 +2,9 @@ name: CI
 
 on: [push]
 
-before_script:
-  - cd Client
-
 jobs:
+  before_script:
+    - cd Client
   test:
     name: CI
     runs-on: ubuntu-20.04

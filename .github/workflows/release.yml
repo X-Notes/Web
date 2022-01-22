@@ -1,13 +1,12 @@
 name: Release
 
-before_script:
-  - cd Client
-
 on:
   push:
     branches:
       - DEV
 jobs:
+  before_script:
+    - cd Client
   release:
     name: Release
     runs-on: ubuntu-20.04
