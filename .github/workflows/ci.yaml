@@ -2,6 +2,9 @@ name: CI
 
 on: [push]
 
+before_script:
+  - cd Client
+
 jobs:
   test:
     name: CI

@@ -1,4 +1,8 @@
 name: Release
+
+before_script:
+  - cd Client
+
 on:
   push:
     branches:
