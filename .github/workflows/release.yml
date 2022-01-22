@@ -4,16 +4,16 @@ on:
   push:
     branches:
       - DEV
-jobs:
+
+job:
   before_script:
     - cd Client
+
+jobs:
   release:
     name: Release
     runs-on: ubuntu-20.04
     steps:
-    - name:
-        run: cd Client
-
       - name: Checkout
         uses: actions/checkout@v2
         with:

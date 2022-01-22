@@ -2,14 +2,15 @@ name: CI
 
 on: [push]
 
+job:
+  before_script:
+    - cd Client
+
 jobs:
   test:
     name: CI
     runs-on: ubuntu-20.04
     steps:
-      - name:
-        run: cd Client
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
