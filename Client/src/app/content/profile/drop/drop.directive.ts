@@ -12,11 +12,11 @@ export class DropDirective {
 
   @Output() dragLeaveEvent = new EventEmitter();
 
+  isActive = false;
+
   @HostBinding('class') get fileOver(): string {
     return this.isActive ? this.appDrop : null;
   }
-
-  isActive = false;
 
   @HostListener('dragover', ['$event']) onDragOver(evt) {
     evt.preventDefault();

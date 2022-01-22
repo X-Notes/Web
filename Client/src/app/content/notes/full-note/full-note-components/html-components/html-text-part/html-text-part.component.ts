@@ -55,6 +55,7 @@ export class HtmlTextPartComponent
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlTextPartComponent>();
 
   @ViewChild('uploadFile') uploadFile: ElementRef;
@@ -82,6 +83,18 @@ export class HtmlTextPartComponent
 
   constructor(public textService: TextService, private host: ElementRef, cdr: ChangeDetectorRef) {
     super(cdr);
+  }
+
+  get isFocused() {
+    return this.textService.isActive(this.contentHtml);
+  }
+
+  get isLink() {
+    return this.validURL(this.contentHtml?.nativeElement?.textContent);
+  }
+
+  get CurrentTextCotent() {
+    return this.contentHtml?.nativeElement?.textContent;
   }
 
   ngDoCheck(): void {
@@ -156,6 +169,7 @@ export class HtmlTextPartComponent
 
   isFocusToNext = () => true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus(entity: SetFocus) {
     this.textService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -168,18 +182,6 @@ export class HtmlTextPartComponent
   setFocusToEnd() {
     this.textService.setFocusToEnd(this.contentHtml, this.content);
     this.onFocus.emit(this);
-  }
-
-  get isFocused() {
-    return this.textService.isActive(this.contentHtml);
-  }
-
-  get isLink() {
-    return this.validURL(this.contentHtml?.nativeElement?.textContent);
-  }
-
-  get CurrentTextCotent() {
-    return this.contentHtml?.nativeElement?.textContent;
   }
 
   validURL = (str) => {

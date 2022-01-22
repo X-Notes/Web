@@ -85,6 +85,59 @@ export class VideoNoteComponent
     super(cdr);
   }
 
+  get volumeIcon(): string {
+    if (this.video?.volume === 0) {
+      return 'volume_off';
+    }
+    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
+      return 'volume_down';
+    }
+    if (this.video?.volume >= 0.5) {
+      return 'volume_up';
+    }
+  }
+
+  get fullWidth() {
+    const nodes = this.videoPlaylist.nativeElement.children;
+    let width = 0;
+    if (nodes && !nodes.length) return width;
+    for (const node of nodes) {
+      width += node.clientWidth;
+    }
+    return width;
+  }
+
+  get playlistWidth() {
+    return this.videoPlaylist.nativeElement.clientWidth;
+  }
+
+  get visibleItemsCount() {
+    if (!this.videoPlaylist) return 0;
+    const nodes = this.videoPlaylist.nativeElement.children;
+    if (nodes && !nodes.length) return 0;
+    return Math.round(this.playlistWidth / nodes[0].getBoundingClientRect().width);
+  }
+
+  get itemsCount() {
+    if (!this.videoPlaylist) return 0;
+    const nodes = this.videoPlaylist.nativeElement.children;
+    return nodes.length;
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.videos || this.content.videos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  get getMainVideo() {
+    if (this.content.videos && this.content.videos.length > 0) {
+      return this.content.videos[this.indexVideo];
+    }
+    return null;
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize = () => {
     const nodes = this.videoPlaylist.nativeElement.children;
@@ -115,18 +168,6 @@ export class VideoNoteComponent
       await document.exitPictureInPicture();
     }
   };
-
-  get volumeIcon(): string {
-    if (this.video?.volume === 0) {
-      return 'volume_off';
-    }
-    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
-      return 'volume_down';
-    }
-    if (this.video?.volume >= 0.5) {
-      return 'volume_up';
-    }
-  }
 
   togglePlay() {
     this.isPlaying = this.video.paused;
@@ -335,51 +376,12 @@ export class VideoNoteComponent
     }
   }
 
-  get fullWidth() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    let width = 0;
-    if (nodes && !nodes.length) return width;
-    for (const node of nodes) {
-      width += node.clientWidth;
-    }
-    return width;
-  }
-
-  get playlistWidth() {
-    return this.videoPlaylist.nativeElement.clientWidth;
-  }
-
-  get visibleItemsCount() {
-    if (!this.videoPlaylist) return 0;
-    const nodes = this.videoPlaylist.nativeElement.children;
-    if (nodes && !nodes.length) return 0;
-    return Math.round(this.playlistWidth / nodes[0].getBoundingClientRect().width);
-  }
-
-  get itemsCount() {
-    if (!this.videoPlaylist) return 0;
-    const nodes = this.videoPlaylist.nativeElement.children;
-    return nodes.length;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.videos || this.content.videos.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
-  get getMainVideo() {
-    if (this.content.videos && this.content.videos.length > 0) {
-      return this.content.videos[this.indexVideo];
-    }
-    return null;
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

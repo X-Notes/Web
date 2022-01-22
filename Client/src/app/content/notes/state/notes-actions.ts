@@ -74,12 +74,12 @@ export class BaseChangeTypeSmallNote {
 
   public successCalback: () => void;
 
-  get isMany() {
-    return this.selectedIds.length > 1;
-  }
-
   constructor(isAddingToDom: boolean) {
     this.isAddingToDom = isAddingToDom;
+  }
+
+  get isMany() {
+    return this.selectedIds.length > 1;
   }
 }
 

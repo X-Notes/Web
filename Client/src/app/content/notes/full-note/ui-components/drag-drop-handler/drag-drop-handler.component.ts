@@ -6,7 +6,5 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./drag-drop-handler.component.scss'],
 })
 export class DragDropHandlerComponent implements OnInit {
-  constructor() {}
-
   ngOnInit(): void {}
 }

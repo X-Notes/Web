@@ -19,7 +19,7 @@
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
         [innerHTML]="viewHtml"
-        (input)="onInput($event)"
+        (input)="onInput()"
       ></p>
       <p class="no-content-list" *ngIf="isActive">{{'innerNote.text' | translate}}</p>
     </div>

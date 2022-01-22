@@ -15,7 +15,5 @@ export class NavMenuItemComponent implements OnInit {
   @Input()
   count: number;
 
-  constructor() {}
-
   ngOnInit(): void {}
 }

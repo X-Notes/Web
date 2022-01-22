@@ -22,14 +22,14 @@ export class ContentEditorElementsListenerService {
 
   setHandlers(elements: QueryList<ParentInteraction>) {
     // DELETION
-    const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', (e) => {
+    const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
       this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.backspaceDown();
       }
     });
 
-    const keydownDelete = this.renderer.listen(document, 'keydown.delete', (e) => {
+    const keydownDelete = this.renderer.listen(document, 'keydown.delete', () => {
       this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.deleteDown();

@@ -42,7 +42,7 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => {
+    const mouseUpListener = this.renderer.listen('document', 'mouseup', () => {
       this.mouseupHandler();
     });
     const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) =>

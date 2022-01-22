@@ -46,6 +46,17 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     private rend: Renderer2,
   ) {}
 
+  @HostListener('window:resize', ['$event'])
+  sizeChange() {
+    if (!this.pService.check()) {
+      this.sliderService.getSize();
+    } else {
+      this.sliderService.mainWidth = null;
+      this.rend.setStyle(this.wrap?.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
+      this.sliderService.active = 0;
+    }
+  }
+
   ngOnDestroy(): void {
     this.sideBarService.murriService.flagForOpacity = false;
   }
@@ -56,17 +67,6 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
     await this.sideBarService.loadNotes(this.note.id);
     this.histories = await this.apiHistory.getHistory(this.note.id).toPromise();
-  }
-
-  @HostListener('window:resize', ['$event'])
-  sizeChange() {
-    if (!this.pService.check()) {
-      this.sliderService.getSize();
-    } else {
-      this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap?.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
-      this.sliderService.active = 0;
-    }
   }
 
   ngAfterViewInit(): void {

@@ -383,7 +383,7 @@ export class AppStore {
 
   @Action(ShowSnackNotification)
   async showSnackNotifications(
-    { getState, patchState }: StateContext<AppState>,
+    { patchState }: StateContext<AppState>,
     { notification }: ShowSnackNotification,
   ) {
     patchState({

@@ -33,11 +33,11 @@ export class GeneralHeaderButtonComponent {
   @Input()
   classOnSize: string;
 
-  clickHandler() {
-    this.clickEvent.emit();
-  }
-
   get isActiveMessage() {
     return this.message?.length > 0;
+  }
+
+  clickHandler() {
+    this.clickEvent.emit();
   }
 }

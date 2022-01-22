@@ -81,6 +81,43 @@ export class FolderService
       });
   }
 
+  get getByCurrentType() {
+    switch (this.store.selectSnapshot(AppStore.getTypeFolder)) {
+      case FolderTypeENUM.Private: {
+        return this.store.selectSnapshot(FolderStore.privateFolders);
+      }
+      case FolderTypeENUM.Shared: {
+        return this.store.selectSnapshot(FolderStore.sharedFolders);
+      }
+      case FolderTypeENUM.Archive: {
+        return this.store.selectSnapshot(FolderStore.archiveFolders);
+      }
+      case FolderTypeENUM.Deleted: {
+        return this.store.selectSnapshot(FolderStore.deletedFolders);
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+  }
+
+  get isSortable() {
+    return this.sortFolderType === SortedByENUM.CustomOrder;
+  }
+
+  get sortFolderType() {
+    return this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedFolderByTypeId;
+  }
+
+  get pageSortType(): SortedByENUM {
+    const isSharedType =
+      this.store.selectSnapshot(AppStore.getTypeFolder) === FolderTypeENUM.Shared;
+    if (isSharedType) {
+      return SortedByENUM.DescDate;
+    }
+    return this.sortFolderType;
+  }
+
   ngOnDestroy(): void {
     console.log('folder destroy');
     super.destroyLayout();
@@ -142,43 +179,6 @@ export class FolderService
     );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);
-  }
-
-  get getByCurrentType() {
-    switch (this.store.selectSnapshot(AppStore.getTypeFolder)) {
-      case FolderTypeENUM.Private: {
-        return this.store.selectSnapshot(FolderStore.privateFolders);
-      }
-      case FolderTypeENUM.Shared: {
-        return this.store.selectSnapshot(FolderStore.sharedFolders);
-      }
-      case FolderTypeENUM.Archive: {
-        return this.store.selectSnapshot(FolderStore.archiveFolders);
-      }
-      case FolderTypeENUM.Deleted: {
-        return this.store.selectSnapshot(FolderStore.deletedFolders);
-      }
-      default: {
-        throw new Error('Incorrect type');
-      }
-    }
-  }
-
-  get isSortable() {
-    return this.sortFolderType === SortedByENUM.CustomOrder;
-  }
-
-  get sortFolderType() {
-    return this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedFolderByTypeId;
-  }
-
-  get pageSortType(): SortedByENUM {
-    const isSharedType =
-      this.store.selectSnapshot(AppStore.getTypeFolder) === FolderTypeENUM.Shared;
-    if (isSharedType) {
-      return SortedByENUM.DescDate;
-    }
-    return this.sortFolderType;
   }
 
   async initializeEntities(folders: SmallFolder[]) {

@@ -8,10 +8,7 @@ import {
 } from 'src/app/content/notes/state/notes-actions';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import {
-  ChangeColorFolder,
-  ChangeColorFullFolder,
-} from 'src/app/content/folders/state/folders-actions';
+import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteColorPallete } from '../../enums/note-colors.enum';

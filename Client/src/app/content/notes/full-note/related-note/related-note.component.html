@@ -1,7 +1,7 @@
 <div class="small-note" appTheme>
   <div class="header">
     <button type="button" (click)="turnUpSmallNote()">
-      <div class="icon" [ngStyle]="{'transform': note.isOpened == true ? '' : 'rotate(180deg)' }">
+      <div class="icon" [ngStyle]="{'transform': note.isOpened === true ? '' : 'rotate(180deg)' }">
         <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
       </div>
     </button>

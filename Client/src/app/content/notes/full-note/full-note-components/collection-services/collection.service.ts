@@ -39,7 +39,7 @@ export class CollectionService extends BaseHtmlComponent {
     // TODO
   };
 
-  updateHTML = (content: TextBlock[]) => {
+  updateHTML = () => {
     return null;
   };
 

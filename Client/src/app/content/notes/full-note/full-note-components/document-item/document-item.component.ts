@@ -39,8 +39,6 @@ export class DocumentItemComponent implements OnInit {
     private exportService: ExportService,
   ) {}
 
-  ngOnInit(): void {}
-
   get isClicked() {
     return this.clickableService.isClicked(this.document.fileId);
   }
@@ -66,6 +64,8 @@ export class DocumentItemComponent implements OnInit {
 
     return 'fileInner';
   }
+
+  ngOnInit(): void {}
 
   openModal(document: DocumentModel) {
     const path = this.exportService.getPath(document.documentPath, document.authorId);

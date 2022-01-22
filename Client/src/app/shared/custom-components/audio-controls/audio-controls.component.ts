@@ -40,6 +40,39 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   constructor(public audioService: AudioService) {}
 
+  get isFirstPlaying() {
+    return (
+      this.audioService.playlist.findIndex(
+        (x) => x.fileId === this.audioService.currentFile.fileId,
+      ) === 0
+    );
+  }
+
+  get isLastPlaying() {
+    return (
+      this.audioService.playlist.findIndex(
+        (x) => x.fileId === this.audioService.currentFile.fileId,
+      ) ===
+      this.audioService.playlist.length - 1
+    );
+  }
+
+  get volumeIcon(): string {
+    if (this.state?.currentVolume === 0) {
+      return 'volume_off';
+    }
+    if (this.state?.currentVolume < 0.5 && this.state?.currentVolume !== 0) {
+      return 'volume_down';
+    }
+    if (this.state?.currentVolume >= 0.5) {
+      return 'volume_up';
+    }
+  }
+
+  get audioName() {
+    return this.audioService.currentFile?.name;
+  }
+
   ngOnInit(): void {
     this.audioService
       .getState()
@@ -122,44 +155,11 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     }
   }
 
-  get isFirstPlaying() {
-    return (
-      this.audioService.playlist.findIndex(
-        (x) => x.fileId === this.audioService.currentFile.fileId,
-      ) === 0
-    );
-  }
-
-  get isLastPlaying() {
-    return (
-      this.audioService.playlist.findIndex(
-        (x) => x.fileId === this.audioService.currentFile.fileId,
-      ) ===
-      this.audioService.playlist.length - 1
-    );
-  }
-
-  get volumeIcon(): string {
-    if (this.state?.currentVolume === 0) {
-      return 'volume_off';
-    }
-    if (this.state?.currentVolume < 0.5 && this.state?.currentVolume !== 0) {
-      return 'volume_down';
-    }
-    if (this.state?.currentVolume >= 0.5) {
-      return 'volume_up';
-    }
-  }
-
   onSliderChangeEnd(change) {
     this.audioService.seekTo(change.value);
   }
 
   onSliderVolumeChangeEnd(change) {
     this.audioService.seekToVolume(change.value);
-  }
-
-  get audioName() {
-    return this.audioService.currentFile?.name;
   }
 }

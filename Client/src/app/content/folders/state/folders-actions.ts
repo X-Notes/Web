@@ -26,18 +26,19 @@ export class BaseChangeTypeSmallFolder {
 
   public isAddingToDom: boolean;
 
-  get isMany() {
-    return this.selectedIds.length > 1;
-  }
-
   constructor(isAddingToDom: boolean) {
     this.isAddingToDom = isAddingToDom;
+  }
+
+  get isMany() {
+    return this.selectedIds.length > 1;
   }
 }
 
 export class ArchiveFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] Archive folders';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }
@@ -46,6 +47,7 @@ export class ArchiveFolders extends BaseChangeTypeSmallFolder {
 export class MakePrivateFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] MakePrivate folders';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }
@@ -65,6 +67,7 @@ export class MakeSharedFolders extends BaseChangeTypeSmallFolder {
 export class SetDeleteFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] SetDelete folder';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }

@@ -59,6 +59,10 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     private apiRelatedNotes: ApiRelatedNotesService,
   ) {}
 
+  get selectedNotesChips() {
+    return this.notes.filter((x) => x.isSelected);
+  }
+
   async ngAfterViewInit(): Promise<void> {
     this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.viewNotes.length && !this.firstInitedMurri) {
@@ -119,10 +123,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   // eslint-disable-next-line class-methods-use-this
   unSelectNote(note: PreviewNote) {
     note.isSelected = false;
-  }
-
-  get selectedNotesChips() {
-    return this.notes.filter((x) => x.isSelected);
   }
 
   ngOnDestroy(): void {

@@ -21,7 +21,6 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
-import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentEditorAudiosCollectionService } from '../../content-editor-services/file-content/content-editor-audios.service';
 
 @Component({
@@ -65,6 +64,10 @@ export class AudioNoteComponent
     super(cdr);
   }
 
+  get isEmpty(): boolean {
+    return !this.content.audios || this.content.audios.length === 0;
+  }
+
   getHost() {
     return this.host;
   }
@@ -103,13 +106,6 @@ export class AudioNoteComponent
       this.audioService.currentFile = audio;
       this.playStream(audio.audioPath, audio.fileId);
     }
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.audios || this.content.audios.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   async exportPlaylist(playlist: AudiosCollection) {
@@ -206,10 +202,12 @@ export class AudioNoteComponent
     return this.content.id;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

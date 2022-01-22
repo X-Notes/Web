@@ -2,7 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';

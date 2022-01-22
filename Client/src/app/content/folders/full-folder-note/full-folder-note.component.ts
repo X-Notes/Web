@@ -16,7 +16,7 @@ import { FullNoteSliderService } from '../../notes/full-note/services/full-note-
 import { ContentModelBase } from '../../notes/models/editor-models/content-model-base';
 import { FullNote } from '../../notes/models/full-note.model';
 import { SmallNote } from '../../notes/models/small-note.model';
-import { LoadFullNote, LoadOnlineUsersOnNote } from '../../notes/state/notes-actions';
+import { LoadFullNote } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { ApiFullFolderService } from '../full-folder/services/api-full-folder.service';
 

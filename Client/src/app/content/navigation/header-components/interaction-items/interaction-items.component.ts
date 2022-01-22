@@ -49,6 +49,24 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store, public pService: PersonalizationService) {}
 
+  get isAnyItemOnPage() {
+    if (this.store.selectSnapshot(AppStore.isNote)) {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      return (
+        this.store.selectSnapshot(NoteStore.getNotes).find((x) => x.typeNotes === noteType)?.count >
+        0
+      );
+    }
+    if (this.store.selectSnapshot(AppStore.isFolder)) {
+      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+      return (
+        this.store.selectSnapshot(FolderStore.getFolders).find((x) => x.typeFolders === folderType)
+          ?.count > 0
+      );
+    }
+    return false;
+  }
+
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
@@ -72,24 +90,6 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
           this.countSelected = x;
         }
       });
-  }
-
-  get isAnyItemOnPage() {
-    if (this.store.selectSnapshot(AppStore.isNote)) {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      return (
-        this.store.selectSnapshot(NoteStore.getNotes).find((x) => x.typeNotes === noteType)?.count >
-        0
-      );
-    }
-    if (this.store.selectSnapshot(AppStore.isFolder)) {
-      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      return (
-        this.store.selectSnapshot(FolderStore.getFolders).find((x) => x.typeFolders === folderType)
-          ?.count > 0
-      );
-    }
-    return false;
   }
 
   // Selection

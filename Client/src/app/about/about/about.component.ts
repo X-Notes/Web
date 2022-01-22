@@ -11,9 +11,9 @@ import { TypeAuthEnum } from '../models/type.auth.enum';
   styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent {
-  constructor(private authService: AuthService, private router: Router, private store: Store) {}
-
   authType = TypeAuthEnum;
+
+  constructor(private authService: AuthService, private router: Router, private store: Store) {}
 
   login(typeAuth: TypeAuthEnum) {
     const flag = this.store.selectSnapshot(AppStore.appLoaded);

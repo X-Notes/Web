@@ -1,4 +1,4 @@
-import Quill, { DeltaOperation, DeltaStatic, RangeStatic } from 'quill';
+import Quill, { DeltaOperation, DeltaStatic } from 'quill';
 import { TextBlock, TextType } from '../../../models/editor-models/base-text';
 
 export interface StringAny {
@@ -7,6 +7,10 @@ export interface StringAny {
 
 export class DeltaConverter {
   static quillInstance: Quill;
+
+  static get getFormated(): DeltaStatic {
+    return DeltaConverter.quillInstance.getContents();
+  }
 
   static initQuill() {
     const id = 'hidden-text-editor';
@@ -76,10 +80,6 @@ export class DeltaConverter {
 
   static setHtml(html: string): void {
     DeltaConverter.quillInstance.clipboard.dangerouslyPasteHTML(html, 'silent');
-  }
-
-  static get getFormated(): DeltaStatic {
-    return DeltaConverter.quillInstance.getContents();
   }
 
   private static convertToAttibutes(block: TextBlock): StringAny {

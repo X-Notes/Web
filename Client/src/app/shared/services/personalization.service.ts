@@ -189,6 +189,14 @@ export class PersonalizationService {
     this.subscribeMobileActiveMenu();
   }
 
+  get isHistoryButtonInMobileMenu$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
+  }
+
+  get isHideTextOnSmall$() {
+    return this.windowWidth$.pipe(map((value) => value < 1400));
+  }
+
   subscribeWindowEvents() {
     fromEvent(window, 'resize')
       .pipe(map((value) => value as any))
@@ -196,14 +204,6 @@ export class PersonalizationService {
         this.windowHeight$.next(evt.target.innerHeight);
         this.windowWidth$.next(evt.target.innerWidth);
       });
-  }
-
-  get isHistoryButtonInMobileMenu$() {
-    return this.windowWidth$.pipe(map((value) => value < 1025));
-  }
-
-  get isHideTextOnSmall$() {
-    return this.windowWidth$.pipe(map((value) => value < 1400));
   }
 
   subscribeMobileActiveMenu() {

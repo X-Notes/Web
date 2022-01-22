@@ -41,8 +41,8 @@ export class HtmlDotListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlDotListComponent>();
 
   @Input()
@@ -62,6 +62,10 @@ export class HtmlDotListComponent
     cdr: ChangeDetectorRef,
   ) {
     super(cdr);
+  }
+
+  get isActive() {
+    return this.dotListService.isActive(this.contentHtml);
   }
 
   getHost() {
@@ -91,6 +95,7 @@ export class HtmlDotListComponent
 
   isFocusToNext = () => true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus(entity: SetFocus) {
     this.dotListService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -110,10 +115,6 @@ export class HtmlDotListComponent
   mouseLeave($event) {
     this.dotListService.mouseLeave($event, this.contentHtml);
     this.isMouseOver = false;
-  }
-
-  get isActive() {
-    return this.dotListService.isActive(this.contentHtml);
   }
 
   // eslint-disable-next-line class-methods-use-this

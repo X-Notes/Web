@@ -8,7 +8,6 @@ import { User } from './models/user.model';
 import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateApp/app-action';
-import { TypeAuthEnum } from '../about/models/type.auth.enum';
 
 @Injectable()
 export class AuthService {

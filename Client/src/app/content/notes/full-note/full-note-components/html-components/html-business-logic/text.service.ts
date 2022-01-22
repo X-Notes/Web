@@ -47,5 +47,6 @@ export class TextService extends HtmlService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backUp = (e: any) => {};
 }

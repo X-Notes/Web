@@ -43,6 +43,10 @@ export class AudioComponent implements OnInit, OnDestroy {
     private clickableService: ClickableContentService,
   ) {}
 
+  get isClicked() {
+    return this.clickableService.isClicked(this.audio.fileId);
+  }
+
   async ngOnInit(): Promise<void> {
     this.audioService
       .getState()
@@ -55,10 +59,6 @@ export class AudioComponent implements OnInit, OnDestroy {
         }
       });
     this.metadataParsed = await this.audioService.getMetadata(this.audio.audioPath);
-  }
-
-  get isClicked() {
-    return this.clickableService.isClicked(this.audio.fileId);
   }
 
   ngOnDestroy(): void {

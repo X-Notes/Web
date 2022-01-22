@@ -47,6 +47,10 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private clickableService: ClickableContentService,
   ) {}
 
+  get subtractionScrollTopAndScrollStart() {
+    return Math.abs(this.mainContent.scrollTop - this.startTop);
+  }
+
   @HostListener('mousedown', ['$event'])
   onClick() {
     this.isFullNote = true;
@@ -118,6 +122,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseUp(evt) {
     this.isFullNote = false;
     this.selectionService.ismousedown = false;
@@ -167,10 +172,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
       this.selectionEvent.emit(this.div.getBoundingClientRect());
     }
-  }
-
-  get subtractionScrollTopAndScrollStart() {
-    return Math.abs(this.mainContent.scrollTop - this.startTop);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

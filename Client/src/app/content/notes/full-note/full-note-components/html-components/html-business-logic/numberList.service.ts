@@ -8,14 +8,17 @@ import { HtmlService } from './html.service';
 export class NumberListService extends HtmlService {
   transformTo = new EventEmitter<TransformContent>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   pasteCommandHandler = (e: any) => {
     throw new Error('Method not implemented.');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart = (e: any) => {
     // SELECTIION
   };
@@ -56,5 +59,6 @@ export class NumberListService extends HtmlService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backUp = (e: any) => {};
 }

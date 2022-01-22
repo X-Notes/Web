@@ -5,8 +5,6 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
   providedIn: 'root',
 })
 export class SnackBarTranlateHelperService {
-  constructor() {}
-
   getNoAccessRightsTranslate(lname: LanguagesENUM): string {
     switch (lname) {
       case LanguagesENUM.English: {

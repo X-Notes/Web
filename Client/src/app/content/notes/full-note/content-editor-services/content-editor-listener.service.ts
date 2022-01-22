@@ -23,7 +23,7 @@ export class ContentEditorListenerService {
   setHandlers(elements: QueryList<ParentInteraction>, noteTitleEl: ElementRef) {
     // KEY UP NAVIGATION
 
-    const keydownArrowUp = this.renderer.listen(document, 'keydown.ArrowUp', (e) => {
+    const keydownArrowUp = this.renderer.listen(document, 'keydown.ArrowUp', () => {
       if (document.activeElement === noteTitleEl.nativeElement) {
         return;
       }
@@ -45,7 +45,7 @@ export class ContentEditorListenerService {
       }
     });
 
-    const keydownArrowDown = this.renderer.listen(document, 'keydown.ArrowDown', (e) => {
+    const keydownArrowDown = this.renderer.listen(document, 'keydown.ArrowDown', () => {
       const arr = elements.toArray();
 
       if (document.activeElement === noteTitleEl.nativeElement) {

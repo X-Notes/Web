@@ -41,8 +41,8 @@ export class HtmlCheckListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlCheckListComponent>();
 
   @Input()
@@ -62,6 +62,10 @@ export class HtmlCheckListComponent
     cdr: ChangeDetectorRef,
   ) {
     super(cdr);
+  }
+
+  get isActive() {
+    return this.checkListService.isActive(this.contentHtml);
   }
 
   getHost() {
@@ -91,6 +95,7 @@ export class HtmlCheckListComponent
 
   isFocusToNext = () => true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus(entity: SetFocus) {
     this.checkListService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -109,10 +114,6 @@ export class HtmlCheckListComponent
   mouseLeave($event) {
     this.checkListService.mouseLeave($event, this.contentHtml);
     this.isMouseOver = false;
-  }
-
-  get isActive() {
-    return this.checkListService.isActive(this.contentHtml);
   }
 
   clickHandler($event: Event) {

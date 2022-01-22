@@ -31,6 +31,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     this.copyListener = this.renderer.listen('body', 'copy', (e) => this.customCopy(e));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   customCopy(e) {
     const selectedItemsIds = this.selectionService.getSelectedItems();
     const items = this.contentEditorContentsService.getContents

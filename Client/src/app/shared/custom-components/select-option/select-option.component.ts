@@ -17,13 +17,13 @@ export class SelectOptionComponent implements Highlightable {
 
   private select: SelectComponent;
 
+  constructor(private selectService: SelectService) {
+    this.select = this.selectService.getSelect();
+  }
+
   @HostBinding('class.selected')
   public get selected(): boolean {
     return this.select.selectedOption === this;
-  }
-
-  constructor(private selectService: SelectService) {
-    this.select = this.selectService.getSelect();
   }
 
   @HostListener('click', ['$event'])
