@@ -22,12 +22,6 @@ jobs:
           git config --global user.email github-actions@github.com
           git pull --no-rebase origin DEV
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'yarn'
-
       - name: Install dependencies
         run: yarn
 
