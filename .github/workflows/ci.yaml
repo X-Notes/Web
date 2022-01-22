@@ -22,6 +22,7 @@ jobs:
           git pull --no-rebase origin DEV
 
       - name: Setup Node.js
+        working-directory: ./Client
         uses: actions/setup-node@v2
         with:
           node-version: 16
