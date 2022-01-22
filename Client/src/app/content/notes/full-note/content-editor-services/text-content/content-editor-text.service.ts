@@ -19,7 +19,6 @@ export class ContentEditorTextService {
     return 0;
   }
 
-
   insertNewContent(contentId: string, nextRowType: NoteTextTypeENUM, isFocusToNext: boolean) {
     let index = this.contentsService.getIndexOrErrorById(contentId);
     if (isFocusToNext) {

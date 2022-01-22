@@ -22,7 +22,7 @@
         class="block-generic default-text-size"
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
-        (input)="onInput($event)"
+        (input)="onInput()"
         [innerHTML]="viewHtml"
         [ngClass]="{
           'checked-item': content.checked

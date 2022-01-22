@@ -11,29 +11,29 @@ import { TypeAuthEnum } from '../models/type.auth.enum';
   styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent {
-  constructor(private authService: AuthService, private router: Router, private store: Store) {}
-
   authType = TypeAuthEnum;
+
+  constructor(private authService: AuthService, private router: Router, private store: Store) {}
 
   login(typeAuth: TypeAuthEnum) {
     const flag = this.store.selectSnapshot(AppStore.appLoaded);
     if (!flag) {
-      switch(typeAuth){
-        case TypeAuthEnum.Google:{
+      switch (typeAuth) {
+        case TypeAuthEnum.Google: {
           this.authService.authGoogle();
           break;
         }
-        case TypeAuthEnum.Facebook:{
+        case TypeAuthEnum.Facebook: {
           // this.authService.authFacebook();
           break;
         }
-        case TypeAuthEnum.Git:{
+        case TypeAuthEnum.Git: {
           break;
         }
-        case TypeAuthEnum.Twitter:{
+        case TypeAuthEnum.Twitter: {
           break;
         }
-        default:{
+        default: {
           throw new Error('Incorrec type');
         }
       }

@@ -1,7 +1,6 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
@@ -17,7 +16,8 @@ import { ApiFullFolderService } from './api-full-folder.service';
 @Injectable()
 export class FullFolderNotesService
   extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
+{
   constructor(
     store: Store,
     murriService: MurriService,

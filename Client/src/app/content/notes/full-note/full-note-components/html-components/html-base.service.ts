@@ -48,7 +48,7 @@ export class HtmlBaseService extends BaseHtmlComponent {
       });
   }
 
-  onInput($event) {
+  onInput() {
     this.syncHtmlWithLayout();
   }
 

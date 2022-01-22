@@ -60,6 +60,23 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     super(cdr);
   }
 
+  get isClicked() {
+    return this.clickableService.isClicked(this.getFirst?.fileId);
+  }
+
+  get getFirst(): DocumentModel {
+    if (this.content.documents && this.content.documents.length > 0) {
+      return this.content.documents[0];
+    }
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.documents || this.content.documents.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   clickDocumentHandler(documentId: string) {
     this.clickableService.set(ClickableSelectableEntities.Document, documentId, this.content.id);
   }
@@ -163,33 +180,18 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     await this.exportService.exportDocuments(documents);
   }
 
-  get isClicked() {
-    return this.clickableService.isClicked(this.getFirst?.fileId);
-  }
-
-  get getFirst(): DocumentModel {
-    if (this.content.documents && this.content.documents.length > 0) {
-      return this.content.documents[0];
-    }
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.documents || this.content.documents.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
   async uploadDocuments(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

@@ -70,7 +70,7 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private orderService: OrderService) { }
+  constructor(private api: ApiFoldersService, private orderService: OrderService) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -280,7 +280,7 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { order, typeFolder }: PositionFolder,
   ) {
-    let folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
+    const folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
     const changedFolder = folders.find((x) => x.id === order.entityId);
     const flag = folders.indexOf(changedFolder);
     if (flag + 1 !== order.position) {

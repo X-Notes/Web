@@ -2,7 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -28,7 +28,8 @@ import { NoteEntitiesService } from 'src/app/shared/services/note-entities.servi
 @Injectable()
 export class NotesService
   extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
+{
   labelsIds: Subscription;
 
   firstInitFlag = false;
@@ -244,7 +245,7 @@ export class NotesService
     if (ids.length !== 0 && this.firstInitFlag) {
       await this.destroyGridAsync();
 
-      let tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
+      const tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
       this.entities = this.orderBy(tempNotes, this.pageSortType);

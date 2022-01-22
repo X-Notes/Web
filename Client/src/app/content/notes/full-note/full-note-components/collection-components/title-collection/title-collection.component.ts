@@ -44,6 +44,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
+  get isFocusedOnTitle(): boolean {
+    return document.activeElement === this.titleHtml.nativeElement;
+  }
+
   ngOnInit(): void {
     this.title = this.textContent;
     this.nameCollectionChanged
@@ -65,10 +69,6 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   focusOnTitle() {
     this.titleHtml.nativeElement.focus();
-  }
-
-  get isFocusedOnTitle(): boolean {
-    return document.activeElement === this.titleHtml.nativeElement;
   }
 
   preventEnter = ($event: KeyboardEvent): void => {

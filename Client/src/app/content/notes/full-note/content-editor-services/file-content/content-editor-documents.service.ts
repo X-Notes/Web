@@ -135,6 +135,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
   };
 
   // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteDocumentHandler(documentId: string, contentId: string, noteId: string) {
     // TODO
   }

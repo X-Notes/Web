@@ -9,7 +9,6 @@ import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 
 @Injectable()
 export class ApiFoldersService {

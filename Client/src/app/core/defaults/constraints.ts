@@ -1,4 +1,3 @@
-
 export const maxRequestFileSize = 1572864000;
 
 export const fileSizeForCheck = 62914560;

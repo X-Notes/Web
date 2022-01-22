@@ -1,4 +1,4 @@
-export interface FileSizeConstraints{
-    maxProfilePhotoSize: number;
-    maxBackgroundPhotoSize: number;
+export interface FileSizeConstraints {
+  maxProfilePhotoSize: number;
+  maxBackgroundPhotoSize: number;
 }

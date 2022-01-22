@@ -11,12 +11,27 @@ import { BillingENUM } from 'src/app/shared/enums/billing.enum';
   styleUrls: ['./side-bar.component.scss'],
 })
 export class SideBarComponent implements OnInit, OnDestroy {
-
   destroy = new Subject<void>();
 
   billing: BillingENUM;
-  
-  constructor(private store: Store) {    
+
+  constructor(private store: Store) {}
+
+  get userBillingPlan() {
+    switch (this.billing) {
+      case BillingENUM.Free: {
+        return 'F';
+      }
+      case BillingENUM.Standart: {
+        return 'S';
+      }
+      case BillingENUM.Business: {
+        return 'B';
+      }
+      default: {
+        return '';
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -26,26 +41,8 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store
-    .select(UserStore.getUser)
-    .pipe(takeUntil(this.destroy))
-    .subscribe((user) => this.billing = user.billingPlanId);
+      .select(UserStore.getUser)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((user) => (this.billing = user.billingPlanId));
   }
-
-  get userBillingPlan(){
-    switch(this.billing){
-      case BillingENUM.Free:{
-        return 'F';
-      }
-      case BillingENUM.Standart: {
-        return 'S';
-      }
-      case BillingENUM.Business:{
-        return 'B'
-      }
-      default:{
-        return '';
-      }
-    }
-  }
-  
 }

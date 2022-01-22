@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
-import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
+import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
@@ -29,7 +29,6 @@ import {
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
-import { AppStore } from '../stateApp/app-state';
 import { byteToMB } from '../defaults/byte-convert';
 import { maxProfilePhotoSize } from '../defaults/constraints';
 

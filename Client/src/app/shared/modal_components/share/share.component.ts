@@ -121,6 +121,26 @@ export class ShareComponent implements OnInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
   ) {}
 
+  get isPrivateButtonActive() {
+    if (this.currentWindowType === SharedType.Note) {
+      return this.currentNote?.noteTypeId !== NoteTypeENUM.Shared;
+    }
+    if (this.currentWindowType === SharedType.Folder) {
+      return this.currentFolder?.folderTypeId !== FolderTypeENUM.Shared;
+    }
+    throw new Error('Incorrect type');
+  }
+
+  get isSharedButtonActive() {
+    if (this.currentWindowType === SharedType.Note) {
+      return this.currentNote?.noteTypeId === NoteTypeENUM.Shared;
+    }
+    if (this.currentWindowType === SharedType.Folder) {
+      return this.currentFolder?.folderTypeId === FolderTypeENUM.Shared;
+    }
+    throw new Error('Incorrect type');
+  }
+
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
@@ -400,26 +420,6 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
-  }
-
-  get isPrivateButtonActive() {
-    if (this.currentWindowType === SharedType.Note) {
-      return this.currentNote?.noteTypeId !== NoteTypeENUM.Shared;
-    }
-    if (this.currentWindowType === SharedType.Folder) {
-      return this.currentFolder?.folderTypeId !== FolderTypeENUM.Shared;
-    }
-    throw new Error('Incorrect type');
-  }
-
-  get isSharedButtonActive() {
-    if (this.currentWindowType === SharedType.Note) {
-      return this.currentNote?.noteTypeId === NoteTypeENUM.Shared;
-    }
-    if (this.currentWindowType === SharedType.Folder) {
-      return this.currentFolder?.folderTypeId === FolderTypeENUM.Shared;
-    }
-    throw new Error('Incorrect type');
   }
 
   changeNote(note: SmallNote) {

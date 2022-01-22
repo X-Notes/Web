@@ -27,7 +27,8 @@ import { HeadingService } from '../html-business-logic/heading.service';
 })
 export class HtmlHeadingsComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
+{
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
@@ -39,6 +40,7 @@ export class HtmlHeadingsComponent
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlHeadingsComponent>();
 
   @Input()
@@ -60,6 +62,10 @@ export class HtmlHeadingsComponent
     cdr: ChangeDetectorRef,
   ) {
     super(cdr);
+  }
+
+  get isActive() {
+    return this.headingService.isActive(this.contentHtml);
   }
 
   getHost() {
@@ -88,6 +94,7 @@ export class HtmlHeadingsComponent
 
   isFocusToNext = () => true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus(entity: SetFocus) {
     this.headingService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -106,10 +113,6 @@ export class HtmlHeadingsComponent
   mouseLeave($event) {
     this.headingService.mouseLeave($event, this.contentHtml);
     this.isMouseOver = false;
-  }
-
-  get isActive() {
-    return this.headingService.isActive(this.contentHtml);
   }
 
   // eslint-disable-next-line class-methods-use-this

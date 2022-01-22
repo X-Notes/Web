@@ -48,6 +48,10 @@ export class NotesComponent implements OnInit, OnDestroy {
     private router: Router,
   ) {}
 
+  get labelsActive() {
+    return this.labelsFilters.filter((z) => z.selected === true).length > 0;
+  }
+
   async ngOnInit() {
     this.store
       .select(AppStore.appLoaded)
@@ -86,10 +90,6 @@ export class NotesComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new AddNote()).toPromise();
     const notes = this.store.selectSnapshot(NoteStore.privateNotes);
     this.router.navigate([`notes/${notes[0].id}`]);
-  }
-
-  get labelsActive() {
-    return this.labelsFilters.filter((z) => z.selected === true).length > 0;
   }
 
   cancelLabel() {

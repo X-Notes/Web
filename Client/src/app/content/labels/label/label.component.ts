@@ -18,7 +18,6 @@ import {
   UpdateLabelFullNote,
 } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
-import { RestoreLabel } from '../state/labels-actions';
 import { Label } from '../models/label.model';
 
 @Component({

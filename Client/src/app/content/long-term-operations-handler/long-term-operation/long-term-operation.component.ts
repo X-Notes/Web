@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { LongTermOperation, OperationDetailMini } from '../models/long-term-operation';
 
@@ -7,7 +7,7 @@ import { LongTermOperation, OperationDetailMini } from '../models/long-term-oper
   templateUrl: './long-term-operation.component.html',
   styleUrls: ['./long-term-operation.component.scss'],
 })
-export class LongTermOperationComponent implements OnInit {
+export class LongTermOperationComponent {
   @Output()
   cancelAllEvent = new EventEmitter();
 
@@ -18,13 +18,6 @@ export class LongTermOperationComponent implements OnInit {
   operation: LongTermOperation;
 
   constructor(private prService: PersonalizationService) {}
-
-  // eslint-disable-next-line class-methods-use-this
-  ngOnInit(): void {}
-
-  toogleIsDetailViewActive() {
-    this.operation.isDetailViewOpened = !this.operation.isDetailViewOpened;
-  }
 
   get firstItem(): OperationDetailMini {
     return this.operation.details[0];
@@ -49,5 +42,9 @@ export class LongTermOperationComponent implements OnInit {
 
   get isOpened() {
     return this.operation.isDetailViewOpened && this.operation.isDetailViewActive;
+  }
+
+  toogleIsDetailViewActive() {
+    this.operation.isDetailViewOpened = !this.operation.isDetailViewOpened;
   }
 }

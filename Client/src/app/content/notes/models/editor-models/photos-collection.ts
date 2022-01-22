@@ -120,14 +120,6 @@ export class Photo {
 
   uploadAt: Date;
 
-  get photoFromBig() {
-    return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
-  }
-
-  get photoFromSmall() {
-    return this.photoPathSmall ?? this.photoPathMedium ?? this.photoPathBig;
-  }
-
   constructor(
     fileId: string,
     photoPathSmall: string,
@@ -146,6 +138,14 @@ export class Photo {
     this.name = name;
     this.authorId = authorId;
     this.uploadAt = uploadAt;
+  }
+
+  get photoFromBig() {
+    return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
+  }
+
+  get photoFromSmall() {
+    return this.photoPathSmall ?? this.photoPathMedium ?? this.photoPathBig;
   }
 
   isEqual(content: Photo): boolean {

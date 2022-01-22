@@ -11,7 +11,6 @@ import {
   OnInit,
   Output,
   Renderer2,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
@@ -34,7 +33,8 @@ import { ContentEditorPhotosCollectionService } from '../../content-editor-servi
 })
 export class PhotosComponent
   extends CollectionService
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
+{
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -84,7 +84,26 @@ export class PhotosComponent
     super(cdr);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  get countOfBlocks() {
+    return Math.floor(this.content.photos.length / this.content.countInRow);
+  }
+
+  get countLastItems() {
+    return this.content.photos.length % this.content.countInRow;
+  }
+
+  get totalRows() {
+    return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.photos || this.content.photos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  ngOnChanges(): void {
     this.updateHeightByNativeOffset();
   }
 
@@ -94,7 +113,8 @@ export class PhotosComponent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
+    this.mainContainer =
+      this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
   uploadHandler = () => {
@@ -242,25 +262,6 @@ export class PhotosComponent
     }
   }
 
-  get countOfBlocks() {
-    return Math.floor(this.content.photos.length / this.content.countInRow);
-  }
-
-  get countLastItems() {
-    return this.content.photos.length % this.content.countInRow;
-  }
-
-  get totalRows() {
-    return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.photos || this.content.photos.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
   deletePhotoHandler(photoId: string) {
     this.deletePhotoEvent.emit(photoId);
   }
@@ -360,10 +361,12 @@ export class PhotosComponent
     return this.host;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

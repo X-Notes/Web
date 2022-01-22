@@ -7,7 +7,7 @@ import { MurriEntityService } from './murri-entity.service';
 import { MurriService } from './murri.service';
 
 export class FeaturesEntitiesService<
-  Entity extends SmallNote | SmallFolder
+  Entity extends SmallNote | SmallFolder,
 > extends MurriEntityService<Entity> {
   constructor(public store: Store, murriService: MurriService) {
     super(murriService);
@@ -32,7 +32,7 @@ export class FeaturesEntitiesService<
         throw new Error('Incorrec type');
       }
     }
-  }
+  };
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {

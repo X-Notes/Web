@@ -86,6 +86,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
   ) {}
 
+  get folderMenu() {
+    const type = this.folder?.folderTypeId;
+    if (type) {
+      return this.menuButtonService.getFolderMenuByFolderType(type);
+    }
+    return [];
+  }
+
   ngAfterViewInit(): void {
     this.ffnService.murriInitialise(this.refElements);
     this.initPanelClassStyleSubscribe();
@@ -130,14 +138,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
-  }
-
-  get folderMenu() {
-    const type = this.folder?.folderTypeId;
-    if (type) {
-      return this.menuButtonService.getFolderMenuByFolderType(type);
-    }
-    return [];
   }
 
   initHeaderButtonSubscribe() {

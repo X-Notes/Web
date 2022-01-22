@@ -4,20 +4,19 @@ import { Directive, EventEmitter, HostBinding, HostListener, Input, Output } fro
   selector: '[appDrop]',
 })
 export class DropDirective {
-
   @Input() appDrop: string; // class that can be active
-  
+
   @Output() fileDropped = new EventEmitter<File[]>();
 
   @Output() dragOverEvent = new EventEmitter();
 
   @Output() dragLeaveEvent = new EventEmitter();
 
+  isActive = false;
+
   @HostBinding('class') get fileOver(): string {
     return this.isActive ? this.appDrop : null;
   }
-
-  isActive = false;
 
   @HostListener('dragover', ['$event']) onDragOver(evt) {
     evt.preventDefault();

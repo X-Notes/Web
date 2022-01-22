@@ -21,11 +21,11 @@ export class DialogGenericHeaderComponent {
   @Input()
   message: string;
 
-  clickHandler() {
-    this.clickEvent.emit();
-  }
-
   get basicStyles() {
     return this.isMessage ? 'is-message' : 'no-message';
+  }
+
+  clickHandler() {
+    this.clickEvent.emit();
   }
 }
