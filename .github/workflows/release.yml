@@ -23,9 +23,7 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          useRollingCache: true
+        run: yarn
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
