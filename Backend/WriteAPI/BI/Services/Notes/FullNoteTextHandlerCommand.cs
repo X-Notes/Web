@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
@@ -37,6 +38,8 @@ namespace BI.Services.Notes
 
         private readonly UserRepository userRepository;
 
+        private readonly NoteWSUpdateService noteWSUpdateService;
+
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
             NoteRepository noteRepository,
@@ -44,7 +47,8 @@ namespace BI.Services.Notes
             AppCustomMapper appCustomMapper,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
-            UserRepository userRepository)
+            UserRepository userRepository,
+            NoteWSUpdateService noteWSUpdateService)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
@@ -53,6 +57,7 @@ namespace BI.Services.Notes
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
             this.userRepository = userRepository;
+            this.noteWSUpdateService = noteWSUpdateService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -70,13 +75,7 @@ namespace BI.Services.Notes
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                 // WS UPDATES
-                var userIds = new List<Guid>() { note.UserId };
-                userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
-                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                var emails = users.Select(x => x.Email);
-                var updates = new UpdateNoteWS { Title = note.Title, NoteId = note.Id };
-                await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                //
+                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers());
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

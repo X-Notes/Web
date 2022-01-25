@@ -35,12 +35,13 @@ import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
+import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService],
+  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -86,20 +87,24 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateNoteService: UpdaterEntitiesService,
     private router: Router,
     private htmlTitleService: HtmlTitleService,
+    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService
   ) {}
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialise(this.refElements);
     this.initPanelClassStyleSubscribe();
+    this.webSocketsFolderUpdaterService.tryJoinToFolder(this.id);
   }
 
   ngOnDestroy(): void {
+    this.webSocketsFolderUpdaterService.leaveFolder(this.id);
     this.updateNoteService.foldersIds$.next([
       ...this.updateNoteService.foldersIds$.getValue(),
       this.id,
     ]);
     this.routeSubscription.unsubscribe();
   }
+
 
   async ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;

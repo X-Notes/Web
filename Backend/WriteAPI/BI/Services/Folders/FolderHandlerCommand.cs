@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Mapping;
 using BI.SignalR;
 using Common;
@@ -30,7 +31,7 @@ namespace BI.Services.Folders
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly AppSignalRService appSignalRService;
+        private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly UserRepository userRepository;
         private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
@@ -40,14 +41,14 @@ namespace BI.Services.Folders
             AppCustomMapper appCustomMapper, 
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
-            AppSignalRService appSignalRService)
+            FolderWSUpdateService folderWSUpdateService)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this.appCustomMapper = appCustomMapper;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
-            this.appSignalRService = appSignalRService;
+            this.folderWSUpdateService = folderWSUpdateService;
         }
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
@@ -108,15 +109,8 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateRangeAsync(foldersForUpdate);
 
                 // WS UPDATES
-                foreach (var folder in permissions.Select(x => x.perm.Folder))
-                {
-                    var userIds = new List<Guid>() { folder.UserId };
-                    userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
-                    var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                    var emails = users.Select(x => x.Email);
-                    var updates = new UpdateFolderWS { Color = folder.Color, FolderId = folder.Id };
-                    await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
-                }
+                var updates = permissions.Select(x => (new UpdateFolderWS { Color = request.Color, FolderId = x.folderId }, x.perm.GetAllUsers()));
+                await folderWSUpdateService.UpdateFolders(updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -51,12 +51,13 @@ import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text
 import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
 import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
+import { WebSocketsNoteUpdaterService } from '../content-editor-services/web-sockets-note-updater.service';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
-  providers: [ContentEditableService],
+  providers: [ContentEditableService, WebSocketsNoteUpdaterService],
 })
 export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
@@ -115,14 +116,17 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     private contentEditorListenerService: ContentEditorListenerService,
     private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
+    private webSocketsUpdaterService: WebSocketsNoteUpdaterService
   ) { }
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elements);
     this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
+    this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
   }
 
   ngOnDestroy(): void {
+    this.webSocketsUpdaterService.leaveNote(this.note.id);
     this.destroy.next();
     this.destroy.complete();
     this.contentEditorElementsListenersService.destroysListeners();

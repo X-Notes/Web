@@ -4,7 +4,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
-import { SignalRService } from 'src/app/core/signal-r.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -16,7 +15,7 @@ import { FullNoteSliderService } from '../../notes/full-note/services/full-note-
 import { ContentModelBase } from '../../notes/models/editor-models/content-model-base';
 import { FullNote } from '../../notes/models/full-note.model';
 import { SmallNote } from '../../notes/models/small-note.model';
-import { LoadFullNote, LoadOnlineUsersOnNote } from '../../notes/state/notes-actions';
+import { LoadFullNote } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { ApiFullFolderService } from '../full-folder/services/api-full-folder.service';
 
@@ -66,7 +65,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     private store: Store,
     private apiFullFolder: ApiFullFolderService,
     public sliderService: FullNoteSliderService,
-    private signalRService: SignalRService,
     private api: ApiServiceNotes,
     public pService: PersonalizationService,
   ) {
@@ -93,7 +91,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     // LEFT SECTION
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     this.linkNotes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
-    await this.signalRService.joinNote(this.noteId);
   }
 
   async loadMain() {
@@ -102,9 +99,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     if (isCanView) {
       await this.loadContent();
       this.note = this.store.selectSnapshot(NoteStore.oneFull);
-      this.signalRService.updateContentEvent
-        .pipe(takeUntil(this.destroy))
-        .subscribe(() => this.loadContent());
     }
     this.loaded = true;
   }

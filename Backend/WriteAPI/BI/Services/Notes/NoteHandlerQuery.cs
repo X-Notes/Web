@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
 using BI.Mapping;
+using BI.SignalR;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
@@ -36,33 +37,33 @@ namespace BI.Services.Notes
         private readonly IMapper mapper;
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
-        private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly WebsocketsNotesService websocketsNotesService;
 
         public NoteHandlerQuery(
             IMapper mapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            UserOnNoteRepository userOnNoteRepository,
             AppCustomMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            WebsocketsNotesService websocketsNotesService)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
-            this.userOnNoteRepository = userOnNoteRepository;
             this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.websocketsNotesService = websocketsNotesService;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -141,7 +142,8 @@ namespace BI.Services.Notes
             var permissions = await _mediator.Send(command);
             if (permissions.CanRead)
             {
-                var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
+                var ids = websocketsNotesService.GetIdsByEntityId(request.Id);
+                var users = await userRepository.GetUsersWithPhotos(ids);
                 return mapper.Map<List<OnlineUserOnNote>>(users);
             }
             return new List<OnlineUserOnNote>();

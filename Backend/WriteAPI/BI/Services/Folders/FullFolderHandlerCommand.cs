@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
@@ -22,22 +23,22 @@ namespace BI.Services.Folders
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly AppSignalRService appSignalRService;
         private readonly UserRepository userRepository;
+        private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly IMediator _mediator;
 
         public FullFolderHandlerCommand(
             FolderRepository folderRepository,
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
-            AppSignalRService appSignalRService,
-            UserRepository userRepository)
+            UserRepository userRepository,
+            FolderWSUpdateService folderWSUpdateService)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
-            this.appSignalRService = appSignalRService;
             this.userRepository = userRepository;
+            this.folderWSUpdateService = folderWSUpdateService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
@@ -53,13 +54,7 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateAsync(folder);
 
                 // WS UPDATES
-                var userIds = new List<Guid>() { folder.UserId };
-                userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
-                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                var emails = users.Select(x => x.Email);
-                var updates = new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id };
-                await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
-                //
+                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers());
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -94,14 +89,9 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateAsync(folder);
 
                 // WS UPDATES
-                var notes = await foldersNotesRepository.GetNotes(folder.Id);
-                var userIds = new List<Guid>() { folder.UserId };
-                userIds.AddRange(folder.UsersOnPrivateFolders.Select(x => x.UserId));
-                var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                var emails = users.Select(x => x.Email);
-                var updates = new UpdateFolderWS { PreviewNotes = notes.Select(x => new NotePreviewInFolder { Title = x.Title }).ToList(), FolderId = folder.Id };
-                await appSignalRService.UpdateFoldersInManyUsers(updates, emails);
-                //
+                var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
+                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -52,17 +52,22 @@ namespace BI.Services.Notes
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
-        private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
+        private readonly NoteWSUpdateService noteWSUpdateService;
 
         public NoteHandlerCommand(
-            UserRepository userRepository, NoteRepository noteRepository,
-            AppCustomMapper noteCustomMapper, IMediator _mediator, LabelsNotesRepository labelsNotesRepository,
-            BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService, NoteSnapshotRepository noteSnapshotRepository,
-            LabelRepository labelRepository)
+            UserRepository userRepository, 
+            NoteRepository noteRepository,
+            AppCustomMapper noteCustomMapper, 
+            IMediator _mediator, 
+            LabelsNotesRepository labelsNotesRepository,
+            BaseNoteContentRepository baseNoteContentRepository,
+            HistoryCacheService historyCacheService, 
+            NoteSnapshotRepository noteSnapshotRepository,
+            LabelRepository labelRepository, 
+            NoteWSUpdateService noteWSUpdateService)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -70,10 +75,10 @@ namespace BI.Services.Notes
             this._mediator = _mediator;
             this.labelsNotesRepository = labelsNotesRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.labelRepository = labelRepository;
+            this.noteWSUpdateService = noteWSUpdateService;
         }
 
 
@@ -131,15 +136,12 @@ namespace BI.Services.Notes
                 }
 
                 // WS UPDATES
-                foreach (var note in permissions.Select(x => x.perm.Note))
-                {
-                    var userIds = new List<Guid>() { note.UserId };
-                    userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
-                    var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                    var emails = users.Select(x => x.Email);
-                    var updates = new UpdateNoteWS { Color = note.Color, NoteId = note.Id };
-                    await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                }
+                var updates = permissions.Select(x => (
+                    new UpdateNoteWS { Color = request.Color, NoteId = x.noteId },
+                    x.perm.GetAllUsers()
+                ));
+
+                await noteWSUpdateService.UpdateNotes(updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -410,16 +412,11 @@ namespace BI.Services.Notes
                     });
 
                     // WS UPDATES
-                    foreach (var note in permissions.Select(x => x.perm.Note))
-                    {
-                        var userIds = new List<Guid>() { note.UserId };
-                        userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
-                        var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                        var emails = users.Select(x => x.Email);
-                        var updates = new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = note.Id };
-                        await appSignalRService.UpdateNotesInManyUsers(updates, emails);
-                    }
-                    //
+                    var updates = permissions.Select(x => 
+                     (new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = x.noteId },
+                     x.perm.GetAllUsers()));
+
+                    await noteWSUpdateService.UpdateNotes(updates);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -456,22 +453,14 @@ namespace BI.Services.Notes
 
                     // WS UPDATES
                     var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.LabelId);
-                    foreach(var noteId in labelsToAdd.Select(x => x.NoteId))
-                    {
-                        var noteToUpdate = permissions.FirstOrDefault(x => x.noteId == noteId);
-                        if (noteToUpdate.perm != null)
-                        {
-                            var note = noteToUpdate.perm.Note;
-                            var userIds = new List<Guid>() { note.UserId };
-                            userIds.AddRange(note.UsersOnPrivateNotes.Select(x => x.UserId));
-                            var users = await userRepository.GetWhereAsync(x => userIds.Contains(x.Id));
-                            var emails = users.Select(x => x.Email);
-                            var labels = appCustomMapper.MapLabelsToLabelsDTO(new List<Label> { label });
-                            var updates = new UpdateNoteWS { AddLabels = labels, NoteId = note.Id };
-                            await appSignalRService.UpdateNotesInManyUsers(updates, emails);
+                    var labels = appCustomMapper.MapLabelsToLabelsDTO(new List<Label> { label });
+                    foreach (var labelNote in labelsToAdd) {
+                        var value = permissions.FirstOrDefault(x => x.noteId == labelNote.NoteId);
+                        if (value.perm != null) {
+                            var update = new UpdateNoteWS { AddLabels = labels, NoteId = value.noteId };
+                            await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers());
                         }
                     }
-                    //
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ChangeColorFolder, UpdateFolderTitle } from '../content/folders/state/folders-actions';
 import {
@@ -27,26 +27,14 @@ export class SignalRService {
 
   public updateContentEvent = new Subject();
 
+  public setAsJoinedToNote = new BehaviorSubject(null);
+
+  public setAsJoinedToFolder = new BehaviorSubject(null);
+
   constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
 
   init() {
     this.startConnection();
-  }
-
-  async joinNote(noteId: string) {
-    try {
-      await this.hubConnection.invoke('JoinNote', noteId);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async leaveNote(noteId: string) {
-    try {
-      await this.hubConnection.invoke('LeaveNote', noteId);
-    } catch (err) {
-      console.error(err);
-    }
   }
 
   private startConnection = () => {
@@ -63,8 +51,12 @@ export class SignalRService {
 
     this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));
 
-    this.hubConnection.on('updateOnlineUsers', (noteId: string) => {
-      this.store.dispatch(new LoadOnlineUsersOnNote(noteId));
+    this.hubConnection.on('updateOnlineUsersNote', (noteId: string) => {
+      this.store.dispatch(new LoadOnlineUsersOnNote(noteId)); // TODO REFACTOR BY ONE USER
+    });
+
+    this.hubConnection.on('updateOnlineUsersFolder', (folderId: string) => {
+      // TODO
     });
 
     this.hubConnection.on('updateNotesGeneral', (updates: UpdateNoteWS) => {
@@ -107,6 +99,14 @@ export class SignalRService {
 
     this.hubConnection.on('updateNoteContent', () => {
       this.updateContentEvent.next();
+    });
+
+    this.hubConnection.on('setJoinedToNote', (noteId: string) => {
+      this.setAsJoinedToNote.next(noteId);
+    });
+
+    this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
+      this.setAsJoinedToFolder.next(folderId);
     });
   };
 }

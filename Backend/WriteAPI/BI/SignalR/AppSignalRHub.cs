@@ -17,18 +17,22 @@ namespace BI.SignalR
 
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
-        private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+        private readonly WebsocketsNotesService websocketsNotesService;
+        private readonly WebsocketsFoldersService websocketsFoldersService;
+
         public AppSignalRHub(
             UserRepository userRepository, 
-            UserOnNoteRepository userOnNoteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
-            NoteRepository noteRepository)
+            NoteRepository noteRepository,
+            WebsocketsNotesService websocketsNotesService,
+            WebsocketsFoldersService websocketsFoldersService)
         {
             this.userRepository = userRepository;
-            this.userOnNoteRepository = userOnNoteRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;;
             this.noteRepository = noteRepository;
+            this.websocketsNotesService = websocketsNotesService;
+            this.websocketsFoldersService = websocketsFoldersService;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -37,65 +41,77 @@ namespace BI.SignalR
             await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
         }
 
-        public async Task JoinNote(string noteId)
+        // NOTES
+        public async Task JoinNote(Guid noteId)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
-            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
+            if (user != null)
             {
-                await TryToSetAsOnline(parsedNoteId, user.Id);
-                await JoinUserToNote(parsedNoteId, user.Id);
-                await Groups.AddToGroupAsync(Context.ConnectionId, noteId);
-                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
-            }
-        }
-
-        public async Task TryToSetAsOnline(Guid parsedNoteId, Guid userId)
-        {
-            var existUser = await userOnNoteRepository.FirstOrDefaultAsync(x => x.NoteId == parsedNoteId && x.UserId == userId);
-            if (existUser == null)
-            {
-                var connectUser = new UserOnNoteNow()
+                if (websocketsNotesService.IsContainsUserId(noteId, user.Id) || websocketsNotesService.Add(noteId, user.Id))
                 {
-                    UserId = userId,
-                    NoteId = parsedNoteId
-                };
-                await userOnNoteRepository.AddAsync(connectUser);
-            }
-        }
-
-        public async Task JoinUserToNote(Guid parsedNoteId, Guid userId) // TODO MAKE THIS FOR FOLDER
-        {
-            var existUser = await usersOnPrivateNotesRepository.FirstOrDefaultAsync(x => x.NoteId == parsedNoteId && x.UserId == userId);
-            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == parsedNoteId);
-            var isCanAdd = (note.UserId != userId) && existUser == null;
-            if (isCanAdd)
-            {
-                var refTypeNote = await this.noteRepository.FirstOrDefaultAsync(x => x.Id == parsedNoteId);
-                var connectUser = new UserOnPrivateNotes() // TODO REFACTOR
-                {
-                    UserId = userId,
-                    NoteId = parsedNoteId,
-                    AccessTypeId = refTypeNote.RefTypeId
-                };
-                await usersOnPrivateNotesRepository.AddAsync(connectUser);
-            }
-        }
-
-
-        public async Task LeaveNote(string noteId)
-        {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
-            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
-            {
-                var users = await userOnNoteRepository.GetWhereAsync(x => x.UserId == user.Id);
-                if(users.Any())
-                {
-                    await userOnNoteRepository.RemoveRangeAsync(users);
+                    var groupId = GetNoteGroupName(noteId);
+                    await Clients.Caller.SendAsync("setJoinedToNote", noteId);
+                    await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
+                    await Clients.Group(groupId).SendAsync("updateOnlineUsersNote", noteId); // TODO change on userId that can be added to ui list
                 }
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId);
-                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
             }
         }
+
+        public async Task LeaveNote(Guid noteId)
+        {
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
+            if (user != null)
+            {
+                var isSuccess = websocketsNotesService.Remove(noteId, user.Id);
+
+                if (!isSuccess)
+                {
+                    Console.WriteLine("User did`nt deleted from online on note, UserId: " + user.Id);
+                }
+
+                var groupId = GetNoteGroupName(noteId);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
+                await Clients.Group(groupId).SendAsync("updateOnlineUsersNote", noteId);
+            }
+        }
+
+        private string GetNoteGroupName(Guid id) => "N-" + id.ToString();
+
+        // FOLDERS
+        public async Task JoinFolder(Guid folderId)
+        {
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
+            if (user != null)
+            {
+                if (websocketsFoldersService.IsContainsUserId(folderId, user.Id) || websocketsFoldersService.Add(folderId, user.Id))
+                {
+                    var groupId = GetFolderGroupName(folderId);
+                    await Clients.Caller.SendAsync("setJoinedToFolder", folderId);
+                    await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
+                    await Clients.Group(groupId).SendAsync("updateOnlineUsersFolder", folderId); // TODO change on userId that can be added to ui list
+                }
+            }
+        }
+
+        public async Task LeaveFolder(Guid folderId)
+        {
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
+            if (user != null)
+            {
+                var isSuccess = websocketsFoldersService.Remove(folderId, user.Id);
+
+                if (!isSuccess)
+                {
+                    Console.WriteLine("User did`nt deleted from online on folder, UserId: " + user.Id);
+                }
+
+                var groupId = GetFolderGroupName(folderId);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
+                await Clients.Group(groupId).SendAsync("updateOnlineUsersFolder", folderId);
+            }
+        }
+
+        private string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
         public override Task OnConnectedAsync()
         {
@@ -107,20 +123,8 @@ namespace BI.SignalR
         {
             usersIdentifier_ConnectionId.TryRemove(Context.UserIdentifier, out var value);
 
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
-            if (user != null)
-            {
-                var connections = await userOnNoteRepository.GetWhereAsync(x => x.UserId == user.Id);
-                if(connections.Any())
-                {
-                    await userOnNoteRepository.RemoveRangeAsync(connections);
-                    foreach(var connection in connections)
-                    {
-                        var stringConnection = connection.NoteId.ToString();
-                        await Clients.Group(stringConnection).SendAsync("updateOnlineUsers", stringConnection);
-                    }
-                }
-            }
+            // TODO MAYBE THERE ARE NEED DISCONNECT FROM FOLDER AND NOTE
+            // If need use channels or background jobs
 
             await base.OnDisconnectedAsync(exception);
         }
