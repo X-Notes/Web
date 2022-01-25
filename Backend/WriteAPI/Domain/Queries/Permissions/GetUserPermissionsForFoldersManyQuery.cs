@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Queries.Permissions
 {
-    public class GetUserPermissionsForFoldersManyQuery : BaseQueryEntity, IRequest<List<(Guid noteId, UserPermissionsForFolder perm)>>
+    public class GetUserPermissionsForFoldersManyQuery : BaseQueryEntity, IRequest<List<(Guid folderId, UserPermissionsForFolder perm)>>
     {
         public List<Guid> FolderIds { set; get; }
 

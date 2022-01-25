@@ -49,8 +49,6 @@ namespace Common.DatabaseModels.Models.Users
         public List<Folder> Folders { set; get; }
         public List<Note> Notes { set; get; }
 
-        public List<UserOnNoteNow> UserOnNotes { set; get; }
-
         public List<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
         public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }

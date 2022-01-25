@@ -327,7 +327,6 @@ namespace WriteAPI.ConfigureAPP
 
             // NOTES
             services.AddScoped<NoteRepository>();
-            services.AddScoped<UserOnNoteRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped<UsersOnPrivateNotesRepository>();
 
@@ -418,6 +417,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<DatabaseFakeDataBridge>();
 
             services.AddScoped<AppSignalRService>();
+            services.AddScoped<FolderWSUpdateService>();
+            services.AddScoped<NoteWSUpdateService>();
+
+
+            services.AddSingleton<WebsocketsNotesService>();
+            services.AddSingleton<WebsocketsFoldersService>();
 
             services.AddScoped<OcrService>();
             services.AddSingleton<ObjectRecognizeService>();

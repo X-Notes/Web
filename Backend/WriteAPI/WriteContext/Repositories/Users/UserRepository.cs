@@ -68,6 +68,7 @@ namespace WriteContext.Repositories.Users
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
+        public async Task<List<string>> GetUsersEmail(IEnumerable<Guid> ids) => await entities.Where(x => ids.Contains(x.Id)).Select(x => x.Email).ToListAsync();
 
         public async Task<bool> UpdatePhoto(User user, AppFile file)
         {

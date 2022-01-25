@@ -37,5 +37,13 @@ namespace WriteContext.Repositories.Folders
                 .OrderBy(x => x.Order).ToListAsync();
         }
 
+        public async Task<List<string>> GetNotesTitle(Guid folderId)
+        {
+            return await entities
+                .Include(x => x.Note)
+                .Where(x => x.FolderId == folderId)
+                .Select(x => x.Note)
+                .OrderBy(x => x.Order).Select(x => x.Title).ToListAsync();
+        }
     }
 }

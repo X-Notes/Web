@@ -98,7 +98,7 @@ namespace BI.Services.Folders
             var command = new GetUserPermissionsForFoldersManyQuery(request.FolderIds, request.Email);
             var permissions = await _mediator.Send(command);
 
-            var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId);
+            var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.folderId);
             if (canReadIds.Any())
             {
                 var folders = await folderRepository.GetFoldersByFolderIdsIncludeNote(canReadIds, request.Settings);
