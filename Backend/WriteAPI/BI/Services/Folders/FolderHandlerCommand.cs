@@ -63,8 +63,8 @@ namespace BI.Services.Folders
                 Color = FolderColorPallete.Green,
                 FolderTypeId = FolderTypeENUM.Private,
                 RefTypeId = RefTypeENUM.Viewer,
-                CreatedAt = DateTimeOffset.Now,
-                UpdatedAt = DateTimeOffset.Now
+                CreatedAt = DateTimeProvider.Time,
+                UpdatedAt = DateTimeProvider.Time
             };
 
             await folderRepository.Add(folder, FolderTypeENUM.Private);
@@ -103,7 +103,7 @@ namespace BI.Services.Folders
                 foreach (var folder in foldersForUpdate)
                 {
                     folder.Color = request.Color;
-                    folder.UpdatedAt = DateTimeOffset.Now;
+                    folder.UpdatedAt = DateTimeProvider.Time;
                 }
 
                 await folderRepository.UpdateRangeAsync(foldersForUpdate);
@@ -129,7 +129,7 @@ namespace BI.Services.Folders
             if (isCanDelete)
             {
                 var folders = permissions.Select(x => x.perm.Folder).ToList();
-                folders.ForEach(note => note.DeletedAt = DateTimeOffset.UtcNow);
+                folders.ForEach(note => note.DeletedAt = DateTimeProvider.Time);
                 await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Deleted);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -160,8 +160,8 @@ namespace BI.Services.Folders
                             FolderTypeId = FolderTypeENUM.Private,
                             RefTypeId = folderForCopy.RefTypeId,
                             Order = order--,
-                            CreatedAt = DateTimeOffset.Now,
-                            UpdatedAt = DateTimeOffset.Now,
+                            CreatedAt = DateTimeProvider.Time,
+                            UpdatedAt = DateTimeProvider.Time,
                             UserId = permission.User.Id
                         };
                         var dbFolder = await folderRepository.AddAsync(newFolder);

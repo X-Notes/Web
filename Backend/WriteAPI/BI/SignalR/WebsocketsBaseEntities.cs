@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -16,7 +17,7 @@ namespace BI.SignalR
         {
             if (entityId_updateTime.TryGetValue(entityId, out var time))
             {
-                return entityId_updateTime.TryUpdate(entityId, DateTimeOffset.UtcNow, time);
+                return entityId_updateTime.TryUpdate(entityId, DateTimeProvider.Time, time);
             }
 
             return false;
@@ -63,7 +64,7 @@ namespace BI.SignalR
             {
                 var userIdsList = new List<Guid>() { userId };
                 var isAddedUser = entityId_userIds.TryAdd(entityId, userIdsList.ToImmutableList());
-                var isAddedTime = entityId_updateTime.TryAdd(entityId, DateTimeOffset.UtcNow);
+                var isAddedTime = entityId_updateTime.TryAdd(entityId, DateTimeProvider.Time);
                 return isAddedUser && isAddedTime;
             }
 

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.SignalR;
+using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
@@ -50,7 +51,7 @@ namespace BI.Services.Folders
             if (permissions.CanWrite)
             {
                 folder.Title = request.Title;
-                folder.UpdatedAt = DateTimeOffset.Now;
+                folder.UpdatedAt = DateTimeProvider.Time;
                 await folderRepository.UpdateAsync(folder);
 
                 // WS UPDATES
@@ -82,7 +83,7 @@ namespace BI.Services.Folders
                     return folderNote;
                 });
 
-                folder.UpdatedAt = DateTimeOffset.Now;
+                folder.UpdatedAt = DateTimeProvider.Time;
 
                 await foldersNotesRepository.RemoveRangeAsync(foldersNotes);
                 await foldersNotesRepository.AddRangeAsync(newFoldersNotes);

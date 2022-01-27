@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.SignalR;
+using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
@@ -141,7 +142,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
                     Message = "notification.ChangeUserPermissionFolder",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
@@ -178,7 +179,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
                     Message = "notification.ChangeUserPermissionNote",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
@@ -209,7 +210,7 @@ namespace BI.Services.Sharing
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
                         Message = "notification.RemoveUserFromFolder",
-                        Date = DateTimeOffset.Now
+                        Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
@@ -239,7 +240,7 @@ namespace BI.Services.Sharing
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
                         Message = "notification.RemoveUserFromNote",
-                        Date = DateTimeOffset.Now
+                        Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
@@ -272,7 +273,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
                     Message = $"notification.SentInvitesToFolder | message: {request.Message}",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 });
 
                 await notificationRepository.AddRangeAsync(notifications);
@@ -308,7 +309,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
                     Message = $"notification.SentInvitesToNote | message: {request.Message}",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 });
 
                 await notificationRepository.AddRangeAsync(notifications);

@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using WriteContext.GenericRepositories;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common;
 
 namespace WriteContext.Repositories.Notes
 {
@@ -254,7 +255,7 @@ namespace WriteContext.Repositories.Notes
                     notesForCasting.ForEach(x =>
                     {
                         x.NoteTypeId = ToId;
-                        x.UpdatedAt = DateTimeOffset.Now;
+                        x.UpdatedAt = DateTimeProvider.Time;
                     });
 
                     ChangeOrderHelper(notesForCasting);

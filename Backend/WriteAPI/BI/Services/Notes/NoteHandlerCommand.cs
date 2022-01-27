@@ -88,7 +88,7 @@ namespace BI.Services.Notes
 
             var _contents = new List<BaseNoteContent>();
 
-            var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeOffset.UtcNow };
+            var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeProvider.Time };
             _contents.Add(newText);
 
             var note = new Note()
@@ -99,8 +99,8 @@ namespace BI.Services.Notes
                 Color = NoteColorPallete.Green,
                 NoteTypeId = NoteTypeENUM.Private,
                 RefTypeId = RefTypeENUM.Viewer,
-                CreatedAt = DateTimeOffset.Now,
-                UpdatedAt = DateTimeOffset.Now,
+                CreatedAt = DateTimeProvider.Time,
+                UpdatedAt = DateTimeProvider.Time,
                 Contents = _contents
             };
 
@@ -124,7 +124,7 @@ namespace BI.Services.Notes
                 foreach(var note in notesForUpdate)
                 {
                     note.Color = request.Color;
-                    note.UpdatedAt = DateTimeOffset.Now;
+                    note.UpdatedAt = DateTimeProvider.Time;
                 }
 
                 await noteRepository.UpdateRangeAsync(notesForUpdate);
@@ -158,7 +158,7 @@ namespace BI.Services.Notes
             if (isCanDelete)
             {
                 var notes = permissions.Select(x => x.perm.Note).ToList();
-                notes.ForEach(note => note.DeletedAt = DateTimeOffset.Now);
+                notes.ForEach(note => note.DeletedAt = DateTimeProvider.Time);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Deleted);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -351,8 +351,8 @@ namespace BI.Services.Notes
                         {
                             Title = noteForCopy.Title,
                             Color = noteForCopy.Color,
-                            CreatedAt = DateTimeOffset.Now,
-                            UpdatedAt = DateTimeOffset.Now,
+                            CreatedAt = DateTimeProvider.Time,
+                            UpdatedAt = DateTimeProvider.Time,
                             NoteTypeId = NoteTypeENUM.Private,
                             RefTypeId = noteForCopy.RefTypeId,
                             Order = order--,
@@ -364,7 +364,7 @@ namespace BI.Services.Notes
                         {
                             NoteId = dbNote.Entity.Id,
                             LabelId = label.LabelId,
-                            AddedAt = DateTimeOffset.Now
+                            AddedAt = DateTimeProvider.Time
                         });
 
                         await labelsNotesRepository.AddRangeAsync(labels);
@@ -403,7 +403,7 @@ namespace BI.Services.Notes
                 {
                     await labelsNotesRepository.RemoveRangeAsync(values);
 
-                    notes.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
+                    notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
                     permissions.ForEach(x =>
@@ -436,14 +436,14 @@ namespace BI.Services.Notes
                 var existValues = await labelsNotesRepository.GetWhereAsync(x => x.LabelId == request.LabelId && noteIds.Contains(x.NoteId));
                 var noteIdsWithLabel = existValues.Select(x => x.NoteId);
 
-                var labelsToAdd = request.NoteIds.Select(id => new LabelsNotes() { LabelId = request.LabelId, NoteId = id, AddedAt = DateTimeOffset.Now });
+                var labelsToAdd = request.NoteIds.Select(id => new LabelsNotes() { LabelId = request.LabelId, NoteId = id, AddedAt = DateTimeProvider.Time });
                 labelsToAdd = labelsToAdd.Where(x => !noteIdsWithLabel.Contains(x.NoteId));
 
                 if (labelsToAdd.Any())
                 {
                     await labelsNotesRepository.AddRangeAsync(labelsToAdd);
 
-                    notes.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
+                    notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
                     permissions.ForEach(x =>
@@ -478,7 +478,7 @@ namespace BI.Services.Notes
                 RefTypeId = noteForCopy.RefTypeId,
                 Title = noteForCopy.Title,
                 Color = noteForCopy.Color,
-                SnapshotTime = DateTimeOffset.Now,
+                SnapshotTime = DateTimeProvider.Time,
                 NoteId = noteForCopy.Id,
                 Labels = labels,
                 UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),

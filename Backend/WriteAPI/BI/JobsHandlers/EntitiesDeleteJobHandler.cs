@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,7 +54,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start labels deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddDays(-configForEntitesDeliting.LabelsNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.LabelsNDays);
 
                 var labels = await labelRepostory.GetLabelsThatNeedDeleteAfterTime(earliestTimestamp);
 
@@ -75,7 +76,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start notes deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddDays(-configForEntitesDeliting.NotesNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.NotesNDays);
                 var notes = await noteRepository.GetNotesThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (notes.Any())
@@ -96,7 +97,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start folders deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddDays(-configForEntitesDeliting.FoldersNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.FoldersNDays);
                 var folders = await folderRepository.GetFoldersThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (folders.Any())
@@ -117,7 +118,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start snapshots deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddDays(-configForEntitesDeliting.HistoriesNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.HistoriesNDays);
                 var snapshots = await noteSnapshotRepository.GetSnapshotsThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (snapshots.Any())

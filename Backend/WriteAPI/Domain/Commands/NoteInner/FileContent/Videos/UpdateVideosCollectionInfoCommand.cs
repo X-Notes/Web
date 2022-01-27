@@ -1,20 +1,11 @@
-﻿using Common.Attributes;
-using Common.DTO;
-using MediatR;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace Domain.Commands.NoteInner.FileContent.Videos
 {
-    public class UpdateVideosCollectionInfoCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateVideosCollectionInfoCommand : BaseUpdateCollectionInfo
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        [Required]
-        public string Name { set; get; }
+        public UpdateVideosCollectionInfoCommand(Guid noteId, Guid contentId, string name) : base(noteId, contentId, name)
+        {
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BI.SignalR;
+using Common;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
@@ -21,7 +22,7 @@ namespace WriteAPI.Hosted
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             int hourse = 2;
-            var earliestTimestamp = DateTimeOffset.UtcNow.AddHours(-hourse);
+            var earliestTimestamp = DateTimeProvider.Time.AddHours(-hourse);
 
             while (!stoppingToken.IsCancellationRequested)
             {

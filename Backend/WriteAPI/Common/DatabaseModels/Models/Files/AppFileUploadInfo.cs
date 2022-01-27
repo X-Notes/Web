@@ -26,7 +26,7 @@ namespace Common.DatabaseModels.Models.Files
         public AppFileUploadInfo SetLinked()
         {
             StatusId = AppFileUploadStatusEnum.Linked;
-            LinkedDate = DateTimeOffset.UtcNow;
+            LinkedDate = DateTimeProvider.Time;
             UnLinkedDate = null;
             return this;
         }
@@ -35,7 +35,7 @@ namespace Common.DatabaseModels.Models.Files
         {
             StatusId = AppFileUploadStatusEnum.UnLinked;
             LinkedDate = null;
-            UnLinkedDate = DateTimeOffset.UtcNow;
+            UnLinkedDate = DateTimeProvider.Time;
             return this;
         }
     }

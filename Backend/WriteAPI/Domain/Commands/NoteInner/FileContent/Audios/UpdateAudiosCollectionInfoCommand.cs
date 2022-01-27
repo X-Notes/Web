@@ -1,20 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Common.Attributes;
-using Common.DTO;
-using MediatR;
+
 
 namespace Domain.Commands.NoteInner.FileContent.Audios
 {
-    public class UpdateAudiosCollectionInfoCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateAudiosCollectionInfoCommand : BaseUpdateCollectionInfo
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        [Required]
-        public string Name { set; get; }
+        public UpdateAudiosCollectionInfoCommand(Guid noteId, Guid contentId, string name) : base(noteId, contentId, name)
+        {
+        }
     }
 }

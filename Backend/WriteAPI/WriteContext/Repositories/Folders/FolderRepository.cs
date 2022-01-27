@@ -7,6 +7,7 @@ using Common.DatabaseModels.Models.Folders;
 using WriteContext.GenericRepositories;
 using Common.DTO.Personalization;
 using Common.DatabaseModels.Models.Notes;
+using Common;
 
 namespace WriteContext.Repositories.Folders
 {
@@ -65,7 +66,7 @@ namespace WriteContext.Repositories.Folders
                     foldersForCasting.ForEach(x =>
                     {
                         x.FolderTypeId = ToId;
-                        x.UpdatedAt = DateTimeOffset.Now;
+                        x.UpdatedAt = DateTimeProvider.Time;
                     });
 
                     ChangeOrderHelper(foldersForCasting);

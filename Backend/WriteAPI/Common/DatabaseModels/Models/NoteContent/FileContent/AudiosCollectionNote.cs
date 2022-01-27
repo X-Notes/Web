@@ -16,7 +16,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
         public AudiosCollectionNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.AudiosCollection;
         }
 
@@ -27,7 +27,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Order = entity.Order;
             Name = entity.Name;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.AudiosCollection;
 
             AudioNoteAppFiles = audios;
@@ -40,7 +40,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Order = entity.Order;
             Name = entity.Name;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.AudiosCollection;
 
             Audios = audios;

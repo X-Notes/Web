@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace BI.Services.History
                 {
                     cacheHistory.UsersThatEditIds.Add(userId);
                 }
-                cacheHistory.UpdatedAt = DateTimeOffset.Now;
+                cacheHistory.UpdatedAt = DateTimeProvider.Time;
                 Ids[noteId] = cacheHistory;
             }
             else
@@ -38,7 +39,7 @@ namespace BI.Services.History
                 var cacheModel = new CacheHistory()
                 {
                     UsersThatEditIds = userList,
-                    UpdatedAt = DateTimeOffset.Now,
+                    UpdatedAt = DateTimeProvider.Time,
                     NoteId = noteId,
                     AuthorNoteEmail = Email
                 };

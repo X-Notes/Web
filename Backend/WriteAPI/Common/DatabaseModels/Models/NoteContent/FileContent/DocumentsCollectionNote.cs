@@ -16,7 +16,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
         public DocumentsCollectionNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.DocumentsCollection;
         }
 
@@ -26,7 +26,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
             Order = entity.Order;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.DocumentsCollection;
 
             Name = entity.Name;
@@ -40,7 +40,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
             Order = entity.Order;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.DocumentsCollection;
 
             Name = entity.Name;

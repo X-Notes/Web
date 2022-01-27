@@ -20,7 +20,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
         public PhotosCollectionNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
             CountInRow = 2;
         }
@@ -29,7 +29,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         {
             NoteId = noteId;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
 
             Width = entity.Width;
@@ -45,7 +45,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         {
             NoteId = noteId;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
 
             Width = entity.Width;

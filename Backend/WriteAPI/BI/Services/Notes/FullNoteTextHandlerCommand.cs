@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
+using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets;
@@ -69,7 +70,7 @@ namespace BI.Services.Notes
             {
                 var note = permissions.Note;
                 note.Title = request.Title;
-                note.UpdatedAt = DateTimeOffset.Now;
+                note.UpdatedAt = DateTimeProvider.Time;
                 await noteRepository.UpdateAsync(note);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
@@ -119,7 +120,7 @@ namespace BI.Services.Notes
                 var textForUpdate = contents.FirstOrDefault(x => x.Id == text.Id);
                 if(textForUpdate != null)
                 {
-                    textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                    textForUpdate.UpdatedAt = DateTimeProvider.Time;
                     textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
                     textForUpdate.HTypeId = text.HeadingTypeId;
                     textForUpdate.Checked = text.Checked;
@@ -135,7 +136,7 @@ namespace BI.Services.Notes
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate != null)
             {
-                textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                textForUpdate.UpdatedAt = DateTimeProvider.Time;
                 textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
                 textForUpdate.HTypeId = text.HeadingTypeId;
                 textForUpdate.Checked = text.Checked;
