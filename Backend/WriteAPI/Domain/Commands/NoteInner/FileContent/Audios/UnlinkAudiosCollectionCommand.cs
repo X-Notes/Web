@@ -5,19 +5,10 @@ using MediatR;
 
 namespace Domain.Commands.NoteInner.FileContent.Audios
 {
-    public class UnlinkAudiosCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UnlinkAudiosCollectionCommand : BaseUnlinkCommand
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        public UnlinkAudiosCollectionCommand(Guid NoteId, Guid ContentId, string Email)
+        public UnlinkAudiosCollectionCommand(Guid noteId, Guid contentId, string email) : base(noteId, contentId, email)
         {
-            this.NoteId = NoteId;
-            this.ContentId = ContentId;
-            this.Email = Email;
         }
     }
 }

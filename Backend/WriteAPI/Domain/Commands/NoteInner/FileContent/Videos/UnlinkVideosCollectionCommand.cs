@@ -5,19 +5,10 @@ using MediatR;
 
 namespace Domain.Commands.NoteInner.FileContent.Videos
 {
-    public class UnlinkVideosCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UnlinkVideosCollectionCommand : BaseUnlinkCommand
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        public UnlinkVideosCollectionCommand(Guid NoteId, Guid ContentId, string Email)
+        public UnlinkVideosCollectionCommand(Guid noteId, Guid contentId, string email) : base(noteId, contentId, email)
         {
-            this.NoteId = NoteId;
-            this.ContentId = ContentId;
-            this.Email = Email;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpDelete("{noteId}/{contentId}/{documentId}")]
-        public async Task<OperationResult<Unit>> RemoveVideoFromCollection(Guid noteId, Guid contentId, Guid documentId)
+        public async Task<OperationResult<Unit>> RemoveDocumentFromCollection(Guid noteId, Guid contentId, Guid documentId)
         {
             var command = new RemoveDocumentFromCollectionCommand(noteId, contentId, documentId);
             command.Email = this.GetUserEmail();
