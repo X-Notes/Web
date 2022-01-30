@@ -11,9 +11,14 @@ import {
   RemoveLabelFromNote,
   UpdateNoteTitle,
 } from '../content/notes/state/notes-actions';
-import { NoteStore } from '../content/notes/state/notes-state';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
 import { UpdaterEntitiesService } from './entities-updater.service';
+import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
+import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
+import { UpdateNoteStructureWS } from './models/signal-r/innerNote/update-note-structure-ws';
+import { UpdateNoteTextWS } from './models/signal-r/innerNote/update-note-text-ws';
+import { UpdatePhotosCollectionWS } from './models/signal-r/innerNote/update-photos-collection-ws';
+import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-videos-collection-ws';
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
@@ -25,10 +30,14 @@ import { AppStore } from './stateApp/app-state';
 export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
-  public updateContentEvent = new Subject();
+  public updateTextContentEvent = new BehaviorSubject<UpdateNoteTextWS>(null);
+  public updateNoteStructureEvent = new BehaviorSubject<UpdateNoteStructureWS>(null);
+  public updatePhotosCollectionEvent = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
+  public updateVideosCollectionEvent = new BehaviorSubject<UpdateVideosCollectionWS>(null);
+  public updateAudiosCollectionEvent = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
+  public updateDocumentsCollectionEvent = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
 
   public setAsJoinedToNote = new BehaviorSubject(null);
-
   public setAsJoinedToFolder = new BehaviorSubject(null);
 
   constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
@@ -66,13 +75,13 @@ export class SignalRService {
       if (updates.title) {
         this.store.dispatch(new UpdateNoteTitle(updates.title, updates.noteId, false));
       }
-      if(updates.addLabels && updates.addLabels.length > 0){
-        updates.addLabels.forEach(label => {
+      if (updates.addLabels && updates.addLabels.length > 0) {
+        updates.addLabels.forEach((label) => {
           this.store.dispatch(new AddLabelOnNote(label, [updates.noteId], false));
         });
       }
-      if(updates.removeLabelIds && updates.removeLabelIds.length > 0) {
-        updates.removeLabelIds.forEach(labelId => {
+      if (updates.removeLabelIds && updates.removeLabelIds.length > 0) {
+        updates.removeLabelIds.forEach((labelId) => {
           this.store.dispatch(new RemoveLabelFromNote(labelId, [updates.noteId], false));
         });
       }
@@ -97,10 +106,33 @@ export class SignalRService {
       }
     });
 
-    this.hubConnection.on('updateNoteContent', () => {
-      this.updateContentEvent.next();
+    // UPDATE CONTENT
+    this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
+      this.updateTextContentEvent.next(updates);
     });
 
+    this.hubConnection.on('updateNoteStructure', (updates: UpdateNoteStructureWS) => {
+      this.updateNoteStructureEvent.next(updates);
+    });
+
+    // FILES
+    this.hubConnection.on('updateDocumentsCollection', (updates: UpdateDocumentsCollectionWS) => {
+      this.updateDocumentsCollectionEvent.next(updates);
+    });
+
+    this.hubConnection.on('updateAudiosCollection', (updates: UpdateAudiosCollectionWS) => {
+      this.updateAudiosCollectionEvent.next(updates);
+    });
+
+    this.hubConnection.on('updateVideosCollection', (updates: UpdateVideosCollectionWS) => {
+      this.updateVideosCollectionEvent.next(updates);
+    });
+
+    this.hubConnection.on('updatePhotosCollection', (updates: UpdatePhotosCollectionWS) => {
+      this.updatePhotosCollectionEvent.next(updates);
+    });
+
+    // JOINER
     this.hubConnection.on('setJoinedToNote', (noteId: string) => {
       this.setAsJoinedToNote.next(noteId);
     });
