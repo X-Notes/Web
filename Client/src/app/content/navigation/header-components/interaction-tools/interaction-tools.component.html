@@ -12,7 +12,7 @@
         (ngModelChange)="searchStrChanged.next($event)"
         [ngModel]="searchStr"
         type="search"
-        placeholder="{{ 'header.search' | translate }}"
+        [placeholder]="'header.search' | translate"
         aria-label="Search"
       />
       <button type="button" name="search button" #searchButton (click)="searchData()">
@@ -36,7 +36,7 @@
   </div>
 
   <div
-    CustomTooltip="{{ 'header.theme' | translate }}"
+    [CustomTooltip]="'header.theme' | translate"
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleTheme()"
@@ -50,20 +50,47 @@
   </div>
 
   <div
-    CustomTooltip="{{ 'header.questions' | translate }}"
+    [CustomTooltip]="'header.questions' | translate"
     position="Bottom"
     class="auxiliary-icon"
     *ngIf="pService.check()"
+    [matMenuTriggerFor]="menu"
     #question
   >
     <div class="icon">
       <mat-icon svgIcon="question" [inline]="true"></mat-icon>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
+    <mat-menu
+      #menu="matMenu"
+      appLazyTheme
+      themeClass="menu"
+      attributeName="panelClass"
+      [element]="menu"
+    >
+      <button
+        routerLink="/faq"
+        mat-menu-item
+        type="button"
+        [name]="'header.questionItems.faq' | translate"
+      >
+        <mat-icon>quiz</mat-icon>
+        <span> {{ 'header.questionItems.faq' | translate }} </span>
+      </button>
+      <button
+        (click)="contactUs()"
+        mat-menu-item
+        type="button"
+        [name]="'header.questionItems.contact' | translate"
+      >
+        <mat-icon> contact_support </mat-icon>
+        <span> {{ 'header.questionItems.contact' | translate }} </span>
+      </button>
+    </mat-menu>
   </div>
 
   <div
-    CustomTooltip="{{ 'header.notification' | translate }}"
+    [CustomTooltip]="'header.notification' | translate"
     position="Bottom"
     class="auxiliary-icon"
     (click)="isOpenNotification = !isOpenNotification"
@@ -95,7 +122,7 @@
   </div>
 
   <div
-    CustomTooltip="{{ 'header.orientation' | translate }}"
+    [CustomTooltip]="'header.orientation' | translate"
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleOrientation()"

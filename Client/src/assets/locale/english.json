@@ -48,6 +48,10 @@
     "defaultColor": "Default color",
     "emptyTrash": "Empty Trash",
     "manage": "Manage",
+    "questionItems": {
+      "faq": "Frequently asked questions",
+      "contact": "Contact with us"
+    },
     "filterMenu": {
       "dateAsc": "From old to new",
       "dateDesc": "From new to old",
@@ -107,6 +111,18 @@
     "ColorModal": {
       "Colors": "Colors",
       "save": "Save"
+    },
+    "contactUs": {
+      "send": "Send",
+      "emailField": "Email",
+      "emailHolder": "Your email adress",
+      "text": "Enter your message",
+      "textHolder": "Message...",
+      "required": "Field is required",
+      "emailValidation": "Email is invalid",
+      "success": "Your message has been successfully sent",
+      "incorrect": "Incorrect input",
+      "close": "Close"
     },
     "ShareModal": {
       "Share": "Share",

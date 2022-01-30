@@ -14,6 +14,7 @@ export const environment = {
   },
   writeAPI: 'http://localhost:5000',
   storage: 'https://nootsdevstorage.blob.core.windows.net',
+  adminAPI: 'http://localhost:3333',
 };
 
 /*
