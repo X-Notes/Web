@@ -4,10 +4,9 @@ import { CreateQuestion } from '../types/create-question.interface';
 
 @Injectable()
 export class ApiContactUsService {
-
   constructor(private httpClient: HttpClient) {}
 
   createQuestion(dto: CreateQuestion) {
-    return this.httpClient.post(`/admin/mail`, dto);
+    return this.httpClient.post('/admin/mail', dto);
   }
 }

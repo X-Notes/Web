@@ -1,0 +1,223 @@
+@import 'variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  background-color: $dark-color;
+  min-height: 100vh;
+  height: 100%;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(289.39deg, #161616 0%, #2B2B2B 48.96%, #161616 100%);
+  padding: 3.75rem 0;
+
+  .content {
+    display: flex;
+    align-items: center;
+    width: 85%;
+    max-width: 1440px;
+
+    .logo {
+      display: flex;
+      margin-right: 10%;
+      cursor: pointer;
+
+      @media (max-width: 1024px) {
+        height: 45px;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .search {
+      position: relative;
+      z-index: $header-search;
+      display: flex;
+      flex: 1;
+      border-radius: 5px;
+      transition: 0.2s ease;
+      height: 55px;
+
+      input[type='search']:not(:placeholder-shown) ~ button[type='button'] {
+        cursor: pointer;
+      }
+
+      input[type='search'] {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px 0 0 5px;
+        padding: 0 1.25rem;
+        font-size: 0.875rem;
+        user-select: none;
+        background: none;
+        outline: none;
+        border: none;
+        color: white;
+        transition: 0.2s ease;
+        background-color: #343434;
+        font-size: 1.25rem;
+        font-weight: 300;
+        min-width: 0;
+      }
+
+      button[type='button'] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        border: 0;
+        user-select: none;
+        outline: none;
+        border-radius: 0 5px 5px 0;
+        cursor: not-allowed;
+        overflow: hidden;
+        transition: 0.2s ease;
+        padding: 0 2.375rem;
+        background-color: #424242;
+
+        .icon {
+          display: flex;
+          width: 25px;
+          height: 25px;
+          transition: 0.2s ease;
+          color: white;
+
+          .mat-icon {
+            display: flex;
+          }
+
+          @media (max-width: 600px) {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+
+      @media (max-width: 600px) {
+        height: 45px;
+        width: 100%;
+
+        button[type='button'] {
+          padding: 0 1.5rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 2.75rem 0;
+  }
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1.875rem 0;
+  overflow: auto;
+  width: 100%;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    max-width: 1440px;
+    margin: 0 auto;
+
+    .chips {
+      display: flex;
+      width: 100%;
+      margin-bottom: 1.875rem;
+  
+      .chip-question {
+        background-color: #6ABCDF;
+      }
+  
+      .chip-guide {
+        background-color: #6A99DF;
+      }
+  
+      .chip-article {
+        background-color: #6A6FDF;
+      }
+  
+      .chip-subscribe {
+        background-color: #A46ADF;
+      }
+  
+      .chip {
+        position: relative;
+        display: flex;
+        align-items: center;
+        border: none;
+        outline: none;
+        color: white;
+        border-radius: 5px;
+        padding: 0.875rem 1.25rem;
+        margin-right: 1.5rem;
+        text-align: left;
+        max-width: 300px;
+  
+        &:last-child {
+          margin-right: 0;
+        }
+  
+        .icon {
+          display: flex;
+          font-size: 1.75rem;
+          width: 28px;
+          height: 28px;
+          margin-right: 1.25rem;
+        }
+  
+        .text {
+          display: flex;
+          font-size: 1.125rem;
+          font-weight: 300;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        flex-wrap: wrap;
+        margin-bottom: 0.875rem;
+
+        .chip {
+          margin-right: 1rem;
+          margin-bottom: 1rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .chip {
+          max-width: initial;
+        }
+      }
+    }
+  
+    .title {
+      display: flex;
+      width: 100%;
+      padding-bottom: 1.875rem;
+      border-bottom: 1px solid #5F5F5F;
+  
+      h1 {
+        font-size: 3.375rem;
+        font-weight: 300;
+      }
+    }
+  
+    .list {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+}

@@ -16,49 +16,54 @@ export class ContactUsComponent {
   form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     text: new FormControl('', [Validators.required]),
-  })
+  });
 
-  loading = false
-
-  hasError = (controlName: string, errorName: string) => {
-    return this.form.controls[controlName].hasError(errorName) && this.form.controls[controlName].touched
-  }
+  loading = false;
 
   constructor(
     private readonly snackService: SnackbarService,
-    private readonly dialogRef: MatDialogRef<ContactUsComponent>, 
+    private readonly dialogRef: MatDialogRef<ContactUsComponent>,
     private readonly contactUsService: ApiContactUsService,
-    private readonly translateService: TranslateService) { }
+    private readonly translateService: TranslateService,
+  ) {}
+
+  hasError = (controlName: string, errorName: string) => {
+    return (
+      this.form.controls[controlName].hasError(errorName) && this.form.controls[controlName].touched
+    );
+  };
 
   async save() {
     if (this.form.valid) {
-      this.loading = true
+      this.loading = true;
       try {
-        await this.contactUsService.createQuestion({
-          senderEmail: this.form.controls['email'].value,
-          question: this.form.controls['text'].value,
-        }).toPromise()
-        this.dialogRef.close()
-        this.successSnackbar()
+        await this.contactUsService
+          .createQuestion({
+            senderEmail: this.form.controls.email.value,
+            question: this.form.controls.text.value,
+          })
+          .toPromise();
+        this.dialogRef.close();
+        this.successSnackbar();
       } catch (e) {
-        const close = await this.translateService.get('modal.contactUs.close').toPromise()
-        this.snackService.openSnackBar(e, close)
+        const close = await this.translateService.get('modal.contactUs.close').toPromise();
+        this.snackService.openSnackBar(e, close);
       }
-      this.loading = false
+      this.loading = false;
     } else {
-      this.incorrectSnackbar()
+      this.incorrectSnackbar();
     }
   }
 
-  private async successSnackbar() {
-    const message = await this.translateService.get('modal.contactUs.success').toPromise()
-    const close = await this.translateService.get('modal.contactUs.close').toPromise()
-    this.snackService.openSnackBar(message, close)
+  private successSnackbar() {
+    const message = this.translateService.instant('modal.contactUs.success');
+    const close = this.translateService.instant('modal.contactUs.close');
+    this.snackService.openSnackBar(message, close);
   }
 
-  private async incorrectSnackbar() {
-    const message = await this.translateService.get('modal.contactUs.incorrect').toPromise()
-    const close = await this.translateService.get('modal.contactUs.close').toPromise()
-    this.snackService.openSnackBar(message, close)
+  private incorrectSnackbar() {
+    const message = this.translateService.instant('modal.contactUs.incorrect');
+    const close = this.translateService.instant('modal.contactUs.close');
+    this.snackService.openSnackBar(message, close);
   }
 }

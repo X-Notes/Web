@@ -61,7 +61,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
 
   constructor(
     public readonly pService: PersonalizationService,
-    private readonly  store: Store,
+    private readonly store: Store,
     private readonly router: Router,
     private readonly searchService: SearchService,
     private readonly dialog: MatDialog,
@@ -121,11 +121,9 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
       maxWidth: '90vw',
       autoFocus: false,
       panelClass:
-      theme === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+        theme === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
     };
-    const ref = this.dialog.open(ContactUsComponent, config)
+    this.dialog.open(ContactUsComponent, config);
   }
 
   unFocusSearch() {

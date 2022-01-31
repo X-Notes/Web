@@ -62,6 +62,14 @@ export const showHistory = trigger('showHistory', [
   ]),
 ]);
 
+export const collapse = trigger('collapse', [
+  transition(':enter', [
+    style({ height: 0, margin: 0, overflow: 'hidden' }),
+    animate('0.3s ease', style({ height: '*', margin: '*' })),
+  ]),
+  transition(':leave', [animate('0.3s ease', style({ height: 0, margin: 0, overflow: 'hidden' }))]),
+]);
+
 export const showDropdown = trigger('showDropdown', [
   state(
     'void',
