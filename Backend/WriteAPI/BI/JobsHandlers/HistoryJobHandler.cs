@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BI.Services.History;
+using Common;
 using Domain.Commands.Notes;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +38,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start make history");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddMinutes(-config.MakeSnapshotAfterNMinutes);
+                var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-config.MakeSnapshotAfterNMinutes);
                 var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(earliestTimestamp);
                 if (histories.Any())
                 {

@@ -66,7 +66,6 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy))
         .subscribe((note) => {
           if (note) {
-            this.initLabels();
             const ids = note.labels.map((label) => label.id);
             this.tryFind(ids);
           }
@@ -76,7 +75,6 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
         .select(NoteStore.labelsIds)
         .pipe(takeUntil(this.destroy))
         .subscribe((ids) => {
-          this.initLabels();
           this.tryFind(ids);
         });
     }
@@ -104,6 +102,6 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
     const newLabel = this.store.selectSnapshot(LabelStore.all)[0] as LabelSelect;
-    this.labels = [newLabel, ...this.labels];
+    this.labels = [{...newLabel}, ...this.labels];
   }
 }

@@ -321,15 +321,15 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Shared;
       this.store.dispatch([
         new ChangeTypeFullNote(NoteTypeENUM.Shared),
-        new UpdateOneNote(this.currentNote, NoteTypeENUM.Shared),
+        new UpdateOneNote(this.currentNote),
       ]);
     } else {
-      await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
+      await this.apiNote.makePrivate([this.currentNote.id]).toPromise();
       this.currentNote.noteTypeId = NoteTypeENUM.Private;
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Private;
       this.store.dispatch([
         new ChangeTypeFullNote(NoteTypeENUM.Private),
-        new UpdateOneNote(this.currentNote, NoteTypeENUM.Private),
+        new UpdateOneNote(this.currentNote),
       ]);
     }
   }
@@ -346,40 +346,40 @@ export class ShareComponent implements OnInit, OnDestroy {
         FolderTypeENUM.Shared;
       this.store.dispatch([
         new ChangeTypeFullFolder(FolderTypeENUM.Shared),
-        new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Shared),
+        new UpdateOneFolder(this.currentFolder),
       ]);
     } else {
-      await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
+      await this.apiFolder.makePrivate([this.currentFolder.id]).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Private;
       this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId =
         FolderTypeENUM.Private;
       this.store.dispatch([
         new ChangeTypeFullFolder(FolderTypeENUM.Private),
-        new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Private),
+        new UpdateOneFolder(this.currentFolder),
       ]);
     }
   }
 
-  factoryForCommandNote(id: string, typeTo: NoteTypeENUM): TransformTypeNotes {
+  factoryForCommandNote = (id: string, typeTo: NoteTypeENUM): TransformTypeNotes => {
     return new TransformTypeNotes(typeTo, [id], false);
-  }
+  };
 
-  factoryForCommandFolder(id: string, typeTo: FolderTypeENUM): TransformTypeFolders {
+  factoryForCommandFolder = (id: string, typeTo: FolderTypeENUM): TransformTypeFolders => {
     return new TransformTypeFolders(typeTo, [id], false);
-  }
+  };
 
   async changeRefTypeNote(refTypeId: RefTypeENUM) {
     await this.apiNote.makePublic(refTypeId, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refTypeId;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refTypeId;
-    this.store.dispatch(new UpdateOneNote(this.currentNote, this.currentNote.noteTypeId));
+    this.store.dispatch(new UpdateOneNote(this.currentNote));
   }
 
   async changeRefTypeFolder(refTypeId: RefTypeENUM) {
     await this.apiFolder.makePublic(refTypeId, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refTypeId;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refTypeId;
-    this.store.dispatch(new UpdateOneFolder(this.currentFolder, this.currentFolder.folderTypeId));
+    this.store.dispatch(new UpdateOneFolder(this.currentFolder));
   }
 
   refTypeNotification(refType: RefTypeENUM): void {

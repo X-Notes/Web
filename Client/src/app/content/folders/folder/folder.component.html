@@ -17,16 +17,17 @@
   >
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
   </div>
-  <div class="folder-inner">
+  <div (click)="handelEntityClick($event, folder.id)" class="folder-inner">
     <input
       type="text"
       [placeholder]="'placeholder.folderSmall' | translate"
       [ngModel]="folder.title"
       (ngModelChange)="changed($event)"
+      [disabled]="isSelectedMode"
     />
     <div
       class="folder-content"
-      (click)="toFolder()"
+      (click)="toFolder($event)"
       [ngStyle]="{'cursor': folder.lockRedirect ? 'pointer' : ''}"
     >
       <div class="notes">
@@ -45,6 +46,11 @@
       <div class="bottom-section">
         <div class="date">
           <p>{{folder.updatedAt | date: 'medium' }}</p>
+        </div>
+        <div class="help-icons">
+          <div *ngIf="folder.additionalInfo?.isHasUserOnNote" class="icon">
+            <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+          </div>
         </div>
       </div>
     </div>

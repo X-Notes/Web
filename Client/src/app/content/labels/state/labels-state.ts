@@ -140,8 +140,9 @@ export class LabelStore {
   }
 
   @Action(UpdateLabelCount)
-  async updateLabelsCount({ setState }: StateContext<LabelState>, { label }: UpdateLabelCount) {
-    const count = await this.api.getCountNotes(label.id).toPromise();
+  async updateLabelsCount({ setState, getState }: StateContext<LabelState>, { labelId }: UpdateLabelCount) {
+    const count = await this.api.getCountNotes(labelId).toPromise();
+    const label = getState().labelsAll.find(x => x.id === labelId) || getState().labelsDeleted.find(x => x.id === labelId);
     if (label.isDeleted) {
       setState(
         patch({

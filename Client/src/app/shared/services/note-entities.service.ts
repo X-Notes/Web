@@ -4,13 +4,9 @@ import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import {
-  ClearUpdatelabelEvent,
-  SelectIdNote,
-  UnSelectIdNote,
-} from 'src/app/content/notes/state/notes-actions';
+import { SelectIdNote, UnSelectIdNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { UpdateLabelEvent } from 'src/app/content/notes/state/update-labels.model';
+import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 
@@ -26,11 +22,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     super(store, murriService);
 
     this.store
-      .select(NoteStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.changeColorHandler(x));
-
-    this.store
       .select(NoteStore.selectedIds)
       .pipe(takeUntil(this.destroy))
       .subscribe((ids) => this.handleSelectEntities(ids));
@@ -40,21 +31,20 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       .pipe(takeUntil(this.destroy))
       .subscribe((count) => this.handleLockRedirect(count));
 
-    this.store // TODO DON`T WORK FOR INNE FOLDER
-      .select(NoteStore.updateLabelOnNoteEvent)
+    this.store
+      .select(NoteStore.updateNotesEvent)
       .pipe(takeUntil(this.destroy))
-      .subscribe(async (values: UpdateLabelEvent[]) => {
-        for (const valuee of values) {
-          const note = this.entities.find((x) => x.id === valuee.id);
-          if (note !== undefined) {
-            note.labels = valuee.labels;
-          }
-        }
-        if (values.length > 0) {
-          await this.store.dispatch(new ClearUpdatelabelEvent()).toPromise();
-          await this.murriService.refreshLayoutAsync();
-        }
+      .subscribe(async (values: UpdateNoteUI[]) => {
+        await this.updateNotes(values);
       });
+  }
+
+  changeColorHandler(updateColor: UpdateNoteUI[]) {
+    for (const update of updateColor) {
+      if (this.entities.length > 0) {
+        this.entities.find((x) => x.id === update.id).color = update.color;
+      }
+    }
   }
 
   baseToNote(note: SmallNote, navigateFunc: () => Promise<boolean>) {
@@ -75,8 +65,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     if (noteIds.length > 0) {
       const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
       for (const info of additionalInfo) {
-        // eslint-disable-next-line eqeqeq
-        const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
+        const noteIndex = this.entities.findIndex((x) => x.id === info.noteId);
         this.entities[noteIndex].additionalInfo = info;
       }
     }

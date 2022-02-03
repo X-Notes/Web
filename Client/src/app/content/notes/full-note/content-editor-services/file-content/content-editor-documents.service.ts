@@ -8,7 +8,6 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiDocumentsService } from '../../services/api-documents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
@@ -44,13 +43,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
 
   async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
     const collectionResult = await this.apiDocuments
-      .transformToDocuments(noteId, contentId)
+      .transformTo(noteId, contentId)
       .toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
-      collectionResult.data.documents = collectionResult.data.documents
-        ? collectionResult.data.documents
-        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadDocumentsToCollectionHandler(
         { contentId: collectionResult.data.id, files },
@@ -58,16 +54,6 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       );
       collectionResult.data.isLoading = false;
     }
-  }
-
-  insertNewContent(contentId: string, isFocusToNext: boolean) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
-    if (isFocusToNext) {
-      index += 1;
-    }
-    const nContent = DocumentsCollection.getNew();
-    this.contentsService.insertInto(nContent, index);
-    return { index, content: nContent };
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -113,44 +99,21 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     const prevCollection = this.contentsService.getContentById<DocumentsCollection>(
       $event.contentId,
     );
-    const prev = prevCollection.documents ?? [];
+    const prev = prevCollection.items ?? [];
 
-    const newCollection = new DocumentsCollection(prevCollection);
-    newCollection.documents = [...prev, ...documentsMapped];
+    const newCollection = new DocumentsCollection(prevCollection, prevCollection.items);
+    newCollection.items = [...prev, ...documentsMapped];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (
-    contentId: string,
-    noteId: string,
-  ): Promise<OperationResult<any>> => {
-    const resp = await this.apiDocuments.removeDocumentFromNote(noteId, contentId).toPromise();
-    if (resp.success) {
-      this.deleteHandler(contentId);
+  deleteDocumentHandler(documentId: string, content: DocumentsCollection) {
+    if (content.items.length === 1) {
+      this.deleteHandler(content.id);
+    } else {
+      content.items = content.items.filter((x) => x.fileId !== documentId);
     }
-    return resp;
-  };
-
-  // eslint-disable-next-line class-methods-use-this
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  deleteDocumentHandler(documentId: string, contentId: string, noteId: string) {
-    // TODO
-  }
-
-  async updateCollectionInfo(
-    contentId: string,
-    noteId: string,
-    name: string,
-  ): Promise<OperationResult<any>> {
-    const resp = await this.apiDocuments.updateCollectionInfo(noteId, contentId, name).toPromise();
-    if (resp.success) {
-      const collection = this.contentsService.getContentById<DocumentsCollection>(contentId);
-      collection.name = name;
-      this.contentsService.setSafe(collection, collection.id);
-    }
-    return resp;
   }
 }

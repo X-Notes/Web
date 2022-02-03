@@ -5,6 +5,7 @@ import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { AudioService } from '../notes/audio.service';
 import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
 
@@ -24,6 +25,7 @@ export class ContentComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private store: Store,
     public audioService: AudioService,
+    private htmlTitleService: HtmlTitleService,
   ) {}
 
   ngOnDestroy(): void {
@@ -33,6 +35,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     DeltaConverter.initQuill();
+    this.htmlTitleService.init();
     this.store
       .select(AppStore.isTokenUpdated)
       .pipe(takeUntil(this.destroy))

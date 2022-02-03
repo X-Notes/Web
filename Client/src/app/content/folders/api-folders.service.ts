@@ -4,11 +4,14 @@ import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map } from 'rxjs/operators';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
+import { Observable } from 'rxjs';
 import { SmallFolder } from './models/folder.model';
 import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
-import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { BottomFolderContent } from './models/bottom-folder-content.model';
 
 @Injectable()
 export class ApiFoldersService {
@@ -33,12 +36,21 @@ export class ApiFoldersService {
     );
   }
 
-  getFoldersMany(folderIds: string[], settings: PersonalizationSetting) {
+  getFoldersMany(folderIds: string[], settings: PersonalizationSetting): Observable<SmallFolder[]> {
     const obj = {
       folderIds,
       settings,
     };
-    return this.httpClient.post<SmallFolder[]>(`${environment.writeAPI}/api/folder/many`, obj);
+    return this.httpClient
+      .post<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/many`, obj)
+      .pipe(
+        map((z) => {
+          if (z.success) {
+            return z.data;
+          }
+          return [];
+        }),
+      );
   }
 
   changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {
@@ -47,7 +59,10 @@ export class ApiFoldersService {
       userId,
       accessTypeId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/permission`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/user/permission`,
+      obj,
+    );
   }
 
   sendInvitesToFolder(
@@ -83,18 +98,24 @@ export class ApiFoldersService {
     return this.httpClient.get<SmallFolder>(`${environment.writeAPI}/api/folder/new`);
   }
 
-  archiveFolder(ids: string[]) {
+  archive(ids: string[]) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/archive`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/archive`,
+      obj,
+    );
   }
 
-  setDeleteFolder(ids: string[]) {
+  setDelete(ids: string[]) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/delete`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/delete`,
+      obj,
+    );
   }
 
   deleteFolders(ids: string[]) {
@@ -111,26 +132,25 @@ export class ApiFoldersService {
     return this.httpClient.patch<SmallFolder[]>(`${environment.writeAPI}/api/folder/copy`, obj);
   }
 
-  restoreFolder(ids: string[]) {
-    const obj = {
-      ids,
-    };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/restore`, obj);
-  }
-
   changeColor(ids: string[], color: string) {
     const obj = {
       ids,
       color,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/color`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/color`,
+      obj,
+    );
   }
 
-  makePrivateFolders(ids: string[]) {
+  makePrivate(ids: string[]) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/ref/private`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/ref/private`,
+      obj,
+    );
   }
 
   makePublic(refTypeId: RefTypeENUM, ids: string[]) {
@@ -138,7 +158,10 @@ export class ApiFoldersService {
       refTypeId,
       ids,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/folders/share`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/share`,
+      obj,
+    );
   }
 
   // FULL FOLDER
@@ -148,6 +171,19 @@ export class ApiFoldersService {
       title,
       id,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/fullfolder/title`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullfolder/title`,
+      obj,
+    );
+  }
+
+  getAdditionalInfos(folderIds: string[]) {
+    const obj = {
+      folderIds,
+    };
+    return this.httpClient.post<BottomFolderContent[]>(
+      `${environment.writeAPI}/api/folder/additional`,
+      obj,
+    );
   }
 }

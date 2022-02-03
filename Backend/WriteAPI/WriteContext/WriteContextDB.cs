@@ -47,8 +47,6 @@ namespace WriteContext
 
         public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
 
-        public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
-
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
 
@@ -176,9 +174,6 @@ namespace WriteContext
 
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
-
-            modelBuilder.Entity<UserOnNoteNow>()
-                .HasKey(x => new { x.UserId, x.NoteId });
 
             modelBuilder.Entity<LabelsNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.LabelId });

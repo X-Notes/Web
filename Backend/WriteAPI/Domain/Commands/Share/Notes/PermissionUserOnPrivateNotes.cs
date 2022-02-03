@@ -1,11 +1,12 @@
 ﻿using System;
 using Common.Attributes;
 using Common.DatabaseModels.Models.Systems;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.Share.Notes
 {
-    public class PermissionUserOnPrivateNotes : BaseCommandEntity, IRequest<Unit>
+    public class PermissionUserOnPrivateNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

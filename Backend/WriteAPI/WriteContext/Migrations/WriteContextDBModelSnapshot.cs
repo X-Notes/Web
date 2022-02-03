@@ -702,21 +702,6 @@ namespace WriteContext.Migrations
                     b.ToTable("ReletatedNoteToInnerNote", "note");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnNoteNow", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "NoteId");
-
-                    b.HasIndex("NoteId");
-
-                    b.ToTable("UserOnNoteNow", "note");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnPrivateNotes", b =>
                 {
                     b.Property<Guid>("NoteId")
@@ -1513,25 +1498,6 @@ namespace WriteContext.Migrations
                     b.Navigation("RelatedNote");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnNoteNow", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
-                        .WithMany("UserOnNotesNow")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
-                        .WithMany("UserOnNotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Note");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnPrivateNotes", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Systems.RefType", "AccessType")
@@ -1833,8 +1799,6 @@ namespace WriteContext.Migrations
 
                     b.Navigation("ReletatedNoteToInnerNotesTo");
 
-                    b.Navigation("UserOnNotesNow");
-
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
@@ -1907,8 +1871,6 @@ namespace WriteContext.Migrations
                     b.Navigation("PersonalizationSetting");
 
                     b.Navigation("UserHistories");
-
-                    b.Navigation("UserOnNotes");
 
                     b.Navigation("UserOnPrivateNotes");
 

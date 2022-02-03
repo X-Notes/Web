@@ -6,11 +6,15 @@ namespace Domain.Queries.Notes
 {
     public class GetFullNoteQuery: BaseQueryEntity, IRequest<FullNoteAnswer>
     {
-        public Guid Id { set; get; }
-        public GetFullNoteQuery(string email, Guid id)
+        public Guid NoteId { set; get; }
+
+        public Guid? FolderId { set; get; }
+
+        public GetFullNoteQuery(string email, Guid noteId, Guid? folderId)
             :base(email)
         {
-            this.Id = id;
+            this.NoteId = noteId;
+            this.FolderId = folderId;
         }
     }
 }

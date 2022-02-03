@@ -26,6 +26,10 @@
   }
 }
 
+.cdk-global-scrollblock {
+  overflow-y: hidden;
+}
+
 .sharing-modal {
   mat-dialog-container {
     background-color: transparent;
@@ -122,6 +126,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   transition: 0.3s ease;
+  // background-color: #FAFAFA;
 
   .content-inner {
     width: 100%;
@@ -225,14 +230,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 24px;
-  width: 24px;
+  height: 26px;
+  width: 26px;
   border-radius: 5px;
   background-color: white;
-  color: #515151;
-  font-size: 1.375rem;
+  color: #414141;
+  font-size: 1rem;
+  font-weight: 500;
   transition: 0.2s ease;
   cursor: pointer;
+  margin-top: 5px;
 }
 
 .separator {

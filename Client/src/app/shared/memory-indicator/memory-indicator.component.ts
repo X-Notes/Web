@@ -1,15 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { BillingENUM } from '../enums/billing.enum';
+import { ThemeENUM } from '../enums/theme.enum';
 @Component({
   selector: 'app-memory-indicator',
   templateUrl: './memory-indicator.component.html',
   styleUrls: ['./memory-indicator.component.scss'],
 })
 export class MemoryIndicatorComponent implements OnInit, OnDestroy {
+  
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
+
   destroy = new Subject<void>();
 
   memory: number;
@@ -52,13 +57,10 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     }
   }
 
-  get indicatorColor() {
+  getIndicatorColor(theme: ThemeENUM) {
     const check = this.memory / this.userMemory;
-    if (check < 0.65) {
-      return 'white';
-    }
-    if (check >= 0.65 && check < 0.85) {
-      return '#ffed69';
+    if (check < 0.85) {
+      return theme === ThemeENUM.Dark ? 'white' : '#404040';
     }
     return '#ff6969';
   }

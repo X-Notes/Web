@@ -57,9 +57,13 @@ export class ExportService {
   }
 
   // PHOTOS
-  async exportAlbum(album: PhotosCollection) {
+  async exportAlbum(collection: PhotosCollection) {
+    if(collection.items.length === 0) {
+      // TODO SNACKBAR WITH WARNING
+      return;
+    }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportPhotos');
-    const tasks = album.photos.map((photo) => {
+    const tasks = collection.items.map((photo) => {
       const path = this.getPath(photo.photoFromBig, photo.authorId);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
@@ -94,9 +98,13 @@ export class ExportService {
   }
 
   // AUDIOS
-  async exportPlaylist(playlist: AudiosCollection) {
+  async exportPlaylist(collection: AudiosCollection) {
+    if(collection.items.length === 0) {
+      // TODO SNACKBAR WITH WARNING
+      return;
+    }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportAudios');
-    const tasks = playlist.audios.map((audio) => {
+    const tasks = collection.items.map((audio) => {
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Audio,
@@ -132,10 +140,14 @@ export class ExportService {
 
   // DOCUMENT
   async exportDocuments(collection: DocumentsCollection) {
+    if(collection.items.length === 0) {
+      // TODO SNACKBAR WITH WARNING
+      return;
+    }
     const operation = this.longTermOperationsHandler.addNewExportOperation(
       'uploader.exportDocuments',
     );
-    const tasks = collection.documents.map((document) => {
+    const tasks = collection.items.map((document) => {
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Document,
@@ -173,8 +185,12 @@ export class ExportService {
 
   // VIDEOS
   async exportVideos(collection: VideosCollection) {
+    if(collection.items.length === 0) {
+      // TODO SNACKBAR WITH WARNING
+      return;
+    }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportVideos');
-    const tasks = collection.videos.map((video) => {
+    const tasks = collection.items.map((video) => {
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Video,

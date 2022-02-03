@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
+using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.WebSockets;
+using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.Services.Notes
 {
@@ -33,6 +38,9 @@ namespace BI.Services.Notes
 
         private readonly TextNotesRepository textNotesRepository;
 
+        private readonly UserRepository userRepository;
+
+        private readonly NoteWSUpdateService noteWSUpdateService;
 
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
@@ -40,7 +48,9 @@ namespace BI.Services.Notes
             HistoryCacheService historyCacheService,
             AppCustomMapper appCustomMapper,
             AppSignalRService appSignalRService,
-            TextNotesRepository textNotesRepository)
+            TextNotesRepository textNotesRepository,
+            UserRepository userRepository,
+            NoteWSUpdateService noteWSUpdateService)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
@@ -48,6 +58,8 @@ namespace BI.Services.Notes
             this.appCustomMapper = appCustomMapper;
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
+            this.userRepository = userRepository;
+            this.noteWSUpdateService = noteWSUpdateService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -59,14 +71,13 @@ namespace BI.Services.Notes
             {
                 var note = permissions.Note;
                 note.Title = request.Title;
-                note.UpdatedAt = DateTimeOffset.Now;
+                note.UpdatedAt = DateTimeProvider.Time;
                 await noteRepository.UpdateAsync(note);
 
-                var fullNote = await noteRepository.GetFull(note.Id);
-                var noteForUpdating = appCustomMapper.MapNoteToFullNote(fullNote);
-
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
+
+                // WS UPDATES
+                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers());
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -83,56 +94,41 @@ namespace BI.Services.Notes
             {
                 if(request.Texts.Count == 1)
                 {
-                    await UpdateOne(request.Texts.First());
+                    await UpdateOne(request.Texts.First(), request.NoteId, request.Email);
                 }
                 else
                 {
-                    await UpdateMany(request.Texts);
+                    foreach (var text in request.Texts)
+                    {
+                        await UpdateOne(text, request.NoteId, request.Email);
+                    }
                 }
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                // TODO DEADLOCK
                 return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        private async Task UpdateMany(List<TextNoteDTO> texts)
-        {
-            var ids = texts.Select(x => x.Id).ToList();
-            var contents = await textNotesRepository.GetWhereAsync(x => ids.Contains(x.Id));
 
-            foreach (var text in texts)
-            {
-                var textForUpdate = contents.FirstOrDefault(x => x.Id == text.Id);
-                if(textForUpdate != null)
-                {
-                    textForUpdate.UpdatedAt = DateTimeOffset.Now;
-                    textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
-                    textForUpdate.HTypeId = text.HeadingTypeId;
-                    textForUpdate.Checked = text.Checked;
-                    textForUpdate.Contents = text.Contents;
-                }
-            }
-            // UPDATING
-            await textNotesRepository.UpdateRangeAsync(contents);
-        }
-
-        private async Task UpdateOne(TextNoteDTO text)
+        private async Task UpdateOne(TextNoteDTO text, Guid noteId, string email)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate != null)
             {
-                textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                textForUpdate.UpdatedAt = DateTimeProvider.Time;
                 textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
                 textForUpdate.HTypeId = text.HeadingTypeId;
                 textForUpdate.Checked = text.Checked;
                 textForUpdate.Contents = text.Contents;
+
+                await textNotesRepository.UpdateAsync(textForUpdate);
+
+                var updates = new UpdateTextWS(text);
+                await appSignalRService.UpdateTextContent(noteId, email, updates);
             }
-            await textNotesRepository.UpdateAsync(textForUpdate);
         }
     }
 }

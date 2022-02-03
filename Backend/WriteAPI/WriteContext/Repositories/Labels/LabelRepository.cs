@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Labels;
 using WriteContext.GenericRepositories;
+using Common;
 
 namespace WriteContext.Repositories.Labels
 {
@@ -110,8 +111,8 @@ namespace WriteContext.Repositories.Labels
                     // New Deleted Label
                     labelDeleted.Order = 1;
                     labelDeleted.IsDeleted = true;
-                    labelDeleted.DeletedAt = DateTimeOffset.Now;
-                    labelDeleted.UpdatedAt = DateTimeOffset.Now;
+                    labelDeleted.DeletedAt = DateTimeProvider.Time;
+                    labelDeleted.UpdatedAt = DateTimeProvider.Time;
                     await UpdateAsync(labelDeleted);
 
                     await transaction.CommitAsync();
@@ -141,7 +142,7 @@ namespace WriteContext.Repositories.Labels
                     allLabels.ForEach(x => x.Order = x.Order + 1);
                     label.Order = 1;
                     label.IsDeleted = false;
-                    label.UpdatedAt = DateTimeOffset.Now; // TODO MOVE TO CLASS
+                    label.UpdatedAt = DateTimeProvider.Time;
                     label.DeletedAt = null;
                     allLabels.Add(label);
                     await UpdateRangeAsync(allLabels);

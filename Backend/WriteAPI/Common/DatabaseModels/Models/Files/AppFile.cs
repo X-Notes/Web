@@ -66,7 +66,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
-            CreatedAt = DateTimeOffset.UtcNow;
+            CreatedAt = DateTimeProvider.Time;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -84,7 +84,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
-            CreatedAt = DateTimeOffset.UtcNow;
+            CreatedAt = DateTimeProvider.Time;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -98,7 +98,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
-            CreatedAt = DateTimeOffset.UtcNow;
+            CreatedAt = DateTimeProvider.Time;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -114,7 +114,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
-            CreatedAt = DateTimeOffset.UtcNow;
+            CreatedAt = DateTimeProvider.Time;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }

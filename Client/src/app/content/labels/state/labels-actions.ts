@@ -30,7 +30,7 @@ export class UpdateLabel {
 export class UpdateLabelCount {
   static type = '[Labels] Update Label Count';
 
-  constructor(public label: Label) {}
+  constructor(public labelId: string) {}
 }
 
 export class PositionLabel {

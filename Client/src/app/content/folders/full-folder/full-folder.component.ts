@@ -34,12 +34,14 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
+import { HtmlTitleService } from 'src/app/core/html-title.service';
+import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService],
+  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -84,6 +86,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
     private router: Router,
+    private htmlTitleService: HtmlTitleService,
+    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService
   ) {}
 
   get folderMenu() {
@@ -97,15 +101,18 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.ffnService.murriInitialise(this.refElements);
     this.initPanelClassStyleSubscribe();
+    this.webSocketsFolderUpdaterService.tryJoinToFolder(this.id);
   }
 
   ngOnDestroy(): void {
+    this.webSocketsFolderUpdaterService.leaveFolder(this.id);
     this.updateNoteService.foldersIds$.next([
       ...this.updateNoteService.foldersIds$.getValue(),
       this.id,
     ]);
     this.routeSubscription.unsubscribe();
   }
+
 
   async ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -126,6 +133,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
               const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
               await this.ffnService.initializeEntities(notes);
             }
+
+            this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
 
             await this.pService.waitPreloading();
             this.pService.setSpinnerState(false);
@@ -214,7 +223,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
-    if (this.folder.folderTypeId) {
+    if (this.folder?.folderTypeId) {
       await this.setSideBarNotes(this.folder.folderTypeId);
     }
   }

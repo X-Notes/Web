@@ -1,8 +1,16 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-return-assign */
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
+import {
+  OperationResult,
+  OperationResultAdditionalInfo,
+} from 'src/app/shared/models/operation-result.model';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { SmallFolder } from '../models/folder.model';
 import { ApiFoldersService } from '../api-folders.service';
 import { FullFolder } from '../models/full-folder.model';
@@ -13,31 +21,27 @@ import {
   UnSelectIdFolder,
   UnSelectAllFolder,
   SelectAllFolder,
-  ArchiveFolders,
+  ChangeTypeFolder,
   RemoveFromDomMurri,
   ChangeColorFolder,
-  ClearColorFolders,
-  SetDeleteFolders,
+  ClearUpdatesUIFolders,
   DeleteFoldersPermanently,
   CopyFolders,
   ClearAddToDomFolders,
-  MakePrivateFolders,
   PositionFolder,
   UpdateFolders,
-  UpdateTitle,
+  UpdateFolderTitle,
   UpdateOneFolder,
   LoadFullFolder,
   TransformTypeFolders,
   ChangeTypeFullFolder,
   GetInvitedUsersToFolder,
-  ChangeColorFullFolder,
   AddToDomFolders,
-  MakeSharedFolders,
   ResetFolders,
 } from './folders-actions';
-import { UpdateColor } from '../../notes/state/update-color.model';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
+import { UpdateFolderUI } from './update-folder-ui.model';
 
 interface FullFolderState {
   isOwner: boolean;
@@ -51,7 +55,7 @@ interface FolderState {
   fullFolderState: FullFolderState;
   selectedIds: string[];
   removeFromMurriEvent: string[];
-  updateColorEvent: UpdateColor[];
+  updateFolderEvent: UpdateFolderUI[];
   foldersAddToDOM: SmallFolder[];
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
@@ -63,7 +67,7 @@ interface FolderState {
     fullFolderState: null,
     selectedIds: [],
     removeFromMurriEvent: [],
-    updateColorEvent: [],
+    updateFolderEvent: [],
     foldersAddToDOM: [],
     InvitedUsersToNote: [],
   },
@@ -164,16 +168,14 @@ export class FolderStore {
     return state.selectedIds;
   }
 
-  // Murri Get REMOVE
   @Selector()
   static removeFromMurriEvent(state: FolderState): string[] {
     return state.removeFromMurriEvent;
   }
 
-  // COLOR
   @Selector()
-  static updateColorEvent(state: FolderState): UpdateColor[] {
-    return state.updateColorEvent;
+  static updateFolderEvents(state: FolderState): UpdateFolderUI[] {
+    return state.updateFolderEvent;
   }
 
   @Selector()
@@ -181,19 +183,10 @@ export class FolderStore {
     return state.foldersAddToDOM;
   }
 
-  @Action(ClearColorFolders)
+  @Action(ClearUpdatesUIFolders)
   // eslint-disable-next-line class-methods-use-this
-  clearColorNotes({ patchState }: StateContext<FolderState>) {
-    patchState({ updateColorEvent: [] });
-  }
-
-  @Action(SetDeleteFolders)
-  async setDeleteFolders(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: SetDeleteFolders,
-  ) {
-    await this.api.setDeleteFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
+  clearUpdates({ patchState }: StateContext<FolderState>) {
+    patchState({ updateFolderEvent: [] });
   }
 
   @Action(CopyFolders)
@@ -255,24 +248,64 @@ export class FolderStore {
     dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
   }
 
-  @Action(MakePrivateFolders)
-  async MakePrivateFolder(
+  @Action(ChangeTypeFolder)
+  async changeTypeFolder(
     { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: MakePrivateFolders,
+    {
+      typeTo,
+      selectedIds,
+      isAddingToDom,
+      errorPermissionMessage,
+      successCallback,
+      refTypeId,
+    }: ChangeTypeFolder,
   ) {
-    await this.api.makePrivateFolders(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
-  }
-
-  @Action(MakeSharedFolders)
-  async makeSharedNotes(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom, refTypeId }: MakeSharedFolders,
-  ) {
-    await this.api.makePublic(refTypeId, selectedIds).toPromise();
-    dispatch(
-      new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
-    );
+    let resp: OperationResult<any>;
+    switch (typeTo) {
+      case FolderTypeENUM.Private: {
+        resp = await this.api.makePrivate(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
+          if (successCallback) {
+            successCallback();
+          }
+        }
+        break;
+      }
+      case FolderTypeENUM.Deleted: {
+        resp = await this.api.setDelete(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
+          if (successCallback) {
+            successCallback();
+          }
+        }
+        break;
+      }
+      case FolderTypeENUM.Archive: {
+        resp = await this.api.archive(selectedIds).toPromise();
+        if (resp.success) {
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
+          if (successCallback) {
+            successCallback();
+          }
+        }
+        break;
+      }
+      case FolderTypeENUM.Shared: {
+        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        dispatch(
+          new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
+        );
+        break;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
+    }
   }
 
   @Action(PositionFolder)
@@ -419,64 +452,37 @@ export class FolderStore {
     dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
   }
 
-  @Action(ArchiveFolders)
-  async archiveFolders(
-    { dispatch }: StateContext<FolderState>,
-    { selectedIds, isAddingToDom }: ArchiveFolders,
-  ) {
-    await this.api.archiveFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
-  }
-
   @Action(ChangeColorFolder)
   async changeColor(
     { patchState, getState, dispatch }: StateContext<FolderState>,
-    { color, typeFolder, selectedIds }: ChangeColorFolder,
+    { color, selectedIds, isCallApi, errorPermissionMessage }: ChangeColorFolder,
   ) {
-    await this.api.changeColor(selectedIds, color).toPromise();
-
-    const folders = this.getFoldersByType(getState, typeFolder);
-    const newFolders = folders.map((x) => {
-      const folder = { ...x };
-      if (selectedIds.some((z) => z === folder.id)) {
-        folder.color = color;
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi) {
+      resp = await this.api.changeColor(selectedIds, color).toPromise();
+    }
+    if (resp.success) {
+      const fullFolder = getState().fullFolderState?.folder;
+      if (fullFolder && selectedIds.some(id => id === fullFolder.id)) {
+        patchState({ fullFolderState: { ...getState().fullFolderState, folder: {...fullFolder, color }}});
       }
-      return folder;
-    });
-
-    const foldersForUpdate = folders
-      .filter((x) => selectedIds.some((z) => z === x.id))
-      .map((folder) => ({ ...folder, color }));
-
-    const updateColor = foldersForUpdate.map((folder) => this.mapFromFolderToUpdateColor(folder));
-    patchState({ updateColorEvent: updateColor });
-    dispatch([
-      new UpdateFolders(new Folders(typeFolder, newFolders), typeFolder),
-      UnSelectAllFolder,
-      ClearColorFolders,
-    ]);
-  }
-
-  @Action(ChangeColorFullFolder)
-  async changeColorFullFolder(
-    { getState, patchState, dispatch }: StateContext<FolderState>,
-    { color }: ChangeColorFullFolder,
-  ) {
-    await this.api.changeColor([getState().fullFolderState.folder.id], color).toPromise();
-
-    const { folder } = getState().fullFolderState;
-    const newFolder: FullFolder = { ...folder, color };
-    patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
-    const folderUpdate = newFolder as SmallFolder;
-    dispatch(new UpdateOneFolder(folderUpdate, folder.folderTypeId));
+      const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
+      foldersForUpdate.forEach((folder) => folder.color = color);
+      const updatesUI = foldersForUpdate.map((folder) =>
+        this.toUpdateFolderUI(folder.id, folder.color, null),
+      );
+      patchState({ updateFolderEvent: updatesUI });
+      foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder)));
+      dispatch([UnSelectAllFolder]);
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
+    }
   }
 
   @Action(UpdateOneFolder)
-  updateOneFolder(
-    { dispatch, getState }: StateContext<FolderState>,
-    { folder, typeFolder }: UpdateOneFolder,
-  ) {
-    let folders = this.getFoldersByType(getState, typeFolder);
+  updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder }: UpdateOneFolder) {
+    let folders = this.getFoldersByType(getState, folder.folderTypeId);
     folders = folders.map((x) => {
       let nt = { ...x };
       if (nt.id === folder.id) {
@@ -484,18 +490,33 @@ export class FolderStore {
       }
       return nt;
     });
-    dispatch(new UpdateFolders(new Folders(typeFolder, [...folders]), typeFolder));
+    dispatch(
+      new UpdateFolders(new Folders(folder.folderTypeId, [...folders]), folder.folderTypeId),
+    );
   }
 
-  @Action(UpdateTitle)
+  @Action(UpdateFolderTitle)
   async updateTitleFolder(
-    { getState, dispatch }: StateContext<FolderState>,
-    { str, id, typeFolder }: UpdateTitle,
+    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { str, folderId, isCallApi, errorPermissionMessage }: UpdateFolderTitle,
   ) {
-    let folder = this.getFoldersByType(getState, typeFolder).find((z) => z.id === id);
-    folder = { ...folder, title: str };
-    dispatch(new UpdateOneFolder(folder, typeFolder));
-    await this.api.updateTitle(str, id).toPromise();
+    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    if (isCallApi) {
+      resp = await this.api.updateTitle(str, folderId).toPromise();
+    }
+    if (resp.success) {
+      const folder = getState().fullFolderState?.folder;
+      if (folder && folder.id === folderId) {
+        patchState({ fullFolderState: { ...getState().fullFolderState, folder: {...folder, title: str} } });
+      }
+      const folderUpdate = this.getFolderById(getState, folderId);
+      folderUpdate.title = str;
+      patchState({ updateFolderEvent: [this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title)] });
+      dispatch(new UpdateOneFolder(folderUpdate));
+    }
+    if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
+      dispatch(new ShowSnackNotification(errorPermissionMessage));
+    }
   }
 
   @Action(LoadFullFolder)
@@ -535,12 +556,37 @@ export class FolderStore {
     });
   }
 
-  mapFromFolderToUpdateColor = (folder: SmallFolder) => {
-    const obj: UpdateColor = {
-      id: folder.id,
-      color: folder.color,
-    };
+  toUpdateFolderUI = (id: string, color: string, title: string) => {
+    const obj = new UpdateFolderUI();
+    obj.id = id;
+    obj.color = color;
+    obj.title = title;
     return obj;
+  };
+
+  getFolderById = (getState: () => FolderState, id: string): SmallFolder => {
+    for (const folders of getState().folders) {
+      for (const x of folders.folders) {
+        const folder = { ...x };
+        if (id === folder.id) {
+          return folder;
+        }
+      }
+    }
+    return null;
+  };
+
+  getFoldersByIds = (getState: () => FolderState, ids: string[]): SmallFolder[] => {
+    const result: SmallFolder[] = [];
+    getState().folders.forEach((folders) => {
+      for (const x of folders.folders) {
+        const folder = { ...x };
+        if (ids.some((z) => z === folder.id)) {
+          result.push(folder);
+        }
+      }
+    });
+    return result;
   };
 
   getFoldersByType = (getState: () => FolderState, type: FolderTypeENUM) => {

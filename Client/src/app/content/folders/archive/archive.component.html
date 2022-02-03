@@ -10,7 +10,7 @@
     *ngFor="let item of folderService.entities"
     [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
   >
-    <app-folder [folder]="item"></app-folder>
+    <app-folder [folder]="item" [isSelectedMode]="folderService.isAnySelected"></app-folder>
   </div>
 </div>
 <app-no-results-illustration

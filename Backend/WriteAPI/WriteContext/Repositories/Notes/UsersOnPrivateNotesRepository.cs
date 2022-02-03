@@ -27,7 +27,7 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<List<UserOnPrivateNotes>> GetByNoteIdsWithUser(List<Guid> noteIds)
         {
-            return await entities.Where(x => noteIds.Contains(x.NoteId)).Include(x => x.User).ToListAsync();
+            return await entities.Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
         }
 
     }

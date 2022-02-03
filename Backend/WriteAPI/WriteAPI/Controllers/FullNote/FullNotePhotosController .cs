@@ -1,66 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.FullNote
 {
     [Authorize]
     [Route("api/note/inner/photos")]
     [ApiController]
-    public class FullNoteAlbumsController : ControllerBase
+    public class FullNoteAlbumsController : BaseNoteFileContentController
+        <
+        RemovePhotosFromCollectionCommand,
+        AddPhotosToCollectionCommand,
+        UpdatePhotosCollectionInfoCommand
+        >
     {
-        private readonly IMediator _mediator;
-        public FullNoteAlbumsController(IMediator _mediator)
+        public FullNoteAlbumsController(IMediator _mediator) : base(_mediator)
         {
-            this._mediator = _mediator;
-        }
-
-
-        [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveAlbum(UnlinkPhotosCollectionCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-
-        [HttpDelete("{noteId}/{contentId}/{photoId}")]
-        public async Task<OperationResult<Unit>> RemovePhotoFromAlbum(Guid noteId, Guid contentId, Guid photoId)
-        {
-            var command = new RemovePhotoFromCollectionCommand(noteId, contentId, photoId);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
         }
 
 
         [HttpPost("transform")]
         public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-        [HttpPatch("sync")]
-        public async Task<OperationResult<Unit>> SyncTextContents(UpdatePhotosContentsCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPatch("info")]
-        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdatePhotosCollectionInfoCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

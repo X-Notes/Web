@@ -1,19 +1,15 @@
 import * as uuid from 'uuid';
-import { ContentModelBase } from './content-model-base';
+import { BaseCollection } from './base-collection';
+import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
-export class VideosCollection extends ContentModelBase {
-  name: string;
+export class VideosCollection extends BaseCollection<VideoModel> {
 
-  videos: VideoModel[];
-
-  isLoading = false;
-
-  constructor(collection: Partial<VideosCollection>) {
+  constructor(collection: Partial<VideosCollection>, items: VideoModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.videos = collection.videos
-      ? collection.videos.map(
+    this.items = items
+      ? items.map(
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -28,69 +24,32 @@ export class VideosCollection extends ContentModelBase {
       id: uuid.v4(),
       updatedAt: new Date(),
     };
-    return new VideosCollection(obj);
+    return new VideosCollection(obj, obj.items);
   }
 
   copy(): VideosCollection {
-    return new VideosCollection(this);
+    return new VideosCollection(this, this.items);
   }
 
   copyBase(): VideosCollection {
-    const obj = new VideosCollection(this);
+    const obj = new VideosCollection(this, this.items);
     obj.name = null;
-    obj.videos = null;
+    obj.items = null;
     return obj;
   }
 
-  update(entity: VideosCollection) {
-    this.name = entity.name;
-    this.updatedAt = entity.updatedAt;
-    this.videos = entity.videos;
-  }
-
-  isEqual(content: VideosCollection): boolean {
-    return this.name === content.name && this.isEqualVideos(content);
-  }
-
-  private isEqualVideos(content: VideosCollection): boolean {
-    if (content.videos.length !== this.videos.length) {
-      return false;
-    }
-
-    const ids1 = content.videos.map((x) => x.fileId);
-    const ids2 = this.videos.map((x) => x.fileId);
-    if (!this.isIdsEquals(ids1, ids2)) {
-      return false;
-    }
-
-    for (const videoF of this.videos) {
-      const videoS = content.videos.find((x) => x.fileId === videoF.fileId);
-      if (!videoF.isEqual(videoS)) {
-        return false;
-      }
-    }
-
-    return true;
+  isTextOrCollectionInfoEqual(content: VideosCollection): boolean {
+    return this.name === content.name;
   }
 }
 
-export class VideoModel {
-  name: string;
+export class VideoModel extends BaseFile {
 
   videoPath: string;
 
-  fileId: string;
-
-  authorId: string;
-
-  uploadAt: Date;
-
   constructor(name: string, videoPath: string, fileId: string, authorId: string, uploadAt: Date) {
-    this.name = name;
+    super(name, fileId, authorId, uploadAt);
     this.videoPath = videoPath;
-    this.fileId = fileId;
-    this.authorId = authorId;
-    this.uploadAt = uploadAt;
   }
 
   isEqual(content: VideoModel): boolean {
@@ -101,4 +60,8 @@ export class VideoModel {
       this.authorId === content.authorId
     );
   }
+}
+
+export class ApiVideosCollection extends VideosCollection {
+  videos: VideoModel[];
 }

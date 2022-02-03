@@ -59,7 +59,7 @@ namespace BI.Services.Labels
             {
                 label.Color = request.Color;
                 label.Name = request.Name;
-                label.UpdatedAt = DateTimeOffset.Now;
+                label.UpdatedAt = DateTimeProvider.Time;
                 await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
@@ -73,8 +73,8 @@ namespace BI.Services.Labels
             label.UserId = user.Id;
             label.Order = 1;
             label.Color = LabelsColorPallete.Red;
-            label.CreatedAt = DateTimeOffset.Now;
-            label.UpdatedAt = DateTimeOffset.Now;
+            label.CreatedAt = DateTimeProvider.Time;
+            label.UpdatedAt = DateTimeProvider.Time;
 
             await labelRepository.NewLabel(label);
             return label.Id;

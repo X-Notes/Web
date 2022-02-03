@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Attributes;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
 namespace Domain.Queries.Notes
 {
-    public class GetNoteContentsQuery : BaseQueryEntity, IRequest<List<BaseNoteContentDTO>>
+    public class GetNoteContentsQuery : BaseQueryEntity, IRequest<OperationResult<List<BaseNoteContentDTO>>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

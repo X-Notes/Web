@@ -13,17 +13,17 @@
     (panend)="panEnd($event)"
   >
     <app-content-editor
-      [note]="note"
-      [isReadOnlyMode]="false"
+      [note]="note$ | async"
+      [isReadOnlyMode]="(canEdit$ | async) === false"
       [contents]="contents"
     ></app-content-editor>
-    <app-right-section-content [note]="note" [wrap]="wrap"></app-right-section-content>
+    <app-right-section-content [note]="note$ | async" [wrap]="wrap"></app-right-section-content>
   </div>
   <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
     <app-no-results-illustration
       [isShow]="true"
-      [message]="'noResult.noAccessView' | translate"
-      [illustration]="pService.icon.noAccessView"
+      [message]="'noResult.noAccessViewNote' | translate"
+      [illustration]="pService.icon.noAccessViewNote"
       typeClass="type-module"
     ></app-no-results-illustration>
   </div>

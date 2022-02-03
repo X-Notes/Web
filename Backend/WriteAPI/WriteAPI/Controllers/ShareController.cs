@@ -10,6 +10,7 @@ using Domain.Commands.Share.Notes;
 using Domain.Queries.Sharing;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
+using Common.DTO;
 
 namespace WriteAPI.Controllers
 {
@@ -24,21 +25,22 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
+        // FOLDERS
 
         [HttpPost("folders/share")]
-        public async Task ToPublicEditShareFolders(ChangeRefTypeFolders command)
+        public async Task<OperationResult<Unit>> ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/permission")]
-        public async Task ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
+        public async Task<OperationResult<Unit>> ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/remove")]
@@ -65,22 +67,23 @@ namespace WriteAPI.Controllers
         }
 
 
+        // NOTES 
 
         [HttpPost("notes/share")]
-        public async Task ToPublicEditShareNotes(ChangeRefTypeNotes command)
+        public async Task<OperationResult<Unit>> ToPublicEditShareNotes(ChangeRefTypeNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
 
         [HttpPost("notes/user/permission")]
-        public async Task ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
+        public async Task<OperationResult<Unit>> ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("notes/user/remove")]

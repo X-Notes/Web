@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
+using Common.DTO;
 using Common.DTO.Folders;
+using Common.DTO.Folders.AdditionalContent;
+using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
 using Domain.Commands.Folders;
 using Domain.Queries.Folders;
@@ -44,7 +47,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("many")]
-        public async Task<List<SmallFolder>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
+        public async Task<OperationResult<List<SmallFolder>>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
@@ -61,36 +64,36 @@ namespace WriteAPI.Controllers
         // Commands 
 
         [HttpPatch("archive")]
-        public async Task ArchiveFolder([FromBody]ArchiveFolderCommand command)
+        public async Task<OperationResult<Unit>> ArchiveFolder([FromBody]ArchiveFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
-        }
-
-        [HttpPatch("color")]
-        public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
-        }
-
-
-        [HttpPatch("restore")]
-        public async Task RestoreNotes([FromBody] MakePrivateFolderCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("delete")]
-        public async Task SetDeleteNotes([FromBody]SetDeleteFolderCommand command)
+        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("ref/private")]
+        public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
+        }
+
+
+        [HttpPatch("color")]
+        public async Task<OperationResult<Unit>> ChangeColor([FromBody]ChangeColorFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("copy")]
@@ -109,13 +112,11 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-
-        [HttpPatch("ref/private")]
-        public async Task MakePrivate([FromBody]MakePrivateFolderCommand command)
+        [HttpPost("additional")]
+        public async Task<List<BottomFolderContent>> GetAdditionalInfo(GetAdditionalContentFolderInfoQuery query)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
+            query.Email = this.GetUserEmail();
+            return await _mediator.Send(query);
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
+using Common.DTO.Personalization;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Permissions;
 using MediatR;
@@ -23,18 +26,21 @@ namespace BI.Services.Folders
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
         private readonly AppCustomMapper noteMapper;
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
             AppCustomMapper noteMapper,
-            NoteRepository noteRepository
+            NoteRepository noteRepository,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository
             )
         {
             this.foldersNotesRepository = foldersNotesRepository;
             this._mediator = _mediator;
             this.noteMapper = noteMapper;
             this.noteRepository = noteRepository;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
@@ -65,6 +71,9 @@ namespace BI.Services.Folders
                 var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
 
                 var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id, request.Settings);
+                var sharedNotes = await GetSharedNotes(permissions.User.Id, request.Settings);
+                allNotes.AddRange(sharedNotes);
+                allNotes = allNotes.DistinctBy(x => x.Id).ToList();
 
                 if (string.IsNullOrEmpty(request.Search))
                 {
@@ -81,6 +90,15 @@ namespace BI.Services.Folders
             }
 
             return new List<PreviewNoteForSelection>();
+        }
+
+        private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
+        {
+            var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
+            var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
+            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, settings);
+            sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
+            return sharedNotes;
         }
     }
 }

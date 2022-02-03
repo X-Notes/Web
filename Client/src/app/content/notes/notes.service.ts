@@ -7,6 +7,11 @@ import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
+import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import {
   CancelAllSelectedLabels,
   ClearAddToDomNotes,
@@ -16,13 +21,8 @@ import {
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
-import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
-import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 
 /** Injection only in component */
 @Injectable()
@@ -169,7 +169,7 @@ export class NotesService
     this.updateService.notesIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
       if (ids.length > 0) {
         const notes = await this.apiService.getNotesMany(ids, pr).toPromise();
-        const actionsForUpdate = notes.map((note) => new UpdateOneNote(note, note.noteTypeId));
+        const actionsForUpdate = notes.map((note) => new UpdateOneNote(note));
         this.store.dispatch(actionsForUpdate);
         const transformNotes = this.transformSpread(notes);
         transformNotes.forEach((note) => {
@@ -196,9 +196,8 @@ export class NotesService
     const routing = this.store.selectSnapshot(AppStore.getRouting);
     if (routing === EntityType.FolderInnerNote) {
       return this.router.navigate(['../', note.id], { relativeTo: this.route });
-    } else {
-      return this.router.navigate(['/notes/', note.id]);
     }
+    return this.router.navigate(['/notes/', note.id]);
   }
 
   toNote(note: SmallNote) {

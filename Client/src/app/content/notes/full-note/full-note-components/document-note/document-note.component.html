@@ -20,10 +20,10 @@
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-document-item
-        *ngFor="let item of content.documents;"
+        *ngFor="let item of content.items;"
         [document]="item"
         [isReadOnlyMode]="isReadOnlyMode"
-        (deleteDocument)="deleteDocumentHandler($event)"
+        (deleteDocument)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportDocument($event)"
         (clickEvent)="clickDocumentHandler($event)"
       ></app-document-item>

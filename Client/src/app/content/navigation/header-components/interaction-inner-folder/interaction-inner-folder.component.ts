@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FullFolder } from 'src/app/content/folders/models/full-folder.model';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
@@ -14,6 +15,13 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   styleUrls: ['./interaction-inner-folder.component.scss'],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
+
+  @Select(FolderStore.canView)
+  canView$: Observable<boolean>;
+
+  @Select(FolderStore.full)
+  folder$: Observable<FullFolder>;
+
   @Select(AppStore.getName)
   public route$: Observable<string>;
 

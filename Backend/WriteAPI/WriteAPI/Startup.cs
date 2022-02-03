@@ -78,6 +78,7 @@ namespace WriteAPI
 
             services.AddHostedService<MLHosted>();
             services.AddHostedService<JobRegisterHosted>();
+            services.AddHostedService<ManageUsersOnEntitiesHosted>();
 
             services.AddHttpClient();
 

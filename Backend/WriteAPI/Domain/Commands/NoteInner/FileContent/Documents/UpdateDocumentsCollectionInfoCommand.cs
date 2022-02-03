@@ -1,20 +1,11 @@
-﻿using Common.Attributes;
-using Common.DTO;
-using MediatR;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace Domain.Commands.NoteInner.FileContent.Documents
 {
-    public class UpdateDocumentsCollectionInfoCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateDocumentsCollectionInfoCommand : BaseUpdateCollectionInfo
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        [Required]
-        public string Name { set; get; }
+        public UpdateDocumentsCollectionInfoCommand(Guid noteId, Guid contentId, string name) : base(noteId, contentId, name)
+        {
+        }
     }
 }
