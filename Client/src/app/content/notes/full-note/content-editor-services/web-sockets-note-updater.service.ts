@@ -15,6 +15,8 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
   
   noteId: string;
 
+  attempts = 5;
+
   constructor(private signalRService: SignalRService) {
     this.signalRService.setAsJoinedToNote
     .pipe(takeUntil(this.destroy))

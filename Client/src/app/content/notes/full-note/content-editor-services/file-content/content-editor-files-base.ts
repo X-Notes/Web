@@ -11,6 +11,8 @@ import {
 } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
+import { BaseCollection } from '../../../models/editor-models/base-collection';
+import { BaseFile } from '../../../models/editor-models/base-file';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
@@ -59,4 +61,13 @@ export class ContentEditorFilesBase {
   deleteContentHandler = (contentId: string) => {
     this.deleteHandler(contentId);
   };
+
+  insertNewCollection<T extends BaseFile>(contentId: string, isFocusToNext: boolean, content: BaseCollection<T>) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    this.contentsService.insertInto(content, index);
+    return { index, content: content };
+  }
 }

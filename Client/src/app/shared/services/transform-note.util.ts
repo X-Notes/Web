@@ -1,10 +1,10 @@
-import { AudiosCollection } from 'src/app/content/notes/models/editor-models/audios-collection';
+import { ApiAudiosCollection, AudiosCollection } from 'src/app/content/notes/models/editor-models/audios-collection';
 import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
 import { ContentTypeENUM } from 'src/app/content/notes/models/editor-models/content-types.enum';
-import { DocumentsCollection } from 'src/app/content/notes/models/editor-models/documents-collection';
-import { PhotosCollection } from 'src/app/content/notes/models/editor-models/photos-collection';
-import { VideosCollection } from 'src/app/content/notes/models/editor-models/videos-collection';
+import { ApiDocumentsCollection, DocumentsCollection } from 'src/app/content/notes/models/editor-models/documents-collection';
+import { ApiPhotosCollection, PhotosCollection } from 'src/app/content/notes/models/editor-models/photos-collection';
+import { ApiVideosCollection, VideosCollection } from 'src/app/content/notes/models/editor-models/videos-collection';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 
 export class TransformNoteUtil {
@@ -21,20 +21,20 @@ export class TransformNoteUtil {
   public static transformContent(contents: ContentModelBase[]) {
     return contents.map((z) => {
       if (z.typeId === ContentTypeENUM.Photos) {
-        const collection  = z as PhotosCollection;
-        return new PhotosCollection(collection, collection.items);
+        const collection  = z as ApiPhotosCollection;
+        return new PhotosCollection(collection, collection.photos);
       }
       if (z.typeId === ContentTypeENUM.Videos) {
-        const collection  = z as VideosCollection;
-        return new VideosCollection(collection, collection.items);
+        const collection  = z as ApiVideosCollection;
+        return new VideosCollection(collection, collection.videos);
       }
       if (z.typeId === ContentTypeENUM.Audios) {
-        const collection  = z as AudiosCollection;
-        return new AudiosCollection(collection, collection.items);
+        const collection  = z as ApiAudiosCollection;
+        return new AudiosCollection(collection, collection.audios);
       }
       if (z.typeId === ContentTypeENUM.Documents) {
-        const collection  = z as DocumentsCollection;
-        return new DocumentsCollection(collection, collection.items);
+        const collection  = z as ApiDocumentsCollection;
+        return new DocumentsCollection(collection, collection.documents);
       }
       if (z.typeId === ContentTypeENUM.Text) {
         return new BaseText(z as BaseText);

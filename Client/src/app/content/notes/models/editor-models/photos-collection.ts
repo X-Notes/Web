@@ -122,3 +122,7 @@ export class Photo extends BaseFile {
     );
   }
 }
+ 
+export class ApiPhotosCollection extends PhotosCollection {
+  photos: Photo[];
+}

@@ -14,6 +14,8 @@ export class WebSocketsFolderUpdaterService implements OnDestroy {
   interval: NodeJS.Timeout;
   
   folderId: string;
+  
+  attempts = 5;
 
   constructor(private signalRService: SignalRService) {
     this.signalRService.setAsJoinedToFolder

@@ -363,7 +363,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const videosFormats = TypeUploadFormats.videos.split(',');
     const documentsFormats = TypeUploadFormats.documents.split(',');
     if (formats.every((z) => photosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorPhotosService.insertNewContent(contentId, false);
+      const cont = this.contentEditorPhotosService.insertNewCollection(contentId, false, AudiosCollection.getNew());
       this.postAction();
       await this.contentEditorPhotosService.uploadPhotoToAlbumHandler(
         { contentId: cont.content.id, files },
@@ -371,7 +371,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorAudiosService.insertNewContent(contentId, false);
+      const cont = this.contentEditorAudiosService.insertNewCollection(contentId, false, AudiosCollection.getNew());
       this.postAction();
       await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
         { contentId: cont.content.id, files },
@@ -379,7 +379,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => videosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorVideosService.insertNewContent(contentId, false);
+      const cont = this.contentEditorVideosService.insertNewCollection(contentId, false, VideosCollection.getNew());
       this.postAction();
       await this.contentEditorVideosService.uploadVideosToCollectionHandler(
         { contentId: cont.content.id, files },
@@ -387,7 +387,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => documentsFormats.some((x) => x === z))) {
-      const cont = this.contentEditorDocumentsService.insertNewContent(contentId, false);
+      const cont = this.contentEditorDocumentsService.insertNewCollection(contentId, false, DocumentsCollection.getNew());
       this.postAction();
       await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
         { contentId: cont.content.id, files },

@@ -40,23 +40,10 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  insertNewContent(contentId: string, isFocusToNext: boolean) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
-    if (isFocusToNext) {
-      index += 1;
-    }
-    const nContent = PhotosCollection.getNew();
-    this.contentsService.insertInto(nContent, index);
-    return { index, content: nContent };
-  }
-
   async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
-    const collectionResult = await this.apiPhotos.transformToAlbum(noteId, contentId).toPromise();
+    const collectionResult = await this.apiPhotos.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
-      collectionResult.data.photos = collectionResult.data.photos
-        ? collectionResult.data.photos
-        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadPhotoToAlbumHandler({ contentId: collectionResult.data.id, files }, noteId);
       collectionResult.data.isLoading = false;
@@ -133,61 +120,19 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           x.uploadAt,
         ),
     );
-    const prev = prevCollection.photos ?? [];
+    const prev = prevCollection.items ?? [];
 
-    const newCollection = new PhotosCollection(prevCollection);
-    newCollection.photos = [...prev, ...newPhotos];
+    const newCollection = new PhotosCollection(prevCollection, prevCollection.items);
+    newCollection.items = [...prev, ...newPhotos];
 
     this.contentsService.setSafe(newCollection, contentId);
   }
 
-  deleteContentHandler = async (
-    contentId: string,
-    noteId: string,
-  ): Promise<OperationResult<any>> => {
-    const resp = await this.apiPhotos.removeCollection(noteId, contentId).toPromise();
-    if (resp.success) {
-      this.deleteHandler(contentId);
+  deletePhotoHandler(photoId: string, content: PhotosCollection) {
+    if (content.items.length === 1) {
+      this.deleteHandler(content.id);
+    } else {
+      content.items = content.items.filter((x) => x.fileId !== photoId);
     }
-    return resp;
-  };
-
-  async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
-    const resp = await this.apiPhotos.removePhotoFromAlbum(noteId, contentId, photoId).toPromise();
-
-    if (resp.success) {
-      const prevCollection = this.contentsService.getContentById<PhotosCollection>(contentId);
-      if (prevCollection.photos.length === 1) {
-        this.deleteHandler(contentId);
-      } else {
-        const newCollection = prevCollection.copy();
-        newCollection.photos = newCollection.photos.filter((x) => x.fileId !== photoId);
-
-        this.contentsService.setSafe(newCollection, contentId);
-      }
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  }
-
-  async updateCollectionInfo(
-    contentId: string,
-    noteId: string,
-    name: string,
-    count: number,
-    width: string,
-    height: string,
-  ): Promise<OperationResult<any>> {
-    const resp = await this.apiPhotos
-      .updateCollectionInfo(noteId, contentId, name, count, width, height)
-      .toPromise();
-    if (resp.success) {
-      const collection = this.contentsService.getContentById<PhotosCollection>(contentId);
-      collection.name = name;
-      collection.width = width;
-      collection.height = height;
-      collection.countInRow = count;
-      this.contentsService.setSafe(collection, collection.id);
-    }
-    return resp;
   }
 }

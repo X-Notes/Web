@@ -61,3 +61,7 @@ export class VideoModel extends BaseFile {
     );
   }
 }
+
+export class ApiVideosCollection extends VideosCollection {
+  videos: VideoModel[];
+}

@@ -69,3 +69,7 @@ export class DocumentModel extends BaseFile {
     );
   }
 }
+
+export class ApiDocumentsCollection extends DocumentsCollection {
+  documents: DocumentModel[];
+}

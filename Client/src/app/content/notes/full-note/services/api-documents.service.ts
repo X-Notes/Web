@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { DocumentsCollection } from '../../models/editor-models/documents-collection';
+import { ApiDocumentsCollection, DocumentsCollection } from '../../models/editor-models/documents-collection';
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
@@ -29,7 +29,7 @@ export class ApiDocumentsService extends BaseNoteFileContentApiService
       noteId,
       contentId,
     };
-    return this.httpClient.post<OperationResult<DocumentsCollection>>(`${this.baseApi}/transform`, obj)
-                          .pipe(tap(x => x.data = new DocumentsCollection(x.data, x.data.items)));
+    return this.httpClient.post<OperationResult<ApiDocumentsCollection>>(`${this.baseApi}/transform`, obj)
+                          .pipe(map(x => { return { ...x, data: new DocumentsCollection(x.data, x.data.documents) }; }));
   }
 }

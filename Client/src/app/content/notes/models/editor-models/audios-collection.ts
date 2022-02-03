@@ -61,3 +61,7 @@ export class AudioModel extends BaseFile  {
     );
   }
 }
+
+export class ApiAudiosCollection extends AudiosCollection {
+  audios: AudioModel[];
+}
