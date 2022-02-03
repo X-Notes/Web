@@ -31,7 +31,7 @@
               *ngFor="let item of block"
               [photo]="item"
               [isReadOnlyMode]="isReadOnlyMode"
-              (deleteEvent)="deletePhotoHandler($event)"
+              (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
               (clickEvent)="clickPhotoHandler($event)"
             ></app-photo>
@@ -47,7 +47,7 @@
               *ngFor="let item of lastBlock"
               [photo]="item"
               [isReadOnlyMode]="isReadOnlyMode"
-              (deleteEvent)="deletePhotoHandler($event)"
+              (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
               (clickEvent)="clickPhotoHandler($event)"
             >

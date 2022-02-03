@@ -24,7 +24,7 @@
         [isReadOnlyMode]="isReadOnlyMode"
         (playEvent)="play($event)"
         (pauseEvent)="pause()"
-        (deleteAudio)="deleteAudioHandler($event)"
+        (deleteAudio)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportAudio($event)"
         (clickEvent)="clickAudioHandler($event)"
       ></app-audio>

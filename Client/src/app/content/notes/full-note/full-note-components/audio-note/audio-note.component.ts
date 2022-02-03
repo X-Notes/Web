@@ -3,15 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
   ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
@@ -21,7 +16,6 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
-import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentEditorAudiosCollectionService } from '../../content-editor-services/file-content/content-editor-audios.service';
 
 @Component({
@@ -31,37 +25,21 @@ import { ContentEditorAudiosCollectionService } from '../../content-editor-servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioNoteComponent
-  extends CollectionService
+  extends CollectionService<AudiosCollection>
   implements ParentInteraction, OnInit, OnDestroy {
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
-
-  @Output()
-  deleteAudioEvent = new EventEmitter<string>();
-
-  @Input()
-  noteId: string;
-
-  @Input()
-  theme: ThemeENUM;
-
-  @Input()
-  content: AudiosCollection;
-
-  themeE = ThemeENUM;
-
-  destroy = new Subject<void>();
 
   formats = TypeUploadFormats.audios;
 
   constructor(
     private audioService: AudioService,
     private exportService: ExportService,
-    private clickableContentService: ClickableContentService,
+    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     private contentEditorAudiosService: ContentEditorAudiosCollectionService,
   ) {
-    super(cdr);
+    super(cdr, clickableContentService);
   }
 
   getHost() {
@@ -69,8 +47,6 @@ export class AudioNoteComponent
   }
 
   ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
   }
 
   ngOnInit(): void {}
@@ -98,14 +74,14 @@ export class AudioNoteComponent
   openFile(audio: AudioModel) {
     this.audioService.stop();
     if (this.audioService.currentFile?.fileId !== audio.fileId) {
-      this.audioService.playlist = this.content.audios;
+      this.audioService.playlist = this.content.items;
       this.audioService.currentFile = audio;
       this.playStream(audio.audioPath, audio.fileId);
     }
   }
 
   get isEmpty(): boolean {
-    if (!this.content.audios || this.content.audios.length === 0) {
+    if (!this.content.items || this.content.items.length === 0) {
       return true;
     }
     return false;
@@ -130,51 +106,47 @@ export class AudioNoteComponent
     this.audioService.play();
   }
 
-  deleteAudioHandler(audioId: string) {
-    this.deleteAudioEvent.emit(audioId);
-  }
-
   isFocusToNext(entity: SetFocus) {
     if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
     }
     if (entity.status === FocusDirection.Down) {
-      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
-      return index === this.content.audios.length - 1;
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.items.length - 1;
     }
     return false;
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.audios.some((x) => x.fileId === entity.itemId);
+    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
 
     if (entity.status === FocusDirection.Up && isExist) {
-      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
         this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       } else {
-        this.clickAudioHandler(this.content.audios[index - 1].fileId);
+        this.clickAudioHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       return;
     }
 
-    if (entity.status === FocusDirection.Up && this.content.audios.length > 0) {
-      this.clickAudioHandler(this.content.audios[this.content.audios.length - 1].fileId);
+    if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
+      this.clickAudioHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
 
-    if (entity.status === FocusDirection.Up && this.content.audios.length === 0) {
+    if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickAudioHandler(null);
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
-      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
-      this.clickAudioHandler(this.content.audios[index + 1].fileId);
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
+      this.clickAudioHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
@@ -182,7 +154,7 @@ export class AudioNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickAudioHandler(this.content.audios[0].fileId);
+        this.clickAudioHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
         this.titleComponent.focusOnTitle();
@@ -213,10 +185,6 @@ export class AudioNoteComponent
     this.isMouseOver = false;
   };
 
-  async onTitleChangeInput(name: string) {
-    await this.contentEditorAudiosService.updateCollectionInfo(this.content.id, this.noteId, name);
-  }
-
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
 
@@ -227,12 +195,5 @@ export class AudioNoteComponent
 
   deleteDown() {
     this.checkForDelete();
-  }
-
-  checkForDelete() {
-    const audio = this.content.audios.find((x) => this.clickableContentService.isClicked(x.fileId));
-    if (audio) {
-      this.deleteAudioEvent.emit(audio.fileId);
-    }
   }
 }

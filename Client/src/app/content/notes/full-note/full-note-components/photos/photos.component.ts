@@ -4,19 +4,15 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   Renderer2,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../content-editor-services/selection.service';
@@ -33,25 +29,11 @@ import { ContentEditorPhotosCollectionService } from '../../content-editor-servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotosComponent
-  extends CollectionService
+  extends CollectionService<PhotosCollection>
   implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
-
-  @Input()
-  noteId: string;
-
-  @Output()
-  deletePhotoEvent = new EventEmitter<string>();
-
-  @Input()
-  content: PhotosCollection;
-
-  @Input()
-  theme: ThemeENUM;
-
-  themeE = ThemeENUM;
 
   startWidth;
 
@@ -76,12 +58,12 @@ export class PhotosComponent
     private elRef: ElementRef,
     private selectionService: SelectionService,
     private exportService: ExportService,
-    private clickableContentService: ClickableContentService,
+    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     private contentEditorPhotosService: ContentEditorPhotosCollectionService,
   ) {
-    super(cdr);
+    super(cdr, clickableContentService);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -105,17 +87,6 @@ export class PhotosComponent
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
-  }
-
-  async onTitleChangeInput(name: string) {
-    await this.contentEditorPhotosService.updateCollectionInfo(
-      this.content.id,
-      this.noteId,
-      name,
-      this.content.countInRow,
-      this.content.width,
-      this.content.height,
-    );
   }
 
   clickPhotoHandler(photoId: string) {
@@ -164,22 +135,19 @@ export class PhotosComponent
   }
 
   ngOnInit(): void {
-    for (const photo of this.content.photos) {
+    for (const photo of this.content.items) {
       photo.loaded = false;
     }
     this.changeSizeAlbumHalder
       .pipe(takeUntil(this.destroy), debounceTime(500)) // TODO export const
-      .subscribe(async (values) => {
+      .subscribe((values) => {
         const [width, height] = values;
+        this.content.width = width;
+        this.content.height = height;
         if (width && height && (this.content.height !== height || this.content.width !== width)) {
-          await this.contentEditorPhotosService.updateCollectionInfo(
-            this.noteId,
-            this.content.id,
-            this.content.name,
-            this.content.countInRow,
-            width,
-            height,
-          );
+          this.content.width = width;
+          this.content.height = height;
+          this.someChangesEvent.emit();
         }
       });
 
@@ -189,21 +157,13 @@ export class PhotosComponent
   }
 
   async setPhotosInRow(count: number) {
-    const resp = await this.contentEditorPhotosService.updateCollectionInfo(
-      this.noteId,
-      this.content.id,
-      this.content.name,
-      count,
-      this.content.width,
-      this.content.height,
-    );
-    if (resp.success) {
-      this.setFalseLoadedForAllPhotos();
-      this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
-      this.changeHeightSubject.next(`height`);
-      this.initPhotos();
-      this.updateHeightByNativeOffset();
-    }
+    this.content.countInRow = count;
+    
+    this.setFalseLoadedForAllPhotos();
+    this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
+    this.changeHeightSubject.next(`height`);
+    this.initPhotos();
+    this.updateHeightByNativeOffset();
   }
 
   setFalseLoadedForAllPhotos() {
@@ -231,23 +191,23 @@ export class PhotosComponent
     this.content.countInRow = this.content.countInRow === 0 ? 2 : this.content.countInRow;
     this.mainBlocks = [];
     this.lastBlock = [];
-    const photoLength = this.content.photos.length;
+    const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.photos.slice(j, j + this.content.countInRow));
+      this.mainBlocks.push(this.content.items.slice(j, j + this.content.countInRow));
       j += this.content.countInRow;
     }
     if (this.countLastItems > 0) {
-      this.lastBlock = this.content.photos.slice(photoLength - this.countLastItems, photoLength);
+      this.lastBlock = this.content.items.slice(photoLength - this.countLastItems, photoLength);
     }
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.photos.length / this.content.countInRow);
+    return Math.floor(this.content.items.length / this.content.countInRow);
   }
 
   get countLastItems() {
-    return this.content.photos.length % this.content.countInRow;
+    return this.content.items.length % this.content.countInRow;
   }
 
   get totalRows() {
@@ -255,15 +215,12 @@ export class PhotosComponent
   }
 
   get isEmpty(): boolean {
-    if (!this.content.photos || this.content.photos.length === 0) {
+    if (!this.content.items || this.content.items.length === 0) {
       return true;
     }
     return false;
   }
 
-  deletePhotoHandler(photoId: string) {
-    this.deletePhotoEvent.emit(photoId);
-  }
 
   getStyle = (numb: number) => {
     switch (numb) {
@@ -290,42 +247,42 @@ export class PhotosComponent
       return true;
     }
     if (entity.status === FocusDirection.Down) {
-      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-      return index === this.content.photos.length - 1;
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.items.length - 1;
     }
     return false;
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.photos.some((x) => x.fileId === entity.itemId);
+    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
 
     if (entity.status === FocusDirection.Up && isExist) {
-      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
         this.titleComponent.focusOnTitle();
         this.clickPhotoHandler(null);
       } else {
-        this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+        this.clickPhotoHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       return;
     }
 
-    if (entity.status === FocusDirection.Up && this.content.photos.length > 0) {
-      this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
+    if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
+      this.clickPhotoHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
 
-    if (entity.status === FocusDirection.Up && this.content.photos.length === 0) {
+    if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickPhotoHandler(null);
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
-      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-      this.clickPhotoHandler(this.content.photos[index + 1].fileId);
+      const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
+      this.clickPhotoHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
@@ -333,7 +290,7 @@ export class PhotosComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickPhotoHandler(this.content.photos[0].fileId);
+        this.clickPhotoHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
         this.titleComponent.focusOnTitle();
@@ -372,17 +329,10 @@ export class PhotosComponent
   backspaceUp() {}
 
   backspaceDown() {
-    this.deleteIfCan();
+    this.checkForDelete();
   }
 
   deleteDown() {
-    this.deleteIfCan();
-  }
-
-  deleteIfCan() {
-    const photo = this.content.photos.find((x) => this.clickableContentService.isClicked(x.fileId));
-    if (photo) {
-      this.deletePhotoEvent.emit(photo.fileId);
-    }
+    this.checkForDelete();
   }
 }

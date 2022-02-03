@@ -23,7 +23,7 @@
         *ngFor="let item of content.items;"
         [document]="item"
         [isReadOnlyMode]="isReadOnlyMode"
-        (deleteDocument)="deleteDocumentHandler($event)"
+        (deleteDocument)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportDocument($event)"
         (clickEvent)="clickDocumentHandler($event)"
       ></app-document-item>
