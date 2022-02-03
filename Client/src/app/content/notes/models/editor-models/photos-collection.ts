@@ -1,11 +1,9 @@
 import * as uuid from 'uuid';
-import { ContentModelBase } from './content-model-base';
+import { BaseCollection } from './base-collection';
+import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
-export class PhotosCollection extends ContentModelBase {
-  photos: Photo[];
-
-  name: string;
+export class PhotosCollection extends BaseCollection<Photo> {
 
   height: string;
 
@@ -13,16 +11,14 @@ export class PhotosCollection extends ContentModelBase {
 
   countInRow: number;
 
-  isLoading = false;
-
-  constructor(collection: Partial<PhotosCollection>) {
+  constructor(collection: Partial<PhotosCollection>, items: Photo[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.countInRow = collection.countInRow;
     this.height = collection.height;
     this.width = collection.width;
     this.name = collection.name;
-    this.photos = collection.photos
-      ? collection.photos.map(
+    this.items = items
+      ? items.map(
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -47,66 +43,40 @@ export class PhotosCollection extends ContentModelBase {
       updatedAt: new Date(),
       countInRow: 2,
     };
-    return new PhotosCollection(obj);
+    return new PhotosCollection(obj, obj.items);
   }
 
-  update(entity: PhotosCollection) {
+  updateInfo(entity: PhotosCollection) {
     this.name = entity.name;
+    this.updatedAt = entity.updatedAt;
+
     this.height = entity.height;
     this.width = entity.width;
     this.countInRow = entity.countInRow;
-    this.updatedAt = entity.updatedAt;
-    this.photos = entity.photos;
   }
 
-  isEqual(content: PhotosCollection): boolean {
-    return (
-      this.height === content.height &&
-      this.width === content.width &&
-      this.countInRow === content.countInRow &&
-      this.isEqualPhotos(content)
-    );
+  isTextOrCollectionInfoEqual(content: PhotosCollection): boolean {
+    return this.name === content.name && 
+    this.height === content.height && 
+    this.width === content.width && 
+    this.countInRow === content.countInRow;
   }
 
   copy(): PhotosCollection {
-    return new PhotosCollection(this);
+    return new PhotosCollection(this, this.items);
   }
 
   copyBase(): PhotosCollection {
-    const obj = new PhotosCollection(this);
+    const obj = new PhotosCollection(this, this.items);
     obj.height = null;
     obj.width = null;
-    obj.photos = null;
+    obj.items = null;
     obj.countInRow = null;
     return obj;
   }
-
-  private isEqualPhotos(content: PhotosCollection): boolean {
-    if (content.photos.length !== this.photos.length) {
-      return false;
-    }
-
-    const ids1 = content.photos.map((x) => x.fileId);
-    const ids2 = this.photos.map((x) => x.fileId);
-    if (!this.isIdsEquals(ids1, ids2)) {
-      return false;
-    }
-
-    for (const photoF of this.photos) {
-      const photoS = content.photos.find((x) => x.fileId === photoF.fileId);
-      if (!photoF.isEqual(photoS)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
 }
 
-export class Photo {
-  fileId: string;
-
-  name: string;
+export class Photo extends BaseFile {
 
   photoPathSmall: string;
 
@@ -114,11 +84,7 @@ export class Photo {
 
   photoPathBig: string;
 
-  authorId: string;
-
   loaded: boolean;
-
-  uploadAt: Date;
 
   get photoFromBig() {
     return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
@@ -138,14 +104,11 @@ export class Photo {
     authorId: string,
     uploadAt: Date,
   ) {
-    this.fileId = fileId;
+    super(name, fileId, authorId, uploadAt);
     this.photoPathSmall = photoPathSmall;
     this.photoPathMedium = photoPathMedium;
     this.photoPathBig = photoPathBig;
     this.loaded = loaded;
-    this.name = name;
-    this.authorId = authorId;
-    this.uploadAt = uploadAt;
   }
 
   isEqual(content: Photo): boolean {

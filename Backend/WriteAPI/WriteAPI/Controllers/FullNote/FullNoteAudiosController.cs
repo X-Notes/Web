@@ -1,68 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Audios;
-using Domain.Commands.NoteInner.FileContent.Documents;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.FullNote
 {
     [Authorize]
     [Route("api/note/inner/audios")]
     [ApiController]
-    public class FullNoteAudiosController : ControllerBase
+    public class FullNoteAudiosController : BaseNoteFileContentController
+        <
+        RemoveAudiosFromCollectionCommand, 
+        AddAudiosToCollectionCommand,
+        UpdateAudiosCollectionInfoCommand
+        >
     {
 
-        private readonly IMediator _mediator;
-
-        public FullNoteAudiosController(IMediator _mediator)
+        public FullNoteAudiosController(IMediator _mediator) : base(_mediator)
         {
-            this._mediator = _mediator;
         }
-
-
-        [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemovePlaylist(UnlinkAudiosCollectionCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-
-        [HttpDelete("{noteId}/{contentId}/{audioFileId}")]
-        public async Task<OperationResult<Unit>> RemoveAudioFromPlaylist(Guid noteId, Guid contentId, Guid audioFileId)
-        {
-            var command = new RemoveAudioFromCollectionCommand(noteId, contentId, audioFileId);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
 
         [HttpPost("transform")]
         public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
-        }
-
-        [HttpPatch("sync")]
-        public async Task<OperationResult<Unit>> SyncTextContents(UpdateAudiosContentsCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPatch("info")]
-        public async Task<OperationResult<Unit>> UpdateCollectionInfo(UpdateAudiosCollectionInfoCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

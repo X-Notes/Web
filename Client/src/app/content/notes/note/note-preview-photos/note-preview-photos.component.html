@@ -1,3 +1,3 @@
-<div class="photo" *ngFor="let item of album.photos">
+<div class="photo" *ngFor="let item of album.items">
   <img alt="note image" [src]="item.photoFromSmall | getImage: item.authorId" />
 </div>

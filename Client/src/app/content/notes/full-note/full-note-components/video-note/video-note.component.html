@@ -96,7 +96,7 @@
         </div>
       </div>
     </div>
-    <div class="video-playlist" *ngIf="content.videos.length > 1">
+    <div class="video-playlist" *ngIf="content.items.length > 1">
       <div
         #videoPlaylist
         class="video-playlist-wrapper"
@@ -104,7 +104,7 @@
       >
         <div
           class="thumb-video-wrapper"
-          *ngFor="let item of content.videos; let i = index"
+          *ngFor="let item of content.items; let i = index"
           (click)="openThumbVideo(i)"
         >
           <div class="thumb-video">
@@ -160,7 +160,7 @@
       </button>
       <button
         class="next-button action-button"
-        *ngIf="(itemsCount !== counterSlider + visibleItemsCount) && content.videos.length > visibleItemsCount"
+        *ngIf="(itemsCount !== counterSlider + visibleItemsCount) && content.items.length > visibleItemsCount"
         type="button"
         name="To next"
         #toNext

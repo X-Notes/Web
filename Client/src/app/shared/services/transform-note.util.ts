@@ -21,16 +21,20 @@ export class TransformNoteUtil {
   public static transformContent(contents: ContentModelBase[]) {
     return contents.map((z) => {
       if (z.typeId === ContentTypeENUM.Photos) {
-        return new PhotosCollection(z as PhotosCollection);
+        const collection  = z as PhotosCollection;
+        return new PhotosCollection(collection, collection.items);
       }
       if (z.typeId === ContentTypeENUM.Videos) {
-        return new VideosCollection(z as VideosCollection);
+        const collection  = z as VideosCollection;
+        return new VideosCollection(collection, collection.items);
       }
       if (z.typeId === ContentTypeENUM.Audios) {
-        return new AudiosCollection(z as AudiosCollection);
+        const collection  = z as AudiosCollection;
+        return new AudiosCollection(collection, collection.items);
       }
       if (z.typeId === ContentTypeENUM.Documents) {
-        return new DocumentsCollection(z as DocumentsCollection);
+        const collection  = z as DocumentsCollection;
+        return new DocumentsCollection(collection, collection.items);
       }
       if (z.typeId === ContentTypeENUM.Text) {
         return new BaseText(z as BaseText);

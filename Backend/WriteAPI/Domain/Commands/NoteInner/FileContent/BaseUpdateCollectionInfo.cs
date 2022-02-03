@@ -14,7 +14,6 @@ namespace Domain.Commands.NoteInner.FileContent
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        [Required]
         public string Name { set; get; }
 
         public BaseUpdateCollectionInfo(Guid noteId, Guid contentId, string name)

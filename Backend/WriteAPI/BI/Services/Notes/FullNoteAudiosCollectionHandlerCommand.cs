@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -11,8 +9,6 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
-using Common.Interfaces.Note;
-using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Queries.Permissions;
 using MediatR;

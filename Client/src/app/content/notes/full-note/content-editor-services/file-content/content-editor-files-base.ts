@@ -54,6 +54,9 @@ export class ContentEditorFilesBase {
 
   protected deleteHandler(contentId: string) {
     this.contentsService.deleteById(contentId, false);
-    this.store.dispatch(LoadUsedDiskSpace);
   }
+
+  deleteContentHandler = (contentId: string) => {
+    this.deleteHandler(contentId);
+  };
 }

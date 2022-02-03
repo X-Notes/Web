@@ -52,6 +52,10 @@ import { InputHtmlEvent } from '../full-note-components/html-components/models/i
 import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from '../content-editor-services/web-sockets-note-updater.service';
+import { VideosCollection } from '../../models/editor-models/videos-collection';
+import { DocumentsCollection } from '../../models/editor-models/documents-collection';
+import { AudiosCollection } from '../../models/editor-models/audios-collection';
+import { PhotosCollection } from '../../models/editor-models/photos-collection';
 
 @Component({
   selector: 'app-content-editor',
@@ -437,15 +441,13 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   // VIDEOS
-  async deleteVideosCollection(contentId: string) {
-    const res = await this.contentEditorVideosService.deleteContentHandler(contentId, this.note.id);
-    if (res.success) {
-      this.postAction();
-    }
+  deleteVideosCollection(contentId: string) {
+    this.contentEditorVideosService.deleteContentHandler(contentId);
+    this.postAction();
   }
 
-  async deleteVideoHandler(videoId: string, contentId: string, noteId: string) {
-    await this.contentEditorVideosService.deleteVideoHandler(videoId, contentId, noteId);
+  deleteVideoHandler(videoId: string, collection: VideosCollection) {
+    this.contentEditorVideosService.deleteVideoHandler(videoId, collection);
     this.postAction();
   }
 
@@ -455,14 +457,14 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   };
 
   // DOCUMENTS
-  async deleteDocumentsCollection(contentId: string) {
-    const res = await this.contentEditorDocumentsService.deleteContentHandler(
-      contentId,
-      this.note.id,
-    );
-    if (res.success) {
-      this.postAction();
-    }
+  deleteDocumentsCollection(contentId: string) {
+    this.contentEditorDocumentsService.deleteContentHandler(contentId);
+    this.postAction();
+  }
+
+  deleteDocumentHandler(documentId: string, collection: DocumentsCollection) {
+    this.contentEditorDocumentsService.deleteDocumentHandler(documentId, collection);
+    this.postAction();
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -471,15 +473,13 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   };
 
   // AUDIOS
-  async deleteAudiosCollection(contentId: string) {
-    const res = await this.contentEditorAudiosService.deleteContentHandler(contentId, this.note.id);
-    if (res.success) {
-      this.postAction();
-    }
+  deleteAudiosCollection(contentId: string) {
+    this.contentEditorAudiosService.deleteContentHandler(contentId);
+    this.postAction();  
   }
 
-  async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {
-    await this.contentEditorAudiosService.deleteAudioHandler(audioId, contentId, noteId);
+  deleteAudioHandler(audioId: string, collection: AudiosCollection) {
+    this.contentEditorAudiosService.deleteAudioHandler(audioId, collection);
     this.postAction();
   }
 
@@ -489,11 +489,14 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   };
 
   // PHOTOS
-  async deletePhotosCollection(contentId: string) {
-    const res = await this.contentEditorPhotosService.deleteContentHandler(contentId, this.note.id);
-    if (res.success) {
-      this.postAction();
-    }
+  deletePhotosCollection(contentId: string) {
+    this.contentEditorPhotosService.deleteContentHandler(contentId);
+    this.postAction();
+  }
+
+  deletePhotoHandler(photoId: string, collection: PhotosCollection) {
+    this.contentEditorPhotosService.deletePhotoHandler(photoId, collection);
+    this.postAction();
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -501,8 +504,4 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     this.postAction();
   };
 
-  async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
-    await this.contentEditorPhotosService.deletePhotoHandler(photoId, contentId, noteId);
-    this.postAction();
-  }
 }

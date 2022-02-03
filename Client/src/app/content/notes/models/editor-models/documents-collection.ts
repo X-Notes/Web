@@ -1,19 +1,15 @@
 import * as uuid from 'uuid';
-import { ContentModelBase } from './content-model-base';
+import { BaseCollection } from './base-collection';
+import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
-export class DocumentsCollection extends ContentModelBase {
-  name: string;
+export class DocumentsCollection extends BaseCollection<DocumentModel> {
 
-  documents: DocumentModel[];
-
-  isLoading = false;
-
-  constructor(collection: Partial<DocumentsCollection>) {
+  constructor(collection: Partial<DocumentsCollection>, items: DocumentModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.documents = collection.documents
-      ? collection.documents.map(
+    this.items = items
+      ? items.map(
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -28,62 +24,30 @@ export class DocumentsCollection extends ContentModelBase {
       id: uuid.v4(),
       updatedAt: new Date(),
     };
-    return new DocumentsCollection(obj);
+    return new DocumentsCollection(obj, obj.items);
   }
 
-  update(entity: DocumentsCollection) {
-    this.name = entity.name;
-    this.updatedAt = entity.updatedAt;
-    this.documents = entity.documents;
+
+  isTextOrCollectionInfoEqual(content: DocumentsCollection): boolean {
+    return this.name === content.name;
   }
 
-  isEqual(content: DocumentsCollection): boolean {
-    return this.name === content.name && this.isEqualDocuments(content);
-  }
 
   copy(): DocumentsCollection {
-    return new DocumentsCollection(this);
+    return new DocumentsCollection(this, this.items);
   }
 
   copyBase(): DocumentsCollection {
-    const obj = new DocumentsCollection(this);
+    const obj = new DocumentsCollection(this, this.items);
     obj.name = null;
-    obj.documents = null;
+    obj.items = null;
     return obj;
-  }
-
-  private isEqualDocuments(content: DocumentsCollection): boolean {
-    if (content.documents.length !== this.documents.length) {
-      return false;
-    }
-
-    const ids1 = content.documents.map((x) => x.fileId);
-    const ids2 = this.documents.map((x) => x.fileId);
-    if (!this.isIdsEquals(ids1, ids2)) {
-      return false;
-    }
-
-    for (const documentsF of this.documents) {
-      const documentsS = content.documents.find((x) => x.fileId === documentsF.fileId);
-      if (!documentsF.isEqual(documentsS)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 }
 
-export class DocumentModel {
-  name: string;
+export class DocumentModel extends BaseFile {
 
   documentPath: string;
-
-  fileId: string;
-
-  authorId: string;
-
-  uploadAt: Date;
 
   constructor(
     name: string,
@@ -92,11 +56,8 @@ export class DocumentModel {
     authorId: string,
     uploadAt: Date,
   ) {
-    this.name = name;
+    super(name, fileId, authorId, uploadAt);
     this.documentPath = documentPath;
-    this.fileId = fileId;
-    this.authorId = authorId;
-    this.uploadAt = uploadAt;
   }
 
   isEqual(content: DocumentModel): boolean {

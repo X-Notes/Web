@@ -143,7 +143,7 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (uploadEvent)="uploadPhotoToAlbumHandler($event, note.id)"
           (deleteContentEvent)="deletePhotosCollection($event)"
-          (deletePhotoEvent)="deletePhotoHandler($event, item.id, note.id)"
+          (deletePhotoEvent)="deletePhotoHandler($event, item)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-photos>
         <app-audio-note
@@ -155,7 +155,7 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
-          (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
+          (deleteAudioEvent)="deleteAudioHandler($event, item)"
           (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-audio-note>
@@ -168,7 +168,7 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteVideosCollection($event)"
-          (deleteVideoEvent)="deleteVideoHandler($event, item.id, note.id)"
+          (deleteVideoEvent)="deleteVideoHandler($event, item)"
           (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-video-note>
@@ -181,7 +181,7 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteDocumentsCollection($event)"
-          (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
+          (deleteDocumentEvent)="deleteDocumentHandler($event, item)"
           (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-document-note>

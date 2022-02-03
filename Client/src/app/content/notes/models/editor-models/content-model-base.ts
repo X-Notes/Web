@@ -16,15 +16,11 @@ export abstract class ContentModelBase {
     this.order = order;
   }
 
-  isIdsEquals(ids1: string[], ids2: string[]): boolean {
-    const res1 = ids1.filter((name) => !ids2.includes(name));
-    const res2 = ids2.filter((name) => !ids1.includes(name));
-    return res1.length === 0 && res2.length === 0;
-  }
-
   abstract copy(): ContentModelBase;
 
   abstract copyBase(): ContentModelBase;
+
+  abstract isTextOrCollectionInfoEqual(content: ContentModelBase): boolean;
 
   abstract isEqual(content: ContentModelBase): boolean;
 }

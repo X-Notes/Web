@@ -19,7 +19,7 @@
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-audio
-        *ngFor="let item of content.audios;"
+        *ngFor="let item of content.items;"
         [audio]="item"
         [isReadOnlyMode]="isReadOnlyMode"
         (playEvent)="play($event)"

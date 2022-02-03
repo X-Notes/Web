@@ -1,61 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { DocumentsCollection } from '../../models/editor-models/documents-collection';
+import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
+import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
+import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
+import { BaseNoteFileContentApiService } from './base-note-file-content-api.service';
 
 @Injectable()
-export class ApiDocumentsService {
-  constructor(private httpClient: HttpClient) {}
+export class ApiDocumentsService extends BaseNoteFileContentApiService
+  <
+  BaseRemoveFromCollectionItemsCommand, 
+  BaseAddToCollectionItemsCommand, 
+  BaseUpdateCollectionInfoCommand
+  >    
+{
 
-  transformToDocuments(noteId: string, contentId: string) {
+  static baseApi = `${environment.writeAPI}/api/note/inner/documents`;
+
+  constructor(httpClient: HttpClient) {
+    super(httpClient, ApiDocumentsService.baseApi)
+  }
+
+  transformTo(noteId: string, contentId: string) {
     const obj = {
       noteId,
       contentId,
     };
-    return this.httpClient.post<OperationResult<DocumentsCollection>>(
-      `${environment.writeAPI}/api/note/inner/documents/transform`,
-      obj,
-    );
-  }
-
-  removeDocumentFromNote(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/documents/remove`,
-      obj,
-    );
-  }
-
-  removeDocumentFromCollection(noteId: string, contentId: string, documentId: string) {
-    return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/dcouments/${noteId}/${contentId}/${documentId}`,
-    );
-  }
-
-  syncContents(noteId: string, documents: DocumentsCollection[]) {
-    const obj = {
-      noteId,
-      documents,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/documents/sync`,
-      obj,
-    );
-  }
-
-  updateCollectionInfo(noteId: string, contentId: string, name: string) {
-    const obj = {
-      noteId,
-      contentId,
-      name,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/documents/info`,
-      obj,
-    );
+    return this.httpClient.post<OperationResult<DocumentsCollection>>(`${this.baseApi}/transform`, obj)
+                          .pipe(tap(x => x.data = new DocumentsCollection(x.data, x.data.items)));
   }
 }

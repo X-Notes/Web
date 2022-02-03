@@ -74,7 +74,7 @@ namespace BI.Services.Notes
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
-            List<Guid> unlinkedItemIds = null;
+            List<Guid> unlinkedItemIds = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
@@ -98,6 +98,9 @@ namespace BI.Services.Notes
                     await UnlinkFileItems(groups, ContentTypeENUM.AudiosCollection, note.Id, request.Email, unlinkedItemIds);
                     await UnlinkFileItems(groups, ContentTypeENUM.DocumentsCollection, note.Id, request.Email, unlinkedItemIds);
                     await UnlinkFileItems(groups, ContentTypeENUM.VideosCollection, note.Id, request.Email, unlinkedItemIds);
+
+                    var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
+                    unlinkedItemIds.AddRange(textIds);
 
                     if (unlinkedItemIds.Any())
                     {
