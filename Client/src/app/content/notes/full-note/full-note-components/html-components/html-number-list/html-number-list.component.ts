@@ -30,8 +30,8 @@ import { NumberListService } from '../html-business-logic/numberList.service';
 })
 export class HtmlNumberListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
-
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges
+{
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -46,6 +46,7 @@ export class HtmlNumberListComponent
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlNumberListComponent>();
 
   @Input()
@@ -71,6 +72,10 @@ export class HtmlNumberListComponent
     cdr: ChangeDetectorRef,
   ) {
     super(cdr);
+  }
+
+  get isActive() {
+    return this.numberService.isActive(this.contentHtml);
   }
 
   getHost() {
@@ -104,14 +109,17 @@ export class HtmlNumberListComponent
 
   setNumber() {
     if (this.prevContent && this.prevContent.noteTextTypeIdSG === NoteTextTypeENUM.Numberlist) {
+      // eslint-disable-next-line id-blacklist
       this.content.number = this.prevContent.number + 1;
     } else {
+      // eslint-disable-next-line id-blacklist
       this.content.number = 1;
     }
   }
 
   isFocusToNext = () => true;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus(entity: SetFocus) {
     this.numberService.setFocus(this.contentHtml, this.content);
     this.onFocus.emit(this);
@@ -130,10 +138,6 @@ export class HtmlNumberListComponent
   mouseLeave($event) {
     this.numberService.mouseLeave($event, this.contentHtml);
     this.isMouseOver = false;
-  }
-
-  get isActive() {
-    return this.numberService.isActive(this.contentHtml);
   }
 
   // eslint-disable-next-line class-methods-use-this

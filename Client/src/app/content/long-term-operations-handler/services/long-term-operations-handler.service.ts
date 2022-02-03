@@ -9,6 +9,7 @@ import { LongTermsIcons } from '../models/long-terms.icons';
 export class LongTermOperationsHandlerService {
   public operations: LongTermOperation[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     // this.test();
   }

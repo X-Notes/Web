@@ -63,7 +63,7 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
     // TODO
   };
 
-  updateHTML = (content: TextBlock[]) => {
+  updateHTML = () => {
     return null;
   };
 

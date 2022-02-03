@@ -3,7 +3,6 @@ export enum FocusDirection {
   Down,
 }
 
-
 export interface SetFocus {
   itemId: string;
   status: FocusDirection;

@@ -2,7 +2,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { ContentActiveteGuard } from 'src/app/core/guards/content-activete.guard';
 import { NotesComponent } from './notes/notes.component';
-import { FullNoteComponent } from './full-note/full-note.component';
 import { PrivatesComponent } from './privates/privates.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { SharedComponent } from './shared/shared.component';

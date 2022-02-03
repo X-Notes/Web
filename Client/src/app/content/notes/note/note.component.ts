@@ -24,17 +24,17 @@ export class NoteComponent {
 
   constructor(public pService: PersonalizationService) {}
 
+  get noteFolders() {
+    return this.note.additionalInfo?.noteFolderInfos?.filter(
+      (folder) => folder.folderId !== this.currentFolderId,
+    );
+  }
+
   highlight(note: SmallNote) {
     this.highlightNote.emit(note);
   }
 
   toNote(note: SmallNote) {
     this.clickOnNote.emit(note);
-  }
-
-  get noteFolders() {
-    return this.note.additionalInfo?.noteFolderInfos?.filter(
-      (folder) => folder.folderId !== this.currentFolderId,
-    );
   }
 }

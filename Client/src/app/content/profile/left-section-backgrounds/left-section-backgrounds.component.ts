@@ -22,7 +22,5 @@ export class LeftSectionBackgroundsComponent implements OnInit {
 
   @Output() setCurrentBackground = new EventEmitter<string>();
 
-  constructor() {}
-
   ngOnInit(): void {}
 }

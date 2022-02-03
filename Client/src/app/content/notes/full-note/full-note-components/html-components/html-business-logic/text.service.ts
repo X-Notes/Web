@@ -38,9 +38,15 @@ export class TextService extends HtmlService {
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev(
+      $event,
+      content,
+      contentHtml,
+      concatThisWithPrev,
+      deleteThis,
+    );
   }
 
-  backUp = (e: any) => {
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  backUp = (e: any) => {};
 }

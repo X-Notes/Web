@@ -106,6 +106,30 @@ export class AudioService {
     return `${environment.storage}/${this.store.selectSnapshot(NoteStore.authorId)}/${escape(url)}`;
   }
 
+  async getMetadata(audioPath): Promise<Record<string, SafeUrl>> {
+    const result = {
+      duration: '',
+      imageUrl: '' as SafeUrl,
+    };
+    const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath), {
+      skipPostHeaders: true,
+      includeChapters: false,
+      duration: false,
+    });
+
+    if (metadata && metadata.format && metadata.format.duration) {
+      result.duration = this.formatTime(metadata.format.duration);
+    }
+
+    if (metadata && metadata.common && metadata.common && metadata.common.picture) {
+      const arrayBufferView = new Uint8Array(metadata.common.picture[0].data.buffer);
+      const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      result.imageUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
+    }
+    return result;
+  }
+
   private streamObservable(url, id) {
     return new Observable((observer) => {
       this.state.id = id;
@@ -183,30 +207,6 @@ export class AudioService {
         throw new Error('Error in audio player');
     }
     this.stateChange.next(this.state);
-  }
-
-  async getMetadata(audioPath): Promise<Record<string, SafeUrl>> {
-    const result = {
-      duration: '',
-      imageUrl: '' as SafeUrl,
-    };
-    const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath), {
-      skipPostHeaders: true,
-      includeChapters: false,
-      duration: false,
-    });
-
-    if (metadata && metadata.format && metadata.format.duration) {
-      result.duration = this.formatTime(metadata.format.duration);
-    }
-
-    if (metadata && metadata.common && metadata.common && metadata.common.picture) {
-      const arrayBufferView = new Uint8Array(metadata.common.picture[0].data.buffer);
-      const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
-      const url = URL.createObjectURL(blob);
-      result.imageUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
-    }
-    return result;
   }
 
   private resetState() {

@@ -3,6 +3,7 @@ import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
 
 export class BaseText extends ContentModelBase {
+  // eslint-disable-next-line id-blacklist
   number?: number;
 
   headingTypeId?: HeadingTypeENUM;
@@ -19,6 +20,26 @@ export class BaseText extends ContentModelBase {
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
+  }
+
+  set contentSG(contents: TextBlock[]) {
+    this.contents = contents;
+    this.updateDate();
+  }
+
+  set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
+    this.headingTypeId = headingTypeId;
+    this.updateDate();
+  }
+
+  set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
+    this.noteTextTypeId = noteTextTypeId;
+    this.updateDate();
+  }
+
+  set checkedSG(_checked: boolean) {
+    this.checked = _checked;
+    this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
   static getNew(): BaseText {
@@ -61,7 +82,8 @@ export class BaseText extends ContentModelBase {
     if (blockF == null || blockS == null) return false;
     if (blockF.length !== blockS.length) return false;
 
-    for (let i = 0; i < blockF.length; i += 1) { // TODO CHANGES
+    for (let i = 0; i < blockF.length; i += 1) {
+      // TODO CHANGES
       if (blockF[i] !== blockS[i]) return false;
     }
 
@@ -74,26 +96,6 @@ export class BaseText extends ContentModelBase {
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
     this.updatedAt = text.updatedAt;
-  }
-
-  set contentSG(contents: TextBlock[]) {
-    this.contents = contents;
-    this.updateDate();
-  }
-
-  set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
-    this.headingTypeId = headingTypeId;
-    this.updateDate();
-  }
-
-  set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
-    this.noteTextTypeId = noteTextTypeId;
-    this.updateDate();
-  }
-
-  set checkedSG(_checked: boolean) {
-    this.checked = _checked;
-    this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
   getConcatedText(): string {

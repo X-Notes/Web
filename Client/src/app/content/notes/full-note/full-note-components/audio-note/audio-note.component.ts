@@ -42,6 +42,7 @@ export class AudioNoteComponent
     super(cdr, clickableContentService);
   }
 
+
   getHost() {
     return this.host;
   }
@@ -177,10 +178,12 @@ export class AudioNoteComponent
     return this.content.id;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

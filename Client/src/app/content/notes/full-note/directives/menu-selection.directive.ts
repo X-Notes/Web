@@ -43,7 +43,8 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const top = coords.top - 48;
 
       this.menuSelectionService.currentTextItem = this.getCurrentItem().getContent() as BaseText;
-      this.menuSelectionService.currentHtmlItem = this.getCurrentItem().getEditableNative().innerHTML;
+      this.menuSelectionService.currentHtmlItem =
+        this.getCurrentItem().getEditableNative().innerHTML;
       this.menuSelectionService.left = left;
       this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;

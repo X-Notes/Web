@@ -20,7 +20,7 @@
       class="block-generic"
       [attr.contenteditable]="!isReadOnlyMode"
       [innerHTML]="viewHtml"
-      (input)="onInput($event)"
+      (input)="onInput()"
     ></p>
     <p class="no-content" *ngIf="isActive">{{'innerNote.heading' | translate}}</p>
   </div>

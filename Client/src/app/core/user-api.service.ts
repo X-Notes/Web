@@ -12,7 +12,10 @@ import { LanguagesENUM } from '../shared/enums/languages.enum';
 import { OperationResult } from '../shared/models/operation-result.model';
 import { LongTermOperationsHandlerService } from '../content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { SnackBarFileProcessHandlerService } from '../shared/services/snackbar/snack-bar-file-process-handler.service';
-import { LongTermOperation, OperationDetailMini } from '../content/long-term-operations-handler/models/long-term-operation';
+import {
+  LongTermOperation,
+  OperationDetailMini,
+} from '../content/long-term-operations-handler/models/long-term-operation';
 
 export interface Token {
   token: string;

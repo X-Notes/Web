@@ -25,7 +25,6 @@ export class ClickableContentService {
     this.setSontent(null, null, null);
   }
 
-
   isClicked(itemId: string): boolean {
     return this.currentItemId === itemId;
   }

@@ -130,7 +130,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     this.authService.logout();
   }
 
-
   async changePersonalizationSettings(value: any, type: Personalization) {
     const types = Personalization;
     const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings) };

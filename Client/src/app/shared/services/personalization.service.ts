@@ -16,8 +16,13 @@ export const timeSidenavAnimation = 200; // TODO move to constant file
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
-  transition(':enter', [style({ transform: 'translateX(-100%)' }), animate(`${timeSidenavAnimation}ms ease`)]),
-  transition(':leave', [animate(`${timeSidenavAnimation}ms ease`, style({ transform: 'translateX(-100%)' }))]),
+  transition(':enter', [
+    style({ transform: 'translateX(-100%)' }),
+    animate(`${timeSidenavAnimation}ms ease`),
+  ]),
+  transition(':leave', [
+    animate(`${timeSidenavAnimation}ms ease`, style({ transform: 'translateX(-100%)' })),
+  ]),
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [
@@ -184,6 +189,14 @@ export class PersonalizationService {
     this.subscribeMobileActiveMenu();
   }
 
+  get isHistoryButtonInMobileMenu$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
+  }
+
+  get isHideTextOnSmall$() {
+    return this.windowWidth$.pipe(map((value) => value < 1400));
+  }
+
   subscribeWindowEvents() {
     fromEvent(window, 'resize')
       .pipe(map((value) => value as any))
@@ -191,14 +204,6 @@ export class PersonalizationService {
         this.windowHeight$.next(evt.target.innerHeight);
         this.windowWidth$.next(evt.target.innerWidth);
       });
-  }
-
-  get isHistoryButtonInMobileMenu$() {
-    return this.windowWidth$.pipe(map((value) => value < 1025));
-  }
-
-  get isHideTextOnSmall$() {
-    return this.windowWidth$.pipe(map((value) => value < 1400));
   }
 
   subscribeMobileActiveMenu() {

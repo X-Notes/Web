@@ -24,7 +24,8 @@ export class ContentEditableService {
       range.selectNodeContents(el);
       range.setEnd(selRange.startContainer, selRange.startOffset);
       const atStart = range.toString().replace(/^\s+|\s+$/g, '') === '';
-      if (atStart) {}
+      if (atStart) {
+      }
 
       range.selectNodeContents(el);
       range.setStart(selRange.endContainer, selRange.endOffset);

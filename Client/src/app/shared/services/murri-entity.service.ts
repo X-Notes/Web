@@ -13,6 +13,10 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
 
   constructor(public murriService: MurriService) {}
 
+  get isAnyEntityInLayout(): boolean {
+    return this.entities.length > 0;
+  }
+
   initState() {
     // eslint-disable-next-line no-return-assign
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
@@ -86,9 +90,5 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
         });
       }
     }
-  }
-
-  get isAnyEntityInLayout(): boolean {
-    return this.entities.length > 0;
   }
 }

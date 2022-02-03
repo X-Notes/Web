@@ -8,7 +8,6 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
@@ -66,7 +65,8 @@ export class PhotosComponent
     super(cdr, clickableContentService);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+
+  ngOnChanges(): void {
     this.updateHeightByNativeOffset();
   }
 
@@ -76,7 +76,8 @@ export class PhotosComponent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
+    this.mainContainer =
+      this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
   uploadHandler = () => {
@@ -317,10 +318,12 @@ export class PhotosComponent
     return this.host;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

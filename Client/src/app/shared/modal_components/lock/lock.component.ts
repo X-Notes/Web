@@ -62,6 +62,37 @@ export class LockComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: { id: string; isRemove: boolean },
   ) {}
 
+  get field() {
+    return this.form.controls;
+  }
+
+  get isLockedGeneric() {
+    if (this.isOpenInInner) {
+      return this.fullNote?.isLocked;
+    }
+    return this.note?.isLocked;
+  }
+
+  get isCurrentOperationButton() {
+    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
+      return 'modal.lockModal.save';
+    }
+    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
+      return 'modal.lockModal.remove';
+    }
+    return 'modal.lockModal.сomeIn';
+  }
+
+  get isCurrentOperationHeader() {
+    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
+      return 'modal.lockModal.lock';
+    }
+    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
+      return 'modal.lockModal.unDecrypt';
+    }
+    return 'modal.lockModal.unLock';
+  }
+
   async ngOnInit() {
     let id = this.data?.id;
     if (!id) {
@@ -108,37 +139,6 @@ export class LockComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
-  }
-
-  get field() {
-    return this.form.controls;
-  }
-
-  get isLockedGeneric() {
-    if (this.isOpenInInner) {
-      return this.fullNote?.isLocked;
-    }
-    return this.note?.isLocked;
-  }
-
-  get isCurrentOperationButton() {
-    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
-      return 'modal.lockModal.save';
-    }
-    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
-      return 'modal.lockModal.remove';
-    }
-    return 'modal.lockModal.сomeIn';
-  }
-
-  get isCurrentOperationHeader() {
-    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
-      return 'modal.lockModal.lock';
-    }
-    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
-      return 'modal.lockModal.unDecrypt';
-    }
-    return 'modal.lockModal.unLock';
   }
 
   async decryptNote(note: SmallNote | FullNote) {

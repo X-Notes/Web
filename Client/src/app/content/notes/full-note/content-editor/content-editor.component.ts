@@ -78,19 +78,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   @Input()
   note: FullNote | NoteSnapshot;
 
-  @Input() set contents(contents: ContentModelBase[]) {
-    if (this.isReadOnlyMode) {
-      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
-    } else {
-      this.contentEditorContentsService.init(contents, this.note.id);
-    }
-  }
-
-  get contents() {
-    return this.contentEditorContentsService.getContents;
-    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
-  }
-
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
 
@@ -122,6 +109,19 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService
   ) { }
+
+  get contents() {
+    return this.contentEditorContentsService.getContents;
+    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
+  }
+
+  @Input() set contents(contents: ContentModelBase[]) {
+    if (this.isReadOnlyMode) {
+      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
+    } else {
+      this.contentEditorContentsService.init(contents, this.note.id);
+    }
+  }
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elements);
@@ -189,6 +189,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFocusHandler(content: ParentInteraction) {
     this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
   }

@@ -8,14 +8,17 @@ import { HtmlService } from './html.service';
 export class DotListService extends HtmlService {
   transformTo = new EventEmitter<TransformContent>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   pasteCommandHandler = (e: any) => {
     throw new Error('Method not implemented.');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart = (e: any) => {
     // SELECTIION
   };
@@ -47,8 +50,15 @@ export class DotListService extends HtmlService {
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.checkForDeleteOrConcatWithPrev($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDeleteOrConcatWithPrev(
+      $event,
+      content,
+      contentHtml,
+      concatThisWithPrev,
+      deleteThis,
+    );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backUp = (e: any) => {};
 }

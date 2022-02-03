@@ -4,7 +4,6 @@ import { Stack } from './models/stack-contents';
 
 @Injectable()
 export class ContentEditorMomentoStateService {
-
   prev: ContentModelBase[];
 
   private state = new Stack<ContentModelBase[]>();

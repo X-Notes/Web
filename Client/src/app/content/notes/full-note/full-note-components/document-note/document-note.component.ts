@@ -43,6 +43,7 @@ export class DocumentNoteComponent
     super(cdr, clickableContentService);
   }
 
+
   clickDocumentHandler(documentId: string) {
     this.clickableService.set(ClickableSelectableEntities.Document, documentId, this.content.id);
   }
@@ -157,10 +158,12 @@ export class DocumentNoteComponent
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

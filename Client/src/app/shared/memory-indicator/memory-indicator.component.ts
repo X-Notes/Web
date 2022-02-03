@@ -23,25 +23,6 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store) {}
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
-
-  ngOnInit(): void {
-    this.store
-      .select(UserStore.getMemoryMBytes)
-      .pipe(takeUntil(this.destroy))
-      // eslint-disable-next-line no-return-assign
-      .subscribe((space) => (this.memory = Math.ceil(space)));
-
-    this.store
-      .select(UserStore.getUser)
-      .pipe(takeUntil(this.destroy))
-      // eslint-disable-next-line no-return-assign
-      .subscribe((user) => (this.billing = user.billingPlanId));
-  }
-
   get userBillingPlan() {
     switch (this.billing) {
       case BillingENUM.Free: {
@@ -86,5 +67,22 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   get procent() {
     return `${(this.memory / this.userMemory) * 100}%`;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
+  ngOnInit(): void {
+    this.store
+      .select(UserStore.getMemoryMBytes)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((space) => (this.memory = Math.ceil(space)));
+
+    this.store
+      .select(UserStore.getUser)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((user) => (this.billing = user.billingPlanId));
   }
 }

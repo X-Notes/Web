@@ -80,6 +80,5 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
   }
 
   abstract toNote(note: SmallNote);
-
   abstract navigateFunc(note: SmallNote): Promise<boolean>;
 }

@@ -6,14 +6,18 @@ import { OperationResult } from '../../shared/models/operation-result.model';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
-import { LongTermOperation, OperationDetailMini } from '../long-term-operations-handler/models/long-term-operation';
+import {
+  LongTermOperation,
+  OperationDetailMini,
+} from '../long-term-operations-handler/models/long-term-operation';
 
 @Injectable()
 export class BackgroundService {
   constructor(
     private httpClient: HttpClient,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
-    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,) {}
+    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+  ) {}
 
   getBackgrounds() {
     return this.httpClient.get<Background[]>(`${environment.writeAPI}/api/backgrounds`);

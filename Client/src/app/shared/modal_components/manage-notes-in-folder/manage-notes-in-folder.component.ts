@@ -57,6 +57,10 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
     private store: Store,
   ) {}
 
+  get selectedNotesChips() {
+    return this.notes.filter((x) => x.isSelected);
+  }
+
   ngOnInit(): void {
     this.initSearch();
     this.pService.setSpinnerState(true);
@@ -143,10 +147,6 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
         this.firstInitedMurri = true;
       }
     });
-  }
-
-  get selectedNotesChips() {
-    return this.notes.filter((x) => x.isSelected);
   }
 
   // eslint-disable-next-line no-param-reassign

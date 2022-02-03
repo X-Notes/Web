@@ -68,6 +68,33 @@ export class VideoNoteComponent
     super(cdr, clickableContentService);
   }
 
+  get volumeIcon(): string {
+    if (this.video?.volume === 0) {
+      return 'volume_off';
+    }
+    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
+      return 'volume_down';
+    }
+    if (this.video?.volume >= 0.5) {
+      return 'volume_up';
+    }
+  }
+
+
+  get visibleItemsCount() {
+    if (!this.videoPlaylist) return 0;
+    const nodes = this.videoPlaylist.nativeElement.children;
+    if (nodes && !nodes.length) return 0;
+    return Math.round(this.playlistWidth / nodes[0].getBoundingClientRect().width);
+  }
+
+  get itemsCount() {
+    if (!this.videoPlaylist) return 0;
+    const nodes = this.videoPlaylist.nativeElement.children;
+    return nodes.length;
+  }
+
+
   @HostListener('window:resize', ['$event'])
   onResize = () => {
     const nodes = this.videoPlaylist.nativeElement.children;
@@ -94,18 +121,6 @@ export class VideoNoteComponent
       await document.exitPictureInPicture();
     }
   };
-
-  get volumeIcon(): string {
-    if (this.video?.volume === 0) {
-      return 'volume_off';
-    }
-    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
-      return 'volume_down';
-    }
-    if (this.video?.volume >= 0.5) {
-      return 'volume_up';
-    }
-  }
 
   togglePlay() {
     this.isPlaying = this.video.paused;
@@ -328,18 +343,6 @@ export class VideoNoteComponent
     return this.videoPlaylist.nativeElement.clientWidth;
   }
 
-  get visibleItemsCount() {
-    if (!this.videoPlaylist) return 0;
-    const nodes = this.videoPlaylist.nativeElement.children;
-    if (nodes && !nodes.length) return 0;
-    return Math.round(this.playlistWidth / nodes[0].getBoundingClientRect().width);
-  }
-
-  get itemsCount() {
-    if (!this.videoPlaylist) return 0;
-    const nodes = this.videoPlaylist.nativeElement.children;
-    return nodes.length;
-  }
 
   get isEmpty(): boolean {
     if (!this.content.items || this.content.items.length === 0) {
@@ -359,6 +362,7 @@ export class VideoNoteComponent
     this.isMouseOver = true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave = ($event: any) => {
     this.isMouseOver = false;
   };

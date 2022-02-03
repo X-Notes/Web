@@ -86,14 +86,6 @@ export class Photo extends BaseFile {
 
   loaded: boolean;
 
-  get photoFromBig() {
-    return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
-  }
-
-  get photoFromSmall() {
-    return this.photoPathSmall ?? this.photoPathMedium ?? this.photoPathBig;
-  }
-
   constructor(
     fileId: string,
     photoPathSmall: string,
@@ -109,6 +101,14 @@ export class Photo extends BaseFile {
     this.photoPathMedium = photoPathMedium;
     this.photoPathBig = photoPathBig;
     this.loaded = loaded;
+  }
+
+  get photoFromBig() {
+    return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
+  }
+
+  get photoFromSmall() {
+    return this.photoPathSmall ?? this.photoPathMedium ?? this.photoPathBig;
   }
 
   isEqual(content: Photo): boolean {
