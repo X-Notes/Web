@@ -66,6 +66,9 @@ import { NavMenuItemComponent } from './left-section-components/nav-menu-item/na
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
 import { ButtonCollectionComponent } from '../content/notes/full-note/ui-components/button-collection/button-collection.component';
 import { DropDirective } from '../content/profile/drop/drop.directive';
+import { ContactUsComponent } from './modal_components/contact-us/contact-us.component';
+import { AutosizeDirective } from './directives/autosize.directive';
+import { ApiContactUsService } from './modal_components/contact-us/services/api-contact-us.service';
 
 @NgModule({
   declarations: [
@@ -115,6 +118,8 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
     NavProfileItemComponent,
     ButtonCollectionComponent,
     DropDirective,
+    ContactUsComponent,
+    AutosizeDirective,
   ],
   imports: [
     CommonModule,
@@ -192,8 +197,9 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
     DragDropModule,
     ButtonCollectionComponent,
     DropDirective,
+    AutosizeDirective,
   ],
-  providers: [DialogService, OrderService, BackgroundService],
+  providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],
 })
 export class SharedModule {}

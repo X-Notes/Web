@@ -11,7 +11,6 @@ import { ThemeENUM } from '../enums/theme.enum';
   styleUrls: ['./memory-indicator.component.scss'],
 })
 export class MemoryIndicatorComponent implements OnInit, OnDestroy {
-  
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
 
@@ -40,6 +39,10 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     }
   }
 
+  get procent() {
+    return `${(this.memory / this.userMemory) * 100}%`;
+  }
+
   get userMemory() {
     switch (this.billing) {
       case BillingENUM.Free: {
@@ -63,10 +66,6 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
       return theme === ThemeENUM.Dark ? 'white' : '#404040';
     }
     return '#ff6969';
-  }
-
-  get procent() {
-    return `${(this.memory / this.userMemory) * 100}%`;
   }
 
   ngOnDestroy(): void {

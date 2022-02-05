@@ -6,7 +6,7 @@ export class UpdateNoteUI {
   color: string;
 
   title: string;
-  
+
   removeLabelIds: string[];
 
   addLabels: Label[];

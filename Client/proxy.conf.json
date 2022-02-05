@@ -1,0 +1,7 @@
+{
+  "/admin": {
+    "target": "http://localhost:3333",
+    "secure": true,
+    "changeOrigin": true
+  }
+}

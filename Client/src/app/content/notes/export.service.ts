@@ -58,7 +58,7 @@ export class ExportService {
 
   // PHOTOS
   async exportAlbum(collection: PhotosCollection) {
-    if(collection.items.length === 0) {
+    if (collection.items.length === 0) {
       // TODO SNACKBAR WITH WARNING
       return;
     }
@@ -99,7 +99,7 @@ export class ExportService {
 
   // AUDIOS
   async exportPlaylist(collection: AudiosCollection) {
-    if(collection.items.length === 0) {
+    if (collection.items.length === 0) {
       // TODO SNACKBAR WITH WARNING
       return;
     }
@@ -140,7 +140,7 @@ export class ExportService {
 
   // DOCUMENT
   async exportDocuments(collection: DocumentsCollection) {
-    if(collection.items.length === 0) {
+    if (collection.items.length === 0) {
       // TODO SNACKBAR WITH WARNING
       return;
     }
@@ -185,7 +185,7 @@ export class ExportService {
 
   // VIDEOS
   async exportVideos(collection: VideosCollection) {
-    if(collection.items.length === 0) {
+    if (collection.items.length === 0) {
       // TODO SNACKBAR WITH WARNING
       return;
     }

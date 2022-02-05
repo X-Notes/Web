@@ -51,7 +51,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   note$: Observable<FullNote>;
 
   public notesLink: SmallNote[];
-  
+
   loaded = false;
 
   destroy = new Subject<void>();

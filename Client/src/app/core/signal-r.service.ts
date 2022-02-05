@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ChangeColorFolder, UpdateFolderTitle } from '../content/folders/state/folders-actions';
 import {
@@ -31,13 +31,19 @@ export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
   public updateTextContentEvent = new BehaviorSubject<UpdateNoteTextWS>(null);
+
   public updateNoteStructureEvent = new BehaviorSubject<UpdateNoteStructureWS>(null);
+
   public updatePhotosCollectionEvent = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
+
   public updateVideosCollectionEvent = new BehaviorSubject<UpdateVideosCollectionWS>(null);
+
   public updateAudiosCollectionEvent = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
+
   public updateDocumentsCollectionEvent = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
 
   public setAsJoinedToNote = new BehaviorSubject(null);
+
   public setAsJoinedToFolder = new BehaviorSubject(null);
 
   constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
@@ -64,6 +70,7 @@ export class SignalRService {
       this.store.dispatch(new LoadOnlineUsersOnNote(noteId)); // TODO REFACTOR BY ONE USER
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     this.hubConnection.on('updateOnlineUsersFolder', (folderId: string) => {
       // TODO
     });

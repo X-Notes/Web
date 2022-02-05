@@ -6,33 +6,31 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable()
 export class WebSocketsNoteUpdaterService implements OnDestroy {
-
   isJoined = false;
 
   destroy = new Subject<void>();
 
   interval: NodeJS.Timeout;
-  
+
   noteId: string;
 
   attempts = 5;
 
   constructor(private signalRService: SignalRService) {
     this.signalRService.setAsJoinedToNote
-    .pipe(takeUntil(this.destroy))
-    .subscribe((noteId: string) => {
-      if(this.noteId === noteId) {
-        clearInterval(this.interval);
-        this.isJoined = true;
-      }
-    })
-   }
-
+      .pipe(takeUntil(this.destroy))
+      .subscribe((noteId: string) => {
+        if (this.noteId === noteId) {
+          clearInterval(this.interval);
+          this.isJoined = true;
+        }
+      });
+  }
 
   tryJoinToNote(noteId: string) {
     this.noteId = noteId;
     this.interval = setInterval(async () => {
-      if(this.signalRService.hubConnection.state === HubConnectionState.Connected){
+      if (this.signalRService.hubConnection.state === HubConnectionState.Connected) {
         try {
           await this.signalRService.hubConnection.invoke('JoinNote', noteId);
         } catch (err) {
@@ -51,7 +49,7 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if(this.interval){
+    if (this.interval) {
       clearInterval(this.interval);
     }
     this.noteId = null;

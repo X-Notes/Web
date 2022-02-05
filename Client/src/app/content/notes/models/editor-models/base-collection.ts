@@ -1,5 +1,5 @@
-import { BaseFile } from "./base-file";
-import { ContentModelBase } from "./content-model-base";
+import { BaseFile } from './base-file';
+import { ContentModelBase } from './content-model-base';
 
 export abstract class BaseCollection<T extends BaseFile> extends ContentModelBase {
   name: string;
@@ -9,7 +9,9 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
   isLoading = false;
 
   isEqual(content: BaseCollection<T>): boolean {
-    return this.isTextOrCollectionInfoEqual(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0];
+    return (
+      this.isTextOrCollectionInfoEqual(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0]
+    );
   }
 
   isIdsEquals(ids1: string[], ids2: string[]): boolean {
@@ -19,7 +21,6 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
   }
 
   getIsEqualIdsToAddIdsToRemove(content: BaseCollection<T>): [boolean, T[], T[]] {
-
     const ids1 = content.items.map((x) => x.fileId);
     const ids2 = this.items.map((x) => x.fileId);
 
@@ -27,8 +28,8 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     const idsToAdd = ids2.filter((name) => !ids1.includes(name));
 
     if (idsToAdd.length !== 0 || idsToRemove.length !== 0) {
-      const itemsToAdd = this.items.filter((x) => idsToAdd.some(z => z === x.fileId));
-      const itemsToRemove = content.items.filter((x) => idsToRemove.some(z => z === x.fileId));
+      const itemsToAdd = this.items.filter((x) => idsToAdd.some((z) => z === x.fileId));
+      const itemsToRemove = content.items.filter((x) => idsToRemove.some((z) => z === x.fileId));
       return [false, itemsToAdd, itemsToRemove];
     }
 
@@ -52,7 +53,7 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
   }
 
   removeItemsFromCollection(files: BaseFile[]): void {
-    const ids = files.map(x => x.fileId);
-    this.items = this.items.filter(x => ids.some(z => z === x.fileId));
+    const ids = files.map((x) => x.fileId);
+    this.items = this.items.filter((x) => ids.some((z) => z === x.fileId));
   }
 }

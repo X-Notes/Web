@@ -1,5 +1,6 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -14,6 +15,7 @@ import {
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
 import { SearchService } from 'src/app/shared/services/search.service';
+import { ContactUsComponent } from '../../../../shared/modal_components/contact-us/contact-us.component';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -58,10 +60,11 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    public pService: PersonalizationService,
-    private store: Store,
-    private router: Router,
-    private searchService: SearchService,
+    public readonly pService: PersonalizationService,
+    private readonly store: Store,
+    private readonly router: Router,
+    private readonly searchService: SearchService,
+    private readonly dialog: MatDialog,
   ) {}
 
   ngOnDestroy() {
@@ -109,6 +112,18 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
         this.searchInput.nativeElement.focus();
       });
     }
+  }
+
+  contactUs() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const config: MatDialogConfig = {
+      maxHeight: '90vh',
+      maxWidth: '90vw',
+      autoFocus: false,
+      panelClass:
+        theme === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
+    };
+    this.dialog.open(ContactUsComponent, config);
   }
 
   unFocusSearch() {

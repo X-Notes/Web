@@ -37,7 +37,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
-  
+
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 

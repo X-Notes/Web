@@ -3,7 +3,6 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';

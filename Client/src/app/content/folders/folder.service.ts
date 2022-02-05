@@ -83,6 +83,10 @@ export class FolderService
       });
   }
 
+  get isAnySelected(): boolean {
+    return this.entities.some((z) => z.isSelected === true);
+  }
+
   get getByCurrentType() {
     switch (this.store.selectSnapshot(AppStore.getTypeFolder)) {
       case FolderTypeENUM.Private: {
@@ -190,10 +194,6 @@ export class FolderService
     );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);
-  }
-
-  get isAnySelected(): boolean {
-    return this.entities.some((z) => z.isSelected === true);
   }
 
   async initializeEntities(folders: SmallFolder[]) {

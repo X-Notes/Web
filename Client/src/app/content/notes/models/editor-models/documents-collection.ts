@@ -4,7 +4,6 @@ import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
 export class DocumentsCollection extends BaseCollection<DocumentModel> {
-
   constructor(collection: Partial<DocumentsCollection>, items: DocumentModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
@@ -27,11 +26,9 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
     return new DocumentsCollection(obj, obj.items);
   }
 
-
   isTextOrCollectionInfoEqual(content: DocumentsCollection): boolean {
     return this.name === content.name;
   }
-
 
   copy(): DocumentsCollection {
     return new DocumentsCollection(this, this.items);
@@ -46,7 +43,6 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
 }
 
 export class DocumentModel extends BaseFile {
-
   documentPath: string;
 
   constructor(

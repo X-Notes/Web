@@ -1,6 +1,6 @@
-export enum UpdateOperationWS{
-    Update,
-    DeleteCollectionItems,
-    Transform,
-    AddCollectionItems
+export enum UpdateOperationWS {
+  Update,
+  DeleteCollectionItems,
+  Transform,
+  AddCollectionItems,
 }
