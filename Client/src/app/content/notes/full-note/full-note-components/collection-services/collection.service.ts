@@ -20,7 +20,6 @@ import { TitleCollectionComponent } from '../collection-components/title-collect
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseHtmlComponent {
-  
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 
@@ -32,6 +31,8 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
 
   @Output()
   someChangesEvent = new EventEmitter();
+
+  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
   @Input()
   isReadOnlyMode = false;
@@ -50,12 +51,8 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
 
   themeE = ThemeENUM;
 
-  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
-
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(
-    cdr: ChangeDetectorRef,
-    protected clickableContentService: ClickableContentService,) {
+  constructor(cdr: ChangeDetectorRef, protected clickableContentService: ClickableContentService) {
     super(cdr);
   }
 

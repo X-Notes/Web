@@ -1,4 +1,5 @@
-export class UpdateContentPosition{
-    contentId: string;
-    order: number;
+export class UpdateContentPosition {
+  contentId: string;
+
+  order: number;
 }

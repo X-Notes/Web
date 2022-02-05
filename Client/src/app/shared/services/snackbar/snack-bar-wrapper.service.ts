@@ -68,7 +68,7 @@ export class SnackBarWrapperService {
     snackbarRef
       .onAction()
       .pipe(take(1))
-      .subscribe((x) => {
+      .subscribe(() => {
         this.prService.isSnackBarActive$.next(false);
         if (callback) {
           callback();

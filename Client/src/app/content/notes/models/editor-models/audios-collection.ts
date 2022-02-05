@@ -4,7 +4,6 @@ import { BaseCollection } from './base-collection';
 import { BaseFile } from './base-file';
 
 export class AudiosCollection extends BaseCollection<AudioModel> {
-
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
@@ -43,8 +42,7 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
   }
 }
 
-export class AudioModel extends BaseFile  {
-
+export class AudioModel extends BaseFile {
   audioPath: string;
 
   constructor(name: string, audioPath: string, fileId: string, authorId: string, uploadAt: Date) {

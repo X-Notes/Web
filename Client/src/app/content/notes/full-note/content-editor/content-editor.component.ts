@@ -107,8 +107,8 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     private contentEditorListenerService: ContentEditorListenerService,
     private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
-    private webSocketsUpdaterService: WebSocketsNoteUpdaterService
-  ) { }
+    private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
+  ) {}
 
   get contents() {
     return this.contentEditorContentsService.getContents;
@@ -142,7 +142,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   ngOnInit(): void {
-
     this.htmlTitleService.setCustomOrDefault(this.note.title, 'titles.note');
 
     this.noteTitleChanged
@@ -364,7 +363,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const videosFormats = TypeUploadFormats.videos.split(',');
     const documentsFormats = TypeUploadFormats.documents.split(',');
     if (formats.every((z) => photosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorPhotosService.insertNewCollection(contentId, false, AudiosCollection.getNew());
+      const cont = this.contentEditorPhotosService.insertNewCollection(
+        contentId,
+        false,
+        AudiosCollection.getNew(),
+      );
       this.postAction();
       await this.contentEditorPhotosService.uploadPhotoToAlbumHandler(
         { contentId: cont.content.id, files },
@@ -372,7 +375,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorAudiosService.insertNewCollection(contentId, false, AudiosCollection.getNew());
+      const cont = this.contentEditorAudiosService.insertNewCollection(
+        contentId,
+        false,
+        AudiosCollection.getNew(),
+      );
       this.postAction();
       await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
         { contentId: cont.content.id, files },
@@ -380,7 +387,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => videosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorVideosService.insertNewCollection(contentId, false, VideosCollection.getNew());
+      const cont = this.contentEditorVideosService.insertNewCollection(
+        contentId,
+        false,
+        VideosCollection.getNew(),
+      );
       this.postAction();
       await this.contentEditorVideosService.uploadVideosToCollectionHandler(
         { contentId: cont.content.id, files },
@@ -388,7 +399,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
       );
     }
     if (formats.every((z) => documentsFormats.some((x) => x === z))) {
-      const cont = this.contentEditorDocumentsService.insertNewCollection(contentId, false, DocumentsCollection.getNew());
+      const cont = this.contentEditorDocumentsService.insertNewCollection(
+        contentId,
+        false,
+        DocumentsCollection.getNew(),
+      );
       this.postAction();
       await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
         { contentId: cont.content.id, files },
@@ -476,7 +491,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   // AUDIOS
   deleteAudiosCollection(contentId: string) {
     this.contentEditorAudiosService.deleteContentHandler(contentId);
-    this.postAction();  
+    this.postAction();
   }
 
   deleteAudioHandler(audioId: string, collection: AudiosCollection) {
@@ -504,5 +519,4 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     await this.contentEditorPhotosService.uploadPhotoToAlbumHandler($event, noteId);
     this.postAction();
   };
-
 }

@@ -29,7 +29,8 @@ import { ContentEditorVideosCollectionService } from '../../content-editor-servi
 })
 export class VideoNoteComponent
   extends CollectionService<VideosCollection>
-  implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
+  implements ParentInteraction, AfterViewInit, OnInit, OnDestroy
+{
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
@@ -68,6 +69,34 @@ export class VideoNoteComponent
     super(cdr, clickableContentService);
   }
 
+  get fullWidth() {
+    const nodes = this.videoPlaylist.nativeElement.children;
+    let width = 0;
+    if (nodes && !nodes.length) return width;
+    for (const node of nodes) {
+      width += node.clientWidth;
+    }
+    return width;
+  }
+
+  get playlistWidth() {
+    return this.videoPlaylist.nativeElement.clientWidth;
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.items || this.content.items.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  get getMainVideo() {
+    if (this.content.items && this.content.items.length > 0) {
+      return this.content.items[this.indexVideo];
+    }
+    return null;
+  }
+
   get volumeIcon(): string {
     if (this.video?.volume === 0) {
       return 'volume_off';
@@ -79,7 +108,6 @@ export class VideoNoteComponent
       return 'volume_up';
     }
   }
-
 
   get visibleItemsCount() {
     if (!this.videoPlaylist) return 0;
@@ -93,7 +121,6 @@ export class VideoNoteComponent
     const nodes = this.videoPlaylist.nativeElement.children;
     return nodes.length;
   }
-
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
@@ -329,35 +356,7 @@ export class VideoNoteComponent
     }
   }
 
-  get fullWidth() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    let width = 0;
-    if (nodes && !nodes.length) return width;
-    for (const node of nodes) {
-      width += node.clientWidth;
-    }
-    return width;
-  }
-
-  get playlistWidth() {
-    return this.videoPlaylist.nativeElement.clientWidth;
-  }
-
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
-  get getMainVideo() {
-    if (this.content.items && this.content.items.length > 0) {
-      return this.content.items[this.indexVideo];
-    }
-    return null;
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
   };

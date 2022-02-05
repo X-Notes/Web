@@ -26,6 +26,23 @@ export class ContentEditorFilesBase {
     protected contentsService: ContentEditorContentsService,
   ) {}
 
+  deleteContentHandler = (contentId: string) => {
+    this.deleteHandler(contentId);
+  };
+
+  insertNewCollection<T extends BaseFile>(
+    contentId: string,
+    isFocusToNext: boolean,
+    content: BaseCollection<T>,
+  ) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    this.contentsService.insertInto(content, index);
+    return { index, content };
+  }
+
   protected transformContentToOrWarning<T extends ContentModelBase>(
     result: OperationResult<T>,
     contentId: string,
@@ -56,18 +73,5 @@ export class ContentEditorFilesBase {
 
   protected deleteHandler(contentId: string) {
     this.contentsService.deleteById(contentId, false);
-  }
-
-  deleteContentHandler = (contentId: string) => {
-    this.deleteHandler(contentId);
-  };
-
-  insertNewCollection<T extends BaseFile>(contentId: string, isFocusToNext: boolean, content: BaseCollection<T>) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
-    if (isFocusToNext) {
-      index += 1;
-    }
-    this.contentsService.insertInto(content, index);
-    return { index, content: content };
   }
 }

@@ -24,10 +24,6 @@ export class AddFolder {
 export class ChangeTypeFolder {
   static type = '[Folders] change type folders';
 
-  get isMany() {
-    return this.selectedIds.length > 1;
-  }
-
   constructor(
     public typeTo: FolderTypeENUM,
     public selectedIds: string[],
@@ -36,6 +32,10 @@ export class ChangeTypeFolder {
     public successCallback?: () => void,
     public refTypeId?: RefTypeENUM,
   ) {}
+
+  get isMany() {
+    return this.selectedIds.length > 1;
+  }
 }
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';

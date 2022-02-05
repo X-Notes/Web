@@ -25,9 +25,10 @@ import {
   styleUrls: ['./document-note.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentNoteComponent 
+export class DocumentNoteComponent
   extends CollectionService<DocumentsCollection>
-  implements OnInit, ParentInteraction {
+  implements OnInit, ParentInteraction
+{
   @ViewChild('uploadRef') uploadRef: ElementRef;
 
   formats = TypeUploadFormats.documents;
@@ -43,6 +44,22 @@ export class DocumentNoteComponent
     super(cdr, clickableContentService);
   }
 
+  get isClicked() {
+    return this.clickableService.isClicked(this.getFirst?.fileId);
+  }
+
+  get getFirst(): DocumentModel {
+    if (this.content.items && this.content.items.length > 0) {
+      return this.content.items[0];
+    }
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.items || this.content.items.length === 0) {
+      return true;
+    }
+    return false;
+  }
 
   clickDocumentHandler(documentId: string) {
     this.clickableService.set(ClickableSelectableEntities.Document, documentId, this.content.id);
@@ -133,23 +150,6 @@ export class DocumentNoteComponent
 
   async exportDocuments(documents: DocumentsCollection) {
     await this.exportService.exportDocuments(documents);
-  }
-
-  get isClicked() {
-    return this.clickableService.isClicked(this.getFirst?.fileId);
-  }
-
-  get getFirst(): DocumentModel {
-    if (this.content.items && this.content.items.length > 0) {
-      return this.content.items[0];
-    }
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   async uploadDocuments(files: File[]) {

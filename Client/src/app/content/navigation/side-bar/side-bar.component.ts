@@ -17,18 +17,6 @@ export class SideBarComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store) {}
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
-
-  ngOnInit(): void {
-    this.store
-      .select(UserStore.getUser)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((user) => (this.billing = user.billingPlanId));
-  }
-
   get userBillingPlan() {
     switch (this.billing) {
       case BillingENUM.Free: {
@@ -44,5 +32,17 @@ export class SideBarComponent implements OnInit, OnDestroy {
         return '';
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
+  ngOnInit(): void {
+    this.store
+      .select(UserStore.getUser)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((user) => (this.billing = user.billingPlanId));
   }
 }

@@ -15,7 +15,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   styleUrls: ['./interaction-inner-folder.component.scss'],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-
   @Select(FolderStore.canView)
   canView$: Observable<boolean>;
 

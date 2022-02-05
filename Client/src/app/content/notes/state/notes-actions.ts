@@ -74,10 +74,6 @@ export class DeleteNotesPermanently {
 export class ChangeTypeNote {
   static type = '[Notes] change type notes';
 
-  get isMany() {
-    return this.selectedIds.length > 1;
-  }
-
   constructor(
     public typeTo: NoteTypeENUM,
     public selectedIds: string[],
@@ -86,6 +82,10 @@ export class ChangeTypeNote {
     public successCallback?: () => void,
     public refTypeId?: RefTypeENUM,
   ) {}
+
+  get isMany() {
+    return this.selectedIds.length > 1;
+  }
 }
 
 // Labels

@@ -4,6 +4,6 @@ export interface UpdateNoteWS {
   noteId: string;
   color: string;
   title: string;
-  removeLabelIds: string[]
+  removeLabelIds: string[];
   addLabels: Label[];
 }

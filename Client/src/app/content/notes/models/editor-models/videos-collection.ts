@@ -4,7 +4,6 @@ import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
 export class VideosCollection extends BaseCollection<VideoModel> {
-
   constructor(collection: Partial<VideosCollection>, items: VideoModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
@@ -44,7 +43,6 @@ export class VideosCollection extends BaseCollection<VideoModel> {
 }
 
 export class VideoModel extends BaseFile {
-
   videoPath: string;
 
   constructor(name: string, videoPath: string, fileId: string, authorId: string, uploadAt: Date) {

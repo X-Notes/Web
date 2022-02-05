@@ -29,7 +29,8 @@ import { ContentEditorPhotosCollectionService } from '../../content-editor-servi
 })
 export class PhotosComponent
   extends CollectionService<PhotosCollection>
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
+{
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -65,6 +66,24 @@ export class PhotosComponent
     super(cdr, clickableContentService);
   }
 
+  get countOfBlocks() {
+    return Math.floor(this.content.items.length / this.content.countInRow);
+  }
+
+  get countLastItems() {
+    return this.content.items.length % this.content.countInRow;
+  }
+
+  get totalRows() {
+    return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.items || this.content.items.length === 0) {
+      return true;
+    }
+    return false;
+  }
 
   ngOnChanges(): void {
     this.updateHeightByNativeOffset();
@@ -159,7 +178,7 @@ export class PhotosComponent
 
   async setPhotosInRow(count: number) {
     this.content.countInRow = count;
-    
+
     this.setFalseLoadedForAllPhotos();
     this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
     this.changeHeightSubject.next(`height`);
@@ -202,26 +221,6 @@ export class PhotosComponent
       this.lastBlock = this.content.items.slice(photoLength - this.countLastItems, photoLength);
     }
   }
-
-  get countOfBlocks() {
-    return Math.floor(this.content.items.length / this.content.countInRow);
-  }
-
-  get countLastItems() {
-    return this.content.items.length % this.content.countInRow;
-  }
-
-  get totalRows() {
-    return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
 
   getStyle = (numb: number) => {
     switch (numb) {

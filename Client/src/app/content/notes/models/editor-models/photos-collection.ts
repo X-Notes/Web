@@ -4,7 +4,6 @@ import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
 export class PhotosCollection extends BaseCollection<Photo> {
-
   height: string;
 
   width: string;
@@ -56,10 +55,12 @@ export class PhotosCollection extends BaseCollection<Photo> {
   }
 
   isTextOrCollectionInfoEqual(content: PhotosCollection): boolean {
-    return this.name === content.name && 
-    this.height === content.height && 
-    this.width === content.width && 
-    this.countInRow === content.countInRow;
+    return (
+      this.name === content.name &&
+      this.height === content.height &&
+      this.width === content.width &&
+      this.countInRow === content.countInRow
+    );
   }
 
   copy(): PhotosCollection {
@@ -77,7 +78,6 @@ export class PhotosCollection extends BaseCollection<Photo> {
 }
 
 export class Photo extends BaseFile {
-
   photoPathSmall: string;
 
   photoPathMedium: string;
@@ -122,7 +122,7 @@ export class Photo extends BaseFile {
     );
   }
 }
- 
+
 export class ApiPhotosCollection extends PhotosCollection {
   photos: Photo[];
 }

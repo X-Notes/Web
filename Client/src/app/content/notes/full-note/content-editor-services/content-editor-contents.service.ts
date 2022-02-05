@@ -14,7 +14,10 @@ import { BaseFile } from '../../models/editor-models/base-file';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
-import { DocumentModel, DocumentsCollection } from '../../models/editor-models/documents-collection';
+import {
+  DocumentModel,
+  DocumentsCollection,
+} from '../../models/editor-models/documents-collection';
 import { Photo, PhotosCollection } from '../../models/editor-models/photos-collection';
 import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
@@ -170,24 +173,36 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Photos,
     );
-    for(const collection of collectionsToUpdate){
+    for (const collection of collectionsToUpdate) {
       this.apiPhotos
-        .updateInfo(new UpdatePhotosCollectionInfoCommand(this.noteId, collection.id, collection.name, 
-                    collection.countInRow, collection.width, collection.height))
+        .updateInfo(
+          new UpdatePhotosCollectionInfoCommand(
+            this.noteId,
+            collection.id,
+            collection.name,
+            collection.countInRow,
+            collection.width,
+            collection.height,
+          ),
+        )
         .pipe(take(1))
         .subscribe(() => {
           const item = this.contentsSync.find((x) => x.id === collection.id) as PhotosCollection;
           item?.updateInfo(collection);
         });
-      }
-      // UPDATES ITEMS
-      const diffs = this.getCollectionItemsDiffs<Photo>(this.contentsSync, this.getContents, ContentTypeENUM.Photos);
-      console.log('diffs: ', diffs);
-      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
-        if(itemsToAdd && itemsToAdd.length > 0){
-          const ids = itemsToAdd.map(x => x.fileId);
-          console.log('ids: ', ids);
-          this.apiPhotos
+    }
+    // UPDATES ITEMS
+    const diffs = this.getCollectionItemsDiffs<Photo>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Photos,
+    );
+    console.log('diffs: ', diffs);
+    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
+      if (itemsToAdd && itemsToAdd.length > 0) {
+        const ids = itemsToAdd.map((x) => x.fileId);
+        console.log('ids: ', ids);
+        this.apiPhotos
           .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
           .pipe(take(1))
           .subscribe(() => {
@@ -196,18 +211,20 @@ export class ContentEditorContentsService {
             console.log('itemsToAdd: ', itemsToAdd);
             item?.addItemsToCollection(itemsToAdd);
           });
-        }
-        if(itemsToRemove && itemsToRemove.length > 0){
-          const ids = itemsToRemove.map(x => x.fileId);
-          this.apiPhotos
-          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+      }
+      if (itemsToRemove && itemsToRemove.length > 0) {
+        const ids = itemsToRemove.map((x) => x.fileId);
+        this.apiPhotos
+          .removeItemsFromCollection(
+            new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids),
+          )
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
             item?.removeItemsFromCollection(itemsToRemove);
           });
-        }
       }
+    }
   }
 
   private processAudiosChanges() {
@@ -217,40 +234,48 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Audios,
     );
-    for(const collection of collectionsToUpdate){
+    for (const collection of collectionsToUpdate) {
       this.apiAudios
-        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
+        .updateInfo(
+          new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name),
+        )
         .pipe(take(1))
         .subscribe(() => {
           const item = this.contentsSync.find((x) => x.id === collection.id) as AudiosCollection;
           item?.updateInfo(collection);
         });
-      }
-      // UPDATES ITEMS
-      const diffs = this.getCollectionItemsDiffs<AudioModel>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
-      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
-        if(itemsToAdd && itemsToAdd.length > 0){
-          const ids = itemsToAdd.map(x => x.fileId);
-          this.apiAudios
+    }
+    // UPDATES ITEMS
+    const diffs = this.getCollectionItemsDiffs<AudioModel>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Audios,
+    );
+    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
+      if (itemsToAdd && itemsToAdd.length > 0) {
+        const ids = itemsToAdd.map((x) => x.fileId);
+        this.apiAudios
           .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
             item?.addItemsToCollection(itemsToAdd);
           });
-        }
-        if(itemsToRemove && itemsToRemove.length > 0){
-          const ids = itemsToRemove.map(x => x.fileId);
-          this.apiAudios
-          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+      }
+      if (itemsToRemove && itemsToRemove.length > 0) {
+        const ids = itemsToRemove.map((x) => x.fileId);
+        this.apiAudios
+          .removeItemsFromCollection(
+            new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids),
+          )
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
             item?.removeItemsFromCollection(itemsToRemove);
           });
-        }
       }
     }
+  }
 
   private processDocumentsChanges() {
     // UPDATE MAIN INFO
@@ -259,39 +284,47 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Documents,
     );
-    for(const collection of collectionsToUpdate){
+    for (const collection of collectionsToUpdate) {
       this.apiDocuments
-        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
+        .updateInfo(
+          new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name),
+        )
         .pipe(take(1))
         .subscribe(() => {
           const item = this.contentsSync.find((x) => x.id === collection.id) as DocumentsCollection;
           item?.updateInfo(collection);
         });
-      }
-      // UPDATES ITEMS
-      const diffs = this.getCollectionItemsDiffs<DocumentModel>(this.contentsSync, this.getContents, ContentTypeENUM.Documents);
-      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
-        if(itemsToAdd && itemsToAdd.length > 0){
-          const ids = itemsToAdd.map(x => x.fileId);
-          this.apiDocuments
+    }
+    // UPDATES ITEMS
+    const diffs = this.getCollectionItemsDiffs<DocumentModel>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Documents,
+    );
+    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
+      if (itemsToAdd && itemsToAdd.length > 0) {
+        const ids = itemsToAdd.map((x) => x.fileId);
+        this.apiDocuments
           .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
             item?.addItemsToCollection(itemsToAdd);
           });
-        }
-        if(itemsToRemove && itemsToRemove.length > 0){
-          const ids = itemsToRemove.map(x => x.fileId);
-          this.apiDocuments
-          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+      }
+      if (itemsToRemove && itemsToRemove.length > 0) {
+        const ids = itemsToRemove.map((x) => x.fileId);
+        this.apiDocuments
+          .removeItemsFromCollection(
+            new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids),
+          )
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
             item?.removeItemsFromCollection(itemsToRemove);
           });
-        }
       }
+    }
   }
 
   private processVideosChanges() {
@@ -300,39 +333,47 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Videos,
     );
-    for(const collection of collectionsToUpdate){
+    for (const collection of collectionsToUpdate) {
       this.apiVideos
-        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
+        .updateInfo(
+          new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name),
+        )
         .pipe(take(1))
         .subscribe(() => {
           const item = this.contentsSync.find((x) => x.id === collection.id) as VideosCollection;
           item?.updateInfo(collection);
         });
-      }
-      // UPDATES ITEMS
-      const diffs = this.getCollectionItemsDiffs<VideoModel>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
-      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
-        if(itemsToAdd && itemsToAdd.length > 0){
-          const ids = itemsToAdd.map(x => x.fileId);
-          this.apiVideos
+    }
+    // UPDATES ITEMS
+    const diffs = this.getCollectionItemsDiffs<VideoModel>(
+      this.contentsSync,
+      this.getContents,
+      ContentTypeENUM.Videos,
+    );
+    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
+      if (itemsToAdd && itemsToAdd.length > 0) {
+        const ids = itemsToAdd.map((x) => x.fileId);
+        this.apiVideos
           .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
             item?.addItemsToCollection(itemsToAdd);
           });
-        }
-        if(itemsToRemove && itemsToRemove.length > 0){
-          const ids = itemsToRemove.map(x => x.fileId);
-          this.apiVideos
-          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+      }
+      if (itemsToRemove && itemsToRemove.length > 0) {
+        const ids = itemsToRemove.map((x) => x.fileId);
+        this.apiVideos
+          .removeItemsFromCollection(
+            new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids),
+          )
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
             item?.removeItemsFromCollection(itemsToRemove);
           });
-        }
       }
+    }
   }
 
   private processTextsChanges() {
@@ -452,18 +493,26 @@ export class ContentEditorContentsService {
     return contents;
   }
 
-  private getCollectionItemsDiffs<T extends BaseFile>(oldContents: ContentModelBase[], newContents: ContentModelBase[], type: ContentTypeENUM): [string, T[], T[]][]
-  {
-    const oldContentsMapped = oldContents.filter(x => x.typeId === type).map(x => x as BaseCollection<T>);
-    const newContentsMapped = newContents.filter(x => x.typeId === type).map(x => x as BaseCollection<T>);
+  private getCollectionItemsDiffs<T extends BaseFile>(
+    oldContents: ContentModelBase[],
+    newContents: ContentModelBase[],
+    type: ContentTypeENUM,
+  ): [string, T[], T[]][] {
+    const oldContentsMapped = oldContents
+      .filter((x) => x.typeId === type)
+      .map((x) => x as BaseCollection<T>);
+    const newContentsMapped = newContents
+      .filter((x) => x.typeId === type)
+      .map((x) => x as BaseCollection<T>);
 
     const result: [string, T[], T[]][] = [];
 
     for (const content of newContentsMapped) {
       const contentForCompare = oldContentsMapped.find((x) => x.id === content.id);
-      if(contentForCompare){
-        const [IsEqual, itemsToAdd, itemsToRemove] = content.getIsEqualIdsToAddIdsToRemove(contentForCompare);
-        if(!IsEqual){
+      if (contentForCompare) {
+        const [IsEqual, itemsToAdd, itemsToRemove] =
+          content.getIsEqualIdsToAddIdsToRemove(contentForCompare);
+        if (!IsEqual) {
           result.push([content.id, itemsToAdd, itemsToRemove]);
         }
       }
@@ -490,7 +539,11 @@ export class ContentEditorContentsService {
       }
 
       // TEXTS
-      const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
+      const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(
+        this.contents,
+        prev,
+        ContentTypeENUM.Text,
+      );
       if (textDiffs && textDiffs.length > 0) {
         this.patchTextDiffs(textDiffs);
         isNeedChange = true;

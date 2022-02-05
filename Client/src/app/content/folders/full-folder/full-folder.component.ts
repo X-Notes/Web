@@ -87,7 +87,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateNoteService: UpdaterEntitiesService,
     private router: Router,
     private htmlTitleService: HtmlTitleService,
-    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService
+    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
   ) {}
 
   get folderMenu() {
@@ -112,7 +112,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     ]);
     this.routeSubscription.unsubscribe();
   }
-
 
   async ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;

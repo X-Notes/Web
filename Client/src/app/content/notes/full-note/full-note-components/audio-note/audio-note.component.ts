@@ -26,7 +26,8 @@ import { ContentEditorAudiosCollectionService } from '../../content-editor-servi
 })
 export class AudioNoteComponent
   extends CollectionService<AudiosCollection>
-  implements ParentInteraction, OnInit, OnDestroy {
+  implements ParentInteraction, OnInit, OnDestroy
+{
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   formats = TypeUploadFormats.audios;
@@ -42,13 +43,18 @@ export class AudioNoteComponent
     super(cdr, clickableContentService);
   }
 
+  get isEmpty(): boolean {
+    if (!this.content.items || this.content.items.length === 0) {
+      return true;
+    }
+    return false;
+  }
 
   getHost() {
     return this.host;
   }
 
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 
   ngOnInit(): void {}
 
@@ -79,13 +85,6 @@ export class AudioNoteComponent
       this.audioService.currentFile = audio;
       this.playStream(audio.audioPath, audio.fileId);
     }
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   async exportPlaylist(playlist: AudiosCollection) {

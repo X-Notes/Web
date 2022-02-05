@@ -102,6 +102,6 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
     const newLabel = this.store.selectSnapshot(LabelStore.all)[0] as LabelSelect;
-    this.labels = [{...newLabel}, ...this.labels];
+    this.labels = [{ ...newLabel }, ...this.labels];
   }
 }

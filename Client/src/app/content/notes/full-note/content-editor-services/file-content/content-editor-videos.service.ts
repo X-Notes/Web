@@ -8,8 +8,6 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
@@ -95,7 +93,6 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       (x) => new VideoModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
     );
 
-    
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     const prev = prevCollection.items ?? [];
 
