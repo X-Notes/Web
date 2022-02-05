@@ -1,4 +1,5 @@
-﻿using Domain.Commands.Files;
+﻿using Common;
+using Domain.Commands.Files;
 using MediatR;
 using System;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start files deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddMinutes(-config.NMinutes);
+                var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-config.NMinutes);
 
                 var infos = await appFileUploadInfoRepository.GetFilesInfoThatNeedDelete(earliestTimestamp);
 

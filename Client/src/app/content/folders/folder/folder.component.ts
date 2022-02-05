@@ -7,7 +7,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
+import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 
@@ -18,6 +18,8 @@ import { SmallFolder } from '../models/folder.model';
 })
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
+
+  @Input() isSelectedMode: boolean;
 
   fontSize = FontSizeENUM;
 
@@ -41,8 +43,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
         if (title) {
-          const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
-          this.store.dispatch(new UpdateTitle(title, this.folder.id, typeRoad));
+          this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
         }
       });
   }
@@ -50,6 +51,12 @@ export class FolderComponent implements OnInit, OnDestroy {
   tryFind(z: string[]): boolean {
     const exist = z.find((id) => id === this.folder.id);
     return exist !== undefined;
+  }
+
+  handelEntityClick($event: MouseEvent, id: string) {
+    if (this.isSelectedMode) {
+      this.highlight(id);
+    }
   }
 
   highlight(id: string) {
@@ -61,7 +68,9 @@ export class FolderComponent implements OnInit, OnDestroy {
     }
   }
 
-  toFolder() {
+  toFolder($event: MouseEvent) {
+    $event.stopPropagation();
+    $event.preventDefault();
     const flag = this.store.selectSnapshot(FolderStore.selectedCount) > 0;
     if (flag) {
       this.highlight(this.folder.id);

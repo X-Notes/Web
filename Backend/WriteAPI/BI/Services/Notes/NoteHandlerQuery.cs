@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
 using BI.Mapping;
+using BI.SignalR;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
+using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Personalization;
 using Common.DTO.Users;
 using Domain.Queries.Notes;
 using Domain.Queries.Permissions;
@@ -23,44 +26,44 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Notes
 {
     public class NoteHandlerQuery :
-        IRequestHandler<GetAdditionalContentInfoQuery, List<BottomNoteContent>>,
+        IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>,
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
-        IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>,
+        IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
-        IRequestHandler<GetNoteContentsQuery, List<BaseNoteContentDTO>>
+        IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
         private readonly IMapper mapper;
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
-        private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly WebsocketsNotesService websocketsNotesService;
 
         public NoteHandlerQuery(
             IMapper mapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            UserOnNoteRepository userOnNoteRepository,
             AppCustomMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            WebsocketsNotesService websocketsNotesService)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
-            this.userOnNoteRepository = userOnNoteRepository;
             this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.websocketsNotesService = websocketsNotesService;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -73,9 +76,7 @@ namespace BI.Services.Notes
 
                 if (NoteTypeENUM.Shared == request.TypeId)
                 {
-                    var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == user.Id);
-                    var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-                    var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
+                    var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
                     notes.AddRange(sharedNotes);
                     notes = notes.DistinctBy(x => x.Id).ToList();
                 }
@@ -86,26 +87,53 @@ namespace BI.Services.Notes
             throw new Exception("User not found");
         }
 
+        private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
+        {
+            var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
+            var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
+            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, settings);
+            sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
+            return sharedNotes;
+        }
+
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
-            var permissions = await _mediator.Send(command);
+            var isCanWrite = false;
+            var isCanRead = false;
+            var isOwner = false;
 
-            if (permissions.CanWrite)
+            if (request.FolderId.HasValue)
             {
-                var note = await noteRepository.GetFull(request.Id);
-                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.Email);
+                var permissions = await _mediator.Send(command);
+                isCanWrite = permissions.CanWrite;
+                isCanRead = permissions.CanRead;
+                isOwner = permissions.IsOwner;
+            }
+            else
+            {
+                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+                var permissions = await _mediator.Send(command);
+                isCanWrite = permissions.CanWrite;
+                isCanRead = permissions.CanRead;
+                isOwner = permissions.IsOwner;
             }
 
-            if (permissions.CanRead)
+            if (isCanWrite)
             {
-                var note = await noteRepository.GetFull(request.Id);
+                var note = await noteRepository.GetFull(request.NoteId);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                return new FullNoteAnswer(isOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
             }
 
-            return new FullNoteAnswer(permissions.IsOwner, false, false, null, null);
+            if (isCanRead)
+            {
+                var note = await noteRepository.GetFull(request.NoteId);
+                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
+                return new FullNoteAnswer(isOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+            }
+
+            return new FullNoteAnswer(isOwner, false, false, null, null);
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
@@ -114,13 +142,14 @@ namespace BI.Services.Notes
             var permissions = await _mediator.Send(command);
             if (permissions.CanRead)
             {
-                var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
+                var ids = websocketsNotesService.GetIdsByEntityId(request.Id);
+                var users = await userRepository.GetUsersWithPhotos(ids);
                 return mapper.Map<List<OnlineUserOnNote>>(users);
             }
             return new List<OnlineUserOnNote>();
         }
 
-        public async Task<List<BaseNoteContentDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -128,11 +157,11 @@ namespace BI.Services.Notes
             if (permissions.CanRead)
             {
                 var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
-                return appCustomMapper.MapContentsToContentsDTO(contents);
+                var result = appCustomMapper.MapContentsToContentsDTO(contents);
+                return new OperationResult<List<BaseNoteContentDTO>>(true, result);
             }
 
-            // TODO WHEN NO ACCESS
-            return null;
+            return new OperationResult<List<BaseNoteContentDTO>>().SetNoPermissions();
         }
 
         public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
@@ -141,6 +170,10 @@ namespace BI.Services.Notes
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
+                var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
+                notes.AddRange(sharedNotes);
+                notes = notes.DistinctBy(x => x.Id).ToList();
+
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return appCustomMapper.MapNotesToSmallNotesDTO(notes);
@@ -149,26 +182,32 @@ namespace BI.Services.Notes
             throw new Exception("User not found");
         }
 
-        public async Task<List<SmallNote>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<SmallNote>>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
         {
-            var canReadIds = new List<Guid>();
-            foreach (var noteId in request.NoteIds) // TODO REMOVE AWAIT FROM CYCLE
-            {
-                var command = new GetUserPermissionsForNoteQuery(noteId, request.Email);
-                var permissions = await _mediator.Send(command); 
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-                if (permissions.CanRead)
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId);
+            if (canReadIds.Any())
+            {
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
+                notes.ForEach(note =>
                 {
-                    canReadIds.Add(noteId);
-                }
+                    if(note.UserId != user.Id)
+                    {
+                        note.NoteTypeId = NoteTypeENUM.Shared;
+                    }
+                });
+                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes);
+                return new OperationResult<List<SmallNote>>(true, result);
             }
 
-            var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
-
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return new OperationResult<List<SmallNote>>().SetNotFound();
         }
 
-        public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentInfoQuery request, CancellationToken cancellationToken)
+        public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
         {
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);

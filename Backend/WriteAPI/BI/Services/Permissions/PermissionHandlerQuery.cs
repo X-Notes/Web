@@ -113,7 +113,7 @@ namespace BI.Services.Permissions
 
             if (folder.UserId == user.Id)
             {
-                return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: true);
+                return new UserPermissionsForFolder().GetFullAccess(user, folder);
             }
 
             if(folder.FolderTypeId == FolderTypeENUM.Shared)
@@ -122,7 +122,7 @@ namespace BI.Services.Permissions
                 {
                     case RefTypeENUM.Editor:
                         {
-                            return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
+                            return new UserPermissionsForFolder().GetFullAccess(user, folder);
                         }
                     case RefTypeENUM.Viewer:
                         {
@@ -134,7 +134,7 @@ namespace BI.Services.Permissions
             var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
             if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
             {
-                return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
+                return new UserPermissionsForFolder().GetFullAccess(user, folder);
             }
 
             if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)

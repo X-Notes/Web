@@ -226,7 +226,8 @@
       "notification": "Немає непрочитаних повідомлень",
       "notificationAll": "У вас немає повідомлень",
       "history": "У нотатку поки немає історії",
-      "noAccessView": "У вас немає прав для перегляду нотатка"
+      "noAccessViewNote": "У вас немає прав для перегляду нотатка",
+      "noAccessViewFolder": "У вас немає прав для перегляду папки"
     },
     "notification": {
       "title": "Повідомлення",
@@ -269,6 +270,35 @@
       "unnamedLabel": "Без назви"
     },
     "snackBar": {
-      "saved": "Збережено"
+      "saved": "Збережено",
+      "onlyAuthorCanMoveIt": "Тільки автор нотатки може її перемістити",
+      "noPermissionsForEdit": "Немає прав для редагування ",
+      "archive": "архів",
+      "toBin": "кошик",
+      "toShared": "спільні",
+      "toPrivate": "особисті",
+      "undo": "Відмінити",
+      "all": "всі",
+      "notes": "Нотатки",
+      "note": "Нотаток",
+      "folders": "Папки",
+      "folder": "Папка",
+      "labels": "Ярлики",
+      "label": "Ярлик",
+      "notePermDeleted": "Нотаток видален безповоротно",
+      "notesPermDeleted": "Нотатки видалені безповоротно",
+      "folderPermDeleted": "Папка видалена безповоротно",
+      "foldersPermDeleted": "Папки видалені безповоротно",
+      "movedToMany" : " переміщені в ",
+      "movedToSingle" : " переміщений в "
+    },
+    "titles": {
+      "labels": "Ярлики",
+      "notes": "Нотатки",
+      "folders": "Папки",
+      "profile": "Профиль",
+      "history": "Історія",
+      "note": "Нотаток",
+      "folder": "Папка"
     }
   }

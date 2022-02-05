@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using WriteContext.GenericRepositories;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common;
 
 namespace WriteContext.Repositories.Notes
 {
@@ -54,6 +55,7 @@ namespace WriteContext.Repositories.Notes
         public async Task<Note> GetForCheckPermission(Guid id)
         {
             return await context.Notes
+                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -61,9 +63,11 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
         {
             return await context.Notes
+                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
+
 
         public async Task<Note> GetFull(Guid id)
         {
@@ -116,7 +120,7 @@ namespace WriteContext.Repositories.Notes
                 .Include(z => (z as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents).ToListAsync();
+                .Include(x => (x as DocumentsCollectionNote).Documents).AsSplitQuery().ToListAsync();
 
             var contentLookUp = contents.ToLookup(x => x.NoteId);
             notes.ForEach(note => note.Contents = contentLookUp[note.Id].OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList());
@@ -251,7 +255,7 @@ namespace WriteContext.Repositories.Notes
                     notesForCasting.ForEach(x =>
                     {
                         x.NoteTypeId = ToId;
-                        x.UpdatedAt = DateTimeOffset.Now;
+                        x.UpdatedAt = DateTimeProvider.Time;
                     });
 
                     ChangeOrderHelper(notesForCasting);

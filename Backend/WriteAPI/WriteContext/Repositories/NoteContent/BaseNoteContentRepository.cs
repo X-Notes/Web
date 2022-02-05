@@ -26,6 +26,8 @@ namespace WriteContext.Repositories.NoteContent
                 .Include(x => (x as DocumentsCollectionNote).Documents)
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
+                .AsSplitQuery()
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -36,6 +38,8 @@ namespace WriteContext.Repositories.NoteContent
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
                 .Include(x => (x as DocumentsCollectionNote).Documents)
+                .AsSplitQuery()
+                .AsNoTracking()
                 .Where(x => ids.Contains(x.NoteId)).ToListAsync();
         }
     }

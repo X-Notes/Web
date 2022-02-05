@@ -10,7 +10,7 @@ nav {
   flex-direction: column;
   height: 100%;
   width: 80px;
-  border-right: 1px solid;
+  border-right: 1px solid #e7e7e7;
   transition: 0.2s ease;
 
   .module {
@@ -53,7 +53,7 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 40px;
+    height: 54px;
     width: 100%;
     margin-top: auto;
     transition: 0.2s ease;

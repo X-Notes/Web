@@ -14,6 +14,7 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import {
@@ -47,6 +48,7 @@ export class AllComponent implements OnInit, AfterViewInit {
     private store: Store,
     public labelService: LabelsService,
     private sbws: SnackBarWrapperService,
+    private translateService: TranslateService,
   ) {}
 
   async ngOnInit() {
@@ -96,13 +98,11 @@ export class AllComponent implements OnInit, AfterViewInit {
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
     this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
-
-    this.sbws.buildLabel(
-      () => this.callBackOnDelete(label),
-      this.sbws.getLabelsNaming,
-      this.sbws.getAllLabelsEntityName,
-      false,
-    );
+    const message =
+      this.sbws.getLabelsNaming(false) +
+      this.sbws.getMoveToMessage(false) +
+      this.translateService.instant('snackBar.toBin');
+    this.sbws.build(() => this.callBackOnDelete(label), message);
   }
 
   async callBackOnDelete(label: Label) {

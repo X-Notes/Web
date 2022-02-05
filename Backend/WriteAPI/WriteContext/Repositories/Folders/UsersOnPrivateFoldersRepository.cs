@@ -22,5 +22,10 @@ namespace WriteContext.Repositories.Folders
                 .Include(x => x.User)
                 .Where(x => x.FolderId == folderId).ToListAsync();
         }
+
+        public async Task<List<UsersOnPrivateFolders>> GetByFolderIds(List<Guid> folderIds)
+        {
+            return await entities.Where(x => folderIds.Contains(x.FolderId)).ToListAsync();
+        }
     }
 }

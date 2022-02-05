@@ -16,7 +16,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100% - 202px);
+  height: calc(100% - 162px - 54px);
+  // background: #fafafa;
 
   .label-cancel {
     display: flex;

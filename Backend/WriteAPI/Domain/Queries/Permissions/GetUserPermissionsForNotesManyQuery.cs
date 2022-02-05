@@ -2,13 +2,10 @@
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Queries.Permissions
 {
-    public class GetUserPermissionsForNotesManyQuery : BaseQueryEntity, IRequest<List<(Guid, UserPermissionsForNote)>>
+    public class GetUserPermissionsForNotesManyQuery : BaseQueryEntity, IRequest<List<(Guid noteId, UserPermissionsForNote perm)>>
     {
         public List<Guid> NoteIds { set; get; }
 

@@ -1,4 +1,4 @@
-<div *ngIf="note$ | async" appTheme class="interactions">
+<div *ngIf="(note$ | async) && (canView$ | async)" appTheme class="interactions">
   <div
     [CustomTooltip]="'header.countUsers' | translate"
     position="Bottom"

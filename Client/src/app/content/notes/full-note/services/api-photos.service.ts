@@ -1,71 +1,34 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, tap } from 'rxjs/operators';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { ApiPhotosCollection, PhotosCollection } from '../../models/editor-models/photos-collection';
+import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
+import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
+import { UpdatePhotosCollectionInfoCommand } from '../models/api/photos/update-photos-collection-info-command';
+import { BaseNoteFileContentApiService } from './base-note-file-content-api.service';
 
 @Injectable()
-export class ApiPhotosService {
-  constructor(private httpClient: HttpClient) {}
+export class ApiPhotosService extends BaseNoteFileContentApiService
+  <
+  BaseRemoveFromCollectionItemsCommand, 
+  BaseAddToCollectionItemsCommand, 
+  UpdatePhotosCollectionInfoCommand
+  > {
 
-  transformToAlbum(noteId: string, contentId: string) {
+  static baseApi = `${environment.writeAPI}/api/note/inner/photos`;
+
+  constructor(httpClient: HttpClient) {
+    super(httpClient, ApiPhotosService.baseApi)
+  }
+
+  transformTo(noteId: string, contentId: string) {
     const obj = {
       noteId,
       contentId,
     };
-    return this.httpClient.post<OperationResult<PhotosCollection>>(
-      `${environment.writeAPI}/api/note/inner/photos/transform`,
-      obj,
-    );
-  }
-
-  removeCollection(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/remove`,
-      obj,
-    );
-  }
-
-  removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
-    return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/${noteId}/${contentId}/${photoId}`,
-    );
-  }
-
-  syncContents(noteId: string, photos: PhotosCollection[]) {
-    const obj = {
-      noteId,
-      photos,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/sync`,
-      obj,
-    );
-  }
-
-  updateCollectionInfo(
-    noteId: string,
-    contentId: string,
-    name: string,
-    count: number,
-    width: string,
-    height: string,
-  ) {
-    const obj = {
-      noteId,
-      contentId,
-      name,
-      count,
-      width,
-      height,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/info`,
-      obj,
-    );
+    return this.httpClient.post<OperationResult<ApiPhotosCollection>>(`${this.baseApi}/transform`,  obj)
+                           .pipe(map(x => { return { ...x, data: new PhotosCollection(x.data, x.data.photos) }; }));
   }
 }

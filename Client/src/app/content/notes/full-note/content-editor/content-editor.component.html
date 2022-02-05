@@ -143,7 +143,8 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (uploadEvent)="uploadPhotoToAlbumHandler($event, note.id)"
           (deleteContentEvent)="deletePhotosCollection($event)"
-          (deletePhotoEvent)="deletePhotoHandler($event, item.id, note.id)"
+          (deleteContentItemEvent)="deletePhotoHandler($event, item)"
+          (someChangesEvent)="postAction()"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-photos>
         <app-audio-note
@@ -155,8 +156,9 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
-          (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
+          (deleteContentItemEvent)="deleteAudioHandler($event, item)"
           (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
+          (someChangesEvent)="postAction()"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-audio-note>
         <app-video-note
@@ -168,8 +170,9 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteVideosCollection($event)"
-          (deleteVideoEvent)="deleteVideoHandler($event, item.id, note.id)"
+          (deleteContentItemEvent)="deleteVideoHandler($event, item)"
           (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
+          (someChangesEvent)="postAction()"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-video-note>
         <app-document-note
@@ -181,8 +184,9 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteDocumentsCollection($event)"
-          (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
+          (deleteContentItemEvent)="deleteDocumentHandler($event, item)"
           (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
+          (someChangesEvent)="postAction()"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>

@@ -17,7 +17,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
         public VideosCollectionNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.VideosCollection;
         }
 
@@ -28,7 +28,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Order = entity.Order;
             Name = entity.Name;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.VideosCollection;
 
             VideoNoteAppFiles = videosCollectionNoteAppFiles;
@@ -41,7 +41,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Order = entity.Order;
             Name = entity.Name;
 
-            UpdatedAt = DateTimeOffset.Now;
+            UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.VideosCollection;
 
             Videos = videos;

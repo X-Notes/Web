@@ -1,7 +1,10 @@
 import { Store } from '@ngxs/store';
 import { SmallFolder } from 'src/app/content/folders/models/folder.model';
+import { ClearUpdatesUIFolders } from 'src/app/content/folders/state/folders-actions';
+import { UpdateFolderUI } from 'src/app/content/folders/state/update-folder-ui.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { UpdateColor } from 'src/app/content/notes/state/update-color.model';
+import { ClearUpdatesUINotes } from 'src/app/content/notes/state/notes-actions';
+import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { MurriEntityService } from './murri-entity.service';
 import { MurriService } from './murri.service';
@@ -29,16 +32,45 @@ export class FeaturesEntitiesService<
         return entities.sort((a, b) => a.order - b.order);
       }
       default: {
-        throw new Error('Incorrec type');
+        throw new Error('Incorrect type');
       }
     }
   };
 
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      if (this.entities.length > 0) {
-        this.entities.find((x) => x.id === update.id).color = update.color;
+  async updateNotes(updates: UpdateNoteUI[]) {
+    for (const value of updates) {
+      const note = this.entities.find((x) => x.id === value.id) as SmallNote;
+      if (note !== undefined) {
+        if(value.removeLabelIds && value.removeLabelIds.length > 0){
+          note.labels = note.labels.filter(x => !value.removeLabelIds.some(id => x.id === id));
+        }
+        if(value.addLabels && value.addLabels.length > 0){
+          note.labels = [...value.addLabels, ...note.labels];
+        }
+        if(value.allLabels){
+          note.labels = value.allLabels;
+        }
+        note.color = value.color ?? note.color;
+        note.title = value.title ?? note.title;
       }
+    }
+    if (updates.length > 0) {
+      await this.store.dispatch(new ClearUpdatesUINotes()).toPromise();
+      await this.murriService.refreshLayoutAsync();
+    }
+  }
+
+  async updateFolders(updates: UpdateFolderUI[]) {
+    for (const value of updates) {
+      const folder = this.entities.find((x) => x.id === value.id) as SmallFolder;
+      if (folder !== undefined) {
+        folder.color = value.color ?? folder.color;
+        folder.title = value.title ?? folder.title;
+      }
+    }
+    if (updates.length > 0) {
+      await this.store.dispatch(new ClearUpdatesUIFolders()).toPromise();
+      await this.murriService.refreshLayoutAsync();
     }
   }
 

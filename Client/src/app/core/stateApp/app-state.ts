@@ -382,12 +382,11 @@ export class AppStore {
   }
 
   @Action(ShowSnackNotification)
+  // eslint-disable-next-line class-methods-use-this
   async showSnackNotifications(
     { patchState }: StateContext<AppState>,
     { notification }: ShowSnackNotification,
   ) {
-    patchState({
-      snackNotification: notification,
-    });
+    patchState({ snackNotification: notification });
   }
 }

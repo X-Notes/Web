@@ -10,7 +10,6 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
-import { SignalRService } from 'src/app/core/signal-r.service';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
@@ -36,6 +35,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
 
+  @Select(NoteStore.canEdit)
+  public canEdit$: Observable<boolean>;
+
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 
@@ -45,13 +47,14 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  public notesLink: SmallNote[];
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
 
+  public notesLink: SmallNote[];
+  
   loaded = false;
 
   destroy = new Subject<void>();
-
-  note: FullNote;
 
   contents: ContentModelBase[];
 
@@ -65,7 +68,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
-    private signalRService: SignalRService,
     private updateNoteService: UpdaterEntitiesService,
     public sliderService: FullNoteSliderService,
   ) {
@@ -88,7 +90,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   async initNote() {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
-    await this.signalRService.joinNote(this.id);
   }
 
   async loadContent() {
@@ -100,10 +101,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     const isCanView = this.store.selectSnapshot(NoteStore.canView);
     if (isCanView) {
       await this.loadContent();
-      this.note = this.store.selectSnapshot(NoteStore.oneFull);
-      this.signalRService.updateContentEvent
-        .pipe(takeUntil(this.destroy))
-        .subscribe(() => this.loadContent());
     }
     this.loaded = true;
   }
@@ -114,7 +111,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
 
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note?.noteTypeId);
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    await this.setSideBarNotes(note.noteTypeId);
   }
 
   async ngOnInit() {
@@ -160,7 +158,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       ...this.updateNoteService.notesIds$.getValue(),
       this.id,
     ]);
-    await this.signalRService.leaveNote(this.id);
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new DeleteCurrentNote());

@@ -1,21 +1,13 @@
-﻿using Common.Attributes;
-using Common.DTO;
-using MediatR;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.NoteInner.FileContent.Photos
 {
-    public class UpdatePhotosCollectionInfoCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdatePhotosCollectionInfoCommand : BaseUpdateCollectionInfo
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        [Required]
-        public string Name { set; get; }
+        public UpdatePhotosCollectionInfoCommand(Guid noteId, Guid contentId, string name) : base(noteId, contentId, name)
+        {
+        }
 
         [Range(1, 4)]
         public int Count { set; get; }

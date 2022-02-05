@@ -5,7 +5,6 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
-import { FullNote } from '../models/full-note.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -32,10 +31,15 @@ export class UpdateNotes {
 export class ChangeColorNote {
   static type = '[Notes] Change color note';
 
-  constructor(public color: string, public selectedIds: string[]) {}
+  constructor(
+    public color: string,
+    public selectedIds: string[],
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
-export class ClearColorNotes {
+export class ClearUpdatesUINotes {
   static type = '[Notes] Clear color note';
 }
 
@@ -67,57 +71,21 @@ export class DeleteNotesPermanently {
   constructor(public selectedIds: string[], public typeNote: NoteTypeENUM) {}
 }
 
-export class BaseChangeTypeSmallNote {
-  public selectedIds: string[];
-
-  public isAddingToDom: boolean;
-
-  public successCalback: () => void;
-
-  constructor(isAddingToDom: boolean) {
-    this.isAddingToDom = isAddingToDom;
-  }
+export class ChangeTypeNote {
+  static type = '[Notes] change type notes';
 
   get isMany() {
     return this.selectedIds.length > 1;
   }
-}
 
-export class SetDeleteNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] SetDelete notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-export class ArchiveNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] Archive notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakePrivateNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] MakePrivate notes';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakeSharedNotes extends BaseChangeTypeSmallNote {
-  static type = '[Notes] MakeShared notes';
-
-  refTypeId: RefTypeENUM;
-
-  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
-    super(isAddingToDom);
-    this.refTypeId = refTypeId;
-  }
+  constructor(
+    public typeTo: NoteTypeENUM,
+    public selectedIds: string[],
+    public isAddingToDom: boolean,
+    public errorPermissionMessage?: string,
+    public successCallback?: () => void,
+    public refTypeId?: RefTypeENUM,
+  ) {}
 }
 
 // Labels
@@ -131,17 +99,23 @@ export class UpdateLabelOnNote {
 export class AddLabelOnNote {
   static type = '[Notes] Add label';
 
-  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
+  constructor(
+    public label: Label,
+    public selectedIds: string[],
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class RemoveLabelFromNote {
   static type = '[Notes] Remove label';
 
-  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
-}
-
-export class ClearUpdatelabelEvent {
-  static type = '[Notes] Clear labels';
+  constructor(
+    public labelId: string,
+    public selectedIds: string[],
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class RemoveFromDomMurri {
@@ -191,18 +165,10 @@ export class SelectAllNote {
   constructor(public typeNote: NoteTypeENUM) {}
 }
 
-// UPDATING FROM FULL NOTE
-
-export class UpdateOneFullNote {
-  static type = '[Notes] update one full note';
-
-  constructor(public note: FullNote) {}
-}
-
 export class UpdateOneNote {
   static type = '[Notes] update one one';
 
-  constructor(public note: SmallNote, public typeNote: NoteTypeENUM) {}
+  constructor(public note: SmallNote) {}
 }
 
 export class CancelAllSelectedLabels {
@@ -221,7 +187,7 @@ export class UpdateSelectLabel {
 export class LoadFullNote {
   static type = '[Notes] Load full note';
 
-  constructor(public id: string) {}
+  constructor(public noteId: string, public folderId: string = null) {}
 }
 
 export class LoadSnapshotNote {
@@ -234,24 +200,16 @@ export class DeleteCurrentNote {
   static type = '[Notes] delete full note';
 }
 
-export class UpdateTitle {
+export class UpdateNoteTitle {
   static type = '[Notes] update title';
 
-  constructor(public str: string) {}
+  constructor(
+    public str: string,
+    public noteId: string,
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
-
-export class UpdateLabelFullNote {
-  static type = '[Notes] update label full note';
-
-  constructor(public label: Label, public remove: boolean) {}
-}
-
-export class ChangeColorFullNote {
-  static type = '[Notes] change color fullNote';
-
-  constructor(public color: string) {}
-}
-
 export class ChangeTypeFullNote {
   static type = '[Notes] change type fullNote';
 

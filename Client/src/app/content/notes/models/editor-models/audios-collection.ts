@@ -1,19 +1,15 @@
 import * as uuid from 'uuid';
 import { ContentTypeENUM } from './content-types.enum';
-import { ContentModelBase } from './content-model-base';
+import { BaseCollection } from './base-collection';
+import { BaseFile } from './base-file';
 
-export class AudiosCollection extends ContentModelBase {
-  name: string;
+export class AudiosCollection extends BaseCollection<AudioModel> {
 
-  audios: AudioModel[];
-
-  isLoading = false;
-
-  constructor(collection: Partial<AudiosCollection>) {
+  constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.audios = collection.audios
-      ? collection.audios.map(
+    this.items = items
+      ? items.map(
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -28,69 +24,32 @@ export class AudiosCollection extends ContentModelBase {
       id: uuid.v4(),
       updatedAt: new Date(),
     };
-    return new AudiosCollection(obj);
-  }
-
-  update(entity: AudiosCollection) {
-    this.name = entity.name;
-    this.updatedAt = entity.updatedAt;
-    this.audios = entity.audios;
+    return new AudiosCollection(obj, obj.items);
   }
 
   copy(): AudiosCollection {
-    return new AudiosCollection(this);
+    return new AudiosCollection(this, this.items);
   }
 
   copyBase(): AudiosCollection {
-    const obj = new AudiosCollection(this);
+    const obj = new AudiosCollection(this, this.items);
     obj.name = null;
-    obj.audios = null;
+    obj.items = null;
     return obj;
   }
 
-  isEqual(content: AudiosCollection): boolean {
-    return this.name === content.name && this.isEqualAudios(content);
-  }
-
-  private isEqualAudios(content: AudiosCollection): boolean {
-    if (content.audios.length !== this.audios.length) {
-      return false;
-    }
-
-    const ids1 = content.audios.map((x) => x.fileId);
-    const ids2 = this.audios.map((x) => x.fileId);
-    if (!this.isIdsEquals(ids1, ids2)) {
-      return false;
-    }
-
-    for (const audioF of this.audios) {
-      const audioS = content.audios.find((x) => x.fileId === audioF.fileId);
-      if (!audioF.isEqual(audioS)) {
-        return false;
-      }
-    }
-
-    return true;
+  isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
+    return this.name === content.name;
   }
 }
 
-export class AudioModel {
-  fileId: string;
-
-  name: string;
+export class AudioModel extends BaseFile  {
 
   audioPath: string;
 
-  authorId: string;
-
-  uploadAt: Date;
-
   constructor(name: string, audioPath: string, fileId: string, authorId: string, uploadAt: Date) {
-    this.name = name;
+    super(name, fileId, authorId, uploadAt);
     this.audioPath = audioPath;
-    this.fileId = fileId;
-    this.authorId = authorId;
-    this.uploadAt = uploadAt;
   }
 
   isEqual(content: AudioModel): boolean {
@@ -101,4 +60,8 @@ export class AudioModel {
       this.authorId === content.authorId
     );
   }
+}
+
+export class ApiAudiosCollection extends AudiosCollection {
+  audios: AudioModel[];
 }

@@ -1,18 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
-import {
-  ChangeColorFullNote,
-  ChangeColorNote,
-  UnSelectAllNote,
-} from 'src/app/content/notes/state/notes-actions';
+import { ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { TranslateService } from '@ngx-translate/core';
 import { NoteColorPallete } from '../../enums/note-colors.enum';
 import { EnumUtil } from '../../services/enum.util';
+import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
 
 @Component({
   selector: 'app-change-color',
@@ -35,7 +33,12 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
 
   date: Date;
 
-  constructor(public dialogRef: MatDialogRef<ChangeColorComponent>, private store: Store) {}
+  constructor(
+    public dialogRef: MatDialogRef<ChangeColorComponent>,
+    private store: Store,
+    private sbws: SnackBarWrapperService,
+    private apiTranslate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.date = new Date();
@@ -48,25 +51,32 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   }
 
   async changeColor() {
-    // TODO
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
       if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-        await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
+        const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
+        await this.store
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
+          .toPromise();
       } else {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
+        await this.store
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
+          .toPromise();
       }
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       if (this.store.selectSnapshot(AppStore.isFolderInner)) {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
+        await this.store
+          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
+          .toPromise();
       } else {
-        const type = this.store.selectSnapshot(AppStore.getTypeFolder);
         const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-        await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
+        await this.store
+          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorMessage()))
+          .toPromise();
       }
     }
     this.dialogRef.close();
@@ -83,4 +93,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(new UnSelectAllNote());
   }
+
+  private permissionsErrorMessage = (): string =>
+    this.apiTranslate.instant('snackBar.noPermissionsForEdit');
 }

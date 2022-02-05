@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
+using Common;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Queries.Permissions;
@@ -20,10 +22,10 @@ namespace BI.Services.Notes
 {
     public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>,
-        IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>,
-        IRequestHandler<UpdatePhotosContentsCommand, OperationResult<Unit>>
+        IRequestHandler<AddPhotosToCollectionCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -83,7 +85,7 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(RemovePhotoFromCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemovePhotosFromCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -91,18 +93,25 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var collection = await photosCollectionNoteRepository.GetOneIncludePhotoNoteAppFiles(request.ContentId);
-
-                if(collection != null)
+                var collection = await photosCollectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collectionItems = await photoNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                if (collection != null && collectionItems != null && collectionItems.Any())
                 {
-                    collection.PhotoNoteAppFiles = collection.PhotoNoteAppFiles.Where(x => x.AppFileId != request.PhotoId).ToList();
-                    collection.UpdatedAt = DateTimeOffset.Now;
+                    await photoNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
+                    var idsToUnlink = collectionItems.Select(x => x.AppFileId);
+                    await MarkAsUnlinked(idsToUnlink.ToArray());
+
+                    collection.UpdatedAt = DateTimeProvider.Time;
                     await photosCollectionNoteRepository.UpdateAsync(collection);
-                    await MarkAsUnlinked(request.PhotoId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
+                    { 
+                        CollectionItemIds = idsToUnlink
+                    };
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.User.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -130,11 +139,19 @@ namespace BI.Services.Notes
                     collection.CountInRow = request.Count;
                     collection.Name = request.Name;
 
-                    collection.UpdatedAt = DateTimeOffset.Now;
+                    collection.UpdatedAt = DateTimeProvider.Time;
                     await baseNoteContentRepository.UpdateAsync(collection);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt)
+                    {
+                        Name = request.Name,
+                        CountInRow = request.Count,
+                        Height = request.Height,
+                        Width = request.Width
+                    };
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.User.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -182,7 +199,12 @@ namespace BI.Services.Notes
                         photosCollection.Id, photosCollection.Order, photosCollection.CountInRow, photosCollection.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, photosCollection.UpdatedAt)
+                    {
+                        Collection = result
+                    };
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.User.Email, updates);
 
                     return new OperationResult<PhotosCollectionNoteDTO>(success: true, result);
                 }
@@ -196,75 +218,44 @@ namespace BI.Services.Notes
             return new OperationResult<PhotosCollectionNoteDTO>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdatePhotosContentsCommand request, CancellationToken cancellationToken)
+
+        public async Task<OperationResult<Unit>> Handle(AddPhotosToCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
-                if (request.Photos.Count == 1)
+                var collection = await photosCollectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                if (collection != null)
                 {
-                    await UpdateOne(request.Photos.First());
-                }
-                else
-                {
-                    await UpdateMany(request.Photos);
+                    var existCollectionItems = await photoNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                    var existCollectionItemsIds = existCollectionItems.Select(x => x.AppFileId);
+
+                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new PhotoNoteAppFile { AppFileId = id, PhotosCollectionNoteId = collection.Id });
+                    await photoNoteAppFileRepository.AddRangeAsync(collectionItems);
+
+                    var idsToLink = collectionItems.Select(x => x.AppFileId);
+                    await MarkAsLinked(idsToLink.ToArray());
+
+                    collection.UpdatedAt = DateTimeProvider.Time;
+                    await photosCollectionNoteRepository.UpdateAsync(collection);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
+                    {
+                        CollectionItemIds = idsToLink
+                    };
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.User.Email, updates);
+
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                // TODO DEADLOCK
-                return new OperationResult<Unit>(success: true, Unit.Value);
+                return new OperationResult<Unit>().SetNotFound();
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        private async Task UpdateMany(List<PhotosCollectionNoteDTO> entities)
-        {
-            foreach (var entity in entities)
-            {
-                await UpdateOne(entity);
-            }
-        }
-
-        private async Task UpdateOne(PhotosCollectionNoteDTO entity)
-        {
-            var entityForUpdate = await photosCollectionNoteRepository.GetOneIncludePhotoNoteAppFiles(entity.Id);
-            if (entityForUpdate != null)
-            {
-                entityForUpdate.UpdatedAt = DateTimeOffset.Now;
-                entityForUpdate.Name = entity.Name;
-                entityForUpdate.Width = entity.Width;
-                entityForUpdate.Height = entity.Height;
-                entityForUpdate.CountInRow = entity.CountInRow;
-
-                var databaseFileIds = entityForUpdate.PhotoNoteAppFiles.Select(x => x.AppFileId);
-                var entityFileIds = entity.Photos.Select(x => x.FileId);
-
-                var idsForDelete = databaseFileIds.Except(entityFileIds);
-                var idsForAdd = entityFileIds.Except(databaseFileIds);
-
-                if (idsForDelete.Any() || idsForAdd.Any())
-                {
-                    entityForUpdate.PhotoNoteAppFiles = entity.Photos.Select(x =>
-                        new PhotoNoteAppFile { AppFileId = x.FileId, PhotosCollectionNoteId = entityForUpdate.Id }).ToList();
-                }
-
-                if (idsForDelete.Any())
-                {
-                    await MarkAsUnlinked(idsForDelete.ToArray());
-                }
-
-                if (idsForAdd.Any())
-                {
-                    await MarkAsLinked(idsForAdd.ToArray());
-                }
-
-                await photosCollectionNoteRepository.UpdateAsync(entityForUpdate);
-            }
         }
     }
 }

@@ -65,6 +65,10 @@ export class BaseText extends ContentModelBase {
   }
 
   isEqual(content: BaseText): boolean {
+    return this.isTextOrCollectionInfoEqual(content);
+  }
+
+  isTextOrCollectionInfoEqual(content: BaseText): boolean {
     return (
       this.isEqualText(this.contents, content.contents) &&
       this.headingTypeId === content.headingTypeId &&

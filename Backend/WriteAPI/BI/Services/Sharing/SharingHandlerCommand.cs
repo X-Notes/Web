@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.SignalR;
+using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
+using Common.DTO;
 using Common.DTO.Permissions;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
@@ -20,14 +22,14 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Sharing
 {
     public class SharingHandlerCommand :
-        IRequestHandler<ChangeRefTypeFolders, Unit>,
-        IRequestHandler<ChangeRefTypeNotes, Unit>,
-        IRequestHandler<PermissionUserOnPrivateFolders, Unit>,
+        IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>,
+        IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>,
+        IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateFolders, Unit>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
         IRequestHandler<SendInvitesToUsersNotes, Unit>,
         IRequestHandler<RemoveUserFromPrivateNotes, Unit>,
-        IRequestHandler<PermissionUserOnPrivateNotes, Unit>
+        IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
@@ -60,88 +62,64 @@ namespace BI.Services.Sharing
 
 
 
-        public async Task<Unit> Handle(ChangeRefTypeFolders request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(ChangeRefTypeFolders request, CancellationToken cancellationToken)
         {
-            var ownerdPermissions = new List<UserPermissionsForFolder>();
-            var rejectedPermissions = new List<UserPermissionsForFolder>();
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+            var isCanEdit = permissions.All(x => x.perm.CanWrite);
 
-            foreach(var id in request.Ids)
-            {
-                var command = new GetUserPermissionsForFolderQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
-
-                if (permissions.IsOwner)
+            if (isCanEdit) {
+                var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
+                foreach (var perm in permissions)
                 {
-                    ownerdPermissions.Add(permissions);
+                    var folder = perm.perm.Folder;
+                    folder.RefTypeId = request.RefTypeId;
+                    if (folder.FolderTypeId != FolderTypeENUM.Shared)
+                    {
+                        folder.DeletedAt = null;
+                        var foldersList = new List<Folder>() { folder };
+                        await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, FolderTypeENUM.Shared);
+                    }
+                    else
+                    {
+                        await folderRepository.UpdateAsync(folder);
+                    }
                 }
-                else
-                {
-                    rejectedPermissions.Add(permissions);
-                }
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-
-            // TODO CODE IMPROV
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
-            foreach (var perm in ownerdPermissions)
-            {
-                perm.Folder.RefTypeId = request.RefTypeId;
-                if (perm.Folder.FolderTypeId != FolderTypeENUM.Shared)
-                {
-                    perm.Folder.DeletedAt = null;
-                    var foldersList = new List<Folder>() { perm.Folder };
-                    await folderRepository.CastFolders(foldersList, user.Folders, perm.Folder.FolderTypeId, FolderTypeENUM.Shared);
-                }
-                else
-                {
-                    await folderRepository.UpdateAsync(perm.Folder);
-                }
-            }
-
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(ChangeRefTypeNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(ChangeRefTypeNotes request, CancellationToken cancellationToken)
         {
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+            var isCanEdit = permissions.All(x => x.perm.CanWrite);
 
-            var ownerdPermissions = new List<UserPermissionsForNote>();
-            var rejectedPermissions = new List<UserPermissionsForNote>();
-
-            foreach (var id in request.Ids)
+            if (isCanEdit)
             {
-                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
-
-                if (permissions.IsOwner)
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
+                foreach (var perm in permissions)
                 {
-                    ownerdPermissions.Add(permissions);
+                    var note = perm.perm.Note;
+                    note.RefTypeId = request.RefTypeId;
+                    if (note.NoteTypeId != NoteTypeENUM.Shared)
+                    {
+                        note.DeletedAt = null;
+                        var notesList = new List<Note>() { note };
+                        await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, NoteTypeENUM.Shared);
+                    }
+                    else
+                    {
+                        await noteRepository.UpdateAsync(note);
+                    }
                 }
-                else
-                {
-                    rejectedPermissions.Add(permissions);
-                }
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-
-            // TODO CODE IMPROV
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
-            foreach (var perm in ownerdPermissions)
-            {
-                perm.Note.RefTypeId = request.RefTypeId;
-                if (perm.Note.NoteTypeId != NoteTypeENUM.Shared)
-                {
-                    perm.Note.DeletedAt = null;
-                    var notesList = new List<Note>() { perm.Note };
-                    await noteRepository.CastNotes(notesList, user.Notes, perm.Note.NoteTypeId, NoteTypeENUM.Shared);
-                }
-                else
-                {
-                    await noteRepository.UpdateAsync(perm.Note);
-                }
-            }
-
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -150,41 +128,35 @@ namespace BI.Services.Sharing
             {
                 var access = await usersOnPrivateFoldersRepository
                     .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
-                if (access != null)
-                {
-                    access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateFoldersRepository.UpdateAsync(access);
-                }
-                else
-                {
-                    var perm = new UsersOnPrivateFolders()
-                    {
-                        AccessTypeId = request.AccessTypeId,
-                        FolderId = request.FolderId,
-                        UserId = request.UserId
-                    };
-                    await usersOnPrivateFoldersRepository.AddAsync(perm);
 
+                if (access == null)
+                {
+                    return new OperationResult<Unit>().SetNotFound();
                 }
+
+                access.AccessTypeId = request.AccessTypeId;
+                await usersOnPrivateFoldersRepository.UpdateAsync(access);
 
                 var notification = new Notification() // TODO MOVE TO SERVICE
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
                     Message = "notification.ChangeUserPermissionFolder",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
 
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -193,29 +165,21 @@ namespace BI.Services.Sharing
             {
                 var access = await usersOnPrivateNotesRepository
                     .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
-                if (access != null)
+
+                if (access == null)
                 {
-                    access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateNotesRepository.UpdateAsync(access);
-                }
-                else
-                {
-                    var perm = new UsersOnPrivateFolders()
-                    {
-                        AccessTypeId = request.AccessTypeId,
-                        FolderId = request.NoteId,
-                        UserId = request.UserId
-                    };
-                    await usersOnPrivateFoldersRepository.AddAsync(perm);
+                    return new OperationResult<Unit>().SetNotFound();
                 }
 
+                access.AccessTypeId = request.AccessTypeId;
+                await usersOnPrivateNotesRepository.UpdateAsync(access);
 
                 var notification = new Notification()
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
                     Message = "notification.ChangeUserPermissionNote",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
@@ -223,8 +187,9 @@ namespace BI.Services.Sharing
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
@@ -245,7 +210,7 @@ namespace BI.Services.Sharing
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
                         Message = "notification.RemoveUserFromFolder",
-                        Date = DateTimeOffset.Now
+                        Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
@@ -275,7 +240,7 @@ namespace BI.Services.Sharing
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
                         Message = "notification.RemoveUserFromNote",
-                        Date = DateTimeOffset.Now
+                        Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
@@ -308,7 +273,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
                     Message = $"notification.SentInvitesToFolder | message: {request.Message}",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 });
 
                 await notificationRepository.AddRangeAsync(notifications);
@@ -344,7 +309,7 @@ namespace BI.Services.Sharing
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
                     Message = $"notification.SentInvitesToNote | message: {request.Message}",
-                    Date = DateTimeOffset.Now
+                    Date = DateTimeProvider.Time
                 });
 
                 await notificationRepository.AddRangeAsync(notifications);

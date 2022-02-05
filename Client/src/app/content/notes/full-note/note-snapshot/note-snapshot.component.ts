@@ -34,6 +34,8 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
 
   contents: ContentModelBase[];
 
+  isLoading = true;
+
   private routeSubscription: Subscription;
 
   private noteId: string;
@@ -56,10 +58,14 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
-          this.store.dispatch(new LoadSnapshotNote(this.snapshotId, this.noteId));
-          this.contents = await this.apiHistory
-            .getSnapshotContent(this.noteId, this.snapshotId)
-            .toPromise();
+          await this.store.dispatch(new LoadSnapshotNote(this.snapshotId, this.noteId)).toPromise();
+          this.isLoading = false;
+          const isCanRead = this.store.selectSnapshot(NoteStore.snapshotState).canView;
+          if (isCanRead) {
+            this.contents = await this.apiHistory
+              .getSnapshotContent(this.noteId, this.snapshotId)
+              .toPromise();
+          }
         }
       });
   }

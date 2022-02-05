@@ -8,13 +8,19 @@ import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import { AudiosCollection } from '../../models/editor-models/audios-collection';
+import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
+import { BaseCollection } from '../../models/editor-models/base-collection';
+import { BaseFile } from '../../models/editor-models/base-file';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
-import { DocumentsCollection } from '../../models/editor-models/documents-collection';
-import { PhotosCollection } from '../../models/editor-models/photos-collection';
-import { VideosCollection } from '../../models/editor-models/videos-collection';
+import { DocumentModel, DocumentsCollection } from '../../models/editor-models/documents-collection';
+import { Photo, PhotosCollection } from '../../models/editor-models/photos-collection';
+import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
+import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
+import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
+import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
+import { UpdatePhotosCollectionInfoCommand } from '../models/api/photos/update-photos-collection-info-command';
 import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiNoteContentService } from '../services/api-note-content.service';
@@ -159,85 +165,178 @@ export class ContentEditorContentsService {
   }
 
   private processPhotosChanges() {
-    const diffs = this.getContentDiffs<PhotosCollection>(
+    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<PhotosCollection>(
       this.contentsSync,
       this.getContents,
       ContentTypeENUM.Photos,
     );
-    console.log('diffs: ', diffs);
-    console.log('sync: ', this.contentsSync);
-    if (diffs.length > 0) {
+    for(const collection of collectionsToUpdate){
       this.apiPhotos
-        .syncContents(this.noteId, diffs)
+        .updateInfo(new UpdatePhotosCollectionInfoCommand(this.noteId, collection.id, collection.name, 
+                    collection.countInRow, collection.width, collection.height))
         .pipe(take(1))
         .subscribe(() => {
-          for (const diff of diffs) {
-            const item = this.contentsSync.find((x) => x.id === diff.id) as PhotosCollection;
-            item.update(diff);
-          }
+          const item = this.contentsSync.find((x) => x.id === collection.id) as PhotosCollection;
+          item?.updateInfo(collection);
         });
-    }
+      }
+      // UPDATES ITEMS
+      const diffs = this.getCollectionItemsDiffs<Photo>(this.contentsSync, this.getContents, ContentTypeENUM.Photos);
+      console.log('diffs: ', diffs);
+      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
+        if(itemsToAdd && itemsToAdd.length > 0){
+          const ids = itemsToAdd.map(x => x.fileId);
+          console.log('ids: ', ids);
+          this.apiPhotos
+          .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
+            console.log(this.contentsSync.find((x) => x.id === contentId) === item);
+            console.log('itemsToAdd: ', itemsToAdd);
+            item?.addItemsToCollection(itemsToAdd);
+          });
+        }
+        if(itemsToRemove && itemsToRemove.length > 0){
+          const ids = itemsToRemove.map(x => x.fileId);
+          this.apiPhotos
+          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
+            item?.removeItemsFromCollection(itemsToRemove);
+          });
+        }
+      }
   }
 
   private processAudiosChanges() {
-    const diffs = this.getContentDiffs<AudiosCollection>(
+    // UPDATE MAIN INFO
+    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<AudiosCollection>(
       this.contentsSync,
       this.getContents,
       ContentTypeENUM.Audios,
     );
-    if (diffs.length > 0) {
+    for(const collection of collectionsToUpdate){
       this.apiAudios
-        .syncContents(this.noteId, diffs)
+        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
         .pipe(take(1))
         .subscribe(() => {
-          for (const diff of diffs) {
-            const item = this.contentsSync.find((x) => x.id === diff.id) as AudiosCollection;
-            item.update(diff);
-          }
+          const item = this.contentsSync.find((x) => x.id === collection.id) as AudiosCollection;
+          item?.updateInfo(collection);
         });
+      }
+      // UPDATES ITEMS
+      const diffs = this.getCollectionItemsDiffs<AudioModel>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
+      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
+        if(itemsToAdd && itemsToAdd.length > 0){
+          const ids = itemsToAdd.map(x => x.fileId);
+          this.apiAudios
+          .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
+            item?.addItemsToCollection(itemsToAdd);
+          });
+        }
+        if(itemsToRemove && itemsToRemove.length > 0){
+          const ids = itemsToRemove.map(x => x.fileId);
+          this.apiAudios
+          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
+            item?.removeItemsFromCollection(itemsToRemove);
+          });
+        }
+      }
     }
-  }
 
   private processDocumentsChanges() {
-    const diffs = this.getContentDiffs<DocumentsCollection>(
+    // UPDATE MAIN INFO
+    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<DocumentsCollection>(
       this.contentsSync,
       this.getContents,
       ContentTypeENUM.Documents,
     );
-    if (diffs.length > 0) {
+    for(const collection of collectionsToUpdate){
       this.apiDocuments
-        .syncContents(this.noteId, diffs)
+        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
         .pipe(take(1))
         .subscribe(() => {
-          for (const diff of diffs) {
-            const item = this.contentsSync.find((x) => x.id === diff.id) as DocumentsCollection;
-            item.update(diff);
-          }
+          const item = this.contentsSync.find((x) => x.id === collection.id) as DocumentsCollection;
+          item?.updateInfo(collection);
         });
-    }
+      }
+      // UPDATES ITEMS
+      const diffs = this.getCollectionItemsDiffs<DocumentModel>(this.contentsSync, this.getContents, ContentTypeENUM.Documents);
+      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
+        if(itemsToAdd && itemsToAdd.length > 0){
+          const ids = itemsToAdd.map(x => x.fileId);
+          this.apiDocuments
+          .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
+            item?.addItemsToCollection(itemsToAdd);
+          });
+        }
+        if(itemsToRemove && itemsToRemove.length > 0){
+          const ids = itemsToRemove.map(x => x.fileId);
+          this.apiDocuments
+          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
+            item?.removeItemsFromCollection(itemsToRemove);
+          });
+        }
+      }
   }
 
   private processVideosChanges() {
-    const diffs = this.getContentDiffs<VideosCollection>(
+    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<VideosCollection>(
       this.contentsSync,
       this.getContents,
       ContentTypeENUM.Videos,
     );
-    if (diffs.length > 0) {
+    for(const collection of collectionsToUpdate){
       this.apiVideos
-        .syncContents(this.noteId, diffs)
+        .updateInfo(new BaseUpdateCollectionInfoCommand(this.noteId, collection.id, collection.name))
         .pipe(take(1))
         .subscribe(() => {
-          for (const diff of diffs) {
-            const item = this.contentsSync.find((x) => x.id === diff.id) as VideosCollection;
-            item.update(diff);
-          }
+          const item = this.contentsSync.find((x) => x.id === collection.id) as VideosCollection;
+          item?.updateInfo(collection);
         });
-    }
+      }
+      // UPDATES ITEMS
+      const diffs = this.getCollectionItemsDiffs<VideoModel>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
+      for(const [contentId, itemsToAdd, itemsToRemove] of diffs){
+        if(itemsToAdd && itemsToAdd.length > 0){
+          const ids = itemsToAdd.map(x => x.fileId);
+          this.apiVideos
+          .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
+            item?.addItemsToCollection(itemsToAdd);
+          });
+        }
+        if(itemsToRemove && itemsToRemove.length > 0){
+          const ids = itemsToRemove.map(x => x.fileId);
+          this.apiVideos
+          .removeItemsFromCollection(new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids))
+          .pipe(take(1))
+          .subscribe(() => {
+            const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
+            item?.removeItemsFromCollection(itemsToRemove);
+          });
+        }
+      }
   }
 
   private processTextsChanges() {
-    const textDiffs = this.getContentDiffs<BaseText>(
+    const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(
       this.contentsSync,
       this.getContents,
       ContentTypeENUM.Text,
@@ -336,7 +435,7 @@ export class ContentEditorContentsService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private getContentDiffs<T extends ContentModelBase>(
+  private getContentTextOrMainInfoDiffs<T extends ContentModelBase>(
     oldContents: ContentModelBase[],
     newContents: ContentModelBase[],
     type: ContentTypeENUM,
@@ -344,13 +443,33 @@ export class ContentEditorContentsService {
     const contents: T[] = [];
     for (const content of newContents.filter((x) => x.typeId === type)) {
       const isNeedUpdate = oldContents.some(
-        (x) => x.typeId === type && x.id === content.id && !content.isEqual(x),
+        (x) => x.typeId === type && x.id === content.id && !content.isTextOrCollectionInfoEqual(x),
       );
       if (isNeedUpdate) {
         contents.push(content as T);
       }
     }
     return contents;
+  }
+
+  private getCollectionItemsDiffs<T extends BaseFile>(oldContents: ContentModelBase[], newContents: ContentModelBase[], type: ContentTypeENUM): [string, T[], T[]][]
+  {
+    const oldContentsMapped = oldContents.filter(x => x.typeId === type).map(x => x as BaseCollection<T>);
+    const newContentsMapped = newContents.filter(x => x.typeId === type).map(x => x as BaseCollection<T>);
+
+    const result: [string, T[], T[]][] = [];
+
+    for (const content of newContentsMapped) {
+      const contentForCompare = oldContentsMapped.find((x) => x.id === content.id);
+      if(contentForCompare){
+        const [IsEqual, itemsToAdd, itemsToRemove] = content.getIsEqualIdsToAddIdsToRemove(contentForCompare);
+        if(!IsEqual){
+          result.push([content.id, itemsToAdd, itemsToRemove]);
+        }
+      }
+    }
+
+    return result;
   }
 
   // Restore Prev
@@ -371,14 +490,14 @@ export class ContentEditorContentsService {
       }
 
       // TEXTS
-      const textDiffs = this.getContentDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
+      const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
       if (textDiffs && textDiffs.length > 0) {
         this.patchTextDiffs(textDiffs);
         isNeedChange = true;
       }
 
       // FILES
-      const audiosDiffs = this.getContentDiffs<AudiosCollection>(
+      const audiosDiffs = this.getContentTextOrMainInfoDiffs<AudiosCollection>(
         this.contents,
         prev,
         ContentTypeENUM.Audios,
@@ -388,7 +507,7 @@ export class ContentEditorContentsService {
         isNeedChange = true;
       }
 
-      const photosDiffs = this.getContentDiffs<PhotosCollection>(
+      const photosDiffs = this.getContentTextOrMainInfoDiffs<PhotosCollection>(
         this.contents,
         prev,
         ContentTypeENUM.Photos,
@@ -398,7 +517,7 @@ export class ContentEditorContentsService {
         isNeedChange = true;
       }
 
-      const documentsDiffs = this.getContentDiffs<DocumentsCollection>(
+      const documentsDiffs = this.getContentTextOrMainInfoDiffs<DocumentsCollection>(
         this.contents,
         prev,
         ContentTypeENUM.Documents,
@@ -408,7 +527,7 @@ export class ContentEditorContentsService {
         isNeedChange = true;
       }
 
-      const videosDiffs = this.getContentDiffs<VideosCollection>(
+      const videosDiffs = this.getContentTextOrMainInfoDiffs<VideosCollection>(
         this.contentsSync,
         this.getContents,
         ContentTypeENUM.Videos,
@@ -508,7 +627,7 @@ export class ContentEditorContentsService {
     const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
     if (obj && obj2) {
       this.contents[obj.index] = data;
-      this.contentsSync[obj2.index] = data;
+      this.contentsSync[obj2.index] = data.copy();
       return obj.index;
     }
     throw new Error('Content not found');

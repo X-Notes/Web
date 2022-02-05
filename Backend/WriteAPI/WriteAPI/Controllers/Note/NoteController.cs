@@ -38,22 +38,12 @@ namespace WriteAPI.Controllers.Note
         // Commands
 
         [HttpPatch("color")]
-        public async Task ChangeColor([FromBody] ChangeColorNoteCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await _mediator.Send(command);
-        }
-
-
-        [HttpPatch("delete")]
-        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
+        public async Task<OperationResult<Unit>> ChangeColor([FromBody] ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
             return await _mediator.Send(command);
         }
-
 
         [HttpPatch("delete/permanently")]
         public async Task DeleteNotes([FromBody] DeleteNotesCommand command)
@@ -62,7 +52,6 @@ namespace WriteAPI.Controllers.Note
             command.Email = email;
             await _mediator.Send(command);
         }
-
 
         [HttpPatch("copy")]
         public async Task<List<Guid>> CopyNote([FromBody] CopyNoteCommand command)
@@ -74,38 +63,45 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpPatch("archive")]
-        public async Task ArchiveNote([FromBody] ArchiveNoteCommand command)
+        public async Task<OperationResult<Unit>> ArchiveNote([FromBody] ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
-
-        [HttpPatch("ref/private")]
-        public async Task MakePrivate([FromBody] MakePrivateNoteCommand command)
+        [HttpPatch("delete")]
+        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
+        }
+
+        [HttpPatch("ref/private")]
+        public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await _mediator.Send(command);
         }
 
 
         [HttpPatch("label/add")]
-        public async Task AddLabel([FromBody] AddLabelOnNoteCommand command)
+        public async Task<OperationResult<Unit>> AddLabel([FromBody] AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
 
         [HttpPatch("label/remove")]
-        public async Task RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
+        public async Task<OperationResult<Unit>> RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
 
@@ -120,14 +116,14 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpPost("additional")]
-        public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentInfoQuery query)
+        public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentNoteInfoQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
         }
 
         [HttpPost("many")]
-        public async Task<List<SmallNote>> GetNoteByIds(GetNotesByNoteIdsQuery query)
+        public async Task<OperationResult<List<SmallNote>>> GetNoteByIds(GetNotesByNoteIdsQuery query)
         {
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
@@ -140,11 +136,11 @@ namespace WriteAPI.Controllers.Note
             return await _mediator.Send(query);
         }
 
-        [HttpGet("{id}")]
-        public async Task<FullNoteAnswer> Get(Guid id)
+        [HttpGet("{noteId}")]
+        public async Task<FullNoteAnswer> Get(Guid noteId, [FromQuery] Guid? folderId)
         {
             var email = this.GetUserEmail();
-            var query = new GetFullNoteQuery(email, id);
+            var query = new GetFullNoteQuery(email, noteId, folderId);
             return await _mediator.Send(query);
         }
     }

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Mapping;
+using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
+using Common.DTO;
 using Common.DTO.Folders;
+using Common.DTO.WebSockets;
 using Domain.Commands.Folders;
 using Domain.Queries.Permissions;
 using MediatR;
@@ -18,15 +22,16 @@ namespace BI.Services.Folders
 {
     public class FolderHandlerCommand : 
         IRequestHandler<NewFolderCommand, SmallFolder>,
-        IRequestHandler<ArchiveFolderCommand, Unit>,
-        IRequestHandler<ChangeColorFolderCommand, Unit>,
-        IRequestHandler<SetDeleteFolderCommand, Unit>,
+        IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
         IRequestHandler<DeleteFoldersCommand, Unit>,
-        IRequestHandler<MakePrivateFolderCommand, Unit>
+        IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly UserRepository userRepository;
         private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
@@ -35,13 +40,15 @@ namespace BI.Services.Folders
             UserRepository userRepository, 
             AppCustomMapper appCustomMapper, 
             IMediator _mediator,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            FolderWSUpdateService folderWSUpdateService)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this.appCustomMapper = appCustomMapper;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.folderWSUpdateService = folderWSUpdateService;
         }
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
@@ -56,8 +63,8 @@ namespace BI.Services.Folders
                 Color = FolderColorPallete.Green,
                 FolderTypeId = FolderTypeENUM.Private,
                 RefTypeId = RefTypeENUM.Viewer,
-                CreatedAt = DateTimeOffset.Now,
-                UpdatedAt = DateTimeOffset.Now
+                CreatedAt = DateTimeProvider.Time,
+                UpdatedAt = DateTimeProvider.Time
             };
 
             await folderRepository.Add(folder, FolderTypeENUM.Private);
@@ -67,65 +74,66 @@ namespace BI.Services.Folders
             return appCustomMapper.MapFolderToSmallFolder(newFolder);
         }
 
-        public async Task<Unit> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
         {
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+
             var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
+            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
 
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var folder = folders.FirstOrDefault();
-            if (folders.Count == request.Ids.Count)
+            if (isCanDelete)
             {
-                folders.ForEach(folder => folder.DeletedAt = null);
-                await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Archived);
+                var folders = permissions.Select(x => x.perm.Folder).ToList();
+                folders.ForEach(note => note.DeletedAt = null);
+                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Archived);
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(ChangeColorFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(ChangeColorFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-
-            if (folders.Any())
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+            var isCanEdit = permissions.All(x => x.perm.CanWrite);
+            if (isCanEdit)
             {
-                folders.ForEach(x => {
-                    x.Color = request.Color;
-                    x.UpdatedAt = DateTimeOffset.Now;
-                });
+                var foldersForUpdate = permissions.Select(x => x.perm.Folder);
+                foreach (var folder in foldersForUpdate)
+                {
+                    folder.Color = request.Color;
+                    folder.UpdatedAt = DateTimeProvider.Time;
+                }
 
-                await folderRepository.UpdateRangeAsync(folders);
-            }
-            else
-            {
-                throw new Exception();
-            }
+                await folderRepository.UpdateRangeAsync(foldersForUpdate);
 
-            return Unit.Value;
+                // WS UPDATES
+                var updates = permissions.Select(x => (new UpdateFolderWS { Color = request.Color, FolderId = x.folderId }, x.perm.GetAllUsers()));
+                await folderWSUpdateService.UpdateFolders(updates);
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
 
-        public async Task<Unit> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
         {
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+
             var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
+            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
 
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var folder = folders.FirstOrDefault();
-            if (folders.Count == request.Ids.Count)
+            if (isCanDelete)
             {
-                folders.ForEach(folder => folder.DeletedAt = DateTimeOffset.UtcNow);
-                await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Deleted);
+                var folders = permissions.Select(x => x.perm.Folder).ToList();
+                folders.ForEach(note => note.DeletedAt = DateTimeProvider.Time);
+                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Deleted);
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<List<SmallFolder>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
@@ -152,8 +160,8 @@ namespace BI.Services.Folders
                             FolderTypeId = FolderTypeENUM.Private,
                             RefTypeId = folderForCopy.RefTypeId,
                             Order = order--,
-                            CreatedAt = DateTimeOffset.Now,
-                            UpdatedAt = DateTimeOffset.Now,
+                            CreatedAt = DateTimeProvider.Time,
+                            UpdatedAt = DateTimeProvider.Time,
                             UserId = permission.User.Id
                         };
                         var dbFolder = await folderRepository.AddAsync(newFolder);
@@ -202,22 +210,21 @@ namespace BI.Services.Folders
         }
 
 
-        public async Task<Unit> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var folder = folders.FirstOrDefault();
-            if (folders.Count == request.Ids.Count)
-            {
-                folders.ForEach(folder => folder.DeletedAt = null);
-                await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Private);
-            }
-            else
-            {
-                throw new Exception();
-            }
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            return Unit.Value;
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
+            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
+            if (isCanDelete)
+            {
+                var folders = permissions.Select(x => x.perm.Folder).ToList();
+                folders.ForEach(note => note.DeletedAt = null);
+                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Private);
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

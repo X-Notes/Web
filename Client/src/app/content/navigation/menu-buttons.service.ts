@@ -1,40 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { AppStore } from 'src/app/core/stateApp/app-state';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
-import { FolderStore } from '../folders/state/folders-state';
 import { NoteStore } from '../notes/state/notes-state';
-import {
-  CopyFolders,
-  SetDeleteFolders,
-  ArchiveFolders,
-  DeleteFoldersPermanently,
-  MakePrivateFolders,
-  ChangeTypeFullFolder,
-  BaseChangeTypeSmallFolder,
-  MakeSharedFolders,
-} from '../folders/state/folders-actions';
-import {
-  CopyNotes,
-  SetDeleteNotes,
-  ArchiveNotes,
-  DeleteNotesPermanently,
-  MakePrivateNotes,
-  ChangeTypeFullNote,
-  BaseChangeTypeSmallNote,
-  MakeSharedNotes,
-} from '../notes/state/notes-actions';
 import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
-import { SnackBarWrapperService } from '../../shared/services/snackbar/snack-bar-wrapper.service';
+import { MenuButtonsNotesService } from './menu-buttons-notes.service';
+import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -64,7 +38,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyNotes(),
+      operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
@@ -97,36 +71,14 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -150,18 +102,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'private',
-      operation: () => {
-        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -175,7 +116,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyNotes(),
+      operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
@@ -208,36 +149,14 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -268,7 +187,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyNotes(),
+      operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
@@ -301,43 +220,21 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
-      operation: () => this.deleteNotes(),
+      operation: () => this.menuButtonsNotesService.deleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
     },
     {
       icon: 'restore',
-      operation: () => {
-        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -361,18 +258,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'private',
-      operation: () => {
-        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -386,7 +272,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyNotes(),
+      operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
@@ -419,18 +305,7 @@ export class MenuButtonsService {
     // },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getNotesNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -454,7 +329,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyFolders(),
+      operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: true,
@@ -472,36 +347,14 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
@@ -525,25 +378,14 @@ export class MenuButtonsService {
     },
     {
       icon: 'privateFolder',
-      operation: () => {
-        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
-      operation: () => this.copyFolders(),
+      operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: true,
@@ -561,36 +403,14 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
@@ -614,7 +434,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'copy',
-      operation: () => this.copyFolders(),
+      operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: true,
@@ -632,43 +452,21 @@ export class MenuButtonsService {
     // },
     {
       icon: 'archive',
-      operation: () => {
-        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getArchiveEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
-      operation: () => this.deleteFolders(),
+      operation: () => this.menuButtonsFoldersService.deleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'restore',
-      operation: () => {
-        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
@@ -692,25 +490,14 @@ export class MenuButtonsService {
     },
     {
       icon: 'privateFolder',
-      operation: () => {
-        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getPrivateEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
-      operation: () => this.copyFolders(),
+      operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
       isViewOnFullFolder: true,
@@ -728,18 +515,7 @@ export class MenuButtonsService {
     // },
     {
       icon: 'delete',
-      operation: () => {
-        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
-        const func = () => {
-          this.store.dispatch(action);
-        };
-        this.sbws.build(
-          func,
-          action.isMany,
-          this.sbws.getFoldersNaming,
-          this.sbws.getDeleteEntityName,
-        );
-      },
+      operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,
@@ -749,39 +525,12 @@ export class MenuButtonsService {
   constructor(
     private store: Store,
     private dialogsManageService: DialogsManageService,
-    private sbws: SnackBarWrapperService,
     private pService: PersonalizationService,
+    private menuButtonsNotesService: MenuButtonsNotesService,
+    private menuButtonsFoldersService: MenuButtonsFoldersService,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
-  getRevertActionNotes(type: NoteTypeENUM, ids): BaseChangeTypeSmallNote {
-    const types = NoteTypeENUM;
-    switch (type) {
-      case types.Private: {
-        const obj = new MakePrivateNotes(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Shared: {
-        const obj = new MakeSharedNotes(true, RefTypeENUM.Viewer);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Archive: {
-        const obj = new ArchiveNotes(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Deleted: {
-        const obj = new SetDeleteNotes(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
-  }
 
   getFolderMenuByFolderType(type: FolderTypeENUM) {
     switch (type) {
@@ -803,202 +552,7 @@ export class MenuButtonsService {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  getRevertActionFolder(type: FolderTypeENUM, ids): BaseChangeTypeSmallFolder {
-    const types = FolderTypeENUM;
-    switch (type) {
-      case types.Private: {
-        const obj = new MakePrivateFolders(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Shared: {
-        const obj = new MakeSharedFolders(true, RefTypeENUM.Viewer);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Archive: {
-        const obj = new ArchiveFolders(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      case types.Deleted: {
-        const obj = new SetDeleteFolders(true);
-        obj.selectedIds = ids;
-        return obj;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
-  }
-
-  changeFolderType(changeAction: BaseChangeTypeSmallFolder, typeTo: FolderTypeENUM) {
-    let prevType: FolderTypeENUM;
-    let ids;
-
-    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-      const folder = this.store.selectSnapshot(FolderStore.full);
-      ids = [folder.id];
-
-      prevType = folder.folderTypeId;
-
-      this.store.dispatch(new ChangeTypeFullFolder(typeTo));
-    } else {
-      ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      prevType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    changeAction.selectedIds = ids;
-
-    this.store.dispatch(changeAction);
-
-    return this.getRevertActionFolder(prevType, ids);
-  }
-
-  changeNoteType(changeAction: BaseChangeTypeSmallNote, typeTo: NoteTypeENUM) {
-    let prevType: NoteTypeENUM;
-    let ids;
-
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      ids = [note.id];
-
-      prevType = note.noteTypeId;
-
-      this.store.dispatch(new ChangeTypeFullNote(typeTo));
-    } else {
-      prevType = this.store.selectSnapshot(AppStore.getTypeNote);
-      ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    changeAction.selectedIds = ids;
-
-    this.store.dispatch(changeAction);
-
-    return this.getRevertActionNotes(prevType, ids);
-  }
-
-  deletePermSnackbar(language: LanguagesENUM, type: string, isMany: boolean) {
-    // TODO Move to snackbar service
-    let snackbarRef;
-    switch (language) {
-      case LanguagesENUM.English: {
-        if (type === 'Note') {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Notes deleted permanently` : `Note deleted permanently`,
-            null,
-          );
-        } else {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Folders deleted permanently` : `Folder deleted permanently`,
-            null,
-          );
-        }
-        break;
-      }
-      case LanguagesENUM.Russian: {
-        if (type === 'Note') {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`,
-            null,
-          );
-        } else {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Папки удалены безвозвратно` : `Папка удалена безвозвратно`,
-            null,
-          );
-        }
-        break;
-      }
-      case LanguagesENUM.Ukraine: {
-        if (type === 'Note') {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`,
-            null,
-          );
-        } else {
-          snackbarRef = this.sbws.buildNotification(
-            isMany ? `Папки видалені безповоротно` : `Папка видалена безповоротно`,
-            null,
-          );
-        }
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
-    return snackbarRef;
-  }
-
-  // DELETE PERMANENTLY
-
-  async deleteNotes() {
-    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-
-    if (isInnerNote) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const idsInner = [note.id];
-      await this.store
-        .dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted))
-        .toPromise();
-      this.deletePermSnackbar(language, 'Note', false);
-    } else {
-      const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-      const isMany = idsOuter.length > 1;
-
-      await this.store
-        .dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted))
-        .toPromise();
-
-      this.store.dispatch(LoadUsedDiskSpace);
-      this.deletePermSnackbar(language, 'Note', isMany);
-    }
-  }
-
-  async deleteFolders() {
-    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    await this.store
-      .dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted))
-      .toPromise();
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    const isMany = ids.length > 1;
-    this.deletePermSnackbar(language, 'Folder', isMany);
-  }
-
   setItems(newItems: MenuItem[]) {
     this.items = newItems;
-  }
-
-  // COPY
-  private copyNotes() {
-    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    if (isInnerNote) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids = [note.id];
-      this.store.dispatch(new CopyNotes(note.noteTypeId, ids, pr));
-    } else {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids, pr));
-    }
-  }
-
-  private copyFolders() {
-    const isInnerFolder = this.store.selectSnapshot(AppStore.isFolderInner);
-    if (isInnerFolder) {
-      const folder = this.store.selectSnapshot(FolderStore.full);
-      const ids = [folder.id];
-      this.store.dispatch(new CopyFolders(folder.folderTypeId, ids));
-    } else {
-      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      this.store.dispatch(new CopyFolders(folderType, ids));
-    }
   }
 }

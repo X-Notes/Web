@@ -21,76 +21,34 @@ export class AddFolder {
   static type = '[Folders] Add folder';
 }
 
-export class BaseChangeTypeSmallFolder {
-  public selectedIds: string[];
-
-  public isAddingToDom: boolean;
-
-  constructor(isAddingToDom: boolean) {
-    this.isAddingToDom = isAddingToDom;
-  }
+export class ChangeTypeFolder {
+  static type = '[Folders] change type folders';
 
   get isMany() {
     return this.selectedIds.length > 1;
   }
+
+  constructor(
+    public typeTo: FolderTypeENUM,
+    public selectedIds: string[],
+    public isAddingToDom: boolean,
+    public errorPermissionMessage?: string,
+    public successCallback?: () => void,
+    public refTypeId?: RefTypeENUM,
+  ) {}
 }
-
-export class ArchiveFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] Archive folders';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakePrivateFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] MakePrivate folders';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-export class MakeSharedFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] MakeShared folders';
-
-  refTypeId: RefTypeENUM;
-
-  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
-    super(isAddingToDom);
-    this.refTypeId = refTypeId;
-  }
-}
-
-export class SetDeleteFolders extends BaseChangeTypeSmallFolder {
-  static type = '[Folders] SetDelete folder';
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(isAddingToDom: boolean) {
-    super(isAddingToDom);
-  }
-}
-
-// COLORS
-export class ChangeColorFullFolder {
-  static type = '[Folders] change color fullFolder';
-
-  constructor(public color: string) {}
-}
-
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
   constructor(
     public color: string,
-    public typeFolder: FolderTypeENUM,
     public selectedIds: string[],
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
   ) {}
 }
 
-export class ClearColorFolders {
+export class ClearUpdatesUIFolders {
   static type = '[Folders] Clear color folder';
 }
 
@@ -158,16 +116,21 @@ export class SelectAllFolder {
   constructor(public typeFolder: FolderTypeENUM) {}
 }
 
-export class UpdateTitle {
+export class UpdateFolderTitle {
   static type = '[Folders] update title';
 
-  constructor(public str: string, public id: string, public typeFolder: FolderTypeENUM) {}
+  constructor(
+    public str: string,
+    public folderId: string,
+    public isCallApi = true,
+    public errorPermissionMessage?: string,
+  ) {}
 }
 
 export class UpdateOneFolder {
   static type = '[Folders] update one one';
 
-  constructor(public folder: SmallFolder, public typeFolder: FolderTypeENUM) {}
+  constructor(public folder: SmallFolder) {}
 }
 
 export class LoadFullFolder {

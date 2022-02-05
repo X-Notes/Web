@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
@@ -73,6 +74,14 @@ namespace BI.Services.Notes
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
+            List<Guid> unlinkedItemIds = new();
+            List<TextNoteDTO> textItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> audiosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> documentsItemsThatNeedAdd = null;
+            List<UpdateContentPositionWS> positions = null;
+
             if (permissions.CanWrite)
             {
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
@@ -85,51 +94,28 @@ namespace BI.Services.Notes
 
                     var groups = contentsToDelete.GroupBy(x => x.ContentTypeId);
 
-                    if (groups.Any(x => x.Key == ContentTypeENUM.PhotosCollection))
-                    {
-                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.PhotosCollection))
-                        {
-                            await _mediator.Send(new UnlinkPhotosCollectionCommand(note.Id, collection.Id, request.Email));
-                        }
-                    }
+                    await UnlinkFileItems(groups, ContentTypeENUM.PhotosCollection, note.Id, request.Email, unlinkedItemIds);
+                    await UnlinkFileItems(groups, ContentTypeENUM.AudiosCollection, note.Id, request.Email, unlinkedItemIds);
+                    await UnlinkFileItems(groups, ContentTypeENUM.DocumentsCollection, note.Id, request.Email, unlinkedItemIds);
+                    await UnlinkFileItems(groups, ContentTypeENUM.VideosCollection, note.Id, request.Email, unlinkedItemIds);
 
-                    if (groups.Any(x => x.Key == ContentTypeENUM.AudiosCollection))
-                    {
-                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.AudiosCollection))
-                        {
-                            await _mediator.Send(new UnlinkAudiosCollectionCommand(note.Id, collection.Id, request.Email));
-                        }
-                    }
+                    var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
+                    unlinkedItemIds.AddRange(textIds);
 
-                    if (groups.Any(x => x.Key == ContentTypeENUM.DocumentsCollection))
+                    if (unlinkedItemIds.Any())
                     {
-                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.DocumentsCollection))
-                        {
-                            await _mediator.Send(new UnlinkDocumentsCollectionCommand(note.Id, collection.Id, request.Email));
-                        }
-                    }
-
-                    if (groups.Any(x => x.Key == ContentTypeENUM.VideosCollection))
-                    {
-                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.VideosCollection))
-                        {
-                            await _mediator.Send(new UnlinkVideosCollectionCommand(note.Id, collection.Id, request.Email));
-                        }
-                    }
-
-                    if (contentsToDelete.Any())
-                    {
+                        contentsToDelete = contents.Where(x => unlinkedItemIds.Contains(x.Id));
                         await baseNoteContentRepository.RemoveRangeAsync(contentsToDelete);
                     }
                 }
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
                 {
-                    var itemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    textItemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList();
 
-                    if (itemsThatNeedAdd.Any())
+                    if (textItemsThatNeedAdd.Any())
                     {
-                        var items = request.Diffs.NewTextItems.Select(content => GetTextContent(content, note.Id));
+                        var items = textItemsThatNeedAdd.Select(content => GetTextContent(content, note.Id));
                         await textNotesRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
@@ -141,12 +127,12 @@ namespace BI.Services.Notes
                 // FILES
                 if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
                 {
-                    var itemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    photosItemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
 
-                    if (itemsThatNeedAdd.Any())
+                    if (photosItemsThatNeedAdd.Any())
                     {
-                        var items = request.Diffs.PhotosCollectionItems.Select(x =>
+                        var items = photosItemsThatNeedAdd.Select(x =>
                         {
                             var cont = GetCollectionContent<PhotosCollectionNote>(x, note.Id);
                             cont.CountInRow = 2;
@@ -161,12 +147,12 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
                 {
-                    var itemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    audiosItemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
 
-                    if (itemsThatNeedAdd.Any())
+                    if (audiosItemsThatNeedAdd.Any())
                     {
-                        var items = request.Diffs.AudiosCollectionItems.Select(x => GetCollectionContent<AudiosCollectionNote>(x, note.Id));
+                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent<AudiosCollectionNote>(x, note.Id));
                         await audiosCollectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
@@ -176,12 +162,12 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
                 {
-                    var itemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    videosItemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
 
-                    if (itemsThatNeedAdd.Any())
+                    if (videosItemsThatNeedAdd.Any())
                     {
-                        var items = request.Diffs.VideosCollectionItems.Select(x => GetCollectionContent<VideosCollectionNote>(x, note.Id));
+                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent<VideosCollectionNote>(x, note.Id));
                         await videosCollectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
@@ -191,12 +177,12 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
                 {
-                    var itemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    documentsItemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
 
-                    if (itemsThatNeedAdd.Any())
+                    if (documentsItemsThatNeedAdd.Any())
                     {
-                        var items = request.Diffs.DocumentsCollectionItems.Select(x => GetCollectionContent<DocumentsCollectionNote>(x, note.Id));
+                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent<DocumentsCollectionNote>(x, note.Id));
                         await documentsCollectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
@@ -219,17 +205,49 @@ namespace BI.Services.Notes
                     }
                     if (updateItems.Any())
                     {
+                        positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order)).ToList();
                         await baseNoteContentRepository.UpdateRangeAsync(updateItems);
                     }
                 }
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                var updates = new UpdateNoteStructureWS()
+                {
+                    ContentIdsToDelete = unlinkedItemIds,
+                    TextContentsToAdd = textItemsThatNeedAdd,
+                    PhotoContentsToAdd = photosItemsThatNeedAdd,
+                    VideoContentsToAdd = videosItemsThatNeedAdd,
+                    DocumentContentsToAdd = documentsItemsThatNeedAdd,
+                    AudioContentsToAdd = audiosItemsThatNeedAdd,
+                    Positions = positions
+                };
+                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.User.Email, updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
             return new OperationResult<Unit>(false, Unit.Value);
+        }
+
+        private async Task UnlinkFileItems(IEnumerable<IGrouping<ContentTypeENUM, BaseNoteContent>> groups, ContentTypeENUM type, Guid noteId, string email, List<Guid> deletedItemIds)
+        {
+            var group = groups.FirstOrDefault(x => x.Key == type);
+            if (group != null)
+            {
+                foreach (var collection in group)
+                {
+                    var command = type switch
+                    {
+                        ContentTypeENUM.AudiosCollection =>     await _mediator.Send(new UnlinkAudiosCollectionCommand(noteId, collection.Id, email)),
+                        ContentTypeENUM.PhotosCollection =>     await _mediator.Send(new UnlinkPhotosCollectionCommand(noteId, collection.Id, email)),
+                        ContentTypeENUM.VideosCollection =>     await _mediator.Send(new UnlinkVideosCollectionCommand(noteId, collection.Id, email)),
+                        ContentTypeENUM.DocumentsCollection =>  await _mediator.Send(new UnlinkDocumentsCollectionCommand(noteId, collection.Id, email)),
+                        _ => throw new Exception("Incorrect type")
+                    };
+                    deletedItemIds.Add(collection.Id);
+                }
+            }
         }
 
         private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)

@@ -1,24 +1,12 @@
 ﻿using System;
-using Common.Attributes;
-using Common.DTO;
-using MediatR;
+
 
 namespace Domain.Commands.NoteInner.FileContent.Documents
 {
-    public class UnlinkDocumentsCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UnlinkDocumentsCollectionCommand : BaseUnlinkCommand
     {
-        [ValidationGuid]
-        public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid ContentId { set; get; }
-
-        public UnlinkDocumentsCollectionCommand(Guid NoteId, Guid ContentId, string Email)
+        public UnlinkDocumentsCollectionCommand(Guid noteId, Guid contentId, string email) : base(noteId, contentId, email)
         {
-            this.NoteId = NoteId;
-            this.ContentId = ContentId;
-            this.Email = Email;
         }
-
     }
 }

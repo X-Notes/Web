@@ -41,12 +41,9 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToVideosCollection(noteId: string, contentId: string, files: File[]) {
-    const collectionResult = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
+    const collectionResult = await this.apiVideos.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true;
-      collectionResult.data.videos = collectionResult.data.videos
-        ? collectionResult.data.videos
-        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadVideosToCollectionHandler(
         { contentId: collectionResult.data.id, files },
@@ -54,16 +51,6 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       );
       collectionResult.data.isLoading = false;
     }
-  }
-
-  insertNewContent(contentId: string, isFocusToNext: boolean) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
-    if (isFocusToNext) {
-      index += 1;
-    }
-    const nContent = VideosCollection.getNew();
-    this.contentsService.insertInto(nContent, index);
-    return { index, content: nContent };
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -107,59 +94,24 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     const videosMapped = videos.map(
       (x) => new VideoModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
     );
-    const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
-    const prev = prevCollection.videos ?? [];
 
-    const newCollection = new VideosCollection(prevCollection);
-    newCollection.videos = [...prev, ...videosMapped];
+    
+    const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
+    const prev = prevCollection.items ?? [];
+
+    const newCollection = new VideosCollection(prevCollection, prevCollection.items);
+    newCollection.items = [...prev, ...videosMapped];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (
-    contentId: string,
-    noteId: string,
-  ): Promise<OperationResult<any>> => {
-    const resp = await this.apiVideos.removeCollection(noteId, contentId).toPromise();
-    if (resp.success) {
-      this.deleteHandler(contentId);
+  deleteVideoHandler(videoId: string, content: VideosCollection) {
+    if (content.items.length === 1) {
+      this.deleteHandler(content.id);
+    } else {
+      content.items = content.items.filter((x) => x.fileId !== videoId);
     }
-    return resp;
-  };
-
-  async deleteVideoHandler(videoId: string, contentId: string, noteId: string) {
-    const resp = await this.apiVideos
-      .removeVideoFromCollection(noteId, contentId, videoId)
-      .toPromise();
-
-    if (resp.success) {
-      const prevCollection = this.contentsService.getContentById<VideosCollection>(contentId);
-      if (prevCollection.videos.length === 1) {
-        this.deleteHandler(contentId);
-      } else {
-        const newCollection = prevCollection.copy();
-        newCollection.videos = newCollection.videos.filter((x) => x.fileId !== videoId);
-        this.contentsService.setSafe(newCollection, contentId);
-      }
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  }
-
-  async updateCollectionInfo(
-    contentId: string,
-    noteId: string,
-    name: string,
-  ): Promise<OperationResult<any>> {
-    const resp = await this.apiVideos
-      .updateVideosCollectionInfo(noteId, contentId, name)
-      .toPromise();
-    if (resp.success) {
-      const collection = this.contentsService.getContentById<VideosCollection>(contentId);
-      collection.name = name;
-      this.contentsService.setSafe(collection, collection.id);
-    }
-    return resp;
   }
 }

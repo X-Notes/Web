@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.Notes
 {
-    public class ChangeColorNoteCommand : BaseCommandEntity, IRequest<Unit>
+    public class ChangeColorNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [Required]
         public string Color { set; get; }

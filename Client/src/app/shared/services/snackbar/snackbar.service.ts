@@ -14,11 +14,12 @@ export class SnackbarService {
     message: string,
     action?: string,
     horizontalPosition: MatSnackBarHorizontalPosition = 'end',
+    duration = 3000,
   ) {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
 
     return this.snackbar.open(message, action, {
-      duration: 5000,
+      duration,
       panelClass: theme === ThemeENUM.Light ? 'snackbar-light' : 'snackbar-dark',
       horizontalPosition,
       verticalPosition: 'bottom',
