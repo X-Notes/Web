@@ -6,13 +6,13 @@ import {
   Input,
   HostBinding,
   DoCheck,
-  Renderer2
+  Renderer2,
 } from '@angular/core';
-  
-@Directive({
-  selector: 'textarea[autosize]'
-})
 
+@Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: 'textarea[autosize]',
+})
 export class AutosizeDirective implements AfterViewInit, DoCheck {
   @Input()
   @HostBinding('rows')
@@ -20,20 +20,20 @@ export class AutosizeDirective implements AfterViewInit, DoCheck {
 
   constructor(private elem: ElementRef, private renderer: Renderer2) {}
 
-  public ngAfterViewInit() {
-    this.resize();
-  }
-
-  public ngDoCheck() {
-    this.resize();
-  }
-
   @HostListener('input')
   private resize() {
     const textarea = this.elem.nativeElement as HTMLTextAreaElement;
     const borderHeight = textarea.offsetHeight - textarea.clientHeight;
     this.setHeight('auto');
     this.setHeight(`${textarea.scrollHeight + borderHeight}px`);
+  }
+
+  public ngAfterViewInit() {
+    this.resize();
+  }
+
+  public ngDoCheck() {
+    this.resize();
   }
 
   private setHeight(value: string) {

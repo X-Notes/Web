@@ -1,4 +1,4 @@
 export interface CreateQuestion {
-    senderEmail: string
-    question: string
+  senderEmail: string;
+  question: string;
 }
