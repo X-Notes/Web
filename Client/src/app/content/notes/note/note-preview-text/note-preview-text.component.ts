@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DeltaConverter } from '../../full-note/content-editor/converter/delta-converter';
 import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -10,6 +11,9 @@ import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text
 export class NotePreviewTextComponent implements OnInit {
   @Input()
   content: BaseText;
+
+  @Input()
+  activeTheme: ThemeENUM = ThemeENUM.Light;
 
   textType = NoteTextTypeENUM;
 

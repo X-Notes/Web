@@ -96,6 +96,7 @@ export class UserStore {
 
   @Selector()
   static getUserTheme(state: UserState): ThemeENUM {
+    console.log(state.user.themeId);
     return state.user.themeId;
   }
 

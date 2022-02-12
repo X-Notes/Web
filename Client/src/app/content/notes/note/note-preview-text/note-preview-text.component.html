@@ -9,6 +9,7 @@
     *ngSwitchCase="textType.Checklist"
     [html]="viewHtml"
     [contentBase]="content"
+    [activeTheme]="activeTheme"
   ></app-note-preview-text-list>
   <app-note-preview-text-list
     *ngSwitchCase="textType.Numberlist"
@@ -19,5 +20,6 @@
     *ngSwitchCase="textType.Dotlist"
     [html]="viewHtml"
     [contentBase]="content"
+    [activeTheme]="activeTheme"
   ></app-note-preview-text-list>
 </ng-container>
