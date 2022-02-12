@@ -12,15 +12,18 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public Guid AuthorId { set; get; }
 
+        public int? SecondsDuration { set; get; }
+
         public DateTimeOffset UploadAt { set; get; }
 
-        public AudioNoteDTO(string name, Guid fileId, string audioPath, Guid userId, DateTimeOffset uploadAt)
+        public AudioNoteDTO(string name, Guid fileId, string audioPath, Guid userId, int? secondsDuration, DateTimeOffset uploadAt)
         {
             FileId = fileId;
             Name = name;
             AudioPath = audioPath;
             AuthorId = userId;
             UploadAt = uploadAt;
+            SecondsDuration = secondsDuration;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
+using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -86,6 +87,13 @@ namespace WriteAPI.Controllers.FullNote
             }
 
             return new OperationResult<List<FileDTO>>(false, null, resp.Status);
+        }
+
+        [HttpPatch("metadata")]
+        public async Task<OperationResult<Unit>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
     }
 }

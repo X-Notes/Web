@@ -48,10 +48,7 @@ namespace BI.Services.Search
             allNotes = allNotes.Where(x =>
                     SearchHelper.IsMatchContent(x.Title, request.SearchString)
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.SearchString))
-                    || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => label.Name.Contains(request.SearchString))
-                    || x.Contents.OfType<PhotosCollectionNote>()
-                                .Any(x => x.Photos.Any(photo => SearchHelper.IsMatchPhoto(photo, request.SearchString)))
-                    ).ToList();
+                    || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => label.Name.Contains(request.SearchString))).ToList();
 
             var folders = await searchRepository.GetFolderByUserIdAndString(user.Id, request.SearchString);
 

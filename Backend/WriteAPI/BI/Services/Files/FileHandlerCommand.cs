@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using Common.DatabaseModels.Models.Files;
+using Common.DTO;
 using ContentProcessing;
 using Domain.Commands.Files;
 using MediatR;
@@ -24,7 +25,8 @@ namespace BI.Services.Files
         IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
         IRequestHandler<RemoveFilesCommand, Unit>,
         IRequestHandler<RemoveFilesFromStorageCommand, Unit>,
-        IRequestHandler<CreateUserContainerCommand, Unit>
+        IRequestHandler<CreateUserContainerCommand, Unit>,
+        IRequestHandler<UpdateFileMetaDataCommand, OperationResult<Unit>>
     {
         private readonly IFilesStorage filesStorage;
 
@@ -268,6 +270,20 @@ namespace BI.Services.Files
         {
             await filesStorage.RemoveFiles(request.UserId, request.Pathes.ToArray());
             return Unit.Value;
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdateFileMetaDataCommand request, CancellationToken cancellationToken)
+        {
+            var file = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.FileId);
+            if(file is not null)
+            {
+                file.MetaData = file.MetaData ?? new AppFileMetaData();
+                file.MetaData.SecondsDuration = request.SecondsDuration;
+                await fileRepository.UpdateAsync(file);
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNotFound();
         }
     }
 }

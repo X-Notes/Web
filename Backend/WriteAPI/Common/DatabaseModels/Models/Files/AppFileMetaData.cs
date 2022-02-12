@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Common.DatabaseModels.Models.Files
+{
+    public class AppFileMetaData
+    {
+        public int? SecondsDuration { set; get; }
+    }
+}
