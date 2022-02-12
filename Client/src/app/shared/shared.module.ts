@@ -76,6 +76,7 @@ import { NotePreviewVideosComponent } from '../content/notes/note/note-preview-v
 import { NotePreviewVideoComponent } from '../content/notes/note/note-preview-videos/note-preview-video/note-preview-video.component';
 import { NoteCollectionTitleComponent } from '../content/notes/note/note-collection-title/note-collection-title.component';
 import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-audios/note-preview-audios.component';
+import { FileNamePipe } from './pipes/file-name.pipe';
 
 @NgModule({
   declarations: [
@@ -134,6 +135,7 @@ import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-a
     NotePreviewVideoComponent,
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
+    FileNamePipe,
   ],
   imports: [
     CommonModule,
@@ -219,6 +221,7 @@ import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-a
     NotePreviewVideoComponent,
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
+    FileNamePipe,
   ],
   providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

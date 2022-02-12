@@ -4,6 +4,6 @@
     <mat-icon [svgIcon]="genericNoteService.documentIcon(item.name)" [inline]="true"></mat-icon>
   </div>
   <div class="document-title">
-    <p>{{ item.name }}</p>
+    <p>{{ item.name | fileName }}</p>
   </div>
 </div>

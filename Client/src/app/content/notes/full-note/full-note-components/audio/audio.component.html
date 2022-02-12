@@ -29,7 +29,7 @@
   <div class="audio-body" appTheme>
     <div class="audio-info">
       <div class="audio-name">
-        <p>{{ audio.name }}</p>
+        <p>{{ audio.name | fileName }}</p>
       </div>
       <div class="audio-time">
         <p>{{ state?.readableCurrentTime }}</p>

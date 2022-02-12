@@ -14,7 +14,7 @@
   </div>
   <div class="card-body">
     <div class="card-info">
-      <div class="title">{{ document.name }}</div>
+      <div class="title">{{ document.name | fileName }}</div>
       <div class="link">{{ document.uploadAt | date: 'medium' }}</div>
     </div>
     <div class="card-action">
