@@ -18,4 +18,15 @@ export class ApiNoteFilesService {
       { reportProgress: true, observe: 'events' },
     );
   }
+
+  updateFileMetaData(fileId: string, secondsDuration: number) {
+    const obj = {
+      fileId,
+      secondsDuration,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/files/metadata`,
+      obj,
+    );
+  }
 }

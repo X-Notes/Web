@@ -4,6 +4,7 @@ import { BaseCollection } from './base-collection';
 import { BaseFile } from './base-file';
 
 export class AudiosCollection extends BaseCollection<AudioModel> {
+
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
@@ -12,7 +13,14 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new AudioModel(z.name, z.audioPath, z.fileId, z.authorId, z.uploadAt),
+            new AudioModel(
+              z.name,
+              z.audioPath,
+              z.fileId,
+              z.authorId,
+              z.uploadAt,
+              z.secondsDuration,
+            ),
         )
       : [];
   }
@@ -40,14 +48,29 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
   isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
     return this.name === content.name;
   }
+  
 }
 
 export class AudioModel extends BaseFile {
   audioPath: string;
 
-  constructor(name: string, audioPath: string, fileId: string, authorId: string, uploadAt: Date) {
+  secondsDuration?: number;
+
+  constructor(
+    name: string,
+    audioPath: string,
+    fileId: string,
+    authorId: string,
+    uploadAt: Date,
+    secondsDuration?: number,
+  ) {
     super(name, fileId, authorId, uploadAt);
     this.audioPath = audioPath;
+    this.secondsDuration = secondsDuration;
+  }
+
+  isNeedUpdateMetaData(): boolean {
+    return !this.secondsDuration;
   }
 
   isEqual(content: AudioModel): boolean {
