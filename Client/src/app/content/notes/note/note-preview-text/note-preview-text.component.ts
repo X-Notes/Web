@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DeltaConverter } from '../../full-note/content-editor/converter/delta-converter';
-import { BaseText } from '../../models/editor-models/base-text';
+import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -9,13 +9,14 @@ import { BaseText } from '../../models/editor-models/base-text';
 })
 export class NotePreviewTextComponent implements OnInit {
   @Input()
-  contentBaseText: BaseText;
+  content: BaseText;
+
+  textType = NoteTextTypeENUM;
 
   viewHtml: string;
 
-  // eslint-disable-next-line class-methods-use-this
   ngOnInit(): void {
-    const delta = DeltaConverter.convertToDelta(this.contentBaseText.contents);
+    const delta = DeltaConverter.convertToDelta(this.content.contents);
     this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
   }
 }

@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.document {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(black, 0.025);
+    
+    .icon {
+        display: flex;
+        width: 18px;
+        height: 18px;
+        margin-right: 0.5rem;
+    }
+
+    .document-title {
+        display: flex;
+        font-size: 0.875rem;
+    }
+}

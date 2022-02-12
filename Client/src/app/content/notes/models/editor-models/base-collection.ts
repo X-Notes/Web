@@ -2,7 +2,7 @@ import { BaseFile } from './base-file';
 import { ContentModelBase } from './content-model-base';
 
 export abstract class BaseCollection<T extends BaseFile> extends ContentModelBase {
-  name: string;
+  name?: string;
 
   items: T[];
 

@@ -5,7 +5,7 @@
 >
   <div class="preview" appTheme>
     <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
-    <div *ngIf="!metadataParsed.imageUrl" class="no-preview">{{ audio.name }}</div>
+    <div *ngIf="!metadataParsed.imageUrl && audio.name" class="no-preview">{{ audio.name[0] }}</div>
     <div class="controls">
       <app-button-collection
         *ngIf="!state?.playing"

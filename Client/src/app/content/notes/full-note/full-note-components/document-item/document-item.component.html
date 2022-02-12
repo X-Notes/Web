@@ -6,12 +6,15 @@
 >
   <div class="preview">
     <div class="icon">
-      <mat-icon [svgIcon]="documentIcon" [inline]="true"></mat-icon>
+      <mat-icon
+        [svgIcon]="genericNoteService.documentIcon(document.name)"
+        [inline]="true"
+      ></mat-icon>
     </div>
   </div>
   <div class="card-body">
     <div class="card-info">
-      <div class="title">{{ document?.name }}</div>
+      <div class="title">{{ document.name }}</div>
       <div class="link">{{ document.uploadAt | date: 'medium' }}</div>
     </div>
     <div class="card-action">
@@ -26,7 +29,7 @@
   </div>
 </div>
 
-<!-- ADDITIONLA -->
+<!-- ADDITIONAL -->
 
 <mat-menu
   #menu="matMenu"

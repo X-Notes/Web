@@ -3,7 +3,7 @@
     <app-button-collection
       cdk-overlay-origin
       #origin="cdkOverlayOrigin"
-      [button]="'queue_music'"
+      button="queue_music"
       [tooltip]="'innerNote.audio.playlist' | translate"
       (clickEvent)="isOpen = !isOpen"
     ></app-button-collection>
@@ -42,7 +42,7 @@
   </div>
   <div class="controls">
     <app-button-collection
-      [button]="'skip_previous'"
+      button="skip_previous"
       [tooltip]="'innerNote.audio.previos' | translate"
       [disabled]="isFirstPlaying"
       (clickEvent)="previous()"
@@ -50,7 +50,7 @@
 
     <app-button-collection
       *ngIf="!state?.playing"
-      [button]="'play_circle_outline'"
+      button="play_circle_outline"
       [tooltip]="'innerNote.audio.play' | translate"
       [disabled]="state?.error"
       (clickEvent)="play()"
@@ -58,13 +58,13 @@
 
     <app-button-collection
       *ngIf="state?.playing"
-      [button]="'pause'"
+      button="pause"
       [tooltip]="'innerNote.audio.pause' | translate"
       (clickEvent)="pause()"
     ></app-button-collection>
 
     <app-button-collection
-      [button]="'skip_next'"
+      button="skip_next"
       [tooltip]="'innerNote.audio.next' | translate"
       [disabled]="isLastPlaying"
       (clickEvent)="next()"
@@ -102,16 +102,16 @@
     </div>
 
     <app-button-collection
-      [button]="'repeat'"
+      button="repeat"
+      activeColor="#0887a7"
       [tooltip]="'innerNote.audio.loop' | translate"
       (clickEvent)="loop()"
       [isActive]="state?.loop"
-      [activeColor]="'#0887a7'"
     ></app-button-collection>
 
     <app-button-collection
       class="audio-cancel"
-      [button]="'close'"
+      button="close"
       [tooltip]="'innerNote.audio.close' | translate"
       (clickEvent)="audioService.resetCurrent()"
     ></app-button-collection>
