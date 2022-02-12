@@ -20,11 +20,16 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
 
         public bool? Checked { set; get; }
 
+
+
+        [NotMapped]
+        public int ListId { set; get; }
+
+
         public TextNote()
         {
             ContentTypeId = ContentTypeENUM.Text;
         }
-
 
         public TextNote(TextNote text, Guid noteId)
         {
