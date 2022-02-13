@@ -19,6 +19,8 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public List<TextBlock> Contents { set; get; }
 
+        public int ListId { set; get; }
+
         public TextNoteDTO(
             List<TextBlock> contents, 
             Guid id, 
@@ -26,6 +28,7 @@ namespace Common.DTO.Notes.FullNoteContent
             NoteTextTypeENUM noteTextTypeId, 
             HTypeENUM? headingTypeId, 
             bool? @checked,
+            int listId,
             DateTimeOffset updatedAt)
             :base(id, order, ContentTypeENUM.Text, updatedAt)
         {
@@ -33,6 +36,7 @@ namespace Common.DTO.Notes.FullNoteContent
             this.HeadingTypeId = headingTypeId;
             this.NoteTextTypeId = noteTextTypeId;
             this.Checked = @checked;
+            this.ListId = listId;
         }
     }
 }
