@@ -69,6 +69,7 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
 import { ContactUsComponent } from './modal_components/contact-us/contact-us.component';
 import { AutosizeDirective } from './directives/autosize.directive';
 import { ApiContactUsService } from './modal_components/contact-us/services/api-contact-us.service';
+import { FormatDateMomentPipe } from './pipes/format-date-moment.pipe';
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { ApiContactUsService } from './modal_components/contact-us/services/api-
     DropDirective,
     ContactUsComponent,
     AutosizeDirective,
+    FormatDateMomentPipe,
   ],
   imports: [
     CommonModule,
@@ -198,6 +200,7 @@ import { ApiContactUsService } from './modal_components/contact-us/services/api-
     ButtonCollectionComponent,
     DropDirective,
     AutosizeDirective,
+    FormatDateMomentPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],
