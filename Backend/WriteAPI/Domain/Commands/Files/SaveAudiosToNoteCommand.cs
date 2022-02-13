@@ -11,15 +11,12 @@ namespace Domain.Commands.Files
     {
         public List<FilesBytes> FileBytes { set; get; }
 
-        public Guid NoteId { set; get; }
-
         public Guid UserId { set; get; }
 
 
-        public SaveAudiosToNoteCommand(Guid userId, List<FilesBytes> fileBytes, Guid noteId)
+        public SaveAudiosToNoteCommand(Guid userId, List<FilesBytes> fileBytes)
         {
             this.FileBytes = fileBytes;
-            this.NoteId = noteId;
             UserId = userId;
         }
 
