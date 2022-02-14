@@ -270,7 +270,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesFromStorageCommand, Unit>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<CreateUserContainerCommand, Unit>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateFileMetaDataCommand, OperationResult<Unit>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateFileMetaDataCommand, OperationResult<FileDTO>>, FileHandlerCommand>();
 
             // Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>, PermissionHandlerQuery>();

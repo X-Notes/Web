@@ -8,7 +8,7 @@ namespace Common.DatabaseModels.Models.Files
 {
     public class AppFileMetaData
     {
-        public int? SecondsDuration { set; get; }
+        public int SecondsDuration { set; get; }
 
         public Guid? ImageFileId { set; get; }
 

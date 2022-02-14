@@ -8,6 +8,7 @@ using BI.Helpers;
 using BI.Services.Notes;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
+using Common.DTO.Files;
 using ContentProcessing;
 using Domain.Commands.Files;
 using MediatR;
@@ -27,7 +28,7 @@ namespace BI.Services.Files
         IRequestHandler<RemoveFilesCommand, Unit>,
         IRequestHandler<RemoveFilesFromStorageCommand, Unit>,
         IRequestHandler<CreateUserContainerCommand, Unit>,
-        IRequestHandler<UpdateFileMetaDataCommand, OperationResult<Unit>>
+        IRequestHandler<UpdateFileMetaDataCommand, OperationResult<FileDTO>>
     {
         private readonly IFilesStorage filesStorage;
 
@@ -271,7 +272,7 @@ namespace BI.Services.Files
             return Unit.Value;
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateFileMetaDataCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<FileDTO>> Handle(UpdateFileMetaDataCommand request, CancellationToken cancellationToken)
         {
             var file = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.FileId);
             if (file is not null)
@@ -293,10 +294,11 @@ namespace BI.Services.Files
                     await MarkAsLinked(file.MetaData.ImageFileId.Value);
                 }
 
-                return new OperationResult<Unit>(true, Unit.Value);
+                var respResult = new FileDTO(file.Id, file.PathPhotoSmall, file.PathPhotoMedium, file.PathPhotoBig, file.PathNonPhotoContent, file.Name, file.UserId, file.MetaData, file.CreatedAt);
+                return new OperationResult<FileDTO>(true, respResult);
             }
 
-            return new OperationResult<Unit>().SetNotFound();
+            return new OperationResult<FileDTO>().SetNotFound();
         }
     }
 }

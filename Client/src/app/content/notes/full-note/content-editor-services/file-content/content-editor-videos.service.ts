@@ -64,7 +64,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file]);
+      const formData = generateFormData(file);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Video,

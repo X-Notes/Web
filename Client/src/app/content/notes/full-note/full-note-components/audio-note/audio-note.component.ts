@@ -26,8 +26,7 @@ import { ContentEditorAudiosCollectionService } from '../../content-editor-servi
 })
 export class AudioNoteComponent
   extends CollectionService<AudiosCollection>
-  implements ParentInteraction, OnInit, OnDestroy
-{
+  implements ParentInteraction, OnInit, OnDestroy {
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   formats = TypeUploadFormats.audios;

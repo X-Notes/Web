@@ -66,7 +66,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file]);
+      const formData = generateFormData(file);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Audio,
@@ -92,7 +92,8 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
 
     const audiosMapped = audios.map(
-      (x) => new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt, null, null),
     );
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.items ?? [];

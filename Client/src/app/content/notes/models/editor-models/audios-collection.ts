@@ -19,6 +19,7 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
               z.fileId,
               z.authorId,
               z.uploadAt,
+              z.pathToImage,
               z.secondsDuration,
             ),
         )
@@ -54,6 +55,8 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
 export class AudioModel extends BaseFile {
   audioPath: string;
 
+  pathToImage: string;
+
   secondsDuration?: number;
 
   constructor(
@@ -62,11 +65,13 @@ export class AudioModel extends BaseFile {
     fileId: string,
     authorId: string,
     uploadAt: Date,
+    pathToImage: string,
     secondsDuration?: number,
   ) {
     super(name, fileId, authorId, uploadAt);
     this.audioPath = audioPath;
     this.secondsDuration = secondsDuration;
+    this.pathToImage = pathToImage;
   }
 
   isNeedUpdateMetaData(): boolean {

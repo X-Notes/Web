@@ -1,15 +1,13 @@
 ﻿using Common.Attributes;
 using Common.DTO;
+using Common.DTO.Files;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Domain.Commands.Files
 {
-    public class UpdateFileMetaDataCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateFileMetaDataCommand : BaseCommandEntity, IRequest<OperationResult<FileDTO>>
     {
         [ValidationGuid]
         public Guid FileId { set; get; }
