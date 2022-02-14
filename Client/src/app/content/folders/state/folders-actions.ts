@@ -63,7 +63,11 @@ export class UpdateFolders {
 export class DeleteFoldersPermanently {
   static type = '[Folders] Delete folders';
 
-  constructor(public selectedIds: string[], public typeNote: FolderTypeENUM) {}
+  isCallApi: boolean;
+
+  constructor(public selectedIds: string[], isCallApi = true) {
+    this.isCallApi = isCallApi;
+  }
 }
 
 export class ClearAddToDomFolders {

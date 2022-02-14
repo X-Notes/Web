@@ -227,7 +227,10 @@ export class ApiServiceNotes {
       noteId,
       userId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/remove`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/user/remove`,
+      obj,
+    );
   }
 
   changeUserPermission(noteId: string, userId: string, accessTypeId: RefTypeENUM) {

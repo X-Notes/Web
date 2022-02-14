@@ -229,22 +229,22 @@ export class FolderStore {
   @Action(DeleteFoldersPermanently)
   async deleteFoldersPermanently(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { selectedIds }: DeleteFoldersPermanently,
+    { selectedIds, isCallApi }: DeleteFoldersPermanently,
   ) {
-    await this.api.deleteFolders(selectedIds).toPromise();
 
-    const foldersFrom = this.getFoldersByType(getState, FolderTypeENUM.Deleted);
-    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-    dispatch(
-      new UpdateFolders(
-        new Folders(FolderTypeENUM.Deleted, foldersFromNew),
-        FolderTypeENUM.Deleted,
-      ),
-    );
+    if(isCallApi){
+      await this.api.deleteFolders(selectedIds).toPromise();
+    }
+
+    for (const { folders, typeFolders } of getState().folders) {
+      const foldersFromNew = folders.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
+      dispatch(new UpdateFolders(new Folders(typeFolders, foldersFromNew), typeFolders));
+    }
 
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
+    
     dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
   }
 

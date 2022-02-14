@@ -68,7 +68,11 @@ export class AddToDomNotes {
 export class DeleteNotesPermanently {
   static type = '[Notes] Delete notes';
 
-  constructor(public selectedIds: string[], public typeNote: NoteTypeENUM) {}
+  isCallApi: boolean;
+
+  constructor(public selectedIds: string[], isCallApi = true) {
+    this.isCallApi = isCallApi;
+  }
 }
 
 export class ChangeTypeNote {

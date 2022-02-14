@@ -35,6 +35,8 @@ namespace BI.SignalR
             await signalRContext.Clients.Users(list).SendAsync("updateFoldersGeneral", updates);
         }
 
+        // INNER NOTE
+
         public async Task UpdateTextContent(Guid noteId, string email, UpdateTextWS updates)
         {
             var connectionId = AppSignalRHub.usersIdentifier_ConnectionId.GetValueOrDefault(email);
@@ -70,6 +72,21 @@ namespace BI.SignalR
         {
             var connectionId = AppSignalRHub.usersIdentifier_ConnectionId.GetValueOrDefault(email);
             await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateAudiosCollection", updates);
+        }
+
+        // Note permissions
+
+        public async Task RevokePermissionUserNote(Guid noteId, string receiverEmail)
+        {
+            await signalRContext.Clients.User(receiverEmail).SendAsync("revokeNotePermissions", noteId);
+        }
+
+
+        // Folder permissions
+
+        public async Task RevokePermissionUserFolder(Guid folderId, string receiverEmail)
+        {
+            await signalRContext.Clients.User(receiverEmail).SendAsync("revokeFolderPermissions", folderId);
         }
     }
 }

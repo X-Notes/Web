@@ -44,11 +44,11 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("folders/user/remove")]
-        public async Task RemoveUserFromFolder(RemoveUserFromPrivateFolders command)
+        public async Task<OperationResult<Unit>> RemoveUserFromFolder(RemoveUserFromPrivateFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/invites")]
@@ -87,11 +87,11 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("notes/user/remove")]
-        public async Task RemoveUserFromNote(RemoveUserFromPrivateNotes command)
+        public async Task<OperationResult<Unit>> RemoveUserFromNote(RemoveUserFromPrivateNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("notes/user/invites")]

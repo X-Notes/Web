@@ -3,10 +3,11 @@ import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ChangeColorFolder, UpdateFolderTitle } from '../content/folders/state/folders-actions';
+import { ChangeColorFolder, DeleteFoldersPermanently, UpdateFolderTitle } from '../content/folders/state/folders-actions';
 import {
   AddLabelOnNote,
   ChangeColorNote,
+  DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
   RemoveLabelFromNote,
   UpdateNoteTitle,
@@ -146,6 +147,18 @@ export class SignalRService {
 
     this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
       this.setAsJoinedToFolder.next(folderId);
+    });
+
+    // Note permissions
+
+    this.hubConnection.on('revokeNotePermissions', (noteId: string) => {
+      this.store.dispatch(new DeleteNotesPermanently([noteId], false));
+    });
+
+    // Folder permissions
+
+    this.hubConnection.on('revokeFolderPermissions', (folderId: string) => {
+      this.store.dispatch(new DeleteFoldersPermanently([folderId], false));
     });
   };
 }

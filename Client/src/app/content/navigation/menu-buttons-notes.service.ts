@@ -32,18 +32,14 @@ export class MenuButtonsNotesService {
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const idsInner = [note.id];
-      await this.store
-        .dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted))
-        .toPromise();
+      await this.store.dispatch(new DeleteNotesPermanently(idsInner)).toPromise();
       return this.sbws.buildNotification(
         this.apiTranslate.instant('snackBar.notePermDeleted'),
         null,
       );
     }
     const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-    await this.store
-      .dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted))
-      .toPromise();
+    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
 
     this.store.dispatch(LoadUsedDiskSpace);
 

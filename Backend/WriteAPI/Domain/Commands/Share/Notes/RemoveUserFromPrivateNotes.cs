@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.Share.Notes
 {
-    public class RemoveUserFromPrivateNotes : BaseCommandEntity, IRequest<Unit>
+    public class RemoveUserFromPrivateNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [Required]
         public Guid NoteId { set; get; }

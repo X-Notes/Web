@@ -107,7 +107,7 @@ export class NoteStore {
     private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
-  ) {}
+  ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
     return state.notes.find((x) => x.typeNotes === type);
@@ -220,7 +220,7 @@ export class NoteStore {
   static canEdit(state: NoteState): boolean {
     return state.fullNoteState?.canEdit;
   }
-  
+
   @Selector()
   static canView(state: NoteState): boolean {
     return state.fullNoteState?.canView;
@@ -346,17 +346,22 @@ export class NoteStore {
   @Action(DeleteNotesPermanently)
   async deleteNotesPermanently(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { selectedIds }: DeleteNotesPermanently,
+    { selectedIds, isCallApi }: DeleteNotesPermanently,
   ) {
-    await this.api.deleteNotes(selectedIds).toPromise();
 
-    const notesFrom = this.getNotesByType(getState, NoteTypeENUM.Deleted);
-    const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-    dispatch(new UpdateNotes(new Notes(NoteTypeENUM.Deleted, notesFromNew), NoteTypeENUM.Deleted));
+    if (isCallApi) {
+      await this.api.deleteNotes(selectedIds).toPromise();
+    }
+    
+    for (const { notes, typeNotes } of getState().notes) {
+      const notesFromNew = notes.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
+      dispatch(new UpdateNotes(new Notes(typeNotes, notesFromNew), typeNotes));
+    }
 
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
+
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
   }
 
@@ -479,10 +484,10 @@ export class NoteStore {
     if (resp.success) {
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && selectedIds.some(id => id === fullNote.id)) {
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: {...fullNote, color }}});
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color } } });
       }
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      if(notesForUpdate && notesForUpdate.length > 0) {
+      if (notesForUpdate && notesForUpdate.length > 0) {
         notesForUpdate.forEach((note) => note.color = color);
         const updatesUI = notesForUpdate.map((note) =>
           this.toUpdateNoteUI(note.id, note.color, null, null, null, null),
@@ -533,12 +538,12 @@ export class NoteStore {
     { label, selectedIds, isCallApi, errorPermissionMessage }: AddLabelOnNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
-    if (isCallApi){
+    if (isCallApi) {
       resp = await this.api.addLabel(label.id, selectedIds).toPromise();
     }
-    if(resp.success){
+    if (resp.success) {
       const note = getState().fullNoteState?.note;
-      if(note && selectedIds.some(id => id === note.id)){
+      if (note && selectedIds.some(id => id === note.id)) {
         patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...note, labels: [...note.labels, label] } } });
       }
       // Updates small notes
@@ -575,16 +580,16 @@ export class NoteStore {
     { labelId, selectedIds, isCallApi, errorPermissionMessage }: RemoveLabelFromNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
-    if (isCallApi){
+    if (isCallApi) {
       resp = await this.api.removeLabel(labelId, selectedIds).toPromise();
     }
-    if(resp.success){
+    if (resp.success) {
       let note = getState().fullNoteState?.note;
-      if(note && selectedIds.some(id => id === note.id)){
+      if (note && selectedIds.some(id => id === note.id)) {
         note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
-        patchState({ fullNoteState: { ...getState().fullNoteState, note }});
+        patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
-      const notesForUpdate = this.getNotesByIds(getState, selectedIds);  
+      const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       const updateNoteEvent: UpdateNoteUI[] = [];
       notesForUpdate.forEach((x: SmallNote) => {
         x.labels = x.labels.filter((z) => z.id !== labelId);
@@ -676,7 +681,7 @@ export class NoteStore {
 
   @Action(UpdateOneNote)
   updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note }: UpdateOneNote) {
-    for(const noteState of getState().notes) {
+    for (const noteState of getState().notes) {
       let isUpdate = false;
       const notes = noteState.notes.map((x) => {
         let nt = { ...x };
@@ -686,7 +691,7 @@ export class NoteStore {
         }
         return nt;
       });
-      if(isUpdate){
+      if (isUpdate) {
         dispatch(new UpdateNotes(new Notes(note.noteTypeId, [...notes]), note.noteTypeId));
       }
     }
@@ -739,10 +744,10 @@ export class NoteStore {
     if (resp.success) {
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && fullNote.id === noteId) {
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: {...fullNote, title: str} } });
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: str } } });
       }
       const noteUpdate = this.getNoteById(getState, noteId);
-      if(noteUpdate){
+      if (noteUpdate) {
         noteUpdate.title = str;
         patchState({ updateNoteEvent: [this.toUpdateNoteUI(noteUpdate.id, null, null, null, null, noteUpdate.title)] });
         dispatch(new UpdateOneNote(noteUpdate));
@@ -879,8 +884,8 @@ export class NoteStore {
   }
 
   getNoteById = (getState: () => NoteState, id: string): SmallNote => {
-    for(const notes of getState().notes) {
-      for(const x of notes.notes){
+    for (const notes of getState().notes) {
+      for (const x of notes.notes) {
         const note = { ...x };
         if (id === note.id) {
           return note;

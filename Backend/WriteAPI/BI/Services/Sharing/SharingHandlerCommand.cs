@@ -25,10 +25,10 @@ namespace BI.Services.Sharing
         IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>,
         IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
-        IRequestHandler<RemoveUserFromPrivateFolders, Unit>,
+        IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
         IRequestHandler<SendInvitesToUsersNotes, Unit>,
-        IRequestHandler<RemoveUserFromPrivateNotes, Unit>,
+        IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
@@ -192,7 +192,7 @@ namespace BI.Services.Sharing
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -216,13 +216,20 @@ namespace BI.Services.Sharing
                     await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+
+                    await appSignalRHub.RevokePermissionUserFolder(request.FolderId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                    return new OperationResult<Unit>(true, Unit.Value);
                 }
+
+                return new OperationResult<Unit>().SetNotFound();
             }
-            return Unit.Value;
+
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -246,10 +253,16 @@ namespace BI.Services.Sharing
                     await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+
+                    await appSignalRHub.RevokePermissionUserNote(request.NoteId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                    return new OperationResult<Unit>(true, Unit.Value);
                 }
+
+                return new OperationResult<Unit>().SetNotFound();
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
