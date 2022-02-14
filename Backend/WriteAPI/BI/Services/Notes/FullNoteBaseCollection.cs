@@ -42,6 +42,17 @@ namespace BI.Services.Notes
             await fileRepository.UpdateRangeAsync(files);
         }
 
+        protected async Task MarkAsLinked(AppFile file)
+        {
+            if (file.AppFileUploadInfo == null)
+            {
+                throw new Exception("AppFileUploadInfo is null");
+            }
+
+            file.AppFileUploadInfo.SetLinked();
+            await fileRepository.UpdateAsync(file);
+        }
+
         protected async Task MarkAsLinked(params Guid[] ids)
         {
             var infos = await appFileUploadInfoRepository.GetWhereAsync(x => ids.Contains(x.AppFileId));

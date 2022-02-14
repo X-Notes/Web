@@ -14,6 +14,8 @@ namespace Domain.Commands.Files
         [ValidationGuid]
         public Guid FileId { set; get; }
 
-        public int? SecondsDuration { set; get; }
+        public int SecondsDuration { set; get; }
+
+        public Guid? ImageFileId { set; get; }
     }
 }

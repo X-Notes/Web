@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
+using BI.Services.Notes;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using ContentProcessing;
@@ -15,7 +16,7 @@ using WriteContext.Repositories.Files;
 
 namespace BI.Services.Files
 {
-    public class FileHandlerCommand :
+    public class FileHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveDocumentsToNoteCommand, List<AppFile>>,
@@ -32,16 +33,14 @@ namespace BI.Services.Files
 
         private readonly IImageProcessor imageProcessor;
 
-        private readonly FileRepository fileRepository;
-
         public FileHandlerCommand(
             IFilesStorage filesStorage,
             IImageProcessor imageProcessor,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            AppFileUploadInfoRepository appFileUploadInfoRepository) : base(appFileUploadInfoRepository, fileRepository)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
-            this.fileRepository = fileRepository;
         }
 
 
@@ -275,11 +274,25 @@ namespace BI.Services.Files
         public async Task<OperationResult<Unit>> Handle(UpdateFileMetaDataCommand request, CancellationToken cancellationToken)
         {
             var file = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.FileId);
-            if(file is not null)
+            if (file is not null)
             {
                 file.MetaData = file.MetaData ?? new AppFileMetaData();
                 file.MetaData.SecondsDuration = request.SecondsDuration;
+
+                var imageFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.ImageFileId);
+                if (imageFile is not null) 
+                {
+                    file.MetaData.ImageFileId = file.MetaData.ImageFileId ?? imageFile.Id;
+                    file.MetaData.ImagePath = file.MetaData.ImagePath ?? imageFile.GetFromSmallPath;
+                }
+
                 await fileRepository.UpdateAsync(file);
+
+                if (file.MetaData.ImageFileId.HasValue)
+                {
+                    await MarkAsLinked(file.MetaData.ImageFileId.Value);
+                }
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 

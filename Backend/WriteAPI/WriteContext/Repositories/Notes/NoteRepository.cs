@@ -127,7 +127,7 @@ namespace WriteContext.Repositories.Notes
             notes.ForEach(note =>
             {
                 SetListIdIfNeed(contentLookUp[note.Id]);
-                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents.Count > 0));
+                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents?.Count > 0));
                 var content = baseContent.OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList();
                 note.Contents = content;
             });
