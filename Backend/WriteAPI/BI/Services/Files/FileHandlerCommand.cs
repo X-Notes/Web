@@ -46,7 +46,7 @@ namespace BI.Services.Files
 
         public async Task<AppFile> ProcessNotePhotos(Guid userId, byte[] bytes, string contentType, string fileName)
         {
-            var photoType = FileHelper.GetExtension(fileName);
+            var photoType = FileHelper.GetExtensionByMIME(contentType);
 
             using var ms = new MemoryStream(bytes);
             ms.Position = 0;
@@ -120,7 +120,7 @@ namespace BI.Services.Files
             var files = new List<AppFile>();
             foreach (var file in request.FileBytes)
             {
-                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, FileHelper.GetExtension(file.FileName));
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, FileHelper.GetExtensionByMIME(file.ContentType));
                 files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName));
             }
             return files;
@@ -131,7 +131,7 @@ namespace BI.Services.Files
             var files = new List<AppFile>();
             foreach (var file in request.FileBytes)
             {
-                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtension(file.FileName));
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtensionByMIME(file.ContentType));
                 files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Video, request.UserId, file.FileName));
             }
             return files;
@@ -142,7 +142,7 @@ namespace BI.Services.Files
             var files = new List<AppFile>();
             foreach (var audio in request.FileBytes)
             {
-                var blob = await filesStorage.SaveFile(request.UserId.ToString(), audio.Bytes, audio.ContentType, ContentTypesFile.Audios, FileHelper.GetExtension(audio.FileName));
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), audio.Bytes, audio.ContentType, ContentTypesFile.Audios, FileHelper.GetExtensionByMIME(audio.ContentType));
                 files.Add(new AppFile(blob.FilePath, audio.ContentType, audio.Bytes.Length,
                     FileTypeEnum.Audio, request.UserId, audio.FileName));
             }
@@ -159,31 +159,31 @@ namespace BI.Services.Files
 
                 if (request.AppFile.PathPhotoSmall != null)
                 {
-                    pathSmall = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoSmall, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtension(request.AppFile.Name));
+                    pathSmall = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoSmall, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtensionByMIME(request.AppFile.ContentType));
                 }
 
                 if(request.AppFile.PathPhotoMedium != null)
                 {
-                    pathMedium = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoMedium, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtension(request.AppFile.Name));
+                    pathMedium = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoMedium, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtensionByMIME(request.AppFile.ContentType));
                 }
 
                 if(request.AppFile.PathPhotoBig != null)
                 {
-                    pathBig = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoBig, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtension(request.AppFile.Name));
+                    pathBig = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathPhotoBig, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtensionByMIME(request.AppFile.ContentType));
                 }
 
                 return new AppFile(pathSmall, pathMedium, pathBig, request.AppFile, request.UserToId);
             }
             else
             {
-                var pathToCreatedFile = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathNonPhotoContent, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtension(request.AppFile.Name));
+                var pathToCreatedFile = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathNonPhotoContent, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtensionByMIME(request.AppFile.ContentType));
                 return new AppFile(pathToCreatedFile, request.AppFile, request.UserToId);
             }
         }
 
         public async Task<AppFile> Handle(SaveBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var photoType = FileHelper.GetExtension(request.FileBytes.FileName);
+            var photoType = FileHelper.GetExtensionByMIME(request.FileBytes.ContentType);
 
             using var ms = new MemoryStream(request.FileBytes.Bytes);
             ms.Position = 0;
@@ -223,7 +223,7 @@ namespace BI.Services.Files
 
         public async Task<AppFile> Handle(SaveUserPhotoCommand request, CancellationToken cancellationToken)
         {
-            var photoType = FileHelper.GetExtension(request.FileBytes.FileName);
+            var photoType = FileHelper.GetExtensionByMIME(request.FileBytes.ContentType);
 
             using var ms = new MemoryStream(request.FileBytes.Bytes);
             ms.Position = 0;
