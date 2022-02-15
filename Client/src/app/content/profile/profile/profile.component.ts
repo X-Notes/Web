@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, DoCheck } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -22,7 +22,6 @@ import {
   RemoveBackground,
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
@@ -39,7 +38,7 @@ import { ResetFolders } from '../../folders/state/folders-actions';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
+export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSizeENUM>;
 
@@ -83,22 +82,11 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     private snackbarTranslateHelper: SnackBarTranlateHelperService,
   ) {}
 
-  ngDoCheck(): void {
-    // console.log('profile');
-  }
-
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
 
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          this.store.dispatch(new LoadBackgrounds());
-          this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-        }
-      });
+    await this.store.dispatch(new LoadBackgrounds()).toPromise();
+    this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
 
     this.pService.newButtonSubject
       .pipe(takeUntil(this.destroy))

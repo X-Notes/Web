@@ -8,12 +8,9 @@ import {
   MissingTranslationHandlerParams,
 } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-// Auth
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
-import { AuthService } from './auth.service';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { UserAPIService } from './user-api.service';
 import { TokenInterceptorService } from './token-interceptor.service';
 import { ApiServiceLabels } from '../content/labels/api-labels.service';
@@ -31,6 +28,7 @@ import { ApiPhotosService } from '../content/notes/full-note/services/api-photos
 import { ApiDocumentsService } from '../content/notes/full-note/services/api-documents.service';
 import { ApiVideosService } from '../content/notes/full-note/services/api-videos.service';
 import { ApiTextService } from '../content/notes/full-note/services/api-text.service';
+import { AuthService } from './auth.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -46,6 +44,8 @@ export class MissingTranslationService implements MissingTranslationHandler {
   imports: [
     CommonModule,
     HttpClientModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -58,8 +58,6 @@ export class MissingTranslationService implements MissingTranslationHandler {
       },
       useDefaultLang: false,
     }),
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
   ],
   providers: [
     AuthService,

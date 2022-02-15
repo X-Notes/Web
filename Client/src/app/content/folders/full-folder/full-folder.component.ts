@@ -14,7 +14,6 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -120,28 +119,21 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.id = params.id;
-      this.store
-        .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.ffnService.destroy)) // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
-        .subscribe(async (x: boolean) => {
-          if (x) {
-            await this.loadFolder();
+      await this.loadFolder(); // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
 
-            if (this.folder) {
-              const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
-              await this.ffnService.initializeEntities(notes);
-            }
+      if (this.folder) {
+        const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+        const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
+        await this.ffnService.initializeEntities(notes);
+      }
 
-            this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
+      this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
 
-            await this.pService.waitPreloading();
-            this.pService.setSpinnerState(false);
-            this.loaded = true;
+      await this.pService.waitPreloading();
+      this.pService.setSpinnerState(false);
+      this.loaded = true;
 
-            this.loadSideBar();
-          }
-        });
+      this.loadSideBar();
     });
 
     this.initManageButtonSubscribe();

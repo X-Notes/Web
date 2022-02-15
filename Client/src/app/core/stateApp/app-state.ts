@@ -4,12 +4,9 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { AuthService } from '../auth.service';
 
 import {
   UpdateRoute,
-  SetToken,
-  TokenSetNoUpdate,
   LoadNotifications,
   ReadAllNotifications,
   ReadNotification,
@@ -21,8 +18,6 @@ import { AppNotification } from '../models/app-notification.model';
 
 interface AppState {
   routing: EntityType;
-  token: string;
-  tokenUpdated: boolean;
   notifications: AppNotification[];
   snackNotification: string;
 }
@@ -31,17 +26,13 @@ interface AppState {
   name: 'App',
   defaults: {
     routing: null,
-    token: null,
-    tokenUpdated: false,
     notifications: [],
     snackNotification: null,
   },
 })
 @Injectable()
 export class AppStore {
-  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
-    authService.init();
-  }
+  constructor(public notificationService: NotificationServiceAPI) {}
 
   @Selector()
   static getSnackBarNotification(state: AppState): string {
@@ -61,11 +52,6 @@ export class AppStore {
   }
 
   @Selector()
-  static appLoaded(state: AppState): boolean {
-    return state.tokenUpdated;
-  }
-
-  @Selector()
   static getReadNotificationsLength(state: AppState): number {
     const notifications = state.notifications.filter((notif) => notif.isRead);
     return notifications.length;
@@ -80,16 +66,6 @@ export class AppStore {
   @Selector()
   static getNotificationsCount(state: AppState): number {
     return state.notifications.filter((z) => z.isRead === false).length;
-  }
-
-  @Selector()
-  static getToken(state: AppState): string {
-    return state.token;
-  }
-
-  @Selector()
-  static isTokenUpdated(state: AppState): boolean {
-    return state.tokenUpdated;
   }
 
   @Selector()
@@ -327,18 +303,6 @@ export class AppStore {
   // eslint-disable-next-line class-methods-use-this
   async updateRoute({ patchState }: StateContext<AppState>, { type }: UpdateRoute) {
     patchState({ routing: type });
-  }
-
-  @Action(SetToken)
-  // eslint-disable-next-line class-methods-use-this
-  setToken({ patchState }: StateContext<AppState>, { token }: SetToken) {
-    patchState({ token, tokenUpdated: true });
-  }
-
-  @Action(TokenSetNoUpdate)
-  // eslint-disable-next-line class-methods-use-this
-  setNoUpdateToken({ patchState }: StateContext<AppState>) {
-    patchState({ token: null, tokenUpdated: false });
   }
 
   @Action(LoadNotifications)

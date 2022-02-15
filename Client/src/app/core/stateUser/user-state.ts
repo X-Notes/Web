@@ -11,7 +11,6 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
-import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,
   Logout,
@@ -34,7 +33,6 @@ import { maxProfilePhotoSize } from '../defaults/constraints';
 
 interface UserState {
   user: ShortUser;
-  isLogin: boolean;
   memory: number;
   personalizationSettings: PersonalizationSetting;
 }
@@ -42,8 +40,7 @@ interface UserState {
 @State<UserState>({
   name: 'User',
   defaults: {
-    user: null,
-    isLogin: false,
+    user: {} as ShortUser,
     memory: 0,
     personalizationSettings: null,
   },
@@ -85,11 +82,6 @@ export class UserStore {
   }
 
   @Selector()
-  static getStatus(state: UserState): boolean {
-    return state.isLogin;
-  }
-
-  @Selector()
   static getUser(state: UserState): ShortUser {
     return state.user;
   }
@@ -119,21 +111,20 @@ export class UserStore {
   }
 
   @Action(Login)
-  async login({ patchState, dispatch }: StateContext<UserState>, { token, user }: Login) {
+  async login({ patchState, dispatch }: StateContext<UserState>, { user }: Login) {
     let userdb = await this.api.getUser().toPromise();
-    if (userdb === null) {
+    if (!userdb) {
       userdb = await this.api.newUser(user).toPromise();
-      dispatch(new UpdateUserPhoto(user.photo));
+      const formData = await this.api.getImageFromGoogle(user.photo);
+      dispatch(new UpdateUserPhoto(formData));
     }
-    dispatch(new SetToken(token));
-    patchState({ user: userdb, isLogin: true });
+    patchState({ user: userdb });
   }
 
   @Action(Logout)
   // eslint-disable-next-line class-methods-use-this
-  logout({ patchState, dispatch }: StateContext<UserState>) {
-    dispatch(new TokenSetNoUpdate());
-    patchState({ user: null, isLogin: false });
+  logout({ patchState }: StateContext<UserState>) {
+    patchState({ user: {} as ShortUser });
   }
 
   @Action(ChangeTheme)

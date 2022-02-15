@@ -2,10 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -70,19 +68,15 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     this.routeSubscription = route.params.subscribe((params) => {
       this.noteId = params.noteId;
       this.folderId = params.folderId;
-
-      this.store
-        .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy)) // TODO REFACTOR
-        .subscribe(async (x: boolean) => {
-          if (x) {
-            await this.initNote();
-            this.store.dispatch(new LoadLabels());
-            this.destroy.next();
-            this.destroy.complete();
-          }
-        });
+      this.loadMainContent();
     });
+  }
+
+  async loadMainContent() {
+    await this.initNote();
+    this.store.dispatch(new LoadLabels());
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   async initNote() {

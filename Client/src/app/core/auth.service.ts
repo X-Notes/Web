@@ -1,92 +1,57 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Store } from '@ngxs/store';
-import { UserAPIService } from './user-api.service';
-import { User } from './models/user.model';
 import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
-import { UserStore } from './stateUser/user-state';
-import { SetToken } from './stateApp/app-action';
+import firebase from 'firebase/compat/app';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private afAuth: AngularFireAuth,
-    private router: Router,
-    private store: Store,
-    private api: UserAPIService,
+    private readonly afAuth: AngularFireAuth,
+    private readonly router: Router,
+    private readonly store: Store,
   ) {
-    this.afAuth.authState.subscribe(async (firebaseUser) => {
-      await this.configureAuthState(firebaseUser);
+    this.afAuth.onAuthStateChanged((user) => {
+      this.configureAuthState(user);
     });
   }
 
-  init = () => null;
-
-  authGoogle() {
-    return this.afAuth
-      .signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
-      .then((result) => {
-        console.log('result: ', result);
-      })
-      .catch((error) => {
-        window.alert(error);
-      });
-  }
-
-  authFacebook() {
-    return this.afAuth
-      .signInWithRedirect(new firebase.default.auth.FacebookAuthProvider())
-      .then((result) => {
-        console.log('result: ', result);
-      })
-      .catch((error) => {
-        window.alert(error);
-      });
+  async authGoogle() {
+    try {
+      this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    } catch (e) {
+      window.alert(e);
+    }
   }
 
   logout = async () => {
     await this.store.dispatch(new Logout()).toPromise();
     await this.afAuth.signOut();
-    await this.router.navigate(['/about']);
+    await this.router.navigate(['about']);
   };
 
-  private async configureAuthState(firebaseUser: firebase.default.User) {
-    if (firebaseUser) {
-      const token = await firebaseUser.getIdToken(true);
-      await this.api.verifyToken(token).toPromise();
-      this.store.dispatch(new SetToken(token));
-      const flag = this.store.selectSnapshot(UserStore.getStatus);
-      if (!flag) {
-        const user = this.getUser(firebaseUser);
-        try {
-          user.photo = await this.api.getImageFromGoogle(firebaseUser.photoURL);
-        } catch (e) {
-          console.log(e);
-        } finally {
-          await this.store.dispatch(new Login(token, user)).toPromise();
-          await this.store.dispatch(LoadPersonalization).toPromise();
-          this.router.navigate(['/notes']);
-        }
-      }
-      setInterval(async () => this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
+  async getToken(refresh = false) {
+    const user = await this.afAuth.currentUser;
+    return user?.getIdToken(refresh);
+  }
+
+  async redirectOnSuccessAuth() {
+    const { user } = await this.afAuth.getRedirectResult();
+    if (user) {
+      this.router.navigate(['notes']);
+    }
+  }
+
+  private async configureAuthState(user: firebase.User) {
+    if (user) {
+      await this.store
+        .dispatch(new Login({ name: user.displayName, photo: user.photoURL }))
+        .toPromise();
+      await this.store.dispatch(LoadPersonalization).toPromise();
+      console.log(1);
     } else {
       await this.logout();
     }
   }
-
-  private async updateToken(firebaseUser: firebase.default.User) {
-    const token = await firebaseUser.getIdToken(true);
-    await this.api.verifyToken(token).toPromise();
-    this.store.dispatch(new SetToken(token));
-  }
-
-  private getUser = (user: firebase.default.User) => {
-    const temp: User = {
-      name: user.displayName,
-      photo: null,
-    };
-    return temp;
-  };
 }

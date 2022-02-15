@@ -93,10 +93,11 @@ export class UserAPIService {
       );
   }
 
-  async getImageFromGoogle(imageUrl): Promise<FormData> {
-    const imageBlob = await this.httpClient.get(imageUrl, { responseType: 'blob' }).toPromise();
+  async getImageFromGoogle(imageUrl) {
     const form = new FormData();
-    form.append('Photo', imageBlob);
+    const res = await fetch(imageUrl);
+    const blob = await res.blob();
+    form.append('Photo', blob);
     return form;
   }
 

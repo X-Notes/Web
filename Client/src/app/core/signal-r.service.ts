@@ -12,6 +12,7 @@ import {
   UpdateNoteTitle,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
+import { AuthService } from './auth.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
@@ -22,7 +23,6 @@ import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-vid
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
-import { AppStore } from './stateApp/app-state';
 
 @Injectable({
   providedIn: 'root',
@@ -46,14 +46,18 @@ export class SignalRService {
 
   public setAsJoinedToFolder = new BehaviorSubject(null);
 
-  constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
+  constructor(
+    private readonly store: Store,
+    private readonly updaterEntitiesService: UpdaterEntitiesService,
+    private readonly auth: AuthService,
+  ) {}
 
   init() {
     this.startConnection();
   }
 
-  private startConnection = () => {
-    const token = this.store.selectSnapshot(AppStore.getToken);
+  private startConnection = async () => {
+    const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
       .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })

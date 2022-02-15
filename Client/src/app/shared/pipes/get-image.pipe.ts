@@ -10,6 +10,8 @@ export class GetImagePipe implements PipeTransform {
   transform = (url: string, prefix: string) => {
     if (environment.production) {
       return new Error('no implimented');
+    } else if (!url || !prefix) {
+      return undefined;
     }
     return `${environment.storage}/${prefix}/${url}`;
   };

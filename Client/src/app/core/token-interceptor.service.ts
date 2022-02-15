@@ -1,47 +1,39 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpResponse,
-  HttpErrorResponse,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
-import { AppStore } from './stateApp/app-state';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { from, Observable, throwError } from 'rxjs';
+import { mergeMap, retryWhen, switchMap, take } from 'rxjs/operators';
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
-  constructor(private store: Store) {}
+  constructor(private readonly auth: AuthService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.store.selectSnapshot(AppStore.getToken);
-    let request = req;
-    if (!request.url.includes('google') && !request.url.includes('blob.core')) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    return next.handle(request).pipe(
-      map((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
-          //  console.log('event--->>>', event);
-        }
-        return event;
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return from(this.auth.getToken()).pipe(
+      switchMap((token) => {
+        const headers = request.headers
+          .set('Authorization', 'Bearer ' + token)
+          .append('Content-Type', 'application/json');
+        const requestClone = request.clone({
+          headers,
+        });
+        return next.handle(requestClone);
       }),
-      catchError((error: HttpErrorResponse) => {
-        const data = {
-          reason: error && error.error && error.error.reason ? error.error.reason : '',
-          status: error.status,
-        };
-        console.log(data);
-        return throwError(error);
-      }),
+      retryWhen((errors: Observable<any>) =>
+        errors.pipe(
+          mergeMap((error, index) => {
+            if (error.status !== 401) {
+              return throwError(error);
+            }
+            if (index === 0) {
+              return this.auth.getToken(true);
+            }
+            this.auth.logout();
+            return throwError(error);
+          }),
+          take(2),
+        ),
+      ),
     );
   }
 }

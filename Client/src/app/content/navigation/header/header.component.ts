@@ -109,15 +109,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (folder) => this.routeChangeFullFolder(folder));
 
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          this.store.dispatch(LoadNotifications);
-          this.signalRService.init();
-        }
-      });
+    this.store.dispatch(LoadNotifications);
+    this.signalRService.init();
   }
 
   showUsers() {

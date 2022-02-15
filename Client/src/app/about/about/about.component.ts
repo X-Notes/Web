@@ -1,23 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { TypeAuthEnum } from '../models/type.auth.enum';
+import { Store } from '@ngxs/store';
+import { UserStore } from '../../core/stateUser/user-state';
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit {
   authType = TypeAuthEnum;
 
   constructor(private authService: AuthService, private router: Router, private store: Store) {}
 
-  login(typeAuth: TypeAuthEnum) {
-    const flag = this.store.selectSnapshot(AppStore.appLoaded);
-    if (!flag) {
+  ngOnInit(): void {
+    this.authService.redirectOnSuccessAuth();
+  }
+
+  async login(typeAuth: TypeAuthEnum) {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    if (!Object.keys(user).length) {
       switch (typeAuth) {
         case TypeAuthEnum.Google: {
           this.authService.authGoogle();
@@ -38,7 +42,7 @@ export class AboutComponent {
         }
       }
     } else {
-      this.router.navigate(['/notes']);
+      this.router.navigate(['notes']);
     }
   }
 
