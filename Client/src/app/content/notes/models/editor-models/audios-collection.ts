@@ -55,7 +55,7 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
 export class AudioModel extends BaseFile {
   audioPath: string;
 
-  pathToImage: string;
+  pathToImage?: string;
 
   secondsDuration?: number;
 
@@ -65,7 +65,7 @@ export class AudioModel extends BaseFile {
     fileId: string,
     authorId: string,
     uploadAt: Date,
-    pathToImage: string,
+    pathToImage?: string,
     secondsDuration?: number,
   ) {
     super(name, fileId, authorId, uploadAt);

@@ -27,8 +27,7 @@ import {
 })
 export class DocumentNoteComponent
   extends CollectionService<DocumentsCollection>
-  implements OnInit, ParentInteraction
-{
+  implements OnInit, ParentInteraction {
   @ViewChild('uploadRef') uploadRef: ElementRef;
 
   formats = TypeUploadFormats.documents;
@@ -52,6 +51,7 @@ export class DocumentNoteComponent
     if (this.content.items && this.content.items.length > 0) {
       return this.content.items[0];
     }
+    return null;
   }
 
   get isEmpty(): boolean {

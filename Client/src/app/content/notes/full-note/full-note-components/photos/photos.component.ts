@@ -29,8 +29,7 @@ import { ContentEditorPhotosCollectionService } from '../../content-editor-servi
 })
 export class PhotosComponent
   extends CollectionService<PhotosCollection>
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
-{
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -95,8 +94,7 @@ export class PhotosComponent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer =
-      this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
+    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
   uploadHandler = () => {

@@ -510,8 +510,9 @@ export class ContentEditorContentsService {
     for (const content of newContentsMapped) {
       const contentForCompare = oldContentsMapped.find((x) => x.id === content.id);
       if (contentForCompare) {
-        const [IsEqual, itemsToAdd, itemsToRemove] =
-          content.getIsEqualIdsToAddIdsToRemove(contentForCompare);
+        const [IsEqual, itemsToAdd, itemsToRemove] = content.getIsEqualIdsToAddIdsToRemove(
+          contentForCompare,
+        );
         if (!IsEqual) {
           result.push([content.id, itemsToAdd, itemsToRemove]);
         }

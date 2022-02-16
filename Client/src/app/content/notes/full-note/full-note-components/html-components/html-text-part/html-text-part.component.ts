@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  DoCheck,
   ElementRef,
   EventEmitter,
   Input,
@@ -36,8 +35,7 @@ import { HtmlBaseService } from '../html-base.service';
 })
 export class HtmlTextPartComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, DoCheck, ParentInteraction
-{
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -95,10 +93,6 @@ export class HtmlTextPartComponent
 
   get CurrentTextCotent() {
     return this.contentHtml?.nativeElement?.textContent;
-  }
-
-  ngDoCheck(): void {
-    // console.log('do check text');
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -175,9 +169,9 @@ export class HtmlTextPartComponent
     this.onFocus.emit(this);
   }
 
-  changeDetectionChecker(): void {
+  changeDetectionChecker = (): void => {
     console.log('Check text');
-  }
+  };
 
   setFocusToEnd() {
     this.textService.setFocusToEnd(this.contentHtml, this.content);

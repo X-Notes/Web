@@ -27,8 +27,7 @@ import { DotListService } from '../html-business-logic/dot-list.service';
 })
 export class HtmlDotListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
-{
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 

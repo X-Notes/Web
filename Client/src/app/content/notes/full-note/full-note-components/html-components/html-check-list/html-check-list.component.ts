@@ -27,8 +27,7 @@ import { CheckListService } from '../html-business-logic/check-list.service';
 })
 export class HtmlCheckListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
-{
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 

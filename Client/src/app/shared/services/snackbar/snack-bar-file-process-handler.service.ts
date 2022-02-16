@@ -30,26 +30,28 @@ export class SnackBarFileProcessHandlerService {
     operation: OperationDetailMini,
   ): Observable<FileProcessTracker<T>> =>
     obs.pipe(
-      map((event): FileProcessTracker<T> => {
-        switch (event.type) {
-          case HttpEventType.Sent: {
-            operation.status = event.type;
-            return new FileProcessTracker<T>();
+      map(
+        (event): FileProcessTracker<T> => {
+          switch (event.type) {
+            case HttpEventType.Sent: {
+              operation.status = event.type;
+              return new FileProcessTracker<T>();
+            }
+            case HttpEventType.UploadProgress: {
+              operation.status = event.type;
+              operation.procent = Math.round((90 * event.loaded) / event.total) ?? 0;
+              return new FileProcessTracker<T>();
+            }
+            case HttpEventType.Response: {
+              operation.status = event.type;
+              operation.procent = 100;
+              return new FileProcessTracker<T>(true, event.body);
+            }
+            default: {
+              return new FileProcessTracker<T>();
+            }
           }
-          case HttpEventType.UploadProgress: {
-            operation.status = event.type;
-            operation.procent = Math.round((90 * event.loaded) / event.total) ?? 0;
-            return new FileProcessTracker<T>();
-          }
-          case HttpEventType.Response: {
-            operation.status = event.type;
-            operation.procent = 100;
-            return new FileProcessTracker<T>(true, event.body);
-          }
-          default: {
-            return new FileProcessTracker<T>();
-          }
-        }
-      }),
+        },
+      ),
     );
 }
