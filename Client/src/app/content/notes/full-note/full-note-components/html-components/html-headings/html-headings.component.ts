@@ -27,8 +27,7 @@ import { HeadingService } from '../html-business-logic/heading.service';
 })
 export class HtmlHeadingsComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
-{
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 

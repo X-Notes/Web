@@ -7,7 +7,7 @@ import { NoteTypeENUM } from '../enums/note-types.enum';
 
 export interface IMurriEntityService<
   T extends Label | SmallNote | SmallFolder,
-  K extends NoteTypeENUM | FolderTypeENUM | boolean,
+  K extends NoteTypeENUM | FolderTypeENUM | boolean
 > {
   initializeEntities(notes: T[]): Promise<void>;
   murriInitialise(refElements: QueryList<ElementRef>, type: K): void;

@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Background } from 'src/app/core/models/background.model';
-import { OperationResult } from '../../shared/models/operation-result.model';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
+import { OperationResult } from '../../shared/models/operation-result.model';
+import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 import {
   LongTermOperation,
   OperationDetailMini,
