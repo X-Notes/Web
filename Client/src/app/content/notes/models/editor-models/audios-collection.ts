@@ -4,7 +4,6 @@ import { BaseCollection } from './base-collection';
 import { BaseFile } from './base-file';
 
 export class AudiosCollection extends BaseCollection<AudioModel> {
-
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
@@ -49,7 +48,6 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
   isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
     return this.name === content.name;
   }
-  
 }
 
 export class AudioModel extends BaseFile {
