@@ -28,7 +28,8 @@ import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 @Injectable()
 export class NotesService
   extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
+{
   labelsIds: Subscription;
 
   firstInitFlag = false;

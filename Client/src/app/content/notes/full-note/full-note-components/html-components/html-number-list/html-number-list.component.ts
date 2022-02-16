@@ -30,7 +30,8 @@ import { NumberListService } from '../html-business-logic/numberList.service';
 })
 export class HtmlNumberListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges
+{
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 

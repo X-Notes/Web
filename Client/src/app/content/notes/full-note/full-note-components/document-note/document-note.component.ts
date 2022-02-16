@@ -27,7 +27,8 @@ import {
 })
 export class DocumentNoteComponent
   extends CollectionService<DocumentsCollection>
-  implements OnInit, ParentInteraction {
+  implements OnInit, ParentInteraction
+{
   @ViewChild('uploadRef') uploadRef: ElementRef;
 
   formats = TypeUploadFormats.documents;

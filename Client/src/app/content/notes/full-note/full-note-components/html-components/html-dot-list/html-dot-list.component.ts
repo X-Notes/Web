@@ -27,7 +27,8 @@ import { DotListService } from '../html-business-logic/dot-list.service';
 })
 export class HtmlDotListComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
+{
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -40,8 +41,8 @@ export class HtmlDotListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlDotListComponent>();
 
   @Input()

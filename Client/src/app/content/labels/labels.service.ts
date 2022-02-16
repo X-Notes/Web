@@ -10,7 +10,8 @@ import { Label } from './models/label.model';
 @Injectable()
 export class LabelsService
   extends MurriEntityService<Label>
-  implements OnDestroy, IMurriEntityService<Label, boolean> {
+  implements OnDestroy, IMurriEntityService<Label, boolean>
+{
   destroy = new Subject<void>();
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

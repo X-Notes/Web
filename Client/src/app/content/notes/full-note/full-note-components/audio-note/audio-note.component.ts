@@ -24,7 +24,8 @@ import { ContentEditorAudiosCollectionService } from '../../content-editor-servi
 })
 export class AudioNoteComponent
   extends CollectionService<AudiosCollection>
-  implements ParentInteraction {
+  implements ParentInteraction
+{
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   formats = TypeUploadFormats.audios;
