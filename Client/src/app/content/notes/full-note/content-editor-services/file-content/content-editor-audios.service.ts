@@ -92,8 +92,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
 
     const audiosMapped = audios.map(
-      (x) =>
-        new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt, null, null),
+      (x) => new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
     );
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.items ?? [];
