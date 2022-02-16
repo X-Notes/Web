@@ -51,6 +51,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     );
   }
 
+  // eslint-disable-next-line consistent-return
   get volumeIcon(): string {
     if (this.state?.currentVolume === 0) {
       return 'volume_off';

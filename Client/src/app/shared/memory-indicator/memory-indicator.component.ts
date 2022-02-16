@@ -77,11 +77,13 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
       .subscribe((space) => (this.memory = Math.ceil(space)));
 
     this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
       .subscribe((user) => (this.billing = user.billingPlanId));
   }
 }

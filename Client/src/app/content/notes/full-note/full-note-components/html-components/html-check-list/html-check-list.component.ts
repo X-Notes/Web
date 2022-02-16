@@ -40,8 +40,8 @@ export class HtmlCheckListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
   onFocus = new EventEmitter<HtmlCheckListComponent>();
 
   @Input()
