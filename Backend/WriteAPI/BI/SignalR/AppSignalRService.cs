@@ -81,12 +81,21 @@ namespace BI.SignalR
             await signalRContext.Clients.User(receiverEmail).SendAsync("revokeNotePermissions", noteId);
         }
 
+        public async Task AddNoteToShared(Guid noteId, string receiverEmail)
+        {
+            await signalRContext.Clients.User(receiverEmail).SendAsync("addNoteToShared", noteId);
+        }
 
         // Folder permissions
 
         public async Task RevokePermissionUserFolder(Guid folderId, string receiverEmail)
         {
             await signalRContext.Clients.User(receiverEmail).SendAsync("revokeFolderPermissions", folderId);
+        }
+
+        public async Task AddFolderToShared(Guid folderId, string receiverEmail)
+        {
+            await signalRContext.Clients.User(receiverEmail).SendAsync("addFolderToShared", folderId);
         }
     }
 }

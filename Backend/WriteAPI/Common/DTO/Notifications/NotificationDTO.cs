@@ -15,6 +15,8 @@ namespace Common.DTO.Notifications
         public bool IsRead { set; get; }
         public string Message { set; get; }
 
+        public NotificationMetaDataInformation Information { set; get; }
+
         public DateTimeOffset Date { set; get; }
 
         public NotificationDTO(Notification notification)
@@ -23,7 +25,7 @@ namespace Common.DTO.Notifications
 
             this.IsSystemMessage = notification.IsSystemMessage;
             this.IsRead = notification.IsRead;
-            this.Message = notification.Message;
+            this.Information = notification.Information;
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;

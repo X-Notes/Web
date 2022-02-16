@@ -155,10 +155,18 @@ export class SignalRService {
       this.store.dispatch(new DeleteNotesPermanently([noteId], false));
     });
 
+    this.hubConnection.on('addNoteToShared', (noteId: string) => {
+      console.log(noteId);
+    });
+
     // Folder permissions
 
     this.hubConnection.on('revokeFolderPermissions', (folderId: string) => {
       this.store.dispatch(new DeleteFoldersPermanently([folderId], false));
+    });
+
+    this.hubConnection.on('addFolderToShared', (folderId: string) => {
+      console.log(folderId);
     });
   };
 }

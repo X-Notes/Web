@@ -8,11 +8,17 @@ namespace Common.DatabaseModels.Models.Users
     {
         public Guid? UserFromId { set; get; }
         public User UserFrom { set; get; }
+
         public Guid UserToId { set; get; }
         public User UserTo { set; get; }
+
         public bool IsSystemMessage { set; get; }
+
         public bool IsRead { set; get; }
-        public string Message { set; get; }
+
+        [Column(TypeName = "jsonb")]
+        public NotificationMetaDataInformation Information { set; get; }
+
         public DateTimeOffset Date { set; get; }
     }
 }
