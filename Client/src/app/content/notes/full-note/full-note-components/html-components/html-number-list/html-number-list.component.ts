@@ -44,7 +44,6 @@ export class HtmlNumberListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlNumberListComponent>();
@@ -108,7 +107,7 @@ export class HtmlNumberListComponent
   }
 
   setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeIdSG === NoteTextTypeENUM.Numberlist) {
+    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
       // eslint-disable-next-line id-blacklist
       this.content.number = this.prevContent.number + 1;
     } else {

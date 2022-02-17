@@ -24,6 +24,7 @@ export class ContentEditableService {
       range.selectNodeContents(el);
       range.setEnd(selRange.startContainer, selRange.startOffset);
       const atStart = range.toString().replace(/^\s+|\s+$/g, '') === '';
+      // eslint-disable-next-line no-empty
       if (atStart) {
       }
 

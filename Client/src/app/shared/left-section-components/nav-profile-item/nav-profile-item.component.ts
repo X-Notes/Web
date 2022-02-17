@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -14,15 +14,13 @@ import {
   templateUrl: './nav-profile-item.component.html',
   styleUrls: ['./nav-profile-item.component.scss'],
 })
-export class NavProfileItemComponent implements OnInit {
+export class NavProfileItemComponent {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
   public photoError = false;
 
   constructor(private router: Router, private pService: PersonalizationService) {}
-
-  ngOnInit(): void {}
 
   changeSource() {
     this.photoError = true;

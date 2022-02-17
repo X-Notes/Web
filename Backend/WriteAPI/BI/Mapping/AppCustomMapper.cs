@@ -41,7 +41,7 @@ namespace BI.Mapping
                     case TextNote tN:
                         {
                             var tNDTO = new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, 
-                                tN.Checked, tN.UpdatedAt);
+                                tN.Checked, tN.ListId, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }
@@ -55,7 +55,7 @@ namespace BI.Mapping
                         }
                     case AudiosCollectionNote playlistNote:
                         {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.CreatedAt)).ToList();
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
                             var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.Order, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(collectionDTO);
                             break;

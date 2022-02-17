@@ -1,3 +1,6 @@
-<div class="photo" *ngFor="let item of album.items">
-  <img alt="note image" [src]="item.photoFromSmall | getImage: item.authorId" />
+<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
+<div class="photos">
+  <div class="photo" *ngFor="let item of content.items">
+    <img alt="note image" [src]="item.photoFromSmall | getImage: item.authorId" />
+  </div>
 </div>

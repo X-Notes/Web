@@ -114,7 +114,7 @@ namespace BI.Services.History
         }
 
         private TextNoteDTO ConvertText(TextNoteSnapshot text) => 
-            new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt);
+            new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, 0, text.UpdatedAt);
 
         private PhotosCollectionNoteDTO ConvertPhotosCollection(PhotosCollectionNoteSnapshot photos, List<AppFile> files)
         {
@@ -137,7 +137,7 @@ namespace BI.Services.History
 
         private AudiosCollectionNoteDTO ConvertAudiosCollection(AudiosCollectionNoteSnapshot audios, List<AppFile> files)
         {
-            var fileDocuments = files.Where(x => audios.AudioFilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
+            var fileDocuments = files.Where(x => audios.AudioFilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.MetaData?.SecondsDuration, x.MetaData?.ImagePath, x.CreatedAt)).ToList();
             return new AudiosCollectionNoteDTO(Guid.Empty, audios.Order, audios.UpdatedAt, audios.Name, fileDocuments);
         }
     }

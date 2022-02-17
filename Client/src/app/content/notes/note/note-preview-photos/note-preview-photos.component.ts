@@ -8,5 +8,5 @@ import { PhotosCollection } from '../../models/editor-models/photos-collection';
 })
 export class NotePreviewPhotosComponent {
   @Input()
-  album: PhotosCollection;
+  content: PhotosCollection;
 }

@@ -13,10 +13,10 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-archive',

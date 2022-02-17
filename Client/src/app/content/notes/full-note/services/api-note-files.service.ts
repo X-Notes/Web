@@ -18,4 +18,23 @@ export class ApiNoteFilesService {
       { reportProgress: true, observe: 'events' },
     );
   }
+
+  uploadFilesToNoteNoProgressReport(data: FormData, noteId: string, fileType: FileNoteTypes) {
+    return this.httpClient.post<OperationResult<FileNote[]>>(
+      `${environment.writeAPI}/api/note/inner/files/upload/${noteId}/${fileType}`,
+      data,
+    );
+  }
+
+  updateFileMetaData(fileId: string, secondsDuration: number, imageFileId: string) {
+    const obj = {
+      fileId,
+      secondsDuration,
+      imageFileId,
+    };
+    return this.httpClient.patch<OperationResult<FileNote>>(
+      `${environment.writeAPI}/api/note/inner/files/metadata`,
+      obj,
+    );
+  }
 }

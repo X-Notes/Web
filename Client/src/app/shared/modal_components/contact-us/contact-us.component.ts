@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { shake } from '../../services/personalization.service';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import { ApiContactUsService } from './services/api-contact-us.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contact-us',

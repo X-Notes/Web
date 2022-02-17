@@ -19,7 +19,7 @@ export class AuthService {
 
   async authGoogle() {
     try {
-      this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      await this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
     } catch (e) {
       window.alert(e);
     }

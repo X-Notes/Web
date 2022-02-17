@@ -4,12 +4,14 @@ import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import * as mm from 'music-metadata-browser';
+import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { StreamAudioState } from './models/stream-audio-state.model';
 import { AudioEvents } from './models/enums/audio-events.enum';
 import { NoteStore } from './state/notes-state';
 import { AudioModel } from './models/editor-models/audios-collection';
+import { ApiNoteFilesService } from './full-note/services/api-note-files.service';
+import { FileNoteTypes } from './full-note/models/file-note-types.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +28,7 @@ export class AudioService {
   private state: StreamAudioState = {
     id: '',
     playing: false,
-    readableCurrentTime: '',
-    readableDuration: '',
-    duration: undefined,
+    readableCurrentTime: undefined,
     currentTime: undefined,
     canplay: false,
     error: false,
@@ -42,7 +42,7 @@ export class AudioService {
 
   private stateChange: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
 
-  constructor(private store: Store, private domSanitizer: DomSanitizer) {}
+  constructor(private store: Store, private apiNoteFilesService: ApiNoteFilesService) {}
 
   getState(): Observable<StreamAudioState> {
     return this.stateChange;
@@ -97,7 +97,7 @@ export class AudioService {
     this.audioObj.volume = volume;
   }
 
-  formatTime = (time: number, format: string = 'mm:ss') => {
+  formatTime = (time: number, format: string = 'mm:ss'): string => {
     const momentTime = time * 1000;
     return moment.utc(momentTime).format(format);
   };
@@ -106,28 +106,51 @@ export class AudioService {
     return `${environment.storage}/${this.store.selectSnapshot(NoteStore.authorId)}/${escape(url)}`;
   }
 
-  async getMetadata(audioPath): Promise<Record<string, SafeUrl>> {
-    const result = {
-      duration: '',
-      imageUrl: '' as SafeUrl,
-    };
+  async tryToUpdateMetaDataIfNeed(audio: AudioModel) {
+    if (audio.isNeedUpdateMetaData()) {
+      try {
+        const [file, duration] = await this.getMetadata(audio.audioPath);
+        const noteId = this.store.selectSnapshot(NoteStore.oneFull)?.id;
+        let fileId = null;
+        if (file && noteId) {
+          const formData = generateFormData(file);
+          const response = await this.apiNoteFilesService
+            .uploadFilesToNoteNoProgressReport(formData, noteId, FileNoteTypes.Photo)
+            .toPromise();
+          if (response?.data && response?.data[0]) {
+            fileId = response.data[0].id;
+          }
+        }
+        const resp = await this.apiNoteFilesService
+          .updateFileMetaData(audio.fileId, Math.floor(duration), fileId)
+          .toPromise();
+        if (resp.success && resp?.data?.metaData) {
+          // eslint-disable-next-line no-param-reassign
+          audio.secondsDuration = resp.data.metaData?.secondsDuration;
+          // eslint-disable-next-line no-param-reassign
+          audio.pathToImage = resp.data.metaData?.imagePath;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  private async getMetadata(audioPath): Promise<[Blob, number]> {
+    let imageBlob: Blob;
+
     const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath), {
       skipPostHeaders: true,
       includeChapters: false,
       duration: false,
     });
 
-    if (metadata && metadata.format && metadata.format.duration) {
-      result.duration = this.formatTime(metadata.format.duration);
-    }
-
     if (metadata && metadata.common && metadata.common && metadata.common.picture) {
       const arrayBufferView = new Uint8Array(metadata.common.picture[0].data.buffer);
-      const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
-      const url = URL.createObjectURL(blob);
-      result.imageUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
+      imageBlob = new Blob([arrayBufferView], { type: 'image/png' });
     }
-    return result;
+
+    return [imageBlob, metadata.format.duration];
   }
 
   private streamObservable(url, id) {
@@ -170,8 +193,6 @@ export class AudioService {
       case this.audioEvents.loadstart:
       case this.audioEvents.loadedmetadata:
       case this.audioEvents.canplay:
-        this.state.duration = this.audioObj.duration;
-        this.state.readableDuration = this.formatTime(this.state.duration);
         this.state.canplay = true;
         this.play();
         break;
@@ -213,9 +234,7 @@ export class AudioService {
     this.state = {
       id: '',
       playing: false,
-      readableCurrentTime: '',
-      readableDuration: '',
-      duration: undefined,
+      readableCurrentTime: undefined,
       currentTime: undefined,
       canplay: false,
       error: false,

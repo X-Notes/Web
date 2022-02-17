@@ -1,0 +1,38 @@
+@import 'variables';
+
+:host {
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+
+  .text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.dot {
+  display: flex;
+  width: 3px;
+  height: 3px;
+  border-radius: 100%;
+  margin: 0.5rem 0.5rem 0.5rem 0;
+}
+
+.number {
+  display: flex;
+  margin-right: 0.5rem;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+p {
+  @include text-overflow-webkit;
+}

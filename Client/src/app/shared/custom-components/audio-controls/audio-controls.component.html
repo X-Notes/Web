@@ -3,7 +3,7 @@
     <app-button-collection
       cdk-overlay-origin
       #origin="cdkOverlayOrigin"
-      [button]="'queue_music'"
+      button="queue_music"
       [tooltip]="'innerNote.audio.playlist' | translate"
       (clickEvent)="isOpen = !isOpen"
     ></app-button-collection>
@@ -34,15 +34,22 @@
       </div>
     </ng-template>
     <div class="preview">
-      <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
-      <div *ngIf="!metadataParsed.imageUrl" class="no-preview" [CustomTooltip]="audioName">
+      <img
+        *ngIf="audioService.currentFile?.pathToImage"
+        [src]="audioService.currentFile?.pathToImage | getImage: audioService.currentFile?.authorId"
+      />
+      <div
+        *ngIf="!audioService.currentFile?.pathToImage"
+        class="no-preview"
+        [CustomTooltip]="audioName"
+      >
         {{ audioName[0] }}
       </div>
     </div>
   </div>
   <div class="controls">
     <app-button-collection
-      [button]="'skip_previous'"
+      button="skip_previous"
       [tooltip]="'innerNote.audio.previos' | translate"
       [disabled]="isFirstPlaying"
       (clickEvent)="previous()"
@@ -50,7 +57,7 @@
 
     <app-button-collection
       *ngIf="!state?.playing"
-      [button]="'play_circle_outline'"
+      button="play_circle_outline"
       [tooltip]="'innerNote.audio.play' | translate"
       [disabled]="state?.error"
       (clickEvent)="play()"
@@ -58,13 +65,13 @@
 
     <app-button-collection
       *ngIf="state?.playing"
-      [button]="'pause'"
+      button="pause"
       [tooltip]="'innerNote.audio.pause' | translate"
       (clickEvent)="pause()"
     ></app-button-collection>
 
     <app-button-collection
-      [button]="'skip_next'"
+      button="skip_next"
       [tooltip]="'innerNote.audio.next' | translate"
       [disabled]="isLastPlaying"
       (clickEvent)="next()"
@@ -75,13 +82,15 @@
     <mat-slider
       class="slider"
       min="0"
-      [max]="state?.duration"
+      [max]="audioService.currentFile?.secondsDuration"
       step="1"
       [value]="state?.currentTime"
       (input)="onSliderChangeEnd($event)"
       [disabled]="state?.error || audioService.currentFile === undefined"
     ></mat-slider>
-    <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
+    <div class="time" *ngIf="audioService.currentFile?.secondsDuration">
+      {{ audioService.currentFile.secondsDuration | formatDateMoment: 1000 }}
+    </div>
   </div>
   <div class="controls">
     <div class="volume">
@@ -102,16 +111,16 @@
     </div>
 
     <app-button-collection
-      [button]="'repeat'"
+      button="repeat"
+      activeColor="#0887a7"
       [tooltip]="'innerNote.audio.loop' | translate"
       (clickEvent)="loop()"
       [isActive]="state?.loop"
-      [activeColor]="'#0887a7'"
     ></app-button-collection>
 
     <app-button-collection
       class="audio-cancel"
-      [button]="'close'"
+      button="close"
       [tooltip]="'innerNote.audio.close' | translate"
       (clickEvent)="audioService.resetCurrent()"
     ></app-button-collection>

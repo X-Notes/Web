@@ -5,7 +5,7 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
   providedIn: 'root',
 })
 export class SnackBarTranlateHelperService {
-  getNoAccessRightsTranslate(lname: LanguagesENUM): string {
+  getNoAccessRightsTranslate = (lname: LanguagesENUM): string => {
     switch (lname) {
       case LanguagesENUM.English: {
         return 'No permission to upload files to note ';
@@ -20,9 +20,10 @@ export class SnackBarTranlateHelperService {
         throw new Error('Inorrect type');
       }
     }
-  }
+  };
 
-  getNoEnoughMemoryTranslate(lname: LanguagesENUM): string {
+  getNoEnoughMemoryTranslate = (lname: LanguagesENUM): string => {
+    // TODO MOVE TO i18
     switch (lname) {
       case LanguagesENUM.English: {
         return 'Not enough memory to upload the file';
@@ -37,9 +38,10 @@ export class SnackBarTranlateHelperService {
         throw new Error('Inorrect type');
       }
     }
-  }
+  };
 
-  getFileTooLargeTranslate(lname: LanguagesENUM, sizeMB: string): string {
+  getFileTooLargeTranslate = (lname: LanguagesENUM, sizeMB: string): string => {
+    // TODO MOVE TO i18
     switch (lname) {
       case LanguagesENUM.English: {
         return `File size must not exceed ${sizeMB} MB `;
@@ -54,9 +56,10 @@ export class SnackBarTranlateHelperService {
         throw new Error('Inorrect type');
       }
     }
-  }
+  };
 
-  getFileNoSupportExtension(lname: LanguagesENUM): string {
+  getFileNoSupportExtension = (lname: LanguagesENUM): string => {
+    // TODO MOVE TO i18
     switch (lname) {
       case LanguagesENUM.English: {
         return `File of this format is not supported  `;
@@ -71,5 +74,5 @@ export class SnackBarTranlateHelperService {
         throw new Error('Inorrect type');
       }
     }
-  }
+  };
 }

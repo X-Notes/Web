@@ -1,0 +1,7 @@
+<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
+<div class="documents">
+  <app-note-preview-video
+    *ngFor="let item of content.items"
+    [url]="item.videoPath | getVideo: item.authorId"
+  ></app-note-preview-video>
+</div>

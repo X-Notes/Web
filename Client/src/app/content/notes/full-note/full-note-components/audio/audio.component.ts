@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SafeUrl } from '@angular/platform-browser';
 import { AudioService } from '../../../audio.service';
 import { StreamAudioState } from '../../../models/stream-audio-state.model';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -29,14 +28,12 @@ export class AudioComponent implements OnInit, OnDestroy {
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  noteId: string;
+
   destroy = new Subject();
 
   state: StreamAudioState;
-
-  metadataParsed: Record<string, SafeUrl> = {
-    duration: '',
-    imageUrl: '',
-  };
 
   constructor(
     public audioService: AudioService,
@@ -58,7 +55,8 @@ export class AudioComponent implements OnInit, OnDestroy {
           this.state = null;
         }
       });
-    this.metadataParsed = await this.audioService.getMetadata(this.audio.audioPath);
+
+    this.audioService.tryToUpdateMetaDataIfNeed(this.audio);
   }
 
   ngOnDestroy(): void {

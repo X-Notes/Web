@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { PreviewNote } from './models/preview-note.model';
-import { RelatedNote } from './models/related-note.model';
-import { OperationResult } from '../../shared/models/operation-result.model';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { PreviewNote } from './models/preview-note.model';
+import { RelatedNote } from './models/related-note.model';
+import { OperationResult } from '../../shared/models/operation-result.model';
 
 @Injectable()
 export class ApiRelatedNotesService {

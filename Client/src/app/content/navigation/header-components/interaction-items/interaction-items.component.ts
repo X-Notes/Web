@@ -122,12 +122,12 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
     this.pService.newButtonSubject.next(true);
   }
 
-  prMenuStyle(
+  prMenuStyle = (
     sortedType: SortedByENUM,
     prSettings: PersonalizationSetting,
     isFolder: boolean,
     isNote: boolean,
-  ) {
+  ) => {
     const effect = 'rgba(0,0,0,0.15)';
     if (isFolder) {
       return {
@@ -139,7 +139,8 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
         background: sortedType === prSettings.sortedNoteByTypeId ? effect : null,
       };
     }
-  }
+    return null;
+  };
 
   updatePrMenuHandler(sortedType: SortedByENUM) {
     const prSettings = this.store.selectSnapshot(UserStore.getPersonalizationSettings);

@@ -1,7 +1,5 @@
-export const generateFormData = (files: File[]): FormData => {
+export const generateFormData = (file: File | Blob, name = 'noteFiles'): FormData => {
   const data = new FormData();
-  for (const file of files) {
-    data.append('noteFiles', file);
-  }
+  data.append(name, file);
   return data;
 };

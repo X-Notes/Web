@@ -9,10 +9,17 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
     this.name = collection.name;
     this.items = items
       ? items.map(
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new AudioModel(z.name, z.audioPath, z.fileId, z.authorId, z.uploadAt),
+            new AudioModel(
+              z.name,
+              z.audioPath,
+              z.fileId,
+              z.authorId,
+              z.uploadAt,
+              z.pathToImage,
+              z.secondsDuration,
+            ),
         )
       : [];
   }
@@ -45,9 +52,27 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
 export class AudioModel extends BaseFile {
   audioPath: string;
 
-  constructor(name: string, audioPath: string, fileId: string, authorId: string, uploadAt: Date) {
+  pathToImage?: string;
+
+  secondsDuration?: number;
+
+  constructor(
+    name: string,
+    audioPath: string,
+    fileId: string,
+    authorId: string,
+    uploadAt: Date,
+    pathToImage?: string,
+    secondsDuration?: number,
+  ) {
     super(name, fileId, authorId, uploadAt);
     this.audioPath = audioPath;
+    this.secondsDuration = secondsDuration;
+    this.pathToImage = pathToImage;
+  }
+
+  isNeedUpdateMetaData(): boolean {
+    return !this.secondsDuration;
   }
 
   isEqual(content: AudioModel): boolean {

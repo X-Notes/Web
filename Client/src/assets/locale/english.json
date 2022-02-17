@@ -198,7 +198,8 @@
       "defaultPlayer": "Default player",
       "fullscreen": "Fullscreen",
       "miniPlayer": "Mini player",
-      "plsUpload": "Upload audio"
+      "plsUpload": "Upload audio",
+      "playing": "playing"
     },
     "video": {
       "plsUpload": "Upload video"

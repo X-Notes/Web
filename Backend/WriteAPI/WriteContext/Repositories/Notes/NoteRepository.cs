@@ -9,6 +9,7 @@ using Common.DTO.Personalization;
 using WriteContext.GenericRepositories;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 
 namespace WriteContext.Repositories.Notes
 {
@@ -120,12 +121,38 @@ namespace WriteContext.Repositories.Notes
                 .Include(z => (z as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents).AsSplitQuery().ToListAsync();
+                .Include(x => (x as DocumentsCollectionNote).Documents).AsSplitQuery().AsNoTracking().ToListAsync();
 
             var contentLookUp = contents.ToLookup(x => x.NoteId);
-            notes.ForEach(note => note.Contents = contentLookUp[note.Id].OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList());
+            notes.ForEach(note =>
+            {
+                SetListIdIfNeed(contentLookUp[note.Id]);
+                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents?.Count > 0));
+                var content = baseContent.OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList();
+                note.Contents = content;
+            });
 
             return notes;
+        }
+
+        private void SetListIdIfNeed(IEnumerable<BaseNoteContent> contents)
+        {
+            var listId = 1;
+            foreach(var content in contents.OrderBy(z => z.Order).ToList())
+            {
+                if(content.ContentTypeId == ContentTypeENUM.Text)
+                {
+                    var text = content as TextNote;
+                    if(text.NoteTextTypeId == NoteTextTypeENUM.Numberlist)
+                    {
+                        text.ListId = listId;
+                    }
+                    else
+                    {
+                        listId++;
+                    }
+                }
+            }
         }
 
         public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
@@ -155,6 +182,16 @@ namespace WriteContext.Repositories.Notes
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId)
+                .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
+        }
+
+        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Where(x => x.UserId == userId && x.Id != noteId)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
@@ -199,16 +236,6 @@ namespace WriteContext.Repositories.Notes
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
-
-        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
-        {
-            var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.Id != noteId)
-                .ToListAsync();
-
-            return await GetWithFilteredContent(notes, settings);
-        }
 
 
         // UPPER MENU FUNCTIONS

@@ -1,12 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-empty-collection-items-placeholder',
   templateUrl: './empty-collection-items-placeholder.component.html',
   styleUrls: ['./empty-collection-items-placeholder.component.scss'],
 })
-export class EmptyCollectionItemsPlaceholderComponent implements OnInit {
+export class EmptyCollectionItemsPlaceholderComponent {
   @Input() title: string;
-
-  ngOnInit(): void {}
 }

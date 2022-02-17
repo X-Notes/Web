@@ -199,7 +199,8 @@
         "defaultPlayer": "Звичайний екран",
         "fullscreen": "На весь екран",
         "miniPlayer": "Міни-плеєр",
-        "plsUpload": "Завантажте аудіозапис"
+        "plsUpload": "Завантажте аудіозапис",
+        "playing": "грає"
       },
       "video": {
         "plsUpload": "Завантажте відео"
