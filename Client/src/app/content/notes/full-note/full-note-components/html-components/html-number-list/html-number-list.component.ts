@@ -44,7 +44,6 @@ export class HtmlNumberListComponent
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
 
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<HtmlNumberListComponent>();

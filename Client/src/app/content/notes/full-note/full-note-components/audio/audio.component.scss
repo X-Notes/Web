@@ -68,8 +68,7 @@
         margin-bottom: 0.25rem;
 
         p {
-          overflow: hidden;
-          text-overflow: ellipsis;
+          @include text-overflow;
         }
       }
 

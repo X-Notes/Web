@@ -39,6 +39,7 @@
 
   .labels {
     display: flex;
+    margin-bottom: 0;
 
     .label {
       display: flex;
@@ -67,18 +68,20 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    font-size: 1.25rem;
+    font-size: 1.75rem;
     color: $text-color;
     overflow: hidden;
+    margin-top: 0.5rem;
 
     h4 {
       @include text-overflow-webkit;
+      font-weight: 500;
     }
 
     .not-named {
-      font-size: 1.25rem;
+      font-size: 1.75rem;
       color: #808080;
-      font-weight: 400;
+      font-weight: 500;
     }
   }
 
@@ -90,7 +93,7 @@
     .date {
       display: flex;
       color: #a1a1a1;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
     }
 
     .help-icons {
@@ -171,7 +174,6 @@
 
     .header {
       -webkit-line-clamp: 1;
-      font-size: 1.125rem;
     }
   }
 
