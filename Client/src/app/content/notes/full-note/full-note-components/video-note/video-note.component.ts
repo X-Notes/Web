@@ -28,7 +28,8 @@ import { ContentEditorVideosCollectionService } from '../../content-editor-servi
 })
 export class VideoNoteComponent
   extends CollectionService<VideosCollection>
-  implements ParentInteraction, AfterViewInit, OnDestroy {
+  implements ParentInteraction, AfterViewInit, OnDestroy
+{
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;

@@ -10,7 +10,7 @@ import { MurriEntityService } from './murri-entity.service';
 import { MurriService } from './murri.service';
 
 export class FeaturesEntitiesService<
-  Entity extends SmallNote | SmallFolder
+  Entity extends SmallNote | SmallFolder,
 > extends MurriEntityService<Entity> {
   constructor(public store: Store, murriService: MurriService) {
     super(murriService);

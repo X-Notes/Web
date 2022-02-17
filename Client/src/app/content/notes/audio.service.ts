@@ -114,11 +114,11 @@ export class AudioService {
         let fileId = null;
         if (file && noteId) {
           const formData = generateFormData(file);
-          const resp = await this.apiNoteFilesService
+          const response = await this.apiNoteFilesService
             .uploadFilesToNoteNoProgressReport(formData, noteId, FileNoteTypes.Photo)
             .toPromise();
-          if (resp?.data && resp?.data[0]) {
-            fileId = resp.data[0].id;
+          if (response?.data && response?.data[0]) {
+            fileId = response.data[0].id;
           }
         }
         const resp = await this.apiNoteFilesService

@@ -35,7 +35,8 @@ import { HtmlBaseService } from '../html-base.service';
 })
 export class HtmlTextPartComponent
   extends HtmlBaseService
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
+{
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
