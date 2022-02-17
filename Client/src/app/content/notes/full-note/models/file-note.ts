@@ -1,3 +1,5 @@
+import { FileNoteMetaData } from './file-note-metadata';
+
 export interface FileNote {
   id: string;
   pathPhotoSmall: string;
@@ -7,4 +9,5 @@ export interface FileNote {
   authorId: string;
   createdAt: Date;
   name: string;
+  metaData: FileNoteMetaData;
 }

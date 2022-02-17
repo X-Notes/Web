@@ -61,7 +61,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file]);
+      const formData = generateFormData(file);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Image,
@@ -130,6 +130,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     if (content.items.length === 1) {
       this.deleteHandler(content.id);
     } else {
+      // eslint-disable-next-line no-param-reassign
       content.items = content.items.filter((x) => x.fileId !== photoId);
     }
   }

@@ -24,6 +24,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
@@ -34,7 +35,6 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
-import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 
 @Component({

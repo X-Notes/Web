@@ -20,5 +20,9 @@ namespace WriteContext.Repositories.Files
             return await entities.Include(x => x.AppFileUploadInfo).Where(x => x.UserId == userId && x.AppFileUploadInfo.StatusId == AppFileUploadStatusEnum.Linked).SumAsync(x => x.Size);
         }
 
+        public Task<AppFile> GetFileWithAppFileUploadInfo(Guid fileId)
+        {
+            return entities.Include(x => x.AppFileUploadInfo).FirstOrDefaultAsync(x => x.Id == fileId);
+        }
     }
 }

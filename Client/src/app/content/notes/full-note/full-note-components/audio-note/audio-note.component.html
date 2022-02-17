@@ -21,6 +21,7 @@
       <app-audio
         *ngFor="let item of content.items;"
         [audio]="item"
+        [noteId]="noteId"
         [isReadOnlyMode]="isReadOnlyMode"
         (playEvent)="play($event)"
         (pauseEvent)="pause()"

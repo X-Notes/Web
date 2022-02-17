@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.Models.Files;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +21,13 @@ namespace Common.DTO.Files
 
         public string Name { set; get; }
 
+        public AppFileMetaData MetaData { set; get; }
+
         public Guid AuthorId { set; get; }
 
         public DateTimeOffset CreatedAt { set; get; }
 
-        public FileDTO(Guid id, string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, string pathNonPhotoContent, string name, Guid authorId, DateTimeOffset createdAt)
+        public FileDTO(Guid id, string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, string pathNonPhotoContent, string name, Guid authorId, AppFileMetaData metaData, DateTimeOffset createdAt)
         {
             Id = id;
             PathPhotoSmall = pathPhotoSmall;
@@ -34,6 +37,7 @@ namespace Common.DTO.Files
             AuthorId = authorId;
             CreatedAt = createdAt;
             Name = name;
+            MetaData = metaData;
         }
     }
 }

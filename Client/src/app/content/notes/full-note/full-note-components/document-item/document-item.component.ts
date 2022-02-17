@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { GenericFileExtenstionService } from '../../../generic-file-extenstion.service';
@@ -10,7 +10,7 @@ import { ClickableContentService } from '../../content-editor-services/clickable
   templateUrl: './document-item.component.html',
   styleUrls: ['../styles/inner-card.scss', './document-item.component.scss'],
 })
-export class DocumentItemComponent implements OnInit {
+export class DocumentItemComponent {
   @Output()
   clickEvent = new EventEmitter<string>();
 
@@ -38,8 +38,6 @@ export class DocumentItemComponent implements OnInit {
   get isClicked() {
     return this.clickableService.isClicked(this.document.fileId);
   }
-
-  ngOnInit(): void {}
 
   openModal(document: DocumentModel) {
     const path = this.exportService.getPath(document.documentPath, document.authorId);

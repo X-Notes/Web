@@ -63,12 +63,16 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var audios = await audioNoteAppFileRepository.GetWhereAsync(x => x.AudiosCollectionNoteId == request.ContentId);
+                var audios = await audioNoteAppFileRepository.GetAppFilesByContentId(request.ContentId);
 
                 if (audios.Any())
                 {
-                    var ids = audios.Select(x => x.AppFileId).ToArray();
-                    await MarkAsUnlinked(ids);
+                    var ids = audios.Select(x => x.Id).ToList();
+                    var imageFileIds = audios.Where(x => x.MetaData != null && x.MetaData.ImageFileId.HasValue).Select(x => x.MetaData.ImageFileId.Value);
+                    ids.AddRange(imageFileIds);
+                    ids = ids.Distinct().ToList();
+
+                    await MarkAsUnlinked(ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

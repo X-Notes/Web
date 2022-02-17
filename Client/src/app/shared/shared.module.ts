@@ -69,6 +69,7 @@ import { DropDirective } from '../content/profile/drop/drop.directive';
 import { ContactUsComponent } from './modal_components/contact-us/contact-us.component';
 import { AutosizeDirective } from './directives/autosize.directive';
 import { ApiContactUsService } from './modal_components/contact-us/services/api-contact-us.service';
+import { FormatDateMomentPipe } from './pipes/format-date-moment.pipe';
 import { NotePreviewTextHeadingComponent } from '../content/notes/note/note-preview-text/note-preview-text-heading/note-preview-text-heading.component';
 import { NotePreviewTextListComponent } from '../content/notes/note/note-preview-text/note-preview-text-list/note-preview-text-list.component';
 import { NotePreviewDocumentsComponent } from '../content/notes/note/note-preview-documents/note-preview-documents.component';
@@ -128,6 +129,7 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     DropDirective,
     ContactUsComponent,
     AutosizeDirective,
+    FormatDateMomentPipe,
     NotePreviewTextHeadingComponent,
     NotePreviewTextListComponent,
     NotePreviewDocumentsComponent,
@@ -214,6 +216,7 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     ButtonCollectionComponent,
     DropDirective,
     AutosizeDirective,
+    FormatDateMomentPipe,
     NotePreviewTextHeadingComponent,
     NotePreviewTextListComponent,
     NotePreviewDocumentsComponent,

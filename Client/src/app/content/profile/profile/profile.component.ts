@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, DoCheck } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -39,7 +39,7 @@ import { ResetFolders } from '../../folders/state/folders-actions';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
+export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSizeENUM>;
 
@@ -82,10 +82,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     private authService: AuthService,
     private snackbarTranslateHelper: SnackBarTranlateHelperService,
   ) {}
-
-  ngDoCheck(): void {
-    // console.log('profile');
-  }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();

@@ -188,6 +188,10 @@ namespace Storage
 
         public string PathFactory(ContentTypesFile type, string fileTypeEnd)
         {
+            if (string.IsNullOrEmpty(fileTypeEnd))
+            {
+                throw new Exception("Invalid file type end");
+            }
             return folders.GetValueOrDefault(type) + "/" + Guid.NewGuid() + "-" + Guid.NewGuid() + "-" + Guid.NewGuid() + fileTypeEnd;
         }
 

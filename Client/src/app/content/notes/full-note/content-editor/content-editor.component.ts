@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  DoCheck,
   ElementRef,
   Input,
   OnDestroy,
@@ -63,7 +62,7 @@ import { PhotosCollection } from '../../models/editor-models/photos-collection';
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService, WebSocketsNoteUpdaterService],
 })
-export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
+export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -135,10 +134,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     this.destroy.complete();
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
-  }
-
-  ngDoCheck(): void {
-    // console.log('do check');
   }
 
   ngOnInit(): void {
@@ -313,22 +308,22 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     }
   };
 
-  changeDetectionChecker() {
+  changeDetectionChecker = () => {
     console.log('Check contents');
-  }
+  };
 
   drop(event: CdkDragDrop<ContentModelBase[]>) {
     moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
     this.postAction();
   }
 
-  dragStarted(event: CdkDragStart) {
+  dragStarted = (event: CdkDragStart) => {
     console.log(event);
-  }
+  };
 
-  dragEnded(event: CdkDragEnd) {
+  dragEnded = (event: CdkDragEnd) => {
     console.log(event);
-  }
+  };
 
   postAction(): void {
     const native = this.elements?.last?.getEditableNative();

@@ -8,18 +8,13 @@ namespace Domain.Commands.Files
 {
     public class SavePhotosToNoteCommand : IRequest<List<AppFile>>
     {
-
         public List<FilesBytes> FilesBytes { set; get; }
-
-        public Guid NoteId { set; get; }
 
         public Guid UserId { set; get; }
 
-
-        public SavePhotosToNoteCommand(Guid userId, List<FilesBytes> photos, Guid noteId)
+        public SavePhotosToNoteCommand(Guid userId, List<FilesBytes> photos)
         {
             this.FilesBytes = photos;
-            this.NoteId = noteId;
             UserId = userId;
         }
 

@@ -12,14 +12,14 @@ export class BaseNoteFileContentApiService<
   constructor(protected httpClient: HttpClient, protected baseApi: string) {}
 
   removeItemsFromCollection(command: Y) {
-    return this.httpClient.post<OperationResult<any>>(this.baseApi + '/remove', command);
+    return this.httpClient.post<OperationResult<any>>(`${this.baseApi}/remove`, command);
   }
 
   addItemsToCollection(command: U) {
-    return this.httpClient.post<OperationResult<any>>(this.baseApi + '/add', command);
+    return this.httpClient.post<OperationResult<any>>(`${this.baseApi}/add`, command);
   }
 
   updateInfo(command: I) {
-    return this.httpClient.patch<OperationResult<any>>(this.baseApi + '/info', command);
+    return this.httpClient.patch<OperationResult<any>>(`${this.baseApi}/info`, command);
   }
 }

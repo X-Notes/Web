@@ -31,6 +31,7 @@ export class AuthService {
         console.log('result: ', result);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-alert
         window.alert(error);
       });
   }
@@ -42,6 +43,7 @@ export class AuthService {
         console.log('result: ', result);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-alert
         window.alert(error);
       });
   }

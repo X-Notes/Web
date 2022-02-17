@@ -221,6 +221,7 @@ export class AppStore {
   }
 
   @Selector()
+  // eslint-disable-next-line consistent-return
   static getTypeNote(state: AppState): NoteTypeENUM {
     switch (state.routing) {
       case EntityType.NotePrivate: {
@@ -245,6 +246,7 @@ export class AppStore {
   }
 
   @Selector()
+  // eslint-disable-next-line consistent-return
   static getTypeFolder(state: AppState): FolderTypeENUM {
     switch (state.routing) {
       case EntityType.FolderPrivate: {

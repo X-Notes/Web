@@ -12,7 +12,14 @@ export class VideosCollection extends BaseCollection<VideoModel> {
           // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new VideoModel(z.name, z.videoPath, z.fileId, z.authorId, z.uploadAt),
+            new VideoModel(
+              z.name,
+              z.videoPath,
+              z.fileId,
+              z.authorId,
+              z.uploadAt,
+              z.secondsDuration,
+            ),
         )
       : [];
   }
@@ -45,9 +52,23 @@ export class VideosCollection extends BaseCollection<VideoModel> {
 export class VideoModel extends BaseFile {
   videoPath: string;
 
-  constructor(name: string, videoPath: string, fileId: string, authorId: string, uploadAt: Date) {
+  secondsDuration?: number;
+
+  constructor(
+    name: string,
+    videoPath: string,
+    fileId: string,
+    authorId: string,
+    uploadAt: Date,
+    secondsDuration?: number,
+  ) {
     super(name, fileId, authorId, uploadAt);
     this.videoPath = videoPath;
+    this.secondsDuration = secondsDuration;
+  }
+
+  isNeedUpdateMetaData(): boolean {
+    return !this.secondsDuration;
   }
 
   isEqual(content: VideoModel): boolean {

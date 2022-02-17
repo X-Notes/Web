@@ -137,7 +137,7 @@ namespace BI.Services.History
 
         private AudiosCollectionNoteDTO ConvertAudiosCollection(AudiosCollectionNoteSnapshot audios, List<AppFile> files)
         {
-            var fileDocuments = files.Where(x => audios.AudioFilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
+            var fileDocuments = files.Where(x => audios.AudioFilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.MetaData?.SecondsDuration, x.MetaData?.ImagePath, x.CreatedAt)).ToList();
             return new AudiosCollectionNoteDTO(Guid.Empty, audios.Order, audios.UpdatedAt, audios.Name, fileDocuments);
         }
     }

@@ -24,9 +24,8 @@ namespace Common.DatabaseModels.Models.Files
         public FileTypeEnum FileTypeId { set; get; }
         public FileType FileType { set; get; }
 
-        public string TextFromPhoto { set; get; }
-
-        public string RecognizeObject { set; get; }
+        [Column(TypeName = "jsonb")]
+        public AppFileMetaData MetaData { set; get; }
 
         public Guid UserId { set; get; }
         public User User { get; set; }

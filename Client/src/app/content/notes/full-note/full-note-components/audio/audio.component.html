@@ -4,8 +4,8 @@
   [ngClass]="{'is-selected' : isClicked}"
 >
   <div class="preview" appTheme>
-    <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
-    <div *ngIf="!metadataParsed.imageUrl && audio.name" class="no-preview">{{ audio.name[0] }}</div>
+    <img *ngIf="audio.pathToImage" [src]="audio.pathToImage | getImage: audio.authorId" />
+    <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name }}</div>
     <div class="controls">
       <app-button-collection
         *ngIf="!state?.playing"
@@ -33,11 +33,8 @@
       </div>
       <div class="audio-time">
         <p>{{ state?.readableCurrentTime }}</p>
-        <span
-          *ngIf="state?.readableCurrentTime && (metadataParsed.duration || state?.readableDuration)"
-          >/</span
-        >
-        <p>{{ metadataParsed.duration || state?.readableDuration }}</p>
+        <span *ngIf="state?.readableCurrentTime && audio.secondsDuration">/</span>
+        <p>{{ audio.secondsDuration | formatDateMoment: 1000 }}</p>
       </div>
     </div>
     <app-button-collection

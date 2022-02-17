@@ -49,22 +49,22 @@ namespace BI.Services.Notes
                 {
                     case FileTypeEnum.Photo:
                         {
-                            dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                            dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes));
                             break;
                         }
                     case FileTypeEnum.Video:
                         {
-                            dbFiles = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                            dbFiles = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebytes));
                             break;
                         }
                     case FileTypeEnum.Document:
                         {
-                            dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                            dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebytes));
                             break;
                         }
                     case FileTypeEnum.Audio:
                         {
-                            dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                            dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes));
                             break;
                         }
                     default:

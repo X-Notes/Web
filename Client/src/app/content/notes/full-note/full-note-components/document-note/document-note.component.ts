@@ -52,6 +52,7 @@ export class DocumentNoteComponent
     if (this.content.items && this.content.items.length > 0) {
       return this.content.items[0];
     }
+    return null;
   }
 
   get isEmpty(): boolean {

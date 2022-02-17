@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
