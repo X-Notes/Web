@@ -109,20 +109,20 @@ export class AudioService {
   async tryToUpdateMetaDataIfNeed(audio: AudioModel) {
     if (audio.isNeedUpdateMetaData()) {
       try {
-        const result = await this.getMetadata(audio.audioPath);
+        const [file, duration] = await this.getMetadata(audio.audioPath);
         const noteId = this.store.selectSnapshot(NoteStore.oneFull)?.id;
         let fileId = null;
-        if (result[1] && noteId) {
-          const formData = generateFormData(result[1]);
-          const resp = await this.apiNoteFilesService
+        if (file && noteId) {
+          const formData = generateFormData(file);
+          const response = await this.apiNoteFilesService
             .uploadFilesToNoteNoProgressReport(formData, noteId, FileNoteTypes.Photo)
             .toPromise();
-          if (resp?.data && resp?.data[0]) {
-            fileId = resp.data[0].id;
+          if (response?.data && response?.data[0]) {
+            fileId = response.data[0].id;
           }
         }
         const resp = await this.apiNoteFilesService
-          .updateFileMetaData(audio.fileId, Math.floor(result[2]), fileId)
+          .updateFileMetaData(audio.fileId, Math.floor(duration), fileId)
           .toPromise();
         if (resp.success && resp?.data?.metaData) {
           // eslint-disable-next-line no-param-reassign
@@ -136,11 +136,8 @@ export class AudioService {
     }
   }
 
-  private async getMetadata(audioPath): Promise<[string, Blob, number]> {
-    const result = {
-      duration: '',
-      imageBlob: null as Blob,
-    };
+  private async getMetadata(audioPath): Promise<[Blob, number]> {
+    let imageBlob: Blob;
 
     const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath), {
       skipPostHeaders: true,
@@ -148,15 +145,12 @@ export class AudioService {
       duration: false,
     });
 
-    if (metadata && metadata.format && metadata.format.duration) {
-      result.duration = this.formatTime(metadata.format.duration);
-    }
-
     if (metadata && metadata.common && metadata.common && metadata.common.picture) {
       const arrayBufferView = new Uint8Array(metadata.common.picture[0].data.buffer);
-      result.imageBlob = new Blob([arrayBufferView], { type: 'image/png' });
+      imageBlob = new Blob([arrayBufferView], { type: 'image/png' });
     }
-    return [result.duration, result.imageBlob, metadata.format.duration];
+
+    return [imageBlob, metadata.format.duration];
   }
 
   private streamObservable(url, id) {

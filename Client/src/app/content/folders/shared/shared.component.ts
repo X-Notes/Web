@@ -15,10 +15,10 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
 import { UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shared',

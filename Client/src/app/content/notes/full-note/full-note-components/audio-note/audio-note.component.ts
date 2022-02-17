@@ -3,8 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { AudioService } from '../../../audio.service';
@@ -26,7 +24,8 @@ import { ContentEditorAudiosCollectionService } from '../../content-editor-servi
 })
 export class AudioNoteComponent
   extends CollectionService<AudiosCollection>
-  implements ParentInteraction, OnInit, OnDestroy {
+  implements ParentInteraction
+{
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   formats = TypeUploadFormats.audios;
@@ -52,10 +51,6 @@ export class AudioNoteComponent
   getHost() {
     return this.host;
   }
-
-  ngOnDestroy(): void {}
-
-  ngOnInit(): void {}
 
   clickAudioHandler(audioId: string) {
     this.clickableContentService.set(ClickableSelectableEntities.Audio, audioId, this.content.id);

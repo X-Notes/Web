@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../../models/small-note.model';
 import { NotesService } from '../../notes.service';
@@ -9,11 +9,9 @@ import { NotesService } from '../../notes.service';
   styleUrls: ['./left-section-content-notes-list.component.scss'],
   providers: [NotesService],
 })
-export class LeftSectionContentNotesListComponent implements OnInit {
+export class LeftSectionContentNotesListComponent {
   @Input()
   public notesLink: SmallNote[];
 
   constructor(public pService: PersonalizationService, public notesService: NotesService) {}
-
-  ngOnInit(): void {}
 }

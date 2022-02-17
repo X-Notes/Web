@@ -1,21 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
+import { GenericFileExtenstionService } from '../../../generic-file-extenstion.service';
 import { DocumentModel } from '../../../models/editor-models/documents-collection';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import {
-  docFormats,
-  excelFormats,
-  pdfFormats,
-  presentationFormats,
-} from '../../models/enums/type-upload-formats.enum';
 
 @Component({
   selector: 'app-document-item',
   templateUrl: './document-item.component.html',
   styleUrls: ['../styles/inner-card.scss', './document-item.component.scss'],
 })
-export class DocumentItemComponent implements OnInit {
+export class DocumentItemComponent {
   @Output()
   clickEvent = new EventEmitter<string>();
 
@@ -34,38 +29,15 @@ export class DocumentItemComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private clickableService: ClickableContentService,
-    private dialogsManageService: DialogsManageService,
-    private exportService: ExportService,
+    private readonly clickableService: ClickableContentService,
+    private readonly dialogsManageService: DialogsManageService,
+    private readonly exportService: ExportService,
+    public readonly genericFileExtenstionService: GenericFileExtenstionService,
   ) {}
 
   get isClicked() {
     return this.clickableService.isClicked(this.document.fileId);
   }
-
-  get documentIcon() {
-    const type = this.document.name?.split('.').pop().toLowerCase();
-
-    if (docFormats.some((format) => format === type)) {
-      return 'microsoftWord';
-    }
-
-    if (excelFormats.some((format) => format === type)) {
-      return 'microsoftExcel';
-    }
-
-    if (presentationFormats.some((format) => format === type)) {
-      return 'microsoftPowerpoint';
-    }
-
-    if (pdfFormats.some((format) => format === type)) {
-      return 'pdf';
-    }
-
-    return 'fileInner';
-  }
-
-  ngOnInit(): void {}
 
   openModal(document: DocumentModel) {
     const path = this.exportService.getPath(document.documentPath, document.authorId);

@@ -125,7 +125,7 @@ namespace BI.Services.History
 
         private VideosCollectionNoteDTO ConvertVideosCollection(VideosCollectionNoteSnapshot videos, List<AppFile> files)
         {
-            var fileVideos = files.Where(x => videos.VideoFilesIds.Contains(x.Id)).Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.MetaData?.SecondsDuration, x.CreatedAt)).ToList();
+            var fileVideos = files.Where(x => videos.VideoFilesIds.Contains(x.Id)).Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
             return new VideosCollectionNoteDTO(Guid.Empty, videos.Order, videos.UpdatedAt, videos.Name, fileVideos);
         }
 

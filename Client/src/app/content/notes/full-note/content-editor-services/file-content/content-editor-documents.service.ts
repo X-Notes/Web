@@ -111,6 +111,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     if (content.items.length === 1) {
       this.deleteHandler(content.id);
     } else {
+      // eslint-disable-next-line no-param-reassign
       content.items = content.items.filter((x) => x.fileId !== documentId);
     }
   }

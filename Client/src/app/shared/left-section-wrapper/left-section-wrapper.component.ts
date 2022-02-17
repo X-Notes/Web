@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PersonalizationService, sideBarCloseOpen } from '../services/personalization.service';
 
 @Component({
@@ -7,8 +7,6 @@ import { PersonalizationService, sideBarCloseOpen } from '../services/personaliz
   styleUrls: ['./left-section-wrapper.component.scss'],
   animations: [sideBarCloseOpen],
 })
-export class LeftSectionWrapperComponent implements OnInit {
+export class LeftSectionWrapperComponent {
   constructor(public pService: PersonalizationService) {}
-
-  ngOnInit(): void {}
 }

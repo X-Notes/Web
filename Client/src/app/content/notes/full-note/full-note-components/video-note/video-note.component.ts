@@ -5,7 +5,6 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
-  OnInit,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -29,7 +28,7 @@ import { ContentEditorVideosCollectionService } from '../../content-editor-servi
 })
 export class VideoNoteComponent
   extends CollectionService<VideosCollection>
-  implements ParentInteraction, AfterViewInit, OnInit, OnDestroy
+  implements ParentInteraction, AfterViewInit, OnDestroy
 {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
@@ -107,6 +106,7 @@ export class VideoNoteComponent
     if (this.video?.volume >= 0.5) {
       return 'volume_up';
     }
+    return null;
   }
 
   get visibleItemsCount() {
@@ -131,8 +131,6 @@ export class VideoNoteComponent
     }
     this.translate = width;
   };
-
-  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;

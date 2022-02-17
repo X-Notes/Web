@@ -4,13 +4,11 @@ import { BaseCollection } from './base-collection';
 import { BaseFile } from './base-file';
 
 export class AudiosCollection extends BaseCollection<AudioModel> {
-
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
     this.items = items
       ? items.map(
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           (z) =>
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             new AudioModel(
@@ -49,13 +47,12 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
   isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
     return this.name === content.name;
   }
-  
 }
 
 export class AudioModel extends BaseFile {
   audioPath: string;
 
-  pathToImage: string;
+  pathToImage?: string;
 
   secondsDuration?: number;
 
@@ -65,7 +62,7 @@ export class AudioModel extends BaseFile {
     fileId: string,
     authorId: string,
     uploadAt: Date,
-    pathToImage: string,
+    pathToImage?: string,
     secondsDuration?: number,
   ) {
     super(name, fileId, authorId, uploadAt);

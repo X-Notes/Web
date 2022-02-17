@@ -7,7 +7,7 @@ import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-colle
 export class BaseNoteFileContentApiService<
   Y extends BaseRemoveFromCollectionItemsCommand,
   U extends BaseAddToCollectionItemsCommand,
-  I extends BaseUpdateCollectionInfoCommand
+  I extends BaseUpdateCollectionInfoCommand,
 > {
   constructor(protected httpClient: HttpClient, protected baseApi: string) {}
 

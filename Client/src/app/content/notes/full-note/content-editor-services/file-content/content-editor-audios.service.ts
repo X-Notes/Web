@@ -92,8 +92,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
 
     const audiosMapped = audios.map(
-      (x) =>
-        new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt, null, null),
+      (x) => new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
     );
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.items ?? [];
@@ -110,6 +109,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     if (content.items.length === 1) {
       this.deleteHandler(content.id);
     } else {
+      // eslint-disable-next-line no-param-reassign
       content.items = content.items.filter((x) => x.fileId !== audioId);
     }
   }

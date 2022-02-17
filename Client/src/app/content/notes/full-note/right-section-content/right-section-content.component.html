@@ -3,16 +3,16 @@
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
-    <p>{{'innerNote.openNoteOrFile' | translate}}</p>
+    <p>{{'innerNote.openNoteOrFile' | translate }}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
   </div>
   <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
-    <ng-scrollbar class="history-records" [visibility]="'hover'" [appearance]="'compact'">
+    <ng-scrollbar class="history-records" visibility="hover" appearance="compact">
       <div class="content-inner-history">
         <app-history-record
+          *ngFor="let item of histories"
           [noteId]="note.id"
           [history]="item"
-          *ngFor="let item of histories"
         ></app-history-record></div
     ></ng-scrollbar>
     <app-no-results-illustration
@@ -23,7 +23,7 @@
       typeClass="type-notification"
     ></app-no-results-illustration>
   </div>
-  <ng-scrollbar class="scroll-helper small-notes" [visibility]="'hover'" [appearance]="'compact'">
+  <ng-scrollbar class="scroll-helper small-notes" visibility="hover" appearance="compact">
     <div class="content-inner-small">
       <div
         class="grid"
@@ -31,7 +31,7 @@
       >
         <div
           #relatedItem
-          id="{{item.id}}"
+          [id]="item.id"
           class="grid-item-small"
           *ngFor="let item of sideBarService.notes"
         >

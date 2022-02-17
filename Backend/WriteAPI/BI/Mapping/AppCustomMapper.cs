@@ -62,7 +62,7 @@ namespace BI.Mapping
                         }
                     case VideosCollectionNote videoNote:
                         {
-                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.MetaData?.SecondsDuration, item.CreatedAt)).ToList();
+                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.Order, videoNote.UpdatedAt, videoNote.Name, videosDTO);
                             resultList.Add(collectionDTO);
                             break;

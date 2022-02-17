@@ -138,6 +138,7 @@ export class FolderService
   ) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (this.getIsFirstInit(z)) {
+        // eslint-disable-next-line no-param-reassign
         isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(folderType, isDragEnabled);
         await this.setInitMurriFlagShowLayout();
