@@ -4,6 +4,10 @@ import { ChangeStateRelatedNote } from '../models/change-state-related-note.mode
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { RelatedNote } from '../../models/related-note.model';
 import { NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { Select } from '@ngxs/store';
+import { UserStore } from '../../../../core/stateUser/user-state';
+import { ThemeENUM } from '../../../../shared/enums/theme.enum';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',
@@ -16,6 +20,9 @@ export class RelatedNoteComponent {
   @Output() deleteNote = new EventEmitter<string>();
 
   @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();
+
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
 
   contentType = ContentTypeENUM;
 

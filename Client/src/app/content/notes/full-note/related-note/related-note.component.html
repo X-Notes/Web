@@ -24,36 +24,30 @@
     </div>
     <div class="title-section">
       <div class="left-border"></div>
-      <p class="title">{{note.title}}</p>
+      <p class="title">{{ note.title }}</p>
       <div class="placeholder">Title</div>
     </div>
     <div class="content-note">
-      <ng-container *ngFor="let content of note.contents">
-        <div class="content-wrapper" [ngSwitch]="content.typeId">
-          <ng-container *ngSwitchCase="contentType.Text">
-            <div *ngIf="content.noteTextTypeId === textType.Default" class="text">
-              <p>{{content.content}}</p>
-            </div>
-            <div *ngIf="content.noteTextTypeId === textType.Dotlist" class="dotlist">
-              <p>{{content.content}}</p>
-            </div>
-            <div *ngIf="content.noteTextTypeId === textType.Numberlist" class="numberList">
-              <p>{{content.content}}</p>
-            </div>
-            <div *ngIf="content.noteTextTypeId === textType.Checklist" class="checkList">
-              <p>{{content.content}}</p>
-            </div>
-            <div *ngIf="content.noteTextTypeId === textType.Heading" class="numberList">
-              <p>{{content.content}}</p>
-            </div>
-          </ng-container>
-          <div *ngSwitchCase="contentType.Photos" class="album">
-            <ng-container *ngFor="let item of content.photos">
-              <img [src]="item.photoFromSmall | getImage: item.authorId" />
-            </ng-container>
-          </div>
-          <div *ngSwitchDefault>Default</div>
-        </div>
+      <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">
+        <app-note-preview-text
+          *ngSwitchCase="contentType.Text"
+          [content]="content"
+          [activeTheme]="theme$ | async"
+        ></app-note-preview-text>
+        <app-note-preview-photos
+          *ngSwitchCase="contentType.Photos"
+          [content]="content"
+        ></app-note-preview-photos>
+        <app-note-preview-documents
+          *ngSwitchCase="contentType.Documents"
+          [content]="content"
+        ></app-note-preview-documents>
+        <app-note-preview-videos
+          *ngSwitchCase="contentType.Videos"
+          [content]="content"
+        ></app-note-preview-videos>
+        <app-note-preview-audios *ngSwitchCase="contentType.Audios" [content]="content">
+        </app-note-preview-audios>
       </ng-container>
     </div>
   </div>

@@ -141,121 +141,77 @@ export class AppStore {
 
   @Selector()
   static getName(state: AppState): string {
-    // TODO REFACTOR
     switch (state.routing) {
-      case EntityType.FolderPrivate: {
+      case EntityType.FolderPrivate:
+      case EntityType.FolderShared:
+      case EntityType.FolderDeleted:
+      case EntityType.FolderArchive:
         return 'folder';
-      }
-      case EntityType.FolderShared: {
-        return 'folder';
-      }
-      case EntityType.FolderDeleted: {
-        return 'folder';
-      }
-      case EntityType.FolderArchive: {
-        return 'folder';
-      }
-      case EntityType.FolderInner: {
+      case EntityType.FolderInner:
         return 'inner-folder';
-      }
-      case EntityType.FolderInnerNote: {
+      case EntityType.FolderInnerNote:
         return 'inner-note';
-      }
 
-      case EntityType.NotePrivate: {
+      case EntityType.NotePrivate:
+      case EntityType.NoteArchive:
+      case EntityType.NoteDeleted:
+      case EntityType.NoteShared:
         return 'note';
-      }
-      case EntityType.NoteArchive: {
-        return 'note';
-      }
-      case EntityType.NoteDeleted: {
-        return 'note';
-      }
-      case EntityType.NoteShared: {
-        return 'note';
-      }
-      case EntityType.NoteInner: {
+      case EntityType.NoteInner:
         return 'inner-note';
-      }
 
-      case EntityType.LabelPrivate: {
+      case EntityType.LabelPrivate:
+      case EntityType.LabelDeleted:
         return 'label';
-      }
-      case EntityType.LabelDeleted: {
-        return 'label';
-      }
 
-      case EntityType.Profile: {
+      case EntityType.Profile:
         return 'background';
-      }
 
-      default: {
+      default:
         throw new Error('error');
-      }
     }
   }
 
   @Selector()
   static getMenuSwitch(state: AppState): string {
-    // TODO REFACTOR
     switch (state.routing) {
       // FOLDERS
-      case EntityType.FolderPrivate: {
+      case EntityType.FolderPrivate:
+      case EntityType.FolderShared:
+      case EntityType.FolderArchive:
+      case EntityType.FolderDeleted:
         return 'items';
-      }
-      case EntityType.FolderShared: {
-        return 'items';
-      }
-      case EntityType.FolderArchive: {
-        return 'items';
-      }
-      case EntityType.FolderDeleted: {
-        return 'items';
-      }
-      case EntityType.FolderInner: {
+      case EntityType.FolderInner:
         return 'folder-inner';
-      }
-      case EntityType.FolderInnerNote: {
+      case EntityType.FolderInnerNote:
         return 'note-inner';
-      }
 
       // NOTES
-      case EntityType.NotePrivate: {
+      case EntityType.NotePrivate:
+      case EntityType.NoteShared:
+      case EntityType.NoteArchive:
+      case EntityType.NoteDeleted:
         return 'items';
-      }
-      case EntityType.NoteShared: {
-        return 'items';
-      }
-      case EntityType.NoteArchive: {
-        return 'items';
-      }
-      case EntityType.NoteDeleted: {
-        return 'items';
-      }
-      case EntityType.NoteInner: {
+
+      case EntityType.NoteInner:
         return 'note-inner';
-      }
 
       // LABELS
-      case EntityType.LabelPrivate: {
+      case EntityType.LabelPrivate:
         return 'label';
-      }
-      case EntityType.LabelDeleted: {
+
+      case EntityType.LabelDeleted:
         return 'label-delete';
-      }
 
       // PROFILE
-      case EntityType.Profile: {
+      case EntityType.Profile:
         return 'profile';
-      }
 
-      case EntityType.History: {
+      case EntityType.History:
         return 'history';
-      }
 
-      default: {
+      default:
         throw new Error('error');
-      }
     }
   }
 
@@ -324,19 +280,16 @@ export class AppStore {
   }
 
   @Action(UpdateRoute)
-  // eslint-disable-next-line class-methods-use-this
   async updateRoute({ patchState }: StateContext<AppState>, { type }: UpdateRoute) {
     patchState({ routing: type });
   }
 
   @Action(SetToken)
-  // eslint-disable-next-line class-methods-use-this
   setToken({ patchState }: StateContext<AppState>, { token }: SetToken) {
     patchState({ token, tokenUpdated: true });
   }
 
   @Action(TokenSetNoUpdate)
-  // eslint-disable-next-line class-methods-use-this
   setNoUpdateToken({ patchState }: StateContext<AppState>) {
     patchState({ token: null, tokenUpdated: false });
   }

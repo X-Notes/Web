@@ -46,15 +46,11 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 0.875rem 1.5rem 1.25rem 1.5rem;
+    padding: 0.75rem 1rem 1rem 1rem;
 
     .note-color {
       width: 22px;
       height: 22px;
-    }
-
-    .labels-section {
-      margin-bottom: 0.75rem;
     }
 
     .title-section {
@@ -91,27 +87,9 @@
     }
 
     .content-note {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-
-      .content-wrapper {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        margin: 0.25rem 0;
-
-        .album {
-          img {
-            max-height: 150px;
-            width: 100%;
-            border-radius: 4px;
-            object-fit: cover;
-          }
-        }
-      }
-
-      .text {
-        word-break: break-word;
-      }
     }
   }
 

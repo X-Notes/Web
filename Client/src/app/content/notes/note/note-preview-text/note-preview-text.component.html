@@ -1,1 +1,25 @@
-<p [innerHTML]="viewHtml"></p>
+<ng-container [ngSwitch]="content.noteTextTypeId">
+  <p *ngSwitchCase="textType.Default" [innerHTML]="viewHtml"></p>
+  <app-note-preview-text-heading
+    *ngSwitchCase="textType.Heading"
+    [html]="viewHtml"
+    [type]="content.headingTypeId"
+  ></app-note-preview-text-heading>
+  <app-note-preview-text-list
+    *ngSwitchCase="textType.Checklist"
+    [html]="viewHtml"
+    [contentBase]="content"
+    [activeTheme]="activeTheme"
+  ></app-note-preview-text-list>
+  <app-note-preview-text-list
+    *ngSwitchCase="textType.Numberlist"
+    [html]="viewHtml"
+    [contentBase]="content"
+  ></app-note-preview-text-list>
+  <app-note-preview-text-list
+    *ngSwitchCase="textType.Dotlist"
+    [html]="viewHtml"
+    [contentBase]="content"
+    [activeTheme]="activeTheme"
+  ></app-note-preview-text-list>
+</ng-container>

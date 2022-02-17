@@ -13,7 +13,7 @@
   [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
   [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
 >
-  <div class="labels">
+  <div class="labels" *ngIf="note.labels.length">
     <div
       class="label"
       *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
@@ -31,15 +31,25 @@
       <h4 class="not-named">{{ 'placeholder.noteSmall' | translate}}</h4>
     </ng-template>
   </div>
-  <ng-container *ngFor="let content of note.contents">
-    <ng-container [ngSwitch]="content.typeId">
-      <ng-container *ngSwitchCase="contentType.Text">
-        <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
-      </ng-container>
-      <ng-container *ngSwitchCase="contentType.Photos">
-        <app-note-preview-photos [album]="content"></app-note-preview-photos>
-      </ng-container>
-    </ng-container>
+  <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">
+    <app-note-preview-text
+      *ngSwitchCase="contentType.Text"
+      [content]="content"
+    ></app-note-preview-text>
+    <app-note-preview-photos
+      *ngSwitchCase="contentType.Photos"
+      [content]="content"
+    ></app-note-preview-photos>
+    <app-note-preview-documents
+      *ngSwitchCase="contentType.Documents"
+      [content]="content"
+    ></app-note-preview-documents>
+    <app-note-preview-videos
+      *ngSwitchCase="contentType.Videos"
+      [content]="content"
+    ></app-note-preview-videos>
+    <app-note-preview-audios *ngSwitchCase="contentType.Audios" [content]="content">
+    </app-note-preview-audios>
   </ng-container>
   <div class="footer">
     <div class="date">

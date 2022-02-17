@@ -1,0 +1,18 @@
+<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
+<div class="audios">
+  <div class="audio" *ngFor="let item of content.items">
+    <div class="preview">
+      <!-- <img *ngIf="item.imageUrl" [src]="item.imageUrl" /> -->
+      <div class="no-preview" *ngIf="item.name">{{ item.name[0] }}</div>
+    </div>
+    <div class="audio-body">
+      <div class="audio-name">
+        <p>{{ item.name | fileName }}</p>
+      </div>
+      <div class="audio-time">
+        <p>1</p>
+        <!--TODO need duration time -->
+      </div>
+    </div>
+  </div>
+</div>
