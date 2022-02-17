@@ -9,7 +9,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class GenericNoteService {
+export class GenericFileExtenstionService {
   documentIcon(name: string) {
     const type = name.split('.').pop().toLowerCase();
 

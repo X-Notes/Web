@@ -1,7 +1,10 @@
 <app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
 <div class="document" *ngFor="let item of content.items">
   <div class="icon">
-    <mat-icon [svgIcon]="genericNoteService.documentIcon(item.name)" [inline]="true"></mat-icon>
+    <mat-icon
+      [svgIcon]="genericFileExtenstionService.documentIcon(item.name)"
+      [inline]="true"
+    ></mat-icon>
   </div>
   <div class="document-title">
     <p>{{ item.name | fileName }}</p>

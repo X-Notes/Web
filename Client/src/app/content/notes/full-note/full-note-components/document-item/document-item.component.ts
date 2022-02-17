@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
-import { GenericNoteService } from '../../../generic-note.service';
+import { GenericFileExtenstionService } from '../../../generic-file-extenstion.service';
 import { DocumentModel } from '../../../models/editor-models/documents-collection';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 
@@ -32,7 +32,7 @@ export class DocumentItemComponent implements OnInit {
     private readonly clickableService: ClickableContentService,
     private readonly dialogsManageService: DialogsManageService,
     private readonly exportService: ExportService,
-    public readonly genericNoteService: GenericNoteService,
+    public readonly genericFileExtenstionService: GenericFileExtenstionService,
   ) {}
 
   get isClicked() {
