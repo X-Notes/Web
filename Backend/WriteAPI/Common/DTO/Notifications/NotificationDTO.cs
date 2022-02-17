@@ -13,7 +13,6 @@ namespace Common.DTO.Notifications
         public string UserFromPhotoPath { set; get; }
 
         public bool IsRead { set; get; }
-        public string Message { set; get; }
 
         public NotificationMetaDataInformation Information { set; get; }
 
