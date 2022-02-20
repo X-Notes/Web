@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { AudioService } from '../notes/audio.service';
 import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
-import { LoadUsedDiskSpace } from '../../core/stateUser/user-action';
+import { LoadPersonalization, LoadUsedDiskSpace } from '../../core/stateUser/user-action';
 
 @Component({
   selector: 'app-content',
@@ -16,8 +16,6 @@ import { LoadUsedDiskSpace } from '../../core/stateUser/user-action';
 })
 export class ContentComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
-
-  loadUsedDisk = new Subject<void>();
 
   newButtonActive = false;
 
@@ -48,9 +46,8 @@ export class ContentComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.loadUsedDisk.pipe(takeUntil(this.destroy)).subscribe(() => {
-      this.store.dispatch([LoadUsedDiskSpace]);
-    });
+    this.store.dispatch([LoadUsedDiskSpace]);
+    this.store.dispatch(LoadPersonalization);
 
     this.store
       .select(AppStore.isProfile)

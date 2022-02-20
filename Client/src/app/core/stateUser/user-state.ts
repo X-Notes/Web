@@ -24,6 +24,7 @@ import {
   LoadUsedDiskSpace,
   LoadPersonalization,
   UpdatePersonalization,
+  Auth,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
@@ -110,14 +111,18 @@ export class UserStore {
     return state.user.languageId;
   }
 
-  @Action(Login)
-  async login({ patchState, dispatch }: StateContext<UserState>, { user }: Login) {
+  @Action(Auth)
+  async auth({ patchState }: StateContext<UserState>, { user }: Auth) {
     let userdb = await this.api.getUser().toPromise();
     if (!userdb) {
       userdb = await this.api.newUser(user).toPromise();
-      const formData = await this.api.getImageFromGoogle(user.photo);
-      dispatch(new UpdateUserPhoto(formData));
     }
+    patchState({ user: userdb });
+  }
+
+  @Action(Login)
+  async login({ patchState }: StateContext<UserState>) {
+    const userdb = await this.api.getUser().toPromise();
     patchState({ user: userdb });
   }
 

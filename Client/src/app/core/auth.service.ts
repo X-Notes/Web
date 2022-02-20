@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Store } from '@ngxs/store';
-import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
+import { Auth, Login, Logout } from './stateUser/user-action';
 import firebase from 'firebase/compat/app';
 
 @Injectable()
@@ -39,17 +39,16 @@ export class AuthService {
   async redirectOnSuccessAuth() {
     const { user } = await this.afAuth.getRedirectResult();
     if (user) {
+      await this.store
+        .dispatch(new Auth({ name: user.displayName, photo: user.photoURL }))
+        .toPromise();
       this.router.navigate(['notes']);
     }
   }
 
   private async configureAuthState(user: firebase.User) {
     if (user) {
-      await this.store
-        .dispatch(new Login({ name: user.displayName, photo: user.photoURL }))
-        .toPromise();
-      await this.store.dispatch(LoadPersonalization).toPromise();
-      console.log(1);
+      await this.store.dispatch(Login).toPromise();
     } else {
       await this.logout();
     }

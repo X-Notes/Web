@@ -92,25 +92,4 @@ export class UserAPIService {
         (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
       );
   }
-
-  async getImageFromGoogle(imageUrl) {
-    const form = new FormData();
-    const res = await fetch(imageUrl);
-    const blob = await res.blob();
-    form.append('Photo', blob);
-    return form;
-  }
-
-  // TODO REMOVE IF NO NEED
-  // private async getBase64FromBlob(blob: Blob) {
-  //   return new Promise<string>((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       const dataUrl = reader.result as string;
-  //       const base64 = dataUrl.split(',')[1];
-  //       resolve(`data:image/jpeg;base64,${base64}`);
-  //     };
-  //     reader.readAsDataURL(blob);
-  //   });
-  // }
 }
