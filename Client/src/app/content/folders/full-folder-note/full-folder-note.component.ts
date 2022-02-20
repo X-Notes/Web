@@ -65,10 +65,10 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     private api: ApiServiceNotes,
     public pService: PersonalizationService,
   ) {
-    this.routeSubscription = route.params.subscribe((params) => {
+    this.routeSubscription = route.params.subscribe(async (params) => {
       this.noteId = params.noteId;
       this.folderId = params.folderId;
-      this.loadMainContent();
+      await this.loadMainContent();
     });
   }
 

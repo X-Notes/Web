@@ -46,11 +46,11 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private apiHistory: ApiNoteHistoryService,
   ) {
-    this.routeSubscription = route.params.subscribe((params) => {
+    this.routeSubscription = route.params.subscribe(async (params) => {
       this.noteId = params.id;
       this.snapshotId = params.snapshotId;
+      await this.loadContent();
     });
-    this.loadContent();
   }
 
   async loadContent() {
