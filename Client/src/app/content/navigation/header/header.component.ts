@@ -110,7 +110,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(async (folder) => this.routeChangeFullFolder(folder));
 
     this.store.dispatch(LoadNotifications);
-    this.signalRService.init();
+    this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service. 
   }
 
   showUsers() {
