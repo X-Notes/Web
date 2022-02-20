@@ -22,6 +22,7 @@ export class AboutComponent implements OnInit {
   async login(typeAuth: TypeAuthEnum) {
     const user = this.store.selectSnapshot(UserStore.getUser);
     if (!Object.keys(user).length) {
+      // don`t user !user because object user always exist like object.
       switch (typeAuth) {
         case TypeAuthEnum.Google: {
           this.authService.authGoogle();
