@@ -82,7 +82,7 @@ export class HtmlNumberListComponent
   }
 
   ngOnChanges(): void {
-    this.setNumber();
+    this.content.setListNumber(this.prevContent);
   }
 
   ngAfterViewInit(): void {
@@ -104,14 +104,6 @@ export class HtmlNumberListComponent
   ngOnInit(): void {
     this.initBaseHTML();
     this.numberService.transformTo = this.transformTo;
-  }
-
-  setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
-      this.content.listNumber = this.prevContent.listNumber + 1;
-    } else {
-      this.content.listNumber = 1;
-    }
   }
 
   isFocusToNext = () => true;

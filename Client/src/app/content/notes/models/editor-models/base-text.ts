@@ -22,6 +22,12 @@ export class BaseText extends ContentModelBase {
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
     this.listId = text.listId;
+    this.listNumber = text.listNumber;
+  }
+
+  get isNumberedList(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return this.noteTextTypeId === NoteTextTypeENUM.Numberlist;
   }
 
   set contentSG(contents: TextBlock[]) {
@@ -109,6 +115,15 @@ export class BaseText extends ContentModelBase {
 
   isHaveText(): boolean {
     return this.contents?.some((z) => z.text.length > 0);
+  }
+
+  setListNumber(prevContent: BaseText) {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (prevContent && prevContent.isNumberedList) {
+      this.listNumber = prevContent.listNumber + 1;
+    } else {
+      this.listNumber = 1;
+    }
   }
 
   private updateDate() {
