@@ -141,7 +141,7 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
-                    Message = "notification.ChangeUserPermissionFolder",
+                    TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
                     Date = DateTimeProvider.Time
                 };
 
@@ -180,7 +180,7 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
-                    Message = "notification.ChangeUserPermissionNote",
+                    TranslateKeyMessage = "notification.ChangeUserPermissionNote",
                     Date = DateTimeProvider.Time
                 };
 
@@ -213,7 +213,7 @@ namespace BI.Services.Sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromFolder",
+                        TranslateKeyMessage = "notification.RemoveUserFromFolder",
                         Date = DateTimeProvider.Time
                     };
 
@@ -250,7 +250,7 @@ namespace BI.Services.Sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromNote",
+                        TranslateKeyMessage = "notification.RemoveUserFromNote",
                         Date = DateTimeProvider.Time
                     };
 
@@ -289,7 +289,8 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToFolder | message: {request.Message}",
+                    TranslateKeyMessage = $"notification.SentInvitesToFolder",
+                    AdditionalMessage = request.Message,
                     Date = DateTimeProvider.Time
                 });
 
@@ -325,7 +326,8 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToNote | message: {request.Message}",
+                    TranslateKeyMessage = $"notification.SentInvitesToNote",
+                    AdditionalMessage = request.Message,
                     Date = DateTimeProvider.Time
                 });
 

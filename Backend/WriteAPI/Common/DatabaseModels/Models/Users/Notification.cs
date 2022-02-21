@@ -16,8 +16,9 @@ namespace Common.DatabaseModels.Models.Users
 
         public bool IsRead { set; get; }
 
-        [Column(TypeName = "jsonb")]
-        public NotificationMetaDataInformation Information { set; get; }
+        public string TranslateKeyMessage { set; get; }
+
+        public string AdditionalMessage { set; get; }
 
         public DateTimeOffset Date { set; get; }
     }

@@ -5,6 +5,7 @@ export interface AppNotification {
   userFromPhotoPath: string;
   isSystemMessage: boolean;
   isRead: boolean;
-  message: string;
+  translateKeyMessage: string;
+  additionalMessage: string;
   date: Date;
 }
