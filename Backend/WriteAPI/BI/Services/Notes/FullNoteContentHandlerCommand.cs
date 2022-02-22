@@ -29,7 +29,6 @@ namespace BI.Services.Notes
 
         private readonly HistoryCacheService historyCacheService;
 
-
         private readonly AppSignalRService appSignalRService;
 
         private readonly TextNotesRepository textNotesRepository;
@@ -44,6 +43,8 @@ namespace BI.Services.Notes
 
         private readonly IMediator _mediator;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
         public FullNoteContentHandlerCommand(
             BaseNoteContentRepository baseNoteContentRepository,
             HistoryCacheService historyCacheService,
@@ -53,7 +54,8 @@ namespace BI.Services.Notes
             VideosCollectionNoteRepository videosCollectionNoteRepository,
             AudiosCollectionNoteRepository audiosCollectionNoteRepository,
             DocumentsCollectionNoteRepository documentsCollectionNoteRepository,
-            IMediator _mediator)
+            IMediator _mediator,
+            CollectionLinkedService collectionLinkedService)
         {
 
             this.historyCacheService = historyCacheService;
@@ -65,6 +67,7 @@ namespace BI.Services.Notes
             this.documentsCollectionNoteRepository = documentsCollectionNoteRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this._mediator = _mediator;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
 
@@ -92,12 +95,7 @@ namespace BI.Services.Notes
                     var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
                     var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
 
-                    var groups = contentsToDelete.GroupBy(x => x.ContentTypeId);
-
-                    await UnlinkFileItems(groups, ContentTypeENUM.PhotosCollection, note.Id, request.Email, unlinkedItemIds);
-                    await UnlinkFileItems(groups, ContentTypeENUM.AudiosCollection, note.Id, request.Email, unlinkedItemIds);
-                    await UnlinkFileItems(groups, ContentTypeENUM.DocumentsCollection, note.Id, request.Email, unlinkedItemIds);
-                    await UnlinkFileItems(groups, ContentTypeENUM.VideosCollection, note.Id, request.Email, unlinkedItemIds);
+                    unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, note.Id, request.Email);
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     unlinkedItemIds.AddRange(textIds);
@@ -228,24 +226,6 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<Unit>(false, Unit.Value);
-        }
-
-        private async Task UnlinkFileItems(IEnumerable<IGrouping<ContentTypeENUM, BaseNoteContent>> groups, ContentTypeENUM type, Guid noteId, string email, List<Guid> deletedItemIds)
-        {
-            var group = groups.FirstOrDefault(x => x.Key == type);
-            if (group != null)
-            {
-                var ids = group.Select(x => x.Id).ToList();
-                var command = type switch
-                {
-                    ContentTypeENUM.AudiosCollection => await _mediator.Send(new UnlinkAudiosCollectionsCommand(noteId, ids, email)),
-                    ContentTypeENUM.PhotosCollection => await _mediator.Send(new UnlinkPhotosCollectionsCommand(noteId, ids, email)),
-                    ContentTypeENUM.VideosCollection => await _mediator.Send(new UnlinkVideosCollectionsCommand(noteId, ids, email)),
-                    ContentTypeENUM.DocumentsCollection => await _mediator.Send(new UnlinkDocumentsCollectionsCommand(noteId, ids, email)),
-                    _ => throw new Exception("Incorrect type")
-                };
-                deletedItemIds.AddRange(ids);
-            }
         }
 
         private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)

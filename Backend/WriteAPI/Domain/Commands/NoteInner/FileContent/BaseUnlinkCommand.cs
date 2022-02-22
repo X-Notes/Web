@@ -14,6 +14,8 @@ namespace Domain.Commands.NoteInner.FileContent
         [ValidationGuid]
         public List<Guid> ContentIds { set; get; }
 
+        public bool IsCheckPermissions { set; get; } = true;
+
         public BaseUnlinkCommand(Guid noteId, List<Guid> contentIds, string email)
         {
             this.NoteId = noteId;

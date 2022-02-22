@@ -350,7 +350,8 @@ export class NoteStore {
   ) {
 
     if (isCallApi) {
-      await this.api.deleteNotes(selectedIds).toPromise();
+      const resp = await this.api.deleteNotes(selectedIds).toPromise();
+      if(!resp.success){ return; }
     }
     
     for (const { notes, typeNotes } of getState().notes) {

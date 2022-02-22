@@ -3,7 +3,11 @@ import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ChangeColorFolder, DeleteFoldersPermanently, UpdateFolderTitle } from '../content/folders/state/folders-actions';
+import {
+  ChangeColorFolder,
+  DeleteFoldersPermanently,
+  UpdateFolderTitle,
+} from '../content/folders/state/folders-actions';
 import {
   AddLabelOnNote,
   ChangeColorNote,
@@ -46,6 +50,10 @@ export class SignalRService {
   public setAsJoinedToNote = new BehaviorSubject(null);
 
   public setAsJoinedToFolder = new BehaviorSubject(null);
+
+  public addNoteToSharedEvent = new BehaviorSubject<string>(null);
+
+  public addFolderToSharedEvent = new BehaviorSubject<string>(null);
 
   constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
 
@@ -156,7 +164,7 @@ export class SignalRService {
     });
 
     this.hubConnection.on('addNoteToShared', (noteId: string) => {
-      console.log(noteId);
+      this.addNoteToSharedEvent.next(noteId);
     });
 
     // Folder permissions
@@ -166,7 +174,7 @@ export class SignalRService {
     });
 
     this.hubConnection.on('addFolderToShared', (folderId: string) => {
-      console.log(folderId);
+      this.addFolderToSharedEvent.next(folderId);
     });
   };
 }
