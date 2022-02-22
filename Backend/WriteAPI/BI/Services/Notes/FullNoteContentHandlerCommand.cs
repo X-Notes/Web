@@ -235,18 +235,16 @@ namespace BI.Services.Notes
             var group = groups.FirstOrDefault(x => x.Key == type);
             if (group != null)
             {
-                foreach (var collection in group)
+                var ids = group.Select(x => x.Id).ToList();
+                var command = type switch
                 {
-                    var command = type switch
-                    {
-                        ContentTypeENUM.AudiosCollection =>     await _mediator.Send(new UnlinkAudiosCollectionCommand(noteId, collection.Id, email)),
-                        ContentTypeENUM.PhotosCollection =>     await _mediator.Send(new UnlinkPhotosCollectionCommand(noteId, collection.Id, email)),
-                        ContentTypeENUM.VideosCollection =>     await _mediator.Send(new UnlinkVideosCollectionCommand(noteId, collection.Id, email)),
-                        ContentTypeENUM.DocumentsCollection =>  await _mediator.Send(new UnlinkDocumentsCollectionCommand(noteId, collection.Id, email)),
-                        _ => throw new Exception("Incorrect type")
-                    };
-                    deletedItemIds.Add(collection.Id);
-                }
+                    ContentTypeENUM.AudiosCollection => await _mediator.Send(new UnlinkAudiosCollectionsCommand(noteId, ids, email)),
+                    ContentTypeENUM.PhotosCollection => await _mediator.Send(new UnlinkPhotosCollectionsCommand(noteId, ids, email)),
+                    ContentTypeENUM.VideosCollection => await _mediator.Send(new UnlinkVideosCollectionsCommand(noteId, ids, email)),
+                    ContentTypeENUM.DocumentsCollection => await _mediator.Send(new UnlinkDocumentsCollectionsCommand(noteId, ids, email)),
+                    _ => throw new Exception("Incorrect type")
+                };
+                deletedItemIds.AddRange(ids);
             }
         }
 

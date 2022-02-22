@@ -146,7 +146,10 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/delete/permanently`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/delete/permanently`,
+      obj,
+    );
   }
 
   archive(ids: string[]) {
