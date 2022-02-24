@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-shared',
@@ -40,6 +41,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     public pService: PersonalizationService,
     private store: Store,
     public noteService: NotesService,
+    private signalRService: SignalRService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -68,6 +70,14 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+
+    this.signalRService.addNoteToSharedEvent
+      .pipe(takeUntil(this.noteService.destroy))
+      .subscribe((noteId) => {
+        if (noteId) {
+          this.noteService.loadNoteAndAddToDom([noteId]);
+        }
+      });
   }
 
   ngOnDestroy(): void {

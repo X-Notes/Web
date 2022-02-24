@@ -148,8 +148,6 @@ namespace BI.Services.Sharing
                 await notificationRepository.AddAsync(notification);
 
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-
-                await appSignalRHub.AddFolderToShared(request.FolderId, receiver.Email);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -186,9 +184,7 @@ namespace BI.Services.Sharing
 
                 await notificationRepository.AddAsync(notification);
 
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-
-                await appSignalRHub.AddNoteToShared(request.NoteId, receiver.Email);
+                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);        
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -299,6 +295,7 @@ namespace BI.Services.Sharing
                 foreach (var notification in notifications)
                 {
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
+                    await appSignalRHub.AddFolderToShared(request.FolderId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
@@ -336,6 +333,7 @@ namespace BI.Services.Sharing
                 foreach (var notification in notifications)
                 {
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
+                    await appSignalRHub.AddNoteToShared(request.NoteId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }

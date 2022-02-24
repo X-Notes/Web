@@ -254,4 +254,12 @@ export class NotesService
       await this.murriService.setOpacityFlagAsync(0);
     }
   }
+
+  async loadNoteAndAddToDom(noteId: string[]) {
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    const notes = await this.apiService.getNotesMany(noteId, pr).toPromise();
+    if (notes && notes.length > 0) {
+      this.entities.unshift(...notes);
+    }
+  }
 }
