@@ -375,7 +375,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(configService.StorageConnection);
+                builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
             });
         }
 

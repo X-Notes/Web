@@ -3,5 +3,7 @@
     public class AzureConfig
     {
         public string StorageConnection { set; get; }
+
+        public string StorageConnectionEmulator { set; get; }
     }
 }
