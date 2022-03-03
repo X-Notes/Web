@@ -176,6 +176,7 @@ export class NotesService
           const index = this.entities.findIndex((x) => x.id === note.id);
           this.entities[index].contents = note.contents;
         });
+        super.loadAdditionNoteInformation(ids);
         await this.murriService.refreshLayoutAsync();
         this.updateService.notesIds$.next([]);
       }
@@ -255,9 +256,7 @@ export class NotesService
     }
   }
 
-  async loadNoteAndAddToDom(noteId: string[]) {
-    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    const notes = await this.apiService.getNotesMany(noteId, pr).toPromise();
+  loadNoteAndAddToDom(notes: SmallNote[]) {
     if (notes && notes.length > 0) {
       this.entities.unshift(...notes);
     }

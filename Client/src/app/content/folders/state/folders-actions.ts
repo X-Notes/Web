@@ -17,8 +17,14 @@ export class ResetFolders {
 
 // FUNCTIONS
 
-export class AddFolder {
+export class CreateFolder {
+  static type = '[Folders] Create folder';
+}
+
+export class AddFolders {
   static type = '[Folders] Add folder';
+
+  constructor(public folders: SmallFolder[], public type: FolderTypeENUM) {}
 }
 
 export class ChangeTypeFolder {

@@ -3,13 +3,19 @@ import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiFoldersService } from '../content/folders/api-folders.service';
+import { SmallFolder } from '../content/folders/models/folder.model';
 import {
+  AddFolders,
   ChangeColorFolder,
   DeleteFoldersPermanently,
   UpdateFolderTitle,
 } from '../content/folders/state/folders-actions';
+import { ApiServiceNotes } from '../content/notes/api-notes.service';
+import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
+  AddNotes,
   ChangeColorNote,
   DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
@@ -17,6 +23,9 @@ import {
   UpdateNoteTitle,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
+import { EntityType } from '../shared/enums/entity-types.enum';
+import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
+import { NoteTypeENUM } from '../shared/enums/note-types.enum';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
@@ -28,6 +37,7 @@ import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
+import { UserStore } from './stateUser/user-state';
 
 @Injectable({
   providedIn: 'root',
@@ -51,11 +61,16 @@ export class SignalRService {
 
   public setAsJoinedToFolder = new BehaviorSubject(null);
 
-  public addNoteToSharedEvent = new BehaviorSubject<string>(null);
+  public addNotesToSharedEvent = new BehaviorSubject<SmallNote[]>(null);
 
-  public addFolderToSharedEvent = new BehaviorSubject<string>(null);
+  public addFoldersToSharedEvent = new BehaviorSubject<SmallFolder[]>(null);
 
-  constructor(private store: Store, private updaterEntitiesService: UpdaterEntitiesService) {}
+  constructor(
+    private store: Store,
+    private updaterEntitiesService: UpdaterEntitiesService,
+    private apiFolders: ApiFoldersService,
+    private apiNotes: ApiServiceNotes,
+  ) {}
 
   init() {
     this.startConnection();
@@ -163,8 +178,14 @@ export class SignalRService {
       this.store.dispatch(new DeleteNotesPermanently([noteId], false));
     });
 
-    this.hubConnection.on('addNoteToShared', (noteId: string) => {
-      this.addNoteToSharedEvent.next(noteId);
+    this.hubConnection.on('addNoteToShared', async (noteId: string) => {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const notes = await this.apiNotes.getNotesMany([noteId], pr).toPromise();
+      await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
+      const route = this.store.selectSnapshot(AppStore.getRouting);
+      if (route === EntityType.NoteShared) {
+        this.addNotesToSharedEvent.next(notes);
+      }
     });
 
     // Folder permissions
@@ -173,8 +194,14 @@ export class SignalRService {
       this.store.dispatch(new DeleteFoldersPermanently([folderId], false));
     });
 
-    this.hubConnection.on('addFolderToShared', (folderId: string) => {
-      this.addFolderToSharedEvent.next(folderId);
+    this.hubConnection.on('addFolderToShared', async (folderId: string) => {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const folders = await this.apiFolders.getFoldersMany([folderId], pr).toPromise();
+      await this.store.dispatch(new AddFolders(folders, FolderTypeENUM.Shared)).toPromise();
+      const route = this.store.selectSnapshot(AppStore.getRouting);
+      if (route === EntityType.FolderShared) {
+        this.addFoldersToSharedEvent.next(folders);
+      }
     });
   };
 }

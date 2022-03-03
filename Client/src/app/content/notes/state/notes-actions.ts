@@ -16,8 +16,14 @@ export class LoadNotes {
   constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
 }
 
-export class AddNote {
+export class CreateNote {
+  static type = '[Notes] Create note';
+}
+
+export class AddNotes {
   static type = '[Notes] Add note';
+
+  constructor(public notes: SmallNote[], public type: NoteTypeENUM) {}
 }
 
 export class UpdateNotes {

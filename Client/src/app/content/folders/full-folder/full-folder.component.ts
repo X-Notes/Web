@@ -106,10 +106,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.webSocketsFolderUpdaterService.leaveFolder(this.id);
-    this.updateNoteService.foldersIds$.next([
-      ...this.updateNoteService.foldersIds$.getValue(),
-      this.id,
-    ]);
+    this.updateNoteService.addFolderToUpdate(this.id);
     this.routeSubscription.unsubscribe();
   }
 

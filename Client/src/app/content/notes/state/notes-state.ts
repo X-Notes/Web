@@ -15,7 +15,7 @@ import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
-  AddNote,
+  CreateNote,
   ChangeColorNote,
   SelectIdNote,
   UnSelectIdNote,
@@ -46,6 +46,7 @@ import {
   LoadSnapshotNote,
   ResetNotes,
   ChangeTypeNote,
+  AddNotes,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -60,6 +61,7 @@ import { ApiNoteHistoryService } from '../full-note/services/api-note-history.se
 import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
+import { Router } from '@angular/router';
 
 interface FullNoteState {
   note: FullNote;
@@ -107,6 +109,7 @@ export class NoteStore {
     private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private router: Router
   ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -316,14 +319,20 @@ export class NoteStore {
     return state.isCanceled;
   }
 
-  @Action(AddNote)
+  @Action(CreateNote)
   async newNote({ getState, dispatch }: StateContext<NoteState>) {
     const note = await this.api.new().toPromise();
-
     const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
-
     const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
     dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private));
+    this.router.navigate([`notes/${note.id}`]);
+  }
+
+  @Action(AddNotes)
+  addNote({ getState, dispatch }: StateContext<NoteState>, { notes, type } : AddNotes) {
+    const notesState = this.getNotesByType(getState, type);
+    const toUpdate = new Notes(type, [...notes, ...notesState]);
+    dispatch(new UpdateNotes(toUpdate, type));
   }
 
   @Action(UpdateNotes)
@@ -353,7 +362,7 @@ export class NoteStore {
       const resp = await this.api.deleteNotes(selectedIds).toPromise();
       if(!resp.success){ return; }
     }
-    
+
     for (const { notes, typeNotes } of getState().notes) {
       const notesFromNew = notes.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
       dispatch(new UpdateNotes(new Notes(typeNotes, notesFromNew), typeNotes));

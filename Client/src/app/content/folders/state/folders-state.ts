@@ -16,7 +16,7 @@ import { ApiFoldersService } from '../api-folders.service';
 import { FullFolder } from '../models/full-folder.model';
 import {
   LoadFolders,
-  AddFolder,
+  CreateFolder,
   SelectIdFolder,
   UnSelectIdFolder,
   UnSelectAllFolder,
@@ -38,10 +38,12 @@ import {
   GetInvitedUsersToFolder,
   AddToDomFolders,
   ResetFolders,
+  AddFolders,
 } from './folders-actions';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
 import { UpdateFolderUI } from './update-folder-ui.model';
+import { Router } from '@angular/router';
 
 interface FullFolderState {
   isOwner: boolean;
@@ -74,7 +76,10 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private orderService: OrderService) {}
+  constructor(
+    private api: ApiFoldersService,
+    private orderService: OrderService,
+    private router: Router) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -244,7 +249,7 @@ export class FolderStore {
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
-    
+
     dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
   }
 
@@ -444,12 +449,20 @@ export class FolderStore {
   }
 
   // FUNCTIONS
-  @Action(AddFolder)
+  @Action(CreateFolder)
   async newFolder({ getState, dispatch }: StateContext<FolderState>) {
     const newF = await this.api.new().toPromise();
     const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
     const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
     dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
+    this.router.navigate([`folders/${newF.id}`])
+  }
+
+  @Action(AddFolders)
+  addFolder({ getState, dispatch }: StateContext<FolderState>, { folders, type } : AddFolders) {
+    const foldersState = this.getFoldersByType(getState, type);
+    const toUpdate = new Folders(type, [...folders, ...foldersState]);
+    dispatch(new UpdateFolders(toUpdate, type));
   }
 
   @Action(ChangeColorFolder)

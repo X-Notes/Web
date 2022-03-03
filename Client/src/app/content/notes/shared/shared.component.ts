@@ -71,11 +71,12 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.signalRService.addNoteToSharedEvent
+    this.signalRService.addNotesToSharedEvent
       .pipe(takeUntil(this.noteService.destroy))
-      .subscribe((noteId) => {
-        if (noteId) {
-          this.noteService.loadNoteAndAddToDom([noteId]);
+      .subscribe((notes) => {
+        if (notes && notes.length > 0) {
+          this.noteService.loadNoteAndAddToDom(notes);
+          this.signalRService.addNotesToSharedEvent.next([]);
         }
       });
   }
