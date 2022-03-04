@@ -2,16 +2,20 @@
 <div class="audios">
   <div class="audio" *ngFor="let item of content.items">
     <div class="preview">
-      <!-- <img *ngIf="item.imageUrl" [src]="item.imageUrl" /> -->
-      <div class="no-preview" *ngIf="item.name">{{ item.name[0] }}</div>
+      <img
+        *ngIf="item.pathToImage; else noPreview"
+        [src]="item.pathToImage | getImage: item.authorId"
+      />
+      <ng-template #noPreview>
+        <div class="no-preview" *ngIf="item.name">{{ item.name[0] }}</div>
+      </ng-template>
     </div>
     <div class="audio-body">
       <div class="audio-name">
         <p>{{ item.name | fileName }}</p>
       </div>
       <div class="audio-time">
-        <p>1</p>
-        <!--TODO need duration time -->
+        <p>{{ audioDuration(item.secondsDuration) }}</p>
       </div>
     </div>
   </div>

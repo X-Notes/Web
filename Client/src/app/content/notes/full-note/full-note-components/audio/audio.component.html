@@ -5,7 +5,7 @@
 >
   <div class="preview" appTheme>
     <img *ngIf="audio.pathToImage" [src]="audio.pathToImage | getImage: audio.authorId" />
-    <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name }}</div>
+    <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
     <div class="controls">
       <app-button-collection
         *ngIf="!state?.playing"
