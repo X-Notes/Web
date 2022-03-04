@@ -3,7 +3,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
 import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
-import { BaseText } from '../models/editor-models/base-text';
+import { BaseText, NoteTextTypeENUM } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
 
 @Component({
@@ -22,9 +22,9 @@ export class NoteComponent implements OnInit {
 
   fontSize = FontSizeENUM;
 
-  contents: ContentModelBase[];
-
   contentType = ContentTypeENUM;
+
+  contents: ContentModelBase[];
 
   constructor(public pService: PersonalizationService) {}
 
@@ -35,14 +35,17 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.contents = this.note.contents.map((x) => x.copy());
-  }
-
-  getTextContentOrNull(index: number): BaseText {
-    if (index >= 0 && this.contents[index].typeId === ContentTypeENUM.Text) {
-      return this.contents[index] as BaseText;
-    }
-    return null;
+    let num = 1;
+    this.contents = this.note.contents.map((item, index, array) => {
+      const prev = array[index - 1];
+      if (item instanceof BaseText && item.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
+        return {
+          ...item,
+          listNumber: item.listId === (prev as BaseText)?.listId ? (num += 1) : (num = 1),
+        };
+      }
+      return item;
+    }) as unknown as ContentModelBase[];
   }
 
   highlight(note: SmallNote) {
