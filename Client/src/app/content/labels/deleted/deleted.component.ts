@@ -11,7 +11,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -58,15 +57,7 @@ export class DeletedComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
     this.pService.setSpinnerState(true);
-
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.labelService.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.loadContent();
-        }
-      });
+    await this.loadContent();
   }
 
   async loadContent() {

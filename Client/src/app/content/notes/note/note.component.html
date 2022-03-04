@@ -31,7 +31,7 @@
       <h4 class="not-named">{{ 'placeholder.noteSmall' | translate}}</h4>
     </ng-template>
   </div>
-  <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">
+  <ng-container *ngFor="let content of contents" [ngSwitch]="content.typeId">
     <app-note-preview-text
       *ngSwitchCase="contentType.Text"
       [content]="content"

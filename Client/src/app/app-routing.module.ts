@@ -1,27 +1,35 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { canActivate, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 import { ContentComponent } from './content/content/content.component';
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['about']);
 
 const routes: Routes = [
   {
     path: '',
     component: ContentComponent,
+    ...canActivate(redirectUnauthorizedToLogin),
     children: [
       {
         path: 'notes',
-        loadChildren: () => import('./content/notes/notes.module').then((m) => m.NotesModule),
+        loadChildren: () =>
+          import('./content/notes/notes.module').then(({ NotesModule }) => NotesModule),
       },
       {
         path: 'folders',
-        loadChildren: () => import('./content/folders/folders.module').then((m) => m.FoldersModule),
+        loadChildren: () =>
+          import('./content/folders/folders.module').then(({ FoldersModule }) => FoldersModule),
       },
       {
         path: 'labels',
-        loadChildren: () => import('./content/labels/labels.module').then((m) => m.LabelsModule),
+        loadChildren: () =>
+          import('./content/labels/labels.module').then(({ LabelsModule }) => LabelsModule),
       },
       {
         path: 'profile',
-        loadChildren: () => import('./content/profile/profile.module').then((m) => m.ProfileModule),
+        loadChildren: () =>
+          import('./content/profile/profile.module').then(({ ProfileModule }) => ProfileModule),
       },
       {
         path: '',
@@ -32,7 +40,7 @@ const routes: Routes = [
   },
   {
     path: 'about',
-    loadChildren: () => import('./about/about.module').then((m) => m.AboutModule),
+    loadChildren: () => import('./about/about.module').then(({ AboutModule }) => AboutModule),
   },
   {
     path: 'faq',
@@ -40,7 +48,8 @@ const routes: Routes = [
   },
   {
     path: '**',
-    loadChildren: () => import('./error-four/error-four.module').then((m) => m.ErrorFourModule),
+    loadChildren: () =>
+      import('./error-four/error-four.module').then(({ ErrorFourModule }) => ErrorFourModule),
   },
 ];
 

@@ -9,7 +9,6 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
-import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { LabelStore } from './content/labels/state/labels-state';
 import { ContentModule } from './content/content.module';
 import { NoteStore } from './content/notes/state/notes-state';
@@ -35,7 +34,6 @@ import { BackgroundStore } from './core/backgrounds/background-state';
       key: UserStore,
     }),
   ],
-  providers: [ContentActiveteGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

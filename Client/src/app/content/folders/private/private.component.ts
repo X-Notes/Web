@@ -8,12 +8,10 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
@@ -53,14 +51,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.folderService.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.loadContent();
-        }
-      });
+    await this.loadContent();
   }
 
   async loadContent() {

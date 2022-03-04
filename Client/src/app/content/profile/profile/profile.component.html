@@ -53,7 +53,7 @@
               <app-select
                 class="dropdown-button"
                 [translate]="'languages'"
-                [selectValue]="language[(language$ | async)].toLowerCase()"
+                [selectValue]="language[(language$ | async)]?.toLowerCase()"
                 [selectObjectProperty]="'name'"
                 (selectValueChange)="setLanguage($event)"
               >

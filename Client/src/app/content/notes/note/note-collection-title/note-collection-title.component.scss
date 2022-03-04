@@ -1,3 +1,5 @@
+@import 'variables';
+
 :host {
     display: flex;
     padding: 0.25rem 0.5rem;
@@ -5,4 +7,9 @@
     font-weight: 300;
     background-color: rgba(black, 0.05);
     margin-bottom: 0.25rem;
+    width: 100%;
+
+    p {
+        @include text-overflow;
+    }
 }

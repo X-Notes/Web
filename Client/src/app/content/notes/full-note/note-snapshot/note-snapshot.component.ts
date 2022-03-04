@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -48,26 +46,22 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private apiHistory: ApiNoteHistoryService,
   ) {
-    this.routeSubscription = route.params.subscribe((params) => {
+    this.routeSubscription = route.params.subscribe(async (params) => {
       this.noteId = params.id;
       this.snapshotId = params.snapshotId;
+      await this.loadContent();
     });
+  }
 
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.store.dispatch(new LoadSnapshotNote(this.snapshotId, this.noteId)).toPromise();
-          this.isLoading = false;
-          const isCanRead = this.store.selectSnapshot(NoteStore.snapshotState).canView;
-          if (isCanRead) {
-            this.contents = await this.apiHistory
-              .getSnapshotContent(this.noteId, this.snapshotId)
-              .toPromise();
-          }
-        }
-      });
+  async loadContent() {
+    await this.store.dispatch(new LoadSnapshotNote(this.snapshotId, this.noteId)).toPromise();
+    this.isLoading = false;
+    const isCanRead = this.store.selectSnapshot(NoteStore.snapshotState).canView;
+    if (isCanRead) {
+      this.contents = await this.apiHistory
+        .getSnapshotContent(this.noteId, this.snapshotId)
+        .toPromise();
+    }
   }
 
   ngOnDestroy(): void {
