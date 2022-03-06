@@ -48,6 +48,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.fullNoteTitle)
+  noteTitle$: Observable<string>;
+
   public notesLink: SmallNote[];
 
   loaded = false;
@@ -144,11 +147,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     this.notesLink = notes.filter((z) => z.id !== this.id);
   }
 
-  async ngOnDestroy() {
-    this.updateNoteService.notesIds$.next([
-      ...this.updateNoteService.notesIds$.getValue(),
-      this.id,
-    ]);
+  ngOnDestroy() {
+    this.updateNoteService.addNoteToUpdate(this.id);
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new DeleteCurrentNote());

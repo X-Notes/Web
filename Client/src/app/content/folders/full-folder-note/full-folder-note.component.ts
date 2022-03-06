@@ -39,6 +39,12 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
+
+  @Select(NoteStore.fullNoteTitle)
+  noteTitle$: Observable<string>;
+
   @ViewChild('fullWrap') wrap: ElementRef;
 
   destroy = new Subject<void>();
@@ -46,8 +52,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   linkNotes: SmallNote[] = [];
 
   loaded = false;
-
-  note: FullNote;
 
   contents: ContentModelBase[];
 
@@ -91,7 +95,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     const isCanView = this.store.selectSnapshot(NoteStore.canView);
     if (isCanView) {
       await this.loadContent();
-      this.note = this.store.selectSnapshot(NoteStore.oneFull);
     }
     this.loaded = true;
   }

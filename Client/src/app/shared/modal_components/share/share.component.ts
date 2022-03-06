@@ -34,6 +34,7 @@ import { SearchUserForShareModal } from '../../models/short-user-for-share-modal
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 
 export interface StartType {
   id: string;
@@ -119,6 +120,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService,
     private apiBrowserFunctions: ApiBrowserTextService,
+    private updaterEntitiesService: UpdaterEntitiesService,
   ) {}
 
   get isPrivateButtonActive() {
@@ -400,6 +402,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
+        this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
       case SharedType.Note: {
@@ -414,6 +417,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+        this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
         break;
       }
       default: {
@@ -465,11 +469,13 @@ export class ShareComponent implements OnInit, OnDestroy {
       case SharedType.Folder: {
         await this.apiFolder.removeUserFromPrivateFolder(this.currentFolder.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
+        this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
       case SharedType.Note: {
         await this.apiNote.removeUserFromPrivateNote(this.currentNote.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+        this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
         break;
       }
       default: {

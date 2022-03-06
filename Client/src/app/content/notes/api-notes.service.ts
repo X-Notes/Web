@@ -146,7 +146,10 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/note/delete/permanently`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/delete/permanently`,
+      obj,
+    );
   }
 
   archive(ids: string[]) {
@@ -227,7 +230,10 @@ export class ApiServiceNotes {
       noteId,
       userId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/remove`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/user/remove`,
+      obj,
+    );
   }
 
   changeUserPermission(noteId: string, userId: string, accessTypeId: RefTypeENUM) {

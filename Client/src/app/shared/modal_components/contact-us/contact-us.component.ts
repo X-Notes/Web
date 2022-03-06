@@ -46,7 +46,7 @@ export class ContactUsComponent {
         this.dialogRef.close();
         this.successSnackbar();
       } catch (e) {
-        const close = await this.translateService.get('modal.contactUs.close').toPromise();
+        const close = this.translateService.instant('modal.contactUs.close');
         this.snackService.openSnackBar(e, close);
       }
       this.loading = false;

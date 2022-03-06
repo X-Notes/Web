@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -17,8 +18,8 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteAudiosCollectionHandlerCommand : FullNoteBaseCollection,
-                IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>,
+    public class FullNoteAudiosCollectionHandlerCommand :
+                IRequestHandler<UnlinkFilesAndRemoveAudiosCollectionsCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>,
                 IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
@@ -37,15 +38,16 @@ namespace BI.Services.Notes
 
         private readonly AppSignalRService appSignalRService;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
         public FullNoteAudiosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            FileRepository fileRepository,
             AudiosCollectionNoteRepository audioNoteRepository,
             AudioNoteAppFileRepository audioNoteAppFileRepository,
-            AppFileUploadInfoRepository appFileUploadInfoRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
+            AppSignalRService appSignalRService,
+            CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -53,26 +55,25 @@ namespace BI.Services.Notes
             this.audioNoteAppFileRepository = audioNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(UnlinkAudiosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveAudiosCollectionsCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
+            async Task<OperationResult<Unit>> UnLink()
             {
-                var audios = await audioNoteAppFileRepository.GetAppFilesByContentId(request.ContentId);
-
+                var audios = await audioNoteAppFileRepository.GetAppFilesByContentIds(request.ContentIds);
                 if (audios.Any())
                 {
-                    var ids = audios.Select(x => x.Id).ToList();
-                    var imageFileIds = audios.Where(x => x.MetaData != null && x.MetaData.ImageFileId.HasValue).Select(x => x.MetaData.ImageFileId.Value);
+                    var files = audios.Select(x => x.AppFile);
+                    var ids = files.Select(x => x.Id).ToList();
+                    var imageFileIds = files.Where(x => x.MetaData != null && x.MetaData.ImageFileId.HasValue).Select(x => x.MetaData.ImageFileId.Value);
                     ids.AddRange(imageFileIds);
                     ids = ids.Distinct().ToList();
 
-                    await MarkAsUnlinked(ids.ToArray());
+                    await audioNoteAppFileRepository.RemoveRangeAsync(audios);
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Audio, ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -80,6 +81,19 @@ namespace BI.Services.Notes
                 {
                     return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
                 }
+            }
+
+
+            if (!request.IsCheckPermissions)
+            {
+                return await UnLink();
+            }
+
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            if (permissions.CanWrite)
+            {
+                return await UnLink();
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -99,7 +113,7 @@ namespace BI.Services.Notes
                     await audioNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsUnlinked(idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Audio, idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await audioNoteRepository.UpdateAsync(collection);
@@ -224,7 +238,7 @@ namespace BI.Services.Notes
                     await audioNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsLinked(idsToLink.ToArray());
+                    await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await audioNoteRepository.UpdateAsync(collection);

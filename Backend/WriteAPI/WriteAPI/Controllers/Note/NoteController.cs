@@ -46,11 +46,11 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpPatch("delete/permanently")]
-        public async Task DeleteNotes([FromBody] DeleteNotesCommand command)
+        public async Task<OperationResult<Unit>> DeleteNotes([FromBody] DeleteNotesCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await _mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
         [HttpPatch("copy")]

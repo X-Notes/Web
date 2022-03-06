@@ -13,9 +13,11 @@ export const environment = {
     messagingSenderId: '69998033878',
   },
   writeAPI: 'http://localhost:5000',
-  storage: 'https://nootsdevstorage.blob.core.windows.net',
+  storage: 'http://127.0.0.1:10000/devstoreaccount1',
   adminAPI: 'http://localhost:3333',
 };
+
+// storage emulator endpoint
 
 /*
  * For easier debugging in development mode, you can import the following file

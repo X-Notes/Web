@@ -13,7 +13,10 @@ namespace Common.DTO.Notifications
         public string UserFromPhotoPath { set; get; }
 
         public bool IsRead { set; get; }
-        public string Message { set; get; }
+
+        public string TranslateKeyMessage { set; get; }
+
+        public string AdditionalMessage { set; get; }
 
         public DateTimeOffset Date { set; get; }
 
@@ -23,7 +26,9 @@ namespace Common.DTO.Notifications
 
             this.IsSystemMessage = notification.IsSystemMessage;
             this.IsRead = notification.IsRead;
-            this.Message = notification.Message;
+            
+            this.TranslateKeyMessage = notification.TranslateKeyMessage;
+            this.AdditionalMessage = notification.AdditionalMessage;
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;

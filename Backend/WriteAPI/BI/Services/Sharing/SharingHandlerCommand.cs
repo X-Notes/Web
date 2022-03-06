@@ -25,10 +25,10 @@ namespace BI.Services.Sharing
         IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>,
         IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
-        IRequestHandler<RemoveUserFromPrivateFolders, Unit>,
+        IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
         IRequestHandler<SendInvitesToUsersNotes, Unit>,
-        IRequestHandler<RemoveUserFromPrivateNotes, Unit>,
+        IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
@@ -141,7 +141,7 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
-                    Message = "notification.ChangeUserPermissionFolder",
+                    TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
                     Date = DateTimeProvider.Time
                 };
 
@@ -178,13 +178,13 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = request.UserId,
-                    Message = "notification.ChangeUserPermissionNote",
+                    TranslateKeyMessage = "notification.ChangeUserPermissionNote",
                     Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
 
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);        
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -192,7 +192,7 @@ namespace BI.Services.Sharing
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -209,20 +209,27 @@ namespace BI.Services.Sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromFolder",
+                        TranslateKeyMessage = "notification.RemoveUserFromFolder",
                         Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+
+                    await appSignalRHub.RevokePermissionUserFolder(request.FolderId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                    return new OperationResult<Unit>(true, Unit.Value);
                 }
+
+                return new OperationResult<Unit>().SetNotFound();
             }
-            return Unit.Value;
+
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -239,17 +246,23 @@ namespace BI.Services.Sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromNote",
+                        TranslateKeyMessage = "notification.RemoveUserFromNote",
                         Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+
+                    await appSignalRHub.RevokePermissionUserNote(request.NoteId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
+
+                    return new OperationResult<Unit>(true, Unit.Value);
                 }
+
+                return new OperationResult<Unit>().SetNotFound();
             }
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
@@ -272,7 +285,8 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToFolder | message: {request.Message}",
+                    TranslateKeyMessage = $"notification.SentInvitesToFolder",
+                    AdditionalMessage = request.Message,
                     Date = DateTimeProvider.Time
                 });
 
@@ -281,6 +295,7 @@ namespace BI.Services.Sharing
                 foreach (var notification in notifications)
                 {
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
+                    await appSignalRHub.AddFolderToShared(request.FolderId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
@@ -308,7 +323,8 @@ namespace BI.Services.Sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToNote | message: {request.Message}",
+                    TranslateKeyMessage = $"notification.SentInvitesToNote",
+                    AdditionalMessage = request.Message,
                     Date = DateTimeProvider.Time
                 });
 
@@ -317,6 +333,7 @@ namespace BI.Services.Sharing
                 foreach (var notification in notifications)
                 {
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
+                    await appSignalRHub.AddNoteToShared(request.NoteId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }

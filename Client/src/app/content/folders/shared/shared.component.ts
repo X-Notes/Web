@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
 import { UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
+import { SignalRService } from 'src/app/core/signal-r.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shared',
@@ -38,6 +40,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     public pService: PersonalizationService,
     private store: Store,
     public folderService: FolderService,
+    private signalRService: SignalRService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -62,5 +65,14 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+
+    this.signalRService.addFoldersToSharedEvent
+      .pipe(takeUntil(this.folderService.destroy))
+      .subscribe((folders) => {
+        if (folders && folders.length > 0) {
+          this.folderService.loadFolderAndAddToDom(folders);
+          this.signalRService.addFoldersToSharedEvent.next([]);
+        }
+      });
   }
 }

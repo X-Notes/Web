@@ -17,7 +17,7 @@ using WriteContext.Repositories.Files;
 
 namespace BI.Services.Files
 {
-    public class FileHandlerCommand : FullNoteBaseCollection,
+    public class FileHandlerCommand :
         IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveDocumentsToNoteCommand, List<AppFile>>,
@@ -34,14 +34,20 @@ namespace BI.Services.Files
 
         private readonly IImageProcessor imageProcessor;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
+        private readonly FileRepository fileRepository;
+
         public FileHandlerCommand(
             IFilesStorage filesStorage,
             IImageProcessor imageProcessor,
             FileRepository fileRepository,
-            AppFileUploadInfoRepository appFileUploadInfoRepository) : base(appFileUploadInfoRepository, fileRepository)
+            CollectionLinkedService collectionLinkedService)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
+            this.collectionLinkedService = collectionLinkedService;
+            this.fileRepository = fileRepository;
         }
 
 
@@ -291,7 +297,7 @@ namespace BI.Services.Files
 
                 if (file.MetaData.ImageFileId.HasValue)
                 {
-                    await MarkAsLinked(file.MetaData.ImageFileId.Value);
+                    await collectionLinkedService.TryLink(file.MetaData.ImageFileId.Value);
                 }
 
                 var respResult = new FileDTO(file.Id, file.PathPhotoSmall, file.PathPhotoMedium, file.PathPhotoBig, file.PathNonPhotoContent, file.Name, file.UserId, file.MetaData, file.CreatedAt);

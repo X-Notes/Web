@@ -87,7 +87,10 @@ export class ApiFoldersService {
       folderId,
       userId,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/remove`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/user/remove`,
+      obj,
+    );
   }
 
   get(id: string) {

@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -21,8 +22,8 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteVideosCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<UnlinkVideosCollectionCommand, OperationResult<Unit>>,
+    public class FullNoteVideosCollectionHandlerCommand :
+        IRequestHandler<UnlinkFilesAndRemoveVideosCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
         IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>,
@@ -41,15 +42,16 @@ namespace BI.Services.Notes
 
         private readonly AppSignalRService appSignalRService;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
         public FullNoteVideosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            FileRepository fileRepository,
-            AppFileUploadInfoRepository appFileUploadInfoRepository,
             VideosCollectionNoteRepository videoNoteRepository,
             VideoNoteAppFileRepository videoNoteAppFileRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
+            AppSignalRService appSignalRService,
+            CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -57,23 +59,22 @@ namespace BI.Services.Notes
             this.videoNoteAppFileRepository = videoNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(UnlinkVideosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveVideosCollectionsCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
+            async Task<OperationResult<Unit>> UnLink()
             {
-                var videos = await videoNoteAppFileRepository.GetWhereAsync(x => x.VideosCollectionNoteId == request.ContentId);
- 
+                var videos = await videoNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.VideosCollectionNoteId));
+
                 if (videos.Any())
                 {
+                    await videoNoteAppFileRepository.RemoveRangeAsync(videos);
+
                     var ids = videos.Select(x => x.AppFileId).ToArray();
-                    await MarkAsUnlinked(ids);
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Video, ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -81,6 +82,19 @@ namespace BI.Services.Notes
                 {
                     return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
                 }
+            }
+
+
+            if (!request.IsCheckPermissions)
+            {
+                return await UnLink();
+            }
+
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            if (permissions.CanWrite)
+            {
+                return await UnLink();
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -100,7 +114,7 @@ namespace BI.Services.Notes
                     await videoNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsUnlinked(idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Video, idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await videoNoteRepository.UpdateAsync(collection);
@@ -226,7 +240,7 @@ namespace BI.Services.Notes
                     await videoNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsLinked(idsToLink.ToArray());
+                    await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await videoNoteRepository.UpdateAsync(collection);

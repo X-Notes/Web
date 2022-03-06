@@ -9,4 +9,18 @@ export class UpdaterEntitiesService {
   foldersIds$ = new BehaviorSubject<string[]>([]);
 
   updateNotesInFolder$ = new BehaviorSubject<UpdateNoteUI[]>([]);
+
+  addNoteToUpdate(id: string): void {
+    const prevValues = this.notesIds$.getValue();
+    if (!prevValues.some((x) => x === id)) {
+      this.notesIds$.next([...prevValues, id]);
+    }
+  }
+
+  addFolderToUpdate(id: string): void {
+    const prevValues = this.foldersIds$.getValue();
+    if (!prevValues.some((x) => x === id)) {
+      this.foldersIds$.next([...prevValues, id]);
+    }
+  }
 }

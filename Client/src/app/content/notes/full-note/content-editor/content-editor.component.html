@@ -25,7 +25,7 @@
         #noteTitle
         [attr.contenteditable]="!isReadOnlyMode"
         (paste)="pasteCommandHandler($event)"
-        [textContent]="note?.title"
+        [textContent]="title"
         class="title"
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"

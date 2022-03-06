@@ -21,10 +21,15 @@ using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets;
 using Domain.Commands.Files;
+using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Photos;
+using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
 using Storage;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.Labels;
 using WriteContext.Repositories.NoteContent;
@@ -37,7 +42,7 @@ namespace BI.Services.Notes
         IRequestHandler<NewPrivateNoteCommand, SmallNote>,
         IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>,
         IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<DeleteNotesCommand, Unit>,
+        IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>,
         IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>,
         IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>,
         IRequestHandler<CopyNoteCommand, List<Guid>>,
@@ -56,7 +61,8 @@ namespace BI.Services.Notes
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
-
+        private readonly FileRepository fileRepository;
+        private readonly CollectionLinkedService collectionLinkedService;
         public NoteHandlerCommand(
             UserRepository userRepository, 
             NoteRepository noteRepository,
@@ -67,7 +73,9 @@ namespace BI.Services.Notes
             HistoryCacheService historyCacheService, 
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
-            NoteWSUpdateService noteWSUpdateService)
+            NoteWSUpdateService noteWSUpdateService,
+            FileRepository fileRepository,
+            CollectionLinkedService collectionLinkedService)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -79,6 +87,8 @@ namespace BI.Services.Notes
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.labelRepository = labelRepository;
             this.noteWSUpdateService = noteWSUpdateService;
+            this.fileRepository = fileRepository;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
 
@@ -165,46 +175,38 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email); // TODO REFACTOR
-            var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
-            var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            if (selectdeletenotes.Count == request.Ids.Count)
+            var isCanDelete = permissions.All(x => x.perm.IsOwner);
+            if (isCanDelete)
             {
-                var contents = await baseNoteContentRepository.GetContentByNoteIdsAsync(request.Ids);
-                var noteFiles = contents.Where(x => x is PhotosCollectionNote).Select(x => x as PhotosCollectionNote).SelectMany(x => x.Photos).ToList();
-                var documents = contents.Where(x => x is DocumentsCollectionNote).Select(x => x as DocumentsCollectionNote).SelectMany(x => x.Documents);
-                var audios = contents.Where(x => x is AudiosCollectionNote).Select(x => x as AudiosCollectionNote).SelectMany(x => x.Audios);
-                var videos = contents.Where(x => x is VideosCollectionNote).Select(x => x as VideosCollectionNote).SelectMany(x => x.Videos);
-                noteFiles.AddRange(documents);
-                noteFiles.AddRange(audios);
-                noteFiles.AddRange(videos);
+                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => request.Ids.Contains(x.NoteId));
+                await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, Guid.Empty, request.Email, false);
 
-                await baseNoteContentRepository.RemoveRangeAsync(contents);
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email); // TODO REFACTOR
+                var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
+                var selectdeletenotes = permissions.Select(x => x.perm.Note).ToList();
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
 
-                noteFiles = noteFiles.DistinctBy(x => x.Id).ToList();
-                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), noteFiles));
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
+            // TODO REMOVE ORDER 
+            return new OperationResult<Unit>().SetNotFound();
         }
+
 
         public async Task<OperationResult<Unit>> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
                 var notes = permissions.Select(x => x.perm.Note).ToList();
                 notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Archived);
@@ -218,15 +220,16 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
                 var notes = permissions.Select(x => x.perm.Note).ToList();
                 notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Private);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
+
             return new OperationResult<Unit>().SetNoPermissions();
         }
 

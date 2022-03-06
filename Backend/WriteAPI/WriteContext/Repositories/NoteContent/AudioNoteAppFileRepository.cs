@@ -17,9 +17,14 @@ namespace WriteContext.Repositories.NoteContent
         }
 
 
-        public Task<List<AppFile>> GetAppFilesByContentId(Guid contentId)
+        public Task<List<AudioNoteAppFile>> GetAppFilesByContentIds(List<Guid> contentIds)
         {
-            return entities.Include(x => x.AppFile).Where(x => x.AudiosCollectionNoteId == contentId).Select(x => x.AppFile).ToListAsync();
+            return entities.Include(x => x.AppFile).Where(x => contentIds.Contains(x.AudiosCollectionNoteId)).ToListAsync();
+        }
+
+        public Task<List<Guid>> GetFileIdsThatExist(params Guid[] ids)
+        {
+            return entities.Where(x => ids.Contains(x.AppFileId)).Select(x => x.AppFileId).ToListAsync();
         }
     }
 }

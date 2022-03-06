@@ -888,6 +888,9 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AdditionalMessage")
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -897,7 +900,7 @@ namespace WriteContext.Migrations
                     b.Property<bool>("IsSystemMessage")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Message")
+                    b.Property<string>("TranslateKeyMessage")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("UserFromId")

@@ -41,6 +41,8 @@ export class ApiBrowserTextService {
   };
 
   getSelectionCharacterOffsetsWithin = (element) => {
+    if (!element) return null;
+
     let startOffset = 0;
     let endOffset = 0;
     const range = this.getSelection().getRangeAt(0);

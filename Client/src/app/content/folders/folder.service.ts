@@ -159,6 +159,7 @@ export class FolderService
         transformFolders.forEach((folder) => {
           const index = this.entities.findIndex((x) => x.id === folder.id);
           this.entities[index].previewNotes = folder.previewNotes;
+          this.loadAdditionInformation(ids);
         });
         await this.murriService.refreshLayoutAsync();
         this.updateService.foldersIds$.next([]);
@@ -166,8 +167,8 @@ export class FolderService
     });
   }
 
-  async loadAdditionInformation() {
-    const folderIds = this.entities.map((x) => x.id);
+  async loadAdditionInformation(folderIds?: string[]) {
+    folderIds = folderIds ?? this.entities.map((x) => x.id);
     if (folderIds.length > 0) {
       const additionalInfo = await this.apiFolders.getAdditionalInfos(folderIds).toPromise();
       for (const info of additionalInfo) {
@@ -203,5 +204,11 @@ export class FolderService
     super.initState();
 
     await this.loadAdditionInformation();
+  }
+
+  loadFolderAndAddToDom(folders: SmallFolder[]) {
+    if (folders && folders.length > 0) {
+      this.entities.unshift(...folders);
+    }
   }
 }

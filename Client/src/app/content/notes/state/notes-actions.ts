@@ -16,8 +16,14 @@ export class LoadNotes {
   constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
 }
 
-export class AddNote {
+export class CreateNote {
+  static type = '[Notes] Create note';
+}
+
+export class AddNotes {
   static type = '[Notes] Add note';
+
+  constructor(public notes: SmallNote[], public type: NoteTypeENUM) {}
 }
 
 export class UpdateNotes {
@@ -68,7 +74,11 @@ export class AddToDomNotes {
 export class DeleteNotesPermanently {
   static type = '[Notes] Delete notes';
 
-  constructor(public selectedIds: string[], public typeNote: NoteTypeENUM) {}
+  isCallApi: boolean;
+
+  constructor(public selectedIds: string[], isCallApi = true) {
+    this.isCallApi = isCallApi;
+  }
 }
 
 export class ChangeTypeNote {

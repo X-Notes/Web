@@ -89,5 +89,12 @@
             Status = OperationResultAdditionalInfo.NotFound;
             return this;
         }
+
+        public OperationResult<T> SetAnotherError()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.AnotherError;
+            return this;
+        }
     }
 }

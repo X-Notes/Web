@@ -62,12 +62,25 @@ export class ContentEditableService {
     }
   }
 
-  setCursor(e: HTMLElement, isStart: boolean) {
+  setCursor(e: HTMLElement, isStart: boolean): void {
+    if (!e) return;
     const range = document.createRange(); // Create a range (a range is a like the selection but invisible)
     range.selectNodeContents(e); // Select the entire contents of the element with the range
     range.collapse(isStart); // collapse the range to the end point. false means collapse to end rather than the start
-    const selection = this.apiBrowserService.getSelection(); // get the selection object (allows you to change selection)
+    this.updateRange(range);
+  }
+
+  updateRange(range: Range): void {
+    const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges(); // remove any selections already made
     selection.addRange(range); // make the range you have just created the visible selection
+  }
+
+  setCaret(el: Node, pos: number): void {
+    if (!el) return;
+    const range = document.createRange();
+    range.setStart(el.childNodes[0], pos);
+    range.collapse(true);
+    this.updateRange(range);
   }
 }

@@ -1,17 +1,33 @@
 import { Injectable } from '@angular/core';
-import * as signalR from '@aspnet/signalr';
+import * as signalR from '@microsoft/signalr';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ChangeColorFolder, UpdateFolderTitle } from '../content/folders/state/folders-actions';
+import { ApiFoldersService } from '../content/folders/api-folders.service';
+import { SmallFolder } from '../content/folders/models/folder.model';
+import {
+  AddFolders,
+  ChangeColorFolder,
+  DeleteFoldersPermanently,
+  UpdateFolderTitle,
+} from '../content/folders/state/folders-actions';
+import { ApiServiceNotes } from '../content/notes/api-notes.service';
+import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
+  AddNotes,
   ChangeColorNote,
+  DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
   RemoveLabelFromNote,
   UpdateNoteTitle,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
+import { EntityType } from '../shared/enums/entity-types.enum';
+import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
+import { NoteTypeENUM } from '../shared/enums/note-types.enum';
+import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
 import { AuthService } from './auth.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
@@ -23,6 +39,8 @@ import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-vid
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
+import { AppStore } from './stateApp/app-state';
+import { UserStore } from './stateUser/user-state';
 
 @Injectable({
   providedIn: 'root',
@@ -46,9 +64,19 @@ export class SignalRService {
 
   public setAsJoinedToFolder = new BehaviorSubject(null);
 
+  public addNotesToSharedEvent = new BehaviorSubject<SmallNote[]>(null);
+
+  public addFoldersToSharedEvent = new BehaviorSubject<SmallFolder[]>(null);
+
+  public wsConnectionClosed = new Subject<boolean>();
+
   constructor(
-    private readonly store: Store,
-    private readonly updaterEntitiesService: UpdaterEntitiesService,
+    private store: Store,
+    private updaterEntitiesService: UpdaterEntitiesService,
+    private apiFolders: ApiFoldersService,
+    private apiNotes: ApiServiceNotes,
+    private snackbarService: SnackbarService,
+    private readonly translateService: TranslateService,
     private readonly auth: AuthService,
   ) {}
 
@@ -61,12 +89,19 @@ export class SignalRService {
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
       .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })
+      .withAutomaticReconnect()
       .build();
 
     this.hubConnection
       .start()
       .then(() => console.log('Connection started'))
       .catch((err) => console.log(`Error while starting connection: ${err}`));
+
+    this.hubConnection.onclose(() => {
+      this.wsConnectionClosed.next(true);
+      const message = this.translateService.instant('snackBar.reloadPage');
+      this.snackbarService.openSnackBar(message);
+    });
 
     this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));
 
@@ -150,6 +185,38 @@ export class SignalRService {
 
     this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
       this.setAsJoinedToFolder.next(folderId);
+    });
+
+    // Note permissions
+
+    this.hubConnection.on('revokeNotePermissions', (noteId: string) => {
+      this.store.dispatch(new DeleteNotesPermanently([noteId], false));
+    });
+
+    this.hubConnection.on('addNoteToShared', async (noteId: string) => {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const notes = await this.apiNotes.getNotesMany([noteId], pr).toPromise();
+      await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
+      const route = this.store.selectSnapshot(AppStore.getRouting);
+      if (route === EntityType.NoteShared) {
+        this.addNotesToSharedEvent.next(notes);
+      }
+    });
+
+    // Folder permissions
+
+    this.hubConnection.on('revokeFolderPermissions', (folderId: string) => {
+      this.store.dispatch(new DeleteFoldersPermanently([folderId], false));
+    });
+
+    this.hubConnection.on('addFolderToShared', async (folderId: string) => {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const folders = await this.apiFolders.getFoldersMany([folderId], pr).toPromise();
+      await this.store.dispatch(new AddFolders(folders, FolderTypeENUM.Shared)).toPromise();
+      const route = this.store.selectSnapshot(AppStore.getRouting);
+      if (route === EntityType.FolderShared) {
+        this.addFoldersToSharedEvent.next(folders);
+      }
     });
   };
 }

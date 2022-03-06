@@ -11,6 +11,7 @@ import { ContentModelBase } from '../../models/editor-models/content-model-base'
 import { LoadSnapshotNote } from '../../state/notes-actions';
 import { NoteStore } from '../../state/notes-state';
 import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
+import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
 
 @Component({
@@ -27,6 +28,12 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.snapshotState)
   public snapshotState$: Observable<NoteSnapshotState>;
+
+  @Select(NoteStore.snapshotNote)
+  public snapshotNote$: Observable<NoteSnapshot>;
+
+  @Select(NoteStore.snapshotNoteTitle)
+  public snapshotNoteTitle$: Observable<string>;
 
   destroy = new Subject<void>();
 

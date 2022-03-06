@@ -8,7 +8,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
+import { CreateNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 
 @Component({
@@ -75,13 +75,10 @@ export class NotesComponent implements OnInit, OnDestroy {
 
     await this.pService.waitPreloading();
     this.loaded = true;
-    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newNote());
-  }
 
-  async newNote() {
-    await this.store.dispatch(new AddNote()).toPromise();
-    const notes = this.store.selectSnapshot(NoteStore.privateNotes);
-    this.router.navigate([`notes/${notes[0].id}`]);
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.store.dispatch(new CreateNote()));
   }
 
   cancelLabel() {

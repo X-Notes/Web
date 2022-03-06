@@ -52,6 +52,11 @@ namespace WriteContext.GenericRepositories
             return await entities.Where(predicate).ToListAsync();
         }
 
+        public async Task<int> GetCountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await entities.Where(predicate).CountAsync();
+        }
+
         public async Task UpdateRangeAsync(IEnumerable<T> ents)
         {
             this.entities.UpdateRange(ents);

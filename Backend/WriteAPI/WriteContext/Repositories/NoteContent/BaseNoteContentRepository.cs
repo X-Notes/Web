@@ -30,17 +30,5 @@ namespace WriteContext.Repositories.NoteContent
                 .AsNoTracking()
                 .ToListAsync();
         }
-
-        public async Task<List<BaseNoteContent>> GetContentByNoteIdsAsync(List<Guid> ids)
-        {
-            return await entities // TODO OPTIMIZATION
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
-                .AsSplitQuery()
-                .AsNoTracking()
-                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
-        }
     }
 }

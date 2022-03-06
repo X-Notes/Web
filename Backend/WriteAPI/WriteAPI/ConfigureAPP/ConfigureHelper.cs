@@ -138,7 +138,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<Guid>>, NoteHandlerCommand>();
@@ -171,28 +171,28 @@ namespace WriteAPI.ConfigureAPP
 
 
             // FULL NOTE ALBUM
-            services.AddScoped<IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UnlinkFilesAndRemovePhotosCollectionsCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddPhotosToCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
 
             // FULL NOTE AUDIOS
-            services.AddScoped<IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveAudiosCollectionsCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddAudiosToCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
 
             // FULL NOTE VIDEOS
-            services.AddScoped<IRequestHandler<UnlinkVideosCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveVideosCollectionsCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateVideosCollectionInfoCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
-            services.AddScoped<IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveDocumentsCollectionsCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
@@ -234,11 +234,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>, SharingHandlerCommand>();
 
             services.AddScoped<IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<SendInvitesToUsersNotes, Unit>, SharingHandlerCommand>();
 
             services.AddScoped<IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
 
             //LOCK
@@ -360,6 +360,7 @@ namespace WriteAPI.ConfigureAPP
             // History
             services.AddScoped<NoteSnapshotRepository>();
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
+            services.AddScoped<SnapshotFileContentRepository>();
 
             // Personalization
             services.AddScoped<PersonalizationSettingRepository>();
@@ -374,7 +375,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(configService.StorageConnection);
+                builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
             });
         }
 
@@ -421,6 +422,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FolderWSUpdateService>();
             services.AddScoped<NoteWSUpdateService>();
 
+            services.AddScoped<CollectionLinkedService>();
 
             services.AddSingleton<WebsocketsNotesService>();
             services.AddSingleton<WebsocketsFoldersService>();

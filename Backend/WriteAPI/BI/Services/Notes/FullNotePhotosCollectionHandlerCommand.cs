@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -20,8 +21,8 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>,
+    public class FullNotePhotosCollectionHandlerCommand :
+        IRequestHandler<UnlinkFilesAndRemovePhotosCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>,
@@ -40,15 +41,16 @@ namespace BI.Services.Notes
 
         private readonly AppSignalRService appSignalRService;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
         public FullNotePhotosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            FileRepository fileRepository,
-            AppFileUploadInfoRepository appFileUploadInfoRepository,
             PhotosCollectionNoteRepository photosCollectionNoteRepository,
             PhotoNoteAppFileRepository photoNoteAppFileRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
+            AppSignalRService appSignalRService,
+            CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -56,23 +58,22 @@ namespace BI.Services.Notes
             this.photoNoteAppFileRepository = photoNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(UnlinkPhotosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemovePhotosCollectionsCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
+            async Task<OperationResult<Unit>> UnLink()
             {
-                var photos = await photoNoteAppFileRepository.GetWhereAsync(x => x.PhotosCollectionNoteId == request.ContentId);
+                var photos = await photoNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.PhotosCollectionNoteId));
 
                 if (photos.Any())
                 {
+                    await photoNoteAppFileRepository.RemoveRangeAsync(photos);
+
                     var ids = photos.Select(x => x.AppFileId).ToArray();
-                    await MarkAsUnlinked(ids);
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Photo, ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -80,6 +81,19 @@ namespace BI.Services.Notes
                 {
                     return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
                 }
+            }
+
+
+            if (!request.IsCheckPermissions)
+            {
+                return await UnLink();
+            }
+
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            if (permissions.CanWrite)
+            {
+                return await UnLink();
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -100,7 +114,7 @@ namespace BI.Services.Notes
                     await photoNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsUnlinked(idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Photo, idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await photosCollectionNoteRepository.UpdateAsync(collection);
@@ -236,7 +250,7 @@ namespace BI.Services.Notes
                     await photoNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsLinked(idsToLink.ToArray());
+                    await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await photosCollectionNoteRepository.UpdateAsync(collection);

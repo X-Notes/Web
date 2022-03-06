@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { HubConnectionState } from '@aspnet/signalr';
+import { HubConnectionState } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SignalRService } from 'src/app/core/signal-r.service';

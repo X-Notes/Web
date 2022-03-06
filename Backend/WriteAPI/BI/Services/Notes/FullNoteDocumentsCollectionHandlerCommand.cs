@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -21,8 +22,8 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteDocumentsCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>,
+    public class FullNoteDocumentsCollectionHandlerCommand :
+        IRequestHandler<UnlinkFilesAndRemoveDocumentsCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
         IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<Unit>>,
@@ -41,6 +42,8 @@ namespace BI.Services.Notes
 
         private readonly AppSignalRService appSignalRService;
 
+        private readonly CollectionLinkedService collectionLinkedService;
+
         public FullNoteDocumentsCollectionHandlerCommand(
                                         IMediator _mediator,
                                         BaseNoteContentRepository baseNoteContentRepository,
@@ -49,7 +52,8 @@ namespace BI.Services.Notes
                                         DocumentsCollectionNoteRepository documentNoteRepository,
                                         DocumentNoteAppFileRepository documentNoteAppFileRepository,
                                         HistoryCacheService historyCacheService,
-                                        AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
+                                        AppSignalRService appSignalRService,
+                                        CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -57,21 +61,21 @@ namespace BI.Services.Notes
             this.documentNoteAppFileRepository = documentNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
-        public async Task<OperationResult<Unit>> Handle(UnlinkDocumentsCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveDocumentsCollectionsCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
+            async Task<OperationResult<Unit>> UnLink()
             {
-                var documents = await documentNoteAppFileRepository.GetWhereAsync(x => x.DocumentsCollectionNoteId == request.ContentId);
+                var documents = await documentNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.DocumentsCollectionNoteId));
 
                 if (documents.Any())
                 {
+                    await documentNoteAppFileRepository.RemoveRangeAsync(documents);
+
                     var ids = documents.Select(x => x.AppFileId).ToArray();
-                    await MarkAsUnlinked(ids);
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Document, ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -79,6 +83,18 @@ namespace BI.Services.Notes
                 {
                     return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
                 }
+            }
+
+            if (!request.IsCheckPermissions)
+            {
+                return await UnLink();
+            }
+
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            if (permissions.CanWrite)
+            {
+                return await UnLink();
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -98,7 +114,7 @@ namespace BI.Services.Notes
                     await documentNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsUnlinked(idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Document, idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await documentNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
@@ -220,7 +236,7 @@ namespace BI.Services.Notes
                     await documentNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await MarkAsLinked(idsToLink.ToArray());
+                    await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await documentNoteRepository.UpdateAsync(collection);

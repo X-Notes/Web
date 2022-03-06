@@ -2,7 +2,7 @@
 using Common.DTO;
 using MediatR;
 using System;
-
+using System.Collections.Generic;
 
 namespace Domain.Commands.NoteInner.FileContent
 {
@@ -12,13 +12,15 @@ namespace Domain.Commands.NoteInner.FileContent
         public Guid NoteId { set; get; }
 
         [ValidationGuid]
-        public Guid ContentId { set; get; }
+        public List<Guid> ContentIds { set; get; }
 
-        public BaseUnlinkCommand(Guid NoteId, Guid ContentId, string Email)
+        public bool IsCheckPermissions { set; get; } = true;
+
+        public BaseUnlinkCommand(Guid noteId, List<Guid> contentIds, string email)
         {
-            this.NoteId = NoteId;
-            this.ContentId = ContentId;
-            this.Email = Email;
+            this.NoteId = noteId;
+            this.ContentIds = contentIds;
+            this.Email = email;
         }
     }
 }

@@ -82,6 +82,7 @@
 
     .fields {
       margin-left: 2.5vw;
+      width: calc(100% - 150px - 2.5vw);
 
       .field {
         .field-name {

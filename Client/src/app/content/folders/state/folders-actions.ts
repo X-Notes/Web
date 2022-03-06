@@ -17,8 +17,14 @@ export class ResetFolders {
 
 // FUNCTIONS
 
-export class AddFolder {
+export class CreateFolder {
+  static type = '[Folders] Create folder';
+}
+
+export class AddFolders {
   static type = '[Folders] Add folder';
+
+  constructor(public folders: SmallFolder[], public type: FolderTypeENUM) {}
 }
 
 export class ChangeTypeFolder {
@@ -63,7 +69,11 @@ export class UpdateFolders {
 export class DeleteFoldersPermanently {
   static type = '[Folders] Delete folders';
 
-  constructor(public selectedIds: string[], public typeNote: FolderTypeENUM) {}
+  isCallApi: boolean;
+
+  constructor(public selectedIds: string[], isCallApi = true) {
+    this.isCallApi = isCallApi;
+  }
 }
 
 export class ClearAddToDomFolders {
