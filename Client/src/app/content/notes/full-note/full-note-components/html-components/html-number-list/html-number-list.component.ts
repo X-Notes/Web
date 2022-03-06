@@ -108,11 +108,9 @@ export class HtmlNumberListComponent
 
   setNumber() {
     if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
-      // eslint-disable-next-line id-blacklist
-      this.content.number = this.prevContent.number + 1;
+      this.content.listNumber = this.prevContent.listNumber + 1;
     } else {
-      // eslint-disable-next-line id-blacklist
-      this.content.number = 1;
+      this.content.listNumber = 1;
     }
   }
 

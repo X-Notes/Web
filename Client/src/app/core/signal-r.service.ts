@@ -28,6 +28,7 @@ import { EntityType } from '../shared/enums/entity-types.enum';
 import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
 import { NoteTypeENUM } from '../shared/enums/note-types.enum';
 import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
+import { AuthService } from './auth.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
@@ -76,14 +77,15 @@ export class SignalRService {
     private apiNotes: ApiServiceNotes,
     private snackbarService: SnackbarService,
     private readonly translateService: TranslateService,
+    private readonly auth: AuthService,
   ) {}
 
   init() {
     this.startConnection();
   }
 
-  private startConnection = () => {
-    const token = this.store.selectSnapshot(AppStore.getToken);
+  private startConnection = async () => {
+    const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
       .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })

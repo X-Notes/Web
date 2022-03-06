@@ -1,6 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { ContentActiveteGuard } from 'src/app/core/guards/content-activete.guard';
 import { FoldersComponent } from './folders/folders.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
 import { PrivateComponent } from './private/private.component';
@@ -10,10 +9,10 @@ import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
 
 const itemRoutes: Routes = [
-  { path: '', component: PrivateComponent, canActivate: [ContentActiveteGuard] },
-  { path: 'deleted', component: DeletedComponent, canActivate: [ContentActiveteGuard] },
-  { path: 'shared', component: SharedComponent, canActivate: [ContentActiveteGuard] },
-  { path: 'archive', component: ArchiveComponent, canActivate: [ContentActiveteGuard] },
+  { path: '', component: PrivateComponent },
+  { path: 'deleted', component: DeletedComponent },
+  { path: 'shared', component: SharedComponent },
+  { path: 'archive', component: ArchiveComponent },
 ];
 
 const routes: Routes = [

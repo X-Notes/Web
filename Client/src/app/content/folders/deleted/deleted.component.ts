@@ -9,11 +9,9 @@ import {
 } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
-import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
@@ -53,14 +51,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderDeleted)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.folderService.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.loadContent();
-        }
-      });
+    await this.loadContent();
   }
 
   async loadContent() {

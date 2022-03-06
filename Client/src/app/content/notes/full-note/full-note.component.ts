@@ -2,12 +2,10 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { takeUntil } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes } from '../state/notes-actions';
@@ -73,17 +71,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
-      this.store
-        .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy)) // TODO REFACTOR
-        .subscribe(async (x: boolean) => {
-          if (x) {
-            await this.initNote();
-            this.store.dispatch(new LoadLabels());
-            this.destroy.next();
-            this.destroy.complete();
-          }
-        });
+      await this.initNote();
+      this.store.dispatch(new LoadLabels());
+      this.destroy.next();
+      this.destroy.complete();
     });
   }
 

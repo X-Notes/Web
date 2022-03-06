@@ -3,8 +3,7 @@ import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
 
 export class BaseText extends ContentModelBase {
-  // eslint-disable-next-line id-blacklist
-  number?: number;
+  listNumber?: number;
 
   headingTypeId?: HeadingTypeENUM;
 
@@ -14,12 +13,15 @@ export class BaseText extends ContentModelBase {
 
   contents: TextBlock[];
 
+  listId?: number;
+
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt);
     this.contents = text.contents;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
+    this.listId = text.listId;
   }
 
   set contentSG(contents: TextBlock[]) {

@@ -22,7 +22,6 @@ import {
   RemoveBackground,
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
@@ -86,15 +85,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
 
-    this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          this.store.dispatch(new LoadBackgrounds());
-          this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-        }
-      });
+    await this.store.dispatch(new LoadBackgrounds()).toPromise();
+    this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
 
     this.pService.newButtonSubject
       .pipe(takeUntil(this.destroy))

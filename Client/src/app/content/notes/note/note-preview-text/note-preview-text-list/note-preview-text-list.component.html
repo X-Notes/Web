@@ -8,7 +8,7 @@
     <div class="text" [innerHTML]="html"></div>
   </div>
   <div *ngSwitchCase="listType.Numberlist" class="container">
-    <div class="number">1.</div>
+    <div class="number">{{ contentBase.listNumber }}.</div>
     <div class="text" [innerHTML]="html"></div>
   </div>
 </ng-container>

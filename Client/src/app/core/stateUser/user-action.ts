@@ -7,8 +7,12 @@ import { User } from '../models/user.model';
 
 export class Login {
   static type = '[User] Login User';
+}
 
-  constructor(public token: string, public user: User) {}
+export class Auth {
+  static type = '[User] Auth User';
+
+  constructor(public user: User) {}
 }
 
 export class Logout {

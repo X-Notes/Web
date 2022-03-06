@@ -6,7 +6,6 @@ import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { CreateNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
@@ -52,37 +51,31 @@ export class NotesComponent implements OnInit, OnDestroy {
     return this.labelsFilters.filter((z) => z.selected === true).length > 0;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.store.dispatch(new LoadLabels()).toPromise();
+
     this.store
-      .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.store.dispatch(new LoadLabels()).toPromise();
-
-          this.store
-            .select(LabelStore.all)
-            .pipe(
-              takeUntil(this.destroy),
-              map((labels) => {
-                return labels.map((label) => {
-                  return {
-                    label,
-                    selected: this.labelsFilters.find((z) => z.label.id === label.id)?.selected,
-                  };
-                });
-              }),
-            )
-            .subscribe(async (labels) => {
-              this.labelsFilters = labels.sort((a, b) =>
-                a.label.countNotes > b.label.countNotes ? -1 : 1,
-              );
-            });
-
-          await this.pService.waitPreloading();
-          this.loaded = true;
-        }
+      .select(LabelStore.all)
+      .pipe(
+        takeUntil(this.destroy),
+        map((labels) => {
+          return labels.map((label) => {
+            return {
+              label,
+              selected: this.labelsFilters.find((z) => z.label.id === label.id)?.selected,
+            };
+          });
+        }),
+      )
+      .subscribe(async (labels) => {
+        this.labelsFilters = labels.sort((a, b) =>
+          a.label.countNotes > b.label.countNotes ? -1 : 1,
+        );
       });
+
+    await this.pService.waitPreloading();
+    this.loaded = true;
+
     this.pService.newButtonSubject
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.store.dispatch(new CreateNote()));
