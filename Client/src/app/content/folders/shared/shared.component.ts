@@ -18,6 +18,7 @@ import { FolderService } from '../folder.service';
 import { UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shared',
