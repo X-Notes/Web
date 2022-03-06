@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { SmallFolder } from '../content/folders/models/folder.model';
@@ -26,6 +27,7 @@ import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
 import { EntityType } from '../shared/enums/entity-types.enum';
 import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
 import { NoteTypeENUM } from '../shared/enums/note-types.enum';
+import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
@@ -65,11 +67,15 @@ export class SignalRService {
 
   public addFoldersToSharedEvent = new BehaviorSubject<SmallFolder[]>(null);
 
+  public wsConnectionClosed = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiFolders: ApiFoldersService,
     private apiNotes: ApiServiceNotes,
+    private snackbarService: SnackbarService,
+    private readonly translateService: TranslateService,
   ) {}
 
   init() {
@@ -81,12 +87,19 @@ export class SignalRService {
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
       .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })
+      .withAutomaticReconnect()
       .build();
 
     this.hubConnection
       .start()
       .then(() => console.log('Connection started'))
       .catch((err) => console.log(`Error while starting connection: ${err}`));
+
+    this.hubConnection.onclose(() => {
+      this.wsConnectionClosed.next(true);
+      const message = this.translateService.instant('snackBar.reloadPage');
+      this.snackbarService.openSnackBar(message);
+    });
 
     this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));
 

@@ -13,12 +13,7 @@ import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contra
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from './models/folder.model';
 import { FolderStore } from './state/folders-state';
-import {
-  AddFolders,
-  ClearAddToDomFolders,
-  LoadFolders,
-  UpdateOneFolder,
-} from './state/folders-actions';
+import { ClearAddToDomFolders, LoadFolders, UpdateOneFolder } from './state/folders-actions';
 import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */

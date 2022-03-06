@@ -127,7 +127,6 @@
     "ShareModal": {
       "Share": "Share",
       "access": "Access",
-      "sharing": "Sharing",
       "personal": "Personal",
       "shared": "Shared",
       "selectedNotes": "Selected notes",
@@ -289,8 +288,9 @@
     "notesPermDeleted": "Notes deleted permanently",
     "folderPermDeleted": "Folder deleted permanently",
     "foldersPermDeleted": "Folders deleted permanently",
-    "movedToMany" :  "moved to ",
-    "movedToSingle" : " moved to "
+    "movedToMany": "moved to ",
+    "movedToSingle": " moved to ",
+    "reloadPage": "Unstable connection please refresh the page"
   },
   "titles": {
     "labels": "Labels",

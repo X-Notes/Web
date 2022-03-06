@@ -1,305 +1,304 @@
 {
-    "notes": {
-      "name": "Нотатки"
+  "notes": {
+    "name": "Нотатки"
+  },
+  "folders": {
+    "name": "Папки"
+  },
+  "labels": {
+    "name": "Ярлики"
+  },
+  "people": {
+    "name": "Люди"
+  },
+  "new": {
+    "note": "Новий нотаток",
+    "folder": "Нова папка",
+    "background": "Новий фон",
+    "label": "Новий ярлик",
+    "inner-folder": "Новий нотаток"
+  },
+  "subMenu": {
+    "all": "Всі",
+    "personal": "Особисті",
+    "shared": "Спільні",
+    "archive": "Архів",
+    "bin": "Кошик",
+    "cancel": "Скасувати"
+  },
+  "languages": {
+    "english": "Англійська",
+    "russian": "Російська",
+    "ukraine": "Українська"
+  },
+  "header": {
+    "selected": "Вибрано",
+    "new": "Нова",
+    "select": "Вибрати все",
+    "filter": "Фільтер",
+    "theme": "Тема",
+    "search": "Пошук...",
+    "questions": "Питання",
+    "notification": "Повідомлення",
+    "orientation": "Режим перегляду",
+    "back": "Повернутися",
+    "video": "Відео",
+    "countUsers": "Кілікість користувачів",
+    "menu": "Меню",
+    "defaultColor": "Звичайний",
+    "emptyTrash": "Очистити кошик",
+    "manage": "Керувати",
+    "questionItems": {
+      "faq": "Часто задавані питання",
+      "contact": "Зв'язатися з нами"
     },
-    "folders": {
-      "name": "Папки"
+    "filterMenu": {
+      "dateAsc": "Від старих до нових",
+      "dateDesc": "Від нових до старих",
+      "order": "Свій порядок"
+    }
+  },
+  "menu": {
+    "label": "Ярлик",
+    "share": "Спільні",
+    "copy": "Копіювати",
+    "color": "Колір",
+    "download": "Завантажити",
+    "lock": "Пароль",
+    "unlock": "Прибрати пароль",
+    "archive": "Архів",
+    "delete": "Видалити",
+    "history": "Історія",
+    "private": "Особисті",
+    "privateFolder": "Особисті"
+  },
+  "profile": {
+    "sectionProfile": "Профіль",
+    "sectionGeneral": "Загальні",
+    "sectionAccount": "Аккаунт",
+    "sectionPersonalization": "Персоналізація",
+    "nameUser": "Ім'я",
+    "email": "Електронна пошта",
+    "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
+    "logOut": "Вийти",
+    "update": "Оновити",
+    "language": "Мова",
+    "personalKey": "Секретний ключ",
+    "changeKey": "Змінити",
+    "resetKey": "Скинути",
+    "theme": "Тема",
+    "themeLight": "Світла",
+    "themeDark": "Темна",
+    "genericTooltip": "Подивіться, як будуть виглядати нотатки в",
+    "genericPreview": "попередньому перегляді",
+    "noteSize": "Розмір нотатки",
+    "noteDefault": "Звичайний",
+    "noteBig": "Великий",
+    "isViewAudioOnNote": "Відобразити аудіо",
+    "isViewDocumentOnNote": "Відобразити документи",
+    "isViewPhotosOnNote": "Відобразити фото",
+    "isViewTextOnNote": "Відобразити текст",
+    "isViewVideoOnNote": "Відобразити відео",
+    "contentInNoteCount": "Кількість відображеного контента на нотатку",
+    "notesInFolderCount": "Кількість відображених нотаток на папці",
+    "countCurrent": "Текущее: "
+  },
+  "modal": {
+    "labelModal": {
+      "Labels": "Ярлики",
+      "search": "Назва ярлика..."
     },
-    "labels": {
-      "name": "Ярлики"
+    "ColorModal": {
+      "Colors": "Кольора",
+      "save": "Зберегти"
     },
-    "people": {
-      "name": "Люди"
+    "contactUs": {
+      "send": "Відправити",
+      "emailField": "Пошта",
+      "emailHolder": "Ваша поштова адреса",
+      "text": "Введіть ваше повідомлення",
+      "textHolder": "Повідомлення...",
+      "required": "Обов'язкове поле",
+      "emailValidation": "Пошта введена некоректно",
+      "success": "Ваше повідомлення було успішно відправлено",
+      "incorrect": "Неправильне введення",
+      "close": "Закрити"
     },
-    "new": {
-      "note": "Новий нотаток",
-      "folder": "Нова папка",
-      "background": "Новий фон",
-      "label": "Новий ярлик",
-      "inner-folder": "Новий нотаток"
-    },
-    "subMenu": {
-      "all": "Всі",
+    "ShareModal": {
+      "Share": "Поділитися",
+      "access": "Доступ",
       "personal": "Особисті",
       "shared": "Спільні",
-      "archive": "Архів",
-      "bin": "Кошик",
-      "cancel": "Скасувати"
-    },
-    "languages": {
-      "english": "Англійська",
-      "russian": "Російська",
-      "ukraine": "Українська"
-    },
-    "header": {
-      "selected": "Вибрано",
-      "new": "Нова",
-      "select": "Вибрати все",
-      "filter": "Фільтер",
-      "theme": "Тема",
+      "selectedNotes": "Вибрані нотатки",
       "search": "Пошук...",
-      "questions": "Питання",
-      "notification": "Повідомлення",
-      "orientation": "Режим перегляду",
-      "back": "Повернутися",
-      "video": "Відео",
-      "countUsers": "Кілікість користувачів",
-      "label": "Ярлик",
-      "shared": "Спільні",
-      "menu": "Меню",
-      "defaultColor": "Звичайний",
-      "emptyTrash": "Очистити кошик",
-      "manage": "Керувати",
-      "questionItems": {
-        "faq": "Часто задавані питання",
-        "contact": "Зв'язатися з нами"
-      },
-      "filterMenu": {
-        "dateAsc": "Від старих до нових",
-        "dateDesc": "Від нових до старих",
-        "order": "Свій порядок"
-      }
+      "alert": "Надіслати повідомлення",
+      "editor": "Редактор ",
+      "viewer": "Глядач",
+      "send": "Надіслати"
     },
-    "menu": {
-      "label": "Ярлик",
-      "share": "Спільні",
-      "copy": "Копіювати",
-      "color": "Колір",
-      "download": "Завантажити",
-      "lock": "Пароль",
-      "unlock": "Прибрати пароль",
-      "archive": "Архів",
-      "delete": "Видалити",
-      "history": "Історія",
-      "private": "Особисті",
-      "privateFolder": "Особисті"
+    "folderManage": {
+      "notes": "Додати нотаток в папку"
     },
-    "profile": {
-      "sectionProfile": "Профіль",
-      "sectionGeneral": "Загальні",
-      "sectionAccount": "Аккаунт",
-      "sectionPersonalization": "Персоналізація",
-      "nameUser": "Ім'я",
-      "email": "Електронна пошта",
-      "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
-      "logOut": "Вийти",
-      "update": "Оновити",
-      "language": "Мова",
-      "personalKey": "Секретний ключ",
-      "changeKey": "Змінити",
-      "resetKey": "Скинути",
-      "theme": "Тема",
-      "themeLight": "Світла",
-      "themeDark": "Темна",
-      "genericTooltip": "Подивіться, як будуть виглядати нотатки в",
-      "genericPreview": "попередньому перегляді",
-      "noteSize": "Розмір нотатки",
-      "noteDefault": "Звичайний",
-      "noteBig": "Великий",
-      "isViewAudioOnNote": "Відобразити аудіо",
-      "isViewDocumentOnNote": "Відобразити документи",
-      "isViewPhotosOnNote": "Відобразити фото",
-      "isViewTextOnNote": "Відобразити текст",
-      "isViewVideoOnNote": "Відобразити відео",
-      "contentInNoteCount": "Кількість відображеного контента на нотатку",
-      "notesInFolderCount": "Кількість відображених нотаток на папці",
-      "countCurrent": "Текущее: "
+    "lockModal": {
+      "lock": "Заблокувати нотаток",
+      "unLock": "Розблокувати нотаток",
+      "unDecrypt": "Прибрати пароль",
+      "remove": "Прибрати",
+      "сomeIn": "Увійти",
+      "save": "Зберегти",
+      "password": "Пароль",
+      "confirm": "Підтвердити пароль",
+      "placeholderPass": "Пароль",
+      "placeholderConfirm": "Підтвердження",
+      "passMatchError": "Паролі не співпадають",
+      "required": "Обов'язкове поле",
+      "minLength": "Пароль должен состоять не менее чем из 6 символов",
+      "incorrect": "Невірний пароль"
     },
-    "modal": {
-      "labelModal": {
-        "Labels": "Ярлики",
-        "search": "Назва ярлика..."
-      },
-      "contactUs": {
-        "send": "Відправити",
-        "emailField": "Пошта",
-        "emailHolder": "Ваша поштова адреса",
-        "text": "Введіть ваше повідомлення",
-        "textHolder": "Повідомлення...",
-        "required": "Обов'язкове поле",
-        "emailValidation": "Пошта введена некоректно",
-        "success": "Ваше повідомлення було успішно відправлено",
-        "incorrect": "Неправильне введення",
-        "close": "Закрити"
-      },
-      "ColorModal": {
-        "Colors": "Кольора",
-        "save": "Зберегти"
-      },
-      "ShareModal": {
-        "Share": "Поділитися",
-        "access": "Доступ",
-        "personal": "Особисті",
-        "shared": "Спільні",
-        "selectedNotes": "Вибрані нотатки",
-        "search": "Пошук...",
-        "alert": "Надіслати повідомлення",
-        "editor": "Редактор ",
-        "viewer": "Глядач",
-        "send": "Надіслати"
-      },
-      "folderManage": {
-        "notes": "Додати нотаток в папку"
-      },
-      "lockModal": {
-        "lock": "Заблокувати нотаток",
-        "unLock": "Розблокувати нотаток",
-        "unDecrypt": "Прибрати пароль",
-        "remove": "Прибрати",
-        "сomeIn": "Увійти",
-        "save": "Зберегти",
-        "password": "Пароль",
-        "confirm": "Підтвердити пароль",
-        "placeholderPass": "Пароль",
-        "placeholderConfirm": "Підтвердження",
-        "passMatchError": "Паролі не співпадають",
-        "required": "Обов'язкове поле",
-        "minLength": "Пароль должен состоять не менее чем из 6 символов",
-        "incorrect": "Невірний пароль"
-      },
-      "reviewModal": {
-        "review": "Перегляд документу",
-        "close": "Закрити"
-      }
-    },
-    "innerNote": {
-      "title": "Заголовок",
-      "openNoteOrFile": "Відкрийте нотаток або файл",
-      "text": "Текст",
-      "heading": "Заголовок",
-      "menu": {
-        "addVideo": "Завантажити нове відео",
-        "add": "Завантажити нове аудіо",
-        "review": "Переглянути",
-        "download": "Завантажити",
-        "copy": "Копіювати посилання",
-        "delete": "Видалити"
-      },
-      "photoMenu": {
-        "download": "Завантажити",
-        "delete": "Видалити",
-        "upload": "Завантажити нову",
-        "countRow": "Фотографій в ряд",
-        "oneRow": "Одна в ряд",
-        "twoRow": "Дві в ряд",
-        "threeRow": "Три в ряд",
-        "fourRow": "Чотири в ряд"
-      },
-      "audio": {
-        "previos": "Попередній",
-        "next": "Наступний",
-        "play": "Відтворити",
-        "pause": "Пауза",
-        "loop": "Повтор",
-        "playlist": "Плейлист",
-        "close": "Закрити",
-        "mute": "Відключити звук",
-        "turnOnSound": "Включити звук",
-        "wideScreen": "Широкий екран",
-        "defaultPlayer": "Звичайний екран",
-        "fullscreen": "На весь екран",
-        "miniPlayer": "Міни-плеєр",
-        "plsUpload": "Завантажте аудіозапис",
-        "playing": "грає"
-      },
-      "video": {
-        "plsUpload": "Завантажте відео"
-      },
-      "document": {
-        "plsUpload": "Завантажте документ"
-      },
-      "photo": {
-        "plsUpload": "Завантажте фото"
-      }
-    },
-    "noResult": {
-      "privateNotes": "Тут будуть відображатися особисті нотатки",
-      "sharedNotes": "Тут будуть відображатися спільні нотатки",
-      "archiveNotes": "Тут будуть відображатися архівовані нотатки",
-      "deletedNotes": "Тут будуть відображатися видалені нотатки",
-      "allLabels": "Тут будуть відображатися ярлики",
-      "deletedLabels": "Тут будуть відображатися видалені ярлики",
-      "privateFolders": "Тут будуть відображатися особисті папки",
-      "sharedFolders": "Тут будуть відображатися спільні папки",
-      "archiveFolders": "Тут будуть відображатися архівовані папки",
-      "deletedFolders": "Тут будуть відображатися видалені папки",
-      "folderNotes": "Тут будуть відображатися нотатки",
-      "notification": "Немає непрочитаних повідомлень",
-      "notificationAll": "У вас немає повідомлень",
-      "history": "У нотатку поки немає історії",
-      "noAccessViewNote": "У вас немає прав для перегляду нотатка",
-      "noAccessViewFolder": "У вас немає прав для перегляду папки"
-    },
-    "notification": {
-      "title": "Повідомлення",
-      "readAll": "Прочитати всі повідомлення",
-      "seeAll": "Переглянути всі повідомлення",
-      "goToNew": "Перейти до нових повідомлень",
-      "newMessage": "Нове",
-      "readMessage": "Прочитане",
-      "ChangeUserPermissionNote": "Доступ користувача до нотатка змінений"
-    },
-    "uploader":{
-      "uploading": "Завантаження",
-      "uploadingDocumentsNoteLong": "Завантаження документів в нотаток",
-      "uploadingDocumentsNote": "Завантаження документів",
-      "uploadingVideosNoteLong": "Завантаження відео в нотаток",
-      "uploadingVideosNote": "Завантаження відео",
-      "uploadingAudiosNoteLong": "Завантаження аудіо в нотаток",
-      "uploadingAudiosNote": "Завантаження аудіо",
-      "uploadingPhotosNoteLong": "Завантаження фотографій в нотаток",
-      "uploadingPhotosNote": "Завантаження фотографій",
-      "exportShort": "Експорт",
-      "exportVideos": "Експорт відео",
-      "exportAudios": "Експорт аудіо",
-      "exportDocuments": "Експорт документів",
-      "exportPhotos": "Експорт фотографій",
-      "copyShort": "Копіювання",
-      "copyNotes": "Копіювання нотаток",
-      "copyFolders": "Копіювання папок",
-      "changingProfilePhoto": "Зміна фотографії",
-      "changingBackground": "Зміна заднього фона"
-    },
-    "placeholder": {
-      "folderNote": "Нотаток без назви",
-      "folderSmall": "Заголовок папки",
-      "noteSmall": "Заголовок нотатку",
-      "playlist": "Назва плейлиста",
-      "labelPage": "Назва ярлика",
-      "unnamedNote": "Без назви",
-      "unnamedFolder": "Без назви",
-      "unnamedLabel": "Без назви"
-    },
-    "snackBar": {
-      "saved": "Збережено",
-      "onlyAuthorCanMoveIt": "Тільки автор нотатки може її перемістити",
-      "noPermissionsForEdit": "Немає прав для редагування ",
-      "archive": "архів",
-      "toBin": "кошик",
-      "toShared": "спільні",
-      "toPrivate": "особисті",
-      "undo": "Відмінити",
-      "all": "всі",
-      "notes": "Нотатки",
-      "note": "Нотаток",
-      "folders": "Папки",
-      "folder": "Папка",
-      "labels": "Ярлики",
-      "label": "Ярлик",
-      "notePermDeleted": "Нотаток видален безповоротно",
-      "notesPermDeleted": "Нотатки видалені безповоротно",
-      "folderPermDeleted": "Папка видалена безповоротно",
-      "foldersPermDeleted": "Папки видалені безповоротно",
-      "movedToMany" : " переміщені в ",
-      "movedToSingle" : " переміщений в "
-    },
-    "titles": {
-      "labels": "Ярлики",
-      "notes": "Нотатки",
-      "folders": "Папки",
-      "profile": "Профиль",
-      "history": "Історія",
-      "note": "Нотаток",
-      "folder": "Папка"
+    "reviewModal": {
+      "review": "Перегляд документу",
+      "close": "Закрити"
     }
+  },
+  "innerNote": {
+    "title": "Заголовок",
+    "openNoteOrFile": "Відкрийте нотаток або файл",
+    "text": "Текст",
+    "heading": "Заголовок",
+    "menu": {
+      "addVideo": "Завантажити нове відео",
+      "add": "Завантажити нове аудіо",
+      "review": "Переглянути",
+      "download": "Завантажити",
+      "copy": "Копіювати посилання",
+      "delete": "Видалити"
+    },
+    "photoMenu": {
+      "download": "Завантажити",
+      "delete": "Видалити",
+      "upload": "Завантажити нову",
+      "countRow": "Фотографій в ряд",
+      "oneRow": "Одна в ряд",
+      "twoRow": "Дві в ряд",
+      "threeRow": "Три в ряд",
+      "fourRow": "Чотири в ряд"
+    },
+    "audio": {
+      "previos": "Попередній",
+      "next": "Наступний",
+      "play": "Відтворити",
+      "pause": "Пауза",
+      "loop": "Повтор",
+      "playlist": "Плейлист",
+      "close": "Закрити",
+      "mute": "Відключити звук",
+      "turnOnSound": "Включити звук",
+      "wideScreen": "Широкий екран",
+      "defaultPlayer": "Звичайний екран",
+      "fullscreen": "На весь екран",
+      "miniPlayer": "Міни-плеєр",
+      "plsUpload": "Завантажте аудіозапис",
+      "playing": "грає"
+    },
+    "video": {
+      "plsUpload": "Завантажте відео"
+    },
+    "document": {
+      "plsUpload": "Завантажте документ"
+    },
+    "photo": {
+      "plsUpload": "Завантажте фото"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Тут будуть відображатися особисті нотатки",
+    "sharedNotes": "Тут будуть відображатися спільні нотатки",
+    "archiveNotes": "Тут будуть відображатися архівовані нотатки",
+    "deletedNotes": "Тут будуть відображатися видалені нотатки",
+    "allLabels": "Тут будуть відображатися ярлики",
+    "deletedLabels": "Тут будуть відображатися видалені ярлики",
+    "privateFolders": "Тут будуть відображатися особисті папки",
+    "sharedFolders": "Тут будуть відображатися спільні папки",
+    "archiveFolders": "Тут будуть відображатися архівовані папки",
+    "deletedFolders": "Тут будуть відображатися видалені папки",
+    "folderNotes": "Тут будуть відображатися нотатки",
+    "notification": "Немає непрочитаних повідомлень",
+    "notificationAll": "У вас немає повідомлень",
+    "history": "У нотатку поки немає історії",
+    "noAccessViewNote": "У вас немає прав для перегляду нотатка",
+    "noAccessViewFolder": "У вас немає прав для перегляду папки"
+  },
+  "notification": {
+    "title": "Повідомлення",
+    "readAll": "Прочитати всі повідомлення",
+    "seeAll": "Переглянути всі повідомлення",
+    "goToNew": "Перейти до нових повідомлень",
+    "newMessage": "Нове",
+    "readMessage": "Прочитане",
+    "ChangeUserPermissionNote": "Доступ користувача до нотатка змінений"
+  },
+  "uploader": {
+    "uploading": "Завантаження",
+    "uploadingDocumentsNoteLong": "Завантаження документів в нотаток",
+    "uploadingDocumentsNote": "Завантаження документів",
+    "uploadingVideosNoteLong": "Завантаження відео в нотаток",
+    "uploadingVideosNote": "Завантаження відео",
+    "uploadingAudiosNoteLong": "Завантаження аудіо в нотаток",
+    "uploadingAudiosNote": "Завантаження аудіо",
+    "uploadingPhotosNoteLong": "Завантаження фотографій в нотаток",
+    "uploadingPhotosNote": "Завантаження фотографій",
+    "exportShort": "Експорт",
+    "exportVideos": "Експорт відео",
+    "exportAudios": "Експорт аудіо",
+    "exportDocuments": "Експорт документів",
+    "exportPhotos": "Експорт фотографій",
+    "copyShort": "Копіювання",
+    "copyNotes": "Копіювання нотаток",
+    "copyFolders": "Копіювання папок",
+    "changingProfilePhoto": "Зміна фотографії",
+    "changingBackground": "Зміна заднього фона"
+  },
+  "placeholder": {
+    "folderNote": "Нотаток без назви",
+    "folderSmall": "Заголовок папки",
+    "noteSmall": "Заголовок нотатку",
+    "playlist": "Назва плейлиста",
+    "labelPage": "Назва ярлика",
+    "unnamedNote": "Без назви",
+    "unnamedFolder": "Без назви",
+    "unnamedLabel": "Без назви"
+  },
+  "snackBar": {
+    "saved": "Збережено",
+    "onlyAuthorCanMoveIt": "Тільки автор нотатки може її перемістити",
+    "noPermissionsForEdit": "Немає прав для редагування ",
+    "archive": "архів",
+    "toBin": "кошик",
+    "toShared": "спільні",
+    "toPrivate": "особисті",
+    "undo": "Відмінити",
+    "all": "всі",
+    "notes": "Нотатки",
+    "note": "Нотаток",
+    "folders": "Папки",
+    "folder": "Папка",
+    "labels": "Ярлики",
+    "label": "Ярлик",
+    "notePermDeleted": "Нотаток видален безповоротно",
+    "notesPermDeleted": "Нотатки видалені безповоротно",
+    "folderPermDeleted": "Папка видалена безповоротно",
+    "foldersPermDeleted": "Папки видалені безповоротно",
+    "movedToMany": " переміщені в ",
+    "movedToSingle": " переміщений в ",
+    "reloadPage": "Нестабільне з'єднання, будь ласка, оновіть сторінку"
+  },
+  "titles": {
+    "labels": "Ярлики",
+    "notes": "Нотатки",
+    "folders": "Папки",
+    "profile": "Профиль",
+    "history": "Історія",
+    "note": "Нотаток",
+    "folder": "Папка"
   }
+}
