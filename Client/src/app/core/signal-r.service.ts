@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as signalR from '@aspnet/signalr';
+import * as signalR from '@microsoft/signalr';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
