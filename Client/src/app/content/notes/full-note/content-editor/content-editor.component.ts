@@ -69,7 +69,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
-  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
+  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<any>;
 
   @Input()
   isReadOnlyMode = true;
@@ -79,6 +79,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
+
+  @Input()
+  title$: Observable<string>;
+
+  title: string;
 
   theme = ThemeENUM;
 
@@ -107,6 +112,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
+    private contentEditableService: ContentEditableService,
   ) {}
 
   get contents() {
@@ -136,8 +142,22 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.contentEditorListenerService.destroysListeners();
   }
 
+  updateTitle(title: string): void {
+    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
+      this.noteTitleEl?.nativeElement,
+    );
+    if (this.title !== title) {
+      this.title = title;
+      requestAnimationFrame(() =>
+        this.contentEditableService.setCaret(this.noteTitleEl?.nativeElement, pos?.start),
+      );
+    }
+  }
+
   ngOnInit(): void {
     this.htmlTitleService.setCustomOrDefault(this.note.title, 'titles.note');
+
+    this.title$.pipe(takeUntil(this.destroy)).subscribe((title) => this.updateTitle(title));
 
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))

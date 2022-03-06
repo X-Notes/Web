@@ -48,6 +48,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.fullNoteTitle)
+  noteTitle$: Observable<string>;
+
   public notesLink: SmallNote[];
 
   loaded = false;

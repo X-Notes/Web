@@ -62,6 +62,7 @@ import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { Router } from '@angular/router';
+import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -218,6 +219,11 @@ export class NoteStore {
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
   }
+  
+  @Selector()
+  static fullNoteTitle(state: NoteState): string {
+    return state.fullNoteState?.note?.title;
+  }
 
   @Selector()
   static canEdit(state: NoteState): boolean {
@@ -247,6 +253,16 @@ export class NoteStore {
   @Selector()
   static snapshotState(state: NoteState): NoteSnapshotState {
     return state.snapshotState;
+  }
+
+  @Selector()
+  static snapshotNote(state: NoteState): NoteSnapshot {
+    return state.snapshotState?.noteSnapshot;
+  }
+
+  @Selector()
+  static snapshotNoteTitle(state: NoteState): string {
+    return state.snapshotState?.noteSnapshot?.title;
   }
 
   // Get notes
