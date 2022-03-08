@@ -1,6 +1,5 @@
 ﻿using Common.Azure;
 using ContentProcessing;
-using FacadeML;
 using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -426,9 +425,6 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesService>();
             services.AddSingleton<WebsocketsFoldersService>();
-
-            services.AddScoped<OcrService>();
-            services.AddSingleton<ObjectRecognizeService>();
 
             services.AddScoped<AppEncryptor>();
 
