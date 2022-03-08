@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
@@ -18,7 +19,7 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerСommand :
-        IRequestHandler<NewUserCommand, Unit>,
+        IRequestHandler<NewUserCommand, Guid>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>,
         IRequestHandler<UpdateLanguageCommand, Unit>,
@@ -45,7 +46,7 @@ namespace BI.Services.UserHandlers
             this.personalizationSettingRepository = personalizationSettingRepository;
         }
 
-        public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
 
             var user = new User()
@@ -64,12 +65,12 @@ namespace BI.Services.UserHandlers
 
             await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 
-            return Unit.Value;
+            return user.Id;
         }
 
         public async Task<Unit> Handle(UpdateMainUserInfoCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.Name = request.Name;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
@@ -77,7 +78,7 @@ namespace BI.Services.UserHandlers
 
         public async Task<OperationResult<AnswerChangeUserPhoto>> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
 
             var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
             if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
@@ -111,7 +112,7 @@ namespace BI.Services.UserHandlers
 
         public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.LanguageId = request.Id;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
@@ -119,7 +120,7 @@ namespace BI.Services.UserHandlers
 
         public async Task<Unit> Handle(UpdateThemeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.ThemeId = request.Id;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
@@ -127,7 +128,7 @@ namespace BI.Services.UserHandlers
 
         public async Task<Unit> Handle(UpdateFontSizeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.FontSizeId = request.Id;
             await userRepository.UpdateAsync(user);
             return Unit.Value;

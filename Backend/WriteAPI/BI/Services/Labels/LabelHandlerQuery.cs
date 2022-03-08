@@ -29,36 +29,26 @@ namespace BI.Services.Labels
 
         public async Task<LabelsDTO> Handle(GetLabelsByEmailQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
+            var labels = await labelRepository.GetAllByUserID(request.UserId);
+
+            foreach (var label in labels)
             {
-                var labels = await labelRepository.GetAllByUserID(user.Id);
-
-                foreach(var label in labels)
-                {
-                    label.LabelsNotes = label.LabelsNotes.ToList();
-                }
-
-                var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();
-                var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order).ToList();
-
-                return new LabelsDTO()
-                {
-                    LabelsAll = appCustomMapper.MapLabelsToLabelsDTO(labelsAll),
-                    LabelsDeleted = appCustomMapper.MapLabelsToLabelsDTO(labelsDeleted)
-                };
+                label.LabelsNotes = label.LabelsNotes.ToList();
             }
-            throw new Exception("User not found");
+
+            var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();
+            var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order).ToList();
+
+            return new LabelsDTO()
+            {
+                LabelsAll = appCustomMapper.MapLabelsToLabelsDTO(labelsAll),
+                LabelsDeleted = appCustomMapper.MapLabelsToLabelsDTO(labelsDeleted)
+            };
         }
 
         public async Task<int> Handle(GetCountNotesByLabelQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
-            {
-                return await this.labelRepository.GetNotesCountByLabelId(request.LabelId);
-            }
-            throw new Exception("User not found");
+            return await this.labelRepository.GetNotesCountByLabelId(request.UserId);
         }
     }
 }

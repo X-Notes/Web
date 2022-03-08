@@ -8,10 +8,10 @@ namespace Domain.Queries.Permissions
     { 
         public Guid NoteId { set; get; }
 
-        public GetUserPermissionsForNoteQuery(Guid NoteId, string Email)
+        public GetUserPermissionsForNoteQuery(Guid noteId, Guid userId)
         {
-            this.NoteId = NoteId;
-            this.Email = Email;
+            this.NoteId = noteId;
+            this.UserId = userId;
         }
     }
 }

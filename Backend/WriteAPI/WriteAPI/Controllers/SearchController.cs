@@ -27,14 +27,14 @@ namespace WriteAPI.Controllers
         [HttpPost("share/modal")]
         public async Task<List<ShortUserForShareModal>> GetByUsersForShareModal(GetUsersForSharingModalQuery command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPost("search")]
         public async Task<SearchNoteFolderResult> GetNoteAndFolders(GetNotesAndFolderForSearchQuery command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 

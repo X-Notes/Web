@@ -43,7 +43,7 @@ namespace BI.Services.Permissions
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user != null)
             {
                 var note = await noteRepository.GetForCheckPermission(request.NoteId);
@@ -54,7 +54,7 @@ namespace BI.Services.Permissions
 
         public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolderQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user != null)
             {
                 var folder = await folderRepository.GetForCheckPermission(request.FolderId);
@@ -159,7 +159,7 @@ namespace BI.Services.Permissions
 
         public async Task<List<(Guid, UserPermissionsForFolder)>> Handle(GetUserPermissionsForFoldersManyQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user != null)
             {
                 var folders = await folderRepository.GetForCheckPermissions(request.FolderIds);
@@ -186,7 +186,7 @@ namespace BI.Services.Permissions
 
         public async Task<List<(Guid, UserPermissionsForNote)>> Handle(GetUserPermissionsForNotesManyQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user != null)
             {
                 var notes = await noteRepository.GetForCheckPermissions(request.NoteIds);

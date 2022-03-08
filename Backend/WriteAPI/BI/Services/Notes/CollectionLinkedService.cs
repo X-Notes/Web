@@ -160,7 +160,7 @@ namespace BI.Services.Notes
             return false;
         }
 
-        public async Task<List<Guid>> UnlinkAndRemoveFileItems(IEnumerable<BaseNoteContent> contentsToDelete, Guid noteId, string email, bool isCheckPermissions = true)
+        public async Task<List<Guid>> UnlinkAndRemoveFileItems(IEnumerable<BaseNoteContent> contentsToDelete, Guid noteId, Guid userId, bool isCheckPermissions = true)
         {
             List<Guid> result = new();
             var groups = contentsToDelete.GroupBy(x => x.ContentTypeId);
@@ -169,10 +169,10 @@ namespace BI.Services.Notes
                 var ids = group.Select(x => x.Id).ToList();
                 var command = group.Key switch
                 {
-                    ContentTypeENUM.AudiosCollection => await _mediator.Send(new UnlinkFilesAndRemoveAudiosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.PhotosCollection => await _mediator.Send(new UnlinkFilesAndRemovePhotosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.VideosCollection => await _mediator.Send(new UnlinkFilesAndRemoveVideosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.DocumentsCollection => await _mediator.Send(new UnlinkFilesAndRemoveDocumentsCollectionsCommand(noteId, ids, email, isCheckPermissions)),
+                    ContentTypeENUM.AudiosCollection => await _mediator.Send(new UnlinkFilesAndRemoveAudiosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    ContentTypeENUM.PhotosCollection => await _mediator.Send(new UnlinkFilesAndRemovePhotosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    ContentTypeENUM.VideosCollection => await _mediator.Send(new UnlinkFilesAndRemoveVideosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    ContentTypeENUM.DocumentsCollection => await _mediator.Send(new UnlinkFilesAndRemoveDocumentsCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
                     _ => null
                 };
                 result.AddRange(ids);

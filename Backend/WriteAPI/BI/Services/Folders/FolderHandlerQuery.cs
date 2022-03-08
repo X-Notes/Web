@@ -51,30 +51,25 @@ namespace BI.Services.Folders
 
         public async Task<List<SmallFolder>> Handle(GetFoldersByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
+            var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(request.UserId, request.TypeId, request.Settings);
+
+            if (FolderTypeENUM.Shared == request.TypeId)
             {
-                var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(user.Id, request.TypeId, request.Settings);
-
-                if (FolderTypeENUM.Shared == request.TypeId)
-                {
-                    var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.UserId == user.Id);
-                    var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);
-                    var sharedFolders = await folderRepository.GetFoldersByFolderIdsIncludeNote(foldersIds, request.Settings);
-                    sharedFolders.ForEach(x => x.FolderTypeId = FolderTypeENUM.Shared);
-                    folders.AddRange(sharedFolders);
-                    folders = folders.DistinctBy(x => x.Id).ToList();
-                }
-
-                return appCustomMapper.MapFoldersToSmallFolders(folders);
+                var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.UserId == request.UserId);
+                var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);
+                var sharedFolders = await folderRepository.GetFoldersByFolderIdsIncludeNote(foldersIds, request.Settings);
+                sharedFolders.ForEach(x => x.FolderTypeId = FolderTypeENUM.Shared);
+                folders.AddRange(sharedFolders);
+                folders = folders.DistinctBy(x => x.Id).ToList();
             }
-            return new List<SmallFolder>();
+
+            return appCustomMapper.MapFoldersToSmallFolders(folders);
         }
 
 
         public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolderQuery(request.Id, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
@@ -94,8 +89,7 @@ namespace BI.Services.Folders
 
         public async Task<OperationResult<List<SmallFolder>>> Handle(GetFoldersByFolderIdsQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var command = new GetUserPermissionsForFoldersManyQuery(request.FolderIds, request.Email);
+            var command = new GetUserPermissionsForFoldersManyQuery(request.FolderIds, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.folderId);
@@ -104,7 +98,7 @@ namespace BI.Services.Folders
                 var folders = await folderRepository.GetFoldersByFolderIdsIncludeNote(canReadIds, request.Settings);
                 folders.ForEach(folder =>
                 {
-                    if (folder.UserId != user.Id)
+                    if (folder.UserId != request.UserId)
                     {
                         folder.FolderTypeId = FolderTypeENUM.Shared;
                     }

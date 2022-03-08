@@ -49,14 +49,14 @@ namespace BI.Services.RelatedNotes
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
             {
                 var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId, request.Settings);
+                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.Caller.Id, request.NoteId, request.Settings);
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Common.DTO;
 using Common.DTO.Backgrounds;
 using MediatR;
@@ -10,8 +11,8 @@ namespace Domain.Commands.Backgrounds
     {
         [Required]
         public IFormFile File { set; get; }
-        public NewBackgroundCommand(string email, IFormFile File)
-            :base(email)
+        public NewBackgroundCommand(Guid userId, IFormFile File)
+            :base(userId)
         {
             this.File = File;
         }

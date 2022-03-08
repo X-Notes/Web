@@ -50,7 +50,7 @@ namespace BI.Services.History
 
         public async Task<List<NoteHistoryDTO>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -64,7 +64,7 @@ namespace BI.Services.History
 
         public async Task<NoteHistoryDTOAnswer> Handle(GetNoteSnapshotQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -78,7 +78,7 @@ namespace BI.Services.History
 
         public async Task<List<BaseNoteContentDTO>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)

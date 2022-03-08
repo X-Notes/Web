@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
@@ -14,8 +15,8 @@ namespace Domain.Queries.Notes
 
         public PersonalizationSettingDTO Settings { set; get; }
 
-        public GetNotesByTypeQuery(string email, NoteTypeENUM id, PersonalizationSettingDTO settings)
-            : base(email)
+        public GetNotesByTypeQuery(Guid userId, NoteTypeENUM id, PersonalizationSettingDTO settings)
+            : base(userId)
         {
             this.TypeId = id;
             this.Settings = settings;

@@ -26,7 +26,7 @@ namespace WriteAPI.Controllers.FullNote
         [HttpPost("transform")]
         public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
     }

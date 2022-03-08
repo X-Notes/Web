@@ -17,6 +17,12 @@ namespace WriteAPI.ControllerConfig
             return email;
         }
 
+        public static Guid GetUserId(this ControllerBase controller)
+        {
+            var email = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
+            return Guid.Parse(email);
+        }
+
         public static OperationResult<T> ValidateFile<T>(
             this ControllerBase controller, 
             IFormFile file, 

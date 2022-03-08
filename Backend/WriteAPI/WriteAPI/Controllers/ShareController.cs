@@ -30,39 +30,35 @@ namespace WriteAPI.Controllers
         [HttpPost("folders/share")]
         public async Task<OperationResult<Unit>> ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/permission")]
         public async Task<OperationResult<Unit>> ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/remove")]
         public async Task<OperationResult<Unit>> RemoveUserFromFolder(RemoveUserFromPrivateFolders command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("folders/user/invites")]
         public async Task InvitesUsersToFolder(SendInvitesToUsersFolders command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             await this._mediator.Send(command);
         }
 
         [HttpGet("folders/user/invites/{folderId}")]
         public async Task<List<InvitedUsersToFoldersOrNote>> GetInvitedToFolderUsers(Guid folderId)
         {
-            var command = new GetUsersOnPrivateFolderQuery { FolderId = folderId, Email = this.GetUserEmail() };
+            var command = new GetUsersOnPrivateFolderQuery { FolderId = folderId, UserId = this.GetUserId() };
             return await this._mediator.Send(command);
         }
 
@@ -72,8 +68,7 @@ namespace WriteAPI.Controllers
         [HttpPost("notes/share")]
         public async Task<OperationResult<Unit>> ToPublicEditShareNotes(ChangeRefTypeNotes command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
@@ -81,31 +76,28 @@ namespace WriteAPI.Controllers
         [HttpPost("notes/user/permission")]
         public async Task<OperationResult<Unit>> ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("notes/user/remove")]
         public async Task<OperationResult<Unit>> RemoveUserFromNote(RemoveUserFromPrivateNotes command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("notes/user/invites")]
         public async Task InvitesUsersToNotes(SendInvitesToUsersNotes command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             await this._mediator.Send(command);
         }
 
         [HttpGet("notes/user/invites/{noteId}")]
         public async Task<List<InvitedUsersToFoldersOrNote>> GetInvitedToNoteUsers(Guid noteId)
         {
-            var command = new GetUsersOnPrivateNoteQuery { NoteId = noteId, Email = this.GetUserEmail() };
+            var command = new GetUsersOnPrivateNoteQuery { NoteId = noteId, UserId = this.GetUserId() };
             return await this._mediator.Send(command);
         }
 

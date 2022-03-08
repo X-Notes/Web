@@ -15,8 +15,8 @@ namespace Domain.Commands.Folders
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
         
-        public ChangeColorFolderCommand(List<Guid> ids, string email, string color)
-            : base(email)
+        public ChangeColorFolderCommand(List<Guid> ids, Guid userId, string color)
+            : base(userId)
         {
             this.Ids = ids;
             Color = color;

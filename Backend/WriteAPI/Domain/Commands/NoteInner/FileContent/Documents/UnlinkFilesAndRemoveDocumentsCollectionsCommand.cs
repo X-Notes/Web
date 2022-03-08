@@ -5,11 +5,11 @@ namespace Domain.Commands.NoteInner.FileContent.Documents
 {
     public class UnlinkFilesAndRemoveDocumentsCollectionsCommand : BaseUnlinkCommand
     {
-        public UnlinkFilesAndRemoveDocumentsCollectionsCommand(Guid noteId, List<Guid> contentIds, string email) : base(noteId, contentIds, email)
+        public UnlinkFilesAndRemoveDocumentsCollectionsCommand(Guid noteId, List<Guid> contentIds, Guid userId) : base(noteId, contentIds, userId)
         {
         }
 
-        public UnlinkFilesAndRemoveDocumentsCollectionsCommand(Guid noteId, List<Guid> contentIds, string email, bool isCheckPemissions) : base(noteId, contentIds, email)
+        public UnlinkFilesAndRemoveDocumentsCollectionsCommand(Guid noteId, List<Guid> contentIds, Guid userId, bool isCheckPemissions) : base(noteId, contentIds, userId)
         {
             this.IsCheckPermissions = isCheckPemissions;
         }

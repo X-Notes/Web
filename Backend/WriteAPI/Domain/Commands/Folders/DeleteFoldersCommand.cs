@@ -10,7 +10,7 @@ namespace Domain.Commands.Folders
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public DeleteFoldersCommand(string email): base(email)
+        public DeleteFoldersCommand(Guid userId) : base(userId)
         {
 
         }

@@ -10,8 +10,8 @@ namespace Domain.Queries.RelatedNotes
 
         public Guid NoteId { set; get; }
 
-        public GetRelatedNotesQuery(string email, Guid id)
-            : base(email)
+        public GetRelatedNotesQuery(Guid userId, Guid id)
+            : base(userId)
         {
             this.NoteId = id;
         }

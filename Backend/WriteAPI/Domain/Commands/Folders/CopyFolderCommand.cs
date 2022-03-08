@@ -11,7 +11,7 @@ namespace Domain.Commands.Folders
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public CopyFolderCommand(string email): base(email)
+        public CopyFolderCommand(Guid userId) : base(userId)
         {
 
         }

@@ -11,7 +11,7 @@ namespace Domain.Commands.Notes
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public DeleteNotesCommand(string email): base(email)
+        public DeleteNotesCommand(Guid userId) : base(userId)
         {
 
         }

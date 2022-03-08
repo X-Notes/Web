@@ -103,10 +103,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddMediatR(typeof(Startup));
 
             // USER
-            services.AddScoped<IRequestHandler<GetShortUserQuery, ShortUser>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<NewUserCommand, Guid>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();

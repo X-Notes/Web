@@ -9,10 +9,10 @@ namespace Domain.Queries.Permissions
     {
         public List<Guid> NoteIds { set; get; }
 
-        public GetUserPermissionsForNotesManyQuery(List<Guid> noteIds, string email)
+        public GetUserPermissionsForNotesManyQuery(List<Guid> noteIds, Guid userId)
         {
             this.NoteIds = noteIds;
-            this.Email = email;
+            this.UserId = userId;
         }
     }
 }

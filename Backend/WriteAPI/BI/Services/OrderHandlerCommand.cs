@@ -36,7 +36,7 @@ namespace BI.Services
             {
                 case OrderEntity.Label:
                     {
-                        var labels = (await userRepository.GetUserWithLabels(request.Email)).Labels;
+                        var labels = (await userRepository.GetUserWithLabels(request.UserId)).Labels;
 
                         var label = labels.FirstOrDefault(x => x.Id == request.EntityId);
                         if (label != null)
@@ -66,7 +66,7 @@ namespace BI.Services
                     }
                 case OrderEntity.Note:
                     {
-                        var notes = (await userRepository.GetUserWithNotesIncludeNoteType(request.Email)).Notes;
+                        var notes = (await userRepository.GetUserWithNotesIncludeNoteType(request.UserId)).Notes;
                         var note = notes.FirstOrDefault(x => x.Id == request.EntityId);
 
                         if (note != null)
@@ -98,7 +98,7 @@ namespace BI.Services
                 case OrderEntity.Folder:
                     {
 
-                        var folders = (await userRepository.GetUserWithFoldersIncludeFolderType(request.Email)).Folders;
+                        var folders = (await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId)).Folders;
                         var folder = folders.FirstOrDefault(x => x.Id == request.EntityId);
 
                         if (folder != null)

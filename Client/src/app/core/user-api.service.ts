@@ -33,7 +33,10 @@ export class UserAPIService {
     const value: Token = {
       token,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/auth/verify`, value);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/auth/verify`,
+      value,
+    );
   }
 
   tryGetFromAuthorize() {
@@ -41,11 +44,16 @@ export class UserAPIService {
   }
 
   newUser(user: User) {
-    return this.httpClient.post<ShortUser>(`${environment.writeAPI}/api/user`, user);
+    return this.httpClient.post<OperationResult<ShortUser>>(
+      `${environment.writeAPI}/api/user`,
+      user,
+    );
   }
 
   getUser() {
-    return this.httpClient.get<ShortUser>(`${environment.writeAPI}/api/user/short`);
+    return this.httpClient.get<OperationResult<ShortUser>>(
+      `${environment.writeAPI}/api/user/short`,
+    );
   }
 
   getMemory() {

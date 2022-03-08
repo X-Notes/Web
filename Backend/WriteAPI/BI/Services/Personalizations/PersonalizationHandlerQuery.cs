@@ -30,13 +30,8 @@ namespace BI.Services.Personalizations
 
         public async Task<PersonalizationSettingDTO> Handle(GetUserPersonalizationSettingsQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
-            {
-                var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == user.Id);
-                return appCustomMapper.MapPersonalizationSettingToPersonalizationSettingDTO(pr);
-            }
-            throw new System.Exception("User not found");
+            var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == request.UserId);
+            return appCustomMapper.MapPersonalizationSettingToPersonalizationSettingDTO(pr);
         }
     }
 }

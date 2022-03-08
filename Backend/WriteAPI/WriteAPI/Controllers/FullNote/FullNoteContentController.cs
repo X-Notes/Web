@@ -25,19 +25,17 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-
         [HttpGet("{noteId}")]
         public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
         {
-            var email = this.GetUserEmail();
-            var command = new GetNoteContentsQuery(email, noteId);
+            var command = new GetNoteContentsQuery(this.GetUserId(), noteId);
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("sync/structure")]
         public async Task<OperationResult<Unit>> SyncNoteStructure(SyncNoteStructureCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 

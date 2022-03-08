@@ -10,8 +10,8 @@ namespace Domain.Queries.Notes
 
         public Guid? FolderId { set; get; }
 
-        public GetFullNoteQuery(string email, Guid noteId, Guid? folderId)
-            :base(email)
+        public GetFullNoteQuery(Guid userId, Guid noteId, Guid? folderId)
+            :base(userId)
         {
             this.NoteId = noteId;
             this.FolderId = folderId;

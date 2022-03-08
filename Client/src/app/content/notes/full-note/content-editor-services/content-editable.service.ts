@@ -79,6 +79,9 @@ export class ContentEditableService {
   setCaret(el: Node, pos: number): void {
     if (!el) return;
     const range = document.createRange();
+    if (range.startOffset === 0 && range.endOffset === 0) {
+      return;
+    }
     range.setStart(el.childNodes[0], pos);
     range.collapse(true);
     this.updateRange(range);

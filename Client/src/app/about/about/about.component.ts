@@ -16,7 +16,7 @@ export class AboutComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router, private store: Store) {}
 
   ngOnInit(): void {
-    this.authService.redirectOnSuccessAuth();
+    this.authService.redirectOnSuccessAuth(); // after auth redirection need call this method in order to login to app
   }
 
   async login(typeAuth: TypeAuthEnum) {

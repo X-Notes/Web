@@ -12,7 +12,6 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import {
-  Login,
   Logout,
   ChangeTheme,
   ChangeLanguage,
@@ -31,6 +30,7 @@ import { PersonalizationSetting } from '../models/personalization-setting.model'
 import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
 import { byteToMB } from '../defaults/byte-convert';
 import { maxProfilePhotoSize } from '../defaults/constraints';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 interface UserState {
   user: ShortUser;
@@ -114,16 +114,10 @@ export class UserStore {
   @Action(Auth)
   async auth({ patchState }: StateContext<UserState>, { user }: Auth) {
     let userdb = await this.api.getUser().toPromise();
-    if (!userdb) {
+    if (userdb.status === OperationResultAdditionalInfo.NotFound) {
       userdb = await this.api.newUser(user).toPromise();
     }
-    patchState({ user: userdb });
-  }
-
-  @Action(Login)
-  async login({ patchState }: StateContext<UserState>) {
-    const userdb = await this.api.getUser().toPromise();
-    patchState({ user: userdb });
+    patchState({ user: userdb.data });
   }
 
   @Action(Logout)

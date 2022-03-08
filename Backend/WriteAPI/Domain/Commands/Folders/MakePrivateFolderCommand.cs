@@ -11,7 +11,7 @@ namespace Domain.Commands.Folders
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public MakePrivateFolderCommand(string email) : base(email)
+        public MakePrivateFolderCommand(Guid userId) : base(userId)
         {
 
         }

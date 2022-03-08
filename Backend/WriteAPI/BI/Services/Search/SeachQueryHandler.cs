@@ -35,22 +35,20 @@ namespace BI.Services.Search
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
         {
             request.SearchString = request.SearchString.ToLower();
-            var users = await userRepository.SearchByEmailAndName(request.SearchString, request.Email);
+            var users = await userRepository.SearchByEmailAndName(request.SearchString, request.UserId);
             return mapper.Map<List<ShortUserForShareModal>>(users);
         }
 
         public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearchQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
-            var allNotes = await searchRepository.GetNotesByUserIdSearch(user.Id);
+            var allNotes = await searchRepository.GetNotesByUserIdSearch(request.UserId);
 
             allNotes = allNotes.Where(x =>
                     SearchHelper.IsMatchContent(x.Title, request.SearchString)
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.SearchString))
                     || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => label.Name.Contains(request.SearchString))).ToList();
 
-            var folders = await searchRepository.GetFolderByUserIdAndString(user.Id, request.SearchString);
+            var folders = await searchRepository.GetFolderByUserIdAndString(request.UserId, request.SearchString);
 
             var searchedNotes = allNotes.Take(5).Select(note => new NoteSearch()
             {

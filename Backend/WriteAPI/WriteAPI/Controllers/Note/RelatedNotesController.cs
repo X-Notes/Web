@@ -26,7 +26,7 @@ namespace WriteAPI.Controllers.Note
         [HttpPost("preview")]
         public async Task<List<PreviewNoteForSelection>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
@@ -34,22 +34,21 @@ namespace WriteAPI.Controllers.Note
         [HttpGet("{id}")]
         public async Task<List<RelatedNote>> GetRelatedNotes(Guid id)
         {
-            var email = this.GetUserEmail();
-            var command = new GetRelatedNotesQuery(email, id);
+            var command = new GetRelatedNotesQuery(this.GetUserId(), id);
             return await _mediator.Send(command);
         }
 
         [HttpPost]
         public async Task<OperationResult<Unit>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPatch("state")]
         public async Task<OperationResult<Unit>> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
@@ -57,7 +56,7 @@ namespace WriteAPI.Controllers.Note
         [HttpPatch("order")]
         public async Task<OperationResult<Unit>> UpdateRelatedNoteOrder(ChangeOrderRelatedNotesCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 

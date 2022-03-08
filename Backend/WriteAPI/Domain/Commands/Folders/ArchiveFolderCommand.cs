@@ -11,7 +11,7 @@ namespace Domain.Commands.Folders
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public ArchiveFolderCommand(string email) : base(email)
+        public ArchiveFolderCommand(Guid userId) : base(userId)
         {
 
         }

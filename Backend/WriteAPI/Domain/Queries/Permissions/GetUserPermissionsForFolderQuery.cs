@@ -8,10 +8,10 @@ namespace Domain.Queries.Permissions
     {
         public Guid FolderId { set; get; }
 
-        public GetUserPermissionsForFolderQuery(Guid FolderId, string Email)
+        public GetUserPermissionsForFolderQuery(Guid FolderId, Guid userId)
         {
             this.FolderId = FolderId;
-            this.Email = Email;
+            this.UserId = userId;
         }
     }
 }

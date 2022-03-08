@@ -8,8 +8,8 @@ namespace Domain.Commands.Backgrounds
     {
         [ValidationGuid]
         public Guid Id { set; get; }
-        public UpdateBackgroundCommand(string email, Guid id)
-            :base(email)
+        public UpdateBackgroundCommand(Guid userId, Guid id)
+            :base(userId)
         {
             this.Id = id;
         }

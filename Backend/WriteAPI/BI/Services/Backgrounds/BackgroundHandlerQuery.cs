@@ -22,7 +22,7 @@ namespace BI.Services.Backgrounds
 
         public async Task<List<BackgroundDTO>> Handle(GetUserBackgroundsQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithBackgrounds(request.Email);
+            var user = await userRepository.GetUserWithBackgrounds(request.UserId);
             if (user != null)
             {
                 return mapper.Map<List<BackgroundDTO>>(user.Backgrounds);

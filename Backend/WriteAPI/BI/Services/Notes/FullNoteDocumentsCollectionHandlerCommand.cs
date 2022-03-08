@@ -90,7 +90,7 @@ namespace BI.Services.Notes
                 return await UnLink();
             }
 
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             if (permissions.CanWrite)
             {
@@ -102,7 +102,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveDocumentsFromCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -119,13 +119,13 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await documentNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
                     {
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -138,7 +138,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(UpdateDocumentsCollectionInfoCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -152,12 +152,12 @@ namespace BI.Services.Notes
 
                     await documentNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt) { 
                         Name = request.Name,
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -169,7 +169,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<DocumentsCollectionNoteDTO>> Handle(TransformToDocumentsCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -199,13 +199,13 @@ namespace BI.Services.Notes
 
                     var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt)
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<DocumentsCollectionNoteDTO>(success: true, result);
                 }
@@ -221,7 +221,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(AddDocumentsToCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -241,13 +241,13 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await documentNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

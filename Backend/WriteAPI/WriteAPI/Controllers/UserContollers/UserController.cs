@@ -26,35 +26,31 @@ namespace WriteAPI.Controllers.UserContollers
 
 
         [HttpPost]
-        public async Task<ShortUser> Authorize(NewUserCommand command)
+        public async Task<OperationResult<ShortUser>> Authorize(NewUserCommand command)
         {
-            var currentUserEmail = this.GetUserEmail();
-            command.Email = currentUserEmail;
-            await _mediator.Send(command);
-            return await _mediator.Send(new GetShortUserQuery(currentUserEmail));
+            command.Email = this.GetUserEmail();
+            var userId = await _mediator.Send(command);
+            return await _mediator.Send(new GetShortUserQuery(userId));
         }
 
 
         [HttpGet("short")]
-        public async Task<ShortUser> GetShort()
+        public async Task<OperationResult<ShortUser>> GetShort()
         {
-            var currentUserEmail = this.GetUserEmail();
-            return await _mediator.Send(new GetShortUserQuery(currentUserEmail));
+            return await _mediator.Send(new GetShortUserQuery(this.GetUserId()));
         }
 
         [HttpGet("memory")]
         public async Task<GetUserMemoryResponse> GetUsedDiskSpace()
         {
-            var currentUserEmail = this.GetUserEmail();
-            return await _mediator.Send(new GetUserMemoryQuery(currentUserEmail));
+            return await _mediator.Send(new GetUserMemoryQuery(this.GetUserId()));
         }
 
         [HttpPut("username")]
-        public async Task UpdateMainInformation([FromBody] UpdateMainUserInfoCommand info)
+        public async Task UpdateMainInformation([FromBody] UpdateMainUserInfoCommand command)
         {
-            var currentUserEmail = this.GetUserEmail();
-            info.Email = currentUserEmail;
-            await _mediator.Send(info);
+            command.UserId = this.GetUserId();
+            await _mediator.Send(command);
         }
 
         [HttpPost("photo")]
@@ -66,32 +62,28 @@ namespace WriteAPI.Controllers.UserContollers
                 return validatioResult;
             }
 
-            var email = this.GetUserEmail();
-            return await _mediator.Send(new UpdatePhotoCommand(photo, email));
+            return await _mediator.Send(new UpdatePhotoCommand(photo, this.GetUserId()));
         }
 
         [HttpPost("language")]
-        public async Task ChangeLanguage(UpdateLanguageCommand languageCommand)
+        public async Task ChangeLanguage(UpdateLanguageCommand command)
         {
-            var email = this.GetUserEmail();
-            languageCommand.Email = email;
-            await _mediator.Send(languageCommand);
+            command.UserId = this.GetUserId();
+            await _mediator.Send(command);
         }
 
         [HttpPost("theme")]
-        public async Task ChangeTheme(UpdateThemeCommand themeCommand)
+        public async Task ChangeTheme(UpdateThemeCommand command)
         {
-            var email = this.GetUserEmail();
-            themeCommand.Email = email;
-            await _mediator.Send(themeCommand);
+            command.UserId = this.GetUserId();
+            await _mediator.Send(command);
         }
 
         [HttpPost("font")]
-        public async Task ChangeFontSize(UpdateFontSizeCommand fontSizeCommand)
+        public async Task ChangeFontSize(UpdateFontSizeCommand command)
         {
-            var email = this.GetUserEmail();
-            fontSizeCommand.Email = email;
-            await _mediator.Send(fontSizeCommand);
+            command.UserId = this.GetUserId();
+            await _mediator.Send(command);
         }
     }
 }

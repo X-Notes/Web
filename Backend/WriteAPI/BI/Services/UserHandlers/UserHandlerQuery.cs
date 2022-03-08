@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Common.DTO;
 using Common.DTO.Users;
 using Domain.Queries.Files;
 using Domain.Queries.Users;
@@ -12,7 +13,7 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
-        IRequestHandler<GetShortUserQuery, ShortUser>,
+        IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>,
         IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
     {
         private readonly UserRepository userRepository;
@@ -28,20 +29,20 @@ namespace BI.Services.UserHandlers
             this.fileRepository = fileRepository;
         }
 
-        public async Task<ShortUser> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<ShortUser>> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
+            var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.UserId);
             if (user != null)
             {
-                return imapper.Map<ShortUser>(user);
+                var userDto = imapper.Map<ShortUser>(user);
+                return new OperationResult<ShortUser>(true ,userDto);
             }
-            return null;
+            return new OperationResult<ShortUser>().SetNotFound();
         }
 
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var size = await fileRepository.GetTotalUserMemory(user.Id);
+            var size = await fileRepository.GetTotalUserMemory(request.UserId);
             return new GetUserMemoryResponse { TotalSize = size };
         }
     }

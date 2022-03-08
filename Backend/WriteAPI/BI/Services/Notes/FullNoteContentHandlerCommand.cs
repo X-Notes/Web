@@ -73,7 +73,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -95,7 +95,7 @@ namespace BI.Services.Notes
                     var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
                     var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
 
-                    unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, note.Id, request.Email);
+                    unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, note.Id, request.UserId);
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     unlinkedItemIds.AddRange(textIds);
@@ -208,7 +208,7 @@ namespace BI.Services.Notes
                     }
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                 var updates = new UpdateNoteStructureWS()
                 {
@@ -220,7 +220,7 @@ namespace BI.Services.Notes
                     AudioContentsToAdd = audiosItemsThatNeedAdd,
                     Positions = positions
                 };
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.User.Email, updates);
+                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Email, updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

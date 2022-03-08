@@ -8,10 +8,10 @@ namespace Domain.Queries.History
     public class GetNoteHistoriesQuery : BaseQueryEntity, IRequest<List<NoteHistoryDTO>>
     {
         public Guid NoteId { set; get; }
-        public GetNoteHistoriesQuery(Guid NoteId, string Email)
+        public GetNoteHistoriesQuery(Guid NoteId, Guid userId)
         {
             this.NoteId = NoteId;
-            this.Email = Email;
+            this.UserId = userId;
         }
     }
 }

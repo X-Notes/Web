@@ -45,7 +45,7 @@ namespace BI.Services.Folders
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -61,8 +61,7 @@ namespace BI.Services.Folders
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
         {
-
-            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)

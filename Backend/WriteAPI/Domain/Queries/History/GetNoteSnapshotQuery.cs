@@ -13,11 +13,11 @@ namespace Domain.Queries.History
         [ValidationGuid]
         public Guid NoteId { set; get; }
 
-        public GetNoteSnapshotQuery(Guid snapshotId, Guid noteId, string Email)
+        public GetNoteSnapshotQuery(Guid snapshotId, Guid noteId, Guid userId)
         {
             this.SnapshotId = snapshotId;
             this.NoteId = noteId;
-            this.Email = Email;
+            this.UserId = userId;
         }
     }
 }

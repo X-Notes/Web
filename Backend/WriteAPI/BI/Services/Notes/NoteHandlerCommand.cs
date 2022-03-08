@@ -94,8 +94,6 @@ namespace BI.Services.Notes
 
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
             var _contents = new List<BaseNoteContent>();
 
             var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeProvider.Time };
@@ -104,7 +102,7 @@ namespace BI.Services.Notes
             var note = new Note()
             {
                 Id = Guid.NewGuid(),
-                UserId = user.Id,
+                UserId = request.UserId,
                 Order = 1,
                 Color = NoteColorPallete.Green,
                 NoteTypeId = NoteTypeENUM.Private,
@@ -124,7 +122,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isCanEdit = permissions.All(x => x.perm.CanWrite);
@@ -142,7 +140,7 @@ namespace BI.Services.Notes
                 // HISTORY
                 foreach(var perm in permissions)
                 {
-                    historyCacheService.UpdateNote(perm.noteId, perm.perm.User.Id, perm.perm.Author.Email);
+                    historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id, perm.perm.Author.Email);
                 }
 
                 // WS UPDATES
@@ -160,10 +158,10 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);;
+            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId);
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
@@ -177,16 +175,16 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
                 var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => request.Ids.Contains(x.NoteId));
-                await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, Guid.Empty, request.Email, false);
+                await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, Guid.Empty, request.UserId, false);
 
-                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email); // TODO REFACTOR
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId); // TODO REFACTOR
                 var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
                 var selectdeletenotes = permissions.Select(x => x.perm.Note).ToList();
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
@@ -200,13 +198,13 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
-                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId);
                 var notes = permissions.Select(x => x.perm.Note).ToList();
                 notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Archived);
@@ -217,13 +215,13 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isCanDelete = permissions.All(x => x.perm.IsOwner);
             if (isCanDelete)
             {
-                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
+                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId);
                 var notes = permissions.Select(x => x.perm.Note).ToList();
                 notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Private);
@@ -338,7 +336,7 @@ namespace BI.Services.Notes
             var resultIds = new List<Guid>();
             var order = -1;
 
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.Any())
@@ -359,7 +357,7 @@ namespace BI.Services.Notes
                             NoteTypeId = NoteTypeENUM.Private,
                             RefTypeId = noteForCopy.RefTypeId,
                             Order = order--,
-                            UserId = permission.User.Id,
+                            UserId = permission.Caller.Id,
                         };
                         var dbNote = await noteRepository.AddAsync(newNote);
                         resultIds.Add(dbNote.Entity.Id);
@@ -371,11 +369,11 @@ namespace BI.Services.Notes
                         });
 
                         await labelsNotesRepository.AddRangeAsync(labels);
-                        var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, permission.IsOwner, permission.Author.Id, permission.User.Id);
+                        var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, permission.IsOwner, permission.Author.Id, permission.Caller.Id);
                         await baseNoteContentRepository.AddRangeAsync(contents);
                     }
 
-                    var dbNotes = await noteRepository.GetWhereAsync(x => x.UserId == permission.User.Id && x.NoteTypeId == NoteTypeENUM.Private);
+                    var dbNotes = await noteRepository.GetWhereAsync(x => x.UserId == permission.Caller.Id && x.NoteTypeId == NoteTypeENUM.Private);
                     var orders = Enumerable.Range(1, dbNotes.Count);
                     dbNotes = dbNotes.OrderBy(x => x.Order).Zip(orders, (note, order) =>
                     {
@@ -392,7 +390,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isAuthor = permissions.All(x => x.perm.IsOwner);
@@ -411,7 +409,7 @@ namespace BI.Services.Notes
 
                     permissions.ForEach(x =>
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.User.Id, x.perm.Author.Email);
+                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
                     });
 
                     // WS UPDATES
@@ -428,7 +426,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(AddLabelOnNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var isAuthor = permissions.All(x => x.perm.IsOwner);
@@ -451,7 +449,7 @@ namespace BI.Services.Notes
 
                     permissions.ForEach(x =>
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.User.Id, x.perm.Author.Email);
+                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
                     });
 
                     // WS UPDATES

@@ -68,23 +68,17 @@ namespace BI.Services.Notes
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
+            var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContentWithPersonalization(request.UserId, request.TypeId, request.Settings);
+
+            if (NoteTypeENUM.Shared == request.TypeId)
             {
-                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContentWithPersonalization
-                    (user.Id, request.TypeId, request.Settings);
-
-                if (NoteTypeENUM.Shared == request.TypeId)
-                {
-                    var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
-                    notes.AddRange(sharedNotes);
-                    notes = notes.DistinctBy(x => x.Id).ToList();
-                }
-
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
-                return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+                var sharedNotes = await GetSharedNotes(request.UserId, request.Settings);
+                notes.AddRange(sharedNotes);
+                notes = notes.DistinctBy(x => x.Id).ToList();
             }
-            throw new Exception("User not found");
+
+            notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
 
         private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
@@ -104,7 +98,7 @@ namespace BI.Services.Notes
 
             if (request.FolderId.HasValue)
             {
-                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.Email);
+                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
                 var permissions = await _mediator.Send(command);
                 isCanWrite = permissions.CanWrite;
                 isCanRead = permissions.CanRead;
@@ -112,7 +106,7 @@ namespace BI.Services.Notes
             }
             else
             {
-                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
                 var permissions = await _mediator.Send(command);
                 isCanWrite = permissions.CanWrite;
                 isCanRead = permissions.CanRead;
@@ -138,7 +132,7 @@ namespace BI.Services.Notes
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
             if (permissions.CanRead)
             {
@@ -151,7 +145,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -166,27 +160,19 @@ namespace BI.Services.Notes
 
         public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
-            {
-                var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
-                var sharedNotes = await GetSharedNotes(user.Id, request.Settings);
-                notes.AddRange(sharedNotes);
-                notes = notes.DistinctBy(x => x.Id).ToList();
+            var notes = await noteRepository.GetNotesByUserId(request.UserId, request.Settings);
+            var sharedNotes = await GetSharedNotes(request.UserId, request.Settings);
+            notes.AddRange(sharedNotes);
+            notes = notes.DistinctBy(x => x.Id).ToList();
 
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
-                notes = notes.OrderBy(x => x.Order).ToList();
-                return appCustomMapper.MapNotesToSmallNotesDTO(notes);
-            }
-
-            throw new Exception("User not found");
+            notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+            notes = notes.OrderBy(x => x.Order).ToList();
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
 
         public async Task<OperationResult<List<SmallNote>>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
-            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.Email);
+            var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
             var permissions = await _mediator.Send(command);
 
             var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId);
@@ -195,7 +181,7 @@ namespace BI.Services.Notes
                 var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
                 notes.ForEach(note =>
                 {
-                    if(note.UserId != user.Id)
+                    if(note.UserId != request.UserId)
                     {
                         note.NoteTypeId = NoteTypeENUM.Shared;
                     }

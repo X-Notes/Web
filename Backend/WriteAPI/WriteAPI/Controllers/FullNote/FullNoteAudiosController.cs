@@ -27,7 +27,7 @@ namespace WriteAPI.Controllers.FullNote
         [HttpPost("transform")]
         public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
     }
