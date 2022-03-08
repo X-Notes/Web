@@ -25,7 +25,7 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesFullContent(Guid id)
         {
-            return await context.ReletatedNoteToInnerNotes // TODO OPTIMIZATION
+            var notes = await context.ReletatedNoteToInnerNotes // TODO OPTIMIZATION
                 .Where(x => x.NoteId == id)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -42,7 +42,10 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => x.Contents)
                 .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
                 .OrderBy(x => x.Order)
-                .ToListAsync();
+                .AsSplitQuery().AsNoTracking().ToListAsync();
+
+            notes.ForEach(x => x.RelatedNote.Contents = x.RelatedNote.Contents.OrderBy(x => x.Order).ToList());
+            return notes;
         }
 
         public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesOnlyLabels(Guid id)
