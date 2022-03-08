@@ -62,26 +62,6 @@
                 </app-select-option>
               </app-select>
             </div>
-            <div class="field-key">
-              <div class="field-name">
-                <p>{{ 'profile.personalKey' | translate }}</p>
-              </div>
-              <div class="personal-key">
-                <input type="password" name="Personal key" />
-                <button class="generic-button" type="button" name="Update button" #changeKey>
-                  <div class="content-button">
-                    <p>{{ 'profile.changeKey' | translate }}</p>
-                  </div>
-                  <div class="ripple-container" matRipple [matRippleTrigger]="changeKey"></div>
-                </button>
-                <button class="generic-button" type="button" name="Reset button" #resetKey>
-                  <div class="content-button">
-                    <p>{{ 'profile.resetKey' | translate }}</p>
-                  </div>
-                  <div class="ripple-container" matRipple [matRippleTrigger]="resetKey"></div>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         <div class="sections">
