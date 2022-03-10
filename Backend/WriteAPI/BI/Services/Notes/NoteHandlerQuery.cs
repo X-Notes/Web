@@ -38,7 +38,7 @@ namespace BI.Services.Notes
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
@@ -48,7 +48,7 @@ namespace BI.Services.Notes
             IMapper mapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            AppCustomMapper noteCustomMapper,
+            NoteFolderLabelMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,

@@ -18,9 +18,9 @@ namespace BI.Services.Labels
     {
         private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
-        private AppCustomMapper appCustomMapper;
+        private NoteFolderLabelMapper appCustomMapper;
         public LabelHandlerQuery(IMapper mapper, LabelRepository labelRepository, UserRepository userRepository,
-            AppCustomMapper appCustomMapper)
+            NoteFolderLabelMapper appCustomMapper)
         {
             this.labelRepository = labelRepository;
             this.userRepository = userRepository;

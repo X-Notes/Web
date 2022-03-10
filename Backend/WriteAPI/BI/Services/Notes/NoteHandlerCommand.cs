@@ -53,7 +53,7 @@ namespace BI.Services.Notes
 
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
@@ -66,7 +66,7 @@ namespace BI.Services.Notes
         public NoteHandlerCommand(
             UserRepository userRepository, 
             NoteRepository noteRepository,
-            AppCustomMapper noteCustomMapper, 
+            NoteFolderLabelMapper noteCustomMapper, 
             IMediator _mediator, 
             LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository,

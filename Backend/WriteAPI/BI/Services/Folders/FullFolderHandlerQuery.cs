@@ -25,13 +25,13 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
-        private readonly AppCustomMapper noteMapper;
+        private readonly NoteFolderLabelMapper noteMapper;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
-            AppCustomMapper noteMapper,
+            NoteFolderLabelMapper noteMapper,
             NoteRepository noteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository
             )

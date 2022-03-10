@@ -32,7 +32,7 @@ namespace BI.Services.Notes
 
         private readonly HistoryCacheService historyCacheService;
 
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -46,7 +46,7 @@ namespace BI.Services.Notes
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
-            AppCustomMapper appCustomMapper,
+            NoteFolderLabelMapper appCustomMapper,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             UserRepository userRepository,

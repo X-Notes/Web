@@ -33,12 +33,12 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly UserRepository userRepository;
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly IMediator _mediator;
         public FolderHandlerCommand(
             FolderRepository folderRepository,
             UserRepository userRepository, 
-            AppCustomMapper appCustomMapper, 
+            NoteFolderLabelMapper appCustomMapper, 
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
             FolderWSUpdateService folderWSUpdateService)

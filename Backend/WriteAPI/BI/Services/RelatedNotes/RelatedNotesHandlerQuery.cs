@@ -19,22 +19,19 @@ namespace BI.Services.RelatedNotes
           IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
-        private readonly AppCustomMapper noteCustomMapper;
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
-        private readonly AppCustomMapper noteMapper;
+        private readonly NoteFolderLabelMapper noteMapper;
         private readonly IMediator _mediator;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
-            AppCustomMapper noteCustomMapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            AppCustomMapper noteMapper,
+            NoteFolderLabelMapper noteMapper,
             IMediator _mediator)
         {
             this.relatedRepository = relatedRepository;
-            this.noteCustomMapper = noteCustomMapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.noteMapper = noteMapper;
@@ -44,7 +41,7 @@ namespace BI.Services.RelatedNotes
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
         {
             var notes = await relatedRepository.GetRelatedNotesFullContent(request.NoteId);
-            return noteCustomMapper.MapNotesToRelatedNotes(notes);
+            return noteMapper.MapNotesToRelatedNotes(notes);
         }
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)

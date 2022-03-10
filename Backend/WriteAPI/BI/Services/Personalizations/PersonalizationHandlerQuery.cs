@@ -16,12 +16,12 @@ namespace BI.Services.Personalizations
 
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
 
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
 
         public PersonalizationHandlerQuery(
             UserRepository userRepository,
             PersonalizationSettingRepository personalizationSettingRepository,
-            AppCustomMapper appCustomMapper)
+            NoteFolderLabelMapper appCustomMapper)
         {
             this.userRepository = userRepository;
             this.personalizationSettingRepository = personalizationSettingRepository;

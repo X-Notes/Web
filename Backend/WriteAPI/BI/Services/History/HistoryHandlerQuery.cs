@@ -28,7 +28,7 @@ namespace BI.Services.History
 
         private readonly NoteSnapshotRepository noteHistoryRepository;
 
-        private readonly AppCustomMapper noteCustomMapper;
+        private readonly NoteFolderLabelMapper noteCustomMapper;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
@@ -37,7 +37,7 @@ namespace BI.Services.History
         public HistoryHandlerQuery(
             IMediator _mediator,
             NoteSnapshotRepository noteHistoryRepository,
-            AppCustomMapper noteCustomMapper,
+            NoteFolderLabelMapper noteCustomMapper,
             BaseNoteContentRepository baseNoteContentRepository,
             FileRepository fileRepository)
         {

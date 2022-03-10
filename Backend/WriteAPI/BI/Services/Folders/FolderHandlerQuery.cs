@@ -32,13 +32,13 @@ namespace BI.Services.Folders
 
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
 
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
 
         public FolderHandlerQuery(
             FolderRepository folderRepository, 
             UserRepository userRepository,
             IMediator _mediator,
-            AppCustomMapper appCustomMapper,
+            NoteFolderLabelMapper appCustomMapper,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
         {
             this.folderRepository = folderRepository;

@@ -1,4 +1,3 @@
-using AutoMapper;
 using BI.Mapping;
 using BI.SignalR;
 using FirebaseAdmin;
@@ -57,8 +56,7 @@ namespace WriteAPI
             services.AzureConfig(Configuration);
             services.JWT(Configuration);
                 
-            services.AddAutoMapper(typeof(UserProfile).Assembly);
-            services.AddScoped<AppCustomMapper>();
+            services.AddScoped<NoteFolderLabelMapper>();
 
             services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();
