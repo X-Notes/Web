@@ -158,6 +158,17 @@
     "reviewModal": {
       "review": "Review document",
       "close": "Close"
+    },
+    "deletionModal": {
+      "title": "Deletion",
+      "sureDeleteNotes": "Are you sure you want to delete notes?",
+      "sureDeleteFolders": "Are you sure you want to delete folders?",
+      "sureDeleteLabels": "Are you sure you want to delete labels?",
+      "additionalMessage": "Once delete them, there is no way to get them back."
+    },
+    "genericButtons":{
+      "cancel": "Cancel",
+      "delete": "Delete"
     }
   },
   "innerNote": {

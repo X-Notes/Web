@@ -158,6 +158,17 @@
     "reviewModal": {
       "review": "Просмотр документа",
       "close": "Закрыть"
+    },
+    "deletionModal": {
+      "title": "Удаление",
+      "sureDeleteNotes": "Вы уверены, что хотите удалить заметки?",
+      "sureDeleteFolders": "Вы уверены, что хотите удалить папки?",
+      "sureDeleteLabels": "Вы уверены, что хотите удалить ярлыки?",
+      "additionalMessage": "После удаления их невозможно вернуть."
+    },
+    "genericButtons":{
+      "cancel": "Отменить",
+      "delete": "Удалить"
     }
   },
   "innerNote": {

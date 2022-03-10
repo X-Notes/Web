@@ -78,6 +78,8 @@ import { NotePreviewVideoComponent } from '../content/notes/note/note-preview-vi
 import { NoteCollectionTitleComponent } from '../content/notes/note/note-collection-title/note-collection-title.component';
 import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-audios/note-preview-audios.component';
 import { FileNamePipe } from './pipes/file-name.pipe';
+import { GenericDeletionPopUpComponent } from './modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
+import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bottom-button-pop-up/generic-bottom-button-pop-up.component';
 
 @NgModule({
   declarations: [
@@ -138,6 +140,8 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
     FileNamePipe,
+    GenericDeletionPopUpComponent,
+    GenericBottomButtonPopUpComponent,
   ],
   imports: [
     CommonModule,

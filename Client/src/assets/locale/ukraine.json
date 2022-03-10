@@ -158,6 +158,17 @@
     "reviewModal": {
       "review": "Перегляд документу",
       "close": "Закрити"
+    },
+    "deletionModal": {
+      "title": "Видалення",
+      "sureDeleteNotes": "Ви впевнені, що хочете видалити свої нотатки?",
+      "sureDeleteFolders": "Ви впевнені, що хочете видалити свої папки?",
+      "sureDeleteLabels": "Ви впевнені, що хочете видалити свої ярлики?",
+      "additionalMessage": "Після видалення їх неможливо повернути. "
+    },
+    "genericButtons":{
+      "cancel": "Скасувати",
+      "delete": "Видалити"
     }
   },
   "innerNote": {

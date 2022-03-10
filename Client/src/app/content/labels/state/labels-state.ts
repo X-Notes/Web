@@ -12,7 +12,7 @@ import {
   PositionLabel,
   DeleteLabel,
   RestoreLabel,
-  DeleteAllFromBin,
+  DeleteAllLabelsFromBin,
   UpdateLabelCount,
 } from './labels-actions';
 import { ApiServiceLabels } from '../api-labels.service';
@@ -213,7 +213,7 @@ export class LabelStore {
     });
   }
 
-  @Action(DeleteAllFromBin)
+  @Action(DeleteAllLabelsFromBin)
   async deleteAllFromBin({ patchState }: StateContext<LabelState>) {
     await this.api.removeAll().toPromise();
     patchState({ labelsDeleted: [] });

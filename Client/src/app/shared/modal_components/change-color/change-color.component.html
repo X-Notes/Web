@@ -45,8 +45,8 @@
   </div>
 </div>
 <div appTheme class="button-container">
-  <div class="save-button" (click)="changeColor()" #saveButton>
-    <span>{{ 'modal.ColorModal.save' | translate }}</span>
-    <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
-  </div>
+  <app-generic-bottom-button-pop-up
+    [title]="'modal.ColorModal.save' | translate"
+    (clickEvent)="changeColor()"
+  ></app-generic-bottom-button-pop-up>
 </div>
