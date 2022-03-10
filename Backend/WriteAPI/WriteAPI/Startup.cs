@@ -57,6 +57,8 @@ namespace WriteAPI
             services.JWT(Configuration);
                 
             services.AddScoped<NoteFolderLabelMapper>();
+            services.AddScoped<AppTypesMapper>();
+            services.AddScoped<UserBackgroundMapper>();
 
             services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using BI.Helpers;
 using BI.Mapping;
 using BI.SignalR;
@@ -34,7 +33,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
-        private readonly IMapper mapper;
+
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
@@ -43,9 +42,9 @@ namespace BI.Services.Notes
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly WebsocketsNotesService websocketsNotesService;
+        private readonly UserBackgroundMapper userBackgroundMapper;
 
         public NoteHandlerQuery(
-            IMapper mapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
             NoteFolderLabelMapper noteCustomMapper,
@@ -53,9 +52,9 @@ namespace BI.Services.Notes
             BaseNoteContentRepository baseNoteContentRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             FoldersNotesRepository foldersNotesRepository,
-            WebsocketsNotesService websocketsNotesService)
+            WebsocketsNotesService websocketsNotesService,
+            UserBackgroundMapper userBackgroundMapper)
         {
-            this.mapper = mapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.appCustomMapper = noteCustomMapper;
@@ -64,6 +63,7 @@ namespace BI.Services.Notes
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.foldersNotesRepository = foldersNotesRepository;
             this.websocketsNotesService = websocketsNotesService;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -138,7 +138,7 @@ namespace BI.Services.Notes
             {
                 var ids = websocketsNotesService.GetIdsByEntityId(request.Id);
                 var users = await userRepository.GetUsersWithPhotos(ids);
-                return mapper.Map<List<OnlineUserOnNote>>(users);
+                return users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x)).ToList();
             }
             return new List<OnlineUserOnNote>();
         }

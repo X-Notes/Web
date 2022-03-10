@@ -11,8 +11,6 @@ namespace Common.DTO.Users
 
         public string PhotoPath { set; get; }
 
-        public string DefaultPhotoURL { set; get; }
-
         public string Name { set; get; }
 
         public string Email { set; get; }

@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using BI.Helpers;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
+using BI.Mapping;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Search;
 using Domain.Queries.Search;
@@ -19,24 +18,24 @@ namespace BI.Services.Search
           IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>
     {
         private readonly SearchRepository searchRepository;
+        private readonly UserBackgroundMapper userBackgroundMapper;
         private readonly UserRepository userRepository;
-        private readonly IMapper mapper;
 
         public SeachQueryHandler(
             UserRepository userRepository,
-            IMapper mapper,
-            SearchRepository searchRepository)
+            SearchRepository searchRepository,
+            UserBackgroundMapper userBackgroundMapper)
         {
             this.userRepository = userRepository;
-            this.mapper = mapper;
             this.searchRepository = searchRepository;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
         {
             request.SearchString = request.SearchString.ToLower();
             var users = await userRepository.SearchByEmailAndName(request.SearchString, request.UserId);
-            return mapper.Map<List<ShortUserForShareModal>>(users);
+            return users.Select(x => userBackgroundMapper.MapToShortUserForShareModal(x)).ToList();
         }
 
         public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearchQuery request, CancellationToken cancellationToken)

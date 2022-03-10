@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using BI.Helpers;
+using BI.Mapping;
 using Common.DTO;
 using Common.DTO.Backgrounds;
-using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
 using Domain.Queries.Permissions;
@@ -20,20 +19,20 @@ namespace BI.Services.Backgrounds
         IRequestHandler<UpdateBackgroundCommand, Unit>,
         IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>
     {
-        private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
         private readonly IMediator _mediator;
+        private readonly UserBackgroundMapper userBackgroundMapper;
 
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
-                                        IMapper mapper,
-                                        IMediator _mediator)
+                                        IMediator _mediator,
+                                        UserBackgroundMapper userBackgroundMapper)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
-            this.mapper = mapper;
             this._mediator = _mediator;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
@@ -91,7 +90,7 @@ namespace BI.Services.Backgrounds
             }
 
             await Handle(new UpdateBackgroundCommand(request.UserId, item.Id), CancellationToken.None);
-            var ent = mapper.Map<BackgroundDTO>(item);
+            var ent = userBackgroundMapper.MapToBackgroundDTO(item);
             return new OperationResult<BackgroundDTO>(success: true, ent);
         }
     }

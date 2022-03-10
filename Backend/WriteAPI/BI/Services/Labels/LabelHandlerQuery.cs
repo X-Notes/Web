@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using BI.Mapping;
 using Common.DTO.Labels;
 using Domain.Queries.Labels;
 using MediatR;
 using WriteContext.Repositories.Labels;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Labels
 {
@@ -16,14 +13,11 @@ namespace BI.Services.Labels
         IRequestHandler<GetLabelsByEmailQuery, LabelsDTO>,
         IRequestHandler<GetCountNotesByLabelQuery, int>
     {
-        private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
         private NoteFolderLabelMapper appCustomMapper;
-        public LabelHandlerQuery(IMapper mapper, LabelRepository labelRepository, UserRepository userRepository,
-            NoteFolderLabelMapper appCustomMapper)
+        public LabelHandlerQuery(LabelRepository labelRepository, NoteFolderLabelMapper appCustomMapper)
         {
             this.labelRepository = labelRepository;
-            this.userRepository = userRepository;
             this.appCustomMapper = appCustomMapper;
         }
 

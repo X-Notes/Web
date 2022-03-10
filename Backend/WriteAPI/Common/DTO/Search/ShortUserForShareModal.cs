@@ -13,7 +13,5 @@ namespace Common.DTO.Search
         public Guid PhotoId { set; get; }
 
         public string PhotoPath { set; get; }
-
-        public string DefaultPhotoURL { set; get; }
     }
 }

@@ -44,30 +44,6 @@ export class MenuButtonsNotesService {
       });
   }
 
-  private async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
-    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-
-    if (isInnerNote) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const idsInner = [note.id];
-      await this.store.dispatch(new DeleteNotesPermanently(idsInner)).toPromise();
-      return this.sbws.buildNotification(
-        this.apiTranslate.instant('snackBar.notePermDeleted'),
-        null,
-      );
-    }
-    const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
-
-    this.store.dispatch(LoadUsedDiskSpace);
-
-    const message =
-      idsOuter.length > 1
-        ? this.apiTranslate.instant('snackBar.notesPermDeleted')
-        : this.apiTranslate.instant('snackBar.notePermDeleted');
-    return this.sbws.buildNotification(message, null);
-  }
-
   copyNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
@@ -194,5 +170,29 @@ export class MenuButtonsNotesService {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       this.store.dispatch(new ChangeTypeFullNote(typeTo));
     }
+  }
+
+  private async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const idsInner = [note.id];
+      await this.store.dispatch(new DeleteNotesPermanently(idsInner)).toPromise();
+      return this.sbws.buildNotification(
+        this.apiTranslate.instant('snackBar.notePermDeleted'),
+        null,
+      );
+    }
+    const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
+    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
+
+    this.store.dispatch(LoadUsedDiskSpace);
+
+    const message =
+      idsOuter.length > 1
+        ? this.apiTranslate.instant('snackBar.notesPermDeleted')
+        : this.apiTranslate.instant('snackBar.notePermDeleted');
+    return this.sbws.buildNotification(message, null);
   }
 }

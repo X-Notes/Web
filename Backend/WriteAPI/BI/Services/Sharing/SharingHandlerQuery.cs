@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
+using BI.Mapping;
 using Common.DTO.Users;
 using Domain.Queries.Sharing;
 using MediatR;
@@ -16,27 +17,28 @@ namespace BI.Services.Sharing
     {
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
-        private readonly IMapper mapper;
+        private readonly UserBackgroundMapper userBackgroundMapper;
+
         public SharingHandlerQuery(
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
-            IMapper mapper)
+            UserBackgroundMapper userBackgroundMapper)
         {
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+            this.userBackgroundMapper = userBackgroundMapper;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
-            this.mapper = mapper;
         }
 
         public async Task<List<InvitedUsersToFoldersOrNote>> Handle(GetUsersOnPrivateNoteQuery request, CancellationToken cancellationToken)
         {
             var users = await usersOnPrivateNotesRepository.GetByNoteIdUserOnPrivateNote(request.NoteId);
-            return mapper.Map<List<InvitedUsersToFoldersOrNote>>(users);
+            return users.Select(x => userBackgroundMapper.MapToInvitedUsersToFoldersOrNote(x)).ToList();
         }
 
         public async Task<List<InvitedUsersToFoldersOrNote>> Handle(GetUsersOnPrivateFolderQuery request, CancellationToken cancellationToken)
         {
             var users = await usersOnPrivateFoldersRepository.GetByFolderIdUserOnPrivateFolder(request.FolderId);
-            return mapper.Map<List<InvitedUsersToFoldersOrNote>>(users);
+            return users.Select(x => userBackgroundMapper.MapToInvitedUsersToFoldersOrNote(x)).ToList();
         }
     }
 }
