@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
+import { take } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -15,6 +16,7 @@ import {
   DeleteNotesPermanently,
 } from '../notes/state/notes-actions';
 import { NoteStore } from '../notes/state/notes-state';
+import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +26,25 @@ export class MenuButtonsNotesService {
     private store: Store,
     private sbws: SnackBarWrapperService,
     private apiTranslate: TranslateService,
+    private dialogsService: DialogsManageService,
   ) {}
 
-  async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
+  openDeletionNoteModal(): void {
+    const instance = this.dialogsService.openDeletionPopup(
+      'modal.deletionModal.sureDeleteNotes',
+      'modal.deletionModal.additionalMessage',
+    );
+    instance
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        if (x) {
+          this.deleteNotes();
+        }
+      });
+  }
+
+  private async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
 
     if (isInnerNote) {
