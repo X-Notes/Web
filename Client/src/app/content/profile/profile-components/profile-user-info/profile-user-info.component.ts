@@ -7,7 +7,7 @@ import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
-import { UpdateUserName, UpdateUserPhoto } from 'src/app/core/stateUser/user-action';
+import { UpdateUserInfo, UpdateUserPhoto } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 
@@ -26,7 +26,7 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
 
   public photoError = false;
 
-  userName;
+  userName: string;
 
   constructor(
     private store: Store,
@@ -45,9 +45,9 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
         if (title) {
-          const oldName = this.store.selectSnapshot(UserStore.getUser).name;
-          if (oldName !== this.userName) {
-            this.store.dispatch(new UpdateUserName(this.userName));
+          const user = this.store.selectSnapshot(UserStore.getUser);
+          if (user.name !== this.userName) {
+            this.store.dispatch(new UpdateUserInfo(this.userName, user.defaultPhotoURL));
           }
         }
       });

@@ -74,7 +74,7 @@ namespace BI.Services.Notes
             return false;
         }
 
-        private async Task<IEnumerable<Guid>> GetItemsThatCanBeUnlinked(FileTypeEnum fileType, params Guid[] ids)
+        private async Task<List<Guid>> GetItemsThatCanBeUnlinked(FileTypeEnum fileType, params Guid[] ids)
         {
             var histIds = await snapshotFileContentRepository.GetFileIdsThatExist(ids);
             switch (fileType)
@@ -82,22 +82,22 @@ namespace BI.Services.Notes
                 case FileTypeEnum.Audio:
                     {
                         var dbIds = await audioNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
+                        return ids.Except(dbIds).Except(histIds).ToList();
                     }
                 case FileTypeEnum.Photo:
                     {
                         var dbIds = await photoNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
+                        return ids.Except(dbIds).Except(histIds).ToList();
                     }
                 case FileTypeEnum.Video:
                     {
                         var dbIds = await videoNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
+                        return ids.Except(dbIds).Except(histIds).ToList();
                     }
                 case FileTypeEnum.Document:
                     {
                         var dbIds = await documentNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
+                        return ids.Except(dbIds).Except(histIds).ToList();
                     }
                 default:
                     {

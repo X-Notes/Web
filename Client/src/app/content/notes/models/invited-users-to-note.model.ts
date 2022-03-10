@@ -4,6 +4,7 @@ export interface InvitedUsersToNoteOrFolder {
   id: string;
   photoId: string;
   photoPath: string;
+  defaultPhotoURL: string;
   name: string;
   email: string;
   accessTypeId: RefTypeENUM;

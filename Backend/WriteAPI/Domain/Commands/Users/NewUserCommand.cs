@@ -10,5 +10,7 @@ namespace Domain.Commands.Users
         public string Name { set; get; }
 
         public string Email { set; get; }
+
+        public string PhotoURL { set; get; }
     }
 }

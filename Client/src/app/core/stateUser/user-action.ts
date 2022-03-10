@@ -43,10 +43,10 @@ export class SetDefaultBackground {
   static type = '[User] setDefault Background';
 }
 
-export class UpdateUserName {
+export class UpdateUserInfo {
   static type = '[User] update userName';
 
-  constructor(public newName: string) {}
+  constructor(public newName: string, public photoUrl: string) {}
 }
 
 export class UpdateUserPhoto {

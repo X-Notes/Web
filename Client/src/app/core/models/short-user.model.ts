@@ -10,6 +10,7 @@ export interface ShortUser {
   email: string;
   photoId: string;
   photoPath: string;
+  defaultPhotoURL: string;
   currentBackground: Background;
   languageId: LanguagesENUM;
   themeId: ThemeENUM;

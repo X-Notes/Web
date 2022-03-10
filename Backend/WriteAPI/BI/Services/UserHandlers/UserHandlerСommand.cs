@@ -56,7 +56,8 @@ namespace BI.Services.UserHandlers
                 Email = request.Email,
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,
-                BillingPlanId = BillingPlanTypeENUM.Free
+                BillingPlanId = BillingPlanTypeENUM.Free,
+                DefaultPhotoUrl = request.PhotoURL
             };
 
             await userRepository.AddAsync(user);
@@ -72,6 +73,7 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.Name = request.Name;
+            user.DefaultPhotoUrl = request.DefaultProfileURL;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
         }

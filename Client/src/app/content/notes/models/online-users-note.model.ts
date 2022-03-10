@@ -3,4 +3,5 @@ export interface OnlineUsersNote {
   name: string;
   photoId: string;
   photoPath: string;
+  defaultPhotoURL: string;
 }

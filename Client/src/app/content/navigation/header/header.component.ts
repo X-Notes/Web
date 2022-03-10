@@ -22,6 +22,8 @@ import { FullNote } from '../../notes/models/full-note.model';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
+import { AuthService } from 'src/app/core/auth.service';
+import { UpdateUserInfo } from 'src/app/core/stateUser/user-action';
 
 @Component({
   selector: 'app-header',
@@ -79,6 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private store: Store,
     public menuButtonService: MenuButtonsService,
     private signalRService: SignalRService,
+    private authService: AuthService,
   ) {}
 
   ngOnDestroy(): void {
@@ -110,6 +113,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(LoadNotifications);
     this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
+
+    this.updatePhotoIfNeed();
+  }
+
+  async updatePhotoIfNeed() {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    const firebaseUser = await this.authService.getUser();
+    if (!user.defaultPhotoURL) {
+      this.store.dispatch(new UpdateUserInfo(user.name, firebaseUser.photoURL));
+    }
   }
 
   showUsers() {

@@ -33,6 +33,11 @@ export class AuthService {
     await this.router.navigate(['about']);
   };
 
+  async getUser() {
+    const user = await this.afAuth.currentUser;
+    return user;
+  }
+
   async getToken(refresh = false) {
     const user = await this.afAuth.currentUser;
     return user?.getIdToken(refresh);
@@ -42,7 +47,7 @@ export class AuthService {
     const { user } = await this.afAuth.getRedirectResult();
     if (user) {
       await this.store
-        .dispatch(new Auth({ name: user.displayName, photo: user.photoURL }))
+        .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
         .toPromise();
       this.router.navigate(['notes']);
     }

@@ -1027,6 +1027,9 @@ namespace WriteContext.Migrations
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("DefaultPhotoUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1038,9 +1041,6 @@ namespace WriteContext.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PersonalKey")
                         .HasColumnType("text");
 
                     b.Property<int>("ThemeId")

@@ -46,7 +46,7 @@ namespace WriteAPI.Controllers.UserContollers
             return await _mediator.Send(new GetUserMemoryQuery(this.GetUserId()));
         }
 
-        [HttpPut("username")]
+        [HttpPut("info")]
         public async Task UpdateMainInformation([FromBody] UpdateMainUserInfoCommand command)
         {
             command.UserId = this.GetUserId();

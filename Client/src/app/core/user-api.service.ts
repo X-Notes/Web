@@ -81,11 +81,12 @@ export class UserAPIService {
     return this.httpClient.post(`${environment.writeAPI}/api/user/language`, obj);
   }
 
-  updateUserName(name: string) {
+  updateUserInfo(name: string, defaultProfileURL: string) {
     const obj = {
       name,
+      defaultProfileURL,
     };
-    return this.httpClient.put(`${environment.writeAPI}/api/user/username`, obj);
+    return this.httpClient.put(`${environment.writeAPI}/api/user/info`, obj);
   }
 
   updateUserPhoto(photo: FormData, mini: OperationDetailMini, operation: LongTermOperation) {

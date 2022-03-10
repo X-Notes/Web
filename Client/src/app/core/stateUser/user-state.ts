@@ -18,7 +18,7 @@ import {
   ChangeFontSize,
   SetCurrentBackground,
   SetDefaultBackground,
-  UpdateUserName,
+  UpdateUserInfo,
   UpdateUserPhoto,
   LoadUsedDiskSpace,
   LoadPersonalization,
@@ -172,14 +172,14 @@ export class UserStore {
     });
   }
 
-  @Action(UpdateUserName)
+  @Action(UpdateUserInfo)
   async updateUserName(
     { patchState, getState }: StateContext<UserState>,
-    { newName }: UpdateUserName,
+    { newName, photoUrl }: UpdateUserInfo,
   ) {
-    await this.api.updateUserName(newName).toPromise();
+    await this.api.updateUserInfo(newName, photoUrl).toPromise();
     patchState({
-      user: { ...getState().user, name: newName },
+      user: { ...getState().user, name: newName, defaultPhotoURL: photoUrl },
     });
   }
 
