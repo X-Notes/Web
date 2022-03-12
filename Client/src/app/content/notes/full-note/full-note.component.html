@@ -2,7 +2,7 @@
 <div
   appTheme
   class="content-generic-project full-content"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div
     *ngIf="(canView$ | async) && loaded"

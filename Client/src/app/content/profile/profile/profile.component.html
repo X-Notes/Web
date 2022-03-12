@@ -7,7 +7,7 @@
 <div
   appTheme
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <ng-scrollbar [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner-profile">

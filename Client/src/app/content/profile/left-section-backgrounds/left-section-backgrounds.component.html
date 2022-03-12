@@ -4,11 +4,7 @@
     *ngFor="let item of backgrounds$ | async"
     [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''"
   >
-    <img
-      alt="background"
-      [src]="item.photoPath | getImage: (user$ | async).id"
-      (click)="setCurrentBackground.emit(item.id)"
-    />
+    <img alt="background" [src]="item.photoPath" (click)="setCurrentBackground.emit(item.id)" />
     <div class="thumbnail" (click)="removeBackground.emit(item.id)">
       <div class="icon">
         <mat-icon svgIcon="cancelThin" [inline]="true"></mat-icon>
