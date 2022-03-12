@@ -90,7 +90,7 @@ namespace BI.Mapping
             {
                 Id = background.Id,
                 PhotoId = background.FileId,
-                PhotoPath = background.File.GetFromBigPath
+                PhotoPath = BuildPhotoPath(background.UserId, background.File.GetFromBigPath)
             };
         }
 
@@ -105,7 +105,7 @@ namespace BI.Mapping
 
         private string BuildPhotoPath(Guid userId, string path)
         {
-            return this.azureConfig + "/" + userId + "/" + path;
+            return this.azureConfig.StorageEmulatorUrl + "/" + userId + "/" + path;
         }
     }
 }

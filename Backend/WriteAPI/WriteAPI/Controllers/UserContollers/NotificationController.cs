@@ -29,42 +29,27 @@ namespace WriteAPI.Controllers.UserContollers
         [HttpGet]
         public async Task<IEnumerable<NotificationDTO>> GetNotifications()
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
-            if (user != null)
-            {
-                var notifs = await notificationRepository.GetByUserOrdered(user.Id);
-                return notifs.Select(t => new NotificationDTO(t));
-            }
-            throw new Exception("User not found");
+            var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
+            return notifs.Select(t => new NotificationDTO(t));
         }
 
         [HttpGet("read/all")]
         public async Task<IActionResult> ReadAllNotifications()
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
-            if (user != null)
-            {
-                var notifs = await notificationRepository
-                    .GetWhereAsync(x => x.UserToId == user.Id && x.IsRead == false);
-                notifs.ForEach(x => x.IsRead = true);
-                await notificationRepository.UpdateRangeAsync(notifs);
-                return Ok();
-            }
-            throw new Exception("User not found");
+            var notifs = await notificationRepository
+                .GetWhereAsync(x => x.UserToId == this.GetUserId() && x.IsRead == false);
+            notifs.ForEach(x => x.IsRead = true);
+            await notificationRepository.UpdateRangeAsync(notifs);
+            return Ok();
         }
 
         [HttpGet("read/{id}")]
         public async Task<IActionResult> ReadAllNotifications(Guid id)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
-            if (user != null)
-            {
-                var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == user.Id && x.Id == id);
-                notif.IsRead = true;
-                await notificationRepository.UpdateAsync(notif);
-                return Ok();
-            }
-            throw new Exception("User not found");
+            var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == this.GetUserId() && x.Id == id);
+            notif.IsRead = true;
+            await notificationRepository.UpdateAsync(notif);
+            return Ok();
         }
     }
 }
