@@ -87,10 +87,9 @@ export class UserAPIService {
     return this.httpClient.post(`${environment.writeAPI}/api/user/language`, obj);
   }
 
-  updateUserInfo(name: string, defaultProfileURL: string) {
+  updateUserInfo(name: string) {
     const obj = {
       name,
-      defaultProfileURL,
     };
     return this.httpClient.put(`${environment.writeAPI}/api/user/info`, obj);
   }

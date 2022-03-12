@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
+using BI.Mapping;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
@@ -33,17 +34,20 @@ namespace BI.Services.UserHandlers
         private readonly IMediator _mediator;
 
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
+        private readonly UserBackgroundMapper userBackgroundMapper;
 
         public UserHandlerСommand(
             UserRepository userRepository,
             UserProfilePhotoRepository userProfilePhotoRepository,
             IMediator _mediator,
-            PersonalizationSettingRepository personalizationSettingRepository)
+            PersonalizationSettingRepository personalizationSettingRepository,
+            UserBackgroundMapper userBackgroundMapper)
         {
             this.userRepository = userRepository;
             this.userProfilePhotoRepository = userProfilePhotoRepository;
             this._mediator = _mediator;
             this.personalizationSettingRepository = personalizationSettingRepository;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
         public async Task<Guid> Handle(NewUserCommand request, CancellationToken cancellationToken)
@@ -73,7 +77,6 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.Name = request.Name;
-            user.DefaultPhotoUrl = request.DefaultProfileURL;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
@@ -102,7 +105,7 @@ namespace BI.Services.UserHandlers
             var success = await userRepository.UpdatePhoto(user, appFile);
             if (success)
             {
-                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = appFile.GetNotNullPathes().Last() };
+                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = userBackgroundMapper.BuildPhotoPath(request.UserId, appFile.GetFromSmallPath) };
                 return new OperationResult<AnswerChangeUserPhoto>(true, result);
             }
             else

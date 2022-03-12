@@ -81,7 +81,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private store: Store,
     public menuButtonService: MenuButtonsService,
     private signalRService: SignalRService,
-    private authService: AuthService,
   ) {}
 
   ngOnDestroy(): void {
@@ -113,17 +112,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(LoadNotifications);
     this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
-
-    this.updatePhotoIfNeed();
   }
 
-  async updatePhotoIfNeed() {
-    const user = this.store.selectSnapshot(UserStore.getUser);
-    const firebaseUser = await this.authService.getUser();
-    if (!user.defaultPhotoURL) {
-      this.store.dispatch(new UpdateUserInfo(user.name, firebaseUser.photoURL));
-    }
-  }
 
   showUsers() {
     this.pService.users = !this.pService.users;

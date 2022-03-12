@@ -7,7 +7,5 @@ namespace Domain.Commands.Users
     {
         [Required]
         public string Name { set; get; }
-
-        public string DefaultProfileURL { set; get; }
     }
 }

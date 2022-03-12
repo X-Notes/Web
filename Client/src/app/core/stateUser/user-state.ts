@@ -94,11 +94,7 @@ export class UserStore {
 
   @Selector()
   static getUserBackground(state: UserState): string {
-    const path = state.user.currentBackground?.photoPath;
-    if (path) {
-      return `${environment.storage}/${state.user.id}/${escape(path)}`;
-    }
-    return null;
+    return state.user.currentBackground?.photoPath;
   }
 
   @Selector()
@@ -175,11 +171,11 @@ export class UserStore {
   @Action(UpdateUserInfo)
   async updateUserName(
     { patchState, getState }: StateContext<UserState>,
-    { newName, photoUrl }: UpdateUserInfo,
+    { newName }: UpdateUserInfo,
   ) {
-    await this.api.updateUserInfo(newName, photoUrl).toPromise();
+    await this.api.updateUserInfo(newName).toPromise();
     patchState({
-      user: { ...getState().user, name: newName, defaultPhotoURL: photoUrl },
+      user: { ...getState().user, name: newName, },
     });
   }
 
@@ -209,7 +205,7 @@ export class UserStore {
 
     const newPhoto = result.data;
     patchState({
-      user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath },
+      user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath }, // todo return link
     });
     dispatch(LoadUsedDiskSpace);
   }

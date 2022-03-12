@@ -103,7 +103,7 @@ namespace BI.Mapping
             };
         }
 
-        private string BuildPhotoPath(Guid userId, string path)
+        public string BuildPhotoPath(Guid userId, string path)
         {
             return this.azureConfig.StorageEmulatorUrl + "/" + userId + "/" + path;
         }

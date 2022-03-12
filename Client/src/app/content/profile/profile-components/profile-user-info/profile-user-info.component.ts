@@ -47,7 +47,7 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
         if (title) {
           const user = this.store.selectSnapshot(UserStore.getUser);
           if (user.name !== this.userName) {
-            this.store.dispatch(new UpdateUserInfo(this.userName, user.defaultPhotoURL));
+            this.store.dispatch(new UpdateUserInfo(this.userName));
           }
         }
       });
