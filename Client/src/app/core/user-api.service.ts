@@ -39,6 +39,12 @@ export class UserAPIService {
     );
   }
 
+  setTokenClaims() {
+    return this.httpClient.get<OperationResult<any>>(
+      `${environment.writeAPI}/api/auth/set`
+    );
+  }
+
   tryGetFromAuthorize() {
     return this.httpClient.get(`${environment.writeAPI}/api/auth/get`);
   }

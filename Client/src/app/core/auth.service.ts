@@ -38,32 +38,31 @@ export class AuthService {
     return user;
   }
 
-  async getToken(refresh = false) {
+  async getToken(refresh = false): Promise<string> {
     const user = await this.afAuth.currentUser;
     return user?.getIdToken(refresh);
+  }
+
+  async refreshToken(): Promise<void> {
+    const user = await this.afAuth.currentUser;
+    await user?.getIdToken(true);
   }
 
   async redirectOnSuccessAuth() {
     const { user } = await this.afAuth.getRedirectResult();
     if (user) {
-      await this.store
-        .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
-        .toPromise();
-      this.router.navigate(['notes']);
+      const token = await this.getToken();
+      const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
+      if (isValidToken.success) {
+        await this.store
+          .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
+          .toPromise();
+        await this.apiAuth.setTokenClaims().toPromise();
+        await this.refreshToken();
+        this.router.navigate(['notes']);
+      }
     }
   }
 
-  private async configureAuthState(user: firebase.User) {
-    if (user) {
-      const token = await this.getToken();
-      const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
-      if (!isValidToken.success) {
-        await this.logout();
-      } else {
-        this.getToken(true); // force refresh token for getting custom claims;
-      }
-    } else {
-      await this.logout();
-    }
-  }
+  private async configureAuthState(user: firebase.User) {}
 }

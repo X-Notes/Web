@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BI.Services.Auth;
 using Common;
 using Common.DTO;
-using FirebaseAdmin;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Users;
 
 namespace WriteAPI.Controllers.UserContollers
@@ -16,54 +17,57 @@ namespace WriteAPI.Controllers.UserContollers
     public class AuthController : ControllerBase
     {
         private readonly UserRepository userRepository;
+        private readonly FirebaseAuthService firebaseAuth;
 
-        public AuthController(UserRepository userRepository)
+        public AuthController(UserRepository userRepository, FirebaseAuthService firebaseAuth)
         {
             this.userRepository = userRepository;
+            this.firebaseAuth = firebaseAuth;
         }
 
         [HttpPost("verify")]
         public async Task<OperationResult<Unit>> VerifyToken(TokenVerifyRequest request)
         {
-            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
-            try
+            var isValid = await firebaseAuth.IsTokenValid(request.Token);
+            if (isValid)
             {
-                var response = await auth.VerifyIdTokenAsync(request.Token);
-                if (response != null)
-                {
-                    var isHasEmail = response.Claims.ContainsKey("email");
-                    if(isHasEmail)
-                    {
-                        var email = response.Claims["email"].ToString();
-                        var user = await userRepository.FirstOrDefaultAsync(x => x.Email == email);
-                        if (user != null)
-                        {
-                            var claims = new Dictionary<string, object>() { { "userId", user.Id }, { "IsHasProfile", true } };
-                            await auth.SetCustomUserClaimsAsync(response.Uid, claims);
-                        }
-                    }
-                    return new OperationResult<Unit>(true, Unit.Value);
-                }
+                return new OperationResult<Unit>(true, Unit.Value);
             }
-            catch (FirebaseException ex)
-            {
-                System.Console.WriteLine(ex);
-            }
-
             return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
         }
 
-        [HttpGet("work")]
+        [HttpGet("set")]
+        [Authorize]
+        public async Task<OperationResult<Unit>> SetClaims()
+        {
+            var email = this.GetUserEmail();
+            var uid = this.GetFirebaseUID();
+
+            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(uid))
+            {
+                return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
+            }
+            
+            var result = await firebaseAuth.TrySetCustomClaims(email, uid);
+            if (!result)
+            {
+                return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.NotFound);
+            }
+
+            return new OperationResult<Unit>(true, Unit.Value);
+        }
+
+        [HttpGet("status")]
         public ActionResult GETSTATUS()
         {
-            return Ok("WORK2");
+            return Ok("Ok");
         }
 
         [Authorize]
         [HttpGet("get")]
         public ActionResult GET()
         {
-            return Ok();
+            return Ok("Ok");
         }
     }
 }

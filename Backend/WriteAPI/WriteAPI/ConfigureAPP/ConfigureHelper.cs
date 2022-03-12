@@ -91,6 +91,7 @@ using Common.DTO;
 using WriteContext.Repositories.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
+using BI.Services.Auth;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -414,6 +415,8 @@ namespace WriteAPI.ConfigureAPP
 
         public static void BI(this IServiceCollection services)
         {
+            services.AddScoped<FirebaseAuthService>();
+
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
 

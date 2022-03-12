@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Users;
 using Domain.Commands.Users;
@@ -37,7 +38,13 @@ namespace WriteAPI.Controllers.UserContollers
         [HttpGet("short")]
         public async Task<OperationResult<ShortUser>> GetShort()
         {
-            return await _mediator.Send(new GetShortUserQuery(this.GetUserId()));
+            var userId = this.GetUserIdRaw();
+
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedId)) {
+                return new OperationResult<ShortUser>(false, null, OperationResultAdditionalInfo.NotFound);
+            }
+
+            return await _mediator.Send(new GetShortUserQuery(parsedId));
         }
 
         [HttpGet("memory")]

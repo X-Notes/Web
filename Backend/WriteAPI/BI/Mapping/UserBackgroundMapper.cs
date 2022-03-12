@@ -28,7 +28,7 @@ namespace BI.Mapping
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
-                CurrentBackground = MapToBackgroundDTO(user.CurrentBackground),
+                CurrentBackground = user.CurrentBackground != null ? MapToBackgroundDTO(user.CurrentBackground) : null,
                 LanguageId = user.LanguageId,
                 ThemeId = user.ThemeId,
                 FontSizeId = user.FontSizeId,
