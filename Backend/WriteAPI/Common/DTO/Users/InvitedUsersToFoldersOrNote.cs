@@ -7,7 +7,7 @@ namespace Common.DTO.Users
     {
         public Guid Id { set; get; }
 
-        public Guid PhotoId { set; get; }
+        public Guid? PhotoId { set; get; }
 
         public string PhotoPath { set; get; }
 

@@ -26,7 +26,7 @@ namespace BI.Mapping
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                PhotoId = user.UserProfilePhoto.AppFileId,
+                PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
                 CurrentBackground = MapToBackgroundDTO(user.CurrentBackground),
                 LanguageId = user.LanguageId,
@@ -41,7 +41,7 @@ namespace BI.Mapping
             return new OnlineUserOnNote {
                 Id = user.Id,
                 Name = user.Name,
-                PhotoId = user.UserProfilePhoto.AppFileId,
+                PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
@@ -53,7 +53,7 @@ namespace BI.Mapping
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                PhotoId = user.UserProfilePhoto.AppFileId,
+                PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
@@ -65,7 +65,7 @@ namespace BI.Mapping
                 Id = user.UserId,
                 Name = user.User.Name,
                 Email = user.User.Email,
-                PhotoId = user.User.UserProfilePhoto.AppFileId,
+                PhotoId = user.User.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.User.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
                 AccessTypeId = user.AccessTypeId
             };
@@ -78,7 +78,7 @@ namespace BI.Mapping
                 Id = user.UserId,
                 Name = user.User.Name,
                 Email = user.User.Email,
-                PhotoId = user.User.UserProfilePhoto.AppFileId,
+                PhotoId = user.User.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.User.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
                 AccessTypeId = user.AccessTypeId
             };

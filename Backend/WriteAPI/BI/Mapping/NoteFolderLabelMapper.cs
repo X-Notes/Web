@@ -309,8 +309,8 @@ namespace BI.Mapping
                 Id = user.Id,
                 Email = user.Email,
                 Name = user.Name,
-                PhotoId = user.UserProfilePhoto.AppFileId,
-                PhotoPath = user.UserProfilePhoto.AppFile.GetFromSmallPath
+                PhotoId = user.UserProfilePhoto?.AppFileId,
+                PhotoPath = user.UserProfilePhoto?.AppFile.GetFromSmallPath
             };
         }
 
