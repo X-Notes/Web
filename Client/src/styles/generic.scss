@@ -251,21 +251,20 @@
 .add-mobile {
   position: absolute;
   right: 5vw;
-  bottom: calc(5vh + 80px);
   z-index: $add-mobile;
   display: none;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background-color: transparent;
-  border: 0.8px solid transparent;
+  border: none;
   padding: 0;
   outline: none;
   user-select: none;
   overflow: hidden;
-  background-color: #1fb86e;
+  background: linear-gradient(97.88deg, #0083BB 0%, #00AFE7 100%);
 
   .icon {
     position: relative;
@@ -274,10 +273,19 @@
     font-size: 2.25rem;
     user-select: none;
     color: white;
-    width: 36px;
+    width: 30px;
     height: 36px;
   }
 }
+
+.add-mobile-position-default{
+  bottom: calc(5vh + 80px);
+}
+
+.add-mobile-position-audio {
+  bottom: calc(5vh + 105px);
+}
+
 
 .separator-buttons {
   height: 20px;
@@ -424,8 +432,12 @@
     width: calc(100% / 2);
   }
 
-  .add-mobile {
+  .add-mobile-position-default{
     bottom: calc(5vh + 70px);
+  }
+
+  .add-mobile-position-audio {
+    bottom: calc(5vh + 115px);
   }
 
   .cdk-overlay-container {
@@ -450,8 +462,8 @@
 
 @media (max-width: 400px) {
   .add-mobile {
-    width: 85px;
-    height: 85px;
+    width: 75px;
+    height: 75px;
 
     .icon {
       font-size: 2.3rem;
@@ -466,7 +478,11 @@
 }
 
 @media (max-width: 320px) {
-  .add-mobile {
+  .add-mobile-position-default {
     bottom: calc(5vh + 65px);
+  }
+
+  .add-mobile-position-audio {
+    bottom: calc(5vh + 145px);
   }
 }
