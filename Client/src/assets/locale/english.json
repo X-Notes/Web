@@ -311,5 +311,14 @@
     "history": "History",
     "note": "Note",
     "folder": "Folder"
+  },
+  "delete-message":{
+    "folders": "Folders will be automatically deleted after {{days}} days",
+    "notes": "Notes will be automatically deleted after {{days}} days",
+    "labels": "Labels will be automatically deleted after {{days}} days"
+  },
+  "entity-bottom-tooltip":{
+    "updated": "date of last changes",
+    "deleted": "date of deletion"
   }
 }

@@ -38,8 +38,6 @@ export class ExportService {
     saveAs(zipFile, `noots-export ${moment().format('MM-DD, h-mm-ss a')}`);
   };
 
-  getPath = (url: string) => escape(url);
-
   getBlobFile(url: string, mini: OperationDetailMini, operation: LongTermOperation) {
     return this.httpClient
       .get(url, {
@@ -62,7 +60,7 @@ export class ExportService {
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportPhotos');
     const tasks = collection.items.map((photo) => {
-      const path = this.getPath(photo.photoFromBig);
+      const path = photo.photoFromBig;
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Image,
@@ -90,7 +88,7 @@ export class ExportService {
       photo.name,
       false,
     );
-    const path = this.getPath(photo.photoFromBig);
+    const path = photo.photoFromBig;
     const blob = await this.getBlobFile(path, mini, operation).toPromise();
     saveAs(blob.eventBody, photo.name);
   }
@@ -109,7 +107,7 @@ export class ExportService {
         audio.name,
         false,
       );
-      const path = this.getPath(audio.audioPath);
+      const path = audio.audioPath;
       return this.getBlobFile(path, mini, operation).pipe(
         map((blob) => {
           return {
@@ -131,7 +129,7 @@ export class ExportService {
       audio.name,
       false,
     );
-    const path = this.getPath(audio.audioPath);
+    const path = audio.audioPath;
     const blob = await this.getBlobFile(path, mini, operation).toPromise();
     saveAs(blob.eventBody, audio.name);
   }
@@ -152,7 +150,7 @@ export class ExportService {
         document.name,
         false,
       );
-      const path = this.getPath(document.documentPath);
+      const path = document.documentPath;
       return this.getBlobFile(path, mini, operation).pipe(
         map((blob) => {
           return {
@@ -176,7 +174,7 @@ export class ExportService {
       document.name,
       false,
     );
-    const path = this.getPath(document.documentPath);
+    const path = document.documentPath;
     const blob = await this.getBlobFile(path, mini, operation).toPromise();
     saveAs(blob.eventBody, document.name);
   }
@@ -195,7 +193,7 @@ export class ExportService {
         video.name,
         false,
       );
-      const path = this.getPath(video.videoPath);
+      const path = video.videoPath;
       return this.getBlobFile(path, mini, operation).pipe(
         map((blob) => {
           return {
@@ -217,7 +215,7 @@ export class ExportService {
       video.name,
       false,
     );
-    const path = this.getPath(video.videoPath);
+    const path = video.videoPath;
     const blob = await this.getBlobFile(path, mini, operation).toPromise();
     saveAs(blob.eventBody, video.name);
   }

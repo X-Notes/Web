@@ -52,8 +52,11 @@
     </app-note-preview-audios>
   </ng-container>
   <div class="footer">
-    <div class="date">
-      <p>{{note.updatedAt | date: 'medium' }}</p>
+    <div
+      class="date"
+      [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
+    >
+      <p>{{date ?? note.updatedAt | date: 'medium' }}</p>
     </div>
     <div class="help-icons">
       <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">

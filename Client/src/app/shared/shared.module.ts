@@ -76,6 +76,7 @@ import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-a
 import { FileNamePipe } from './pipes/file-name.pipe';
 import { GenericDeletionPopUpComponent } from './modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
 import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bottom-button-pop-up/generic-bottom-button-pop-up.component';
+import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-message/generic-delete-entity-message.component';
 
 @NgModule({
   declarations: [
@@ -134,6 +135,7 @@ import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bo
     FileNamePipe,
     GenericDeletionPopUpComponent,
     GenericBottomButtonPopUpComponent,
+    GenericDeleteEntityMessageComponent,
   ],
   imports: [
     CommonModule,
@@ -217,6 +219,7 @@ import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bo
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
     FileNamePipe,
+    GenericDeleteEntityMessageComponent
   ],
   providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

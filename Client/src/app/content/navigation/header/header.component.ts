@@ -114,7 +114,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
   }
 
-
   showUsers() {
     this.pService.users = !this.pService.users;
   }

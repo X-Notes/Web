@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
-import { environment } from 'src/environments/environment';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
@@ -175,7 +174,7 @@ export class UserStore {
   ) {
     await this.api.updateUserInfo(newName).toPromise();
     patchState({
-      user: { ...getState().user, name: newName, },
+      user: { ...getState().user, name: newName },
     });
   }
 

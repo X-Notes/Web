@@ -18,6 +18,10 @@ import { SmallFolder } from '../models/folder.model';
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
 
+  @Input() date: string;
+
+  @Input() tooltipDateMessage: string;
+
   @Input() isSelectedMode: boolean;
 
   fontSize = FontSizeENUM;
