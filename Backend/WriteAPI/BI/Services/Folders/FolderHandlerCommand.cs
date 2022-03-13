@@ -158,7 +158,7 @@ namespace BI.Services.Folders
                             Order = order--,
                             CreatedAt = DateTimeProvider.Time,
                             UpdatedAt = DateTimeProvider.Time,
-                            UserId = permission.User.Id
+                            UserId = permission.Caller.Id
                         };
                         var dbFolder = await folderRepository.AddAsync(newFolder);
                         resultIds.Add(dbFolder.Entity.Id);
@@ -170,7 +170,7 @@ namespace BI.Services.Folders
                         await foldersNotesRepository.AddRangeAsync(foldersNotes);
                     }
 
-                    var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(permission.User.Id, FolderTypeENUM.Private);
+                    var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(permission.Caller.Id, FolderTypeENUM.Private);
                     var orders = Enumerable.Range(1, dbFolders.Count);
                     dbFolders = dbFolders.Zip(orders, (folder, order) => {
                         folder.Order = order;

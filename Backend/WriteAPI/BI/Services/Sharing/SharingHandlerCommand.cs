@@ -139,7 +139,7 @@ namespace BI.Services.Sharing
 
                 var notification = new Notification() // TODO MOVE TO SERVICE
                 {
-                    UserFromId = permissions.User.Id,
+                    UserFromId = permissions.Caller.Id,
                     UserToId = request.UserId,
                     TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
                     Date = DateTimeProvider.Time
@@ -207,7 +207,7 @@ namespace BI.Services.Sharing
 
                     var notification = new Notification()
                     {
-                        UserFromId = permissions.User.Id,
+                        UserFromId = permissions.Caller.Id,
                         UserToId = request.UserId,
                         TranslateKeyMessage = "notification.RemoveUserFromFolder",
                         Date = DateTimeProvider.Time
@@ -283,7 +283,7 @@ namespace BI.Services.Sharing
 
                 var notifications = request.UserIds.Select(userId => new Notification()
                 {
-                    UserFromId = permissions.User.Id,
+                    UserFromId = permissions.Caller.Id,
                     UserToId = userId,
                     TranslateKeyMessage = $"notification.SentInvitesToFolder",
                     AdditionalMessage = request.Message,

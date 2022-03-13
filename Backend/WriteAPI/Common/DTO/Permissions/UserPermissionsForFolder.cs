@@ -13,7 +13,7 @@ namespace Common.DTO.Permissions
             }
         }
 
-        public User User { set; get; }
+        public User Caller { set; get; }
 
         public Folder Folder { set; get; }
 
@@ -29,14 +29,14 @@ namespace Common.DTO.Permissions
         {
             get
             {
-                return User.Id == Folder.UserId;
+                return Caller.Id == Folder.UserId;
             }
 
         }
 
         public UserPermissionsForFolder GetFullAccess(User user, Folder folder)
         {
-            User = user;
+            Caller = user;
             Folder = folder;
             CanRead = true;
             CanWrite = true;
@@ -44,7 +44,7 @@ namespace Common.DTO.Permissions
         }
         public UserPermissionsForFolder GetOnlyRead(User user, Folder folder)
         {
-            User = user;
+            Caller = user;
             Folder = folder;
             CanRead = true;
             CanWrite = false;
@@ -53,7 +53,7 @@ namespace Common.DTO.Permissions
 
         public UserPermissionsForFolder NoAccessRights(User user, Folder folder)
         {
-            User = user;
+            Caller = user;
             Folder = folder;
             CanRead = false;
             CanWrite = false;

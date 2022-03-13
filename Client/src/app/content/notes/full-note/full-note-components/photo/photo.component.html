@@ -6,7 +6,7 @@
 >
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
-    [src]="photo.photoFromBig | getImage: photo.authorId"
+    [src]="photo.photoFromBig"
     (load)="onLoadImage()"
   />
   <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>

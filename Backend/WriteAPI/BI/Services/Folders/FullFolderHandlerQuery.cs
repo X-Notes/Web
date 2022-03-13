@@ -69,8 +69,8 @@ namespace BI.Services.Folders
                 var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
 
-                var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id, request.Settings);
-                var sharedNotes = await GetSharedNotes(permissions.User.Id, request.Settings);
+                var allNotes = await noteRepository.GetNotesByUserId(permissions.Caller.Id, request.Settings);
+                var sharedNotes = await GetSharedNotes(permissions.Caller.Id, request.Settings);
                 allNotes.AddRange(sharedNotes);
                 allNotes = allNotes.DistinctBy(x => x.Id).ToList();
 

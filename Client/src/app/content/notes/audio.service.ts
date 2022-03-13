@@ -103,7 +103,7 @@ export class AudioService {
   };
 
   getAudioUrl(url: string) {
-    return `${environment.storage}/${this.store.selectSnapshot(NoteStore.authorId)}/${escape(url)}`;
+    return escape(url);
   }
 
   async tryToUpdateMetaDataIfNeed(audio: AudioModel) {

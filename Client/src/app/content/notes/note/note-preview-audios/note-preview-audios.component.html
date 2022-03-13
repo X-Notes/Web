@@ -2,10 +2,7 @@
 <div class="audios">
   <div class="audio" *ngFor="let item of content.items">
     <div class="preview">
-      <img
-        *ngIf="item.pathToImage; else noPreview"
-        [src]="item.pathToImage | getImage: item.authorId"
-      />
+      <img *ngIf="item.pathToImage; else noPreview" [src]="item.pathToImage" />
       <ng-template #noPreview>
         <div class="no-preview" *ngIf="item.name">{{ item.name[0] }}</div>
       </ng-template>

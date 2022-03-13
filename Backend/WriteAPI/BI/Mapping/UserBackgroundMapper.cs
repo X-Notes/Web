@@ -10,13 +10,11 @@ using Common.DTO.Users;
 
 namespace BI.Mapping
 {
-    public class UserBackgroundMapper
+    public class UserBackgroundMapper : BaseMapper
     {
-        private readonly AzureConfig azureConfig;
 
-        public UserBackgroundMapper(AzureConfig azureConfig)
+        public UserBackgroundMapper(AzureConfig azureConfig) : base(azureConfig)
         {
-            this.azureConfig = azureConfig;
         }
 
         public ShortUser MapToShortUser(User user)
@@ -101,11 +99,6 @@ namespace BI.Mapping
                 Id = background.Id,
                 FileId = background.PhotoId
             };
-        }
-
-        public string BuildPhotoPath(Guid userId, string path)
-        {
-            return this.azureConfig.StorageEmulatorUrl + "/" + userId + "/" + path;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BI.Services.Notes;
+using Common.Azure;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
@@ -22,10 +23,13 @@ using Common.DTO.Users;
 
 namespace BI.Mapping
 {
-    public class NoteFolderLabelMapper
+    public class NoteFolderLabelMapper : BaseMapper
     {
+        public NoteFolderLabelMapper(AzureConfig azureConfig) : base(azureConfig)
+        {
+        }
 
-        public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> contents)
+        public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> contents, Guid ownerId)
         {
             if(contents == null)
             {
@@ -47,29 +51,36 @@ namespace BI.Mapping
                         }
                     case PhotosCollectionNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, 
-                                item.PathPhotoMedium, item.PathPhotoBig, item.UserId, item.CreatedAt)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(
+                                item.Id, 
+                                item.Name, 
+                                BuildPhotoPath(ownerId, item.PathPhotoSmall),
+                                BuildPhotoPath(ownerId, item.PathPhotoMedium), 
+                                BuildPhotoPath(ownerId, item.PathPhotoBig), 
+                                item.UserId, 
+                                item.CreatedAt)).ToList();
+
                             var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case AudiosCollectionNote playlistNote:
                         {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
                             var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.Order, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case VideosCollectionNote videoNote:
                         {
-                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId, item.CreatedAt)).ToList();
+                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.Order, videoNote.UpdatedAt, videoNote.Name, videosDTO);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case DocumentsCollectionNote documentNote:
                         {
-                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, item.PathNonPhotoContent, item.Id, item.UserId, item.CreatedAt)).ToList();
+                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
                             var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
                             resultList.Add(collectionDTO);
                             break;
@@ -148,7 +159,7 @@ namespace BI.Mapping
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = tuple.note.NoteTypeId,
                 RefTypeId = tuple.note.RefTypeId,
-                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents),
+                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, tuple.note.UserId),
                 IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
@@ -156,11 +167,11 @@ namespace BI.Mapping
             };
         }
 
-        private List<BaseNoteContentDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents)
+        private List<BaseNoteContentDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents, Guid ownerId)
         {
             if(!isLocked)
             {
-                return MapContentsToContentsDTO(contents).ToList();
+                return MapContentsToContentsDTO(contents, ownerId).ToList();
             }
             return new List<BaseNoteContentDTO>();
         }
@@ -177,7 +188,7 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, note.UserId),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
@@ -215,7 +226,7 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, note.UserId),
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,

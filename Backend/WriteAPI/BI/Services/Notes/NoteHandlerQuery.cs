@@ -151,7 +151,7 @@ namespace BI.Services.Notes
             if (permissions.CanRead)
             {
                 var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
-                var result = appCustomMapper.MapContentsToContentsDTO(contents);
+                var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);
                 return new OperationResult<List<BaseNoteContentDTO>>(true, result);
             }
 

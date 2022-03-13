@@ -4,7 +4,7 @@
   [ngClass]="{'is-selected' : isClicked}"
 >
   <div class="preview" appTheme>
-    <img *ngIf="audio.pathToImage" [src]="audio.pathToImage | getImage: audio.authorId" />
+    <img *ngIf="audio.pathToImage" [src]="audio.pathToImage" />
     <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
     <div class="controls">
       <app-button-collection

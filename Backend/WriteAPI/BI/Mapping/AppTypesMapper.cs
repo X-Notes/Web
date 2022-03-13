@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.Models.Folders;
+﻿using Common.Azure;
+using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.App;
@@ -6,8 +7,12 @@ using Common.DTO.App;
 
 namespace BI.Mapping
 {
-    public class AppTypesMapper
+    public class AppTypesMapper : BaseMapper
     {
+        public AppTypesMapper(AzureConfig azureConfig) : base(azureConfig)
+        {
+        }
+
         public LanguageDTO MapToLanguageDTO(Language language)
         {
             return new LanguageDTO

@@ -36,7 +36,7 @@
     <div class="preview">
       <img
         *ngIf="audioService.currentFile?.pathToImage"
-        [src]="audioService.currentFile?.pathToImage | getImage: audioService.currentFile?.authorId"
+        [src]="audioService.currentFile?.pathToImage"
       />
       <div
         *ngIf="!audioService.currentFile?.pathToImage"
