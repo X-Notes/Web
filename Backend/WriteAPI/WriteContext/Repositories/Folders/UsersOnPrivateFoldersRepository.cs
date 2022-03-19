@@ -16,16 +16,16 @@ namespace WriteContext.Repositories.Folders
         {
         }
 
-        public async Task<List<UsersOnPrivateFolders>> GetByFolderIdUserOnPrivateFolder(Guid folderId)
+        public Task<List<UsersOnPrivateFolders>> GetByFolderIdUserOnPrivateFolder(Guid folderId)
         {
-            return await context.UsersOnPrivateFolders
+            return context.UsersOnPrivateFolders
                 .Include(x => x.User)
                 .Where(x => x.FolderId == folderId).ToListAsync();
         }
 
-        public async Task<List<UsersOnPrivateFolders>> GetByFolderIds(List<Guid> folderIds)
+        public Task<List<UsersOnPrivateFolders>> GetByFolderIds(List<Guid> folderIds)
         {
-            return await entities.Where(x => folderIds.Contains(x.FolderId)).ToListAsync();
+            return entities.Where(x => folderIds.Contains(x.FolderId)).ToListAsync();
         }
     }
 }

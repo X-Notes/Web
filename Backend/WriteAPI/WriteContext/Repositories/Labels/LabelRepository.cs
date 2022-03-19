@@ -44,24 +44,23 @@ namespace WriteContext.Repositories.Labels
 
         }
 
-        public async Task<List<Label>> GetLabelsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        public Task<List<Label>> GetLabelsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {
-            return await entities.Where(x => x.IsDeleted == true && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
+            return entities.Where(x => x.IsDeleted == true && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
         }
 
-        public async Task<List<Label>> GetAllByUserID(Guid id)
+        public Task<List<Label>> GetAllByUserID(Guid id)
         {
-            return await context.Labels
+            return context.Labels
                 .Include(x => x.LabelsNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => x.UserId == id)
                 .ToListAsync();
         }
 
-        public async Task<int> GetNotesCountByLabelId(Guid id)
+        public Task<int> GetNotesCountByLabelId(Guid id)
         {
-            return await context.LabelsNotes.Include(x => x.Note)
-                .Where(x => x.LabelId == id).CountAsync();
+            return context.LabelsNotes.Include(x => x.Note).Where(x => x.LabelId == id).CountAsync();
         }
 
 

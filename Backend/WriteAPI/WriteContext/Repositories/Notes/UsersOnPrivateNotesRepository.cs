@@ -16,18 +16,18 @@ namespace WriteContext.Repositories.Notes
         {
         }
 
-        public async Task<List<UserOnPrivateNotes>> GetByNoteIdUserOnPrivateNote(Guid noteId)
+        public Task<List<UserOnPrivateNotes>> GetByNoteIdUserOnPrivateNote(Guid noteId)
         {
-            return await entities
+            return entities
                 .Include(x => x.User)
                 .ThenInclude(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
 
-        public async Task<List<UserOnPrivateNotes>> GetByNoteIdsWithUser(List<Guid> noteIds)
+        public Task<List<UserOnPrivateNotes>> GetByNoteIdsWithUser(List<Guid> noteIds)
         {
-            return await entities.Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
+            return entities.Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
         }
 
     }

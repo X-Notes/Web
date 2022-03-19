@@ -17,7 +17,7 @@ namespace Common.DTO.Notes.FullNoteContent
         public int CountInRow { set; get; }
 
         public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int countInRow, DateTimeOffset updatedAt)
-            : base(id, order, ContentTypeENUM.PhotosCollection, updatedAt)
+            : base(id, order, ContentTypeENUM.Collection, updatedAt)
         {
             this.Photos = files;
             this.Name = name;

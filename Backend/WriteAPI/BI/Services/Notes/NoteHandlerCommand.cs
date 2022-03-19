@@ -8,6 +8,7 @@ using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.Labels;
@@ -182,7 +183,12 @@ namespace BI.Services.Notes
             if (isCanDelete)
             {
                 var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => request.Ids.Contains(x.NoteId));
-                await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, Guid.Empty, request.UserId, false);
+
+                var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
+                if (fileContents.Any())
+                {
+                    await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, Guid.Empty, request.UserId, false);
+                }
 
                 var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId); // TODO REFACTOR
                 var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
@@ -231,6 +237,18 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
+        public ContentTypesFile MapToContentTypesFile(FileTypeEnum fileTypeEnum) 
+        {
+            switch (fileTypeEnum)
+            {
+                case FileTypeEnum.Photo: return ContentTypesFile.Photos;
+                case FileTypeEnum.Video : return ContentTypesFile.Videos;
+                case FileTypeEnum.Audio : return ContentTypesFile.Audios;
+                case FileTypeEnum.Document : return ContentTypesFile.Documents;
+            }
+
+            throw new ArgumentException("Incorrect type");
+        }
 
         public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, bool isOwner, Guid? authorId, Guid? userId)
         {
@@ -245,79 +263,22 @@ namespace BI.Services.Notes
                             contents.Add(new TextNote(textNote, noteId));
                             continue;
                         }
-                    case PhotosCollectionNote collection:
+                    case CollectionNote collection:
                         {
                             if (isOwner)
                             {
-                                var dbFiles = collection.PhotoNoteAppFiles?.Select(x => new PhotoNoteAppFile
+                                var dbFiles = collection.CollectionNoteAppFiles?.Select(x => new CollectionNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
-                                contents.Add(new PhotosCollectionNote(collection, dbFiles, noteId));
+                                contents.Add(new CollectionNote(collection, dbFiles, noteId, collection.FileTypeId));
                             }
                             else
                             {
-                                var copyCommands = collection.Photos?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Photos));
+                                var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, MapToContentTypesFile(collection.FileTypeId)));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new PhotosCollectionNote(collection, copies, noteId));
-                            }
-                            continue;
-                        }
-                    case VideosCollectionNote collection:
-                        {
-                            if (isOwner)
-                            {
-                                var dbFiles = collection.VideoNoteAppFiles?.Select(x => new VideoNoteAppFile
-                                {
-                                    AppFileId = x.AppFileId
-                                }).ToList();
-                                contents.Add(new VideosCollectionNote(collection, dbFiles, noteId));
-                            }
-                            else
-                            {
-                                var copyCommands = collection.Videos?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Videos));
-                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new VideosCollectionNote(collection, copies, noteId));
-                            }
-                            continue;
-                        }
-                    case AudiosCollectionNote collection:
-                        {
-                            if (isOwner)
-                            {
-                                var dbFiles = collection.AudioNoteAppFiles?.Select(x => new AudioNoteAppFile
-                                {
-                                    AppFileId = x.AppFileId
-                                }).ToList();
-                                contents.Add(new AudiosCollectionNote(collection, dbFiles, noteId));
-                            }
-                            else
-                            {
-                                var copyCommands = collection.Audios?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
-                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new AudiosCollectionNote(collection, copies, noteId));
-                            }
-                            continue;
-                        }
-                    case DocumentsCollectionNote collection:
-                        {
-                            if (isOwner)
-                            {
-                                var dbFiles = collection.DocumentNoteAppFiles?.Select(x => new DocumentNoteAppFile
-                                {
-                                    AppFileId = x.AppFileId
-                                }).ToList();
-                                contents.Add(new DocumentsCollectionNote(collection, dbFiles, noteId));
-                            }
-                            else
-                            {
-                                var copyCommands = collection.Documents?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Documents));
-                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new DocumentsCollectionNote(collection, copies, noteId));
+                                contents.Add(new CollectionNote(collection, copies, noteId, collection.FileTypeId));
                             }
                             continue;
                         }
@@ -505,36 +466,11 @@ namespace BI.Services.Notes
                             result.TextNoteSnapshots.Add(tNDTO);
                             break;
                         }
-                    case PhotosCollectionNote aN:
+                    case CollectionNote aN:
                         {
-                            var photoFileIds = aN.Photos.Select(item => item.Id).ToList();
-                            var collectionDTO = new PhotosCollectionNoteSnapshot(aN.Name, aN.Width, aN.Height, aN.CountInRow, photoFileIds, 
-                                aN.Order, aN.ContentTypeId, aN.UpdatedAt);
-                            result.PhotosCollectionNoteSnapshots.Add(collectionDTO);
-                            break;
-                        }
-                    case AudiosCollectionNote playlistNote:
-                        {
-                            var audioFileIds = playlistNote.Audios.Select(item => item.Id).ToList();
-                            var collectionDTO = new AudiosCollectionNoteSnapshot(playlistNote.Name, audioFileIds,
-                                playlistNote.Order, playlistNote.ContentTypeId, playlistNote.UpdatedAt);
-                            result.AudiosCollectionNoteSnapshots.Add(collectionDTO);
-                            break;
-                        }
-                    case VideosCollectionNote videoNote:
-                        {
-                            var videoFileIds = videoNote.Videos.Select(item => item.Id).ToList();
-                            var collectionDTO = new VideosCollectionNoteSnapshot(videoNote.Name, videoFileIds,
-                                videoNote.Order, videoNote.ContentTypeId, videoNote.UpdatedAt);
-                            result.VideosCollectionNoteSnapshots.Add(collectionDTO);
-                            break;
-                        }
-                    case DocumentsCollectionNote documentNote:
-                        {
-                            var documentFileIds = documentNote.Documents.Select(item => item.Id).ToList();
-                            var collectionDTO = new DocumentsCollectionNoteSnapshot(documentNote.Name, documentFileIds,
-                                documentNote.Order, documentNote.ContentTypeId, documentNote.UpdatedAt);
-                            result.DocumentsCollectionNoteSnapshots.Add(collectionDTO);
+                            var fileIds = aN.Files.Select(item => item.Id).ToList();
+                            var collectionDTO = new CollectionNoteSnapshot(aN.Name, fileIds, aN.MetaData, aN.FileTypeId, aN.Order, aN.ContentTypeId, aN.UpdatedAt);
+                            result.CollectionNoteSnapshots.Add(collectionDTO);
                             break;
                         }
                     default:

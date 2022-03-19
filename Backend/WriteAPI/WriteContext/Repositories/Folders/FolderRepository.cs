@@ -125,46 +125,46 @@ namespace WriteContext.Repositories.Folders
         }
 
 
-        public async Task<Folder> GetForCheckPermission(Guid id)
+        public Task<Folder> GetForCheckPermission(Guid id)
         {
-            return await context.Folders
+            return context.Folders
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
+        public Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
         {
-            return await context.Folders
+            return context.Folders
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<Folder> GetFull(Guid id)
+        public Task<Folder> GetFull(Guid id)
         {
-            return await context.Folders
+            return context.Folders
                 .Include(folder => folder.FoldersNotes)
                 .Include(folder => folder.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, FolderTypeENUM typeId)
+        public Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, FolderTypeENUM typeId)
         {
-            return await context.Folders
+            return context.Folders
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetFoldersByIdsForCopy(List<Guid> ids)
+        public Task<List<Folder>> GetFoldersByIdsForCopy(List<Guid> ids)
         {
-            return await context.Folders
+            return context.Folders
                 .Include(x => x.FoldersNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId)
+        public Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId)
         {
-            return await context.Folders
+            return context.Folders
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
@@ -187,9 +187,9 @@ namespace WriteContext.Repositories.Folders
             return result;
         }
 
-        public async Task<Folder> GetOneById(Guid folderId)
+        public Task<Folder> GetOneById(Guid folderId)
         {
-            return await context.Folders.FirstOrDefaultAsync(x => x.Id == folderId);
+            return context.Folders.FirstOrDefaultAsync(x => x.Id == folderId);
         }
 
     }

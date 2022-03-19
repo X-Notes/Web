@@ -17,9 +17,9 @@ namespace WriteContext.Repositories.Notes
 
         }
 
-        public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotes(Guid id)
+        public Task<List<ReletatedNoteToInnerNote>> GetRelatedNotes(Guid id)
         {
-            return await context.ReletatedNoteToInnerNotes
+            return context.ReletatedNoteToInnerNotes
                 .Where(x => x.NoteId == id).ToListAsync();
         }
 
@@ -31,16 +31,8 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(z => (z as PhotosCollectionNote).Photos)
+                .ThenInclude(z => (z as CollectionNote).Files)
                 .Include(x => x.RelatedNote)
-                .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as VideosCollectionNote).Videos)
-                .Include(x => x.RelatedNote)
-                .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => x.RelatedNote)
-                .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
                 .OrderBy(x => x.Order)
                 .AsSplitQuery().AsNoTracking().ToListAsync();
 
@@ -48,18 +40,18 @@ namespace WriteContext.Repositories.Notes
             return notes;
         }
 
-        public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesOnlyLabels(Guid id)
+        public Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesOnlyLabels(Guid id)
         {
-            return await context.ReletatedNoteToInnerNotes
+            return context.ReletatedNoteToInnerNotes
                 .Where(x => x.NoteId == id)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .ToListAsync();
         }
 
-        public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesOnlyRelated(Guid id)
+        public Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesOnlyRelated(Guid id)
         {
-            return await context.ReletatedNoteToInnerNotes
+            return context.ReletatedNoteToInnerNotes
                 .Where(x => x.NoteId == id)
                 .Include(x => x.RelatedNote)
                 .ToListAsync();

@@ -4,8 +4,8 @@ using Common.DatabaseModels.Models.Files;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
-    [Table(nameof(AudioNoteAppFile), Schema = SchemeConfig.NoteContent)]
-    public class AudioNoteAppFile : BaseEntity<Guid>
+    [Table(nameof(CollectionNoteAppFile), Schema = SchemeConfig.NoteContent)]
+    public class CollectionNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }
@@ -13,7 +13,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         public Guid AppFileId { get; set; }
         public AppFile AppFile { get; set; }
 
-        public Guid AudiosCollectionNoteId { get; set; }
-        public AudiosCollectionNote AudiosCollectionNote { get; set; }
+        public Guid CollectionNoteId { get; set; }
+        public CollectionNote CollectionNote { get; set; }
     }
 }

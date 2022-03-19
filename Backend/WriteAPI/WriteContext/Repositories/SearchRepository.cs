@@ -23,7 +23,7 @@ namespace WriteContext.Repositories
             return await context.Notes // TODO OPTIMIZATION
                 .Include(x => x.FoldersNotes).ThenInclude(z => z.Folder)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
+                .Include(x => x.Contents).ThenInclude(z => (z as CollectionNote).Files)
                 .Where(x => x.UserId == userId).ToListAsync();
         }
 

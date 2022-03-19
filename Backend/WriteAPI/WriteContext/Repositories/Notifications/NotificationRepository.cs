@@ -16,9 +16,9 @@ namespace WriteContext.Repositories.Notifications
 
         }
 
-        public async Task<List<Notification>> GetByUserOrdered(Guid userId)
+        public Task<List<Notification>> GetByUserOrdered(Guid userId)
         {
-            return await entities
+            return entities
                 .Include(x => x.UserFrom)
                 .ThenInclude(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)

@@ -10,6 +10,7 @@ using WriteContext.GenericRepositories;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.Files;
 
 namespace WriteContext.Repositories.Notes
 {
@@ -48,64 +49,50 @@ namespace WriteContext.Repositories.Notes
             }
         }
 
-        public async Task<List<Note>> GetNotesThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        public Task<List<Note>> GetNotesThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {
-            return await entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
+            return entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
         }
 
-        public async Task<Note> GetForCheckPermission(Guid id)
+        public Task<Note> GetForCheckPermission(Guid id)
         {
-            return await context.Notes
+            return context.Notes
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
+        public Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
         {
-            return await context.Notes
+            return context.Notes
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
 
-        public async Task<Note> GetFull(Guid id)
+        public Task<Note> GetFull(Guid id)
         {
-            return await context.Notes
+            return context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
 
-        private List<int> GetFilterTypes(PersonalizationSettingDTO settings)
+        private List<ContentTypeENUM> GetFilterTypes(PersonalizationSettingDTO settings)
         {
-            var types = new List<int>();
+            var types = new List<ContentTypeENUM>();
 
             if (settings.IsViewTextOnNote)
             {
-                types.Add((int)ContentTypeENUM.Text);
+                types.Add(ContentTypeENUM.Text);
             }
 
-            if (settings.IsViewPhotosOnNote)
+            if (settings.IsViewPhotosOnNote || settings.IsViewVideoOnNote || settings.IsViewAudioOnNote || settings.IsViewDocumentOnNote)
             {
-                types.Add((int)ContentTypeENUM.PhotosCollection);
+                types.Add(ContentTypeENUM.Collection);
             }
 
-            if (settings.IsViewVideoOnNote)
-            {
-                types.Add((int)ContentTypeENUM.VideosCollection);
-            }
-
-            if (settings.IsViewAudioOnNote)
-            {
-                types.Add((int)ContentTypeENUM.AudiosCollection);
-            }
-
-            if (settings.IsViewDocumentOnNote)
-            {
-                types.Add((int)ContentTypeENUM.DocumentsCollection);
-            }
             return types;
         }
 
@@ -116,14 +103,14 @@ namespace WriteContext.Repositories.Notes
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();
 
-            var contents = await context.BaseNoteContents // TODO OPTIMIZATION
-                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId))
-                .Include(z => (z as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents).AsSplitQuery().AsNoTracking().ToListAsync();
+            var contents = await context.BaseNoteContents
+                .Include(z => (z as CollectionNote).Files)
+                .Where(z => types.Contains(z.ContentTypeId) && notesIds.Contains(z.NoteId))
+                .AsSplitQuery().AsNoTracking().ToListAsync();
 
+            contents = FilterFileContents(contents, settings);
             var contentLookUp = contents.ToLookup(x => x.NoteId);
+
             notes.ForEach(note =>
             {
                 SetListIdIfNeed(contentLookUp[note.Id]);
@@ -133,6 +120,37 @@ namespace WriteContext.Repositories.Notes
             });
 
             return notes;
+        }
+
+        private List<BaseNoteContent> FilterFileContents(List<BaseNoteContent> contents, PersonalizationSettingDTO settings)
+        {
+            var result = new List<BaseNoteContent>();
+            foreach(var content in contents)
+            {
+                if (content.ContentTypeId == ContentTypeENUM.Collection)
+                {
+                    var fileContent = content as CollectionNote;
+                    if (!settings.IsViewAudioOnNote && fileContent.FileTypeId == FileTypeEnum.Audio)
+                    {
+                        continue;
+                    }
+                    if (!settings.IsViewDocumentOnNote && fileContent.FileTypeId == FileTypeEnum.Document)
+                    {
+                        continue;
+                    }
+                    if (!settings.IsViewPhotosOnNote && fileContent.FileTypeId == FileTypeEnum.Photo)
+                    {
+                        continue;
+                    }
+                    if (!settings.IsViewVideoOnNote && fileContent.FileTypeId == FileTypeEnum.Video)
+                    {
+                        continue;
+                    }
+                }
+                result.Add(content);
+            }
+
+            return result;
         }
 
         private void SetListIdIfNeed(IEnumerable<BaseNoteContent> contents)
@@ -198,41 +216,25 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
+        public Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
         { 
-            return await entities  // TODO OPTIMIZATION
+            return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as PhotosCollectionNote).PhotoNoteAppFiles)
+                .ThenInclude(z => (z as CollectionNote).CollectionNoteAppFiles)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as PhotosCollectionNote).Photos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosCollectionNote).AudioNoteAppFiles)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideosCollectionNote).Videos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
+                .ThenInclude(z => (z as CollectionNote).Files)
                 .Where(x => noteIds.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<Note> GetNoteByIdsForCopy(Guid noteId)
+        public Task<Note> GetNoteByIdsForCopy(Guid noteId)
         {
-            return await entities  // TODO OPTIMIZATION
+            return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as PhotosCollectionNote).PhotoNoteAppFiles)
+                .ThenInclude(z => (z as CollectionNote).CollectionNoteAppFiles)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as PhotosCollectionNote).Photos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosCollectionNote).AudioNoteAppFiles)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideosCollectionNote).Videos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
+                .ThenInclude(z => (z as CollectionNote).Files)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 

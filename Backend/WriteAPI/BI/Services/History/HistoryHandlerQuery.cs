@@ -98,16 +98,11 @@ namespace BI.Services.History
 
             resultList.AddRange(contents.TextNoteSnapshots.Select(x => ConvertText(x)));
 
-
             var ids = contents.GetFileIdsFromAllContent();
-
             if (ids.Any())
             {
                 var files = await fileRepository.GetWhereAsync(x => ids.Contains(x.Id));
-                resultList.AddRange(contents.PhotosCollectionNoteSnapshots.Select(x => ConvertPhotosCollection(x, files)));
-                resultList.AddRange(contents.VideosCollectionNoteSnapshots.Select(x => ConvertVideosCollection(x, files)));
-                resultList.AddRange(contents.DocumentsCollectionNoteSnapshots.Select(x => ConvertDocumentsCollection(x, files)));
-                resultList.AddRange(contents.AudiosCollectionNoteSnapshots.Select(x => ConvertAudiosCollection(x, files)));
+                resultList.AddRange(contents.CollectionNoteSnapshots.Select(x => ConvertPhotosCollection(x, files)));
             }
 
             return resultList;
@@ -116,28 +111,28 @@ namespace BI.Services.History
         private TextNoteDTO ConvertText(TextNoteSnapshot text) => 
             new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, 0, text.UpdatedAt);
 
-        private PhotosCollectionNoteDTO ConvertPhotosCollection(PhotosCollectionNoteSnapshot photos, List<AppFile> files)
+        private PhotosCollectionNoteDTO ConvertPhotosCollection(CollectionNoteSnapshot photos, List<AppFile> files)
         {
-            var filePhotos = files.Where(x => photos.PhotosFilesIds.Contains(x.Id))
+            var filePhotos = files.Where(x => photos.FilesIds.Contains(x.Id))
                 .Select(x => new PhotoNoteDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId, x.CreatedAt)).ToList();
-            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, photos.Width, photos.Height, Guid.Empty, photos.Order, photos.CountInRow, photos.UpdatedAt);
+            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, photos.MetaData.Width, photos.MetaData.Height, Guid.Empty, photos.Order, photos.MetaData.CountInRow, photos.UpdatedAt);
         }
 
-        private VideosCollectionNoteDTO ConvertVideosCollection(VideosCollectionNoteSnapshot videos, List<AppFile> files)
+        private VideosCollectionNoteDTO ConvertVideosCollection(CollectionNoteSnapshot videos, List<AppFile> files)
         {
-            var fileVideos = files.Where(x => videos.VideoFilesIds.Contains(x.Id)).Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
+            var fileVideos = files.Where(x => videos.FilesIds.Contains(x.Id)).Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
             return new VideosCollectionNoteDTO(Guid.Empty, videos.Order, videos.UpdatedAt, videos.Name, fileVideos);
         }
 
-        private DocumentsCollectionNoteDTO ConvertDocumentsCollection(DocumentsCollectionNoteSnapshot documents, List<AppFile> files)
+        private DocumentsCollectionNoteDTO ConvertDocumentsCollection(CollectionNoteSnapshot documents, List<AppFile> files)
         {
-            var fileDocuments = files.Where(x => documents.DocumentFilesIds.Contains(x.Id)).Select(x => new DocumentNoteDTO(x.Name, x.PathNonPhotoContent, x.Id, x.UserId, x.CreatedAt)).ToList();
+            var fileDocuments = files.Where(x => documents.FilesIds.Contains(x.Id)).Select(x => new DocumentNoteDTO(x.Name, x.PathNonPhotoContent, x.Id, x.UserId, x.CreatedAt)).ToList();
             return new DocumentsCollectionNoteDTO(Guid.Empty, documents.Order, documents.UpdatedAt, documents.Name, fileDocuments);
         }
 
-        private AudiosCollectionNoteDTO ConvertAudiosCollection(AudiosCollectionNoteSnapshot audios, List<AppFile> files)
+        private AudiosCollectionNoteDTO ConvertAudiosCollection(CollectionNoteSnapshot audios, List<AppFile> files)
         {
-            var fileDocuments = files.Where(x => audios.AudioFilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.MetaData?.SecondsDuration, x.MetaData?.ImagePath, x.CreatedAt)).ToList();
+            var fileDocuments = files.Where(x => audios.FilesIds.Contains(x.Id)).Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.MetaData?.SecondsDuration, x.MetaData?.ImagePath, x.CreatedAt)).ToList();
             return new AudiosCollectionNoteDTO(Guid.Empty, audios.Order, audios.UpdatedAt, audios.Name, fileDocuments);
         }
     }

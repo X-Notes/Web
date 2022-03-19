@@ -341,17 +341,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FoldersNotesRepository>();
 
             // Note Content 
-            services.AddScoped<PhotosCollectionNoteRepository>();
-            services.AddScoped<PhotoNoteAppFileRepository>();
-
-            services.AddScoped<AudiosCollectionNoteRepository>();
-            services.AddScoped<AudioNoteAppFileRepository>();
-
-            services.AddScoped<VideosCollectionNoteRepository>();
-            services.AddScoped<VideoNoteAppFileRepository>();
-
-            services.AddScoped<DocumentsCollectionNoteRepository>();
-            services.AddScoped<DocumentNoteAppFileRepository>();
+            services.AddScoped<CollectionNoteRepository>();
+            services.AddScoped<CollectionAppFileRepository>();
 
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();

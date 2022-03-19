@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BI.Services.Notes;
 using Common.Azure;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
@@ -49,40 +50,46 @@ namespace BI.Mapping
                             resultList.Add(tNDTO);
                             break;
                         }
-                    case PhotosCollectionNote aN:
+                    case CollectionNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(
-                                item.Id, 
-                                item.Name, 
-                                BuildPhotoPath(ownerId, item.PathPhotoSmall),
-                                BuildPhotoPath(ownerId, item.PathPhotoMedium), 
-                                BuildPhotoPath(ownerId, item.PathPhotoBig), 
-                                item.UserId, 
-                                item.CreatedAt)).ToList();
-
-                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
-                            resultList.Add(collectionDTO);
-                            break;
-                        }
-                    case AudiosCollectionNote playlistNote:
-                        {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
-                            var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.Order, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
-                            resultList.Add(collectionDTO);
-                            break;
-                        }
-                    case VideosCollectionNote videoNote:
-                        {
-                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
-                            var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.Order, videoNote.UpdatedAt, videoNote.Name, videosDTO);
-                            resultList.Add(collectionDTO);
-                            break;
-                        }
-                    case DocumentsCollectionNote documentNote:
-                        {
-                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
-                            var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
-                            resultList.Add(collectionDTO);
+                            switch (aN.FileTypeId)
+                            {
+                                case FileTypeEnum.Audio:
+                                    {
+                                        var audiosDTO = aN.Files.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
+                                        var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO);
+                                        resultList.Add(collectionDTO);
+                                        break;
+                                    }
+                                case FileTypeEnum.Photo:
+                                    {
+                                       var photosDTO = aN.Files.Select(item => new PhotoNoteDTO(
+                                                                item.Id, 
+                                                                item.Name, 
+                                                                BuildPhotoPath(ownerId, item.PathPhotoSmall),
+                                                                BuildPhotoPath(ownerId, item.PathPhotoMedium), 
+                                                                BuildPhotoPath(ownerId, item.PathPhotoBig), 
+                                                                item.UserId, 
+                                                                item.CreatedAt)).ToList();
+                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData.Width, aN.MetaData.Height, aN.Id, aN.Order, aN.MetaData.CountInRow, aN.UpdatedAt);
+                                        resultList.Add(collectionDTO);
+                                        break;
+                                    }
+                                case FileTypeEnum.Video:
+                                    {
+                                        var videosDTO = aN.Files.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
+                                        var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO);
+                                        resultList.Add(collectionDTO);
+                                        break;
+                                    }
+                                case FileTypeEnum.Document:
+                                    {
+                                        var documentsDTO = aN.Files.Select(item => new DocumentNoteDTO(item.Name, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
+                                        var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO);
+                                        resultList.Add(collectionDTO);
+                                        break;
+                                    }
+                            }
                             break;
                         }
                     default:

@@ -32,9 +32,9 @@ namespace BI.Services.Notes
 
         private readonly IMediator _mediator;
 
-        private readonly DocumentsCollectionNoteRepository documentNoteRepository;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
-        private readonly DocumentNoteAppFileRepository documentNoteAppFileRepository;
+        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
@@ -47,18 +47,17 @@ namespace BI.Services.Notes
         public FullNoteDocumentsCollectionHandlerCommand(
                                         IMediator _mediator,
                                         BaseNoteContentRepository baseNoteContentRepository,
-                                        FileRepository fileRepository,
                                         AppFileUploadInfoRepository appFileUploadInfoRepository,
-                                        DocumentsCollectionNoteRepository documentNoteRepository,
-                                        DocumentNoteAppFileRepository documentNoteAppFileRepository,
+                                        CollectionNoteRepository documentNoteRepository,
+                                        CollectionAppFileRepository documentNoteAppFileRepository,
                                         HistoryCacheService historyCacheService,
                                         AppSignalRService appSignalRService,
                                         CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.documentNoteRepository = documentNoteRepository;
-            this.documentNoteAppFileRepository = documentNoteAppFileRepository;
+            this.collectionNoteRepository = documentNoteRepository;
+            this.collectionNoteAppFileRepository = documentNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
@@ -68,14 +67,14 @@ namespace BI.Services.Notes
         {
             async Task<OperationResult<Unit>> UnLink()
             {
-                var documents = await documentNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.DocumentsCollectionNoteId));
+                var documents = await collectionNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.CollectionNoteId));
 
                 if (documents.Any())
                 {
-                    await documentNoteAppFileRepository.RemoveRangeAsync(documents);
+                    await collectionNoteAppFileRepository.RemoveRangeAsync(documents);
 
                     var ids = documents.Select(x => x.AppFileId).ToArray();
-                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Document, ids.ToArray());
+                    await collectionLinkedService.TryToUnlink(ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -107,17 +106,17 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var collection = await documentNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await documentNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
-                    await documentNoteAppFileRepository.RemoveRangeAsync(collectionItems);
+                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Document, idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
-                    await documentNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
+                    await collectionNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
@@ -143,14 +142,14 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var collection = await documentNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if (collection != null)
                 {
                     collection.Name = request.Name;
                     collection.UpdatedAt = DateTimeProvider.Time;
 
-                    await documentNoteRepository.UpdateAsync(collection);
+                    await collectionNoteRepository.UpdateAsync(collection);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
@@ -187,13 +186,13 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var documentNote = new DocumentsCollectionNote()
+                    var documentNote = new CollectionNote(FileTypeEnum.Document)
                     {
                         NoteId = request.NoteId,
                         Order = contentForRemove.Order,
                     };
 
-                    await documentNoteRepository.AddAsync(documentNote);
+                    await collectionNoteRepository.AddAsync(documentNote);
 
                     await transaction.CommitAsync();
 
@@ -226,20 +225,20 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var collection = await documentNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 if (collection != null)
                 {
-                    var existCollectionItems = await documentNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                    var existCollectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
                     var existCollectionItemsIds = existCollectionItems.Select(x => x.AppFileId);
 
-                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new DocumentNoteAppFile { AppFileId = id, DocumentsCollectionNoteId = collection.Id });
-                    await documentNoteAppFileRepository.AddRangeAsync(collectionItems);
+                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new CollectionNoteAppFile { AppFileId = id, CollectionNoteId = collection.Id });
+                    await collectionNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
                     await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
-                    await documentNoteRepository.UpdateAsync(collection);
+                    await collectionNoteRepository.UpdateAsync(collection);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 

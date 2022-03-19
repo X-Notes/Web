@@ -16,9 +16,9 @@ namespace WriteContext.Repositories.Users
         {
         }
 
-        public async Task<UserProfilePhoto> GetWithFile(Guid userId)
+        public Task<UserProfilePhoto> GetWithFile(Guid userId)
         {
-            return await this.entities.Include(x => x.AppFile).FirstOrDefaultAsync(x => x.UserId == userId);
+            return this.entities.Include(x => x.AppFile).FirstOrDefaultAsync(x => x.UserId == userId);
         }
     }
 }

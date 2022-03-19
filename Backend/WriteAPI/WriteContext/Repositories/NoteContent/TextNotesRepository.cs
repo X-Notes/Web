@@ -16,9 +16,9 @@ namespace WriteContext.Repositories.NoteContent
 
         }
 
-        public async Task<List<TextNote>> GetAllTextContentByNoteIdOrdered(Guid id)
+        public Task<List<TextNote>> GetAllTextContentByNoteIdOrdered(Guid id)
         {
-            return await entities
+            return entities
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
                 .ToListAsync();

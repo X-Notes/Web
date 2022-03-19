@@ -34,17 +34,8 @@ namespace Common.DatabaseModels.Models.Files
 
         public List<UserProfilePhoto> UserProfilePhotos { set; get; }
 
-        public List<PhotosCollectionNote> PhotosCollectionNotes { set; get; }
-        public List<PhotoNoteAppFile> PhotosCollectionNoteAppFiles { set; get; }
-
-        public List<VideosCollectionNote> VideosCollectionNotes { set; get; }
-        public List<VideoNoteAppFile> VideosCollectionNoteAppFiles { set; get; }
-
-        public List<AudiosCollectionNote> AudiosCollectionNotes { set; get; }
-        public List<AudioNoteAppFile> AudiosCollectionNoteAppFiles { set; get; }
-
-        public List<DocumentsCollectionNote> DocumentsCollectionNotes { set; get; }
-        public List<DocumentNoteAppFile> DocumentsCollectionNoteAppFiles { set; get; }
+        public List<CollectionNote> PhotosCollectionNotes { set; get; }
+        public List<CollectionNoteAppFile> PhotosCollectionNoteAppFiles { set; get; }
 
         public List<NoteSnapshot> NoteSnapshots { set; get; }
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }

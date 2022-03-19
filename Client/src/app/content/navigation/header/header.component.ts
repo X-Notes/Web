@@ -22,8 +22,6 @@ import { FullNote } from '../../notes/models/full-note.model';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
-import { AuthService } from 'src/app/core/auth.service';
-import { UpdateUserInfo } from 'src/app/core/stateUser/user-action';
 
 @Component({
   selector: 'app-header',

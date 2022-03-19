@@ -219,7 +219,7 @@ import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-mes
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
     FileNamePipe,
-    GenericDeleteEntityMessageComponent
+    GenericDeleteEntityMessageComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],
