@@ -30,7 +30,7 @@ namespace Common.DTO.Notes.FullNoteContent
             bool? @checked,
             int listId,
             DateTimeOffset updatedAt)
-            :base(id, order, ContentTypeENUM.Text, updatedAt)
+            :base(id, order, ContentTypeEnumDTO.Text, updatedAt)
         {
             this.Contents = contents;
             this.HeadingTypeId = headingTypeId;

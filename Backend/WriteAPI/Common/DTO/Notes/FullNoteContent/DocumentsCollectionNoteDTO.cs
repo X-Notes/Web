@@ -10,7 +10,7 @@ namespace Common.DTO.Notes.FullNoteContent
         public List<DocumentNoteDTO> Documents { set; get; }
 
         public DocumentsCollectionNoteDTO(Guid id, int order, DateTimeOffset updatedAt, string name, List<DocumentNoteDTO> documents)
-                : base(id, order, ContentTypeENUM.Collection, updatedAt)
+                : base(id, order, ContentTypeEnumDTO.Documents, updatedAt)
         {
             Name = name;
             Documents = documents;
