@@ -1,0 +1,22 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 475px;
+}
+
+.preview-container {
+  margin: 1.25rem 2.25rem 0 2.25rem;
+  width: calc(100% - 4.5rem);
+  p {
+    margin-top: 10px;
+  }
+}
+
+.button-container {
+  margin: 2.5rem 2.25rem 1.25rem 2.25rem;
+  width: calc(100% - 4.5rem);
+  display: flex;
+  justify-content: flex-end;
+}

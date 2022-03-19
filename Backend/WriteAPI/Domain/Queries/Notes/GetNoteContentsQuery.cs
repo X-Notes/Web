@@ -11,8 +11,8 @@ namespace Domain.Queries.Notes
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
-        public GetNoteContentsQuery(string email, Guid NoteId)
-            : base(email)
+        public GetNoteContentsQuery(Guid userId, Guid NoteId)
+            : base(userId)
         {
             this.NoteId = NoteId;
         }

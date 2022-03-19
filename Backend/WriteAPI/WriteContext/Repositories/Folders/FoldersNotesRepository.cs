@@ -18,28 +18,28 @@ namespace WriteContext.Repositories.Folders
         {
         }
 
-        public async Task<List<FoldersNotes>> GetOrderedByFolderId(Guid folderId)
+        public Task<List<FoldersNotes>> GetOrderedByFolderId(Guid folderId)
         {
-            return await entities.Where(x => x.FolderId == folderId).OrderBy(x => x.Order).ToListAsync();
+            return entities.Where(x => x.FolderId == folderId).OrderBy(x => x.Order).ToListAsync();
         }
 
-        public async Task<List<FoldersNotes>> GetByNoteIdsIncludeFolder(List<Guid> noteIds)
+        public Task<List<FoldersNotes>> GetByNoteIdsIncludeFolder(List<Guid> noteIds)
         {
-            return await entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
+            return entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
         }
 
-        public async Task<List<Note>> GetNotes(Guid folderId)
+        public Task<List<Note>> GetNotes(Guid folderId)
         {
-            return await entities
+            return entities
                 .Include(x => x.Note)
                 .Where(x => x.FolderId == folderId)
                 .Select(x => x.Note)
                 .OrderBy(x => x.Order).ToListAsync();
         }
 
-        public async Task<List<string>> GetNotesTitle(Guid folderId)
+        public Task<List<string>> GetNotesTitle(Guid folderId)
         {
-            return await entities
+            return entities
                 .Include(x => x.Note)
                 .Where(x => x.FolderId == folderId)
                 .Select(x => x.Note)

@@ -10,7 +10,7 @@ namespace Common.DTO.Notes.FullNoteContent
         public List<AudioNoteDTO> Audios { set; get; }
 
         public AudiosCollectionNoteDTO(Guid Id, int order, DateTimeOffset UpdatedAt, string name, List<AudioNoteDTO> audios)
-                : base(Id, order, ContentTypeENUM.AudiosCollection, UpdatedAt)
+                : base(Id, order, ContentTypeEnumDTO.Audios, UpdatedAt)
         {
             Name = name;
             Audios = audios;

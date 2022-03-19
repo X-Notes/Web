@@ -14,6 +14,10 @@ import { ContentModelBase } from '../models/editor-models/content-model-base';
 export class NoteComponent implements OnInit {
   @Input() note: SmallNote;
 
+  @Input() date: string;
+
+  @Input() tooltipDateMessage: string;
+
   @Input() currentFolderId: string;
 
   @Output() highlightNote = new EventEmitter<SmallNote>();

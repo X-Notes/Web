@@ -45,6 +45,6 @@ export class RestoreLabel {
   constructor(public label: Label) {}
 }
 
-export class DeleteAllFromBin {
+export class DeleteAllLabelsFromBin {
   static type = '[Labels] Delete all from bin';
 }

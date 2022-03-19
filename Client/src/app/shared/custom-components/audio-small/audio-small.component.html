@@ -1,6 +1,6 @@
 <div class="audio-small" appTheme>
   <div class="preview">
-    <img *ngIf="audio.pathToImage" [src]="audio.pathToImage | getImage: audio.authorId" />
+    <img *ngIf="audio.pathToImage" [src]="audio.pathToImage" />
     <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
   </div>
   <div class="audio-info">

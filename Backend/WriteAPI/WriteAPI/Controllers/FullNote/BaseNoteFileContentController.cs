@@ -21,21 +21,21 @@ namespace WriteAPI.Controllers.FullNote
         [HttpPatch("info")]
         public virtual async Task<OperationResult<Unit>> UpdateCollectionInfo(I command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPost("remove")]
         public virtual async Task<OperationResult<Unit>> RemoveItemsFromCollection(Y command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPost("add")]
         public virtual async Task<OperationResult<Unit>> AddItemsToCollection(U command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
     }

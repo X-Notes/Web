@@ -33,7 +33,14 @@ export class UserAPIService {
     const value: Token = {
       token,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/auth/verify`, value);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/auth/verify`,
+      value,
+    );
+  }
+
+  setTokenClaims() {
+    return this.httpClient.get<OperationResult<any>>(`${environment.writeAPI}/api/auth/set`);
   }
 
   tryGetFromAuthorize() {
@@ -41,11 +48,16 @@ export class UserAPIService {
   }
 
   newUser(user: User) {
-    return this.httpClient.post<ShortUser>(`${environment.writeAPI}/api/user`, user);
+    return this.httpClient.post<OperationResult<ShortUser>>(
+      `${environment.writeAPI}/api/user`,
+      user,
+    );
   }
 
   getUser() {
-    return this.httpClient.get<ShortUser>(`${environment.writeAPI}/api/user/short`);
+    return this.httpClient.get<OperationResult<ShortUser>>(
+      `${environment.writeAPI}/api/user/short`,
+    );
   }
 
   getMemory() {
@@ -73,11 +85,11 @@ export class UserAPIService {
     return this.httpClient.post(`${environment.writeAPI}/api/user/language`, obj);
   }
 
-  updateUserName(name: string) {
+  updateUserInfo(name: string) {
     const obj = {
       name,
     };
-    return this.httpClient.put(`${environment.writeAPI}/api/user/username`, obj);
+    return this.httpClient.put(`${environment.writeAPI}/api/user/info`, obj);
   }
 
   updateUserPhoto(photo: FormData, mini: OperationDetailMini, operation: LongTermOperation) {

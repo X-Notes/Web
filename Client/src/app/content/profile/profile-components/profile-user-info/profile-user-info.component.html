@@ -2,7 +2,7 @@
   <div class="photo" appDrop>
     <img
       *ngIf="!photoError"
-      [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
+      [src]="(user$ | async).photoPath"
       alt="User photo"
       (error)="changeSource()"
     />

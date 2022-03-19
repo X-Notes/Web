@@ -40,7 +40,6 @@ export class DocumentItemComponent {
   }
 
   openModal(document: DocumentModel) {
-    const path = this.exportService.getPath(document.documentPath, document.authorId);
-    this.dialogsManageService.viewDock(path);
+    this.dialogsManageService.viewDock(document.documentPath);
   }
 }

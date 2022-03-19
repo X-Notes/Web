@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
+import { take } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -15,6 +16,7 @@ import {
   DeleteNotesPermanently,
 } from '../notes/state/notes-actions';
 import { NoteStore } from '../notes/state/notes-state';
+import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,30 +26,22 @@ export class MenuButtonsNotesService {
     private store: Store,
     private sbws: SnackBarWrapperService,
     private apiTranslate: TranslateService,
+    private dialogsService: DialogsManageService,
   ) {}
 
-  async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
-    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-
-    if (isInnerNote) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const idsInner = [note.id];
-      await this.store.dispatch(new DeleteNotesPermanently(idsInner)).toPromise();
-      return this.sbws.buildNotification(
-        this.apiTranslate.instant('snackBar.notePermDeleted'),
-        null,
-      );
-    }
-    const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
-
-    this.store.dispatch(LoadUsedDiskSpace);
-
-    const message =
-      idsOuter.length > 1
-        ? this.apiTranslate.instant('snackBar.notesPermDeleted')
-        : this.apiTranslate.instant('snackBar.notePermDeleted');
-    return this.sbws.buildNotification(message, null);
+  openDeletionNoteModal(): void {
+    const instance = this.dialogsService.openDeletionPopup(
+      'modal.deletionModal.sureDeleteNotes',
+      'modal.deletionModal.additionalMessage',
+    );
+    instance
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        if (x) {
+          this.deleteNotes();
+        }
+      });
   }
 
   copyNotes() {
@@ -176,5 +170,29 @@ export class MenuButtonsNotesService {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       this.store.dispatch(new ChangeTypeFullNote(typeTo));
     }
+  }
+
+  private async deleteNotes(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const idsInner = [note.id];
+      await this.store.dispatch(new DeleteNotesPermanently(idsInner)).toPromise();
+      return this.sbws.buildNotification(
+        this.apiTranslate.instant('snackBar.notePermDeleted'),
+        null,
+      );
+    }
+    const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
+    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
+
+    this.store.dispatch(LoadUsedDiskSpace);
+
+    const message =
+      idsOuter.length > 1
+        ? this.apiTranslate.instant('snackBar.notesPermDeleted')
+        : this.apiTranslate.instant('snackBar.notePermDeleted');
+    return this.sbws.buildNotification(message, null);
   }
 }

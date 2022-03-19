@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Store } from '@ngxs/store';
-import { Auth, Login, Logout } from './stateUser/user-action';
+import { Auth, Logout } from './stateUser/user-action';
 import firebase from 'firebase/compat/app';
+import { UserAPIService } from './user-api.service';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,7 @@ export class AuthService {
     private readonly afAuth: AngularFireAuth,
     private readonly router: Router,
     private readonly store: Store,
+    private readonly apiAuth: UserAPIService,
   ) {
     this.afAuth.onAuthStateChanged((user) => {
       this.configureAuthState(user);
@@ -31,26 +34,37 @@ export class AuthService {
     await this.router.navigate(['about']);
   };
 
-  async getToken(refresh = false) {
+  async getUser() {
+    const user = await this.afAuth.currentUser;
+    return user;
+  }
+
+  async getToken(refresh = false): Promise<string> {
     const user = await this.afAuth.currentUser;
     return user?.getIdToken(refresh);
+  }
+
+  async refreshToken(): Promise<void> {
+    const user = await this.afAuth.currentUser;
+    await user?.getIdToken(true);
   }
 
   async redirectOnSuccessAuth() {
     const { user } = await this.afAuth.getRedirectResult();
     if (user) {
-      await this.store
-        .dispatch(new Auth({ name: user.displayName, photo: user.photoURL }))
-        .toPromise();
-      this.router.navigate(['notes']);
+      const token = await this.getToken();
+      const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
+      if (isValidToken.success) {
+        await this.store
+          .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
+          .toPromise();
+        await this.apiAuth.setTokenClaims().toPromise();
+        await this.refreshToken();
+        this.router.navigate(['notes']);
+      }
     }
   }
 
-  private async configureAuthState(user: firebase.User) {
-    if (user) {
-      await this.store.dispatch(Login).toPromise();
-    } else {
-      await this.logout();
-    }
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async configureAuthState(user: firebase.User) {}
 }

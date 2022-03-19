@@ -8,8 +8,8 @@ namespace Domain.Commands.Labels
     {
         [ValidationGuid]
         public Guid Id { set; get; }
-        public DeleteLabelCommand(string email, Guid id)
-            :base(email)
+        public DeleteLabelCommand(Guid userId, Guid id)
+            :base(userId)
         {
             this.Id = id;
         }

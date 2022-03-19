@@ -22,25 +22,22 @@ namespace WriteAPI.Controllers.Note
             this.mediator = mediator;
         }
 
-
         [HttpGet("{noteId}")]
         public async Task<List<NoteHistoryDTO>> GetHistories(Guid noteId)
         {
-            return await mediator.Send(new GetNoteHistoriesQuery(noteId, this.GetUserEmail()));
+            return await mediator.Send(new GetNoteHistoriesQuery(noteId, this.GetUserId()));
         }
 
         [HttpGet("snapshot/{noteId}/{snapshotId}")]
         public async Task<NoteHistoryDTOAnswer> GetSnapshot(Guid noteId, Guid snapshotId)
         {
-            var email = this.GetUserEmail();
-            return await mediator.Send(new GetNoteSnapshotQuery(snapshotId, noteId, email));
+            return await mediator.Send(new GetNoteSnapshotQuery(snapshotId, noteId, this.GetUserId()));
         }
 
         [HttpGet("snapshot/contents/{noteId}/{snapshotId}")]
         public async Task<List<BaseNoteContentDTO>> GetSnapshotContent(Guid noteId, Guid snapshotId)
         {
-            var email = this.GetUserEmail();
-            var command = new GetSnapshotContentsQuery(email, noteId, snapshotId);
+            var command = new GetSnapshotContentsQuery(this.GetUserId(), noteId, snapshotId);
             return await mediator.Send(command);
         }
     }

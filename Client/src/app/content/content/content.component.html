@@ -9,6 +9,7 @@
     #addMobile
     (click)="pService.newButtonSubject.next(true)"
     *ngIf="newButtonActive && !newProfile"
+    [ngClass]="audioService.currentFile ? 'add-mobile-position-audio' : 'add-mobile-position-default'"
   >
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>

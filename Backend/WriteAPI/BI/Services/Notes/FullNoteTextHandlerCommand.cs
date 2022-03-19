@@ -32,7 +32,7 @@ namespace BI.Services.Notes
 
         private readonly HistoryCacheService historyCacheService;
 
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -46,7 +46,7 @@ namespace BI.Services.Notes
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
-            AppCustomMapper appCustomMapper,
+            NoteFolderLabelMapper appCustomMapper,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             UserRepository userRepository,
@@ -64,7 +64,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -74,7 +74,7 @@ namespace BI.Services.Notes
                 note.UpdatedAt = DateTimeProvider.Time;
                 await noteRepository.UpdateAsync(note);
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                 // WS UPDATES
                 await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers());
@@ -87,24 +87,24 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
                 if(request.Texts.Count == 1)
                 {
-                    await UpdateOne(request.Texts.First(), request.NoteId, request.Email);
+                    await UpdateOne(request.Texts.First(), request.NoteId, permissions.Caller.Email);
                 }
                 else
                 {
                     foreach (var text in request.Texts)
                     {
-                        await UpdateOne(text, request.NoteId, request.Email);
+                        await UpdateOne(text, request.NoteId, permissions.Caller.Email);
                     }
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                 return new OperationResult<Unit>(success: true, Unit.Value);
             }

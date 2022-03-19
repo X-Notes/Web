@@ -16,11 +16,11 @@ namespace Domain.Commands.NoteInner.FileContent
 
         public bool IsCheckPermissions { set; get; } = true;
 
-        public BaseUnlinkCommand(Guid noteId, List<Guid> contentIds, string email)
+        public BaseUnlinkCommand(Guid noteId, List<Guid> contentIds, Guid userId)
         {
             this.NoteId = noteId;
             this.ContentIds = contentIds;
-            this.Email = email;
+            this.UserId = userId;
         }
     }
 }

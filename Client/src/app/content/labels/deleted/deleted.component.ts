@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
@@ -22,9 +22,11 @@ import {
   DeleteLabel,
   SetDeleteLabel,
   RestoreLabel,
+  DeleteAllLabelsFromBin,
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
+import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 
 @Component({
   selector: 'app-deleted',
@@ -48,6 +50,7 @@ export class DeletedComponent implements OnInit, AfterViewInit {
     public labelService: LabelsService,
     private sbws: SnackBarWrapperService,
     private translateService: TranslateService,
+    private dialogsService: DialogsManageService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -58,6 +61,25 @@ export class DeletedComponent implements OnInit, AfterViewInit {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
     this.pService.setSpinnerState(true);
     await this.loadContent();
+
+    this.pService.emptyTrashButtonSubject
+      .pipe(takeUntil(this.labelService.destroy))
+      .subscribe(async (flag) => {
+        if (flag) {
+          const instance = this.dialogsService.openDeletionPopup(
+            'modal.deletionModal.sureDeleteLabels',
+            'modal.deletionModal.additionalMessage',
+          );
+          instance
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe((x) => {
+              if (x) {
+                this.store.dispatch(DeleteAllLabelsFromBin);
+              }
+            });
+        }
+      });
   }
 
   async loadContent() {

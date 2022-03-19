@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Orders;
 using Domain.Commands.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -28,8 +24,7 @@ namespace WriteAPI.Controllers
         [HttpPost]
         public async Task<List<UpdateOrderEntityResponse>> UpdateEntityOrder(UpdateOrderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
     }

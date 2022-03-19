@@ -25,13 +25,13 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
-        private readonly AppCustomMapper noteMapper;
+        private readonly NoteFolderLabelMapper noteMapper;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
-            AppCustomMapper noteMapper,
+            NoteFolderLabelMapper noteMapper,
             NoteRepository noteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository
             )
@@ -45,7 +45,7 @@ namespace BI.Services.Folders
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -61,8 +61,7 @@ namespace BI.Services.Folders
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
         {
-
-            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -70,8 +69,8 @@ namespace BI.Services.Folders
                 var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
 
-                var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id, request.Settings);
-                var sharedNotes = await GetSharedNotes(permissions.User.Id, request.Settings);
+                var allNotes = await noteRepository.GetNotesByUserId(permissions.Caller.Id, request.Settings);
+                var sharedNotes = await GetSharedNotes(permissions.Caller.Id, request.Settings);
                 allNotes.AddRange(sharedNotes);
                 allNotes = allNotes.DistinctBy(x => x.Id).ToList();
 

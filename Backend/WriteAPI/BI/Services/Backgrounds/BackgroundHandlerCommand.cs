@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using BI.Helpers;
+using BI.Mapping;
 using Common.DTO;
 using Common.DTO.Backgrounds;
-using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
 using Domain.Queries.Permissions;
@@ -20,25 +19,25 @@ namespace BI.Services.Backgrounds
         IRequestHandler<UpdateBackgroundCommand, Unit>,
         IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>
     {
-        private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
         private readonly IMediator _mediator;
+        private readonly UserBackgroundMapper userBackgroundMapper;
 
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
-                                        IMapper mapper,
-                                        IMediator _mediator)
+                                        IMediator _mediator,
+                                        UserBackgroundMapper userBackgroundMapper)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
-            this.mapper = mapper;
             this._mediator = _mediator;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.CurrentBackgroundId = null;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
@@ -46,7 +45,7 @@ namespace BI.Services.Backgrounds
 
         public async Task<Unit> Handle(RemoveBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithBackgrounds(request.Email);
+            var user = await userRepository.GetUserWithBackgrounds(request.UserId);
             var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
             if (back != null)
             {
@@ -58,7 +57,7 @@ namespace BI.Services.Backgrounds
 
         public async Task<Unit> Handle(UpdateBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             user.CurrentBackgroundId = request.Id;
             await userRepository.UpdateAsync(user);
             return Unit.Value;
@@ -66,14 +65,12 @@ namespace BI.Services.Backgrounds
 
         public async Task<OperationResult<BackgroundDTO>> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
             if(uploadPermission == PermissionUploadFileEnum.NoCanUpload)
             {
                 return new OperationResult<BackgroundDTO>().SetNoEnougnMemory();
             }
-
 
             var filebytes = await request.File.GetFilesBytesAsync();
             var appFile = await _mediator.Send(new SaveBackgroundCommand(user.Id, filebytes));
@@ -92,8 +89,8 @@ namespace BI.Services.Backgrounds
                 return null;
             }
 
-            await Handle(new UpdateBackgroundCommand(request.Email, item.Id), CancellationToken.None);
-            var ent = mapper.Map<BackgroundDTO>(item);
+            await Handle(new UpdateBackgroundCommand(request.UserId, item.Id), CancellationToken.None);
+            var ent = userBackgroundMapper.MapToBackgroundDTO(item);
             return new OperationResult<BackgroundDTO>(success: true, ent);
         }
     }

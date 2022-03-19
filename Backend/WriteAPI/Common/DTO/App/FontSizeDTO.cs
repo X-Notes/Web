@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Common.DatabaseModels.Models.Systems;
+using System;
 
 namespace Common.DTO.App
 {
     public class FontSizeDTO
     {
-        public Guid Id { set; get; }
+        public FontSizeENUM Id { set; get; }
         public string Name { set; get; }
     }
 }

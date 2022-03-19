@@ -15,8 +15,8 @@ namespace Domain.Commands.Notes
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public ChangeColorNoteCommand(List<Guid> ids, string email, string color)
-            :base(email)
+        public ChangeColorNoteCommand(List<Guid> ids, Guid userId, string color)
+            :base(userId)
         {
             this.Ids = ids;
             Color = color;

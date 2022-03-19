@@ -5,7 +5,7 @@
         <img
           *ngIf="!photoError"
           alt="photo"
-          [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
+          [src]="(user$ | async).photoPath"
           (error)="changeSource()"
         />
         <div *ngIf="photoError" class="photo-error">

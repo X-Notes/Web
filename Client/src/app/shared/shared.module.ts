@@ -37,7 +37,6 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { SearchComponent } from './modal_components/search/search.component';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
-import { GetImagePipe } from './pipes/get-image.pipe';
 import { SelectComponent } from './custom-components/select/select.component';
 import { ChipComponent } from './custom-components/chip/chip.component';
 import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
@@ -50,9 +49,6 @@ import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.co
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
 import { LazyThemeDirective } from './directives/lazy-theme.directive';
-import { GetAudioPipe } from './pipes/get-audio.pipe';
-import { GetVideoPipe } from './pipes/get-video.pipe';
-import { GetDocumentPipe } from './pipes/get-document.pipe';
 import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
@@ -78,6 +74,9 @@ import { NotePreviewVideoComponent } from '../content/notes/note/note-preview-vi
 import { NoteCollectionTitleComponent } from '../content/notes/note/note-collection-title/note-collection-title.component';
 import { NotePreviewAudiosComponent } from '../content/notes/note/note-preview-audios/note-preview-audios.component';
 import { FileNamePipe } from './pipes/file-name.pipe';
+import { GenericDeletionPopUpComponent } from './modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
+import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bottom-button-pop-up/generic-bottom-button-pop-up.component';
+import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-message/generic-delete-entity-message.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +97,6 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     OpenInnerSideComponent,
     NoteComponent,
     SearchComponent,
-    GetImagePipe,
     SelectComponent,
     ChipComponent,
     SelectOptionComponent,
@@ -111,9 +109,6 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     DialogGenericHeaderComponent,
     FolderTypePipe,
     LazyThemeDirective,
-    GetAudioPipe,
-    GetVideoPipe,
-    GetDocumentPipe,
     LockComponent,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
@@ -138,6 +133,9 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
     FileNamePipe,
+    GenericDeletionPopUpComponent,
+    GenericBottomButtonPopUpComponent,
+    GenericDeleteEntityMessageComponent,
   ],
   imports: [
     CommonModule,
@@ -182,7 +180,6 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     NgScrollbarModule,
     SearchComponent,
     MatCheckboxModule,
-    GetImagePipe,
     MatSnackBarModule,
     NoteComponent,
     SelectComponent,
@@ -196,9 +193,6 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     MatMenuModule,
     FolderTypePipe,
     LazyThemeDirective,
-    GetAudioPipe,
-    GetVideoPipe,
-    GetDocumentPipe,
     ReactiveFormsModule,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
@@ -225,6 +219,7 @@ import { FileNamePipe } from './pipes/file-name.pipe';
     NoteCollectionTitleComponent,
     NotePreviewAudiosComponent,
     FileNamePipe,
+    GenericDeleteEntityMessageComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

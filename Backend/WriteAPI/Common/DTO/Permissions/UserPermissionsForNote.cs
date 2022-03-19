@@ -13,7 +13,7 @@ namespace Common.DTO.Permissions
             }
         }
 
-        public User User { set; get; }
+        public User Caller { set; get; }
 
         public Note Note { set; get; }
 
@@ -29,14 +29,14 @@ namespace Common.DTO.Permissions
         {
             get
             {
-                return User.Id == Note.UserId;
+                return Caller.Id == Note.UserId;
             }
 
         }
 
         public UserPermissionsForNote SetFullAccess(User user, Note note)
         {
-            User = user;
+            Caller = user;
             Note = note;
             CanRead = true;
             CanWrite = true;
@@ -45,7 +45,7 @@ namespace Common.DTO.Permissions
 
         public UserPermissionsForNote SetOnlyRead(User user, Note note)
         {
-            User = user;
+            Caller = user;
             Note = note;
             CanRead = true;
             CanWrite = false;
@@ -54,7 +54,7 @@ namespace Common.DTO.Permissions
 
         public UserPermissionsForNote SetNoAccessRights(User user, Note note)
         {
-            User = user;
+            Caller = user;
             Note = note;
             CanRead = false;
             CanWrite = false;

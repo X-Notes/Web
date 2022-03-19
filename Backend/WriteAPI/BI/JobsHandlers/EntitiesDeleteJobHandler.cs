@@ -13,11 +13,11 @@ namespace BI.JobsHandlers
 {
     public class ConfigForEntitesDeliting
     {
-        public int LabelsNDays { set; get; } = 5;
+        public int LabelsNDays { set; get; } = 30;
 
-        public int FoldersNDays { set; get; } = 5;
+        public int FoldersNDays { set; get; } = 30;
 
-        public int NotesNDays { set; get; } = 5;
+        public int NotesNDays { set; get; } = 30;
 
         public int HistoriesNDays { set; get; } = 30;
     }

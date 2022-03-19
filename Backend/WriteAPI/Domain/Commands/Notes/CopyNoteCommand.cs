@@ -15,7 +15,7 @@ namespace Domain.Commands.Notes
 
         }
 
-        public CopyNoteCommand(string email) : base(email)
+        public CopyNoteCommand(Guid userId) : base(userId)
         {
 
         }

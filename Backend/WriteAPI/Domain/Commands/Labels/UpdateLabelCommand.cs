@@ -15,8 +15,8 @@ namespace Domain.Commands.Labels
         [Required]
         public string Color { set; get; }
 
-        public UpdateLabelCommand(string email)
-            :base(email)
+        public UpdateLabelCommand(Guid userId)
+            :base(userId)
         {
 
         }

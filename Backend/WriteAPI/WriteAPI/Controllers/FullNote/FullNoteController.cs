@@ -26,7 +26,7 @@ namespace WriteAPI.Controllers
         public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
         {
             var query = new GetOnlineUsersOnNoteQuery(id);
-            query.Email = this.GetUserEmail();
+            query.UserId = this.GetUserId();
             return await _mediator.Send(query);
         }
 

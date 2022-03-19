@@ -1,0 +1,30 @@
+@import 'variables';
+
+:host {
+  position: fixed;
+  z-index: 500;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+.delete-message-container {
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  p {
+    color: #cccccc;
+    font-size: 0.875rem;
+  }
+}
+
+.dark {
+  background-color: $dark-backlight;
+}
+
+.light {
+  background-color: $light-billing-field;
+  color: $text-color;
+}

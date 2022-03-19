@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Folders;
@@ -16,7 +17,7 @@ namespace Domain.Queries.Folders
         [Required]
         public PersonalizationSettingDTO Settings { set; get; }
 
-        public GetFoldersByTypeQuery(string email, FolderTypeENUM id, PersonalizationSettingDTO settings) :base(email)
+        public GetFoldersByTypeQuery(Guid userId, FolderTypeENUM id, PersonalizationSettingDTO settings) :base(userId)
         {
             this.TypeId = id;
             this.Settings = settings;

@@ -227,7 +227,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'delete',
-      operation: () => this.menuButtonsNotesService.deleteNotes(),
+      operation: () => this.menuButtonsNotesService.openDeletionNoteModal(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
@@ -459,7 +459,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'delete',
-      operation: () => this.menuButtonsFoldersService.deleteFolders(),
+      operation: () => this.menuButtonsFoldersService.openDeletionNoteModal(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
       isViewOnFullFolder: true,

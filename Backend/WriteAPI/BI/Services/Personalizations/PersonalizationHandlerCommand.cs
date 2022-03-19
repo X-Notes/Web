@@ -16,12 +16,12 @@ namespace BI.Services.Personalizations
 
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
 
-        private readonly AppCustomMapper appCustomMapper;
+        private readonly NoteFolderLabelMapper appCustomMapper;
 
         public PersonalizationHandlerCommand(
             UserRepository userRepository,
             PersonalizationSettingRepository personalizationSettingRepository,
-            AppCustomMapper appCustomMapper)
+            NoteFolderLabelMapper appCustomMapper)
         {
             this.userRepository = userRepository;
             this.personalizationSettingRepository = personalizationSettingRepository;
@@ -30,24 +30,18 @@ namespace BI.Services.Personalizations
 
         public async Task<Unit> Handle(UpdatePersonalizationSettingsCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
-            {
-                var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == user.Id);
-                pr.IsViewAudioOnNote = request.PersonalizationSetting.IsViewAudioOnNote;
-                pr.IsViewDocumentOnNote = request.PersonalizationSetting.IsViewDocumentOnNote;
-                pr.IsViewPhotosOnNote = request.PersonalizationSetting.IsViewPhotosOnNote;
-                pr.IsViewTextOnNote = request.PersonalizationSetting.IsViewTextOnNote;
-                pr.IsViewVideoOnNote = request.PersonalizationSetting.IsViewVideoOnNote;
-                pr.NotesInFolderCount = request.PersonalizationSetting.NotesInFolderCount;
-                pr.ContentInNoteCount = request.PersonalizationSetting.ContentInNoteCount;
+            var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == request.UserId);
+            pr.IsViewAudioOnNote = request.PersonalizationSetting.IsViewAudioOnNote;
+            pr.IsViewDocumentOnNote = request.PersonalizationSetting.IsViewDocumentOnNote;
+            pr.IsViewPhotosOnNote = request.PersonalizationSetting.IsViewPhotosOnNote;
+            pr.IsViewTextOnNote = request.PersonalizationSetting.IsViewTextOnNote;
+            pr.IsViewVideoOnNote = request.PersonalizationSetting.IsViewVideoOnNote;
+            pr.NotesInFolderCount = request.PersonalizationSetting.NotesInFolderCount;
+            pr.ContentInNoteCount = request.PersonalizationSetting.ContentInNoteCount;
 
-                await personalizationSettingRepository.UpdateAsync(pr);
+            await personalizationSettingRepository.UpdateAsync(pr);
 
-                return Unit.Value;
-            }
-
-            throw new Exception("User not found");
+            return Unit.Value;
         }
     }
 }

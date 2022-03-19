@@ -5,10 +5,6 @@ import { Background } from '../models/background.model';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { User } from '../models/user.model';
 
-export class Login {
-  static type = '[User] Login User';
-}
-
 export class Auth {
   static type = '[User] Auth User';
 
@@ -47,7 +43,7 @@ export class SetDefaultBackground {
   static type = '[User] setDefault Background';
 }
 
-export class UpdateUserName {
+export class UpdateUserInfo {
   static type = '[User] update userName';
 
   constructor(public newName: string) {}

@@ -44,8 +44,11 @@
         </div>
       </div>
       <div class="bottom-section">
-        <div class="date">
-          <p>{{folder.updatedAt | date: 'medium' }}</p>
+        <div
+          class="date"
+          [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
+        >
+          <p>{{date ?? folder.updatedAt | date: 'medium' }}</p>
         </div>
         <div class="help-icons">
           <div *ngIf="folder.additionalInfo?.isHasUserOnNote" class="icon">

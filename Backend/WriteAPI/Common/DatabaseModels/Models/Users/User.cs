@@ -24,7 +24,7 @@ namespace Common.DatabaseModels.Models.Users
 
         public List<AppFile> Files { set; get; }
 
-        public string PersonalKey { set; get; }
+        public string DefaultPhotoUrl { set; get; }
 
         public LanguageENUM LanguageId { set; get; }
         public Language Language { set; get; }

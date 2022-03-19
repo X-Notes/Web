@@ -6,11 +6,13 @@ namespace Domain.Queries
 {
     public class BaseQueryEntity
     {
-        public string Email { set; get; }
-        public BaseQueryEntity(string Email)
+        public Guid UserId { set; get; }
+
+        public BaseQueryEntity(Guid userId)
         {
-            this.Email = Email;
+            this.UserId = userId;
         }
+
         public BaseQueryEntity()
         {
 

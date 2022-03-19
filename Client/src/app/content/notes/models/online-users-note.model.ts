@@ -1,6 +1,6 @@
 export interface OnlineUsersNote {
   id: string;
   name: string;
-  photoId: string;
+  photoId?: string;
   photoPath: string;
 }

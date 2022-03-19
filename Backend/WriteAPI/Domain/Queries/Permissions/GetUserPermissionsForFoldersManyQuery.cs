@@ -9,10 +9,10 @@ namespace Domain.Queries.Permissions
     {
         public List<Guid> FolderIds { set; get; }
 
-        public GetUserPermissionsForFoldersManyQuery(List<Guid> folderIds, string email)
+        public GetUserPermissionsForFoldersManyQuery(List<Guid> folderIds, Guid userId)
         {
             this.FolderIds = folderIds;
-            this.Email = email;
+            this.UserId = userId;
         }
     }
 }

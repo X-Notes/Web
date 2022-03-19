@@ -25,7 +25,7 @@ namespace WriteAPI.Controllers.UserContollers
         [HttpGet]
         public async Task<PersonalizationSettingDTO> GetUserPersonalizationSettings()
         {
-            var query = new GetUserPersonalizationSettingsQuery(this.GetUserEmail());
+            var query = new GetUserPersonalizationSettingsQuery(this.GetUserId());
             return await _mediator.Send(query);
         }
 
@@ -33,7 +33,7 @@ namespace WriteAPI.Controllers.UserContollers
         [HttpPatch]
         public async Task UpdateUserPersonalizationSettings(UpdatePersonalizationSettingsCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             await _mediator.Send(command);
         }
     }

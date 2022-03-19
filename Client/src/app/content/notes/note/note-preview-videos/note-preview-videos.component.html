@@ -2,6 +2,6 @@
 <div class="documents">
   <app-note-preview-video
     *ngFor="let item of content.items"
-    [url]="item.videoPath | getVideo: item.authorId"
+    [url]="item.videoPath"
   ></app-note-preview-video>
 </div>

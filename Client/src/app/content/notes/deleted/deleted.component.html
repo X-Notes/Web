@@ -12,6 +12,8 @@
   >
     <app-note
       [note]="item"
+      [date]="item.deletedAt | date: 'medium'"
+      [tooltipDateMessage]="'entity-bottom-tooltip.deleted'"
       (highlightNote)="noteService.highlightNote($event)"
       [ngStyle]="{'backgroundColor': item.color }"
       (clickOnNote)="noteService.toNote($event)"
@@ -26,3 +28,6 @@
   [illustration]="pService.icon.deletedIllustration"
   typeClass="type-module"
 ></app-no-results-illustration>
+<app-generic-delete-entity-message
+  [message]="'delete-message.notes' | translate: { days: 30 }"
+></app-generic-delete-entity-message>

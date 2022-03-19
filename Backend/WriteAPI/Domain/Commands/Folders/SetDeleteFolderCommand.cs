@@ -12,7 +12,7 @@ namespace Domain.Commands.Folders
         public List<Guid> Ids { set; get; }
 
 
-        public SetDeleteFolderCommand(string email) : base(email)
+        public SetDeleteFolderCommand(Guid userId) : base(userId)
         {
 
         }

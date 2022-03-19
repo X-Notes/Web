@@ -1,47 +1,49 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
+using BI.Mapping;
+using Common.DTO;
 using Common.DTO.Users;
 using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
-using Storage;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
-        IRequestHandler<GetShortUserQuery, ShortUser>,
+        IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>,
         IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
     {
         private readonly UserRepository userRepository;
 
-        private readonly IMapper imapper;
-
         private readonly FileRepository fileRepository;
+        private readonly UserBackgroundMapper userBackgroundMapper;
 
-        public UserHandlerQuery(UserRepository userRepository, IMapper imapper, FileRepository fileRepository)
+        public UserHandlerQuery(
+            UserRepository userRepository, 
+            FileRepository fileRepository,
+            UserBackgroundMapper userBackgroundMapper)
         {
             this.userRepository = userRepository;
-            this.imapper = imapper;
             this.fileRepository = fileRepository;
+            this.userBackgroundMapper = userBackgroundMapper;
         }
 
-        public async Task<ShortUser> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<ShortUser>> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
+            var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.UserId);
             if (user != null)
             {
-                return imapper.Map<ShortUser>(user);
+                var userDto = userBackgroundMapper.MapToShortUser(user);
+                return new OperationResult<ShortUser>(true , userDto);
             }
-            return null;
+            return new OperationResult<ShortUser>().SetNotFound();
         }
 
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var size = await fileRepository.GetTotalUserMemory(user.Id);
+            var size = await fileRepository.GetTotalUserMemory(request.UserId);
             return new GetUserMemoryResponse { TotalSize = size };
         }
     }

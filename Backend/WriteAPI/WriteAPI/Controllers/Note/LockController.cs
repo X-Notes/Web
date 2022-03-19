@@ -24,21 +24,21 @@ namespace WriteAPI.Controllers.Note
         [HttpPost("encrypt")]
         public async Task<OperationResult<bool>> EncryptNote(EncryptionNoteCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPost("decrypt")]
         public async Task<OperationResult<bool>> DecryptNote(DecriptionNoteCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPost("unlock")]
         public async Task<OperationResult<bool>> UnlockNote(UnlockNoteQuery query)
         {
-            query.Email = this.GetUserEmail();
+            query.UserId = this.GetUserId();
             return await _mediator.Send(query);
         }
 

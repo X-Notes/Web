@@ -8,8 +8,9 @@ namespace Domain.Commands.Backgrounds
     {
         [ValidationGuid]
         public Guid Id { set; get; }
-        public RemoveBackgroundCommand(string email, Guid id)
-            :base(email)
+
+        public RemoveBackgroundCommand(Guid userId, Guid id)
+            :base(userId)
         {
             this.Id = id;
         }

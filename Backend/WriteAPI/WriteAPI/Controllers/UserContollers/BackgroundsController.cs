@@ -29,22 +29,19 @@ namespace WriteAPI.Controllers.UserContollers
         [HttpGet("background/default")]
         public async Task DefaultBackgroundCover()
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new DefaultBackgroundCommand(email));
+            await _mediator.Send(new DefaultBackgroundCommand(this.GetUserId()));
         }
 
         [HttpDelete("background/{id}")]
         public async Task DeleteBackground(Guid id)
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new RemoveBackgroundCommand(email, id));
+            await _mediator.Send(new RemoveBackgroundCommand(this.GetUserId(), id));
         }
 
         [HttpGet("background/{id}")]
         public async Task UpdateBackgroundCover(Guid id)
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new UpdateBackgroundCommand(email, id));
+            await _mediator.Send(new UpdateBackgroundCommand(this.GetUserId(), id));
         }
 
         [HttpPost("new")]
@@ -55,16 +52,13 @@ namespace WriteAPI.Controllers.UserContollers
             {
                 return validatioResult;
             }
-
-            var email = this.GetUserEmail();
-            return await _mediator.Send(new NewBackgroundCommand(email, photo));
+            return await _mediator.Send(new NewBackgroundCommand(this.GetUserId(), photo));
         }
 
         [HttpGet]
         public async Task<List<BackgroundDTO>> GetAll()
         {
-            var email = this.GetUserEmail();
-            return await _mediator.Send(new GetUserBackgroundsQuery(email));
+            return await _mediator.Send(new GetUserBackgroundsQuery(this.GetUserId()));
         }
     }
 }

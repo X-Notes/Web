@@ -16,73 +16,74 @@ namespace WriteContext.Repositories
             this.contextDB = contextDB;
         }
 
-        public async Task<List<Language>> GetLanguages()
+        public Task<List<Language>> GetLanguages()
         {
-            return await contextDB.Languages.ToListAsync();
+            return contextDB.Languages.ToListAsync();
         }
 
-        public async Task<Language> GetLanguageByName(string name)
+        public Task<Language> GetLanguageByName(string name)
         {
-            return await contextDB.Languages.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.Languages.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<FontSize>> GetFontSizes()
+        public Task<List<FontSize>> GetFontSizes()
         {
-            return await contextDB.FontSizes.ToListAsync();
+            return contextDB.FontSizes.ToListAsync();
         }
 
-        public async Task<FontSize> GetFontSizeByName(string name)
+        public Task<FontSize> GetFontSizeByName(string name)
         {
-            return await contextDB.FontSizes.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.FontSizes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<Theme>> GetThemes()
+        public Task<List<Theme>> GetThemes()
         {
-            return await contextDB.Themes.ToListAsync();
+            return contextDB.Themes.ToListAsync();
         }
 
-        public async Task<Theme> GetThemeByName(string name)
+        public Task<Theme> GetThemeByName(string name)
         {
-            return await contextDB.Themes.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.Themes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<BillingPlan>> GetBillingPlans()
+        public Task<List<BillingPlan>> GetBillingPlans()
         {
-            return await contextDB.BillingPlans.ToListAsync();
+            return contextDB.BillingPlans.ToListAsync();
         }
 
-        public async Task<BillingPlan> GetBillingPlanByName(string name)
+        public Task<BillingPlan> GetBillingPlanByName(string name)
         {
-            return await contextDB.BillingPlans.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.BillingPlans.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<NoteType>> GetNoteTypes()
+        public Task<List<NoteType>> GetNoteTypes()
         {
-            return await contextDB.NotesTypes.ToListAsync();
+            return contextDB.NotesTypes.ToListAsync();
         }
 
-        public async Task<NoteType> GetNoteTypeByName(string name)
+        public Task<NoteType> GetNoteTypeByName(string name)
         {
-            return await contextDB.NotesTypes.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.NotesTypes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<FolderType>> GetFolderTypes()
+        public Task<List<FolderType>> GetFolderTypes()
         {
-            return await contextDB.FoldersTypes.ToListAsync();
+            return contextDB.FoldersTypes.ToListAsync();
         }
 
-        public async Task<FolderType> GetFolderTypeByName(string name)
+        public Task<FolderType> GetFolderTypeByName(string name)
         {
-            return await contextDB.FoldersTypes.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.FoldersTypes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
-        public async Task<List<RefType>> GetRefTypes()
+        public Task<List<RefType>> GetRefTypes()
         {
-            return await contextDB.RefTypes.ToListAsync();
+            return contextDB.RefTypes.ToListAsync();
         }
-        public async Task<RefType> GetRefTypeByName(string name)
+
+        public Task<RefType> GetRefTypeByName(string name)
         {
-            return await contextDB.RefTypes.FirstOrDefaultAsync(x => x.Name == name);
+            return contextDB.RefTypes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
     }

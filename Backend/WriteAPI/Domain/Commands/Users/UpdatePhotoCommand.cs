@@ -2,16 +2,18 @@
 using Common.DTO.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Domain.Commands.Users
 {
     public class UpdatePhotoCommand : BaseCommandEntity, IRequest<OperationResult<AnswerChangeUserPhoto>>
     {
         public IFormFile File { set; get; }
-        public UpdatePhotoCommand(IFormFile File, string Email)
-            :base(Email)
+
+        public UpdatePhotoCommand(IFormFile file, Guid userId)
+            :base(userId)
         {
-            this.File = File;
+            this.File = file;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.Email);
+            var user = await userRepository.GetUserWithLabels(request.UserId);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
@@ -41,7 +41,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(SetDeletedLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.Email);
+            var user = await userRepository.GetUserWithLabels(request.UserId);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
@@ -53,7 +53,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.Email);
+            var user = await userRepository.GetUserWithLabels(request.UserId);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
@@ -67,10 +67,8 @@ namespace BI.Services.Labels
 
         public async Task<Guid> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
             var label = new Label();
-            label.UserId = user.Id;
+            label.UserId = request.UserId;
             label.Order = 1;
             label.Color = LabelsColorPallete.Red;
             label.CreatedAt = DateTimeProvider.Time;
@@ -83,7 +81,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(RestoreLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.Email);
+            var user = await userRepository.GetUserWithLabels(request.UserId);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
@@ -94,12 +92,13 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(RemoveAllFromBinCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            if (user != null)
+            var labels = await labelRepository.GetWhereAsync(x => x.UserId == request.UserId && x.IsDeleted == true);
+
+            if (labels.Any())
             {
-                var labels = await labelRepository.GetWhereAsync(x => x.UserId == user.Id && x.IsDeleted == true);
                 await labelRepository.RemoveRangeAsync(labels);
             }
+
             return Unit.Value;
         }
     }

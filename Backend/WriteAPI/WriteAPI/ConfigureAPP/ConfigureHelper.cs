@@ -1,6 +1,5 @@
 ﻿using Common.Azure;
 using ContentProcessing;
-using FacadeML;
 using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -92,6 +91,7 @@ using Common.DTO;
 using WriteContext.Repositories.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
+using BI.Services.Auth;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -103,10 +103,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddMediatR(typeof(Startup));
 
             // USER
-            services.AddScoped<IRequestHandler<GetShortUserQuery, ShortUser>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<NewUserCommand, Guid>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
@@ -341,17 +341,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FoldersNotesRepository>();
 
             // Note Content 
-            services.AddScoped<PhotosCollectionNoteRepository>();
-            services.AddScoped<PhotoNoteAppFileRepository>();
-
-            services.AddScoped<AudiosCollectionNoteRepository>();
-            services.AddScoped<AudioNoteAppFileRepository>();
-
-            services.AddScoped<VideosCollectionNoteRepository>();
-            services.AddScoped<VideoNoteAppFileRepository>();
-
-            services.AddScoped<DocumentsCollectionNoteRepository>();
-            services.AddScoped<DocumentNoteAppFileRepository>();
+            services.AddScoped<CollectionNoteRepository>();
+            services.AddScoped<CollectionAppFileRepository>();
 
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
@@ -415,6 +406,8 @@ namespace WriteAPI.ConfigureAPP
 
         public static void BI(this IServiceCollection services)
         {
+            services.AddScoped<FirebaseAuthService>();
+
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
 
@@ -426,9 +419,6 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesService>();
             services.AddSingleton<WebsocketsFoldersService>();
-
-            services.AddScoped<OcrService>();
-            services.AddSingleton<ObjectRecognizeService>();
 
             services.AddScoped<AppEncryptor>();
 

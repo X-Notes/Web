@@ -17,8 +17,8 @@ namespace Domain.Queries.Folders
         [Required]
         public PersonalizationSettingDTO Settings { set; get; }
 
-        public GetFoldersByFolderIdsQuery(string email, List<Guid> folderIds, PersonalizationSettingDTO settings)
-            : base(email)
+        public GetFoldersByFolderIdsQuery(Guid userId, List<Guid> folderIds, PersonalizationSettingDTO settings)
+            : base(userId)
         {
             this.Settings = settings;
             this.FolderIds = folderIds;

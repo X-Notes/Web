@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 
 namespace Domain.Queries.Files
 {
@@ -9,7 +10,7 @@ namespace Domain.Queries.Files
 
     public class GetUserStorageMemoryQuery : BaseQueryEntity, IRequest<GetUserMemoryResponse>
     {
-        public GetUserStorageMemoryQuery(string Email) : base(Email)
+        public GetUserStorageMemoryQuery(Guid userId) : base(userId)
         {
         }
     }

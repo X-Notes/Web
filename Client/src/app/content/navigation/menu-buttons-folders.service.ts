@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
+import { take } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
@@ -13,6 +14,7 @@ import {
   DeleteFoldersPermanently,
 } from '../folders/state/folders-actions';
 import { FolderStore } from '../folders/state/folders-state';
+import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +24,7 @@ export class MenuButtonsFoldersService {
     private store: Store,
     private sbws: SnackBarWrapperService,
     private apiTranslate: TranslateService,
+    private dialogsService: DialogsManageService,
   ) {}
 
   setDeleteFolders = () => {
@@ -106,7 +109,22 @@ export class MenuButtonsFoldersService {
     }
   }
 
-  async deleteFolders(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
+  openDeletionNoteModal(): void {
+    const instance = this.dialogsService.openDeletionPopup(
+      'modal.deletionModal.sureDeleteFolders',
+      'modal.deletionModal.additionalMessage',
+    );
+    instance
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        if (x) {
+          this.deleteFolders();
+        }
+      });
+  }
+
+  private async deleteFolders(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     await this.store.dispatch(new DeleteFoldersPermanently(ids)).toPromise();
     const message =

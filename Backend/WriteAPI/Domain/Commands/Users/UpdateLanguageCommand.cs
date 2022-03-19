@@ -1,6 +1,7 @@
 ﻿using Common.Attributes;
 using Common.DatabaseModels.Models.Systems;
 using MediatR;
+using System;
 
 namespace Domain.Commands.Users
 {
@@ -9,8 +10,7 @@ namespace Domain.Commands.Users
         [RequiredEnumField(ErrorMessage = "Language Id is required.")]
         public LanguageENUM Id { set; get; }
 
-        public UpdateLanguageCommand(LanguageENUM Id, string Email)
-            :base(Email)
+        public UpdateLanguageCommand(LanguageENUM Id, Guid userId) : base(userId)
         {
             this.Id = Id;
         }

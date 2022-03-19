@@ -11,7 +11,7 @@ namespace Common.DTO.Notes.FullNoteContent
         public Guid Id { set; get; }
 
         [Required]
-        public ContentTypeENUM TypeId { set; get; }
+        public ContentTypeEnumDTO TypeId { set; get; }
 
         [Required]
         public DateTimeOffset UpdatedAt { set; get; }
@@ -19,7 +19,7 @@ namespace Common.DTO.Notes.FullNoteContent
         [Required]
         public int Order { set; get; }
 
-        public BaseNoteContentDTO(Guid id, int order, ContentTypeENUM typeId, DateTimeOffset updatedAt)
+        public BaseNoteContentDTO(Guid id, int order, ContentTypeEnumDTO typeId, DateTimeOffset updatedAt)
         {
             this.Id = id;
             this.TypeId = typeId;

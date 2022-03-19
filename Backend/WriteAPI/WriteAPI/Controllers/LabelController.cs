@@ -26,62 +26,55 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Add(NewLabelCommand newLabel)
+        public async Task<JsonResult> Add(NewLabelCommand command)
         {
-            var email = this.GetUserEmail();
-            newLabel.Email = email;
-            return new JsonResult(await _mediator.Send(newLabel));
+            command.UserId = this.GetUserId();
+            return new JsonResult(await _mediator.Send(command));
         }
 
         [HttpGet]
         public async Task<LabelsDTO> GetUserLabels()
         {
-            var email = this.GetUserEmail();
-            return await _mediator.Send(new GetLabelsByEmailQuery(email));
+            return await _mediator.Send(new GetLabelsByEmailQuery(this.GetUserId()));
         }
 
         [HttpGet("count/{id}")]
         public async Task<int> NotesCountByLabel(Guid id)
         {
             var command = new GetCountNotesByLabelQuery { LabelId = id };
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
 
         [HttpPut]
-        public async Task Update(UpdateLabelCommand label)
+        public async Task Update(UpdateLabelCommand command)
         {
-            var email = this.GetUserEmail();
-            label.Email = email;
-           await _mediator.Send(label);
+            command.UserId = this.GetUserId();
+            await _mediator.Send(command);
         }
 
         [HttpDelete("perm/{id}")]
         public async Task DeletePerm(Guid id)
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new DeleteLabelCommand(email, id));
+            await _mediator.Send(new DeleteLabelCommand(this.GetUserId(), id));
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(Guid id)
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new SetDeletedLabelCommand(email, id));
+            await _mediator.Send(new SetDeletedLabelCommand(this.GetUserId(), id));
         }
 
         [HttpGet("restore/{id}")]
         public async Task RestoreLabel(Guid id)
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new RestoreLabelCommand(email, id));
+            await _mediator.Send(new RestoreLabelCommand(this.GetUserId(), id));
         }
 
         [HttpDelete]
         public async Task RemoveAllFromBin()
         {
-            var email = this.GetUserEmail();
-            await _mediator.Send(new RemoveAllFromBinCommand(email));
+            await _mediator.Send(new RemoveAllFromBinCommand(this.GetUserId()));
         }
     }
 }

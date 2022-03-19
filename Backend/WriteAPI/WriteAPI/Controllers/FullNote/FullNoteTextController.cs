@@ -22,16 +22,15 @@ namespace WriteAPI.Controllers
 
         [HttpPatch("title")]
         public async Task<OperationResult<Unit>> UpdateTitle([FromBody]UpdateTitleNoteCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
+        {          
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("sync")]
         public async Task<OperationResult<Unit>> SyncTextContents(UpdateTextContentsCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
     }

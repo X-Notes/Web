@@ -32,7 +32,7 @@ namespace Common.DTO.Notifications
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;
-            this.UserFromPhotoPath = notification.UserFrom.UserProfilePhoto.AppFile.GetFromSmallPath;
+            this.UserFromPhotoPath = notification.UserFrom.UserProfilePhoto?.AppFile.GetFromSmallPath ?? notification.UserFrom.DefaultPhotoUrl;
 
             this.Date = Date;
         }

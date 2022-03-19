@@ -17,13 +17,10 @@ namespace WriteContext.Repositories.NoteContent
 
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
+        public Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
         {
-            return await entities // TODO OPTIMIZATION
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
+            return entities
+                .Include(x => (x as CollectionNote).Files)
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
                 .AsSplitQuery()

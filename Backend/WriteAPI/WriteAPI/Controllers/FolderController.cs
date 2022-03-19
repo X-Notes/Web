@@ -32,16 +32,14 @@ namespace WriteAPI.Controllers
         [HttpGet("new")]
         public async Task<SmallFolder> Add()
         {
-            var email = this.GetUserEmail();
-            var command = new NewFolderCommand(email);
+            var command = new NewFolderCommand(this.GetUserId());
             return await _mediator.Send(command);
         }
 
         [HttpGet("type/{id}")]
         public async Task<List<SmallFolder>> GetFolders(FolderTypeENUM id, [FromQuery] PersonalizationSettingDTO settings)
         {
-            var email = this.GetUserEmail();
-            var query = new GetFoldersByTypeQuery(email, id, settings);
+            var query = new GetFoldersByTypeQuery(this.GetUserId(), id, settings);
             return await _mediator.Send(query);
         }
 
@@ -49,15 +47,14 @@ namespace WriteAPI.Controllers
         [HttpPost("many")]
         public async Task<OperationResult<List<SmallFolder>>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
         {
-            query.Email = this.GetUserEmail();
+            query.UserId = this.GetUserId();
             return await _mediator.Send(query);
         }
 
         [HttpGet("{id}")]
         public async Task<FullFolderAnswer> Get(Guid id)
         {
-            var email = this.GetUserEmail();
-            var query = new GetFullFolderQuery(email, id);
+            var query = new GetFullFolderQuery(this.GetUserId(), id);
             return await _mediator.Send(query);
         }
 
@@ -66,24 +63,21 @@ namespace WriteAPI.Controllers
         [HttpPatch("archive")]
         public async Task<OperationResult<Unit>> ArchiveFolder([FromBody]ArchiveFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("delete")]
         public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("ref/private")]
         public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
@@ -91,31 +85,28 @@ namespace WriteAPI.Controllers
         [HttpPatch("color")]
         public async Task<OperationResult<Unit>> ChangeColor([FromBody]ChangeColorFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("copy")]
         public async Task<List<SmallFolder>> CopyFolder([FromBody]CopyFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("delete/permanently")]
         public async Task DeleteNotes([FromBody]DeleteFoldersCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             await this._mediator.Send(command);
         }
 
         [HttpPost("additional")]
         public async Task<List<BottomFolderContent>> GetAdditionalInfo(GetAdditionalContentFolderInfoQuery query)
         {
-            query.Email = this.GetUserEmail();
+            query.UserId = this.GetUserId();
             return await _mediator.Send(query);
         }
     }

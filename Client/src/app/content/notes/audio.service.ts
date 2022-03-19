@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
-import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
 import * as mm from 'music-metadata-browser';
 import { generateFormData } from 'src/app/core/defaults/form-data-generator';
@@ -102,10 +101,6 @@ export class AudioService {
     return moment.utc(momentTime).format(format);
   };
 
-  getAudioUrl(url: string) {
-    return `${environment.storage}/${this.store.selectSnapshot(NoteStore.authorId)}/${escape(url)}`;
-  }
-
   async tryToUpdateMetaDataIfNeed(audio: AudioModel) {
     if (audio.isNeedUpdateMetaData()) {
       try {
@@ -139,7 +134,7 @@ export class AudioService {
   private async getMetadata(audioPath): Promise<[Blob, number]> {
     let imageBlob: Blob;
 
-    const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath), {
+    const metadata = await mm.fetchFromUrl(audioPath, {
       skipPostHeaders: true,
       includeChapters: false,
       duration: false,
@@ -156,7 +151,7 @@ export class AudioService {
   private streamObservable(url, id) {
     return new Observable((observer) => {
       this.state.id = id;
-      this.audioObj.src = this.getAudioUrl(url);
+      this.audioObj.src = url;
       this.audioObj.volume = this.state.currentVolume;
       this.audioObj.load();
 

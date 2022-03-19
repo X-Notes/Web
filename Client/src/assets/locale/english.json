@@ -158,11 +158,22 @@
     "reviewModal": {
       "review": "Review document",
       "close": "Close"
+    },
+    "deletionModal": {
+      "title": "Deletion",
+      "sureDeleteNotes": "Are you sure you want to delete notes?",
+      "sureDeleteFolders": "Are you sure you want to delete folders?",
+      "sureDeleteLabels": "Are you sure you want to delete labels?",
+      "additionalMessage": "Once delete them, there is no way to get them back."
+    },
+    "genericButtons":{
+      "cancel": "Cancel",
+      "delete": "Delete"
     }
   },
   "innerNote": {
     "title": "Title",
-    "openNoteOrFile": "Open note or file",
+    "openNoteOrFile": "notes",
     "text": "Text",
     "heading": "Heading",
     "menu": {
@@ -300,5 +311,14 @@
     "history": "History",
     "note": "Note",
     "folder": "Folder"
+  },
+  "delete-message":{
+    "folders": "Folders will be automatically deleted after {{days}} days",
+    "notes": "Notes will be automatically deleted after {{days}} days",
+    "labels": "Labels will be automatically deleted after {{days}} days"
+  },
+  "entity-bottom-tooltip":{
+    "updated": "date of last changes",
+    "deleted": "date of deletion"
   }
 }

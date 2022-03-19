@@ -13,7 +13,6 @@ export const environment = {
     messagingSenderId: '69998033878',
   },
   writeAPI: 'http://localhost:5000',
-  storage: 'http://127.0.0.1:10000/devstoreaccount1',
   adminAPI: 'http://localhost:3333',
 };
 

@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -22,14 +23,7 @@ namespace BI.Services.Notes
 
         private readonly FileRepository fileRepository;
 
-
-        private readonly AudioNoteAppFileRepository audioNoteAppFileRepository;
-
-        private readonly DocumentNoteAppFileRepository documentNoteAppFileRepository;
-
-        private readonly PhotoNoteAppFileRepository photoNoteAppFileRepository;
-
-        private readonly VideoNoteAppFileRepository videoNoteAppFileRepository;
+        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
         private readonly SnapshotFileContentRepository snapshotFileContentRepository;
 
@@ -38,28 +32,22 @@ namespace BI.Services.Notes
         public CollectionLinkedService(
             AppFileUploadInfoRepository appFileUploadInfoRepository,
             FileRepository fileRepository,
-            AudioNoteAppFileRepository audioNoteAppFileRepository,
-            DocumentNoteAppFileRepository documentNoteAppFileRepository,
-            PhotoNoteAppFileRepository photoNoteAppFileRepository,
-            VideoNoteAppFileRepository videoNoteAppFileRepository,
+            CollectionAppFileRepository collectionNoteAppFileRepository,
             SnapshotFileContentRepository snapshotFileContentRepository,
             IMediator _mediator)
         {
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
             this.fileRepository = fileRepository;
-            this.audioNoteAppFileRepository = audioNoteAppFileRepository;
-            this.documentNoteAppFileRepository = documentNoteAppFileRepository;
-            this.photoNoteAppFileRepository = photoNoteAppFileRepository;
-            this.videoNoteAppFileRepository = videoNoteAppFileRepository;
+            this.collectionNoteAppFileRepository = collectionNoteAppFileRepository;
             this.snapshotFileContentRepository = snapshotFileContentRepository;
             this._mediator = _mediator;
         }
 
-        public async Task<bool> TryToUnlink(FileTypeEnum fileType, params Guid[] ids)
+        public async Task<bool> TryToUnlink(params Guid[] ids)
         {
             var infos = await appFileUploadInfoRepository.GetWhereAsync(x => ids.Contains(x.AppFileId) && x.StatusId == AppFileUploadStatusEnum.Linked);
 
-            var fileIdsToUnlink = await GetItemsThatCanBeUnlinked(fileType, ids);
+            var fileIdsToUnlink = await GetItemsThatCanBeUnlinked(ids);
 
             infos = infos.Where(x => fileIdsToUnlink.Contains(x.AppFileId)).ToList();
 
@@ -74,36 +62,11 @@ namespace BI.Services.Notes
             return false;
         }
 
-        private async Task<IEnumerable<Guid>> GetItemsThatCanBeUnlinked(FileTypeEnum fileType, params Guid[] ids)
+        private async Task<List<Guid>> GetItemsThatCanBeUnlinked(params Guid[] ids)
         {
             var histIds = await snapshotFileContentRepository.GetFileIdsThatExist(ids);
-            switch (fileType)
-            {
-                case FileTypeEnum.Audio:
-                    {
-                        var dbIds = await audioNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
-                    }
-                case FileTypeEnum.Photo:
-                    {
-                        var dbIds = await photoNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
-                    }
-                case FileTypeEnum.Video:
-                    {
-                        var dbIds = await videoNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
-                    }
-                case FileTypeEnum.Document:
-                    {
-                        var dbIds = await documentNoteAppFileRepository.GetFileIdsThatExist(ids);
-                        return ids.Except(dbIds).Except(histIds);
-                    }
-                default:
-                    {
-                        throw new ArgumentException(message: "Invalid enum value");
-                    }
-            }
+            var dbIds = await collectionNoteAppFileRepository.GetFileIdsThatExist(ids);
+            return ids.Except(dbIds).Except(histIds).ToList();
         }
 
         public async Task<bool> TryLink(List<AppFile> files)
@@ -160,19 +123,19 @@ namespace BI.Services.Notes
             return false;
         }
 
-        public async Task<List<Guid>> UnlinkAndRemoveFileItems(IEnumerable<BaseNoteContent> contentsToDelete, Guid noteId, string email, bool isCheckPermissions = true)
+        public async Task<List<Guid>> UnlinkAndRemoveFileItems(IEnumerable<CollectionNote> contentsToDelete, Guid noteId, Guid userId, bool isCheckPermissions = true)
         {
             List<Guid> result = new();
-            var groups = contentsToDelete.GroupBy(x => x.ContentTypeId);
+            var groups = contentsToDelete.GroupBy(x => x.FileTypeId);
             foreach(var group in groups)
             {
                 var ids = group.Select(x => x.Id).ToList();
                 var command = group.Key switch
                 {
-                    ContentTypeENUM.AudiosCollection => await _mediator.Send(new UnlinkFilesAndRemoveAudiosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.PhotosCollection => await _mediator.Send(new UnlinkFilesAndRemovePhotosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.VideosCollection => await _mediator.Send(new UnlinkFilesAndRemoveVideosCollectionsCommand(noteId, ids, email, isCheckPermissions)),
-                    ContentTypeENUM.DocumentsCollection => await _mediator.Send(new UnlinkFilesAndRemoveDocumentsCollectionsCommand(noteId, ids, email, isCheckPermissions)),
+                    FileTypeEnum.Audio => await _mediator.Send(new UnlinkFilesAndRemoveAudiosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    FileTypeEnum.Photo => await _mediator.Send(new UnlinkFilesAndRemovePhotosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    FileTypeEnum.Video => await _mediator.Send(new UnlinkFilesAndRemoveVideosCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
+                    FileTypeEnum.Document => await _mediator.Send(new UnlinkFilesAndRemoveDocumentsCollectionsCommand(noteId, ids, userId, isCheckPermissions)),
                     _ => null
                 };
                 result.AddRange(ids);

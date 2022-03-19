@@ -28,7 +28,7 @@ namespace BI.Services.Files
 
         public async Task<GetUserMemoryResponse> Handle(GetUserStorageMemoryQuery request, CancellationToken cancellationToken)
         {
-            var userId = (await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email)).Id.ToString();
+            var userId = (await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId)).Id.ToString();
             var size = await filesStorage.GetUsedDiskSpace(userId);
             return new GetUserMemoryResponse { TotalSize = size };
         }

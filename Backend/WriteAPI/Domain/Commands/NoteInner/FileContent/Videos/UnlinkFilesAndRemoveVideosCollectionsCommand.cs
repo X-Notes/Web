@@ -5,11 +5,11 @@ namespace Domain.Commands.NoteInner.FileContent.Videos
 {
     public class UnlinkFilesAndRemoveVideosCollectionsCommand : BaseUnlinkCommand
     {
-        public UnlinkFilesAndRemoveVideosCollectionsCommand(Guid noteId, List<Guid> contentIds, string email) : base(noteId, contentIds, email)
+        public UnlinkFilesAndRemoveVideosCollectionsCommand(Guid noteId, List<Guid> contentIds, Guid userId) : base(noteId, contentIds, userId)
         {
         }
 
-        public UnlinkFilesAndRemoveVideosCollectionsCommand(Guid noteId, List<Guid> contentIds, string email, bool isCheckPemissions) : base(noteId, contentIds, email)
+        public UnlinkFilesAndRemoveVideosCollectionsCommand(Guid noteId, List<Guid> contentIds, Guid userId, bool isCheckPemissions) : base(noteId, contentIds, userId)
         {
             this.IsCheckPermissions = isCheckPemissions;
         }

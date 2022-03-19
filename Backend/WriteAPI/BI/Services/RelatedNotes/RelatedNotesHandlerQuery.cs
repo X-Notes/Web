@@ -19,22 +19,19 @@ namespace BI.Services.RelatedNotes
           IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
-        private readonly AppCustomMapper noteCustomMapper;
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
-        private readonly AppCustomMapper noteMapper;
+        private readonly NoteFolderLabelMapper noteMapper;
         private readonly IMediator _mediator;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
-            AppCustomMapper noteCustomMapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            AppCustomMapper noteMapper,
+            NoteFolderLabelMapper noteMapper,
             IMediator _mediator)
         {
             this.relatedRepository = relatedRepository;
-            this.noteCustomMapper = noteCustomMapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.noteMapper = noteMapper;
@@ -44,19 +41,19 @@ namespace BI.Services.RelatedNotes
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
         {
             var notes = await relatedRepository.GetRelatedNotesFullContent(request.NoteId);
-            return noteCustomMapper.MapNotesToRelatedNotes(notes);
+            return noteMapper.MapNotesToRelatedNotes(notes);
         }
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
             {
                 var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId, request.Settings);
+                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.Caller.Id, request.NoteId, request.Settings);
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

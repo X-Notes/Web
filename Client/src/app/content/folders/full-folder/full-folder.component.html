@@ -20,12 +20,12 @@
 <div
   *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div
     class="folder-sub-header"
     appTheme
-    [ngClass]="{ 'sub-header-photo': (user$ | async).currentBackground?.photoPath }"
+    [ngClass]="{ 'sub-header-photo': (userBackground$ | async) }"
   >
     <div class="container">
       <div class="navigation">

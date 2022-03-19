@@ -75,7 +75,7 @@ namespace WriteAPI.Controllers.FullNote
             }
 
             var command = new UploadNoteFilesToStorageAndSaveCommand(fileType, noteFiles, noteId);
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             var resp = await _mediator.Send(command, cancellationToken);
 
             if(resp.Success)
@@ -92,7 +92,7 @@ namespace WriteAPI.Controllers.FullNote
         [HttpPatch("metadata")]
         public async Task<OperationResult<FileDTO>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await _mediator.Send(command);
         }
     }

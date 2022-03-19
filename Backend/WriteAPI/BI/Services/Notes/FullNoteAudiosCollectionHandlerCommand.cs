@@ -30,9 +30,9 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly AudiosCollectionNoteRepository audioNoteRepository;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
-        private readonly AudioNoteAppFileRepository audioNoteAppFileRepository;
+        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
         private readonly HistoryCacheService historyCacheService;
 
@@ -43,16 +43,16 @@ namespace BI.Services.Notes
         public FullNoteAudiosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            AudiosCollectionNoteRepository audioNoteRepository,
-            AudioNoteAppFileRepository audioNoteAppFileRepository,
+            CollectionNoteRepository collectionNoteRepository,
+            CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.audioNoteRepository = audioNoteRepository;
-            this.audioNoteAppFileRepository = audioNoteAppFileRepository;
+            this.collectionNoteRepository = collectionNoteRepository;
+            this.collectionNoteAppFileRepository = collectionNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
@@ -63,7 +63,7 @@ namespace BI.Services.Notes
         {
             async Task<OperationResult<Unit>> UnLink()
             {
-                var audios = await audioNoteAppFileRepository.GetAppFilesByContentIds(request.ContentIds);
+                var audios = await collectionNoteAppFileRepository.GetAppFilesByContentIds(request.ContentIds);
                 if (audios.Any())
                 {
                     var files = audios.Select(x => x.AppFile);
@@ -72,8 +72,8 @@ namespace BI.Services.Notes
                     ids.AddRange(imageFileIds);
                     ids = ids.Distinct().ToList();
 
-                    await audioNoteAppFileRepository.RemoveRangeAsync(audios);
-                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Audio, ids.ToArray());
+                    await collectionNoteAppFileRepository.RemoveRangeAsync(audios);
+                    await collectionLinkedService.TryToUnlink(ids.ToArray());
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -89,7 +89,7 @@ namespace BI.Services.Notes
                 return await UnLink();
             }
 
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             if (permissions.CanWrite)
             {
@@ -101,30 +101,30 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
-                var collection = await audioNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await audioNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
-                    await audioNoteAppFileRepository.RemoveRangeAsync(collectionItems);
+                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryToUnlink(FileTypeEnum.Audio, idsToUnlink.ToArray());
+                    await collectionLinkedService.TryToUnlink(idsToUnlink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
-                    await audioNoteRepository.UpdateAsync(collection);
+                    await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
                     { 
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -137,27 +137,27 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(UpdateAudiosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
-                var audiosCollection = await audioNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var audiosCollection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if(audiosCollection != null)
                 {
                     audiosCollection.Name = request.Name;
                     audiosCollection.UpdatedAt = DateTimeProvider.Time;
 
-                    await audioNoteRepository.UpdateAsync(audiosCollection);
+                    await collectionNoteRepository.UpdateAsync(audiosCollection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt)
                     {
                         Name = request.Name,
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -171,7 +171,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<AudiosCollectionNoteDTO>> Handle(TransformToAudiosCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -189,25 +189,25 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var collection = new AudiosCollectionNote()
+                    var collection = new CollectionNote(FileTypeEnum.Audio)
                     {
                         NoteId = request.NoteId,
                         Order = contentForRemove.Order,
                     };
 
-                    await audioNoteRepository.AddAsync(collection);
+                    await collectionNoteRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
                     var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<AudiosCollectionNoteDTO>(success: true, result);
                 }
@@ -223,33 +223,33 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(AddAudiosToCollectionCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
-                var collection = await audioNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 if (collection != null)
                 {
-                    var existCollectionItems = await audioNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                    var existCollectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
                     var existCollectionItemsIds = existCollectionItems.Select(x => x.AppFileId);
 
-                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new AudioNoteAppFile { AppFileId = id, AudiosCollectionNoteId = collection.Id });
-                    await audioNoteAppFileRepository.AddRangeAsync(collectionItems);
+                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new CollectionNoteAppFile { AppFileId = id, CollectionNoteId = collection.Id });
+                    await collectionNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
                     await collectionLinkedService.TryLink(idsToLink.ToArray());
 
                     collection.UpdatedAt = DateTimeProvider.Time;
-                    await audioNoteRepository.UpdateAsync(collection);
+                    await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.User.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

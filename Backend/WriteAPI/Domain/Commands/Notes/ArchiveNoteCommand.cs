@@ -12,7 +12,7 @@ namespace Domain.Commands.Notes
         public List<Guid> Ids { set; get; }
         
 
-        public ArchiveNoteCommand(string email) : base(email)
+        public ArchiveNoteCommand(Guid userId) : base(userId)
         {
 
         }

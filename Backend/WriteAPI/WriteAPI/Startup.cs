@@ -1,4 +1,3 @@
-using AutoMapper;
 using BI.Mapping;
 using BI.SignalR;
 using FirebaseAdmin;
@@ -57,8 +56,9 @@ namespace WriteAPI
             services.AzureConfig(Configuration);
             services.JWT(Configuration);
                 
-            services.AddAutoMapper(typeof(UserProfile).Assembly);
-            services.AddScoped<AppCustomMapper>();
+            services.AddScoped<NoteFolderLabelMapper>();
+            services.AddScoped<AppTypesMapper>();
+            services.AddScoped<UserBackgroundMapper>();
 
             services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();
@@ -76,9 +76,9 @@ namespace WriteAPI
 
             services.AddMemoryCache();
 
-            services.AddHostedService<MLHosted>();
             services.AddHostedService<JobRegisterHosted>();
             services.AddHostedService<ManageUsersOnEntitiesHosted>();
+            services.AddHostedService<SetupServicesHosted>();
 
             services.AddHttpClient();
 

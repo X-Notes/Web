@@ -17,6 +17,24 @@ namespace WriteAPI.ControllerConfig
             return email;
         }
 
+        public static string GetFirebaseUID(this ControllerBase controller)
+        {
+            var userId = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("user_id"))?.Value;
+            return userId;
+        }
+
+
+        public static string GetUserIdRaw(this ControllerBase controller)
+        {
+            return controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
+        }
+
+        public static Guid GetUserId(this ControllerBase controller)
+        {
+            var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
+            return Guid.Parse(id);
+        }
+
         public static OperationResult<T> ValidateFile<T>(
             this ControllerBase controller, 
             IFormFile file, 

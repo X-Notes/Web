@@ -17,8 +17,8 @@ namespace Domain.Queries.Notes
         [Required]
         public PersonalizationSettingDTO Settings { set; get; }
 
-        public GetNotesByNoteIdsQuery(string email, List<Guid> noteIds, PersonalizationSettingDTO settings)
-            : base(email)
+        public GetNotesByNoteIdsQuery(Guid userId, List<Guid> noteIds, PersonalizationSettingDTO settings)
+            : base(userId)
         {
             this.Settings = settings;
             this.NoteIds = noteIds;

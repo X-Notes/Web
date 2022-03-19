@@ -170,4 +170,8 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
       await this.murriService.setOpacityFlagAsync(0);
     }
   };
+
+  close() {
+    this.dialogRef.close(this.selectedNotesChips);
+  }
 }

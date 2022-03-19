@@ -14,8 +14,8 @@ namespace Domain.Queries.History
         [ValidationGuid]
         public Guid NoteId { set; get; }
 
-        public GetSnapshotContentsQuery(string email, Guid noteId, Guid snapshotId)
-            : base(email)
+        public GetSnapshotContentsQuery(Guid userId, Guid noteId, Guid snapshotId)
+            : base(userId)
         {
             this.NoteId = noteId;
             this.SnapshotId = snapshotId;

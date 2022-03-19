@@ -199,35 +199,7 @@
           }
         }
 
-        .field-key {
-          flex-direction: column;
-
-          .personal-key {
-            display: flex;
-            margin-top: 0.5rem;
-
-            input[type='password'] {
-              height: 32px;
-              width: calc(100% - 192px);
-              padding-left: 0.75rem;
-              border-radius: 5px;
-              border: 0.8px solid #cacaca;
-              outline: none;
-              color: $text-color;
-              font-weight: 700;
-              font-size: 1.25rem;
-            }
-
-            button[type='button'] {
-              width: 86px;
-              background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
-              margin-left: 0.625rem;
-            }
-          }
-        }
-
-        .field-language,
-        .field-key {
+        .field-language {
           display: flex;
           width: calc(100% - 150px - 2.5vw);
 
@@ -328,8 +300,7 @@
         }
 
         .account-setting {
-          .field-language,
-          .field-key {
+          .field-language {
             width: 100%;
           }
         }
@@ -358,26 +329,6 @@
 
             .content-button {
               font-weight: normal;
-            }
-          }
-        }
-
-        .account-setting {
-          .field-key {
-            .personal-key {
-              flex-wrap: wrap;
-
-              input[type='password'] {
-                width: 100%;
-              }
-
-              button[type='button'] {
-                margin-top: 0.625rem;
-              }
-
-              button[type='button']:not(:last-child) {
-                margin-left: 0;
-              }
             }
           }
         }
@@ -459,19 +410,6 @@
                 .toggle {
                   width: 100%;
                 }
-              }
-            }
-          }
-        }
-
-        .account-setting {
-          .field-key {
-            .personal-key {
-              justify-content: space-between;
-
-              button[type='button'] {
-                margin-left: 0;
-                width: calc(50% - 0.75rem);
               }
             }
           }

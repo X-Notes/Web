@@ -1,11 +1,6 @@
 <div class="user-shared-card">
   <div class="photo">
-    <img
-      alt="user image"
-      *ngIf="!noPhoto"
-      (error)="noPhoto = true"
-      [src]="user.photoPath | getImage: user.id"
-    />
+    <img alt="user image" *ngIf="!noPhoto" (error)="noPhoto = true" [src]="user.photoPath" />
     <div *ngIf="noPhoto" class="no-photo">
       <mat-icon svgIcon="people" [inline]="true"></mat-icon>
     </div>

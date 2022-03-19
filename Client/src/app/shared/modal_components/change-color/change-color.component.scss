@@ -169,47 +169,6 @@
   width: calc(100% - 4.5rem);
   display: flex;
   justify-content: flex-end;
-
-  .save-button {
-    position: relative;
-    cursor: pointer;
-    border-radius: 10px;
-    width: 100px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: 0.2s ease;
-    border: 0.8px solid transparent;
-    overflow: hidden;
-
-    span {
-      position: relative;
-      z-index: 5;
-    }
-  }
-}
-
-.light {
-  .save-button {
-    background-color: #f2f2f2;
-    color: #808080;
-
-    &:hover {
-      background-color: #ebebeb;
-      color: #202020;
-    }
-  }
-}
-
-.dark {
-  .save-button {
-    background-color: #34373e;
-
-    &:hover {
-      background-color: #3a3e46;
-    }
-  }
 }
 
 @media (max-width: 1024px) {

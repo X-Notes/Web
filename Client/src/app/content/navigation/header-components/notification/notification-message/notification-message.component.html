@@ -4,7 +4,7 @@
       *ngIf="!photoError"
       alt="user image"
       (error)="photoError = true;"
-      [src]="message.userFromPhotoPath | getImage: message.userFromId"
+      [src]="message.userFromPhotoPath"
     />
     <div *ngIf="photoError" class="photo-error">
       <mat-icon svgIcon="people" [inline]="true"></mat-icon>

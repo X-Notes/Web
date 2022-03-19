@@ -11,7 +11,7 @@ namespace Domain.Commands.Notes
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public MakePrivateNoteCommand(string email) : base(email)
+        public MakePrivateNoteCommand(Guid userId) : base(userId)
         {
 
         }

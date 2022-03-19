@@ -1,5 +1,6 @@
 ﻿using BI.Services.History;
 using BI.SignalR;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
@@ -33,13 +34,7 @@ namespace BI.Services.Notes
 
         private readonly TextNotesRepository textNotesRepository;
 
-        private readonly PhotosCollectionNoteRepository photosCollectionNoteRepository;
-
-        private readonly VideosCollectionNoteRepository videosCollectionNoteRepository;
-
-        private readonly AudiosCollectionNoteRepository audiosCollectionNoteRepository;
-
-        private readonly DocumentsCollectionNoteRepository documentsCollectionNoteRepository;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
         private readonly IMediator _mediator;
 
@@ -50,10 +45,7 @@ namespace BI.Services.Notes
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
-            PhotosCollectionNoteRepository photosCollectionNoteRepository,
-            VideosCollectionNoteRepository videosCollectionNoteRepository,
-            AudiosCollectionNoteRepository audiosCollectionNoteRepository,
-            DocumentsCollectionNoteRepository documentsCollectionNoteRepository,
+            CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,
             CollectionLinkedService collectionLinkedService)
         {
@@ -61,10 +53,7 @@ namespace BI.Services.Notes
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
-            this.photosCollectionNoteRepository = photosCollectionNoteRepository;
-            this.videosCollectionNoteRepository = videosCollectionNoteRepository;
-            this.audiosCollectionNoteRepository = audiosCollectionNoteRepository;
-            this.documentsCollectionNoteRepository = documentsCollectionNoteRepository;
+            this.collectionNoteRepository = collectionNoteRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this._mediator = _mediator;
             this.collectionLinkedService = collectionLinkedService;
@@ -73,7 +62,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -95,10 +84,17 @@ namespace BI.Services.Notes
                     var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
                     var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
 
-                    unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(contentsToDelete, note.Id, request.Email);
+                    var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
+                    if (fileContents.Any())
+                    {
+                        unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, note.Id, request.UserId);
+                    }
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
-                    unlinkedItemIds.AddRange(textIds);
+                    if (textIds.Any())
+                    {
+                        unlinkedItemIds.AddRange(textIds);
+                    }
 
                     if (unlinkedItemIds.Any())
                     {
@@ -132,11 +128,11 @@ namespace BI.Services.Notes
                     {
                         var items = photosItemsThatNeedAdd.Select(x =>
                         {
-                            var cont = GetCollectionContent<PhotosCollectionNote>(x, note.Id);
-                            cont.CountInRow = 2;
+                            var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
+                            cont.SetMetaDataPhotos("100%", "auto", 2);
                             return cont;
                         });
-                        await photosCollectionNoteRepository.AddRangeAsync(items);
+                        await collectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
                     {
@@ -150,8 +146,8 @@ namespace BI.Services.Notes
 
                     if (audiosItemsThatNeedAdd.Any())
                     {
-                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent<AudiosCollectionNote>(x, note.Id));
-                        await audiosCollectionNoteRepository.AddRangeAsync(items);
+                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio));
+                        await collectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
                     {
@@ -165,8 +161,8 @@ namespace BI.Services.Notes
 
                     if (videosItemsThatNeedAdd.Any())
                     {
-                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent<VideosCollectionNote>(x, note.Id));
-                        await videosCollectionNoteRepository.AddRangeAsync(items);
+                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video));
+                        await collectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
                     {
@@ -180,8 +176,8 @@ namespace BI.Services.Notes
 
                     if (documentsItemsThatNeedAdd.Any())
                     {
-                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent<DocumentsCollectionNote>(x, note.Id));
-                        await documentsCollectionNoteRepository.AddRangeAsync(items);
+                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document));
+                        await collectionNoteRepository.AddRangeAsync(items);
                     }
                     if (itemsThatAlreadyAdded.Any())
                     {
@@ -208,7 +204,7 @@ namespace BI.Services.Notes
                     }
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
 
                 var updates = new UpdateNoteStructureWS()
                 {
@@ -220,7 +216,7 @@ namespace BI.Services.Notes
                     AudioContentsToAdd = audiosItemsThatNeedAdd,
                     Positions = positions
                 };
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.User.Email, updates);
+                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Email, updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -249,9 +245,9 @@ namespace BI.Services.Notes
         }
 
         // FILES
-        private T GetCollectionContent<T>(BaseNoteContentDTO baseContent, Guid noteId) where T : BaseNoteContent, new()
+        private CollectionNote GetCollectionContent(BaseNoteContentDTO baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
         {
-            var content = new T();
+            var content = new CollectionNote(fileTypeEnum);
 
             // UPDATE BASE
             content.Id = baseContent.Id;

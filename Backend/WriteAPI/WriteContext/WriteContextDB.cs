@@ -53,13 +53,9 @@ namespace WriteContext
         // FILES
         public DbSet<AppFile> Files { set; get; }
 
-        public DbSet<PhotoNoteAppFile> PhotoNoteAppFiles { set; get; }
+        public DbSet<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
+        public DbSet<CollectionNote> CollectionNotes { set; get; }
 
-        public DbSet<VideoNoteAppFile> VideoNoteAppFiles { set; get; }
-
-        public DbSet<DocumentNoteAppFile> DocumentNoteAppFiles { set; get; }
-
-        public DbSet<AudioNoteAppFile> AudioNoteAppFiles { set; get; }
 
         public DbSet<FileType> FileTypes { set; get; }
 
@@ -68,13 +64,6 @@ namespace WriteContext
 
         public DbSet<TextNote> TextNotes { set; get; }
 
-        public DbSet<PhotosCollectionNote> AlbumNotes { set; get; }
-
-        public DbSet<AudiosCollectionNote> AudiosNote { set; get; }
-
-        public DbSet<VideosCollectionNote> VideosNote { set; get; }
-
-        public DbSet<DocumentsCollectionNote> DocumentsNote { set; get; }
 
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
@@ -244,72 +233,21 @@ namespace WriteContext
                 .HasForeignKey(bc => bc.RelatedNoteId);
 
 
-            modelBuilder.Entity<PhotosCollectionNote>()
-                .HasMany(p => p.Photos)
+            modelBuilder.Entity<CollectionNote>()
+                .HasMany(p => p.Files)
                 .WithMany(p => p.PhotosCollectionNotes)
-                .UsingEntity<PhotoNoteAppFile>(
+                .UsingEntity<CollectionNoteAppFile>(
                     j => j
                         .HasOne(pt => pt.AppFile)
                         .WithMany(t => t.PhotosCollectionNoteAppFiles)
                         .HasForeignKey(pt => pt.AppFileId),
                     j => j
-                        .HasOne(pt => pt.PhotosCollectionNote)
-                        .WithMany(p => p.PhotoNoteAppFiles)
-                        .HasForeignKey(pt => pt.PhotosCollectionNoteId),
+                        .HasOne(pt => pt.CollectionNote)
+                        .WithMany(p => p.CollectionNoteAppFiles)
+                        .HasForeignKey(pt => pt.CollectionNoteId),
                     j =>
                     {
-                        j.HasKey(bc => new { bc.PhotosCollectionNoteId, bc.AppFileId });
-                    });
-
-            modelBuilder.Entity<AudiosCollectionNote>()
-                .HasMany(x => x.Audios)
-                .WithMany(x => x.AudiosCollectionNotes)
-                .UsingEntity<AudioNoteAppFile>(
-                    j => j
-                         .HasOne(pt => pt.AppFile)
-                         .WithMany(t => t.AudiosCollectionNoteAppFiles)
-                         .HasForeignKey(pt => pt.AppFileId),
-                    j => j
-                         .HasOne(pt => pt.AudiosCollectionNote)
-                         .WithMany(p => p.AudioNoteAppFiles)
-                         .HasForeignKey(pt => pt.AudiosCollectionNoteId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { bc.AudiosCollectionNoteId, bc.AppFileId });
-                    });
-
-            modelBuilder.Entity<VideosCollectionNote>()
-                .HasMany(x => x.Videos)
-                .WithMany(x => x.VideosCollectionNotes)
-                .UsingEntity<VideoNoteAppFile>(
-                    j => j
-                         .HasOne(pt => pt.AppFile)
-                         .WithMany(t => t.VideosCollectionNoteAppFiles)
-                         .HasForeignKey(pt => pt.AppFileId),
-                    j => j
-                         .HasOne(pt => pt.VideosCollectionNote)
-                         .WithMany(p => p.VideoNoteAppFiles)
-                         .HasForeignKey(pt => pt.VideosCollectionNoteId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { bc.VideosCollectionNoteId, bc.AppFileId });
-                    });
-
-            modelBuilder.Entity<DocumentsCollectionNote>()
-                .HasMany(x => x.Documents)
-                .WithMany(x => x.DocumentsCollectionNotes)
-                .UsingEntity<DocumentNoteAppFile>(
-                    j => j
-                         .HasOne(pt => pt.AppFile)
-                         .WithMany(t => t.DocumentsCollectionNoteAppFiles)
-                         .HasForeignKey(pt => pt.AppFileId),
-                    j => j
-                         .HasOne(pt => pt.DocumentsCollectionNote)
-                         .WithMany(p => p.DocumentNoteAppFiles)
-                         .HasForeignKey(pt => pt.DocumentsCollectionNoteId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { bc.DocumentsCollectionNoteId, bc.AppFileId });
+                        j.HasKey(bc => new { bc.CollectionNoteId, bc.AppFileId });
                     });
 
 
@@ -427,10 +365,7 @@ namespace WriteContext
 
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
-                new ContentType { Id = ContentTypeENUM.PhotosCollection, Name = nameof(ContentTypeENUM.PhotosCollection) },
-                new ContentType { Id = ContentTypeENUM.DocumentsCollection, Name = nameof(ContentTypeENUM.DocumentsCollection) },
-                new ContentType { Id = ContentTypeENUM.AudiosCollection, Name = nameof(ContentTypeENUM.AudiosCollection) },
-                new ContentType { Id = ContentTypeENUM.VideosCollection, Name = nameof(ContentTypeENUM.VideosCollection) }
+                new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }
              );
 
             modelBuilder.Entity<AppFileUploadStatus>().HasData(

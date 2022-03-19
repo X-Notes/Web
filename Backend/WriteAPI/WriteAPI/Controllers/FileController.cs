@@ -1,13 +1,7 @@
-﻿using Azure.Core;
-using Common.DatabaseModels.Models.Files;
-using Common.DTO;
+﻿using Common.DTO;
 using Domain.Queries.Permissions;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;

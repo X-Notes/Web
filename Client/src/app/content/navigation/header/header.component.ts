@@ -19,7 +19,6 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/full-note.model';
-import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
@@ -190,7 +189,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   deleteAllFromBin() {
-    this.store.dispatch(DeleteAllFromBin);
+    this.pService.emptyTrashButtonSubject.next(true);
   }
 
   routeChange(type: EntityType) {

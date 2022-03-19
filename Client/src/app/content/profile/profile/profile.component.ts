@@ -213,17 +213,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const lastPs = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
 
     if (
-      lastPs.contentInNoteCount !== this.settingsInit.contentInNoteCount ||
-      lastPs.isViewAudioOnNote !== this.settingsInit.isViewAudioOnNote ||
-      lastPs.isViewDocumentOnNote !== this.settingsInit.isViewDocumentOnNote ||
-      lastPs.isViewTextOnNote !== this.settingsInit.isViewTextOnNote ||
-      lastPs.isViewVideoOnNote !== this.settingsInit.isViewVideoOnNote ||
-      lastPs.isViewPhotosOnNote !== this.settingsInit.isViewPhotosOnNote
+      lastPs.contentInNoteCount !== this.settingsInit?.contentInNoteCount ||
+      lastPs.isViewAudioOnNote !== this.settingsInit?.isViewAudioOnNote ||
+      lastPs.isViewDocumentOnNote !== this.settingsInit?.isViewDocumentOnNote ||
+      lastPs.isViewTextOnNote !== this.settingsInit?.isViewTextOnNote ||
+      lastPs.isViewVideoOnNote !== this.settingsInit?.isViewVideoOnNote ||
+      lastPs.isViewPhotosOnNote !== this.settingsInit?.isViewPhotosOnNote
     ) {
       this.store.dispatch(new ResetNotes());
     }
 
-    if (lastPs.notesInFolderCount !== this.settingsInit.notesInFolderCount) {
+    if (lastPs.notesInFolderCount !== this.settingsInit?.notesInFolderCount) {
       this.store.dispatch(new ResetFolders());
     }
 

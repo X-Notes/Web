@@ -31,28 +31,27 @@ namespace WriteAPI.Controllers
         [HttpGet("{id}")]
         public async Task<List<SmallNote>> GetNoteByFolderId(Guid id, [FromQuery] PersonalizationSettingDTO settings)
         {
-            return await _mediator.Send(new GetFolderNotesByFolderIdQuery(id, this.GetUserEmail(), settings));
+            return await _mediator.Send(new GetFolderNotesByFolderIdQuery(id, this.GetUserId(), settings));
         }
 
         [HttpPost("preview")]
         public async Task<List<PreviewNoteForSelection>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("title")]
         public async Task<OperationResult<Unit>> ChangeColor([FromBody]UpdateTitleFolderCommand command)
         {
-            var email = this.GetUserEmail();
-            command.Email = email;
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("update/notes")]
         public async Task<OperationResult<Unit>> UpdateNotesInFolder(UpdateNotesInFolderCommand command)
         {
-            command.Email = this.GetUserEmail();
+            command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
     }
