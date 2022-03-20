@@ -41,7 +41,7 @@ namespace BI.Services.Notes
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly WebsocketsNotesService websocketsNotesService;
+        private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly UserBackgroundMapper userBackgroundMapper;
 
         public NoteHandlerQuery(
@@ -52,7 +52,7 @@ namespace BI.Services.Notes
             BaseNoteContentRepository baseNoteContentRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             FoldersNotesRepository foldersNotesRepository,
-            WebsocketsNotesService websocketsNotesService,
+            WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper)
         {
             this.noteRepository = noteRepository;

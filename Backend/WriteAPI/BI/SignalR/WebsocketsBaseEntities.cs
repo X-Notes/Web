@@ -28,9 +28,9 @@ namespace BI.SignalR
         public int CountActiveEntities => entityId_userIds.Count;
 
 
-        public bool IsContainsId(Guid id) => entityId_userIds.ContainsKey(id);
+        public bool IsContainsId(Guid entityId) => entityId_userIds.ContainsKey(entityId);
 
-        public bool IsContainsUserId(Guid id, Guid userId) => entityId_userIds.ContainsKey(id) && entityId_userIds[id].Contains(userId);
+        public bool IsContainsUserId(Guid entityId, Guid userId) => IsContainsId(entityId) && entityId_userIds[entityId].Contains(userId);
 
         public List<Guid> GetIdsByEntityId(Guid id)
         {

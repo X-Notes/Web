@@ -9,12 +9,12 @@ namespace BI.SignalR
 {
     public class NoteWSUpdateService
     {
-        private readonly WebsocketsNotesService websocketsNotesService;
+        private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly AppSignalRService appSignalRService;
         private readonly UserRepository userRepository;
 
         public NoteWSUpdateService(
-            WebsocketsNotesService websocketsNotesService, 
+            WebsocketsNotesServiceStorage websocketsNotesService, 
             AppSignalRService appSignalRService,
             UserRepository userRepository)
         {

@@ -1,8 +1,7 @@
 ﻿using Common;
+using Common.Timers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Histories;
@@ -11,16 +10,6 @@ using WriteContext.Repositories.Notes;
 
 namespace BI.JobsHandlers
 {
-    public class ConfigForEntitesDeliting
-    {
-        public int LabelsNDays { set; get; } = 30;
-
-        public int FoldersNDays { set; get; } = 30;
-
-        public int NotesNDays { set; get; } = 30;
-
-        public int HistoriesNDays { set; get; } = 30;
-    }
 
     public class EntitiesDeleteJobHandler
     {
@@ -30,7 +19,7 @@ namespace BI.JobsHandlers
 
         private readonly FolderRepository folderRepository;
 
-        private readonly ConfigForEntitesDeliting configForEntitesDeliting;
+        private readonly TimersConfig timersConfig;
 
         private readonly NoteSnapshotRepository noteSnapshotRepository;
 
@@ -38,13 +27,13 @@ namespace BI.JobsHandlers
             LabelRepository labelRepostory,
             NoteRepository noteRepository,
             FolderRepository folderRepository,
-            ConfigForEntitesDeliting configForEntitesDeliting,
+            TimersConfig timersConfig,
             NoteSnapshotRepository noteSnapshotRepository)
         {
             this.labelRepostory = labelRepostory;
             this.noteRepository = noteRepository;
             this.folderRepository = folderRepository;
-            this.configForEntitesDeliting = configForEntitesDeliting;
+            this.timersConfig = timersConfig;
             this.noteSnapshotRepository = noteSnapshotRepository;
         }
 
@@ -54,7 +43,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start labels deleting");
 
-                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.LabelsNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteLabelsNDays);
 
                 var labels = await labelRepostory.GetLabelsThatNeedDeleteAfterTime(earliestTimestamp);
 
@@ -76,7 +65,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start notes deleting");
 
-                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.NotesNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteNotesNDays);
                 var notes = await noteRepository.GetNotesThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (notes.Any())
@@ -97,7 +86,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start folders deleting");
 
-                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.FoldersNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteFoldersNDays);
                 var folders = await folderRepository.GetFoldersThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (folders.Any())
@@ -118,7 +107,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start snapshots deleting");
 
-                var earliestTimestamp = DateTimeProvider.Time.AddDays(-configForEntitesDeliting.HistoriesNDays);
+                var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteHistoriesNDays);
                 var snapshots = await noteSnapshotRepository.GetSnapshotsThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (snapshots.Any())
@@ -127,7 +116,8 @@ namespace BI.JobsHandlers
                     await noteSnapshotRepository.RemoveRangeAsync(snapshots);
                     Console.WriteLine("Folders was deleted");
                 }
-            }catch(Exception ex) {  
+            }catch(Exception ex) 
+            {  
                 Console.WriteLine(ex.ToString());
             }
         }

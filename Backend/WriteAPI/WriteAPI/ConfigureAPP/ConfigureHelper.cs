@@ -92,6 +92,7 @@ using WriteContext.Repositories.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
+using Common.Timers;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -362,12 +363,21 @@ namespace WriteAPI.ConfigureAPP
         public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
         {
             var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
-            services.AddScoped(x => configService);
+            services.AddSingleton(x => configService);
 
             services.AddAzureClients(builder =>
             {
                 builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
             });
+        }
+
+        public static void TimersConfig(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var configService = Configuration.GetSection("Timers").Get<TimersConfig>();
+            services.AddSingleton(x => configService);
+
+            var hostedConfigService = Configuration.GetSection("HostedTimers").Get<HostedTimersConfig>();
+            services.AddSingleton(x => hostedConfigService);
         }
 
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -417,24 +427,22 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<CollectionLinkedService>();
 
-            services.AddSingleton<WebsocketsNotesService>();
-            services.AddSingleton<WebsocketsFoldersService>();
+            services.AddSingleton<WebsocketsNotesServiceStorage>();
+            services.AddSingleton<WebsocketsFoldersServiceStorage>();
+            services.AddSingleton<UserNoteEncryptStorage>();
 
-            services.AddScoped<AppEncryptor>();
+            services.AddSingleton<AppEncryptor>();
 
             services.AddScoped<IImageProcessor, ImageProcessor>();
 
             // BACKGROUND JOBS
-            services.AddSingleton<ConfigForEntitesDeliting>(); // TODO CHECK
             services.AddScoped<EntitiesDeleteJobHandler>();
 
             services.AddSingleton<ConfigForHistoryMaker>();
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryJobHandler>();
 
-            services.AddSingleton<ConfigForFilesDeleter>();
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
-
         }
 
         public static void FileStorage(this IServiceCollection services)
