@@ -45,7 +45,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-
 __azurite_db_blob__.json
 __azurite_db_blob_extent__.json
 __blobstorage__
