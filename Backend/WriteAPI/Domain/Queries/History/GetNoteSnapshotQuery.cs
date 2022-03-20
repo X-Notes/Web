@@ -1,11 +1,12 @@
 ﻿using Common.Attributes;
+using Common.DTO;
 using Common.DTO.History;
 using MediatR;
 using System;
 
 namespace Domain.Queries.History
 {
-    public class GetNoteSnapshotQuery : BaseQueryEntity, IRequest<NoteHistoryDTOAnswer>
+    public class GetNoteSnapshotQuery : BaseQueryEntity, IRequest<OperationResult<NoteHistoryDTOAnswer>>
     {
         [ValidationGuid]
         public Guid SnapshotId { set; get; }

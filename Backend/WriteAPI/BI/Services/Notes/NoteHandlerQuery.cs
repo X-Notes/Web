@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
+using BI.Services.Encryption;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
@@ -29,7 +30,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
         IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
-        IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
+        IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>,
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
@@ -43,6 +44,7 @@ namespace BI.Services.Notes
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly UserBackgroundMapper userBackgroundMapper;
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -53,7 +55,8 @@ namespace BI.Services.Notes
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             FoldersNotesRepository foldersNotesRepository,
             WebsocketsNotesServiceStorage websocketsNotesService,
-            UserBackgroundMapper userBackgroundMapper)
+            UserBackgroundMapper userBackgroundMapper,
+            UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -64,6 +67,7 @@ namespace BI.Services.Notes
             this.foldersNotesRepository = foldersNotesRepository;
             this.websocketsNotesService = websocketsNotesService;
             this.userBackgroundMapper = userBackgroundMapper;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -90,7 +94,7 @@ namespace BI.Services.Notes
             return sharedNotes;
         }
 
-        public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<FullNoteAnswer>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
             var isCanWrite = false;
             var isCanRead = false;
@@ -115,19 +119,19 @@ namespace BI.Services.Notes
 
             if (isCanWrite)
             {
-                var note = await noteRepository.GetFull(request.NoteId);
+                var note = await noteRepository.GetNoteWithLabels(request.NoteId);
+
+                if (note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id))
+                {
+                    return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                }
+
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(isOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                return new OperationResult<FullNoteAnswer>(true, data);
             }
 
-            if (isCanRead)
-            {
-                var note = await noteRepository.GetFull(request.NoteId);
-                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(isOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
-            }
-
-            return new FullNoteAnswer(isOwner, false, false, null, null);
+            return new OperationResult<FullNoteAnswer>(false, null).SetNoPermissions();
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
@@ -150,6 +154,11 @@ namespace BI.Services.Notes
 
             if (permissions.CanRead)
             {
+                if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+                {
+                    return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+                }
+
                 var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
                 var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);
                 return new OperationResult<List<BaseNoteContentDTO>>(true, result);

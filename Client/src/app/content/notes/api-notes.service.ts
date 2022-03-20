@@ -167,9 +167,12 @@ export class ApiServiceNotes {
     if (folderId) {
       params = params.append('folderId', folderId);
     }
-    return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${noteId}`, {
-      params,
-    });
+    return this.httpClient.get<OperationResult<RequestFullNote>>(
+      `${environment.writeAPI}/api/note/${noteId}`,
+      {
+        params,
+      },
+    );
   }
 
   getAll(settings: PersonalizationSetting) {

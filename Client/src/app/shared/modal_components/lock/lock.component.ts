@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -59,6 +60,7 @@ export class LockComponent implements OnInit, OnDestroy {
     private snackService: SnackBarWrapperService,
     private pService: PersonalizationService,
     public dialogRef: MatDialogRef<LockComponent>,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: { id: string; isRemove: boolean },
   ) {}
 
@@ -146,7 +148,7 @@ export class LockComponent implements OnInit, OnDestroy {
       .decryptNote(note.id, this.form.controls.password.value)
       .toPromise();
     if (!data) {
-      const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
+      const message = this.translate.instant('modal.lockModal.incorrect');
       this.snackService.buildNotification(message, null);
       return false;
     }
@@ -158,7 +160,7 @@ export class LockComponent implements OnInit, OnDestroy {
       .tryUnlockNote(note.id, this.form.controls.password.value)
       .toPromise();
     if (!data) {
-      const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
+      const message = this.translate.instant('modal.lockModal.incorrect');
       this.snackService.buildNotification(message, null);
       return false;
     }

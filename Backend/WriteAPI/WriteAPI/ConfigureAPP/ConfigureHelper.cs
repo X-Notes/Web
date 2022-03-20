@@ -152,7 +152,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
 
@@ -248,9 +248,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
 
             // HISTORY
-            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, List<BaseNoteContentDTO>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
@@ -439,7 +439,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<EntitiesDeleteJobHandler>();
 
             services.AddSingleton<ConfigForHistoryMaker>();
-            services.AddSingleton<HistoryCacheService>();
+            services.AddSingleton<HistoryCacheServiceStorage>();
             services.AddSingleton<HistoryJobHandler>();
 
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();

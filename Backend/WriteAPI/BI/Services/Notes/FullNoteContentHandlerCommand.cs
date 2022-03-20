@@ -28,7 +28,7 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly HistoryCacheService historyCacheService;
+        private readonly HistoryCacheServiceStorage historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -42,7 +42,7 @@ namespace BI.Services.Notes
 
         public FullNoteContentHandlerCommand(
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheService historyCacheService,
+            HistoryCacheServiceStorage historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             CollectionNoteRepository collectionNoteRepository,

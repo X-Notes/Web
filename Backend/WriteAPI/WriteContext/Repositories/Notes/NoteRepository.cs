@@ -71,7 +71,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public Task<Note> GetFull(Guid id)
+        public Task<Note> GetNoteWithLabels(Guid id)
         {
             return context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)

@@ -58,7 +58,7 @@ namespace BI.Services.Notes
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
-        private readonly HistoryCacheService historyCacheService;
+        private readonly HistoryCacheServiceStorage historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
@@ -71,7 +71,7 @@ namespace BI.Services.Notes
             IMediator _mediator, 
             LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheService historyCacheService, 
+            HistoryCacheServiceStorage historyCacheService, 
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
