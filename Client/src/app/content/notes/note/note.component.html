@@ -59,6 +59,9 @@
       <p>{{date ?? note.updatedAt | date: 'medium' }}</p>
     </div>
     <div class="help-icons">
+      <div *ngIf="note?.isLocked" class="icon">
+        <mat-icon svgIcon="lock" [inline]="true"></mat-icon>
+      </div>
       <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
         <mat-icon svgIcon="people" [inline]="true"></mat-icon>
       </div>

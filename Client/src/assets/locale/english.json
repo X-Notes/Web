@@ -144,7 +144,7 @@
       "unLock": "Unlock note",
       "unDecrypt": "Remove lock",
       "remove": "Remove",
-      "сomeIn": "To come in",
+      "сomeIn": "Unlock",
       "save": "Save",
       "password": "Password",
       "confirm": "Confirm password",
@@ -153,7 +153,8 @@
       "passMatchError": "passwords does not match",
       "required": "Required field",
       "minLength": "Password must be at least 6 characters",
-      "incorrect": "Incorrect password"
+      "incorrect": "Incorrect password",
+      "timeMessage": "After unlocking the note will be available for 5 minutes"
     },
     "reviewModal": {
       "review": "Review document",

@@ -34,6 +34,14 @@ namespace Common.DTO.Permissions
 
         }
 
+        public bool IsUnlocked
+        {
+            get
+            {
+                return !Note.IsLocked;
+            }
+        }
+
         public UserPermissionsForNote SetFullAccess(User user, Note note)
         {
             Caller = user;

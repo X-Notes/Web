@@ -20,10 +20,20 @@ namespace BI.Services.Encryption
         {
             if (!noteId_unlockTime.ContainsKey(noteId))
             {
-                noteId_unlockTime.TryAdd(noteId, DateTimeProvider.Time);
-                return true;
+                return noteId_unlockTime.TryAdd(noteId, DateTimeProvider.Time);
             }
-            return false;
+
+            return noteId_unlockTime.TryUpdate(noteId, DateTimeProvider.Time, noteId_unlockTime[noteId]);
+        }
+
+        public bool RemoveUnlockTime(Guid noteId)
+        {
+            if (!noteId_unlockTime.ContainsKey(noteId))
+            {
+                return noteId_unlockTime.TryRemove(noteId, out var value);
+            }
+
+            return true;
         }
 
         public bool IsUnlocked(Guid noteId) => noteId_unlockTime.ContainsKey(noteId) && noteId_unlockTime[noteId].AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time; 

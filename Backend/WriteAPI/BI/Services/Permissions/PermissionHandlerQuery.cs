@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Services.Encryption;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
@@ -28,16 +29,20 @@ namespace BI.Services.Permissions
         private readonly UserRepository userRepository;
         private readonly FileRepository fileRepository;
         private readonly FolderRepository folderRepository;
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
         public PermissionHandlerQuery(
             UserRepository userRepository,
             NoteRepository noteRepository,
             FolderRepository folderRepository,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.folderRepository = folderRepository;
             this.fileRepository = fileRepository;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
@@ -67,6 +72,10 @@ namespace BI.Services.Permissions
             if (note == null)
             {
                 return new UserPermissionsForNote().SetNoteNotFounded();
+            }
+
+            if (note.IsLocked) {
+                note.IsLocked = !this.userNoteEncryptStorage.IsUnlocked(note.Id);
             }
 
             if (note.UserId == user.Id)

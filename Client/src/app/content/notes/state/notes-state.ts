@@ -125,14 +125,6 @@ export class NoteStore {
   }
 
   @Selector()
-  static getNote(state: NoteState) {
-    return (id: string, type: NoteTypeENUM) => {
-      const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
-      return note;
-    };
-  }
-
-  @Selector()
   static isRemoveLock(state: NoteState) {
     if (state.selectedIds.length === 1) {
       const { 0: id } = state.selectedIds;
@@ -166,6 +158,11 @@ export class NoteStore {
   @Selector()
   static getNotes(state: NoteState): Notes[] {
     return state.notes;
+  }
+
+  @Selector()
+  static getSmallNotes(state: NoteState): SmallNote[] {
+    return state.notes.flatMap(x => x.notes);
   }
 
   @Selector()
@@ -244,6 +241,11 @@ export class NoteStore {
   @Selector()
   static isOwner(state: NoteState): boolean {
     return state.fullNoteState?.isOwner;
+  }
+
+  @Selector()
+  static isLocked(state: NoteState): boolean {
+    return state.fullNoteState?.isLocked;
   }
 
   @Selector()
@@ -846,7 +848,7 @@ export class NoteStore {
   ) {
     const note = getState().fullNoteState?.note;
     if (note) {
-      const newNote: FullNote = { ...note, isLocked };
+      const newNote: FullNote = { ...note, isLocked }; // TOOD
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }

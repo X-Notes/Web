@@ -18,7 +18,9 @@ import { MenuSelectionService } from './content-editor-services/menu-selection.s
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
-
+import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
+import { take } from 'rxjs/operators';
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -71,19 +73,15 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     private api: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
     public sliderService: FullNoteSliderService,
+    private dialogsManageService: DialogsManageService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
-      await this.initNote();
+      await this.loadMain();
       this.store.dispatch(new LoadLabels());
       this.destroy.next();
       this.destroy.complete();
     });
-  }
-
-  async initNote() {
-    await this.loadMain();
-    await this.loadLeftMenuWithNotes();
   }
 
   async loadContent() {
@@ -92,11 +90,35 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
+    const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
+    if (isLocked) {
+      const instance = this.dialogsManageService.openLockDialog(
+        this.id,
+        LockPopupState.Unlock,
+        false,
+      );
+      instance
+        .afterClosed()
+        .pipe(take(1))
+        .subscribe(async (flag) => {
+          if (flag) {
+            await this.loadIternalContent();
+            await this.loadLeftMenuWithNotes();
+          }
+          this.loaded = true;
+        });
+    } else {
+      await this.loadIternalContent();
+      await this.loadLeftMenuWithNotes();
+      this.loaded = true;
+    }
+  }
+
+  async loadIternalContent() {
     const isCanView = this.store.selectSnapshot(NoteStore.canView);
     if (isCanView) {
       await this.loadContent();
     }
-    this.loaded = true;
   }
 
   async loadLeftMenuWithNotes() {

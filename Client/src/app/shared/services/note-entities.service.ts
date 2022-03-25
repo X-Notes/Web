@@ -7,6 +7,7 @@ import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { SelectIdNote, UnSelectIdNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
+import { LockPopupState } from '../modal_components/lock/lock.component';
 import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 
@@ -53,7 +54,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       this.highlightNote(note);
     } else {
       if (note.isLocked) {
-        this.dialogsManageService.lock(note.id);
+        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock);
         return;
       }
       navigateFunc();

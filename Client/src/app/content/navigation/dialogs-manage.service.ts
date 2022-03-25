@@ -7,7 +7,7 @@ import { ChangeColorComponent } from 'src/app/shared/modal_components/change-col
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { GenericDeletionPopUpComponent } from 'src/app/shared/modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
-import { LockComponent } from 'src/app/shared/modal_components/lock/lock.component';
+import { LockComponent, LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { ManageNotesInFolderComponent } from 'src/app/shared/modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
@@ -83,7 +83,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
   }
 
-  lock(id?: string, isRemove?: boolean) {
+  openLockDialog(id: string, state: LockPopupState, isCallActionAfterSave: boolean = true) {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
@@ -91,7 +91,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
-      data: { id, isRemove },
+      data: { id, state, isCallActionAfterSave },
     };
     return this.dialogService.openDialog(LockComponent, config);
   }

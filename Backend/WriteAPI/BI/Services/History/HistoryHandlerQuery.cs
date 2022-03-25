@@ -58,13 +58,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
+            if (!permissions.IsUnlocked)
+            {
+                return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
+            }
+
             if (permissions.CanRead)
             {
-                if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
-                {
-                    return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
-                }
-
                 var histories = await noteHistoryRepository.GetNoteHistories(request.NoteId);
                 var data = noteCustomMapper.MapHistoriesToHistoriesDto(histories);
                 return new OperationResult<List<NoteHistoryDTO>>(true, data);
@@ -78,13 +78,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
+            if (!permissions.IsUnlocked)
+            {
+                return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
+            }
+
             if (permissions.CanRead)
             {
-                if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
-                {
-                    return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
-                }
-
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
                 var data = new NoteHistoryDTOAnswer(true, noteCustomMapper.MapNoteSnapshotToNoteSnapshotDTO(snapshot));
                 return new OperationResult<NoteHistoryDTOAnswer>(true, data);
@@ -98,13 +98,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
+            if (!permissions.IsUnlocked)
+            {
+                return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+            }
+
             if (permissions.CanRead)
             {
-                if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
-                {
-                    return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
-                }
-
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
                 var result = await Convert(snapshot.Contents);
                 var data = result.OrderBy(x => x.Order).ToList();

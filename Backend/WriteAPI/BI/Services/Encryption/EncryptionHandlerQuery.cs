@@ -12,10 +12,13 @@ namespace BI.Services.Encryption
     {
         private readonly IMediator _mediator;
         private readonly AppEncryptor appEncryptor;
-        public EncryptionHandlerQuery(IMediator _mediator, AppEncryptor appEncryptor)
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
+        public EncryptionHandlerQuery(IMediator _mediator, AppEncryptor appEncryptor, UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.appEncryptor = appEncryptor;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
         public async Task<OperationResult<bool>> Handle(UnlockNoteQuery request, CancellationToken cancellationToken)
@@ -27,13 +30,14 @@ namespace BI.Services.Encryption
             {
                 if(appEncryptor.Compare(request.Password, permissions.Note.Password))
                 {
+                    userNoteEncryptStorage.SetUnlockTime(request.NoteId);
                     return new OperationResult<bool>(true, true);
                 }
 
                 return new OperationResult<bool>(true, false);
             }
 
-            return new OperationResult<bool>(false, false);
+            return new OperationResult<bool>(false, false).SetNoPermissions();
         }
     }
 }
