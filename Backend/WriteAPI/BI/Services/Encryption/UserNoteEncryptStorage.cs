@@ -36,11 +36,25 @@ namespace BI.Services.Encryption
             return true;
         }
 
-        public bool IsUnlocked(Guid noteId) => noteId_unlockTime.ContainsKey(noteId) && noteId_unlockTime[noteId].AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time; 
+        public bool IsUnlocked(Guid noteId)
+        {
+            if (noteId_unlockTime.ContainsKey(noteId))
+            {
+                var value = noteId_unlockTime[noteId];
+                var flag = value.AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time;
+                return flag;
+            }
+
+            return false;
+        } 
 
         public void ClearTimers()
         {
-            var valuesToRemove = noteId_unlockTime.Where(x => x.Value.AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time);
+            var valuesToRemove = noteId_unlockTime.Where(x =>
+            {
+                var time = x.Value;
+                return time.AddMinutes(timersConfig.UnlockTimeMinutes) < DateTimeProvider.Time;
+            });
             foreach(var value in valuesToRemove)
             {
                 noteId_unlockTime.TryRemove(value);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BI.Services.Encryption;
 using BI.Services.Notes;
 using Common.Azure;
 using Common.DatabaseModels.Models.Files;
@@ -26,10 +27,14 @@ namespace BI.Mapping
 {
     public class NoteFolderLabelMapper : BaseMapper
     {
-        public NoteFolderLabelMapper(AzureConfig azureConfig) : base(azureConfig)
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
+        public NoteFolderLabelMapper(AzureConfig azureConfig, UserNoteEncryptStorage userNoteEncryptStorage) : base(azureConfig)
         {
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
+        // CONTENTS
         public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> contents, Guid ownerId)
         {
             if(contents == null)
@@ -101,6 +106,18 @@ namespace BI.Mapping
             return resultList;
         }
 
+        private List<BaseNoteContentDTO> GetContentsDTOFromContents(Note note, List<BaseNoteContent> contents, Guid ownerId)
+        {
+            if (IsLocked(note))
+            {
+                return new List<BaseNoteContentDTO>();
+            }
+            return MapContentsToContentsDTO(contents, ownerId).ToList();
+        }
+
+        private bool IsLocked(Note note) => note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id);
+
+        // TYPES
         public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {
             return new NoteTypeDTO(type.Id, type.Name);
@@ -111,6 +128,9 @@ namespace BI.Mapping
             return new FolderTypeDTO(type.Id, type.Name);
         }
 
+
+
+        // LABELS
         public List<LabelDTO> MapLabelsToLabelsDTO(List<LabelsNotes> labelsNotes)
         {
             var count = labelsNotes.Count();
@@ -153,6 +173,10 @@ namespace BI.Mapping
             };
         }
 
+
+
+
+        // NOTES 
         public RelatedNote MapNoteToRelatedNoteDTO((Note note, bool isOpened) tuple)
         {
             return new RelatedNote()
@@ -166,22 +190,14 @@ namespace BI.Mapping
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = tuple.note.NoteTypeId,
                 RefTypeId = tuple.note.RefTypeId,
-                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, tuple.note.UserId),
-                IsLocked = tuple.note.IsLocked,
+                Contents = GetContentsDTOFromContents(tuple.note, tuple.note.Contents, tuple.note.UserId),
+                IsLocked = IsLocked(tuple.note),
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
                 UpdatedAt = tuple.note.UpdatedAt
             };
         }
 
-        private List<BaseNoteContentDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents, Guid ownerId)
-        {
-            if(!isLocked)
-            {
-                return MapContentsToContentsDTO(contents, ownerId).ToList();
-            }
-            return new List<BaseNoteContentDTO>();
-        }
 
         public SmallNote MapNoteToSmallNoteDTO(Note note)
         {
@@ -195,8 +211,8 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, note.UserId),
-                IsLocked = note.IsLocked,
+                Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
+                IsLocked = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -213,7 +229,7 @@ namespace BI.Mapping
                 RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                IsLocked = note.IsLocked,
+                IsLocked = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -233,9 +249,9 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, note.UserId),
+                Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
                 IsSelected = ids.Contains(note.Id),
-                IsLocked = note.IsLocked,
+                IsLocked = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -263,6 +279,20 @@ namespace BI.Mapping
             return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple)).ToList();
         }
 
+        public List<NotePreviewInFolder> MapNotesToNotesPreviewInFolder(IEnumerable<Note> notes)
+        {
+            return notes?.Select(x => MapNoteToNotePreviewInFolder(x)).ToList();
+        }
+
+        public NotePreviewInFolder MapNoteToNotePreviewInFolder(Note note)
+        {
+            return new NotePreviewInFolder()
+            {
+                Title = note.Title
+            };
+        }
+
+        // FOLDERS
         public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders)
         {
             return folders.Select(folder => MapFolderToSmallFolder(folder)).ToList();
@@ -286,19 +316,6 @@ namespace BI.Mapping
             };
         }
 
-        public List<NotePreviewInFolder> MapNotesToNotesPreviewInFolder(IEnumerable<Note> notes)
-        {
-            return notes?.Select(x => MapNoteToNotePreviewInFolder(x)).ToList();
-        }
-
-        public NotePreviewInFolder MapNoteToNotePreviewInFolder(Note note)
-        {
-            return new NotePreviewInFolder()
-            { 
-                Title = note.Title
-            };
-        }
-
         public IEnumerable<FullFolder> MapFoldersToFullFolders(IEnumerable<Folder> folders)
         {
             return folders.Select(folder => MapFolderToFullFolder(folder));
@@ -319,6 +336,8 @@ namespace BI.Mapping
             };
         }
 
+
+        // HISTORY
 
         public UserNoteHistory MapUserToUserNoteHistory(User user)
         {
@@ -352,6 +371,22 @@ namespace BI.Mapping
             return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
         }
 
+        public NoteSnapshotDTO MapNoteSnapshotToNoteSnapshotDTO(NoteSnapshot snapshot)
+        {
+            return new NoteSnapshotDTO()
+            {
+                Id = snapshot.Id,
+                Color = snapshot.Color,
+                SnapshotTime = snapshot.SnapshotTime,
+                Labels = snapshot.Labels.Select(x => new LabelDTO { Name = x.Name, Color = x.Color }).ToList(),
+                NoteId = snapshot.NoteId,
+                NoteTypeId = snapshot.NoteTypeId,
+                RefTypeId = snapshot.RefTypeId,
+                Title = snapshot.Title
+            };
+        }
+
+        // PERSONALIZATION
         public PersonalizationSettingDTO MapPersonalizationSettingToPersonalizationSettingDTO(PersonalizationSetting pr)
         {
             return new PersonalizationSettingDTO()
@@ -365,21 +400,6 @@ namespace BI.Mapping
                 ContentInNoteCount = pr.ContentInNoteCount,
                 SortedNoteByTypeId = pr.SortedNoteByTypeId,
                 SortedFolderByTypeId = pr.SortedFolderByTypeId
-            };
-        }
-
-        public NoteSnapshotDTO MapNoteSnapshotToNoteSnapshotDTO(NoteSnapshot snapshot)
-        {
-            return new NoteSnapshotDTO()
-            {
-                Id = snapshot.Id,
-                Color = snapshot.Color,
-                SnapshotTime = snapshot.SnapshotTime,
-                Labels = snapshot.Labels.Select(x => new LabelDTO { Name = x.Name, Color = x.Color }).ToList(),
-                NoteId = snapshot.NoteId,
-                NoteTypeId = snapshot.NoteTypeId,
-                RefTypeId = snapshot.RefTypeId,
-                Title = snapshot.Title
             };
         }
 

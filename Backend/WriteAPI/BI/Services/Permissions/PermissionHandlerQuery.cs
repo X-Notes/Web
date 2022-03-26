@@ -74,10 +74,6 @@ namespace BI.Services.Permissions
                 return new UserPermissionsForNote().SetNoteNotFounded();
             }
 
-            if (note.IsLocked) {
-                note.IsLocked = !this.userNoteEncryptStorage.IsUnlocked(note.Id);
-            }
-
             if (note.UserId == user.Id)
             {
                 return new UserPermissionsForNote().SetFullAccess(user, note);

@@ -82,21 +82,10 @@ namespace BI.Services.Notes
             }
 
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
-            SetLockStatusForNotes(notes);
 
             return appCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
 
-        private void SetLockStatusForNotes(List<Note> notes)
-        {
-            foreach(var note in notes)
-            {
-                if (note.IsLocked && userNoteEncryptStorage.IsUnlocked(note.Id))
-                {
-                    note.IsLocked = false;
-                }
-            }
-        }
 
         private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
         {
@@ -112,7 +101,6 @@ namespace BI.Services.Notes
             var isCanWrite = false;
             var isCanRead = false;
             var isOwner = false;
-            var isUnlocked = false;
 
             if (request.FolderId.HasValue)
             {
@@ -129,17 +117,17 @@ namespace BI.Services.Notes
                 isCanWrite = permissions.CanWrite;
                 isCanRead = permissions.CanRead;
                 isOwner = permissions.IsOwner;
-                isUnlocked = permissions.IsUnlocked;
-            }
-
-            if (!isUnlocked)
-            {
-                return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
             }
 
             if (isCanRead)
             {
                 var note = await noteRepository.GetNoteWithLabels(request.NoteId);
+
+                if (note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id))
+                {
+                    return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                }
+
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, appCustomMapper.MapNoteToFullNote(note));
                 return new OperationResult<FullNoteAnswer>(true, data);
@@ -152,7 +140,13 @@ namespace BI.Services.Notes
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
-            if (permissions.CanRead && permissions.IsUnlocked)
+
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            {
+                return new List<OnlineUserOnNote>();
+            }
+
+            if (permissions.CanRead)
             {
                 var ids = websocketsNotesService.GetIdsByEntityId(request.Id);
                 var users = await userRepository.GetUsersWithPhotos(ids);
@@ -166,12 +160,12 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (!permissions.IsUnlocked)
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
             {
                 return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
             }
 
-            if (permissions.CanRead && permissions.IsUnlocked)
+            if (permissions.CanRead)
             {
                 var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
                 var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);
@@ -190,8 +184,6 @@ namespace BI.Services.Notes
 
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
             notes = notes.OrderBy(x => x.Order).ToList();
-
-            SetLockStatusForNotes(notes);
 
             return appCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
@@ -212,8 +204,6 @@ namespace BI.Services.Notes
                         note.NoteTypeId = NoteTypeENUM.Shared;
                     }
                 });
-
-                SetLockStatusForNotes(notes);
 
                 var result = appCustomMapper.MapNotesToSmallNotesDTO(notes);
                 return new OperationResult<List<SmallNote>>(true, result);

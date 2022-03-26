@@ -157,6 +157,13 @@ export class LockComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  setLockedInState(isLocked: boolean) {
+    const updatedNote = { ...this.getNote(this.data.id) };
+    updatedNote.isLocked = isLocked;
+    this.store.dispatch(new UpdateOneNote(updatedNote));
+    this.store.dispatch(new ChangeIsLockedFullNote(isLocked));
+  }
+
   async encryptNote(noteId: string) {
     const { data } = await this.lockEncryptService
       .encryptNote(noteId, this.form.controls.password.value, this.form.controls.confirmation.value)
@@ -175,10 +182,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const isSuccess = await this.encryptNote(this.data.id);
         if (isSuccess) {
           if (this.data.isCallActionAfterSave) {
-            const updatedNote = { ...this.getNote(this.data.id) };
-            updatedNote.isLocked = false;
-            this.store.dispatch(new UpdateOneNote(updatedNote));
-            this.store.dispatch(new ChangeIsLockedFullNote(true));
+            this.setLockedInState(true);
             this.router.navigate([`notes/${this.data.id}`]);
           }
           this.dialogRef.close(true);
@@ -189,6 +193,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const isSuccess = await this.tryUnlockNote(this.data.id);
         if (isSuccess) {
           if (this.data.isCallActionAfterSave) {
+            this.setLockedInState(false);
             this.router.navigate([`notes/${this.data.id}`]);
           }
           this.dialogRef.close(true);
@@ -199,10 +204,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const isSuccess = await this.decryptNote(this.data.id);
         if (isSuccess) {
           if (this.data.isCallActionAfterSave) {
-            const updatedNote = { ...this.getNote(this.data.id) };
-            updatedNote.isLocked = false;
-            this.store.dispatch(new UpdateOneNote(updatedNote));
-            this.store.dispatch(new ChangeIsLockedFullNote(false));
+            this.setLockedInState(false);
             this.router.navigate([`notes/${this.data.id}`]);
           }
           this.dialogRef.close(true);

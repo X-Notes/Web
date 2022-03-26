@@ -58,7 +58,7 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (!permissions.IsUnlocked)
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
             {
                 return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
             }
@@ -78,7 +78,7 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (!permissions.IsUnlocked)
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
             {
                 return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
             }
@@ -98,7 +98,7 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (!permissions.IsUnlocked)
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
             {
                 return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
             }
