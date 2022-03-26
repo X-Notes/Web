@@ -35,7 +35,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("preview")]
-        public async Task<List<PreviewNoteForSelection>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
+        public async Task<List<SmallNote>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

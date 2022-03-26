@@ -173,7 +173,7 @@ namespace WriteContext.Repositories.Notes
             }
         }
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(
             Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -184,7 +184,7 @@ namespace WriteContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
-        public async Task<List<Note>> GetNotesByNoteIdsIdWithContentWithPersonalization(
+        public async Task<List<Note>> GetNotesByNoteIdsIdWithContent(
             IEnumerable<Guid> noteIds, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -205,6 +205,24 @@ namespace WriteContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
+        public Task<List<Note>> GetNotesByUserIdWithContentNoLocked(Guid userId, List<Guid> exceptIds)
+        {
+            return entities  // TODO OPTIMIZATION
+                .Include(x => x.Contents)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null).ToListAsync();
+        }
+
+        public async Task<List<Note>> GetNotesByUserIdNoLocked(Guid userId, List<Guid> exceptIds, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null)
+                .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
+        }
+
+
         public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -216,7 +234,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
+        public Task<List<Note>> GetNotesWithContent(List<Guid> noteIds)
         { 
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -227,7 +245,7 @@ namespace WriteContext.Repositories.Notes
                 .Where(x => noteIds.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<Note> GetNoteByIdsForCopy(Guid noteId)
+        public Task<Note> GetNoteWithContent(Guid noteId)
         {
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)

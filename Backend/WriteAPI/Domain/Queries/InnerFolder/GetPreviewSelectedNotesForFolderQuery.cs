@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Domain.Queries.InnerFolder
 {
-    public class GetPreviewSelectedNotesForFolderQuery : BaseQueryEntity, IRequest<List<PreviewNoteForSelection>>
+    public class GetPreviewSelectedNotesForFolderQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
         [ValidationGuid]
         public Guid FolderId { set; get; }

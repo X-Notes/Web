@@ -44,7 +44,6 @@ import { ButtonToggleComponent } from './custom-components/button-toggle/button-
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
 import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
 import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
-import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
@@ -77,6 +76,7 @@ import { FileNamePipe } from './pipes/file-name.pipe';
 import { GenericDeletionPopUpComponent } from './modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
 import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bottom-button-pop-up/generic-bottom-button-pop-up.component';
 import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-message/generic-delete-entity-message.component';
+import { AddNotesInFolderComponent } from './modal_components/manage-notes-in-folder/add-notes-in-folder.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +104,7 @@ import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-mes
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
-    ManageNotesInFolderComponent,
+    AddNotesInFolderComponent,
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,

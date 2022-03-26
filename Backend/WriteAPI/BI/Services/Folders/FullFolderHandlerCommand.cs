@@ -14,6 +14,7 @@ using Domain.Commands.FolderInner;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Folders
@@ -27,18 +28,21 @@ namespace BI.Services.Folders
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
+        private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
 
         public FullFolderHandlerCommand(
             FolderRepository folderRepository,
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
-            FolderWSUpdateService folderWSUpdateService)
+            FolderWSUpdateService folderWSUpdateService,
+            NoteRepository noteRepository)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
             this.folderWSUpdateService = folderWSUpdateService;
+            this.noteRepository = noteRepository;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
@@ -68,12 +72,15 @@ namespace BI.Services.Folders
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner && request.NoteIds.Any())
             {
                 var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
                 var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
 
-                var newFoldersNotes = request.NoteIds.Except(foldersNoteIds)
+                var noLockedNotes = await noteRepository.GetWhereAsync(x => request.NoteIds.Contains(x.Id) && x.Password == null);
+                var noLockedNoteIds = noLockedNotes.Select(x => x.Id).ToList();
+
+                var newFoldersNotes = noLockedNoteIds.Except(foldersNoteIds)
                                                      .Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
 
                 if (newFoldersNotes.Any())
@@ -101,7 +108,7 @@ namespace BI.Services.Folders
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner && request.NoteIds.Any())
             {
                 var foldersNotesToDelete = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, request.NoteIds);
 

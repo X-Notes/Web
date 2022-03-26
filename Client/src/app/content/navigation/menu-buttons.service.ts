@@ -10,6 +10,7 @@ import { DialogsManageService } from './dialogs-manage.service';
 import { MenuButtonsNotesService } from './menu-buttons-notes.service';
 import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -44,24 +45,13 @@ export class MenuButtonsService {
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
-    {
-      icon: 'lock',
-      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
-      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
-          LockPopupState.Lock,
-        ),
-      isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
-    },
+    this.getLockItem(),
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () =>
         this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
+          this.getSelectedNoteId(),
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
@@ -130,24 +120,13 @@ export class MenuButtonsService {
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
-    {
-      icon: 'lock',
-      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
-      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
-          LockPopupState.Lock,
-        ),
-      isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
-    },
+    this.getLockItem(),
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () =>
         this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
+          this.getSelectedNoteId(),
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
@@ -209,24 +188,13 @@ export class MenuButtonsService {
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
-    {
-      icon: 'lock',
-      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
-      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
-          LockPopupState.Lock,
-        ),
-      isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
-    },
+    this.getLockItem(),
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () =>
         this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
+          this.getSelectedNoteId(),
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
@@ -302,25 +270,13 @@ export class MenuButtonsService {
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
-    {
-      icon: 'lock',
-      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
-      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: () => {
-        return this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
-          LockPopupState.Lock,
-        );
-      },
-      isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
-    },
+    this.getLockItem(),
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () =>
         this.dialogsManageService.openLockDialog(
-          this.store.selectSnapshot(NoteStore.selectedIds)[0],
+          this.getSelectedNoteId(),
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
@@ -584,6 +540,30 @@ export class MenuButtonsService {
         throw new Error('Incorrect type');
       }
     }
+  }
+
+  getLockItem(): MenuItem {
+    const obj = {
+      icon: 'lock',
+      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
+      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
+      operation: () => {
+        return this.dialogsManageService.openLockDialog(
+          this.getSelectedNoteId(),
+          LockPopupState.Lock,
+        );
+      },
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
+    };
+    return obj;
+  }
+
+  getSelectedNoteId(): string {
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      return this.store.selectSnapshot(NoteStore.oneFull).id;
+    }
+    return this.store.selectSnapshot(NoteStore.selectedIds)[0];
   }
 
   setItems(newItems: MenuItem[]) {

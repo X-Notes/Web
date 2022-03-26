@@ -8,5 +8,6 @@ namespace Domain.Commands.Notes
     public class UpdatePositionNotesCommand
     {
         public List<NotePositionDTO> Positions { set; get; }
+
     }
 }

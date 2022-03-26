@@ -23,12 +23,12 @@ import { MurriService } from '../../services/murri.service';
 import { PersonalizationService } from '../../services/personalization.service';
 
 @Component({
-  selector: 'app-manage-notes-in-folder',
-  templateUrl: './manage-notes-in-folder.component.html',
-  styleUrls: ['./manage-notes-in-folder.component.scss'],
+  selector: 'app-add-notes-in-folder',
+  templateUrl: './add-notes-in-folder.component.html',
+  styleUrls: ['./add-notes-in-folder.component.scss'],
   providers: [MurriService],
 })
-export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   searchChanged: Subject<string> = new Subject<string>();
@@ -53,7 +53,7 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
     public murriService: MurriService,
     public pService: PersonalizationService,
     private apiFullFolder: ApiFullFolderService,
-    public dialogRef: MatDialogRef<ManageNotesInFolderComponent>,
+    public dialogRef: MatDialogRef<AddNotesInFolderComponent>,
     private store: Store,
   ) {}
 

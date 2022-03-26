@@ -229,7 +229,7 @@ namespace BI.Mapping
                 RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                IsLocked = IsLocked(note),
+                IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt

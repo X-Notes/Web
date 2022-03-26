@@ -224,7 +224,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateNotesPositionInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<SmallNote>>, FullFolderHandlerQuery>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, List<UpdateOrderEntityResponse>>, OrderHandlerCommand>();

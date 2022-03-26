@@ -29,7 +29,7 @@ namespace BI.Services.Encryption
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner)
             {
                 if (request.Password == request.ConfirmPassword)
                 {
@@ -50,7 +50,7 @@ namespace BI.Services.Encryption
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner)
             {
                 if (appEncryptor.Compare(request.Password, permissions.Note.Password))
                 {

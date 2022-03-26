@@ -72,7 +72,7 @@ namespace BI.Services.Notes
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
-            var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContentWithPersonalization(request.UserId, request.TypeId, request.Settings);
+            var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(request.UserId, request.TypeId, request.Settings);
 
             if (NoteTypeENUM.Shared == request.TypeId)
             {
@@ -91,7 +91,7 @@ namespace BI.Services.Notes
         {
             var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
             var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, settings);
+            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, settings);
             sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
             return sharedNotes;
         }
@@ -196,7 +196,7 @@ namespace BI.Services.Notes
             var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId);
             if (canReadIds.Any())
             {
-                var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(canReadIds, request.Settings);
                 notes.ForEach(note =>
                 {
                     if(note.UserId != request.UserId)

@@ -306,7 +306,7 @@ namespace BI.Services.Notes
                 var permission = permissions.First().Item2;
                 if (idsForCopy.Any())
                 {
-                    var notesForCopy = await noteRepository.GetNotesByIdsForCopy(idsForCopy);
+                    var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
                     foreach(var noteForCopy in notesForCopy)
                     {
                         var newNote = new Note()
@@ -431,7 +431,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
         {
-            var noteForCopy = await noteRepository.GetNoteByIdsForCopy(request.Id);
+            var noteForCopy = await noteRepository.GetNoteWithContent(request.Id);
             var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(z => new SnapshotNoteLabel { Name = z.Name, Color = z.Color }).ToList();
    
             var snapshot = new NoteSnapshot()

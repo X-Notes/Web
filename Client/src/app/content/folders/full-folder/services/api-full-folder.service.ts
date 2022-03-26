@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
@@ -34,7 +33,7 @@ export class ApiFullFolderService {
       settings,
     };
     return this.httpClient
-      .post<PreviewNote[]>(`${this.controllerApi}/preview`, obj)
+      .post<SmallNote[]>(`${this.controllerApi}/preview`, obj)
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
@@ -54,7 +53,7 @@ export class ApiFullFolderService {
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/remove/notes`, obj);
   }
 
-  orderNotesInFolder(positions: PositionNoteModel[], folderId: string) {
+  orderNotesInFolder(positions: PositionNoteModel[], folderId: string) { // TODO
     const obj = {
       positions,
       folderId,

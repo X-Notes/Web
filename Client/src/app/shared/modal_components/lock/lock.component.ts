@@ -62,6 +62,9 @@ export class LockComponent implements OnInit, OnDestroy {
     public data: { id: string; state: LockPopupState; isCallActionAfterSave: boolean },
   ) {
     this.state = data.state;
+    if (!data.id) {
+      throw new Error('id not seted');
+    }
   }
 
   get field() {
