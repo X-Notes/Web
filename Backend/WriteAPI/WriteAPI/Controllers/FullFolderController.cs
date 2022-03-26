@@ -48,8 +48,22 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
-        [HttpPatch("update/notes")]
-        public async Task<OperationResult<Unit>> UpdateNotesInFolder(UpdateNotesInFolderCommand command)
+        [HttpPatch("add/notes")]
+        public async Task<OperationResult<Unit>> AddNotesToFolder(AddNotesToFolderCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("remove/notes")]
+        public async Task<OperationResult<Unit>> RemoveNotesFromFolder(RemoveNotesFromFolderCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("order/notes")]
+        public async Task<OperationResult<Unit>> UpdateOrderNotesInFolder(UpdateNotesPositionInFolderCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

@@ -20,11 +20,12 @@ namespace BI.Services.Folders
 {
     public class FullFolderHandlerCommand :
         IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateNotesInFolderCommand, OperationResult<Unit>>
+        IRequestHandler<AddNotesToFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdateNotesPositionInFolderCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly UserRepository userRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly IMediator _mediator;
 
@@ -32,13 +33,11 @@ namespace BI.Services.Folders
             FolderRepository folderRepository,
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
-            UserRepository userRepository,
             FolderWSUpdateService folderWSUpdateService)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
-            this.userRepository = userRepository;
             this.folderWSUpdateService = folderWSUpdateService;
         }
 
@@ -63,7 +62,7 @@ namespace BI.Services.Folders
             return new OperationResult<Unit>(false, Unit.Value);
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateNotesInFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(AddNotesToFolderCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -71,28 +70,87 @@ namespace BI.Services.Folders
 
             if (permissions.CanWrite)
             {
-                var foldersNotes = await foldersNotesRepository.GetOrderedByFolderId(request.FolderId);
+                var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
+                var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
 
-                var newFoldersNotes = request.NoteIds.Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
+                var newFoldersNotes = request.NoteIds.Except(foldersNoteIds)
+                                                     .Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
 
-                var orders = Enumerable.Range(1, newFoldersNotes.Count());
-
-                newFoldersNotes = newFoldersNotes.Zip(orders, (folderNote, order) =>
+                if (newFoldersNotes.Any())
                 {
-                    folderNote.Order = order;
-                    return folderNote;
-                });
+                    folder.UpdatedAt = DateTimeProvider.Time;
 
-                folder.UpdatedAt = DateTimeProvider.Time;
+                    await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
+                    await folderRepository.UpdateAsync(folder);
 
-                await foldersNotesRepository.RemoveRangeAsync(foldersNotes);
-                await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
-                await folderRepository.UpdateAsync(folder);
+                    // WS UPDATES
+                    var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                    var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                }
 
-                // WS UPDATES
-                var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
-                var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
-                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>(false, Unit.Value);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(RemoveNotesFromFolderCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
+            var permissions = await _mediator.Send(command);
+            var folder = permissions.Folder;
+
+            if (permissions.CanWrite)
+            {
+                var foldersNotesToDelete = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, request.NoteIds);
+
+                if (foldersNotesToDelete.Any())
+                {
+                    folder.UpdatedAt = DateTimeProvider.Time;
+
+                    await foldersNotesRepository.RemoveRangeAsync(foldersNotesToDelete);
+                    await folderRepository.UpdateAsync(folder);
+
+                    // WS UPDATES
+                    var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                    var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                }
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>(false, Unit.Value);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdateNotesPositionInFolderCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
+            var permissions = await _mediator.Send(command);
+            var folder = permissions.Folder;
+
+            if (permissions.CanWrite && request.Positions != null && request.Positions.Any())
+            {
+                var noteIds = request.Positions.Select(x => x.NoteId).ToList();
+                var foldersNotesToUpdateOrder = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, noteIds);
+
+                if (foldersNotesToUpdateOrder.Any())
+                {
+                    folder.UpdatedAt = DateTimeProvider.Time;
+
+                    var noteLookUp = foldersNotesToUpdateOrder.ToDictionary(x => x.NoteId);
+                    request.Positions.ForEach(x =>
+                    {
+                        if (noteLookUp.ContainsKey(x.NoteId))
+                        {
+                            noteLookUp[x.NoteId].Order = x.Position;
+                        }
+                    });
+
+                    await foldersNotesRepository.UpdateRangeAsync(foldersNotesToUpdateOrder);
+                    await folderRepository.UpdateAsync(folder);
+                }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

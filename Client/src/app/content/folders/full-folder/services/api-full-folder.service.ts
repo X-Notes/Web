@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { PositionNoteModel } from 'src/app/content/notes/models/position-note.model';
 
 @Injectable()
 export class ApiFullFolderService {
@@ -37,11 +38,27 @@ export class ApiFullFolderService {
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
-  updateNotesInFolder(noteIds: string[], folderId: string) {
+  addNotesToFolder(noteIds: string[], folderId: string) {
     const obj = {
       noteIds,
       folderId,
     };
-    return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/update/notes`, obj);
+    return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/add/notes`, obj);
+  }
+
+  removeNotesFromFolder(noteIds: string[], folderId: string) {
+    const obj = {
+      noteIds,
+      folderId,
+    };
+    return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/remove/notes`, obj);
+  }
+
+  orderNotesInFolder(positions: PositionNoteModel[], folderId: string) {
+    const obj = {
+      positions,
+      folderId,
+    };
+    return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/order/notes`, obj);
   }
 }
