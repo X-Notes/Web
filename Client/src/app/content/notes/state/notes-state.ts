@@ -5,7 +5,6 @@
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { OrderService } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
   OperationResult,
@@ -33,7 +32,7 @@ import {
   RemoveLabelFromNote,
   UpdateLabelOnNote,
   UpdateOneNote,
-  PositionNote,
+  UpdatePositionsNotes,
   LoadFullNote,
   DeleteCurrentNote,
   UpdateNoteTitle,
@@ -63,6 +62,7 @@ import { LongTermOperationsHandlerService } from '../../long-term-operations-han
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { Router } from '@angular/router';
 import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
+import { PositionEntityModel } from '../models/position-note.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -108,7 +108,6 @@ export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
     private apiText: ApiTextService,
-    private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
@@ -391,10 +390,11 @@ export class NoteStore {
   }
 
   @Action(TransformTypeNotes)
-  transformFromTo(
+  async transformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
   ) {
+
     const typeFrom = getState()
       .notes.map((x) => x.notes)
       .flat()
@@ -402,27 +402,30 @@ export class NoteStore {
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-
-    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
     dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
-    const notesTo = this.getNotesByType(getState, typeTo);
+    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
 
-    notesAdded = [
-      ...notesAdded.map((note) => {
-        const newNote = { ...note };
-        return newNote;
-      }),
-    ];
-    notesAdded = notesAdded.map((x) => {
+    let notesTo = this.getNotesByType(getState, typeTo).map(x => ({...x}));
+    notesTo.forEach((x) => x.order = x.order + notesAdded.length);
+
+    notesAdded = notesAdded.map((x, index) => {
       const note = { ...x };
       note.noteTypeId = typeTo;
       note.refTypeId = refTypeId ?? note.refTypeId;
+      note.order = index + 1;
+      note.updatedAt = new Date();
       return note;
     });
 
     const newNotesTo = [...notesAdded, ...notesTo];
-    dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
+    await dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo)).toPromise();
+
+    notesTo = this.getNotesByType(getState, typeTo);
+    const positions = notesTo.map(
+      (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
+    );
+    dispatch(new UpdatePositionsNotes(positions));
 
     patchState({
       removeFromMurriEvent: [...selectedIds],
@@ -592,6 +595,7 @@ export class NoteStore {
               name: label.name,
               isDeleted: label.isDeleted,
               countNotes: 0,
+              order: 0
             },
           ];
           updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
@@ -693,21 +697,25 @@ export class NoteStore {
     });
   }
 
-  @Action(PositionNote)
+  @Action(UpdatePositionsNotes)
   async changePosition(
     { getState, dispatch }: StateContext<NoteState>,
-    { order, typeNote }: PositionNote,
+    { positions}: UpdatePositionsNotes,
   ) {
-    const notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
-    const changedNote = notes.find((x) => x.id === order.entityId);
-    const flag = notes.indexOf(changedNote);
-    if (flag + 1 !== order.position) {
-      const resp = await this.orderService.changeOrder(order).toPromise();
-      resp.forEach((z) => {
-        const indexOf = notes.findIndex((x) => x.id === z.entityId);
-        notes[indexOf].order = z.newOrder;
+
+    if(!positions || positions.length === 0){
+      return;
+    }
+
+    const resp = await this.api.updateOrder(positions).toPromise();
+    if(resp.success){
+      positions.forEach(pos => {
+        const note = this.getNoteById(getState, pos.entityId);
+        if(note){
+          note.order = pos.position;
+        }
+        dispatch(new UpdateOneNote(note));
       });
-      dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
     }
   }
 

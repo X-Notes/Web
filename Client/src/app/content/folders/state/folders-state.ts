@@ -3,7 +3,6 @@
 /* eslint-disable no-return-assign */
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { OrderService } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
 import {
@@ -28,7 +27,7 @@ import {
   DeleteFoldersPermanently,
   CopyFolders,
   ClearAddToDomFolders,
-  PositionFolder,
+  UpdatePositionsFolders,
   UpdateFolders,
   UpdateFolderTitle,
   UpdateOneFolder,
@@ -44,6 +43,7 @@ import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
 import { UpdateFolderUI } from './update-folder-ui.model';
 import { Router } from '@angular/router';
+import { PositionEntityModel } from '../../notes/models/position-note.model';
 
 interface FullFolderState {
   isOwner: boolean;
@@ -78,7 +78,6 @@ interface FolderState {
 export class FolderStore {
   constructor(
     private api: ApiFoldersService,
-    private orderService: OrderService,
     private router: Router) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
@@ -88,6 +87,11 @@ export class FolderStore {
   @Selector()
   static getUsersOnPrivateFolder(state: FolderState): InvitedUsersToNoteOrFolder[] {
     return state.InvitedUsersToNote;
+  }
+
+  @Selector()
+  static getSmallFolders(state: FolderState): SmallFolder[] {
+    return state.folders.flatMap(x => x.folders);
   }
 
   @Selector()
@@ -313,26 +317,30 @@ export class FolderStore {
     }
   }
 
-  @Action(PositionFolder)
+  @Action(UpdatePositionsFolders)
   async changePosition(
     { getState, dispatch }: StateContext<FolderState>,
-    { order, typeFolder }: PositionFolder,
+    { positions }: UpdatePositionsFolders,
   ) {
-    const folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
-    const changedFolder = folders.find((x) => x.id === order.entityId);
-    const flag = folders.indexOf(changedFolder);
-    if (flag + 1 !== order.position) {
-      const resp = await this.orderService.changeOrder(order).toPromise();
-      resp.forEach((z) => {
-        const indexOf = folders.findIndex((x) => x.id === z.entityId);
-        folders[indexOf].order = z.newOrder;
+
+    if(!positions || positions.length === 0){
+      return;
+    }
+
+    const resp = await this.api.updateOrder(positions).toPromise();
+    if(resp.success){
+      positions.forEach(pos => {
+        const folder = this.getFolderById(getState, pos.entityId);
+        if(folder){
+          folder.order = pos.position;
+        }
+        dispatch(new UpdateOneFolder(folder));
       });
-      dispatch(new UpdateFolders(new Folders(typeFolder, [...folders]), typeFolder));
     }
   }
 
   @Action(TransformTypeFolders)
-  transformFromTo(
+  async transformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeFolders,
   ) {
@@ -341,29 +349,34 @@ export class FolderStore {
       .flat()
       .find((z) => selectedIds.some((x) => x === z.id)).folderTypeId;
 
-    const foldersFrom = this.getFoldersByType(getState, typeFrom);
-    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
 
-    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
+    const foldersFrom = this.getFoldersByType(getState, typeFrom);
+
+    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
     dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
 
-    const foldersTo = this.getFoldersByType(getState, typeTo);
+    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
 
-    foldersAdded = [
-      ...foldersAdded.map((folder) => {
-        const newFolder = { ...folder };
-        return newFolder;
-      }),
-    ];
-    foldersAdded = foldersAdded.map((x) => {
+    let foldersTo = this.getFoldersByType(getState, typeTo).map(x => ({...x}));
+    foldersTo.forEach((x) => x.order = x.order + foldersAdded.length);
+
+    foldersAdded = foldersAdded.map((x, index) => {
       const folder = { ...x };
       folder.folderTypeId = typeTo;
       folder.refTypeId = refTypeId ?? folder.refTypeId;
+      folder.order = index + 1;
+      folder.updatedAt = new Date();
       return folder;
     });
 
     const newFoldersTo = [...foldersAdded, ...foldersTo];
-    dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo));
+    await dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo)).toPromise();
+
+    foldersTo = this.getFoldersByType(getState, typeTo);
+    const positions = foldersTo.map(
+      (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
+    );
+    dispatch(new UpdatePositionsFolders(positions));
 
     patchState({
       removeFromMurriEvent: [...selectedIds],

@@ -28,7 +28,7 @@
         [ngStyle]="{'backgroundColor' : item.color}"
         labelColor="{{item.color}}"
         [ngClass]="{'active-note': currentNote?.id === item.id}"
-        (click)="changeNote(item)"
+        (click)="selectNote(item)"
         flagDisable="{{ disableTooltipUser() }}"
       >
         <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
@@ -53,7 +53,7 @@
         [ngStyle]="{'backgroundColor' : item.color}"
         labelColor="{{item.color}}"
         [ngClass]="{'active-note': currentFolder?.id === item.id}"
-        (click)="changeFolder(item)"
+        (click)="selectFolder(item)"
         flagDisable="{{ disableTooltipUser() }}"
       >
         <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
