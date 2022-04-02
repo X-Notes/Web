@@ -97,10 +97,10 @@ namespace WriteAPI.Controllers.Note
 
 
         // GET Entities
-        [HttpGet("type/{id}")]
-        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id, [FromQuery] PersonalizationSettingDTO settings)
+        [HttpGet("type/{typeId}")]
+        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM typeId, [FromQuery] PersonalizationSettingDTO settings)
         {
-            var query = new GetNotesByTypeQuery(this.GetUserId(), id, settings);
+            var query = new GetNotesByTypeQuery(this.GetUserId(), typeId, settings);
             return await _mediator.Send(query);
         }
 
@@ -131,6 +131,13 @@ namespace WriteAPI.Controllers.Note
         {
             var query = new GetFullNoteQuery(this.GetUserId(), noteId, folderId);
             return await _mediator.Send(query);
+        }
+
+        [HttpPatch("order")]
+        public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsNotesCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await _mediator.Send(command);
         }
     }
 }

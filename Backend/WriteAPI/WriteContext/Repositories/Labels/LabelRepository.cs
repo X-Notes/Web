@@ -27,7 +27,6 @@ namespace WriteContext.Repositories.Labels
         {
             return context.Labels
                 .Include(x => x.LabelsNotes)
-                .ThenInclude(x => x.Note)
                 .Where(x => x.UserId == id)
                 .ToListAsync();
         }

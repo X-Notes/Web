@@ -1,4 +1,4 @@
-export interface PositionNoteModel {
-  noteId: string;
+export interface PositionEntityModel {
+  entityId: string;
   position: number;
 }

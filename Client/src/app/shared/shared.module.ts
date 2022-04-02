@@ -23,7 +23,6 @@ import { ChangeColorComponent } from './modal_components/change-color/change-col
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
 import { LabelComponent } from '../content/labels/label/label.component';
 import { SearchLabelPipe } from './pipes/search-label.pipe';
-import { OrderService } from './services/order.service';
 import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
 import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
 import { BackgroundService } from '../content/profile/background.service';
@@ -221,7 +220,7 @@ import { AddNotesInFolderComponent } from './modal_components/manage-notes-in-fo
     FileNamePipe,
     GenericDeleteEntityMessageComponent,
   ],
-  providers: [DialogService, OrderService, BackgroundService, ApiContactUsService],
+  providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],
 })
 export class SharedModule {}

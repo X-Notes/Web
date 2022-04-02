@@ -121,7 +121,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
 
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsByEmailQuery, LabelsDTO>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetLabelsQuery, List<LabelDTO>>, LabelHandlerQuery>();
             services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
