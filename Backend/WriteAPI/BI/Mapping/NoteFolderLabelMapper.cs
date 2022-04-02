@@ -191,7 +191,8 @@ namespace BI.Mapping
                 NoteTypeId = tuple.note.NoteTypeId,
                 RefTypeId = tuple.note.RefTypeId,
                 Contents = GetContentsDTOFromContents(tuple.note, tuple.note.Contents, tuple.note.UserId),
-                IsLocked = IsLocked(tuple.note),
+                IsLocked = tuple.note.IsLocked,
+                IsLockedNow = IsLocked(tuple.note),
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
                 UpdatedAt = tuple.note.UpdatedAt
@@ -212,7 +213,8 @@ namespace BI.Mapping
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
-                IsLocked = IsLocked(note),
+                IsLocked = note.IsLocked,
+                IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -230,6 +232,7 @@ namespace BI.Mapping
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 IsLocked = note.IsLocked,
+                IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -251,7 +254,8 @@ namespace BI.Mapping
                 RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
                 IsSelected = ids.Contains(note.Id),
-                IsLocked = IsLocked(note),
+                IsLocked = note.IsLocked,
+                IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt

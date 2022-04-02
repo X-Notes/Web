@@ -132,22 +132,12 @@ export class NoteStore {
         .map((x) => x.notes)
         .reduce((acc, val) => acc.concat(val), [])
         .find((x) => x.id === id);
-      return note.isLocked;
+      return note.isLockedNow;
     }
     if (state.fullNoteState) {
-      return state.fullNoteState.note.isLocked;
+      return state.fullNoteState.note.isLockedNow;
     }
     return false;
-  }
-
-  @Selector()
-  static concatedAllNotes(state: NoteState) {
-    let newArr: SmallNote[] = [];
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < state.notes.length; i += 1) {
-      newArr = newArr.concat(state.notes[i].notes);
-    }
-    return newArr;
   }
 
   @Selector()
@@ -192,7 +182,7 @@ export class NoteStore {
 
   @Selector()
   static labelsIds(state: NoteState): string[] {
-    return this.concatedAllNotes(state)
+    return this.getSmallNotes(state)
       .filter((note) => state.selectedIds.some((id) => id === note.id))
       .map((x) => x.labels)
       .flat()
@@ -246,6 +236,11 @@ export class NoteStore {
   @Selector()
   static isLocked(state: NoteState): boolean {
     return state.fullNoteState?.isLocked;
+  }
+
+  @Selector()
+  static isCanForceLocked(state: NoteState): boolean {
+    return !state.fullNoteState?.note?.isLockedNow && state.fullNoteState?.note?.isLocked;
   }
 
   @Selector()
@@ -848,7 +843,7 @@ export class NoteStore {
   ) {
     const note = getState().fullNoteState?.note;
     if (note) {
-      const newNote: FullNote = { ...note, isLocked }; // TOOD
+      const newNote: FullNote = { ...note, isLockedNow: isLocked }; // TOOD
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }

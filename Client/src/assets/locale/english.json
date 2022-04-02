@@ -66,6 +66,7 @@
     "download": "Download",
     "lock": "Lock",
     "unlock": "Remove lock",
+    "forceLock": "Force lock",
     "archive": "Archive",
     "delete": "Delete",
     "history": "History",

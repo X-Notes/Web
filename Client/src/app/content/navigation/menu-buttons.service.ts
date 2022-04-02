@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteStore } from '../notes/state/notes-state';
 import { MenuItem } from './menu-Item.model';
@@ -11,6 +11,10 @@ import { MenuButtonsNotesService } from './menu-buttons-notes.service';
 import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { SmallNote } from '../notes/models/small-note.model';
+import { ChangeIsLockedFullNote, UpdateOneNote } from '../notes/state/notes-actions';
+import { LockEncryptService } from '../notes/lock-encrypt.service';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -518,6 +522,8 @@ export class MenuButtonsService {
     private pService: PersonalizationService,
     private menuButtonsNotesService: MenuButtonsNotesService,
     private menuButtonsFoldersService: MenuButtonsFoldersService,
+    private lockEncryptService: LockEncryptService,
+    private router: Router,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
@@ -542,21 +548,46 @@ export class MenuButtonsService {
     }
   }
 
+  isActiveForceLock(): Observable<string> {
+    return combineLatest([
+      this.store.select(AppStore.isNoteInner),
+      this.store.select(NoteStore.isCanForceLocked),
+    ]).pipe(map(([n, f]) => (n && f ? 'menu.forceLock' : 'menu.lock')));
+  }
+
   getLockItem(): MenuItem {
-    const obj = {
+    return {
       icon: 'lock',
+      tooltip: this.isActiveForceLock(),
       isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: () => {
-        return this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.Lock,
-        );
+      operation: async () => {
+        const id = this.getSelectedNoteId();
+        if (
+          this.store.selectSnapshot(AppStore.isNoteInner) &&
+          this.store.selectSnapshot(NoteStore.isCanForceLocked)
+        ) {
+          await this.setLockedInState(id);
+          this.router.navigate(['notes']);
+          return;
+        }
+        return this.dialogsManageService.openLockDialog(id, LockPopupState.Lock);
       },
       isNoOwnerCanSee: false,
       isViewOnFullFolder: false,
     };
-    return obj;
+  }
+
+  getNote(id: string): SmallNote {
+    return this.store.selectSnapshot(NoteStore.getSmallNotes).find((x) => x.id === id);
+  }
+
+  async setLockedInState(id: string) {
+    await this.lockEncryptService.forceLock(id).toPromise();
+    const updatedNote = { ...this.getNote(id) };
+    updatedNote.isLockedNow = true;
+    this.store.dispatch(new UpdateOneNote(updatedNote));
+    this.store.dispatch(new ChangeIsLockedFullNote(true));
   }
 
   getSelectedNoteId(): string {

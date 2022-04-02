@@ -28,7 +28,7 @@ namespace BI.Services.Encryption
 
         public bool RemoveUnlockTime(Guid noteId)
         {
-            if (!noteId_unlockTime.ContainsKey(noteId))
+            if (noteId_unlockTime.ContainsKey(noteId))
             {
                 return noteId_unlockTime.TryRemove(noteId, out var value);
             }

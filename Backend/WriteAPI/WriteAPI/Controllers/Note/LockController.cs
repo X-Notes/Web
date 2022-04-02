@@ -6,6 +6,8 @@ using Domain.Queries.Encryption;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO;
+using BI.Services.Encryption;
+using System;
 
 namespace WriteAPI.Controllers.Note
 {
@@ -15,9 +17,12 @@ namespace WriteAPI.Controllers.Note
     public class LockController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public LockController(IMediator _mediator)
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
+        public LockController(IMediator _mediator, UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this._mediator = _mediator;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
 
@@ -42,5 +47,11 @@ namespace WriteAPI.Controllers.Note
             return await _mediator.Send(query);
         }
 
+        [HttpGet("force/{noteId}")]
+        public OperationResult<bool> ForceLockNote(Guid noteId)
+        {
+            var result = userNoteEncryptStorage.RemoveUnlockTime(noteId);
+            return new OperationResult<bool>(result, result);
+        }
     }
 }

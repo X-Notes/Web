@@ -53,7 +53,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     if (isSelectedMode) {
       this.highlightNote(note);
     } else {
-      if (note.isLocked) {
+      if (note.isLockedNow) {
         this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock);
         return;
       }

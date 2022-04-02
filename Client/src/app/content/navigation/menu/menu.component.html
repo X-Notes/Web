@@ -5,7 +5,7 @@
       [ngClass]="item.class"
       #trigger
       (click)="item.operation()"
-      [CustomTooltip]="'menu.' + item.icon | translate"
+      [CustomTooltip]="(item.tooltip | async) ?? 'menu.' + item.icon | translate"
       position="Bottom"
       [disabled]="item?.isActive | async"
       *ngIf="(item?.isVisible | async) === (true || undefined || null)"

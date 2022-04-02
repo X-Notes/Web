@@ -162,7 +162,7 @@ export class LockComponent implements OnInit, OnDestroy {
 
   setLockedInState(isLocked: boolean) {
     const updatedNote = { ...this.getNote(this.data.id) };
-    updatedNote.isLocked = isLocked;
+    updatedNote.isLockedNow = isLocked;
     this.store.dispatch(new UpdateOneNote(updatedNote));
     this.store.dispatch(new ChangeIsLockedFullNote(isLocked));
   }
