@@ -550,9 +550,6 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsLocked")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("NoteTypeId")
                         .HasColumnType("integer");
 

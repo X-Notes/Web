@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { environment } from 'src/environments/environment';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
@@ -12,20 +13,22 @@ export class ApiNoteHistoryService {
   constructor(private httpClient: HttpClient) {}
 
   getHistory(noteId: string) {
-    return this.httpClient.get<NoteHistory[]>(`${environment.writeAPI}/api/history/${noteId}`);
+    return this.httpClient.get<OperationResult<NoteHistory[]>>(
+      `${environment.writeAPI}/api/history/${noteId}`,
+    );
   }
 
   getSnapshot(noteId: string, snapshotId: string) {
-    return this.httpClient.get<NoteSnapshotState>(
+    return this.httpClient.get<OperationResult<NoteSnapshotState>>(
       `${environment.writeAPI}/api/history/snapshot/${noteId}/${snapshotId}`,
     );
   }
 
   getSnapshotContent(noteId: string, snapshotId: string) {
     return this.httpClient
-      .get<ContentModelBase[]>(
+      .get<OperationResult<ContentModelBase[]>>(
         `${environment.writeAPI}/api/history/snapshot/contents/${noteId}/${snapshotId}`,
       )
-      .pipe(map((x) => TransformNoteUtil.transformContent(x)));
+      .pipe(map((x) => (x.success ? TransformNoteUtil.transformContent(x.data) : [])));
   }
 }

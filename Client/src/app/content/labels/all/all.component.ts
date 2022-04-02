@@ -35,7 +35,7 @@ import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-
 export class AllComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
-  @Select(LabelStore.countAll)
+  @Select(LabelStore.countNoDeleted)
   countAll$: Observable<number>;
 
   fontSize = FontSizeENUM;
@@ -57,13 +57,13 @@ export class AllComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.labelService.murriInitialise(this.refElements, false);
+    this.labelService.murriInitialise(this.refElements);
   }
 
   async loadContent() {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
-    const labels = this.store.selectSnapshot(LabelStore.all);
+    const labels = this.store.selectSnapshot(LabelStore.noDeleted);
     this.labelService.initializeEntities(labels);
 
     await this.pService.waitPreloading();
@@ -82,7 +82,7 @@ export class AllComponent implements OnInit, AfterViewInit {
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
 
-    const labels = this.store.selectSnapshot(LabelStore.all);
+    const labels = this.store.selectSnapshot(LabelStore.noDeleted);
     this.labelService.entities.unshift(labels[0]);
   }
 

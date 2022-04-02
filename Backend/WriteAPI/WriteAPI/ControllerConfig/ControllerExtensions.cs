@@ -35,6 +35,12 @@ namespace WriteAPI.ControllerConfig
             return Guid.Parse(id);
         }
 
+        public static Guid GetUserIdUnStrict(this ControllerBase controller)
+        {
+            var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
+            return string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
+        }
+
         public static OperationResult<T> ValidateFile<T>(
             this ControllerBase controller, 
             IFormFile file, 

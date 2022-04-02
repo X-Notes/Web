@@ -47,7 +47,7 @@
     "menu": "Menu",
     "defaultColor": "Default color",
     "emptyTrash": "Empty Trash",
-    "manage": "Manage",
+    "manage": "Add notes",
     "questionItems": {
       "faq": "Frequently asked questions",
       "contact": "Contact with us"
@@ -66,6 +66,7 @@
     "download": "Download",
     "lock": "Lock",
     "unlock": "Remove lock",
+    "forceLock": "Force lock",
     "archive": "Archive",
     "delete": "Delete",
     "history": "History",
@@ -144,7 +145,7 @@
       "unLock": "Unlock note",
       "unDecrypt": "Remove lock",
       "remove": "Remove",
-      "сomeIn": "To come in",
+      "сomeIn": "Unlock",
       "save": "Save",
       "password": "Password",
       "confirm": "Confirm password",
@@ -153,7 +154,8 @@
       "passMatchError": "passwords does not match",
       "required": "Required field",
       "minLength": "Password must be at least 6 characters",
-      "incorrect": "Incorrect password"
+      "incorrect": "Incorrect password",
+      "timeMessage": "After unlocking the note will be available for 5 minutes"
     },
     "reviewModal": {
       "review": "Review document",

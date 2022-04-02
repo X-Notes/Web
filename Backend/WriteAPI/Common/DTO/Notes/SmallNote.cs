@@ -30,6 +30,8 @@ namespace Common.DTO.Notes
 
         public bool IsLocked { set; get; }
 
+        public bool IsLockedNow { set; get; }
+
         public DateTimeOffset? DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }

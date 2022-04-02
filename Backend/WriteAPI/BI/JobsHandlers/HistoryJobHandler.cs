@@ -16,14 +16,14 @@ namespace BI.JobsHandlers
 
     public class HistoryJobHandler
     {
-        private HistoryCacheService historyCacheService;
+        private HistoryCacheServiceStorage historyCacheService;
 
         private readonly IServiceScopeFactory serviceScopeFactory;
 
         private readonly ConfigForHistoryMaker config;
 
         public HistoryJobHandler(
-            HistoryCacheService historyCacheServicу,
+            HistoryCacheServiceStorage historyCacheServicу,
             IServiceScopeFactory serviceScopeFactory,
             ConfigForHistoryMaker config)
         {

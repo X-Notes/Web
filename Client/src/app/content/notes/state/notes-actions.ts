@@ -1,10 +1,10 @@
-import { Order } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
+import { PositionEntityModel } from '../models/position-note.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -132,10 +132,10 @@ export class RemoveFromDomMurri {
   static type = '[Notes] MurriRemove notes';
 }
 
-export class PositionNote {
+export class UpdatePositionsNotes {
   static type = '[Notes] Position notes';
 
-  constructor(public order: Order, public typeNote: NoteTypeENUM) {}
+  constructor(public positions: PositionEntityModel[]) {}
 }
 
 // SHARING

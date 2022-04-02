@@ -55,7 +55,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store
-      .select(LabelStore.all)
+      .select(LabelStore.noDeleted)
       .pipe(
         takeUntil(this.destroy),
         map((labels) => {

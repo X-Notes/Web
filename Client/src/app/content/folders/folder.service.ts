@@ -13,7 +13,12 @@ import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contra
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from './models/folder.model';
 import { FolderStore } from './state/folders-state';
-import { ClearAddToDomFolders, LoadFolders, UpdateOneFolder } from './state/folders-actions';
+import {
+  ClearAddToDomFolders,
+  LoadFolders,
+  UpdateOneFolder,
+  UpdatePositionsFolders,
+} from './state/folders-actions';
 import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */
@@ -122,6 +127,10 @@ export class FolderService
       return SortedByENUM.DescDate;
     }
     return this.sortFolderType;
+  }
+
+  updatePositions(): void {
+    this.store.dispatch(new UpdatePositionsFolders(this.murriService.getPositions()));
   }
 
   ngOnDestroy(): void {

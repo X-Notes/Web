@@ -7,6 +7,7 @@ export enum OperationResultAdditionalInfo {
   RequestCancelled,
   NotFound,
   AnotherError,
+  ContentLocked,
 }
 
 export interface OperationResult<T> {

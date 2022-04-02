@@ -1,4 +1,4 @@
-import { Order } from 'src/app/shared/services/order.service';
+import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { Label } from '../models/label.model';
 
 export class LoadLabels {
@@ -24,7 +24,7 @@ export class DeleteLabel {
 export class UpdateLabel {
   static type = '[Labels] Update Label';
 
-  constructor(public label: Label) {}
+  constructor(public label: Label, public isCallApi = true) {}
 }
 
 export class UpdateLabelCount {
@@ -33,10 +33,10 @@ export class UpdateLabelCount {
   constructor(public labelId: string) {}
 }
 
-export class PositionLabel {
+export class UpdatePositionsLabels {
   static type = '[Labels] Position Label';
 
-  constructor(public deleted: boolean, public id: string, public order: Order) {}
+  constructor(public positions: PositionEntityModel[]) {}
 }
 
 export class RestoreLabel {

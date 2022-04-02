@@ -10,12 +10,12 @@ namespace BI.SignalR
 {
     public class FolderWSUpdateService
     {
-        private readonly WebsocketsFoldersService websocketsFoldersService;
+        private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
         private readonly AppSignalRService appSignalRService;
         private readonly UserRepository userRepository;
 
         public FolderWSUpdateService(
-            WebsocketsFoldersService websocketsFoldersService, 
+            WebsocketsFoldersServiceStorage websocketsFoldersService, 
             AppSignalRService appSignalRService,
             UserRepository userRepository)
         {

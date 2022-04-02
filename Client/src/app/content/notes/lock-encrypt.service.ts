@@ -40,4 +40,10 @@ export class LockEncryptService {
       obj,
     );
   }
+
+  forceLock(noteId: string) {
+    return this.httpClient.get<OperationResult<boolean>>(
+      `${environment.writeAPI}/api/lock/force/${noteId}`,
+    );
+  }
 }

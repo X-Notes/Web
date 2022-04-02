@@ -54,6 +54,7 @@ namespace WriteAPI
             });
 
             services.AzureConfig(Configuration);
+            services.TimersConfig(Configuration);
             services.JWT(Configuration);
                 
             services.AddScoped<NoteFolderLabelMapper>();
@@ -79,6 +80,7 @@ namespace WriteAPI
             services.AddHostedService<JobRegisterHosted>();
             services.AddHostedService<ManageUsersOnEntitiesHosted>();
             services.AddHostedService<SetupServicesHosted>();
+            services.AddHostedService<ManageUnlockNotesHosted>();
 
             services.AddHttpClient();
 

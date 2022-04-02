@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes;
@@ -9,10 +8,8 @@ using Domain.Commands.FolderInner;
 using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -35,7 +32,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("preview")]
-        public async Task<List<PreviewNoteForSelection>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
+        public async Task<List<SmallNote>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
@@ -48,8 +45,22 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
-        [HttpPatch("update/notes")]
-        public async Task<OperationResult<Unit>> UpdateNotesInFolder(UpdateNotesInFolderCommand command)
+        [HttpPatch("add/notes")]
+        public async Task<OperationResult<Unit>> AddNotesToFolder(AddNotesToFolderCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("remove/notes")]
+        public async Task<OperationResult<Unit>> RemoveNotesFromFolder(RemoveNotesFromFolderCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("order/notes")]
+        public async Task<OperationResult<Unit>> UpdateOrderNotesInFolder(UpdateNotesPositionsInFolderCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Label } from './models/label.model';
-import { Labels } from './models/labels.model';
+import { PositionEntityModel } from '../notes/models/position-note.model';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ApiServiceLabels {
   constructor(private httpClient: HttpClient) {}
 
   getAll() {
-    return this.httpClient.get<Labels>(`${environment.writeAPI}/api/label`);
+    return this.httpClient.get<Label[]>(`${environment.writeAPI}/api/label`);
   }
 
   new() {
@@ -22,6 +23,16 @@ export class ApiServiceLabels {
 
   delete(id: string) {
     return this.httpClient.delete(`${environment.writeAPI}/api/label/perm/${id}`);
+  }
+
+  updateOrder(positions: PositionEntityModel[]) {
+    const obj = {
+      positions,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/label/order`,
+      obj,
+    );
   }
 
   update(label: Label) {

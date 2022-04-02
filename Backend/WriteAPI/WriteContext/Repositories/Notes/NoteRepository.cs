@@ -21,34 +21,6 @@ namespace WriteContext.Repositories.Notes
         {
         }
 
-        public async Task Add(Note note, NoteTypeENUM TypeId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var notes = await context.Notes.Where(x => x.UserId == note.UserId && x.NoteTypeId == TypeId).ToListAsync();
-
-                    if (notes.Count() > 0)
-                    {
-                        notes.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRangeAsync(notes);
-                    }
-
-                    await context.Notes.AddAsync(note);
-                    await context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
         public Task<List<Note>> GetNotesThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {
             return entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
@@ -71,7 +43,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public Task<Note> GetFull(Guid id)
+        public Task<Note> GetNoteWithLabels(Guid id)
         {
             return context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -173,7 +145,7 @@ namespace WriteContext.Repositories.Notes
             }
         }
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(
             Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -184,7 +156,7 @@ namespace WriteContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
-        public async Task<List<Note>> GetNotesByNoteIdsIdWithContentWithPersonalization(
+        public async Task<List<Note>> GetNotesByNoteIdsIdWithContent(
             IEnumerable<Guid> noteIds, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -205,6 +177,24 @@ namespace WriteContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
+        public Task<List<Note>> GetNotesByUserIdWithContentNoLocked(Guid userId, List<Guid> exceptIds)
+        {
+            return entities  // TODO OPTIMIZATION
+                .Include(x => x.Contents)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null).ToListAsync();
+        }
+
+        public async Task<List<Note>> GetNotesByUserIdNoLocked(Guid userId, List<Guid> exceptIds, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null)
+                .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
+        }
+
+
         public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
@@ -216,7 +206,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
+        public Task<List<Note>> GetNotesWithContent(List<Guid> noteIds)
         { 
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -227,7 +217,7 @@ namespace WriteContext.Repositories.Notes
                 .Where(x => noteIds.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<Note> GetNoteByIdsForCopy(Guid noteId)
+        public Task<Note> GetNoteWithContent(Guid noteId)
         {
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -237,87 +227,5 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(z => (z as CollectionNote).Files)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
-
-
-
-        // UPPER MENU FUNCTIONS
-
-        public async Task DeleteRangeDeleted(List<Note> selectdeletenotes, List<Note> deletednotes)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    context.Notes.RemoveRange(selectdeletenotes);
-                    await context.SaveChangesAsync();
-
-                    foreach (var item in selectdeletenotes)
-                    {
-                        deletednotes.Remove(item);
-                    }
-
-                    deletednotes = deletednotes.OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(deletednotes);
-                    await UpdateRangeAsync(deletednotes);
-
-                    await transaction.CommitAsync();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
-
-        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NoteTypeENUM FromId, NoteTypeENUM ToId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
-                    notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
-                    await UpdateRangeAsync(notesTo);
-
-                    notesForCasting.ForEach(x =>
-                    {
-                        x.NoteTypeId = ToId;
-                        x.UpdatedAt = DateTimeProvider.Time;
-                    });
-
-                    ChangeOrderHelper(notesForCasting);
-                    await UpdateRangeAsync(notesForCasting);
-
-                    var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(oldNotes);
-                    await UpdateRangeAsync(oldNotes);
-
-                    await transaction.CommitAsync();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
-        private void ChangeOrderHelper(List<Note> notes)
-        {
-            int order = 1;
-            foreach (var item in notes)
-            {
-                item.Order = order;
-                order++;
-            }
-        }
-
-        public async Task<Note> GetOneById(Guid noteId)
-        {
-            return await context.Notes.FirstOrDefaultAsync(x => x.Id == noteId);
-        }
-
     }
 }

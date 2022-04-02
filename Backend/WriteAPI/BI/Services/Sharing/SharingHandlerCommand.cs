@@ -66,24 +66,15 @@ namespace BI.Services.Sharing
         {
             var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
-            var isCanEdit = permissions.All(x => x.perm.CanWrite);
+            var isCanEdit = permissions.All(x => x.perm.IsOwner);
 
             if (isCanEdit) {
-                var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId);
                 foreach (var perm in permissions)
                 {
                     var folder = perm.perm.Folder;
                     folder.RefTypeId = request.RefTypeId;
-                    if (folder.FolderTypeId != FolderTypeENUM.Shared)
-                    {
-                        folder.DeletedAt = null;
-                        var foldersList = new List<Folder>() { folder };
-                        await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, FolderTypeENUM.Shared);
-                    }
-                    else
-                    {
-                        await folderRepository.UpdateAsync(folder);
-                    }
+                    folder.ToType(FolderTypeENUM.Shared);
+                    await folderRepository.UpdateAsync(folder);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -94,25 +85,15 @@ namespace BI.Services.Sharing
         {
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
-            var isCanEdit = permissions.All(x => x.perm.CanWrite);
-
+            var isCanEdit = permissions.All(x => x.perm.IsOwner);
             if (isCanEdit)
             {
-                var user = await userRepository.GetUserWithNotesIncludeNoteType(request.UserId);
                 foreach (var perm in permissions)
                 {
                     var note = perm.perm.Note;
                     note.RefTypeId = request.RefTypeId;
-                    if (note.NoteTypeId != NoteTypeENUM.Shared)
-                    {
-                        note.DeletedAt = null;
-                        var notesList = new List<Note>() { note };
-                        await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, NoteTypeENUM.Shared);
-                    }
-                    else
-                    {
-                        await noteRepository.UpdateAsync(note);
-                    }
+                    note.ToType(NoteTypeENUM.Shared);
+                    await noteRepository.UpdateAsync(note);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Mapping;
+using BI.Services.Encryption;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.History.Contents;
+using Common.DTO;
 using Common.DTO.History;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Queries.History;
@@ -14,14 +16,13 @@ using MediatR;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.NoteContent;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BI.Services.History
 {
     public class HistoryHandlerQuery :
-        IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>,
-        IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>,
-        IRequestHandler<GetSnapshotContentsQuery, List<BaseNoteContentDTO>>
+        IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>,
+        IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>,
+        IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
 
         private readonly IMediator _mediator;
@@ -34,62 +35,83 @@ namespace BI.Services.History
 
         private readonly FileRepository fileRepository;
 
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
         public HistoryHandlerQuery(
             IMediator _mediator,
             NoteSnapshotRepository noteHistoryRepository,
             NoteFolderLabelMapper noteCustomMapper,
             BaseNoteContentRepository baseNoteContentRepository,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.noteHistoryRepository = noteHistoryRepository;
             this.noteCustomMapper = noteCustomMapper;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.fileRepository = fileRepository;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
-        public async Task<List<NoteHistoryDTO>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<NoteHistoryDTO>>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
+
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            {
+                return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
+            }
 
             if (permissions.CanRead)
             {
                 var histories = await noteHistoryRepository.GetNoteHistories(request.NoteId);
-                return noteCustomMapper.MapHistoriesToHistoriesDto(histories);
+                var data = noteCustomMapper.MapHistoriesToHistoriesDto(histories);
+                return new OperationResult<List<NoteHistoryDTO>>(true, data);
             }
 
-            return new List<NoteHistoryDTO>();
+            return new OperationResult<List<NoteHistoryDTO>>(false, null).SetNoPermissions();
         }
 
-        public async Task<NoteHistoryDTOAnswer> Handle(GetNoteSnapshotQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<NoteHistoryDTOAnswer>> Handle(GetNoteSnapshotQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
+
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            {
+                return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
+            }
 
             if (permissions.CanRead)
             {
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
-                return new NoteHistoryDTOAnswer(true, noteCustomMapper.MapNoteSnapshotToNoteSnapshotDTO(snapshot));
+                var data = new NoteHistoryDTOAnswer(true, noteCustomMapper.MapNoteSnapshotToNoteSnapshotDTO(snapshot));
+                return new OperationResult<NoteHistoryDTOAnswer>(true, data);
             }
 
-            return new NoteHistoryDTOAnswer(false, null);
+            return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetNoPermissions();
         }
 
-        public async Task<List<BaseNoteContentDTO>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
+
+            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            {
+                return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+            }
 
             if (permissions.CanRead)
             {
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
                 var result = await Convert(snapshot.Contents);
-                return result.OrderBy(x => x.Order).ToList();
+                var data = result.OrderBy(x => x.Order).ToList();
+                return new OperationResult<List<BaseNoteContentDTO>>(true, data);
             }
 
-            // TODO WHEN NO ACCESS
-            return null;
+            return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetNoPermissions();
         }
 
         private async Task<List<BaseNoteContentDTO>> Convert(ContentSnapshot contents)
@@ -102,9 +124,34 @@ namespace BI.Services.History
             if (ids.Any())
             {
                 var files = await fileRepository.GetWhereAsync(x => ids.Contains(x.Id));
-                resultList.AddRange(contents.CollectionNoteSnapshots.Select(x => ConvertPhotosCollection(x, files)));
+                foreach(var x in contents.CollectionNoteSnapshots)
+                {
+                    switch (x.FileTypeId)
+                    {
+                        case FileTypeEnum.Photo:
+                            {
+                                resultList.Add(ConvertPhotosCollection(x, files));
+                                break;
+                            }
+                        case FileTypeEnum.Audio:
+                            {
+                                resultList.Add(ConvertAudiosCollection(x, files));
+                                break;
+                            }
+                        case FileTypeEnum.Document:
+                            {
+                                resultList.Add(ConvertDocumentsCollection(x, files));
+                                break;
+                            }
+                        case FileTypeEnum.Video:
+                            {
+                                resultList.Add(ConvertVideosCollection(x, files));
+                                break;
+                            }
+                        default: break;
+                    }
+                }
             }
-
             return resultList;
         }
 

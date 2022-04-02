@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
 import { TranslateService } from '@ngx-translate/core';
-import { map, startWith, take } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -228,10 +228,6 @@ export class PersonalizationService {
       this.store.select(NoteStore.activeMenu).pipe(startWith(false)),
       this.store.select(FolderStore.activeMenu).pipe(startWith(false)),
     ]).pipe(map(([n, f]) => n || f));
-  }
-
-  async getTranslateText(key) {
-    return this.translate.get(key).pipe(take(1)).toPromise();
   }
 
   onResize(): void {

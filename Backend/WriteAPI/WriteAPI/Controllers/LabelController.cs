@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Labels;
 using Domain.Commands.Labels;
 using Domain.Queries.Labels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -33,9 +31,9 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<LabelsDTO> GetUserLabels()
+        public async Task<List<LabelDTO>> GetUserLabels()
         {
-            return await _mediator.Send(new GetLabelsByEmailQuery(this.GetUserId()));
+            return await _mediator.Send(new GetLabelsQuery(this.GetUserId()));
         }
 
         [HttpGet("count/{id}")]
@@ -75,6 +73,13 @@ namespace WriteAPI.Controllers
         public async Task RemoveAllFromBin()
         {
             await _mediator.Send(new RemoveAllFromBinCommand(this.GetUserId()));
+        }
+
+        [HttpPatch("order")]
+        public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsLabelCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await _mediator.Send(command);
         }
     }
 }

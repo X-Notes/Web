@@ -66,7 +66,10 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     this.sliderService.initWidthSlide();
 
     await this.sideBarService.loadNotes(this.note.id);
-    this.histories = await this.apiHistory.getHistory(this.note.id).toPromise();
+    const result = await this.apiHistory.getHistory(this.note.id).toPromise();
+    if (result.success) {
+      this.histories = result.data;
+    }
   }
 
   ngAfterViewInit(): void {

@@ -29,7 +29,7 @@ namespace Common.DTO.Permissions
         {
             get
             {
-                return Caller.Id == Note.UserId;
+                return Caller?.Id == Note.UserId;
             }
 
         }

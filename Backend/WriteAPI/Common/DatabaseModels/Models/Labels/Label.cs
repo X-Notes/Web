@@ -26,5 +26,12 @@ namespace Common.DatabaseModels.Models.Labels
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+
+        public void ToType(bool isDeleted, DateTimeOffset? deletedAt = null)
+        {
+            DeletedAt = deletedAt;
+            IsDeleted = isDeleted;
+            UpdatedAt = DateTimeProvider.Time;
+        }
     }
 }

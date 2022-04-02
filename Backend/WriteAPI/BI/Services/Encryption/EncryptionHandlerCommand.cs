@@ -15,11 +15,13 @@ namespace BI.Services.Encryption
         private readonly IMediator _mediator;
         private readonly AppEncryptor appEncryptor;
         private readonly NoteRepository noteRepository;
-        public EncryptionHandlerCommand(IMediator _mediator, AppEncryptor appEncryptor, NoteRepository noteRepository)
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        public EncryptionHandlerCommand(IMediator _mediator, AppEncryptor appEncryptor, NoteRepository noteRepository, UserNoteEncryptStorage userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.appEncryptor = appEncryptor;
             this.noteRepository = noteRepository;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
         public async Task<OperationResult<bool>> Handle(EncryptionNoteCommand request, CancellationToken cancellationToken)
@@ -27,13 +29,12 @@ namespace BI.Services.Encryption
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner)
             {
                 if (request.Password == request.ConfirmPassword)
                 {
                     var note = permissions.Note;
                     var hash = appEncryptor.Encode(request.Password);
-                    note.IsLocked = true;
                     note.Password = hash;
                     await noteRepository.UpdateAsync(note);
                     return new OperationResult<bool>(true, true);
@@ -49,21 +50,21 @@ namespace BI.Services.Encryption
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (permissions.IsOwner)
             {
                 if (appEncryptor.Compare(request.Password, permissions.Note.Password))
                 {
                     var note = permissions.Note;
-                    note.IsLocked = false;
                     note.Password = null;
                     await noteRepository.UpdateAsync(note);
+                    userNoteEncryptStorage.RemoveUnlockTime(note.Id);
                     return new OperationResult<bool>(true, true);
                 }
 
                 return new OperationResult<bool>(true, false);
             }
 
-            return new OperationResult<bool>(false, false);
+            return new OperationResult<bool>(false, false).SetNoPermissions();
         }
     }
 }

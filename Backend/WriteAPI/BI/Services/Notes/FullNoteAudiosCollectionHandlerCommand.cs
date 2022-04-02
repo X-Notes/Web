@@ -34,7 +34,7 @@ namespace BI.Services.Notes
 
         private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
-        private readonly HistoryCacheService historyCacheService;
+        private readonly HistoryCacheServiceStorage historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -45,7 +45,7 @@ namespace BI.Services.Notes
             BaseNoteContentRepository baseNoteContentRepository,
             CollectionNoteRepository collectionNoteRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
-            HistoryCacheService historyCacheService,
+            HistoryCacheServiceStorage historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService)
         {

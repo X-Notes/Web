@@ -7,6 +7,7 @@ using WriteContext.Repositories;
 using BI.JobsHandlers;
 using BI.Mapping;
 using System.Linq;
+using Common.Timers;
 
 namespace WriteAPI.Controllers
 {
@@ -16,25 +17,23 @@ namespace WriteAPI.Controllers
     public class AppController : ControllerBase
     {
         private readonly AppRepository appRepository;
-
-        private readonly ConfigForEntitesDeliting configForEntitesDeliting;
-
+        private readonly TimersConfig timersConfig;
         private readonly AppTypesMapper appTypesMapper;
 
         public AppController(
-            AppRepository appRepository, 
-            ConfigForEntitesDeliting configForEntitesDeliting,
+            AppRepository appRepository,
+            TimersConfig timersConfig,
             AppTypesMapper appTypesMapper)
         {
             this.appRepository = appRepository;
-            this.configForEntitesDeliting = configForEntitesDeliting;
+            this.timersConfig = timersConfig;
             this.appTypesMapper = appTypesMapper;
         }
 
-        [HttpGet("config/n/delete")]
-        public ConfigForEntitesDeliting GetConfigForDelete()
+        [HttpGet("config")]
+        public TimersConfig GetConfigForDelete()
         {
-            return configForEntitesDeliting;
+            return timersConfig;
         }
 
         [HttpGet("languages")]

@@ -1,6 +1,6 @@
 <app-dialog-generic-header
   [icon]="'icon-plus'"
-  [message]="isCurrentOperationHeader | translate"
+  [message]="header | translate"
 ></app-dialog-generic-header>
 <!-- TODO move input to component -->
 <form [formGroup]="form" class="container" *ngIf="form">
@@ -22,7 +22,10 @@
       >
     </div>
   </div>
-  <div class="field" *ngIf="!isLockedGeneric">
+  <div *ngIf="isDisplayUnlockTime" class="time-messsage">
+    <p>{{ 'modal.lockModal.timeMessage' | translate }}</p>
+  </div>
+  <div class="field" *ngIf="isDisplaySecondField">
     <label>{{ 'modal.lockModal.confirm' | translate }}</label>
     <input
       type="password"
@@ -43,5 +46,5 @@
 </form>
 <app-dialog-generic-save
   (saveOutput)="save()"
-  [buttonText]="isCurrentOperationButton | translate"
+  [buttonText]="bottomButtonName | translate"
 ></app-dialog-generic-save>

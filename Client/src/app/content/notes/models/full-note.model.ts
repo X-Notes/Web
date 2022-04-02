@@ -10,6 +10,7 @@ export interface FullNote {
   refTypeId: RefTypeENUM;
   noteTypeId: NoteTypeENUM;
   isLocked: boolean;
+  isLockedNow: boolean;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

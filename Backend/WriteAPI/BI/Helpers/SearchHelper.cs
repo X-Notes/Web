@@ -7,9 +7,9 @@ namespace BI.Helpers
 {
     public static class SearchHelper
     {
-        public static bool IsMatchContent(string Content, string search)
+        public static bool IsMatchContent(string content, string search)
         {
-            if (!string.IsNullOrEmpty(Content) && Content.Contains(search))
+            if (!string.IsNullOrEmpty(content) && content.Contains(search))
             {
                 return true;
             }
