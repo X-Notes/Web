@@ -23,7 +23,7 @@ namespace BI.Services.Folders
         IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>,
         IRequestHandler<AddNotesToFolderCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateNotesPositionInFolderCommand, OperationResult<Unit>>
+        IRequestHandler<UpdateNotesPositionsInFolderCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
@@ -131,7 +131,7 @@ namespace BI.Services.Folders
             return new OperationResult<Unit>(false, Unit.Value);
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateNotesPositionInFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UpdateNotesPositionsInFolderCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -139,7 +139,7 @@ namespace BI.Services.Folders
 
             if (permissions.CanWrite && request.Positions != null && request.Positions.Any())
             {
-                var noteIds = request.Positions.Select(x => x.NoteId).ToList();
+                var noteIds = request.Positions.Select(x => x.EntityId).ToList();
                 var foldersNotesToUpdateOrder = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, noteIds);
 
                 if (foldersNotesToUpdateOrder.Any())
@@ -149,9 +149,9 @@ namespace BI.Services.Folders
                     var noteLookUp = foldersNotesToUpdateOrder.ToDictionary(x => x.NoteId);
                     request.Positions.ForEach(x =>
                     {
-                        if (noteLookUp.ContainsKey(x.NoteId))
+                        if (noteLookUp.ContainsKey(x.EntityId))
                         {
-                            noteLookUp[x.NoteId].Order = x.Position;
+                            noteLookUp[x.EntityId].Order = x.Position;
                         }
                     });
 

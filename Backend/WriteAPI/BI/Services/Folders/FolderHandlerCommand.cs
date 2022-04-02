@@ -27,7 +27,8 @@ namespace BI.Services.Folders
         IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
         IRequestHandler<DeleteFoldersCommand, Unit>,
-        IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>
+        IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
@@ -66,7 +67,7 @@ namespace BI.Services.Folders
             };
 
             await folderRepository.Add(folder, FolderTypeENUM.Private);
-            var newFolder = await folderRepository.GetOneById(folder.Id);
+            var newFolder = await folderRepository.FirstOrDefaultAsync(x => x.Id == folder.Id);
             return appCustomMapper.MapFolderToSmallFolder(newFolder);
         }
 
@@ -221,6 +222,30 @@ namespace BI.Services.Folders
                 return new OperationResult<Unit>(true, Unit.Value);
             }
             return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePositionsFoldersCommand request, CancellationToken cancellationToken)
+        {
+            var folderIds = request.Positions.Select(x => x.EntityId).ToList();
+            var folders = await folderRepository.GetWhereAsync(x => x.UserId == request.UserId && folderIds.Contains(x.Id));
+
+            if (folders.Any())
+            {
+                request.Positions.ForEach(x =>
+                {
+                    var folder = folders.FirstOrDefault(z => z.Id == x.EntityId); 
+                    if (folder != null)
+                    {
+                        folder.Order = x.Position;
+                    }
+                });
+
+                await folderRepository.UpdateRangeAsync(folders);
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNotFound();
         }
     }
 }

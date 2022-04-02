@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.DatabaseModels.Models.Labels;
+using Common.DTO;
 using Domain.Commands.Labels;
 using MediatR;
 using WriteContext.Repositories.Labels;
@@ -17,7 +18,8 @@ namespace BI.Services.Labels
         IRequestHandler<UpdateLabelCommand, Unit>,
         IRequestHandler<SetDeletedLabelCommand, Unit>,
         IRequestHandler<RestoreLabelCommand, Unit>,
-        IRequestHandler<RemoveAllFromBinCommand, Unit>
+        IRequestHandler<RemoveAllFromBinCommand, Unit>,
+        IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>
     {
         private readonly LabelRepository labelRepository;
         private readonly UserRepository userRepository;
@@ -100,6 +102,30 @@ namespace BI.Services.Labels
             }
 
             return Unit.Value;
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePositionsLabelCommand request, CancellationToken cancellationToken)
+        {
+            var labelIds = request.Positions.Select(x => x.EntityId).ToList();
+            var labels = await labelRepository.GetWhereAsync(x => x.UserId == request.UserId && labelIds.Contains(x.Id));
+
+            if (labels.Any())
+            {
+                request.Positions.ForEach(x =>
+                {
+                    var label = labels.FirstOrDefault(z => z.Id == x.EntityId);
+                    if (label != null)
+                    {
+                        label.Order = x.Position;
+                    }
+                });
+
+                await labelRepository.UpdateRangeAsync(labels);
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNotFound();
         }
     }
 }
