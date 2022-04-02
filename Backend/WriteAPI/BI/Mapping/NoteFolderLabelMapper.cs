@@ -154,7 +154,8 @@ namespace BI.Mapping
                 IsDeleted = lb.IsDeleted,
                 DeletedAt = lb.DeletedAt,
                 CreatedAt = lb.CreatedAt,
-                UpdatedAt = lb.UpdatedAt
+                UpdatedAt = lb.UpdatedAt,
+                Order = lb.Order
             };
         }
 
@@ -169,7 +170,8 @@ namespace BI.Mapping
                 IsDeleted = label.IsDeleted,
                 DeletedAt = label.DeletedAt,
                 CreatedAt = label.CreatedAt,
-                UpdatedAt = label.UpdatedAt
+                UpdatedAt = label.UpdatedAt,
+                Order = label.Order
             };
         }
 

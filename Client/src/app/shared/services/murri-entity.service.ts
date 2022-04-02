@@ -25,10 +25,16 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
   async synchronizeState(refElements: QueryList<ElementRef>, isAddToEnd: boolean) {
     if (this.firstInitedMurri) {
       const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-      this.newItemChecker(elements, isAddToEnd);
-      await this.deleteItemChecker(elements);
+      const isHasNewItem = this.newItemChecker(elements, isAddToEnd);
+      const isDeleteItem = await this.deleteItemChecker(elements);
+      const isNeedUpdatePositions = isHasNewItem || isDeleteItem;
+      if (isNeedUpdatePositions) {
+        this.updatePositions();
+      }
     }
   }
+
+  updatePositions() {}
 
   async setInitMurriFlagShowLayout() {
     await this.murriService.setOpacityFlagAsync();
@@ -64,31 +70,44 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     }
   }
 
-  private async deleteItemChecker(elements: HTMLElement[]) {
-    let flag = false;
+  private async deleteItemChecker(elements: HTMLElement[]): Promise<boolean> {
+    let isHasUpdates = false;
     // eslint-disable-next-line guard-for-in
     for (const key in this.state) {
       const item = this.state[key];
       const htmlItem = elements.find((x) => x.id === item.id);
       if (!htmlItem) {
-        flag = true;
+        isHasUpdates = true;
         delete this.state[key];
+        this.removeFromGrid(item.id);
       }
     }
-    if (flag) {
+    if (isHasUpdates) {
       await this.murriService.refreshLayoutAsync();
+    }
+    return isHasUpdates;
+  }
+
+  private removeFromGrid(id: string): void {
+    // eslint-disable-next-line no-underscore-dangle
+    const item = this.murriService.grid.getItems().find((x) => x._element.id === id);
+    if (item) {
+      this.murriService.grid.remove([item], { removeElements: true });
     }
   }
 
-  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {
+  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean): boolean {
+    let isHasUpdates = false;
     for (const el of elements) {
       if (!this.state[el.id]) {
         this.state[el.id] = this.entities.find((x) => x.id === el.id);
-        this.murriService.grid.add(document.getElementById(el.id), {
+        this.murriService.grid.add(el, {
           index: isAddToEnd ? -1 : 0,
           layout: true,
         });
+        isHasUpdates = true;
       }
     }
+    return isHasUpdates;
   }
 }

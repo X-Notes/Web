@@ -22,11 +22,9 @@ namespace BI.Services.Labels
         IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>
     {
         private readonly LabelRepository labelRepository;
-        private readonly UserRepository userRepository;
-        public LabelHandlerCommand(LabelRepository labelRepository, UserRepository userRepository)
+        public LabelHandlerCommand(LabelRepository labelRepository)
         {
             this.labelRepository = labelRepository;
-            this.userRepository = userRepository;
         }
 
 
@@ -69,7 +67,6 @@ namespace BI.Services.Labels
         {
             var label = new Label();
             label.UserId = request.UserId;
-            label.Order = 1;
             label.Color = LabelsColorPallete.Red;
             label.CreatedAt = DateTimeProvider.Time;
             label.UpdatedAt = DateTimeProvider.Time;
@@ -84,7 +81,7 @@ namespace BI.Services.Labels
             var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                label.ToType(false, DateTimeProvider.Time);
+                label.ToType(false);
                 await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
