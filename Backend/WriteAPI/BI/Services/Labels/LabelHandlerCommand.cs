@@ -32,22 +32,21 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.DeleteLabel(label, user.Labels);
+                await labelRepository.RemoveAsync(label);
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(SetDeletedLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.SetDeletedLabel(label, user.Labels);
+                label.ToType(true, DateTimeProvider.Time);
+                await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
         }
@@ -55,8 +54,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
                 label.Color = request.Color;
@@ -76,18 +74,18 @@ namespace BI.Services.Labels
             label.CreatedAt = DateTimeProvider.Time;
             label.UpdatedAt = DateTimeProvider.Time;
 
-            await labelRepository.NewLabel(label);
+            await labelRepository.AddAsync(label);
             return label.Id;
         }
 
 
         public async Task<Unit> Handle(RestoreLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.RestoreLabel(label, user.Labels);
+                label.ToType(false, DateTimeProvider.Time);
+                await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
         }

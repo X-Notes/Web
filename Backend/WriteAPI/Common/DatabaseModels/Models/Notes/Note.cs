@@ -44,5 +44,12 @@ namespace Common.DatabaseModels.Models.Notes
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public  DateTimeOffset CreatedAt { get; set; }
+
+        public void ToType(NoteTypeENUM noteTypeId, DateTimeOffset? deletedAt = null)
+        {
+            DeletedAt = deletedAt;
+            NoteTypeId = noteTypeId;
+            UpdatedAt = DateTimeProvider.Time;
+        }
     }
 }

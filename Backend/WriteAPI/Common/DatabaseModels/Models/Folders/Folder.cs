@@ -29,5 +29,12 @@ namespace Common.DatabaseModels.Models.Folders
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+
+        public void ToType(FolderTypeENUM folderTypeId, DateTimeOffset? deletedAt = null)
+        {
+            DeletedAt = deletedAt;
+            FolderTypeId = folderTypeId;
+            UpdatedAt = DateTimeProvider.Time;
+        }
     }
 }

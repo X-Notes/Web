@@ -63,7 +63,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("order/notes")]
-        public async Task<OperationResult<Unit>> UpdateOrderNotesInFolder(UpdateNotesPositionInFolderCommand command)
+        public async Task<OperationResult<Unit>> UpdateOrderNotesInFolder(UpdateNotesPositionsInFolderCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

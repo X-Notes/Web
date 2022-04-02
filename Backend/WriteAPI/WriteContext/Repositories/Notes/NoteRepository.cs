@@ -21,34 +21,6 @@ namespace WriteContext.Repositories.Notes
         {
         }
 
-        public async Task Add(Note note, NoteTypeENUM TypeId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var notes = await context.Notes.Where(x => x.UserId == note.UserId && x.NoteTypeId == TypeId).ToListAsync();
-
-                    if (notes.Count() > 0)
-                    {
-                        notes.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRangeAsync(notes);
-                    }
-
-                    await context.Notes.AddAsync(note);
-                    await context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
         public Task<List<Note>> GetNotesThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {
             return entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
@@ -255,87 +227,5 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(z => (z as CollectionNote).Files)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
-
-
-
-        // UPPER MENU FUNCTIONS
-
-        public async Task DeleteRangeDeleted(List<Note> selectdeletenotes, List<Note> deletednotes)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    context.Notes.RemoveRange(selectdeletenotes);
-                    await context.SaveChangesAsync();
-
-                    foreach (var item in selectdeletenotes)
-                    {
-                        deletednotes.Remove(item);
-                    }
-
-                    deletednotes = deletednotes.OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(deletednotes);
-                    await UpdateRangeAsync(deletednotes);
-
-                    await transaction.CommitAsync();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
-
-        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NoteTypeENUM FromId, NoteTypeENUM ToId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
-                    notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
-                    await UpdateRangeAsync(notesTo);
-
-                    notesForCasting.ForEach(x =>
-                    {
-                        x.NoteTypeId = ToId;
-                        x.UpdatedAt = DateTimeProvider.Time;
-                    });
-
-                    ChangeOrderHelper(notesForCasting);
-                    await UpdateRangeAsync(notesForCasting);
-
-                    var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(oldNotes);
-                    await UpdateRangeAsync(oldNotes);
-
-                    await transaction.CommitAsync();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    await transaction.RollbackAsync();
-                }
-            }
-        }
-
-        private void ChangeOrderHelper(List<Note> notes)
-        {
-            int order = 1;
-            foreach (var item in notes)
-            {
-                item.Order = order;
-                order++;
-            }
-        }
-
-        public async Task<Note> GetOneById(Guid noteId)
-        {
-            return await context.Notes.FirstOrDefaultAsync(x => x.Id == noteId);
-        }
-
     }
 }
