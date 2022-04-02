@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { PositionNoteModel } from 'src/app/content/notes/models/position-note.model';
+import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 
 @Injectable()
 export class ApiFullFolderService {
@@ -53,7 +53,8 @@ export class ApiFullFolderService {
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/remove/notes`, obj);
   }
 
-  orderNotesInFolder(positions: PositionNoteModel[], folderId: string) { // TODO
+  orderNotesInFolder(positions: PositionEntityModel[], folderId: string) {
+    // TODO
     const obj = {
       positions,
       folderId,
