@@ -26,9 +26,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{noteId}")]
+        [AllowAnonymous]
         public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
         {
-            var command = new GetNoteContentsQuery(this.GetUserId(), noteId);
+            var command = new GetNoteContentsQuery(this.GetUserIdUnStrict(), noteId);
             return await this._mediator.Send(command);
         }
 
