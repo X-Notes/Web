@@ -1,4 +1,4 @@
 export enum EntityPopupType {
-  Note,
+  Note = 1,
   Folder,
 }

@@ -1,5 +1,5 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -24,10 +24,8 @@ import {
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
-import { EntityType } from '../../enums/entity-types.enum';
 import { FolderTypeENUM } from '../../enums/folder-types.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { SearchUserForShareModal } from '../../models/short-user-for-share-modal.model';
@@ -35,15 +33,12 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EntityPopupType } from '../../models/entity-popup-type.enum';
 
 export interface StartType {
   id: string;
   type: NoteTypeENUM | FolderTypeENUM;
-}
-
-export enum SharedType {
-  Note,
-  Folder,
 }
 
 @Component({
@@ -64,9 +59,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   @Select(NoteStore.getUsersOnPrivateNote)
   public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
 
-  windowType = SharedType;
-
-  currentWindowType: SharedType;
+  windowType = EntityPopupType;
 
   noteType = NoteTypeENUM;
 
@@ -121,23 +114,28 @@ export class ShareComponent implements OnInit, OnDestroy {
     private apiFolder: ApiFoldersService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private updaterEntitiesService: UpdaterEntitiesService,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      currentWindowType: EntityPopupType;
+      ids: string[];
+    },
   ) {}
 
   get isPrivateButtonActive() {
-    if (this.currentWindowType === SharedType.Note) {
+    if (this.data.currentWindowType === EntityPopupType.Note) {
       return this.currentNote?.noteTypeId !== NoteTypeENUM.Shared;
     }
-    if (this.currentWindowType === SharedType.Folder) {
+    if (this.data.currentWindowType === EntityPopupType.Folder) {
       return this.currentFolder?.folderTypeId !== FolderTypeENUM.Shared;
     }
     throw new Error('Incorrect type');
   }
 
   get isSharedButtonActive() {
-    if (this.currentWindowType === SharedType.Note) {
+    if (this.data.currentWindowType === EntityPopupType.Note) {
       return this.currentNote?.noteTypeId === NoteTypeENUM.Shared;
     }
-    if (this.currentWindowType === SharedType.Folder) {
+    if (this.data.currentWindowType === EntityPopupType.Folder) {
       return this.currentFolder?.folderTypeId === FolderTypeENUM.Shared;
     }
     throw new Error('Incorrect type');
@@ -167,61 +165,11 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const routing = this.store.selectSnapshot(AppStore.getRouting); // TODO REMOVE CHANGE ON INPUT
-    switch (routing) {
-      case EntityType.NoteArchive: {
-        this.getNotes();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      case EntityType.NotePrivate: {
-        this.getNotes();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      case EntityType.NoteDeleted: {
-        this.getNotes();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      case EntityType.NoteShared: {
-        this.getNotes();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      case EntityType.NoteInner: {
-        this.getFullNote();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      case EntityType.FolderArchive: {
-        this.getFolders();
-        this.currentWindowType = SharedType.Folder;
-        break;
-      }
-      case EntityType.FolderDeleted: {
-        this.getFolders();
-        this.currentWindowType = SharedType.Folder;
-        break;
-      }
-      case EntityType.FolderPrivate: {
-        this.getFolders();
-        this.currentWindowType = SharedType.Folder;
-        break;
-      }
-      case EntityType.FolderShared: {
-        this.getFolders();
-        this.currentWindowType = SharedType.Folder;
-        break;
-      }
-      case EntityType.FolderInner: {
-        this.getNotes();
-        this.currentWindowType = SharedType.Note;
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
+    if (this.data.currentWindowType === EntityPopupType.Note) {
+      this.getNotes();
+    }
+    if (this.data.currentWindowType === EntityPopupType.Folder) {
+      this.getFolders();
     }
 
     this.searchStrChanged
@@ -238,12 +186,12 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   userFilters(items: SearchUserForShareModal[]) {
     const users = items.filter((user) => !this.selectedUsers.some((z) => z.id === user.id));
-    switch (this.currentWindowType) {
-      case SharedType.Note: {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Note: {
         const noteUsers = this.store.selectSnapshot(NoteStore.getUsersOnPrivateNote);
         return users.filter((user) => !noteUsers.some((z) => z.id === user.id));
       }
-      case SharedType.Folder: {
+      case EntityPopupType.Folder: {
         const fodlerUsers = this.store.selectSnapshot(FolderStore.getUsersOnPrivateFolder);
         return users.filter((user) => !fodlerUsers.some((z) => z.id === user.id));
       }
@@ -254,50 +202,34 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   getFolders() {
-    const selectionIds = this.store.selectSnapshot(FolderStore.selectedIds);
     this.folders = this.store
       .selectSnapshot(FolderStore.getSmallFolders)
-      .filter((z) => selectionIds.some((x) => x === z.id))
+      .filter((z) => this.data.ids.some((x) => x === z.id))
       .map((folder) => {
         return { ...folder };
       });
     this.selectFolder(this.folders[0]);
   }
 
-  getFullNote() {
-    const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
-    const smallNote = { ...fullNote } as SmallNote;
-    this.notes = [smallNote];
-    this.selectNote(smallNote);
-  }
-
   getNotes() {
-    const selectionIds = this.store.selectSnapshot(NoteStore.selectedIds);
     this.notes = this.store
       .selectSnapshot(NoteStore.getSmallNotes)
-      .filter((z) => selectionIds.some((x) => x === z.id))
+      .filter((z) => this.data.ids.some((x) => x === z.id))
       .map((note) => {
         return { ...note };
       });
+    console.log('notes: ', this.notes);
     this.selectNote(this.notes[0]);
   }
 
-  getFullFolder() {
-    const fullFolder = this.store.selectSnapshot(FolderStore.full);
-    const smallFolder = { ...fullFolder } as SmallFolder;
-    this.folders = [smallFolder];
-    this.selectFolder(smallFolder);
-  }
-
   copyInputLink() {
-    const type = this.currentWindowType;
     let input;
-    switch (type) {
-      case SharedType.Folder: {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
         input = document.getElementById('linkInputFolder') as HTMLInputElement;
         break;
       }
-      case SharedType.Note: {
+      case EntityPopupType.Note: {
         input = document.getElementById('linkInputNote') as HTMLInputElement;
         break;
       }
@@ -369,8 +301,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async sendInvites() {
-    switch (this.currentWindowType) {
-      case SharedType.Folder: {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
         const userIds = this.selectedUsers.map((user) => user.id);
         await this.apiFolder
           .sendInvitesToFolder(
@@ -385,7 +317,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
-      case SharedType.Note: {
+      case EntityPopupType.Note: {
         const userIds = this.selectedUsers.map((user) => user.id);
         await this.apiNote
           .sendInvitesToNote(
@@ -445,14 +377,14 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async removeUserWithPermissions(userId: string) {
-    switch (this.currentWindowType) {
-      case SharedType.Folder: {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
         await this.apiFolder.removeUserFromPrivateFolder(this.currentFolder.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
-      case SharedType.Note: {
+      case EntityPopupType.Note: {
         await this.apiNote.removeUserFromPrivateNote(this.currentNote.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
@@ -465,13 +397,13 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeUserPermission(refType: RefTypeENUM, id: string) {
-    switch (this.currentWindowType) {
-      case SharedType.Folder: {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
         await this.apiFolder.changeUserPermission(this.currentFolder.id, id, refType).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         break;
       }
-      case SharedType.Note: {
+      case EntityPopupType.Note: {
         await this.apiNote.changeUserPermission(this.currentNote.id, id, refType).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;

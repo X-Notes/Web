@@ -10,12 +10,10 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/full-note.model';
@@ -133,27 +131,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!folder) {
       return;
     }
-    switch (folder.folderTypeId) {
-      case FolderTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        break;
-      }
-      case FolderTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        break;
-      }
-      case FolderTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case FolderTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
+
+    this.menuButtonService.setItems(this.menuButtonService.folderInnerNotesItems);
   }
 
   routeChangeFullNote(note: FullNote) {
@@ -161,27 +140,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!note) {
       return;
     }
-    switch (note.noteTypeId) {
-      case NoteTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        break;
-      }
-      case NoteTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        break;
-      }
-      case NoteTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case NoteTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
+    const items = this.menuButtonService.getNoteMenuByNoteType(note.noteTypeId);
+    this.menuButtonService.setItems(items);
   }
 
   newButton() {

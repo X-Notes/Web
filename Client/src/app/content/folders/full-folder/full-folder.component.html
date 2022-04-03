@@ -47,7 +47,7 @@
         type="button"
         name="Color"
         #color
-        (click)="dialogsService.changeColor()"
+        (click)="openChangeColorPopup()"
       >
         <div class="inner-content">
           <div class="icon">
@@ -57,13 +57,7 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
       </button>
-      <button
-        class="side-button"
-        type="button"
-        name="share"
-        #share
-        (click)="dialogsService.shareEntity()"
-      >
+      <button class="side-button" type="button" name="share" #share (click)="openSharePopup()">
         <div class="inner-content">
           <div class="icon">
             <mat-icon svgIcon="share" [inline]="true"></mat-icon>

@@ -36,6 +36,7 @@ import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
+import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 
 @Component({
   selector: 'app-full-folder',
@@ -124,6 +125,16 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
         }
       });
+  }
+
+  openSharePopup() {
+    const ids = [this.store.selectSnapshot(FolderStore.full).id];
+    return this.dialogsService.openShareEntity(EntityPopupType.Folder, ids);
+  }
+
+  openChangeColorPopup() {
+    const ids = [this.store.selectSnapshot(FolderStore.full).id];
+    return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
   }
 
   async ngOnInit() {

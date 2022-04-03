@@ -15,6 +15,9 @@ import { SmallNote } from '../notes/models/small-note.model';
 import { ChangeIsLockedFullNote, UpdateOneNote } from '../notes/state/notes-actions';
 import { LockEncryptService } from '../notes/lock-encrypt.service';
 import { Router } from '@angular/router';
+import { FolderStore } from '../folders/state/folders-state';
+import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -26,28 +29,24 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
-      operation: () => this.dialogsManageService.changeLabels(),
+      operation: () => this.dialogsManageService.openChangeLabels(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     this.getLockItem(),
     {
@@ -59,14 +58,12 @@ export class MenuButtonsService {
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -77,14 +74,12 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
   ];
 
@@ -94,35 +89,30 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
-      operation: () => this.dialogsManageService.changeLabels(),
+      operation: () => this.dialogsManageService.openChangeLabels(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'private',
       operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     this.getLockItem(),
     {
@@ -134,14 +124,12 @@ export class MenuButtonsService {
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -152,14 +140,12 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
   ];
 
@@ -169,28 +155,24 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
-      operation: () => this.dialogsManageService.changeLabels(),
+      operation: () => this.dialogsManageService.openChangeLabels(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     this.getLockItem(),
     {
@@ -202,14 +184,12 @@ export class MenuButtonsService {
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -220,21 +200,18 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsNotesService.archiveNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.openDeletionNoteModal(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'restore',
       operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
   ];
 
@@ -244,35 +221,30 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
-      operation: () => this.dialogsManageService.changeLabels(),
+      operation: () => this.dialogsManageService.openChangeLabels(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'private',
       operation: () => this.menuButtonsNotesService.setPrivateNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsNotesService.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: false,
     },
     this.getLockItem(),
     {
@@ -284,14 +256,12 @@ export class MenuButtonsService {
           LockPopupState.RemoveLock,
         ),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -302,7 +272,21 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
+    },
+  ];
+
+  public folderInnerNotesItems: MenuItem[] = [
+    {
+      icon: 'color',
+      operation: () => this.openColorWithNotes(),
+      isVisible: of(true),
+      isNoOwnerCanSee: true,
+    },
+    {
+      icon: 'label',
+      operation: () => this.dialogsManageService.openChangeLabels(),
+      isVisible: of(true),
+      isNoOwnerCanSee: true,
     },
   ];
 
@@ -312,28 +296,24 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: of(false),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -344,14 +324,12 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
   ];
 
@@ -361,35 +339,30 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: of(false),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'privateFolder',
       operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -400,14 +373,12 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
   ];
 
@@ -417,28 +388,24 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: of(false),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -449,21 +416,18 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsFoldersService.archiveFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.openDeletionNoteModal(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'restore',
       operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
   ];
 
@@ -473,35 +437,30 @@ export class MenuButtonsService {
       operation: () => 5,
       isVisible: of(false),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'share',
-      operation: () => this.dialogsManageService.shareEntity(),
+      operation: () => this.openShareWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'privateFolder',
       operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
+      operation: () => this.openColorWithFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -512,7 +471,6 @@ export class MenuButtonsService {
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: true,
     },
   ];
 
@@ -548,6 +506,72 @@ export class MenuButtonsService {
     }
   }
 
+  getNoteMenuByNoteType(type: NoteTypeENUM) {
+    switch (type) {
+      case NoteTypeENUM.Private: {
+        return this.notesItemsPrivate;
+      }
+      case NoteTypeENUM.Archive: {
+        return this.notesItemsArchive;
+      }
+      case NoteTypeENUM.Shared: {
+        return this.notesItemsShared;
+      }
+      case NoteTypeENUM.Deleted: {
+        return this.notesItemsDeleted;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+  }
+
+  // SHARE
+  openShareWithNotes() {
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
+      return this.dialogsManageService.openShareEntity(EntityPopupType.Note, ids);
+    }
+    return this.dialogsManageService.openShareEntity(
+      EntityPopupType.Note,
+      this.store.selectSnapshot(NoteStore.selectedIds),
+    );
+  }
+
+  openShareWithFolders() {
+    const type = EntityPopupType.Folder;
+    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
+      const idsI = [this.store.selectSnapshot(FolderStore.full).id];
+      return this.dialogsManageService.openShareEntity(type, idsI);
+    }
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+    return this.dialogsManageService.openShareEntity(type, ids);
+  }
+
+  // COLORS
+  openColorWithNotes() {
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
+      return this.dialogsManageService.openChangeColorDialog(EntityPopupType.Note, ids);
+    }
+    return this.dialogsManageService.openChangeColorDialog(
+      EntityPopupType.Note,
+      this.store.selectSnapshot(NoteStore.selectedIds),
+    );
+  }
+
+  openColorWithFolders() {
+    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
+      const ids = [this.store.selectSnapshot(FolderStore.full).id];
+      return this.dialogsManageService.openChangeColorDialog(EntityPopupType.Folder, ids);
+    }
+    return this.dialogsManageService.openChangeColorDialog(
+      EntityPopupType.Folder,
+      this.store.selectSnapshot(FolderStore.selectedIds),
+    );
+  }
+
+  // LOCK
   isActiveForceLock(): Observable<string> {
     return combineLatest([
       this.store.select(AppStore.isNoteInner),
@@ -574,7 +598,6 @@ export class MenuButtonsService {
         return this.dialogsManageService.openLockDialog(id, LockPopupState.Lock);
       },
       isNoOwnerCanSee: false,
-      isViewOnFullFolder: false,
     };
   }
 

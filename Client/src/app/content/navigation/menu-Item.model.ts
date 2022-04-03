@@ -7,6 +7,5 @@ export interface MenuItem {
   class?: string;
   operation: () => void;
   isNoOwnerCanSee: boolean;
-  isViewOnFullFolder: boolean;
   tooltip?: Observable<string>;
 }
