@@ -4,7 +4,7 @@ import { Store, Select } from '@ngxs/store';
 import { ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
+import { ChangeColorFolder, UnSelectAllFolder } from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { TranslateService } from '@ngx-translate/core';
@@ -68,9 +68,9 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        const ids = [this.store.selectSnapshot(FolderStore.full).id];
         await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
+          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorMessage()))
           .toPromise();
       } else {
         const ids = this.store.selectSnapshot(FolderStore.selectedIds);
@@ -92,6 +92,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(new UnSelectAllNote());
+    this.store.dispatch(new UnSelectAllFolder());
   }
 
   private permissionsErrorMessage = (): string =>
