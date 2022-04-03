@@ -12,9 +12,9 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -24,7 +24,7 @@ import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
-import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
+import { LoadFolders, LoadFullFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
 import { SmallFolder } from '../models/folder.model';
@@ -35,6 +35,7 @@ import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
+import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-full-folder',
@@ -70,6 +71,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
+  destroy = new Subject<void>();
+
+  nameChanged: Subject<string> = new Subject<string>();
+
   private routeSubscription: Subscription;
 
   private id: string;
@@ -104,16 +109,28 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
     this.webSocketsFolderUpdaterService.leaveFolder(this.id);
     this.updateNoteService.addFolderToUpdate(this.id);
     this.routeSubscription.unsubscribe();
+  }
+
+  changeNameSubscribtion() {
+    this.nameChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
+      .subscribe((title) => {
+        if (title) {
+          this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
+        }
+      });
   }
 
   async ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false; // TODO NEED REMOVE THIS CRUNCH
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
-
+    this.changeNameSubscribtion();
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.id = params.id;
       await this.loadFolder(); // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE

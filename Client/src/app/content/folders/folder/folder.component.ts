@@ -28,7 +28,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+  nameChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private store: Store,

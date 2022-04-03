@@ -27,17 +27,21 @@
     appTheme
     [ngClass]="{ 'sub-header-photo': (userBackground$ | async) }"
   >
-    <div class="container">
+    <div class="container info-container">
+      <div class="dot" [ngStyle]="{ backgroundColor: folder?.color }"></div>
       <div class="navigation">
         <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link"
           >{{ (folder?.folderTypeId | folderType)?.tranlate | translate }}</a
         >
         <span class="divider">/</span>
-        <a class="link">{{ folder?.title }}</a>
+        <input
+          [ngModel]="folder?.title"
+          [placeholder]="'placeholder.folderSmall' | translate"
+          (ngModelChange)="nameChanged.next($event)"
+        />
       </div>
-      <div class="dot" [ngStyle]="{ backgroundColor: folder?.color }"></div>
     </div>
-    <div class="container">
+    <div class="container buttons-container">
       <button
         class="side-button"
         type="button"
