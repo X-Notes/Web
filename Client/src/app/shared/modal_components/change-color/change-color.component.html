@@ -4,7 +4,7 @@
 ></app-dialog-generic-header>
 <div class="preview-container">
   <div
-    *ngIf="(isNote$ | async) || (isFolderInner$ | async)"
+    *ngIf="windowType.Note === data.currentWindowType"
     class="note"
     [ngStyle]="{'backgroundColor': current}"
   >
@@ -19,7 +19,7 @@
     >
     <span class="date">{{date | date:'dd.MM.yyyy'}}</span>
   </div>
-  <div *ngIf="(isFolder$ | async) && (isFolderInner$ | async) !== true" class="folder">
+  <div *ngIf="windowType.Folder === data.currentWindowType" class="folder">
     <div class="outer" [ngStyle]="{'backgroundColor': shadeColor(current, -20)}"></div>
     <div class="inner" [ngStyle]="{'backgroundColor': current}">
       <p>Preview</p>

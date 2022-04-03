@@ -1,16 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Store, Select } from '@ngxs/store';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngxs/store';
 import { ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
-import { Observable } from 'rxjs/internal/Observable';
-import { AppStore } from 'src/app/core/stateApp/app-state';
-import { ChangeColorFolder, UnSelectAllFolder } from 'src/app/content/folders/state/folders-actions';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import {
+  ChangeColorFolder,
+  UnSelectAllFolder,
+} from 'src/app/content/folders/state/folders-actions';
 import { TranslateService } from '@ngx-translate/core';
 import { NoteColorPallete } from '../../enums/note-colors.enum';
 import { EnumUtil } from '../../services/enum.util';
-import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
+import { EntityPopupType } from '../../models/entity-popup-type.enum';
 
 @Component({
   selector: 'app-change-color',
@@ -18,31 +17,26 @@ import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrappe
   styleUrls: ['./change-color.component.scss'],
 })
 export class ChangeColorComponent implements OnInit, OnDestroy {
-  @Select(AppStore.isNote)
-  public isNote$: Observable<boolean>;
-
-  @Select(AppStore.isFolder)
-  public isFolder$: Observable<boolean>;
-
-  @Select(AppStore.isFolderInner)
-  public isFolderInner$: Observable<boolean>;
+  windowType = EntityPopupType;
 
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
 
   current;
 
-  date: Date;
+  date: Date = new Date();
 
   constructor(
     public dialogRef: MatDialogRef<ChangeColorComponent>,
     private store: Store,
-    private sbws: SnackBarWrapperService,
     private apiTranslate: TranslateService,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      currentWindowType: EntityPopupType;
+      ids: string[];
+    },
   ) {}
 
   ngOnInit(): void {
-    this.date = new Date();
-    // eslint-disable-next-line prefer-destructuring
     this.current = this.pallete[0];
   }
 
@@ -51,33 +45,19 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   }
 
   async changeColor() {
-    let routePath = this.store.selectSnapshot(AppStore.isNote);
-    if (routePath) {
-      if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-        const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
-        await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
-          .toPromise();
-      } else {
-        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        await this.store
-          .dispatch(new ChangeColorNote(this.current, ids, true, this.permissionsErrorMessage()))
-          .toPromise();
-      }
+    if (this.data.currentWindowType === EntityPopupType.Folder) {
+      await this.store
+        .dispatch(
+          new ChangeColorFolder(this.current, this.data.ids, true, this.permissionsErrorMessage()),
+        )
+        .toPromise();
     }
-    routePath = this.store.selectSnapshot(AppStore.isFolder);
-    if (routePath) {
-      if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-        const ids = [this.store.selectSnapshot(FolderStore.full).id];
-        await this.store
-          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorMessage()))
-          .toPromise();
-      } else {
-        const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-        await this.store
-          .dispatch(new ChangeColorFolder(this.current, ids, true, this.permissionsErrorMessage()))
-          .toPromise();
-      }
+    if (this.data.currentWindowType === EntityPopupType.Note) {
+      await this.store
+        .dispatch(
+          new ChangeColorNote(this.current, this.data.ids, true, this.permissionsErrorMessage()),
+        )
+        .toPromise();
     }
     this.dialogRef.close();
   }
