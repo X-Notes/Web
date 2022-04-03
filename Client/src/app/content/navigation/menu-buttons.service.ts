@@ -288,6 +288,13 @@ export class MenuButtonsService {
       isVisible: of(true),
       isNoOwnerCanSee: true,
     },
+    {
+      icon: 'delete',
+      operation: () => this.pService.removeNotesToFolderSubject.next(true),
+      isVisible: of(true),
+      isNoOwnerCanSee: false,
+      tooltip: of('menu.removeFromFolder'),
+    },
   ];
 
   public foldersItemsPrivate: MenuItem[] = [

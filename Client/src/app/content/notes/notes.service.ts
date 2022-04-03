@@ -178,8 +178,10 @@ export class NotesService
         this.store.dispatch(actionsForUpdate);
         const transformNotes = this.transformSpread(notes);
         transformNotes.forEach((note) => {
-          const index = this.entities.findIndex((x) => x.id === note.id);
-          this.entities[index].contents = note.contents;
+          const entity = this.entities.find((x) => x.id === note.id);
+          if (entity) {
+            entity.contents = note.contents;
+          }
         });
         super.loadAdditionNoteInformation(ids);
         await this.murriService.refreshLayoutAsync();

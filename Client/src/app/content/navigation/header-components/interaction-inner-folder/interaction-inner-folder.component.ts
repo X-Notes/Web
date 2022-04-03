@@ -34,8 +34,8 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
     this.initCountSelected();
   }
 
-  manageNotesInFolderHandler() {
-    this.pService.manageNotesInFolderSubject.next(true);
+  addNotesToFolderHandler() {
+    this.pService.addNotesToFolderSubject.next(true);
   }
 
   selectAll() {

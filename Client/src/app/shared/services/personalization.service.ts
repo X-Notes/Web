@@ -156,7 +156,9 @@ export class PersonalizationService {
 
   emptyTrashButtonSubject = new Subject();
 
-  manageNotesInFolderSubject = new Subject();
+  addNotesToFolderSubject = new Subject();
+
+  removeNotesToFolderSubject = new Subject();
 
   stateSidebar = true;
 

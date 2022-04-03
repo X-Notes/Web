@@ -166,9 +166,11 @@ export class FolderService
         this.store.dispatch(actionsForUpdate);
         const transformFolders = this.transformSpread(folders);
         transformFolders.forEach((folder) => {
-          const index = this.entities.findIndex((x) => x.id === folder.id);
-          this.entities[index].previewNotes = folder.previewNotes;
-          this.loadAdditionInformation(ids);
+          const folderFinded = this.entities.find((x) => x.id === folder.id);
+          if (folderFinded) {
+            folderFinded.previewNotes = folder.previewNotes;
+            this.loadAdditionInformation(ids);
+          }
         });
         await this.murriService.refreshLayoutAsync();
         this.updateService.foldersIds$.next([]);

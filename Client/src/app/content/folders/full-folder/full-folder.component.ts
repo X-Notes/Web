@@ -24,7 +24,7 @@ import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
-import { LoadFolders, LoadFullFolder, UpdateFolderTitle } from '../state/folders-actions';
+import { LoadFolders, LoadFullFolder, UnSelectAllFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
 import { SmallFolder } from '../models/folder.model';
@@ -33,10 +33,11 @@ import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
-import { SelectIdNote } from '../../notes/state/notes-actions';
+import { SelectIdNote, UnSelectAllNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
+import { NoteStore } from '../../notes/state/notes-state';
 
 @Component({
   selector: 'app-full-folder',
@@ -208,20 +209,29 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initManageButtonSubscribe() {
-    this.pService.manageNotesInFolderSubject
+    this.pService.addNotesToFolderSubject.pipe(takeUntil(this.ffnService.destroy)).subscribe(() => {
+      const instanse = this.dialogsService.openAddNotesToFolder();
+      instanse
+        .afterClosed()
+        .pipe(takeUntil(this.ffnService.destroy))
+        .subscribe(async (resp) => {
+          if (resp) {
+            const ids = resp.map((x) => x.id);
+            await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
+            await this.ffnService.updateNotesLayout(this.folder.id);
+          }
+        });
+    });
+
+    this.pService.removeNotesToFolderSubject
       .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe(() => {
-        const instanse = this.dialogsService.openAddNotesToFolder();
-        instanse
-          .afterClosed()
-          .pipe(takeUntil(this.ffnService.destroy))
-          .subscribe(async (resp) => {
-            if (resp) {
-              const ids = resp.map((x) => x.id);
-              await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
-              await this.ffnService.updateNotesLayout(this.folder.id);
-            }
-          });
+      .subscribe(async () => {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        const res = await this.apiFullFolder.removeNotesFromFolder(ids, this.folder.id).toPromise();
+        if (res.success) {
+          this.ffnService.removeFromLayout(ids);
+        }
+        this.store.dispatch(UnSelectAllNote);
       });
   }
 

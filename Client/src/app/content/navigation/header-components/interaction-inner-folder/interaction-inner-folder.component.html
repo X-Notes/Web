@@ -1,6 +1,7 @@
 <ng-container *ngIf="(canView$ | async) && (folder$ | async)">
   <app-general-header-button
-    (clickEvent)="manageNotesInFolderHandler()"
+    *ngIf="(pService.isMenuActive$ | async) === (false)"
+    (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
     [styleClasses]="'manage-notes'"
   ></app-general-header-button>
