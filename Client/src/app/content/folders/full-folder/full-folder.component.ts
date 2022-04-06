@@ -24,20 +24,20 @@ import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
-import { LoadFolders, LoadFullFolder, UnSelectAllFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
 import { SmallFolder } from '../models/folder.model';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
-import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote, UnSelectAllNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteStore } from '../../notes/state/notes-state';
+import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
+import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
 
 @Component({
   selector: 'app-full-folder',

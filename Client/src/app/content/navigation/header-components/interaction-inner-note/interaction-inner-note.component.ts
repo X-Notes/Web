@@ -11,8 +11,8 @@ import {
   PersonalizationService,
   showMenuLeftRight,
 } from 'src/app/shared/services/personalization.service';
-import { DialogsManageService } from '../../dialogs-manage.service';
-import { MenuButtonsService } from '../../menu-buttons.service';
+import { DialogsManageService } from '../../services/dialogs-manage.service';
+import { MenuButtonsService } from '../../services/menu-buttons.service';
 
 @Component({
   selector: 'app-interaction-inner-note',

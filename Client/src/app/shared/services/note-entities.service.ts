@@ -1,7 +1,7 @@
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { SelectIdNote, UnSelectIdNote } from 'src/app/content/notes/state/notes-actions';

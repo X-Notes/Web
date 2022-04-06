@@ -18,7 +18,7 @@ import { MenuSelectionService } from './content-editor-services/menu-selection.s
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
-import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 @Component({

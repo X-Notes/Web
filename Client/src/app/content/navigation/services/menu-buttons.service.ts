@@ -4,20 +4,20 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map } from 'rxjs/operators';
 import { combineLatest, Observable, of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { NoteStore } from '../notes/state/notes-state';
-import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
 import { MenuButtonsNotesService } from './menu-buttons-notes.service';
 import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { SmallNote } from '../notes/models/small-note.model';
-import { ChangeIsLockedFullNote, UpdateOneNote } from '../notes/state/notes-actions';
-import { LockEncryptService } from '../notes/lock-encrypt.service';
 import { Router } from '@angular/router';
-import { FolderStore } from '../folders/state/folders-state';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { MenuItem } from '../models/menu-Item.model';
+import { NoteStore } from '../../notes/state/notes-state';
+import { LockEncryptService } from '../../notes/lock-encrypt.service';
+import { FolderStore } from '../../folders/state/folders-state';
+import { SmallNote } from '../../notes/models/small-note.model';
+import { ChangeIsLockedFullNote, UpdateOneNote } from '../../notes/state/notes-actions';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {

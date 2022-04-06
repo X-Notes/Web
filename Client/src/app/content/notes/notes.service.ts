@@ -21,7 +21,7 @@ import {
 } from './state/notes-actions';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
-import { DialogsManageService } from '../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 

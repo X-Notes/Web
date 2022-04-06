@@ -2,7 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';

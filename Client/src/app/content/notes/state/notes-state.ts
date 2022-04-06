@@ -149,6 +149,12 @@ export class NoteStore {
     return state.notes;
   }
 
+  
+  @Selector()
+  static getSelectedNotes(state: NoteState): SmallNote[] {
+    return state.notes.flatMap(x => x.notes).filter((note) => state.selectedIds.some(z => z === note.id));
+  }
+
   @Selector()
   static getSmallNotes(state: NoteState): SmallNote[] {
     return state.notes.flatMap(x => x.notes);
