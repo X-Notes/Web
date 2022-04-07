@@ -170,6 +170,21 @@ export class FolderStore {
     return state.folders;
   }
 
+  @Selector()
+  static getSelectedFolders(state: FolderState): SmallFolder[] {
+    return state.folders.flatMap(x => x.folders).filter((folder) => state.selectedIds.some(z => z === folder.id));
+  }
+
+  @Selector()
+  static getAllSelectedFoldersCanEdit(state: FolderState): boolean {
+    return this.getSelectedFolders(state).every(x => x.isCanEdit);
+  }
+
+  @Selector()
+  static getAllSelectedFoldersAuthors(state: FolderState): string[] {
+    return [...new Set(this.getSelectedFolders(state).map(x => x.userId))];
+  }
+
   // Get selected Ids
 
   @Selector()

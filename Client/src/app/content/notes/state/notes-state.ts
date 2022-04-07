@@ -156,6 +156,16 @@ export class NoteStore {
   }
 
   @Selector()
+  static getAllSelectedNotesCanEdit(state: NoteState): boolean {
+    return this.getSelectedNotes(state).every(x => x.isCanEdit);
+  }
+
+  @Selector()
+  static getAllSelectedNotesAuthors(state: NoteState): string[] {
+    return [...new Set(this.getSelectedNotes(state).map(x => x.userId))];
+  }
+
+  @Selector()
   static getSmallNotes(state: NoteState): SmallNote[] {
     return state.notes.flatMap(x => x.notes);
   }

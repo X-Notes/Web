@@ -344,6 +344,7 @@ namespace BI.Mapping
                 Id = folder.Id,
                 Color = folder.Color,
                 Order = folder.Order,
+                UserId = folder.UserId, 
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,

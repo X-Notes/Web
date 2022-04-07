@@ -8,6 +8,7 @@ export interface SmallFolder {
   title: string;
   color: string;
   order: number;
+  userId: string;
   previewNotes: PreviewNotesInFolder[];
   refTypeId: RefTypeENUM;
   isCanEdit: boolean;

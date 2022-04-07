@@ -16,6 +16,8 @@ namespace Common.DTO.Folders
 
         public int Order { set; get; }
 
+        public Guid UserId { set; get; }
+
         public RefTypeENUM RefTypeId { set; get; }
 
         public FolderTypeENUM FolderTypeId { set; get; }
