@@ -112,7 +112,7 @@ namespace BI.Services.Notes
             await noteRepository.AddAsync(note);
             note.LabelsNotes = new List<LabelsNotes>();
 
-            return appCustomMapper.MapNoteToSmallNoteDTO(note);
+            return appCustomMapper.MapNoteToSmallNoteDTO(note, true);
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)

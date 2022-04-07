@@ -250,10 +250,10 @@ export class ApiServiceNotes {
     );
   }
 
-  changeUserPermission(noteId: string, userId: string, accessTypeId: RefTypeENUM) {
+  changeUserPermission(noteId: string, permissionUserId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       noteId,
-      userId,
+      permissionUserId,
       accessTypeId,
     };
     return this.httpClient.post<OperationResult<any>>(

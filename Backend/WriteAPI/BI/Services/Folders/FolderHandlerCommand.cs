@@ -65,7 +65,7 @@ namespace BI.Services.Folders
             };
 
             await folderRepository.AddAsync(folder);
-            return appCustomMapper.MapFolderToSmallFolder(folder);
+            return appCustomMapper.MapFolderToSmallFolder(folder, true);
         }
 
         public async Task<OperationResult<Unit>> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
@@ -175,7 +175,7 @@ namespace BI.Services.Folders
 
                     await folderRepository.UpdateRangeAsync(dbFolders);
                     var resultFolders = dbFolders.Where(dbFolder => resultIds.Contains(dbFolder.Id)).ToList();
-                    return appCustomMapper.MapFoldersToSmallFolders(resultFolders);
+                    return appCustomMapper.MapFoldersToSmallFolders(resultFolders, request.UserId);
                 }
             }
 

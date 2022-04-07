@@ -18,466 +18,162 @@ import { LockEncryptService } from '../../notes/lock-encrypt.service';
 import { FolderStore } from '../../folders/state/folders-state';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { ChangeIsLockedFullNote, UpdateOneNote } from '../../notes/state/notes-actions';
+import { EntityMenuEnum } from '../models/entity-menu.enum';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
   public items: MenuItem[] = [];
 
+  public type: EntityMenuEnum;
+
   public notesItemsPrivate: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: this.pService.isMobileHistoryActive$,
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsNotesService.copyNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
+    this.getHistoryItem(),
+    this.getLabelItem(),
+    this.getNoteShareItem(),
+    this.getCopyNotesItem(),
     this.getLockItem(),
-    {
-      icon: 'unlock',
-      isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.RemoveLock,
-        ),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsNotesService.archiveNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getUnlockItem(),
+    this.getChangeColorNoteItem(),
+    this.getArchiveNotesItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
   public notesItemsShared: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: this.pService.isMobileHistoryActive$,
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'private',
-      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsNotesService.copyNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
+    this.getHistoryItem(),
+    this.getLabelItem(),
+    this.getSetPrivateNotes(),
+    this.getNoteShareItem(),
+    this.getCopyNotesItem(),
     this.getLockItem(),
-    {
-      icon: 'unlock',
-      isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.RemoveLock,
-        ),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsNotesService.archiveNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getUnlockItem(),
+    this.getChangeColorNoteItem(),
+    this.getArchiveNotesItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
   public notesItemsDeleted: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: this.pService.isMobileHistoryActive$,
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsNotesService.copyNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
+    this.getHistoryItem(),
+    this.getLabelItem(),
+    this.getNoteShareItem(),
+    this.getCopyNotesItem(),
     this.getLockItem(),
-    {
-      icon: 'unlock',
-      isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.RemoveLock,
-        ),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsNotesService.archiveNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getUnlockItem(),
+    this.getChangeColorNoteItem(),
+    this.getArchiveNotesItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.openDeletionNoteModal(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
-    {
-      icon: 'restore',
-      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getSetPrivateNotes('restore'),
   ];
 
   public notesItemsArchive: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: this.pService.isMobileHistoryActive$,
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'private',
-      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsNotesService.copyNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
+    this.getHistoryItem(),
+    this.getLabelItem(),
+    this.getSetPrivateNotes(),
+    this.getNoteShareItem(),
+    this.getCopyNotesItem(),
     this.getLockItem(),
-    {
-      icon: 'unlock',
-      isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.RemoveLock,
-        ),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
+    this.getUnlockItem(),
+    this.getChangeColorNoteItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
+  // INNER FOLDER
   public folderInnerNotesItems: MenuItem[] = [
-    {
-      icon: 'color',
-      operation: () => this.openColorWithNotes(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
+    this.getChangeColorNoteItem(),
+    this.getLabelItem(),
     {
       icon: 'delete',
       operation: () => this.pService.removeNotesToFolderSubject.next(true),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
       tooltip: of('menu.removeFromFolder'),
     },
   ];
 
+  // FOLDERS
   public foldersItemsPrivate: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: of(false),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsFoldersService.archiveFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getHistoryItem(),
+    this.getFolderShareItem(),
+    this.getCopyFoldersItem(),
+    this.getChangeColorFolderItem(),
+    this.getArchiveFoldersItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
   public foldersItemsShared: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: of(false),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'privateFolder',
-      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsFoldersService.archiveFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getHistoryItem(),
+    this.getFolderShareItem(),
+    this.getSetPrivateFolders(),
+    this.getCopyFoldersItem(),
+    this.getChangeColorFolderItem(),
+    this.getArchiveFoldersItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
   public foldersItemsDeleted: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: of(false),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
-    {
-      icon: 'archive',
-      operation: () => this.menuButtonsFoldersService.archiveFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getHistoryItem(),
+    this.getFolderShareItem(),
+    this.getCopyFoldersItem(),
+    this.getChangeColorFolderItem(),
+    this.getArchiveFoldersItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.openDeletionNoteModal(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
-    {
-      icon: 'restore',
-      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
+    this.getSetPrivateFolders('restore'),
   ];
 
   public foldersItemsArchive: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-      isVisible: of(false),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'share',
-      operation: () => this.openShareWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'privateFolder',
-      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: false,
-    },
-    {
-      icon: 'copy',
-      operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    {
-      icon: 'color',
-      operation: () => this.openColorWithFolders(),
-      isVisible: of(true),
-      isNoOwnerCanSee: true,
-    },
-    // {
-    //   icon: 'download',
-    //   operation: () => 5
-    // },
+    this.getHistoryItem(),
+    this.getFolderShareItem(),
+    this.getSetPrivateFolders(),
+    this.getCopyFoldersItem(),
+    this.getChangeColorFolderItem(),
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     },
   ];
 
@@ -586,6 +282,144 @@ export class MenuButtonsService {
     ]).pipe(map(([n, f]) => (n && f ? 'menu.forceLock' : 'menu.lock')));
   }
 
+  // MENU ITEMS
+
+  getSetPrivateFolders(icon = 'privateFolder'): MenuItem {
+    return {
+      icon,
+      operation: () => this.menuButtonsFoldersService.setPrivateFolders(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getSetPrivateNotes(icon = 'private'): MenuItem {
+    return {
+      icon,
+      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getArchiveNotesItem(): MenuItem {
+    return {
+      icon: 'archive',
+      operation: () => this.menuButtonsNotesService.archiveNotes(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getArchiveFoldersItem(): MenuItem {
+    return {
+      icon: 'archive',
+      operation: () => this.menuButtonsFoldersService.archiveFolders(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getCopyNotesItem(): MenuItem {
+    return {
+      icon: 'copy',
+      operation: () => this.menuButtonsNotesService.copyNotes(),
+      isVisible: of(true),
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: false,
+    };
+  }
+
+  getCopyFoldersItem(): MenuItem {
+    return {
+      icon: 'copy',
+      operation: () => this.menuButtonsFoldersService.copyFolders(),
+      isVisible: of(true),
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: false,
+    };
+  }
+
+  getNoteShareItem(): MenuItem {
+    return {
+      icon: 'share',
+      operation: () => this.openShareWithNotes(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getFolderShareItem(): MenuItem {
+    return {
+      icon: 'share',
+      operation: () => this.openShareWithFolders(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getChangeColorFolderItem(): MenuItem {
+    return {
+      icon: 'color',
+      operation: () => this.openColorWithFolders(),
+      isVisible: of(true),
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getChangeColorNoteItem(): MenuItem {
+    return {
+      icon: 'color',
+      operation: () => this.openColorWithNotes(),
+      isVisible: of(true),
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getLabelItem(): MenuItem {
+    return {
+      icon: 'label',
+      operation: () => this.dialogsManageService.openChangeLabels(),
+      isVisible: of(true),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
+  getHistoryItem(): MenuItem {
+    return {
+      icon: 'history',
+      operation: () => {
+        throw new Error('Not implimented');
+      },
+      isVisible: this.pService.isMobileHistoryActive$,
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: false,
+    };
+  }
+
+  getUnlockItem(): MenuItem {
+    return {
+      icon: 'unlock',
+      isVisible: this.store.select(NoteStore.isRemoveLock),
+      operation: () =>
+        this.dialogsManageService.openLockDialog(
+          this.getSelectedNoteId(),
+          LockPopupState.RemoveLock,
+        ),
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
+    };
+  }
+
   getLockItem(): MenuItem {
     return {
       icon: 'lock',
@@ -604,7 +438,8 @@ export class MenuButtonsService {
         }
         return this.dialogsManageService.openLockDialog(id, LockPopupState.Lock);
       },
-      isNoOwnerCanSee: false,
+      isOnlyForAuthor: true,
+      IsNeedEditRightsToSee: true,
     };
   }
 
@@ -627,7 +462,17 @@ export class MenuButtonsService {
     return this.store.selectSnapshot(NoteStore.selectedIds)[0];
   }
 
-  setItems(newItems: MenuItem[]) {
+  setNotesItems(newItems: MenuItem[]) {
+    this.type = EntityMenuEnum.Note;
+    this.setItems(newItems);
+  }
+
+  setFoldersItems(newItems: MenuItem[]) {
+    this.type = EntityMenuEnum.Folder;
+    this.setItems(newItems);
+  }
+
+  private setItems(newItems: MenuItem[]) {
     this.items = newItems;
   }
 }

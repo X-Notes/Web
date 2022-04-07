@@ -161,6 +161,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Include(x => x.UsersOnPrivateNotes)
                     .Where(x => noteIds.Contains(x.Id))
                     .ToListAsync();
 
@@ -171,6 +172,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 

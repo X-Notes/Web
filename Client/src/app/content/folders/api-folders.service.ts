@@ -54,10 +54,10 @@ export class ApiFoldersService {
       );
   }
 
-  changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {
+  changeUserPermission(folderId: string, permissionUserId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       folderId,
-      userId,
+      permissionUserId,
       accessTypeId,
     };
     return this.httpClient.post<OperationResult<any>>(

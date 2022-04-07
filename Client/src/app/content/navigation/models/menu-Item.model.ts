@@ -6,6 +6,7 @@ export interface MenuItem {
   isActive?: Observable<boolean>;
   class?: string;
   operation: () => void;
-  isNoOwnerCanSee: boolean;
+  isOnlyForAuthor: boolean;
+  IsNeedEditRightsToSee: boolean;
   tooltip?: Observable<string>;
 }

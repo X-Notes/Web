@@ -12,6 +12,7 @@ using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.App;
 using Common.DTO.Folders;
@@ -202,7 +203,7 @@ namespace BI.Mapping
         }
 
 
-        public SmallNote MapNoteToSmallNoteDTO(Note note)
+        public SmallNote MapNoteToSmallNoteDTO(Note note, bool isCanEdit)
         {
             return new SmallNote()
             {
@@ -219,7 +220,8 @@ namespace BI.Mapping
                 IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
+                UpdatedAt = note.UpdatedAt,
+                IsCanEdit = isCanEdit
             };
         }
 
@@ -273,9 +275,39 @@ namespace BI.Mapping
             return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids)).ToList();
         }
 
-        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes)
+        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, Guid callerId)
         {
-            return notes.Select(note => MapNoteToSmallNoteDTO(note)).ToList();
+            return notes.Select(note => MapNoteToSmallNoteDTO(note, IsCanEdit(note, callerId))).ToList();
+        }
+
+        private bool IsCanEdit(Note note, Guid callerId)
+        {
+            if(note.UserId == callerId)
+            {
+                return true;
+            }
+
+            if(note.UsersOnPrivateNotes != null && note.UsersOnPrivateNotes.Any())
+            {
+                return note.UsersOnPrivateNotes.Any(x => x.UserId == callerId && x.AccessTypeId == RefTypeENUM.Editor);
+            }
+
+            return false;
+        }
+
+        private bool IsCanEdit(Folder folder, Guid callerId)
+        {
+            if (folder.UserId == callerId)
+            {
+                return true;
+            }
+
+            if (folder.UsersOnPrivateFolders != null && folder.UsersOnPrivateFolders.Any())
+            {
+                return folder.UsersOnPrivateFolders.Any(x => x.UserId == callerId && x.AccessTypeId == RefTypeENUM.Editor);
+            }
+
+            return false;
         }
 
         public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes)
@@ -299,12 +331,12 @@ namespace BI.Mapping
         }
 
         // FOLDERS
-        public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders)
+        public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders, Guid callerId)
         {
-            return folders.Select(folder => MapFolderToSmallFolder(folder)).ToList();
+            return folders.Select(folder => MapFolderToSmallFolder(folder, IsCanEdit(folder, callerId))).ToList();
         }
 
-        public SmallFolder MapFolderToSmallFolder(Folder folder)
+        public SmallFolder MapFolderToSmallFolder(Folder folder, bool isCanEdit)
         {
             var notes = folder.FoldersNotes?.Select(x => x.Note);
             return new SmallFolder()
@@ -318,6 +350,7 @@ namespace BI.Mapping
                 Title = folder.Title,
                 FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId,
+                IsCanEdit = isCanEdit,
                 PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
             };
         }

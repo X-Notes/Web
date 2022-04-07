@@ -83,7 +83,7 @@ namespace BI.Services.Notes
 
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
 
@@ -185,7 +185,7 @@ namespace BI.Services.Notes
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
             notes = notes.OrderBy(x => x.Order).ToList();
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
         public async Task<OperationResult<List<SmallNote>>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
@@ -205,7 +205,7 @@ namespace BI.Services.Notes
                     }
                 });
 
-                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes);
+                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
                 return new OperationResult<List<SmallNote>>(true, result);
             }
 

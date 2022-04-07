@@ -13,6 +13,7 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from '../../services/dialogs-manage.service';
 import { MenuButtonsService } from '../../services/menu-buttons.service';
+import { PermissionsButtonsService } from '../../services/permissions-buttons.service';
 
 @Component({
   selector: 'app-interaction-inner-note',
@@ -43,6 +44,7 @@ export class InteractionInnerNoteComponent {
     public buttonService: MenuButtonsService,
     public dialogsManageService: DialogsManageService,
     private store: Store,
+    public permissionsButtonsService: PermissionsButtonsService,
   ) {}
 
   closeMenu(): void {

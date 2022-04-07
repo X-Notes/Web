@@ -38,6 +38,7 @@ import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
 import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
+import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -94,6 +95,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
+    public permissionsButtonsService: PermissionsButtonsService,
   ) {}
 
   get folderMenu() {

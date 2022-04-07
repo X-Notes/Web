@@ -48,6 +48,7 @@ namespace WriteContext.Repositories.Folders
         public Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId)
         {
             return context.Folders
+                .Include(x => x.UsersOnPrivateFolders)
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
@@ -63,6 +64,7 @@ namespace WriteContext.Repositories.Folders
         public async Task<List<Folder>> GetFoldersByFolderIdsIncludeNote(IEnumerable<Guid> folderIds, PersonalizationSettingDTO settings)
         {
             var result = await context.Folders
+                .Include(x => x.UsersOnPrivateFolders)
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => folderIds.Contains(x.Id)).ToListAsync();

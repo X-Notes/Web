@@ -63,7 +63,7 @@ namespace BI.Services.Folders
                 folders = folders.DistinctBy(x => x.Id).ToList();
             }
 
-            return appCustomMapper.MapFoldersToSmallFolders(folders);
+            return appCustomMapper.MapFoldersToSmallFolders(folders, request.UserId);
         }
 
 
@@ -103,7 +103,7 @@ namespace BI.Services.Folders
                         folder.FolderTypeId = FolderTypeENUM.Shared;
                     }
                 });
-                var result = appCustomMapper.MapFoldersToSmallFolders(folders);
+                var result = appCustomMapper.MapFoldersToSmallFolders(folders, request.UserId);
                 return new OperationResult<List<SmallFolder>>(true, result);
             }
             return new OperationResult<List<SmallFolder>>().SetNotFound();

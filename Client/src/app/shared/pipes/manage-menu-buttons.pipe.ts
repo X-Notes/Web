@@ -5,9 +5,12 @@ import { MenuItem } from 'src/app/content/navigation/models/menu-Item.model';
   name: 'manageMenuButtons',
 })
 export class ManageMenuButtonsPipe implements PipeTransform {
-  transform = (items: MenuItem[], isOwner: boolean): MenuItem[] => {
+  transform = (items: MenuItem[], isHasEditRights: boolean, isOwner: boolean): MenuItem[] => {
     if (!isOwner) {
-      return items.filter((x) => x.isNoOwnerCanSee === true);
+      items = items.filter((x) => x.isOnlyForAuthor === false);
+    }
+    if (!isHasEditRights) {
+      items = items.filter((x) => x.IsNeedEditRightsToSee === false);
     }
     return items;
   };

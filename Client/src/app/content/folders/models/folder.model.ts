@@ -10,6 +10,7 @@ export interface SmallFolder {
   order: number;
   previewNotes: PreviewNotesInFolder[];
   refTypeId: RefTypeENUM;
+  isCanEdit: boolean;
   folderTypeId: FolderTypeENUM;
   isSelected?: boolean;
   lockRedirect?: boolean;

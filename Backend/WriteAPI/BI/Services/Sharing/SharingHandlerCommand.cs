@@ -108,7 +108,7 @@ namespace BI.Services.Sharing
             if (permissions.IsOwner)
             {
                 var access = await usersOnPrivateFoldersRepository
-                    .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
+                    .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
 
                 if (access == null)
                 {
@@ -121,14 +121,14 @@ namespace BI.Services.Sharing
                 var notification = new Notification() // TODO MOVE TO SERVICE
                 {
                     UserFromId = permissions.Caller.Id,
-                    UserToId = request.UserId,
+                    UserToId = request.PermissionUserId,
                     TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
                     Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
 
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.PermissionUserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -145,7 +145,7 @@ namespace BI.Services.Sharing
             if (permissions.IsOwner)
             {
                 var access = await usersOnPrivateNotesRepository
-                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
+                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
 
                 if (access == null)
                 {
@@ -158,14 +158,14 @@ namespace BI.Services.Sharing
                 var notification = new Notification()
                 {
                     UserFromId = permissions.Caller.Id,
-                    UserToId = request.UserId,
+                    UserToId = request.PermissionUserId,
                     TranslateKeyMessage = "notification.ChangeUserPermissionNote",
                     Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
 
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);        
+                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.PermissionUserId);        
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);

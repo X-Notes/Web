@@ -26,6 +26,8 @@ namespace Common.DTO.Folders
 
         public DateTimeOffset CreatedAt { set; get; }
 
+        public bool IsCanEdit { set; get; }
+
         public List<NotePreviewInFolder> PreviewNotes { set; get; }
     }
 }
