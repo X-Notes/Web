@@ -18,15 +18,15 @@ namespace BI.SignalR
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
-        private readonly WebsocketsNotesService websocketsNotesService;
-        private readonly WebsocketsFoldersService websocketsFoldersService;
+        private readonly WebsocketsNotesServiceStorage websocketsNotesService;
+        private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
 
         public AppSignalRHub(
             UserRepository userRepository, 
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             NoteRepository noteRepository,
-            WebsocketsNotesService websocketsNotesService,
-            WebsocketsFoldersService websocketsFoldersService)
+            WebsocketsNotesServiceStorage websocketsNotesService,
+            WebsocketsFoldersServiceStorage websocketsFoldersService)
         {
             this.userRepository = userRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;;

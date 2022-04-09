@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.DatabaseModels.Models.Labels;
+using Common.DTO;
 using Domain.Commands.Labels;
 using MediatR;
 using WriteContext.Repositories.Labels;
@@ -17,35 +18,33 @@ namespace BI.Services.Labels
         IRequestHandler<UpdateLabelCommand, Unit>,
         IRequestHandler<SetDeletedLabelCommand, Unit>,
         IRequestHandler<RestoreLabelCommand, Unit>,
-        IRequestHandler<RemoveAllFromBinCommand, Unit>
+        IRequestHandler<RemoveAllFromBinCommand, Unit>,
+        IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>
     {
         private readonly LabelRepository labelRepository;
-        private readonly UserRepository userRepository;
-        public LabelHandlerCommand(LabelRepository labelRepository, UserRepository userRepository)
+        public LabelHandlerCommand(LabelRepository labelRepository)
         {
             this.labelRepository = labelRepository;
-            this.userRepository = userRepository;
         }
 
 
         public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.DeleteLabel(label, user.Labels);
+                await labelRepository.RemoveAsync(label);
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(SetDeletedLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.SetDeletedLabel(label, user.Labels);
+                label.ToType(true, DateTimeProvider.Time);
+                await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
         }
@@ -53,8 +52,7 @@ namespace BI.Services.Labels
 
         public async Task<Unit> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
                 label.Color = request.Color;
@@ -69,23 +67,22 @@ namespace BI.Services.Labels
         {
             var label = new Label();
             label.UserId = request.UserId;
-            label.Order = 1;
             label.Color = LabelsColorPallete.Red;
             label.CreatedAt = DateTimeProvider.Time;
             label.UpdatedAt = DateTimeProvider.Time;
 
-            await labelRepository.NewLabel(label);
+            await labelRepository.AddAsync(label);
             return label.Id;
         }
 
 
         public async Task<Unit> Handle(RestoreLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.UserId);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
             if (label != null)
             {
-                await labelRepository.RestoreLabel(label, user.Labels);
+                label.ToType(false);
+                await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
         }
@@ -100,6 +97,30 @@ namespace BI.Services.Labels
             }
 
             return Unit.Value;
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePositionsLabelCommand request, CancellationToken cancellationToken)
+        {
+            var labelIds = request.Positions.Select(x => x.EntityId).ToList();
+            var labels = await labelRepository.GetWhereAsync(x => x.UserId == request.UserId && labelIds.Contains(x.Id));
+
+            if (labels.Any())
+            {
+                request.Positions.ForEach(x =>
+                {
+                    var label = labels.FirstOrDefault(z => z.Id == x.EntityId);
+                    if (label != null)
+                    {
+                        label.Order = x.Position;
+                    }
+                });
+
+                await labelRepository.UpdateRangeAsync(labels);
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNotFound();
         }
     }
 }

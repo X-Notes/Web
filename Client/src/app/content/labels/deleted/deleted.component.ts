@@ -54,7 +54,7 @@ export class DeletedComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.labelService.murriInitialise(this.refElements, true);
+    this.labelService.murriInitialise(this.refElements);
   }
 
   async ngOnInit() {

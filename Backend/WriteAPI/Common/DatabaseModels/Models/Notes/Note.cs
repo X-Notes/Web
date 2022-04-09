@@ -25,7 +25,9 @@ namespace Common.DatabaseModels.Models.Notes
         public string Color { set; get; }
         public int Order { set; get; }
 
-        public bool IsLocked { set; get; }
+        [NotMapped]
+        public bool IsLocked { get => !string.IsNullOrEmpty(Password); }
+
         public string Password { set; get; }
 
         public Guid UserId { set; get; }
@@ -42,5 +44,12 @@ namespace Common.DatabaseModels.Models.Notes
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public  DateTimeOffset CreatedAt { get; set; }
+
+        public void ToType(NoteTypeENUM noteTypeId, DateTimeOffset? deletedAt = null)
+        {
+            DeletedAt = deletedAt;
+            NoteTypeId = noteTypeId;
+            UpdatedAt = DateTimeProvider.Time;
+        }
     }
 }

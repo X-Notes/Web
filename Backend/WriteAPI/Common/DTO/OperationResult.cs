@@ -9,7 +9,8 @@
         NoAnyFile,
         RequestCancelled,
         NotFound,
-        AnotherError
+        AnotherError,
+        ContentLocked
     }
 
     public class OperationResult<T>
@@ -94,6 +95,13 @@
         {
             Success = false;
             Status = OperationResultAdditionalInfo.AnotherError;
+            return this;
+        }
+
+        public OperationResult<T> SetContentLocked()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.ContentLocked;
             return this;
         }
     }

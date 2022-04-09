@@ -48,7 +48,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   }
 
   initLabels() {
-    const labels = this.store.selectSnapshot(LabelStore.all);
+    const labels = this.store.selectSnapshot(LabelStore.noDeleted);
     this.labels = this.transformLabels(labels);
   }
 
@@ -101,7 +101,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
-    const newLabel = this.store.selectSnapshot(LabelStore.all)[0] as LabelSelect;
+    const newLabel = this.store.selectSnapshot(LabelStore.noDeleted)[0] as LabelSelect;
     this.labels = [{ ...newLabel }, ...this.labels];
   }
 }

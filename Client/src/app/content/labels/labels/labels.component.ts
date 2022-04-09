@@ -12,7 +12,7 @@ import { LabelStore } from '../state/labels-state';
   styleUrls: ['./labels.component.scss'],
 })
 export class LabelsComponent {
-  @Select(LabelStore.countAll)
+  @Select(LabelStore.countNoDeleted)
   countAll$: Observable<number>;
 
   @Select(LabelStore.countDeleted)

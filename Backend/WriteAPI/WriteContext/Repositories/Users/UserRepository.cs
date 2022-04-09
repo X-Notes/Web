@@ -49,24 +49,6 @@ namespace WriteContext.Repositories.Users
                 .ToListAsync();
         }
 
-        public Task<User> GetUserWithLabels(Guid userId)
-        {
-            return context.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Id == userId);
-        }
-
-        public Task<User> GetUserWithNotesIncludeNoteType(Guid userId)
-        {
-            return context.Users
-                .Include(x => x.Notes)
-                .FirstOrDefaultAsync(x => x.Id == userId);
-        }
-
-        public Task<User> GetUserWithFoldersIncludeFolderType(Guid userId)
-        {
-            return context.Users
-                .Include(x => x.Folders)
-                .FirstOrDefaultAsync(x => x.Id == userId);
-        }
 
         public Task<List<string>> GetUsersEmail(IEnumerable<Guid> ids) => entities.Where(x => ids.Contains(x.Id)).Select(x => x.Email).ToListAsync();
 

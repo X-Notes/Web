@@ -19,28 +19,25 @@ namespace BI.Services.Folders
 {
     public class FullFolderHandlerQuery :
         IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>,
-        IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>
+        IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<SmallNote>>
     {
 
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
         private readonly NoteFolderLabelMapper noteMapper;
-        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
             NoteFolderLabelMapper noteMapper,
-            NoteRepository noteRepository,
-            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository
+            NoteRepository noteRepository
             )
         {
             this.foldersNotesRepository = foldersNotesRepository;
             this._mediator = _mediator;
             this.noteMapper = noteMapper;
             this.noteRepository = noteRepository;
-            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
@@ -52,52 +49,45 @@ namespace BI.Services.Folders
             {
                 var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 var notesIds = foldersNotes.Select(x => x.NoteId);
-                var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
                 return noteMapper.MapNotesToSmallNotesDTO(notes);
             }
 
             return new List<SmallNote>();
         }
 
-        public async Task<List<PreviewNoteForSelection>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
+        public async Task<List<SmallNote>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
             {
-                var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
-                var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
-
-                var allNotes = await noteRepository.GetNotesByUserId(permissions.Caller.Id, request.Settings);
-                var sharedNotes = await GetSharedNotes(permissions.Caller.Id, request.Settings);
-                allNotes.AddRange(sharedNotes);
-                allNotes = allNotes.DistinctBy(x => x.Id).ToList();
-
+                var folderNoteIds = await foldersNotesRepository.GetNoteIdsByFolderId(request.FolderId);
+   
                 if (string.IsNullOrEmpty(request.Search))
                 {
-                    return noteMapper.MapNotesToPreviewNotesDTO(allNotes, folderdNotesIds);
+                    var notes = await noteRepository.GetNotesByUserIdNoLocked(permissions.Caller.Id, folderNoteIds, request.Settings);
+                    return noteMapper.MapNotesToSmallNotesDTO(notes);
                 }
                 else
                 {
-                    allNotes = allNotes.Where(x => SearchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
-                    || folderdNotesIds.Contains(x.Id)
-                    ).ToList();
-                    return noteMapper.MapNotesToPreviewNotesDTO(allNotes, folderdNotesIds);
+                    var notes = await noteRepository.GetNotesByUserIdWithContentNoLocked(permissions.Caller.Id, folderNoteIds);
+
+                    var noteIds = notes.Where(x => 
+                                    SearchHelper.IsMatchContent(x.Title, request.Search) || 
+                                    x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
+                                    ).Select(x => x.Id);
+
+                    if (noteIds.Any())
+                    {
+                        notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteIds, request.Settings);
+                        return noteMapper.MapNotesToSmallNotesDTO(notes);
+                    }
                 }
             }
 
-            return new List<PreviewNoteForSelection>();
-        }
-
-        private async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
-        {
-            var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
-            var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-            var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, settings);
-            sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
-            return sharedNotes;
+            return new List<SmallNote>();
         }
     }
 }

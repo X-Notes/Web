@@ -12,7 +12,6 @@ using Storage;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BI.Services;
 using BI.Services.Backgrounds;
 using BI.Services.Encryption;
 using BI.Services.Files;
@@ -48,7 +47,6 @@ using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
-using Domain.Commands.Orders;
 using Domain.Commands.Personalizations;
 using Domain.Commands.RelatedNotes;
 using Domain.Commands.Share.Folders;
@@ -78,7 +76,6 @@ using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
-using Common.DTO.Orders;
 using Common.DTO.Notes.AdditionalContent;
 using BI.Services.UserHandlers;
 using Hangfire;
@@ -92,6 +89,7 @@ using WriteContext.Repositories.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
+using Common.Timers;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -123,7 +121,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
 
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsByEmailQuery, LabelsDTO>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetLabelsQuery, List<LabelDTO>>, LabelHandlerQuery>();
             services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
@@ -132,7 +130,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveAllFromBinCommand, Unit>, LabelHandlerCommand>();
-
+            services.AddScoped<IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>, LabelHandlerCommand>();
 
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
@@ -145,13 +143,14 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<MakeNoteHistoryCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
 
@@ -207,8 +206,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
 
 
             services.AddScoped<IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>, FolderHandlerQuery>();
@@ -218,13 +218,12 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateNotesInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<AddNotesToFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateNotesPositionsInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
-
-            //Order
-            services.AddScoped<IRequestHandler<UpdateOrderCommand, List<UpdateOrderEntityResponse>>, OrderHandlerCommand>();
+            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<SmallNote>>, FullFolderHandlerQuery>();
 
             //SHARE
             services.AddScoped<IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
@@ -247,9 +246,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
 
             // HISTORY
-            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, List<BaseNoteContentDTO>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
@@ -362,12 +361,21 @@ namespace WriteAPI.ConfigureAPP
         public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
         {
             var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
-            services.AddScoped(x => configService);
+            services.AddSingleton(x => configService);
 
             services.AddAzureClients(builder =>
             {
                 builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
             });
+        }
+
+        public static void TimersConfig(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var configService = Configuration.GetSection("Timers").Get<TimersConfig>();
+            services.AddSingleton(x => configService);
+
+            var hostedConfigService = Configuration.GetSection("HostedTimers").Get<HostedTimersConfig>();
+            services.AddSingleton(x => hostedConfigService);
         }
 
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -417,24 +425,22 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<CollectionLinkedService>();
 
-            services.AddSingleton<WebsocketsNotesService>();
-            services.AddSingleton<WebsocketsFoldersService>();
+            services.AddSingleton<WebsocketsNotesServiceStorage>();
+            services.AddSingleton<WebsocketsFoldersServiceStorage>();
+            services.AddSingleton<UserNoteEncryptStorage>();
 
-            services.AddScoped<AppEncryptor>();
+            services.AddSingleton<AppEncryptor>();
 
             services.AddScoped<IImageProcessor, ImageProcessor>();
 
             // BACKGROUND JOBS
-            services.AddSingleton<ConfigForEntitesDeliting>(); // TODO CHECK
             services.AddScoped<EntitiesDeleteJobHandler>();
 
             services.AddSingleton<ConfigForHistoryMaker>();
-            services.AddSingleton<HistoryCacheService>();
+            services.AddSingleton<HistoryCacheServiceStorage>();
             services.AddSingleton<HistoryJobHandler>();
 
-            services.AddSingleton<ConfigForFilesDeleter>();
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
-
         }
 
         public static void FileStorage(this IServiceCollection services)

@@ -1,9 +1,9 @@
-import { Order } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Folders } from '../models/folders.model';
 import { SmallFolder } from '../models/folder.model';
+import { PositionEntityModel } from '../../notes/models/position-note.model';
 
 export class LoadFolders {
   static type = '[Folders] Load folders';
@@ -92,10 +92,10 @@ export class CopyFolders {
   constructor(public typeFolder: FolderTypeENUM, public selectedIds: string[]) {}
 }
 
-export class PositionFolder {
+export class UpdatePositionsFolders {
   static type = '[Folders] Position folders';
 
-  constructor(public order: Order, public typeFolder: FolderTypeENUM) {}
+  constructor(public positions: PositionEntityModel[]) {}
 }
 
 // Muuri remove from dom

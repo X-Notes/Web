@@ -7,6 +7,8 @@ export class Label {
 
   color: string;
 
+  order: number;
+
   countNotes: number;
 
   createdAt?: Date;

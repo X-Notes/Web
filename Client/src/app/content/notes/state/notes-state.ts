@@ -5,7 +5,6 @@
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { OrderService } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
   OperationResult,
@@ -33,7 +32,7 @@ import {
   RemoveLabelFromNote,
   UpdateLabelOnNote,
   UpdateOneNote,
-  PositionNote,
+  UpdatePositionsNotes,
   LoadFullNote,
   DeleteCurrentNote,
   UpdateNoteTitle,
@@ -63,6 +62,7 @@ import { LongTermOperationsHandlerService } from '../../long-term-operations-han
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { Router } from '@angular/router';
 import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
+import { PositionEntityModel } from '../models/position-note.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -70,6 +70,7 @@ interface FullNoteState {
   canEdit: boolean;
   isOwner: boolean;
   authorId: string;
+  isLocked: boolean;
 }
 
 interface NoteState {
@@ -107,11 +108,10 @@ export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
     private apiText: ApiTextService,
-    private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
     return state.notes.find((x) => x.typeNotes === type);
@@ -124,14 +124,6 @@ export class NoteStore {
   }
 
   @Selector()
-  static getNote(state: NoteState) {
-    return (id: string, type: NoteTypeENUM) => {
-      const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
-      return note;
-    };
-  }
-
-  @Selector()
   static isRemoveLock(state: NoteState) {
     if (state.selectedIds.length === 1) {
       const { 0: id } = state.selectedIds;
@@ -139,22 +131,12 @@ export class NoteStore {
         .map((x) => x.notes)
         .reduce((acc, val) => acc.concat(val), [])
         .find((x) => x.id === id);
-      return note.isLocked;
+      return note.isLockedNow;
     }
     if (state.fullNoteState) {
-      return state.fullNoteState.note.isLocked;
+      return state.fullNoteState.note.isLockedNow;
     }
     return false;
-  }
-
-  @Selector()
-  static concatedAllNotes(state: NoteState) {
-    let newArr: SmallNote[] = [];
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < state.notes.length; i += 1) {
-      newArr = newArr.concat(state.notes[i].notes);
-    }
-    return newArr;
   }
 
   @Selector()
@@ -165,6 +147,11 @@ export class NoteStore {
   @Selector()
   static getNotes(state: NoteState): Notes[] {
     return state.notes;
+  }
+
+  @Selector()
+  static getSmallNotes(state: NoteState): SmallNote[] {
+    return state.notes.flatMap(x => x.notes);
   }
 
   @Selector()
@@ -194,7 +181,7 @@ export class NoteStore {
 
   @Selector()
   static labelsIds(state: NoteState): string[] {
-    return this.concatedAllNotes(state)
+    return this.getSmallNotes(state)
       .filter((note) => state.selectedIds.some((id) => id === note.id))
       .map((x) => x.labels)
       .flat()
@@ -219,7 +206,7 @@ export class NoteStore {
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
   }
-  
+
   @Selector()
   static fullNoteTitle(state: NoteState): string {
     return state.fullNoteState?.note?.title;
@@ -243,6 +230,16 @@ export class NoteStore {
   @Selector()
   static isOwner(state: NoteState): boolean {
     return state.fullNoteState?.isOwner;
+  }
+
+  @Selector()
+  static isLocked(state: NoteState): boolean {
+    return state.fullNoteState?.isLocked;
+  }
+
+  @Selector()
+  static isCanForceLocked(state: NoteState): boolean {
+    return !state.fullNoteState?.note?.isLockedNow && state.fullNoteState?.note?.isLocked;
   }
 
   @Selector()
@@ -345,7 +342,7 @@ export class NoteStore {
   }
 
   @Action(AddNotes)
-  addNote({ getState, dispatch }: StateContext<NoteState>, { notes, type } : AddNotes) {
+  addNote({ getState, dispatch }: StateContext<NoteState>, { notes, type }: AddNotes) {
     const notesState = this.getNotesByType(getState, type);
     const toUpdate = new Notes(type, [...notes, ...notesState]);
     dispatch(new UpdateNotes(toUpdate, type));
@@ -373,10 +370,11 @@ export class NoteStore {
     { getState, dispatch, patchState }: StateContext<NoteState>,
     { selectedIds, isCallApi }: DeleteNotesPermanently,
   ) {
-
     if (isCallApi) {
       const resp = await this.api.deleteNotes(selectedIds).toPromise();
-      if(!resp.success){ return; }
+      if (!resp.success) {
+        return;
+      }
     }
 
     for (const { notes, typeNotes } of getState().notes) {
@@ -392,10 +390,11 @@ export class NoteStore {
   }
 
   @Action(TransformTypeNotes)
-  transformFromTo(
+  async transformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
   ) {
+
     const typeFrom = getState()
       .notes.map((x) => x.notes)
       .flat()
@@ -403,27 +402,30 @@ export class NoteStore {
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-
-    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
     dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
-    const notesTo = this.getNotesByType(getState, typeTo);
+    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
 
-    notesAdded = [
-      ...notesAdded.map((note) => {
-        const newNote = { ...note };
-        return newNote;
-      }),
-    ];
-    notesAdded = notesAdded.map((x) => {
+    let notesTo = this.getNotesByType(getState, typeTo).map(x => ({...x}));
+    notesTo.forEach((x) => x.order = x.order + notesAdded.length);
+
+    notesAdded = notesAdded.map((x, index) => {
       const note = { ...x };
       note.noteTypeId = typeTo;
       note.refTypeId = refTypeId ?? note.refTypeId;
+      note.order = index + 1;
+      note.updatedAt = new Date();
       return note;
     });
 
     const newNotesTo = [...notesAdded, ...notesTo];
-    dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
+    await dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo)).toPromise();
+
+    notesTo = this.getNotesByType(getState, typeTo);
+    const positions = notesTo.map(
+      (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
+    );
+    dispatch(new UpdatePositionsNotes(positions));
 
     patchState({
       removeFromMurriEvent: [...selectedIds],
@@ -509,12 +511,14 @@ export class NoteStore {
     }
     if (resp.success) {
       const fullNote = getState().fullNoteState?.note;
-      if (fullNote && selectedIds.some(id => id === fullNote.id)) {
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color } } });
+      if (fullNote && selectedIds.some((id) => id === fullNote.id)) {
+        patchState({
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color } },
+        });
       }
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
-        notesForUpdate.forEach((note) => note.color = color);
+        notesForUpdate.forEach((note) => (note.color = color));
         const updatesUI = notesForUpdate.map((note) =>
           this.toUpdateNoteUI(note.id, note.color, null, null, null, null),
         );
@@ -569,8 +573,13 @@ export class NoteStore {
     }
     if (resp.success) {
       const note = getState().fullNoteState?.note;
-      if (note && selectedIds.some(id => id === note.id)) {
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...note, labels: [...note.labels, label] } } });
+      if (note && selectedIds.some((id) => id === note.id)) {
+        patchState({
+          fullNoteState: {
+            ...getState().fullNoteState,
+            note: { ...note, labels: [...note.labels, label] },
+          },
+        });
       }
       // Updates small notes
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
@@ -586,6 +595,7 @@ export class NoteStore {
               name: label.name,
               isDeleted: label.isDeleted,
               countNotes: 0,
+              order: 0
             },
           ];
           updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
@@ -611,7 +621,7 @@ export class NoteStore {
     }
     if (resp.success) {
       let note = getState().fullNoteState?.note;
-      if (note && selectedIds.some(id => id === note.id)) {
+      if (note && selectedIds.some((id) => id === note.id)) {
         note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
@@ -687,21 +697,25 @@ export class NoteStore {
     });
   }
 
-  @Action(PositionNote)
+  @Action(UpdatePositionsNotes)
   async changePosition(
     { getState, dispatch }: StateContext<NoteState>,
-    { order, typeNote }: PositionNote,
+    { positions}: UpdatePositionsNotes,
   ) {
-    const notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
-    const changedNote = notes.find((x) => x.id === order.entityId);
-    const flag = notes.indexOf(changedNote);
-    if (flag + 1 !== order.position) {
-      const resp = await this.orderService.changeOrder(order).toPromise();
-      resp.forEach((z) => {
-        const indexOf = notes.findIndex((x) => x.id === z.entityId);
-        notes[indexOf].order = z.newOrder;
+
+    if(!positions || positions.length === 0){
+      return;
+    }
+
+    const resp = await this.api.updateOrder(positions).toPromise();
+    if(resp.success){
+      positions.forEach(pos => {
+        const note = this.getNoteById(getState, pos.entityId);
+        if(note){
+          note.order = pos.position;
+        }
+        dispatch(new UpdateOneNote(note));
       });
-      dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
     }
   }
 
@@ -726,15 +740,30 @@ export class NoteStore {
   @Action(LoadFullNote)
   async loadFull({ patchState }: StateContext<NoteState>, { noteId, folderId }: LoadFullNote) {
     const request = await this.api.get(noteId, folderId).toPromise();
-    patchState({
-      fullNoteState: {
-        canView: request.canView,
-        canEdit: request.canEdit,
-        note: request.fullNote,
-        isOwner: request.isOwner,
-        authorId: request.authorId,
-      },
-    });
+    if (request.success) {
+      patchState({
+        fullNoteState: {
+          canView: request.data.canView,
+          canEdit: request.data.canEdit,
+          note: request.data.fullNote,
+          isOwner: request.data.isOwner,
+          authorId: request.data.authorId,
+          isLocked: false
+        },
+      });
+    }
+    if(!request.success && request.status === OperationResultAdditionalInfo.ContentLocked){
+      patchState({
+        fullNoteState: {
+          canView: null,
+          canEdit: null,
+          note: null,
+          isOwner: null,
+          authorId: null,
+          isLocked: true
+        },
+      });
+    }
   }
 
   @Action(LoadSnapshotNote)
@@ -743,12 +772,24 @@ export class NoteStore {
     { snapshotId, noteId }: LoadSnapshotNote,
   ) {
     const request = await this.historyApi.getSnapshot(noteId, snapshotId).toPromise();
-    patchState({
-      snapshotState: {
-        canView: request.canView,
-        noteSnapshot: request.noteSnapshot,
-      },
-    });
+    if (request.success) {
+      patchState({
+        snapshotState: {
+          canView: request.data.canView,
+          noteSnapshot: request.data.noteSnapshot,
+          isLocked: false,
+        },
+      });
+    }
+    if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
+      patchState({
+        snapshotState: {
+          canView: false,
+          noteSnapshot: null,
+          isLocked: true,
+        },
+      });
+    }
   }
 
   @Action(DeleteCurrentNote)
@@ -756,7 +797,6 @@ export class NoteStore {
   deleteCurrentNote({ patchState }: StateContext<NoteState>) {
     patchState({ fullNoteState: null });
   }
-
 
   @Action(UpdateNoteTitle)
   async updateTitle(
@@ -770,12 +810,18 @@ export class NoteStore {
     if (resp.success) {
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && fullNote.id === noteId) {
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: str } } });
+        patchState({
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: str } },
+        });
       }
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
         noteUpdate.title = str;
-        patchState({ updateNoteEvent: [this.toUpdateNoteUI(noteUpdate.id, null, null, null, null, noteUpdate.title)] });
+        patchState({
+          updateNoteEvent: [
+            this.toUpdateNoteUI(noteUpdate.id, null, null, null, null, noteUpdate.title),
+          ],
+        });
         dispatch(new UpdateOneNote(noteUpdate));
       }
     }
@@ -805,7 +851,7 @@ export class NoteStore {
   ) {
     const note = getState().fullNoteState?.note;
     if (note) {
-      const newNote: FullNote = { ...note, isLocked };
+      const newNote: FullNote = { ...note, isLockedNow: isLocked }; // TOOD
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }
@@ -934,7 +980,14 @@ export class NoteStore {
     return result;
   };
 
-  toUpdateNoteUI = (id: string, color: string, removeLabelIds: string[], addLabels: Label[], labels: Label[], title: string) => {
+  toUpdateNoteUI = (
+    id: string,
+    color: string,
+    removeLabelIds: string[],
+    addLabels: Label[],
+    labels: Label[],
+    title: string,
+  ) => {
     const obj = new UpdateNoteUI();
     obj.id = id;
     obj.color = color;

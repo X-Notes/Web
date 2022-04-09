@@ -23,10 +23,11 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("users/{id}")]
+        [AllowAnonymous]
         public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
         {
             var query = new GetOnlineUsersOnNoteQuery(id);
-            query.UserId = this.GetUserId();
+            query.UserId = this.GetUserIdUnStrict();
             return await _mediator.Send(query);
         }
 

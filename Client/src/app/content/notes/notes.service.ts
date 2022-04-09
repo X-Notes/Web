@@ -17,6 +17,7 @@ import {
   ClearAddToDomNotes,
   LoadNotes,
   UpdateOneNote,
+  UpdatePositionsNotes,
 } from './state/notes-actions';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
@@ -147,6 +148,10 @@ export class NotesService
     const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
     this.murriService.initMurriNoteAsync(roadType, isDraggable);
     await this.murriService.setOpacityFlagAsync(0);
+  }
+
+  updatePositions(): void {
+    this.store.dispatch(new UpdatePositionsNotes(this.murriService.getPositions()));
   }
 
   getIsDraggable(noteType: NoteTypeENUM) {

@@ -14,11 +14,11 @@ namespace BI.Services.History
     }
 
 
-    public class HistoryCacheService
+    public class HistoryCacheServiceStorage
     {
         public ConcurrentDictionary<Guid, CacheHistory> Ids = new ConcurrentDictionary<Guid, CacheHistory>();
 
-        public HistoryCacheService()
+        public HistoryCacheServiceStorage()
         {
         }
         

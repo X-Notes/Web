@@ -32,9 +32,10 @@ namespace WriteAPI.Controllers.Note
 
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<List<RelatedNote>> GetRelatedNotes(Guid id)
         {
-            var command = new GetRelatedNotesQuery(this.GetUserId(), id);
+            var command = new GetRelatedNotesQuery(this.GetUserIdUnStrict(), id);
             return await _mediator.Send(command);
         }
 

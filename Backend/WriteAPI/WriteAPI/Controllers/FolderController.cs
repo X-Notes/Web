@@ -5,7 +5,6 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
-using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
 using Domain.Commands.Folders;
 using Domain.Queries.Folders;
@@ -13,7 +12,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -108,6 +106,13 @@ namespace WriteAPI.Controllers
         {
             query.UserId = this.GetUserId();
             return await _mediator.Send(query);
+        }
+
+        [HttpPatch("order")]
+        public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsFoldersCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await _mediator.Send(command);
         }
     }
 }

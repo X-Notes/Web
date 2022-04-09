@@ -26,25 +26,24 @@ namespace BI.Services.Folders
         IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>,
         IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
-        IRequestHandler<DeleteFoldersCommand, Unit>,
-        IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>
+        IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>,
+        IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
-        private readonly UserRepository userRepository;
         private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly IMediator _mediator;
+
         public FolderHandlerCommand(
             FolderRepository folderRepository,
-            UserRepository userRepository, 
             NoteFolderLabelMapper appCustomMapper, 
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
             FolderWSUpdateService folderWSUpdateService)
         {
             this.folderRepository = folderRepository;
-            this.userRepository = userRepository;
             this.appCustomMapper = appCustomMapper;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
@@ -65,9 +64,8 @@ namespace BI.Services.Folders
                 UpdatedAt = DateTimeProvider.Time
             };
 
-            await folderRepository.Add(folder, FolderTypeENUM.Private);
-            var newFolder = await folderRepository.GetOneById(folder.Id);
-            return appCustomMapper.MapFolderToSmallFolder(newFolder);
+            await folderRepository.AddAsync(folder);
+            return appCustomMapper.MapFolderToSmallFolder(folder);
         }
 
         public async Task<OperationResult<Unit>> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
@@ -75,17 +73,16 @@ namespace BI.Services.Folders
             var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId);
-            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
-
-            if (isCanDelete)
+            var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
+            if (folders.Any())
             {
-                var folders = permissions.Select(x => x.perm.Folder).ToList();
-                folders.ForEach(note => note.DeletedAt = null);
-                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Archived);
+                folders.ForEach(x => x.ToType(FolderTypeENUM.Archived));
+                await folderRepository.UpdateRangeAsync(folders);
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
-            return new OperationResult<Unit>().SetNoPermissions();
+
+            return new OperationResult<Unit>().SetNotFound();
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeColorFolderCommand request, CancellationToken cancellationToken)
@@ -119,17 +116,16 @@ namespace BI.Services.Folders
             var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId);
-            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
-
-            if (isCanDelete)
+            var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
+            if (folders.Any())
             {
-                var folders = permissions.Select(x => x.perm.Folder).ToList();
-                folders.ForEach(note => note.DeletedAt = DateTimeProvider.Time);
-                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Deleted);
+                folders.ForEach(x => x.ToType(FolderTypeENUM.Deleted, DateTimeProvider.Time));
+                await folderRepository.UpdateRangeAsync(folders);
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
-            return new OperationResult<Unit>().SetNoPermissions();
+
+            return new OperationResult<Unit>().SetNotFound();
         }
 
         public async Task<List<SmallFolder>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
@@ -186,23 +182,19 @@ namespace BI.Services.Folders
             return new List<SmallFolder>();
         }
 
-        public async Task<Unit> Handle(DeleteFoldersCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(DeleteFoldersCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId);
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
+            var permissions = await _mediator.Send(command);
 
-            var deletedFolders = user.Folders.Where(x => x.FolderTypeId == FolderTypeENUM.Deleted).ToList();
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-
-            if (folders.Count == request.Ids.Count)
+            var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
+            if (folders.Any())
             {
-                await folderRepository.DeleteRangeDeleted(folders, deletedFolders);
-            }
-            else
-            {
-                throw new Exception("Incorrect count");
+                await folderRepository.RemoveRangeAsync(folders);
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNotFound();
         }
 
 
@@ -211,16 +203,40 @@ namespace BI.Services.Folders
             var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.UserId);
-            var isCanDelete = permissions.All(x => x.Item2.IsOwner);
-            if (isCanDelete)
+            var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
+            if (folders.Any())
             {
-                var folders = permissions.Select(x => x.perm.Folder).ToList();
-                folders.ForEach(note => note.DeletedAt = null);
-                await folderRepository.CastFolders(folders, user.Folders, folders.FirstOrDefault().FolderTypeId, FolderTypeENUM.Private);
+                folders.ForEach(x => x.ToType(FolderTypeENUM.Private));
+                await folderRepository.UpdateRangeAsync(folders);
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
-            return new OperationResult<Unit>().SetNoPermissions();
+
+            return new OperationResult<Unit>().SetNotFound();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePositionsFoldersCommand request, CancellationToken cancellationToken)
+        {
+            var folderIds = request.Positions.Select(x => x.EntityId).ToList();
+            var folders = await folderRepository.GetWhereAsync(x => x.UserId == request.UserId && folderIds.Contains(x.Id));
+
+            if (folders.Any())
+            {
+                request.Positions.ForEach(x =>
+                {
+                    var folder = folders.FirstOrDefault(z => z.Id == x.EntityId); 
+                    if (folder != null)
+                    {
+                        folder.Order = x.Position;
+                    }
+                });
+
+                await folderRepository.UpdateRangeAsync(folders);
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNotFound();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BI.SignalR;
 using Common;
+using Common.Timers;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
@@ -10,36 +11,42 @@ namespace WriteAPI.Hosted
 {
     public class ManageUsersOnEntitiesHosted : BackgroundService
     {
-        private readonly WebsocketsFoldersService websocketsFoldersService;
-        private readonly WebsocketsNotesService websocketsNotesService;
+        private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
+        private readonly WebsocketsNotesServiceStorage websocketsNotesService;
+        private readonly HostedTimersConfig hostedTimersConfig;
 
-        public ManageUsersOnEntitiesHosted(WebsocketsFoldersService websocketsFoldersService, WebsocketsNotesService websocketsNotesService)
+        public ManageUsersOnEntitiesHosted(
+            WebsocketsFoldersServiceStorage websocketsFoldersService, 
+            WebsocketsNotesServiceStorage websocketsNotesService,
+            HostedTimersConfig hostedTimersConfig)
         {
             this.websocketsFoldersService = websocketsFoldersService;
             this.websocketsNotesService = websocketsNotesService;
+            this.hostedTimersConfig = hostedTimersConfig;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            int hourse = 2;
-            var earliestTimestamp = DateTimeProvider.Time.AddHours(-hourse);
+            var earliestTimestamp = DateTimeProvider.Time.AddHours(-hostedTimersConfig.ManageUsersOnEntitiesDeleteAfterHourse);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 Debug.WriteLine("Start ManageUsersOnEntitiesHosted");
 
-                Console.WriteLine("Is consist websockets notes: " + websocketsNotesService.IsConsist);
-                Console.WriteLine("Websockets notes count: " + websocketsNotesService.CountActiveEntities);
+                if (!websocketsNotesService.IsConsist)
+                {
+                    Console.WriteLine("Unconsist websockets notes");
+                }
 
-                Console.WriteLine("Is consist websockets folders: " + websocketsFoldersService.IsConsist);
-                Console.WriteLine("Websockets folders count: " + websocketsFoldersService.CountActiveEntities);
+                if (!websocketsFoldersService.IsConsist)
+                {
+                    Console.WriteLine("Unconsist websockets folders");
+                }
 
                 websocketsFoldersService.ClearEmptyAfterDelay(earliestTimestamp);
                 websocketsNotesService.ClearEmptyAfterDelay(earliestTimestamp);
 
-                await Task.Delay(60000, stoppingToken);
-
-                Debug.WriteLine("End ManageUsersOnEntitiesHosted");
+                await Task.Delay(hostedTimersConfig.ManageUsersOnEntitiesCallClearSeconds * 1000, stoppingToken);
             }
         }
     }

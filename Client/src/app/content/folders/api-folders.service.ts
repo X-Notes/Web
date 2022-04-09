@@ -12,6 +12,7 @@ import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
 import { BottomFolderContent } from './models/bottom-folder-content.model';
+import { PositionEntityModel } from '../notes/models/position-note.model';
 
 @Injectable()
 export class ApiFoldersService {
@@ -125,7 +126,10 @@ export class ApiFoldersService {
     const obj = {
       ids,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/folder/delete/permanently`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/delete/permanently`,
+      obj,
+    );
   }
 
   copyFolders(ids: string[]) {
@@ -152,6 +156,16 @@ export class ApiFoldersService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/folder/ref/private`,
+      obj,
+    );
+  }
+
+  updateOrder(positions: PositionEntityModel[]) {
+    const obj = {
+      positions,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/folder/order`,
       obj,
     );
   }

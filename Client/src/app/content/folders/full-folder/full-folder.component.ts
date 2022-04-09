@@ -143,8 +143,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(async (flag) => {
         if (flag) {
           const newNote = await this.noteApiService.new().toPromise();
-          const ids = [newNote.id, ...this.ffnService.entities.map((z) => z.id)];
-          await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+          await this.apiFullFolder.addNotesToFolder([newNote.id], this.folder.id).toPromise();
           this.ffnService.addToDom([newNote]);
         }
       });
@@ -184,14 +183,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pService.manageNotesInFolderSubject
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(() => {
-        const instanse = this.dialogsService.openManageNotesInFolder();
+        const instanse = this.dialogsService.openAddNotesToFolder();
         instanse
           .afterClosed()
           .pipe(takeUntil(this.ffnService.destroy))
           .subscribe(async (resp) => {
             if (resp) {
               const ids = resp.map((x) => x.id);
-              await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+              await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
               await this.ffnService.updateNotesLayout(this.folder.id);
             }
           });

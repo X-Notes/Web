@@ -255,42 +255,38 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   getFolders() {
     const selectionIds = this.store.selectSnapshot(FolderStore.selectedIds);
-    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    const folders = this.store.selectSnapshot(FolderStore.getFolders);
-    const foldersWithType = folders.find((z) => z.typeFolders === folderType);
-    this.folders = foldersWithType.folders
+    this.folders = this.store
+      .selectSnapshot(FolderStore.getSmallFolders)
       .filter((z) => selectionIds.some((x) => x === z.id))
       .map((folder) => {
         return { ...folder };
       });
-    this.changeFolder(this.folders[0]);
+    this.selectFolder(this.folders[0]);
   }
 
   getFullNote() {
     const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
     const smallNote = { ...fullNote } as SmallNote;
     this.notes = [smallNote];
-    this.changeNote(smallNote);
+    this.selectNote(smallNote);
   }
 
   getNotes() {
     const selectionIds = this.store.selectSnapshot(NoteStore.selectedIds);
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const notes = this.store.selectSnapshot(NoteStore.getNotes);
-    const notesWithType = notes.find((z) => z.typeNotes === noteType);
-    this.notes = notesWithType.notes
+    this.notes = this.store
+      .selectSnapshot(NoteStore.getSmallNotes)
       .filter((z) => selectionIds.some((x) => x === z.id))
       .map((note) => {
         return { ...note };
       });
-    this.changeNote(this.notes[0]);
+    this.selectNote(this.notes[0]);
   }
 
   getFullFolder() {
     const fullFolder = this.store.selectSnapshot(FolderStore.full);
     const smallFolder = { ...fullFolder } as SmallFolder;
     this.folders = [smallFolder];
-    this.changeFolder(smallFolder);
+    this.selectFolder(smallFolder);
   }
 
   copyInputLink() {
@@ -317,23 +313,16 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.startIdsType.push({ id: this.currentNote.id, type: this.currentNote.noteTypeId });
     }
 
+    let type = NoteTypeENUM.Private;
     if (this.currentNote.noteTypeId !== NoteTypeENUM.Shared) {
       await this.apiNote.makePublic(RefTypeENUM.Viewer, [this.currentNote.id]).toPromise();
-      this.currentNote.noteTypeId = NoteTypeENUM.Shared;
-      this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Shared;
-      this.store.dispatch([
-        new ChangeTypeFullNote(NoteTypeENUM.Shared),
-        new UpdateOneNote(this.currentNote),
-      ]);
+      type = NoteTypeENUM.Shared;
     } else {
       await this.apiNote.makePrivate([this.currentNote.id]).toPromise();
-      this.currentNote.noteTypeId = NoteTypeENUM.Private;
-      this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Private;
-      this.store.dispatch([
-        new ChangeTypeFullNote(NoteTypeENUM.Private),
-        new UpdateOneNote(this.currentNote),
-      ]);
     }
+    this.currentNote.noteTypeId = type;
+    this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = type;
+    this.store.dispatch(new ChangeTypeFullNote(type));
   }
 
   async changeFolderType() {
@@ -341,25 +330,16 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.startIdsType.push({ id: this.currentFolder.id, type: this.currentFolder.folderTypeId });
     }
 
+    let type = FolderTypeENUM.Private;
     if (this.currentFolder.folderTypeId !== FolderTypeENUM.Shared) {
       await this.apiFolder.makePublic(RefTypeENUM.Viewer, [this.currentFolder.id]).toPromise();
-      this.currentFolder.folderTypeId = FolderTypeENUM.Shared;
-      this.folders.find((note) => note.id === this.currentFolder.id).folderTypeId =
-        FolderTypeENUM.Shared;
-      this.store.dispatch([
-        new ChangeTypeFullFolder(FolderTypeENUM.Shared),
-        new UpdateOneFolder(this.currentFolder),
-      ]);
+      type = FolderTypeENUM.Shared;
     } else {
       await this.apiFolder.makePrivate([this.currentFolder.id]).toPromise();
-      this.currentFolder.folderTypeId = FolderTypeENUM.Private;
-      this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId =
-        FolderTypeENUM.Private;
-      this.store.dispatch([
-        new ChangeTypeFullFolder(FolderTypeENUM.Private),
-        new UpdateOneFolder(this.currentFolder),
-      ]);
     }
+    this.currentFolder.folderTypeId = type;
+    this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = type;
+    this.store.dispatch([new ChangeTypeFullFolder(type)]);
   }
 
   factoryForCommandNote = (id: string, typeTo: NoteTypeENUM): TransformTypeNotes => {
@@ -426,12 +406,12 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeNote(note: SmallNote) {
+  selectNote(note: SmallNote) {
     this.currentNote = { ...note };
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 
-  changeFolder(folder: SmallFolder) {
+  selectFolder(folder: SmallFolder) {
     this.currentFolder = { ...folder };
     this.store.dispatch(new GetInvitedUsersToFolder(folder.id));
   }

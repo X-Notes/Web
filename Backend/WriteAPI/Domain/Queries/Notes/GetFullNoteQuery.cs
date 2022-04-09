@@ -1,10 +1,11 @@
 ﻿using System;
+using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
 namespace Domain.Queries.Notes
 {
-    public class GetFullNoteQuery: BaseQueryEntity, IRequest<FullNoteAnswer>
+    public class GetFullNoteQuery: BaseQueryEntity, IRequest<OperationResult<FullNoteAnswer>>
     {
         public Guid NoteId { set; get; }
 

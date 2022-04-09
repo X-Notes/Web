@@ -21,6 +21,7 @@ import {
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
 import { ContentModelBase } from './models/editor-models/content-model-base';
+import { PositionEntityModel } from './models/position-note.model';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -80,6 +81,16 @@ export class ApiServiceNotes {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/label/add`,
+      obj,
+    );
+  }
+
+  updateOrder(positions: PositionEntityModel[]) {
+    const obj = {
+      positions,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/order`,
       obj,
     );
   }
@@ -167,9 +178,12 @@ export class ApiServiceNotes {
     if (folderId) {
       params = params.append('folderId', folderId);
     }
-    return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${noteId}`, {
-      params,
-    });
+    return this.httpClient.get<OperationResult<RequestFullNote>>(
+      `${environment.writeAPI}/api/note/${noteId}`,
+      {
+        params,
+      },
+    );
   }
 
   getAll(settings: PersonalizationSetting) {
