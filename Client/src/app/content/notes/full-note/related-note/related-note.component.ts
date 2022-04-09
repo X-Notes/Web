@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 export class RelatedNoteComponent {
   @Input() note: RelatedNote;
 
+  @Input() isCanTurnUp: RelatedNote;
+
   @Output() deleteNote = new EventEmitter<string>();
 
   @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();
@@ -31,6 +33,7 @@ export class RelatedNoteComponent {
   constructor(public murriService: MurriService) {}
 
   turnUpSmallNote() {
+    if (!this.isCanTurnUp) return;
     this.changeState.emit({ isOpened: !this.note.isOpened, relatedNoteId: this.note.id });
     this.note.isOpened = !this.note.isOpened;
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 100);

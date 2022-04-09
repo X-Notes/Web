@@ -10,13 +10,15 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import {
   deleteSmallNote,
   PersonalizationService,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../../models/small-note.model';
+import { NoteStore } from '../../state/notes-state';
 import { NoteHistory } from '../models/history/note-history.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
@@ -32,6 +34,9 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
   @Input() note: SmallNote;
 
   @Input() wrap: ElementRef;
+
+  @Select(NoteStore.canEdit)
+  public canEdit$: Observable<boolean>;
 
   @ViewChildren('relatedItem', { read: ElementRef }) refSideBarElements: QueryList<ElementRef>;
 

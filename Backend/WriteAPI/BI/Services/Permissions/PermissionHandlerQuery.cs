@@ -61,6 +61,12 @@ namespace BI.Services.Permissions
                 return new UserPermissionsForNote().SetFullAccess(caller, note);
             }
 
+            var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == caller.Id);
+            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
+            {
+                return new UserPermissionsForNote().SetFullAccess(caller, note);
+            }
+
             if (note.NoteTypeId == NoteTypeENUM.Shared)
             {
                 switch (note.RefTypeId)
@@ -78,12 +84,6 @@ namespace BI.Services.Permissions
                             return new UserPermissionsForNote().SetOnlyRead(caller, note);
                         }
                 }
-            }
-
-            var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == caller.Id);
-            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
-            {
-                return new UserPermissionsForNote().SetFullAccess(caller, note);
             }
 
             if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
@@ -113,13 +113,19 @@ namespace BI.Services.Permissions
                 return new UserPermissionsForFolder().GetFullAccess(caller, folder);
             }
 
-            if(folder.FolderTypeId == FolderTypeENUM.Shared)
+            var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == caller.Id);
+            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
+            {
+                return new UserPermissionsForFolder().GetFullAccess(caller, folder);
+            }
+
+            if (folder.FolderTypeId == FolderTypeENUM.Shared)
             {
                 switch (folder.RefTypeId)
                 {
                     case RefTypeENUM.Editor:
                         {
-                            if(caller == null)
+                            if (caller == null)
                             {
                                 return new UserPermissionsForFolder().GetOnlyRead(caller, folder);
                             }
@@ -130,12 +136,6 @@ namespace BI.Services.Permissions
                             return new UserPermissionsForFolder().GetOnlyRead(caller, folder);
                         }
                 }
-            }
-
-            var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == caller.Id);
-            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
-            {
-                return new UserPermissionsForFolder().GetFullAccess(caller, folder);
             }
 
             if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)

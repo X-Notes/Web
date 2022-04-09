@@ -49,11 +49,15 @@ namespace BI.Services.RelatedNotes
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanRead)
+            if (permissions.CanWrite)
             {
                 var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.Caller.Id, request.NoteId, request.Settings);
+                var relNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(relatedNotesIds, request.Settings);
+                var allNotes = await noteRepository.GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(permissions.Caller.Id, request.NoteId, request.Settings);
+                allNotes.AddRange(relNotes);
+                allNotes = allNotes.DistinctBy(x => x.Id).ToList();
+
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

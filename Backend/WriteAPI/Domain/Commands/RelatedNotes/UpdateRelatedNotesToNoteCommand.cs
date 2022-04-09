@@ -12,7 +12,6 @@ namespace Domain.Commands.RelatedNotes
         [ValidationGuid]
         public Guid NoteId { set; get; }
         
-        [RequiredListNotEmptyAttribute]
         public List<Guid> RelatedNoteIds { set; get; }
     }
 }
