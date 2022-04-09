@@ -102,6 +102,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe(async (flag) => {
           if (flag) {
+            await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
             await this.loadIternalContent();
             await this.loadLeftMenuWithNotes();
           }

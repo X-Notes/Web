@@ -44,7 +44,7 @@ export class InteractionInnerNoteComponent {
     public buttonService: MenuButtonsService,
     public dialogsManageService: DialogsManageService,
     private store: Store,
-    public permissionsButtonsService: PermissionsButtonsService,
+    public pB: PermissionsButtonsService,
   ) {}
 
   closeMenu(): void {

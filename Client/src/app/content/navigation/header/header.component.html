@@ -109,7 +109,7 @@
       [@showMenuLeftRight]
     >
       <app-menu
-        [items]="menuButtonService.items | manageMenuButtons: permissionsButtonsService.IsCanEdit: permissionsButtonsService.IsOwner"
+        [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
         class="menu-inner"
       ></app-menu>
     </div>

@@ -78,7 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private store: Store,
     public menuButtonService: MenuButtonsService,
     private signalRService: SignalRService,
-    public permissionsButtonsService: PermissionsButtonsService,
+    public pB: PermissionsButtonsService,
   ) {}
 
   ngOnDestroy(): void {

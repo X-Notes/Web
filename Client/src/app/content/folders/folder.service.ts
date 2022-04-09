@@ -183,8 +183,10 @@ export class FolderService
     if (folderIds.length > 0) {
       const additionalInfo = await this.apiFolders.getAdditionalInfos(folderIds).toPromise();
       for (const info of additionalInfo) {
-        const noteIndex = this.entities.findIndex((x) => x.id === info.folderId);
-        this.entities[noteIndex].additionalInfo = info;
+        const index = this.entities.findIndex((x) => x.id === info.folderId);
+        if (index !== -1) {
+          this.entities[index].additionalInfo = info;
+        }
       }
     }
   }

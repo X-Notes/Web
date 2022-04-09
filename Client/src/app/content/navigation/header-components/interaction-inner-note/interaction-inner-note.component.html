@@ -34,7 +34,7 @@
 
   <app-menu
     class="menu-inner"
-    [items]="buttonService.items | manageMenuButtons: permissionsButtonsService.IsCanEdit: permissionsButtonsService.IsOwner"
+    [items]="buttonService.items | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
     [@.disabled]="pService.AnimationInnerMenu"

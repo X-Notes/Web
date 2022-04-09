@@ -161,6 +161,21 @@ export class NoteStore {
   }
 
   @Selector()
+  static getAllSelectedNotesNoShared(state: NoteState): boolean {
+    return this.getSelectedNotes(state).every(x => x.noteTypeId !== NoteTypeENUM.Shared);
+  }
+
+  @Selector()
+  static getAllSelectedNotesUnlocked(state: NoteState): boolean {
+    return this.getSelectedNotes(state).every(x => !x.isLocked);
+  }
+
+  @Selector()
+  static getAllSelectedNotesUnlockedNow(state: NoteState): boolean {
+    return this.getSelectedNotes(state).every(x => !x.isLockedNow);
+  }
+
+  @Selector()
   static getAllSelectedNotesAuthors(state: NoteState): string[] {
     return [...new Set(this.getSelectedNotes(state).map(x => x.userId))];
   }
@@ -561,20 +576,23 @@ export class NoteStore {
       true,
       true,
     );
+    
     const resp = await this.api.copyNotes(selectedIds, mini, operation).toPromise();
-    const newIds = resp.eventBody;
-    const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
-    const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
-    dispatch(
-      new UpdateNotes(
-        new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]),
-        NoteTypeENUM.Private,
-      ),
-    );
-    dispatch([UnSelectAllNote]);
-
-    if (typeNote === NoteTypeENUM.Private) {
-      dispatch(new AddToDomNotes([...newNotes]));
+    if(resp.eventBody.success){
+      const newIds = resp.eventBody.data;
+      const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
+      const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
+      dispatch(
+        new UpdateNotes(
+          new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]),
+          NoteTypeENUM.Private,
+        ),
+      );
+      dispatch([UnSelectAllNote]);
+  
+      if (typeNote === NoteTypeENUM.Private) {
+        dispatch(new AddToDomNotes([...newNotes]));
+      }
     }
   }
 

@@ -5,7 +5,15 @@ import { MenuItem } from 'src/app/content/navigation/models/menu-Item.model';
   name: 'manageMenuButtons',
 })
 export class ManageMenuButtonsPipe implements PipeTransform {
-  transform = (items: MenuItem[], isHasEditRights: boolean, isOwner: boolean): MenuItem[] => {
+  transform = (
+    items: MenuItem[],
+    isHasEditRights: boolean,
+    isOwner: boolean,
+    isAllNotesNoShared: boolean,
+  ): MenuItem[] => {
+    if (!isAllNotesNoShared) {
+      items = items.filter((x) => !x.isDisableForShared);
+    }
     if (!isOwner) {
       items = items.filter((x) => x.isOnlyForAuthor === false);
     }

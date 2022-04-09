@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { combineLatest, Observable, of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from './dialogs-manage.service';
@@ -328,10 +328,15 @@ export class MenuButtonsService {
     return {
       icon: 'copy',
       operation: () => this.menuButtonsNotesService.copyNotes(),
-      isVisible: of(true),
+      isVisible: this.isVisibleCopy,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get isVisibleCopy(): Observable<boolean> {
+    return this.store.select(NoteStore.getAllSelectedNotesUnlockedNow);
   }
 
   getCopyFoldersItem(): MenuItem {
@@ -348,10 +353,22 @@ export class MenuButtonsService {
     return {
       icon: 'share',
       operation: () => this.openShareWithNotes(),
-      isVisible: of(true),
+      isVisible: this.isVisibleShareNote,
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
     };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get isVisibleShareNote(): Observable<boolean> {
+    return this.store.select(AppStore.isNoteInner).pipe(
+      switchMap((flag) => {
+        if (flag) {
+          return this.store.select(NoteStore.oneFull).pipe(map((x) => !x?.isLocked));
+        }
+        return this.store.select(NoteStore.getAllSelectedNotesUnlocked);
+      }),
+    );
   }
 
   getFolderShareItem(): MenuItem {
@@ -417,6 +434,7 @@ export class MenuButtonsService {
         ),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
+      isDisableForShared: true,
     };
   }
 
@@ -440,6 +458,7 @@ export class MenuButtonsService {
       },
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
+      isDisableForShared: true,
     };
   }
 

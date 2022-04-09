@@ -156,7 +156,8 @@
       "required": "Required field",
       "minLength": "Password must be at least 6 characters",
       "incorrect": "Incorrect password",
-      "timeMessage": "After unlocking the note will be available for 5 minutes"
+      "timeMessage": "After unlocking the note will be available for 5 minutes",
+      "revokeMessage": "All users who can view or edit this note will lose access to it"
     },
     "reviewModal": {
       "review": "Review document",
@@ -322,6 +323,8 @@
   },
   "entity-bottom-tooltip":{
     "updated": "date of last changes",
-    "deleted": "date of deletion"
+    "deleted": "date of deletion",
+    "hasUsersNote": "This note can be viewed or edited by multiple users",
+    "hasUsersFolder": "This folder can be viewed or edited by multiple users"
   }
 }

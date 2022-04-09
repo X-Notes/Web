@@ -8,5 +8,6 @@ export interface MenuItem {
   operation: () => void;
   isOnlyForAuthor: boolean;
   IsNeedEditRightsToSee: boolean;
+  isDisableForShared?: boolean;
   tooltip?: Observable<string>;
 }
