@@ -93,20 +93,20 @@ $full-main-content: 52;
 //convert
 
 @function get-color($name) {
-    @return '$name';
+  @return '$name';
 }
 
-//mixin 
+//mixin
 
 @mixin text-overflow-webkit {
-    width: 100%;
-    white-space: pre-wrap;
-    text-overflow: ellipsis;
+  width: 100%;
+  white-space: pre-wrap;
+  text-overflow: ellipsis;
 }
 
 @mixin text-overflow {
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

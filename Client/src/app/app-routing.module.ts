@@ -39,6 +39,13 @@ const routes: Routes = [
     ],
   },
   {
+    path: 'public',
+    loadChildren: () =>
+      import('./full-note-public/full-note-public.module').then(
+        ({ FullNotePublicModule }) => FullNotePublicModule,
+      ),
+  },
+  {
     path: 'about',
     loadChildren: () => import('./about/about.module').then(({ AboutModule }) => AboutModule),
   },

@@ -1,0 +1,55 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+}
+
+.auth {
+  display: flex;
+  align-items: center;
+  width: 270px;
+  height: 100%;
+  border-right: 1px solid #e7e7e7;
+  padding: 0 1.25rem;
+
+  .logo {
+    display: flex;
+    width: 95px;
+    margin-right: 2rem;
+  }
+
+  button[type="button"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 32px;
+    outline: none;
+    border: 0.8px solid transparent;
+    border-radius: 5px;
+    background: $dark-button;
+    transition: 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #3d4049;
+    }
+
+    .text {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      color: white;
+    }
+  }
+}
