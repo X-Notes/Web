@@ -62,7 +62,11 @@
       <div *ngIf="note?.isLockedNow" class="icon">
         <mat-icon svgIcon="lock" [inline]="true"></mat-icon>
       </div>
-      <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
+      <div
+        *ngIf="note.additionalInfo?.isHasUserOnNote"
+        class="icon"
+        [CustomTooltip]="'entity-bottom-tooltip.hasUsersNote' | translate"
+      >
         <mat-icon svgIcon="people" [inline]="true"></mat-icon>
       </div>
       <div

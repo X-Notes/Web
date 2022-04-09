@@ -88,10 +88,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("notes/user/invites")]
-        public async Task InvitesUsersToNotes(SendInvitesToUsersNotes command)
+        public async Task<OperationResult<Unit>> InvitesUsersToNotes(SendInvitesToUsersNotes command)
         {
             command.UserId = this.GetUserId();
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpGet("notes/user/invites/{noteId}")]

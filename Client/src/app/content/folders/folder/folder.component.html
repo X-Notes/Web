@@ -51,7 +51,11 @@
           <p>{{date ?? folder.updatedAt | date: 'medium' }}</p>
         </div>
         <div class="help-icons">
-          <div *ngIf="folder.additionalInfo?.isHasUserOnNote" class="icon">
+          <div
+            *ngIf="folder.additionalInfo?.isHasUserOnNote"
+            class="icon"
+            [CustomTooltip]="'entity-bottom-tooltip.hasUsersFolder' | translate"
+          >
             <mat-icon svgIcon="people" [inline]="true"></mat-icon>
           </div>
         </div>

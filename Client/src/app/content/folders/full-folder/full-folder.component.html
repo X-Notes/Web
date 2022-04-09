@@ -124,9 +124,7 @@
 </div>
 <div class="drag-helper main-helper"></div>
 <mat-menu #menu="matMenu">
-  <ng-container
-    *ngFor="let item of folderMenu | manageMenuButtons: permissionsButtonsService.IsCanEdit: permissionsButtonsService.IsOwner"
-  >
+  <ng-container *ngFor="let item of folderMenu | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: true">
     <button
       (click)="item.operation()"
       mat-menu-item

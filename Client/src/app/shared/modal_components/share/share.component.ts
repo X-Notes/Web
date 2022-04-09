@@ -247,10 +247,18 @@ export class ShareComponent implements OnInit, OnDestroy {
 
     let type = NoteTypeENUM.Private;
     if (this.currentNote.noteTypeId !== NoteTypeENUM.Shared) {
-      await this.apiNote.makePublic(RefTypeENUM.Viewer, [this.currentNote.id]).toPromise();
+      const resp = await this.apiNote
+        .makePublic(RefTypeENUM.Viewer, [this.currentNote.id])
+        .toPromise();
+      if (!resp.success) {
+        return;
+      }
       type = NoteTypeENUM.Shared;
     } else {
-      await this.apiNote.makePrivate([this.currentNote.id]).toPromise();
+      const resp = await this.apiNote.makePrivate([this.currentNote.id]).toPromise();
+      if (!resp.success) {
+        return;
+      }
     }
     this.currentNote.noteTypeId = type;
     this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = type;
@@ -264,10 +272,18 @@ export class ShareComponent implements OnInit, OnDestroy {
 
     let type = FolderTypeENUM.Private;
     if (this.currentFolder.folderTypeId !== FolderTypeENUM.Shared) {
-      await this.apiFolder.makePublic(RefTypeENUM.Viewer, [this.currentFolder.id]).toPromise();
+      const resp = await this.apiFolder
+        .makePublic(RefTypeENUM.Viewer, [this.currentFolder.id])
+        .toPromise();
+      if (!resp.success) {
+        return;
+      }
       type = FolderTypeENUM.Shared;
     } else {
-      await this.apiFolder.makePrivate([this.currentFolder.id]).toPromise();
+      const resp = await this.apiFolder.makePrivate([this.currentFolder.id]).toPromise();
+      if (!resp.success) {
+        return;
+      }
     }
     this.currentFolder.folderTypeId = type;
     this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = type;

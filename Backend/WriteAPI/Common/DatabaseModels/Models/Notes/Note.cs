@@ -51,5 +51,7 @@ namespace Common.DatabaseModels.Models.Notes
             NoteTypeId = noteTypeId;
             UpdatedAt = DateTimeProvider.Time;
         }
+
+        public bool IsShared() => NoteTypeId == NoteTypeENUM.Shared;
     }
 }

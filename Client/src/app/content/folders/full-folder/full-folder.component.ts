@@ -95,7 +95,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
-    public permissionsButtonsService: PermissionsButtonsService,
+    public pB: PermissionsButtonsService,
   ) {}
 
   get folderMenu() {

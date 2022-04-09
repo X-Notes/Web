@@ -51,7 +51,7 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpPatch("copy")]
-        public async Task<List<Guid>> CopyNote([FromBody] CopyNoteCommand command)
+        public async Task<OperationResult<List<Guid>>> CopyNote([FromBody] CopyNoteCommand command)
         {
             command.UserId = this.GetUserId();
             return await _mediator.Send(command);

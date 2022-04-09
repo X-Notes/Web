@@ -27,7 +27,7 @@ namespace BI.Services.Sharing
         IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
-        IRequestHandler<SendInvitesToUsersNotes, Unit>,
+        IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
@@ -91,6 +91,12 @@ namespace BI.Services.Sharing
                 foreach (var perm in permissions)
                 {
                     var note = perm.perm.Note;
+
+                    if (note.IsLocked)
+                    {
+                        return new OperationResult<Unit>().SetContentLocked();
+                    }
+
                     note.RefTypeId = request.RefTypeId;
                     note.ToType(NoteTypeENUM.Shared);
                     await noteRepository.UpdateAsync(note);
@@ -144,6 +150,12 @@ namespace BI.Services.Sharing
 
             if (permissions.IsOwner)
             {
+
+                if (permissions.Note.IsLocked)
+                {
+                    return new OperationResult<Unit>().SetContentLocked();
+                }
+
                 var access = await usersOnPrivateNotesRepository
                     .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
 
@@ -284,13 +296,19 @@ namespace BI.Services.Sharing
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
             {
+
+                if (permissions.Note.IsLocked)
+                {
+                    return new OperationResult<Unit>().SetContentLocked();
+                }
+
                 var permissionsRequests = request.UserIds.Select(userId => new UserOnPrivateNotes()
                 {
                     AccessTypeId = request.RefTypeId,
@@ -317,9 +335,12 @@ namespace BI.Services.Sharing
                     await appSignalRHub.AddNoteToShared(request.NoteId, receiver.Email);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
+
+
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

@@ -43,6 +43,9 @@
       >
     </div>
   </div>
+  <div *ngIf="isDisplaySecondField" class="revoke-rights-message-container">
+    <p>{{ 'modal.lockModal.revokeMessage' | translate }}</p>
+  </div>
 </form>
 <app-dialog-generic-save
   (saveOutput)="save()"

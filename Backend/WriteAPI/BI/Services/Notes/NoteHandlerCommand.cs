@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
+using BI.Services.Encryption;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -41,14 +42,13 @@ namespace BI.Services.Notes
         IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>,
         IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>,
         IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<CopyNoteCommand, List<Guid>>,
+        IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>,
         IRequestHandler<MakeNoteHistoryCommand, Unit>,
         IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>,
         IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>
     {
 
-        private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly LabelsNotesRepository labelsNotesRepository;
@@ -58,10 +58,10 @@ namespace BI.Services.Notes
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
-        private readonly FileRepository fileRepository;
         private readonly CollectionLinkedService collectionLinkedService;
+        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+
         public NoteHandlerCommand(
-            UserRepository userRepository, 
             NoteRepository noteRepository,
             NoteFolderLabelMapper noteCustomMapper, 
             IMediator _mediator, 
@@ -71,10 +71,9 @@ namespace BI.Services.Notes
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
-            FileRepository fileRepository,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            UserNoteEncryptStorage userNoteEncryptStorage)
         {
-            this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
@@ -84,8 +83,8 @@ namespace BI.Services.Notes
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.labelRepository = labelRepository;
             this.noteWSUpdateService = noteWSUpdateService;
-            this.fileRepository = fileRepository;
             this.collectionLinkedService = collectionLinkedService;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
 
@@ -280,7 +279,7 @@ namespace BI.Services.Notes
             return contents;
         }
 
-        public async Task<List<Guid>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var resultIds = new List<Guid>();
             var order = -1;
@@ -290,13 +289,19 @@ namespace BI.Services.Notes
 
             if (permissions.Any())
             {
-                var idsForCopy = permissions.Where(x => x.Item2.CanRead).Select(x => x.Item1).ToList();
-                var permission = permissions.First().Item2;
+                var idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+                var permission = permissions.First().perm;
                 if (idsForCopy.Any())
                 {
                     var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
                     foreach(var noteForCopy in notesForCopy)
                     {
+
+                        if (noteForCopy.IsLocked && !userNoteEncryptStorage.IsUnlocked(noteForCopy.Id))
+                        {
+                            continue;
+                        }
+
                         var newNote = new Note()
                         {
                             Title = noteForCopy.Title,
@@ -322,19 +327,11 @@ namespace BI.Services.Notes
                         await baseNoteContentRepository.AddRangeAsync(contents);
                     }
 
-                    var dbNotes = await noteRepository.GetWhereAsync(x => x.UserId == permission.Caller.Id && x.NoteTypeId == NoteTypeENUM.Private);
-                    var orders = Enumerable.Range(1, dbNotes.Count);
-                    dbNotes = dbNotes.OrderBy(x => x.Order).Zip(orders, (note, order) =>
-                    {
-                        note.Order = order;
-                        return note;
-                    }).ToList();
-
-                    await noteRepository.UpdateRangeAsync(dbNotes);
+                    return new OperationResult<List<Guid>>(true, resultIds);
                 }
             }
 
-            return resultIds;
+            return new OperationResult<List<Guid>>(false, resultIds).SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)

@@ -142,7 +142,7 @@ export class ApiServiceNotes {
       ids,
     };
     return this.httpClient
-      .patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj, {
+      .patch<OperationResult<string[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
         reportProgress: true,
         observe: 'events',
       })
@@ -236,7 +236,10 @@ export class ApiServiceNotes {
       sendMessage,
       message,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/invites`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/user/invites`,
+      obj,
+    );
   }
 
   removeUserFromPrivateNote(noteId: string, userId: string) {
