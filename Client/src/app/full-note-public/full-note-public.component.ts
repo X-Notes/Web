@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DeltaConverter } from '../content/notes/full-note/content-editor/converter/delta-converter';
+import { SignalRService } from '../core/signal-r.service';
 
 @Component({
   selector: 'app-full-note-public',
@@ -6,5 +8,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./full-note-public.component.scss'],
 })
 export class FullNotePublicComponent implements OnInit {
-  ngOnInit(): void {}
+  constructor(private signalRService: SignalRService) {}
+
+  async ngOnInit(): Promise<void> {
+    DeltaConverter.initQuill();
+    await this.signalRService.init();
+  }
 }

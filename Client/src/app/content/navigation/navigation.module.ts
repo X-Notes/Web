@@ -14,6 +14,7 @@ import { InteractionInnerFolderComponent } from './header-components/interaction
 import { GeneralHeaderButtonComponent } from './header-components/general-header-button/general-header-button.component';
 import { SearchResultComponent } from './header-components/interaction-tools/search-result/search-result.component';
 import { NotificationMessageComponent } from './header-components/notification/notification-message/notification-message.component';
+import { FullNoteActiveUsersComponent } from './header-components/full-note-active-users/full-note-active-users.component';
 
 @NgModule({
   declarations: [
@@ -29,9 +30,10 @@ import { NotificationMessageComponent } from './header-components/notification/n
     GeneralHeaderButtonComponent,
     SearchResultComponent,
     NotificationMessageComponent,
+    FullNoteActiveUsersComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
-  exports: [SideBarComponent, HeaderComponent],
+  exports: [SideBarComponent, HeaderComponent, FullNoteActiveUsersComponent],
   providers: [],
 })
 export class NavigationModule {}

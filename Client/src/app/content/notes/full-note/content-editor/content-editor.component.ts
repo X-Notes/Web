@@ -346,6 +346,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   postAction(): void {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     const native = this.elements?.last?.getEditableNative();
     if (native?.textContent.length !== 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
@@ -354,6 +357,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   placeHolderClick($event) {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     $event.preventDefault();
     if (this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();

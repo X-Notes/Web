@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -21,6 +22,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   @Output()
   selectionStartEvent = new EventEmitter<DOMRect>();
+
+  @Input() isReadonly: boolean;
 
   listeners = [];
 
@@ -53,6 +56,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   @HostListener('mousedown', ['$event'])
   onClick() {
+    if (this.isReadonly) {
+      return;
+    }
     this.isFullNote = true;
   }
 

@@ -1,9 +1,8 @@
-import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
+import { Renderer2, Component } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/full-note.model';
-import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import {
   PersonalizationService,
@@ -28,13 +27,6 @@ export class InteractionInnerNoteComponent {
   @Select(NoteStore.isOwner)
   isOwner$: Observable<boolean>;
 
-  @Select(NoteStore.getOnlineUsersOnNote)
-  onlineUsers$: Observable<OnlineUsersNote[]>;
-
-  @ViewChild('heightPeople') heightPeople: ElementRef;
-
-  @ViewChild('scrollbar') scrollbar: ElementRef;
-
   constructor(
     public pService: PersonalizationService,
     public renderer: Renderer2,
@@ -42,28 +34,7 @@ export class InteractionInnerNoteComponent {
     public dialogsManageService: DialogsManageService,
   ) {}
 
-  closeMenu(): void {
-    if (this.pService.checkWidth()) {
-      this.pService.users = false;
-    }
-
-    if (!this.pService.check()) {
-      this.pService.hideInnerMenu = false;
-    }
-  }
-
   hideMenu() {
     this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
-  }
-
-  showUsers() {
-    this.pService.users = !this.pService.users;
-  }
-
-  disableTooltpUser(): boolean {
-    if (this.pService.checkWidth()) {
-      return true;
-    }
-    return false;
   }
 }

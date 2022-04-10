@@ -44,8 +44,6 @@ export class ContentEditorContentsService {
 
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
-  private timer: NodeJS.Timeout;
-
   private noteId: string;
 
   private updateSubject: BehaviorSubject<boolean>;
@@ -69,7 +67,7 @@ export class ContentEditorContentsService {
   ) {}
 
   // TODO 1. Worker
-  // TODO 2. File Content process change + ctrlx + z
+  // TODO 2. File Content process change + ctrl + z
   //
 
   init(contents: ContentModelBase[], noteId: string) {

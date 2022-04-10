@@ -4,6 +4,7 @@
   appSelection
   [appMenuSelection]="elements"
   [appCopy]="refElements"
+  [isReadonly]="isReadOnlyMode"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
   [ngStyle]="{'width': sliderService ? sliderService?.mainWidth : ''}"
@@ -20,6 +21,7 @@
         <p>{{ label.name }}</p>
       </div>
     </div>
+    <ng-content></ng-content>
     <div class="title-section">
       <div
         #noteTitle

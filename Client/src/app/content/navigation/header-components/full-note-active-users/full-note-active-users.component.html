@@ -1,0 +1,35 @@
+<div class="active-users">
+  <div
+    [CustomTooltip]="'header.countUsers' | translate"
+    position="Bottom"
+    class="user-circle"
+    (click)="showUsers()"
+    #userCircle
+  >
+    <p>{{(onlineUsers$ | async).length}}</p>
+    <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
+  </div>
+  <div
+    class="wrapper-people"
+    #scrollbar
+    *ngIf="pService.users"
+    [@showMenuLeftRight]
+    [@.disabled]="pService.AnimationInnerUsers"
+  >
+    <div class="people-editing" #heightPeople>
+      <div
+        class="person"
+        *ngFor="let item of onlineUsers$ | async"
+        CustomTooltip="{{item.name}}"
+        position="Bottom"
+        [flagDisable]="disableTooltpUser()"
+      >
+        <div class="inner-person">
+          <img [src]="item.photoPath" alt="contributor" />
+        </div>
+        <p>{{item.name}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" (click)="closeMenu()"></div>
+</div>

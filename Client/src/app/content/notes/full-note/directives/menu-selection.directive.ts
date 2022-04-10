@@ -20,6 +20,8 @@ import { BaseText } from '../../models/editor-models/base-text';
 export class MenuSelectionDirective implements OnDestroy, OnInit {
   @Input() appMenuSelection: QueryList<ParentInteraction>;
 
+  @Input() isReadonly: boolean;
+
   listeners = [];
 
   constructor(
@@ -36,6 +38,9 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseUp() {
+    if (this.isReadonly) {
+      return;
+    }
     const selection = this.apiBrowserService.getSelection();
     if (selection.toString() !== '') {
       const coords = selection.getRangeAt(0).getBoundingClientRect();

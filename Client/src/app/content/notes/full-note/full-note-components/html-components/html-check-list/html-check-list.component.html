@@ -15,6 +15,7 @@
         [ngModel]="content.checked"
         (change)="changeCheckBox()"
         (click)="clickHandler($event)"
+        [disabled]="isReadOnlyMode"
       ></mat-checkbox>
     </div>
     <div class="text-container">

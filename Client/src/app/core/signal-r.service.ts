@@ -80,8 +80,8 @@ export class SignalRService {
     private readonly auth: AuthService,
   ) {}
 
-  init() {
-    this.startConnection();
+  async init() {
+    await this.startConnection();
   }
 
   private startConnection = async () => {
