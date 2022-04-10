@@ -17,9 +17,23 @@ namespace BI.Mapping
         {
         }
 
-        public ShortUser MapToShortUser(User user)
+        public ShortUserDTO MapToShortUser(UserDTO user)
         {
-            return new ShortUser
+            if(user == null) return null;
+
+            return new ShortUserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                PhotoId = user?.PhotoId,
+                PhotoPath = user.PhotoPath
+            };
+        }
+
+        public UserDTO MapToUser(User user)
+        {
+            return new UserDTO
             {
                 Id = user.Id,
                 Name = user.Name,

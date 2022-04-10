@@ -12,7 +12,7 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
-        IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>,
+        IRequestHandler<GetUserQuery, OperationResult<UserDTO>>,
         IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
     {
         private readonly UserRepository userRepository;
@@ -30,15 +30,15 @@ namespace BI.Services.UserHandlers
             this.userBackgroundMapper = userBackgroundMapper;
         }
 
-        public async Task<OperationResult<ShortUser>> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UserDTO>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.UserId);
             if (user != null)
             {
-                var userDto = userBackgroundMapper.MapToShortUser(user);
-                return new OperationResult<ShortUser>(true , userDto);
+                var userDto = userBackgroundMapper.MapToUser(user);
+                return new OperationResult<UserDTO>(true , userDto);
             }
-            return new OperationResult<ShortUser>().SetNotFound();
+            return new OperationResult<UserDTO>().SetNotFound();
         }
 
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)

@@ -104,5 +104,15 @@
             Status = OperationResultAdditionalInfo.ContentLocked;
             return this;
         }
+
+        public OperationResult<Q> Copy<Q>(Q data)
+        {
+            var result = new OperationResult<Q>();
+            result.Message = this.Message;
+            result.Data = data;
+            result.Success = this.Success;
+            result.Status = this.Status;
+            return result;
+        }
     }
 }

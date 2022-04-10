@@ -5,7 +5,7 @@ using Common.DTO.Backgrounds;
 
 namespace Common.DTO.Users
 {
-    public class ShortUser
+    public class UserDTO
     {
         public Guid Id { set; get; }
 
