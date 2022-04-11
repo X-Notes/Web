@@ -124,7 +124,7 @@ namespace BI.Services.Notes
                     { 
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -157,7 +157,7 @@ namespace BI.Services.Notes
                     {
                         Name = request.Name,
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -207,7 +207,7 @@ namespace BI.Services.Notes
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<AudiosCollectionNoteDTO>(success: true, result);
                 }
@@ -249,7 +249,7 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

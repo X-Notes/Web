@@ -34,15 +34,15 @@ namespace BI.SignalR
 
         public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds)
         {
-            var userIdsThatOnFullFolder = websocketsFoldersService.GetIdsByEntityId(update.FolderId);
+            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId);
 
             if (userIds != null && userIds.Any())
             {
-                userIdsThatOnFullFolder.AddRange(userIds);
+                var additionalConnections = appSignalRService.GetConnections(userIds);
+                connections.AddRange(additionalConnections);
             }
 
-            var emails = await userRepository.GetUsersEmail(userIdsThatOnFullFolder.Distinct()); // TODO MAYBE ADD CACHE
-            await appSignalRService.UpdateFoldersInManyUsers(update, emails);
+            await appSignalRService.UpdateFoldersInManyUsers(update, connections.Distinct());
         }
     }
 }

@@ -33,15 +33,15 @@ namespace BI.SignalR
 
         public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds)
         {
-            var userIdsThatOnFullNote = websocketsNotesService.GetIdsByEntityId(update.NoteId);
+            var connections = websocketsNotesService.GetConnectiondsById(update.NoteId);
 
             if(userIds != null && userIds.Any())
             {
-                userIdsThatOnFullNote.AddRange(userIds);
+                var additionalConnections = appSignalRService.GetConnections(userIds);
+                connections.AddRange(additionalConnections);
             }
 
-            var emails = await userRepository.GetUsersEmail(userIdsThatOnFullNote.Distinct()); // TODO MAYBE ADD CACHE
-            await appSignalRService.UpdateNotesInManyUsers(update, emails);
+            await appSignalRService.UpdateNotesInManyUsers(update, connections.Distinct());
         }
     }
 }

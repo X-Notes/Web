@@ -125,7 +125,7 @@ namespace BI.Services.Notes
                     { 
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -163,7 +163,7 @@ namespace BI.Services.Notes
                         Height = request.Height,
                         Width = request.Width
                     };
-                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -215,7 +215,7 @@ namespace BI.Services.Notes
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<PhotosCollectionNoteDTO>(success: true, result);
                 }
@@ -258,7 +258,7 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Email, updates);
+                    await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
