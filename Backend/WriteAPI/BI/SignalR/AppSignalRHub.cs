@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.SignalR;
@@ -10,7 +11,7 @@ namespace BI.SignalR
 {
     public class AppSignalRHub : Hub
     {
-        public static ConcurrentDictionary<string, string> UsersIdentifier_ConnectionId { set; get; } = new();
+        public static ConcurrentDictionary<string, HashSet<string>> UsersIdentifier_ConnectionId { set; get; } = new();
 
         private readonly WebsocketsNotesServiceStorage wsNotesService;
         private readonly WebsocketsFoldersServiceStorage wsFoldersService;
@@ -21,6 +22,11 @@ namespace BI.SignalR
         {
             this.wsNotesService = websocketsNotesService;
             this.wsFoldersService = websocketsFoldersService;
+        }
+
+        public static List<string> GetConnectionsByUserId(Guid userId)
+        {
+           return UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString()).ToList();
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -95,7 +101,12 @@ namespace BI.SignalR
         {
             if (!string.IsNullOrEmpty(Context.UserIdentifier))
             {
-                UsersIdentifier_ConnectionId.TryAdd(Context.UserIdentifier, Context.ConnectionId);
+                if (!UsersIdentifier_ConnectionId.ContainsKey(Context.UserIdentifier))
+                {
+                    UsersIdentifier_ConnectionId.TryAdd(Context.UserIdentifier, new HashSet<string>());
+                }
+
+                UsersIdentifier_ConnectionId[Context.UserIdentifier].Add(Context.ConnectionId);
             } 
          
             return base.OnConnectedAsync();
@@ -103,7 +114,19 @@ namespace BI.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            UsersIdentifier_ConnectionId.Remove(Context.UserIdentifier, out var value);
+            if (!string.IsNullOrEmpty(Context.UserIdentifier))
+            {
+                var isContains = UsersIdentifier_ConnectionId.ContainsKey(Context.UserIdentifier);
+                if (isContains)
+                {
+                    UsersIdentifier_ConnectionId[Context.UserIdentifier].Remove(Context.ConnectionId);
+                }
+
+                if (isContains && !UsersIdentifier_ConnectionId[Context.UserIdentifier].Any())
+                {
+                    UsersIdentifier_ConnectionId.Remove(Context.UserIdentifier, out var value);
+                }
+            }
 
             // TODO MAYBE THERE ARE NEED DISCONNECT FROM FOLDER AND NOTE
             // If need use channels or background jobs

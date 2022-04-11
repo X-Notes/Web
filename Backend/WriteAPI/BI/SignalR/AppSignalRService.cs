@@ -24,10 +24,10 @@ namespace BI.SignalR
 
             foreach(var id in userIds)
             {
-                var connection = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(id.ToString());
-                if (connection != null)
+                var connections = AppSignalRHub.GetConnectionsByUserId(id);
+                if (connections != null && connections.Any())
                 {
-                    result.Add(connection);
+                    result.AddRange(connections);
                 }
             }
 
@@ -55,39 +55,39 @@ namespace BI.SignalR
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateTextContent", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updateTextContent", updates);
         }
 
         public async Task UpdateNoteStructure(Guid noteId, Guid userId, UpdateNoteStructureWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateNoteStructure", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updateNoteStructure", updates);
         }
 
         // FILE CONTENT
         public async Task UpdateDocumentsCollection(Guid noteId, Guid userId, UpdateDocumentsCollectionWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateDocumentsCollection", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updateDocumentsCollection", updates);
         }
 
         public async Task UpdatePhotosCollection(Guid noteId, Guid userId, UpdatePhotosCollectionWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updatePhotosCollection", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updatePhotosCollection", updates);
         }
 
         public async Task UpdateVideosCollection(Guid noteId, Guid userId, UpdateVideosCollectionWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateVideosCollection", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updateVideosCollection", updates);
         }
 
         public async Task UpdateAudiosCollection(Guid noteId, Guid userId, UpdateAudiosCollectionWS updates)
         {
-            var connectionId = AppSignalRHub.UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString());
-            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionId).SendAsync("updateAudiosCollection", updates);
+            var connectionsId = AppSignalRHub.GetConnectionsByUserId(userId);
+            await signalRContext.Clients.GroupExcept(noteId.ToString(), connectionsId).SendAsync("updateAudiosCollection", updates);
         }
 
         // Note permissions
