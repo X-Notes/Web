@@ -33,16 +33,6 @@ namespace WriteAPI.Hosted
             {
                 Debug.WriteLine("Start ManageUsersOnEntitiesHosted");
 
-                if (!websocketsNotesService.IsConsist)
-                {
-                    Console.WriteLine("Unconsist websockets notes");
-                }
-
-                if (!websocketsFoldersService.IsConsist)
-                {
-                    Console.WriteLine("Unconsist websockets folders");
-                }
-
                 websocketsFoldersService.ClearEmptyAfterDelay(earliestTimestamp);
                 websocketsNotesService.ClearEmptyAfterDelay(earliestTimestamp);
 

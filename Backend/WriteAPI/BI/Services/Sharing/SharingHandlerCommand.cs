@@ -128,8 +128,7 @@ namespace BI.Services.Sharing
 
                 await notificationRepository.AddAsync(notification);
 
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-                await appSignalRHub.SendNewNotification(receiver.Email, true);
+                await appSignalRHub.SendNewNotification(request.UserId, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -164,9 +163,8 @@ namespace BI.Services.Sharing
                 };
 
                 await notificationRepository.AddAsync(notification);
-
-                var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);        
-                await appSignalRHub.SendNewNotification(receiver.Email, true);
+     
+                await appSignalRHub.SendNewNotification(request.UserId, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -196,10 +194,8 @@ namespace BI.Services.Sharing
 
                     await notificationRepository.AddAsync(notification);
 
-                    var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-
-                    await appSignalRHub.RevokePermissionUserFolder(request.FolderId, receiver.Email);
-                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                    await appSignalRHub.RevokePermissionUserFolder(request.FolderId, request.UserId);
+                    await appSignalRHub.SendNewNotification(request.UserId, true);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
@@ -233,10 +229,8 @@ namespace BI.Services.Sharing
 
                     await notificationRepository.AddAsync(notification);
 
-                    var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-
-                    await appSignalRHub.RevokePermissionUserNote(request.NoteId, receiver.Email);
-                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                    await appSignalRHub.RevokePermissionUserNote(request.NoteId, request.UserId);
+                    await appSignalRHub.SendNewNotification(request.UserId, true);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
@@ -275,9 +269,8 @@ namespace BI.Services.Sharing
 
                 foreach (var notification in notifications)
                 {
-                    var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
-                    await appSignalRHub.AddFolderToShared(request.FolderId, receiver.Email);
-                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                    await appSignalRHub.AddFolderToShared(request.FolderId, notification.UserToId);
+                    await appSignalRHub.SendNewNotification(notification.UserToId, true);
                 }
             }
 
@@ -313,9 +306,8 @@ namespace BI.Services.Sharing
 
                 foreach (var notification in notifications)
                 {
-                    var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == notification.UserToId);
-                    await appSignalRHub.AddNoteToShared(request.NoteId, receiver.Email);
-                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                    await appSignalRHub.AddNoteToShared(request.NoteId, notification.UserToId);
+                    await appSignalRHub.SendNewNotification(notification.UserToId, true);
                 }
             }
 
