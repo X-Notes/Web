@@ -69,7 +69,7 @@ namespace BI.SignalR
                 var ent = new WsEntityInfo { ConnectionId = connectionId, UserId = userId };
                 newState.Users.TryAdd(connectionId, ent);
 
-                return entityId_users.TryAdd(entityId, state);
+                return entityId_users.TryAdd(entityId, newState);
             }
 
             return false;

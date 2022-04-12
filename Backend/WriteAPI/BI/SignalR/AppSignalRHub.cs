@@ -67,7 +67,7 @@ namespace BI.SignalR
             await Clients.Group(groupId).SendAsync("updateOnlineUsersNote", noteId);
         }
 
-        private string GetNoteGroupName(Guid id) => "N-" + id.ToString();
+        public static string GetNoteGroupName(Guid id) => "N-" + id.ToString();
 
         // FOLDERS
         public async Task JoinFolder(Guid folderId)
@@ -95,7 +95,7 @@ namespace BI.SignalR
             await Clients.Group(groupId).SendAsync("updateOnlineUsersFolder", folderId);
         }
 
-        private string GetFolderGroupName(Guid id) => "F-" + id.ToString();
+        public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
         public override Task OnConnectedAsync()
         {
