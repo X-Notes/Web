@@ -148,7 +148,8 @@ namespace BI.Services.Notes
 
             if (permissions.CanRead)
             {
-                var ids = websocketsNotesService.GetIdsByEntityId(request.Id);
+                var ents = websocketsNotesService.GetEntitiesId(request.Id);
+                var ids = ents.Where(x => x.UserId.HasValue).Select(x => x.UserId.Value).ToList();
                 var users = await userRepository.GetUsersWithPhotos(ids);
                 return users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x)).ToList();
             }

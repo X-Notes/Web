@@ -216,7 +216,7 @@ namespace BI.Services.Notes
                     AudioContentsToAdd = audiosItemsThatNeedAdd,
                     Positions = positions
                 };
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Email, updates);
+                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -32,13 +32,9 @@ namespace BI.Services.Notes
 
         private readonly HistoryCacheServiceStorage historyCacheService;
 
-        private readonly NoteFolderLabelMapper appCustomMapper;
-
         private readonly AppSignalRService appSignalRService;
 
         private readonly TextNotesRepository textNotesRepository;
-
-        private readonly UserRepository userRepository;
 
         private readonly NoteWSUpdateService noteWSUpdateService;
 
@@ -46,19 +42,15 @@ namespace BI.Services.Notes
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheServiceStorage historyCacheService,
-            NoteFolderLabelMapper appCustomMapper,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
-            UserRepository userRepository,
             NoteWSUpdateService noteWSUpdateService)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
             this.historyCacheService = historyCacheService;
-            this.appCustomMapper = appCustomMapper;
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
-            this.userRepository = userRepository;
             this.noteWSUpdateService = noteWSUpdateService;
         }
 
@@ -94,13 +86,13 @@ namespace BI.Services.Notes
             {
                 if(request.Texts.Count == 1)
                 {
-                    await UpdateOne(request.Texts.First(), request.NoteId, permissions.Caller.Email);
+                    await UpdateOne(request.Texts.First(), request.NoteId, permissions.Caller.Id);
                 }
                 else
                 {
                     foreach (var text in request.Texts)
                     {
-                        await UpdateOne(text, request.NoteId, permissions.Caller.Email);
+                        await UpdateOne(text, request.NoteId, permissions.Caller.Id);
                     }
                 }
 
@@ -113,7 +105,7 @@ namespace BI.Services.Notes
         }
 
 
-        private async Task UpdateOne(TextNoteDTO text, Guid noteId, string email)
+        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate != null)
@@ -127,7 +119,7 @@ namespace BI.Services.Notes
                 await textNotesRepository.UpdateAsync(textForUpdate);
 
                 var updates = new UpdateTextWS(text);
-                await appSignalRService.UpdateTextContent(noteId, email, updates);
+                await appSignalRService.UpdateTextContent(noteId, userId, updates);
             }
         }
     }

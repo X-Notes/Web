@@ -7,89 +7,88 @@ using System.Linq;
 
 namespace BI.SignalR
 {
+    public class WsEntityInfo
+    {
+        public Guid? UserId { set; get; }
+
+        public string ConnectionId { set; get; }
+    }
+
+    public class WsEntitiesState
+    {
+        public ConcurrentDictionary<string, WsEntityInfo> Users { get; set; } = new();
+
+        public DateTimeOffset UpdateTime { set; get; }
+    }
+
     public class WebsocketsBaseEntities
     {
-        protected static ConcurrentDictionary<Guid, ImmutableList<Guid>> entityId_userIds = new ConcurrentDictionary<Guid, ImmutableList<Guid>>();
+        protected static ConcurrentDictionary<Guid, WsEntitiesState> entityId_users = new();
 
-        protected static ConcurrentDictionary<Guid, DateTimeOffset> entityId_updateTime = new ConcurrentDictionary<Guid, DateTimeOffset>();
+        public int CountActiveEntities => entityId_users.Count;
 
-        private bool UpdateTime(Guid entityId)
+        public bool IsContainsId(Guid entityId) => entityId_users.ContainsKey(entityId);
+
+        public bool IsContainsConnectionId(Guid entityId, string connectionId) => IsContainsId(entityId) && entityId_users[entityId].Users.ContainsKey(connectionId);
+
+        public List<WsEntityInfo> GetEntitiesId(Guid entityId)
         {
-            if (entityId_updateTime.TryGetValue(entityId, out var time))
+            if (entityId_users.TryGetValue(entityId, out var value))
             {
-                return entityId_updateTime.TryUpdate(entityId, DateTimeProvider.Time, time);
+                return value.Users.Values.ToList();
             }
-
-            return false;
+            return new List<WsEntityInfo>();
         }
 
-        public bool IsConsist => entityId_userIds.Count == entityId_updateTime.Count;
-
-        public int CountActiveEntities => entityId_userIds.Count;
-
-
-        public bool IsContainsId(Guid entityId) => entityId_userIds.ContainsKey(entityId);
-
-        public bool IsContainsUserId(Guid entityId, Guid userId) => IsContainsId(entityId) && entityId_userIds[entityId].Contains(userId);
-
-        public List<Guid> GetIdsByEntityId(Guid id)
+        public List<string> GetConnectiondsById(Guid entityId)
         {
-            var isSuccess = entityId_userIds.TryGetValue(id, out var value);
-            if (isSuccess)
+            if (entityId_users.TryGetValue(entityId, out var value))
             {
-                return value.ToList();
+                return value.Users.Select(x => x.Value.ConnectionId).ToList();
             }
-            return new List<Guid>();
+            return new List<string>();
         }
 
-        public bool Add(Guid entityId, Guid userId)
+        public bool Add(Guid entityId, string connectionId, Guid? userId)
         {
-            if (entityId_userIds.TryGetValue(entityId, out var userIds))
+            if (entityId_users.TryGetValue(entityId, out var state))
             {
-                if (!userIds.Contains(userId))
+                if (!state.Users.ContainsKey(connectionId))
                 {
-                    try
+                    var ent = new WsEntityInfo { ConnectionId = connectionId, UserId = userId };
+                    if (state.Users.TryAdd(connectionId, ent))
                     {
-                        entityId_userIds[entityId] = userIds.Add(userId);
-                        UpdateTime(entityId);
+                        state.UpdateTime = DateTimeProvider.Time;
                         return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
                     }
                 }
             }
             else
             {
-                var userIdsList = new List<Guid>() { userId };
-                var isAddedUser = entityId_userIds.TryAdd(entityId, userIdsList.ToImmutableList());
-                var isAddedTime = entityId_updateTime.TryAdd(entityId, DateTimeProvider.Time);
-                return isAddedUser && isAddedTime;
+                var newState = new WsEntitiesState { UpdateTime = DateTimeProvider.Time };
+                var ent = new WsEntityInfo { ConnectionId = connectionId, UserId = userId };
+                newState.Users.TryAdd(connectionId, ent);
+
+                return entityId_users.TryAdd(entityId, newState);
             }
 
             return false;
         }
 
-        public bool Remove(Guid entityId, Guid userId)
+        public bool Remove(Guid entityId, string connectionId)
         {
-            if (!entityId_userIds.TryGetValue(entityId, out var userIds))
+            if (!entityId_users.TryGetValue(entityId, out var state))
             {
                 return true;
             }
             else
             {
-                if (userIds.Contains(userId))
+                if (state.Users.ContainsKey(connectionId))
                 {
-                    try
+                    if (state.Users.TryRemove(connectionId, out var value))
                     {
-                        entityId_userIds[entityId] = userIds.Remove(userId);
-                        UpdateTime(entityId);
+                        state.UpdateTime = DateTimeProvider.Time;
                         return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
                     }
                 }
             }
@@ -99,10 +98,10 @@ namespace BI.SignalR
 
         public void ClearEmptyAfterDelay(DateTimeOffset earliestTimestamp)
         {
-            var ids = entityId_updateTime.Where(x => x.Value < earliestTimestamp).Select(x => x.Key);
+            var ids = entityId_users.Where(x => x.Value.UpdateTime < earliestTimestamp).Select(x => x.Key);
             if (ids.Any())
             {
-                var idsToDelete = entityId_userIds.Where(x => ids.Contains(x.Key) && !x.Value.Any()).Select(x => x.Key);
+                var idsToDelete = entityId_users.Where(x => ids.Contains(x.Key) && !x.Value.Users.Any()).Select(x => x.Key);
                 if (idsToDelete.Any())
                 {
                     var idsThatWasDeleted = new List<Guid>();
@@ -111,14 +110,8 @@ namespace BI.SignalR
                     {
                         foreach (var id in idsToDelete)
                         {
-                            bool isRemoved = true;
-                            if (!entityId_userIds.ContainsKey(id))
+                            if (entityId_users.ContainsKey(id) && entityId_users.TryRemove(id, out var value))
                             {
-                                isRemoved = entityId_userIds.TryRemove(id, out var value);
-                            }
-                            if (isRemoved)
-                            {
-                                entityId_updateTime.TryRemove(id, out var value);
                                 idsThatWasDeleted.Add(id);
                             }
                         }
