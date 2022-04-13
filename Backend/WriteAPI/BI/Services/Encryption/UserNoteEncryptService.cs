@@ -1,73 +1,55 @@
 ﻿using Common;
+using Common.DatabaseModels.Models.Notes;
 using Common.Timers;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using WriteContext.Repositories.Notes;
 
 namespace BI.Services.Encryption
 {
     public class UserNoteEncryptService
     {
-        protected static ConcurrentDictionary<Guid, DateTimeOffset> noteId_unlockTime = new ConcurrentDictionary<Guid, DateTimeOffset>();
         private readonly TimersConfig timersConfig;
+        private readonly NoteRepository noteRepository;
 
-        public UserNoteEncryptService(TimersConfig timersConfig)
+        public UserNoteEncryptService(
+            TimersConfig timersConfig,
+            NoteRepository noteRepository)
         {
             this.timersConfig = timersConfig;
+            this.noteRepository = noteRepository;
         }
 
-        public bool SetUnlockTime(Guid noteId)
+        public async Task SetUnlockTime(Guid noteId)
         {
-            if (!noteId_unlockTime.ContainsKey(noteId))
+            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == noteId);
+            if(note != null)
             {
-                return noteId_unlockTime.TryAdd(noteId, DateTimeProvider.Time);
+                note.UnlockTime = DateTimeProvider.Time;
+                await noteRepository.UpdateAsync(note);
             }
-
-            return noteId_unlockTime.TryUpdate(noteId, DateTimeProvider.Time, noteId_unlockTime[noteId]);
         }
 
-        public bool RemoveUnlockTime(Guid noteId)
+        public async Task RemoveUnlockTime(Guid noteId)
         {
-            if (noteId_unlockTime.ContainsKey(noteId))
+            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == noteId);
+            if (note != null)
             {
-                return noteId_unlockTime.TryRemove(noteId, out var value);
+                note.UnlockTime = null;
+                await noteRepository.UpdateAsync(note);
             }
-
-            return true;
         }
 
-        public bool IsUnlocked(Guid noteId)
+        public bool IsUnlocked(DateTimeOffset? time)
         {
-            if (noteId_unlockTime.ContainsKey(noteId))
+            if(time != null)
             {
-                var value = noteId_unlockTime[noteId];
-                var flag = value.AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time;
-                return flag;
+                return time.Value.AddMinutes(timersConfig.UnlockTimeMinutes) > DateTimeProvider.Time;
             }
 
             return false;
         } 
-
-        public DateTimeOffset? GetUnlockedTime(Guid noteId)
-        {
-            if (noteId_unlockTime.ContainsKey(noteId))
-            {
-                return noteId_unlockTime[noteId];
-            }
-            return null;
-        }
-
-        public void ClearTimers()
-        {
-            var valuesToRemove = noteId_unlockTime.Where(x =>
-            {
-                var time = x.Value;
-                return time.AddMinutes(timersConfig.UnlockTimeMinutes) < DateTimeProvider.Time;
-            });
-            foreach(var value in valuesToRemove)
-            {
-                noteId_unlockTime.TryRemove(value);
-            }
-        }
     }
 }

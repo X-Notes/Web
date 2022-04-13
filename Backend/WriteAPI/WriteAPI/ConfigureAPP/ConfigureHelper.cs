@@ -329,7 +329,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<NoteRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped<UsersOnPrivateNotesRepository>();
-            services.AddScoped<NoteLockStateRepository>();
 
             //LABELS
             services.AddScoped<LabelRepository>();
@@ -428,7 +427,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesServiceStorage>();
             services.AddSingleton<WebsocketsFoldersServiceStorage>();
-            services.AddSingleton<UserNoteEncryptService>();
+            services.AddTransient<UserNoteEncryptService>();
 
             services.AddSingleton<AppEncryptor>();
 

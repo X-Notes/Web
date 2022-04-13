@@ -40,8 +40,12 @@ namespace BI.Services.RelatedNotes
 
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
         {
-            var notes = await relatedRepository.GetRelatedNotesFullContent(request.NoteId);
-            return noteMapper.MapNotesToRelatedNotes(notes);
+            var relatedNotes = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+            var ids = relatedNotes.Select(x => x.RelatedNoteId);
+            var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, null);
+            var lookUp = notes.ToDictionary(x => x.Id);
+            relatedNotes.ForEach(x => x.RelatedNote = lookUp.ContainsKey(x.RelatedNoteId) ? lookUp[x.RelatedNoteId] : null);
+            return noteMapper.MapNotesToRelatedNotes(relatedNotes);
         }
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
@@ -51,7 +55,7 @@ namespace BI.Services.RelatedNotes
 
             if (permissions.CanWrite)
             {
-                var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
+                var relatedNotes = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
                 var relNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(relatedNotesIds, request.Settings);
                 var allNotes = await noteRepository.GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(permissions.Caller.Id, request.NoteId, request.Settings);

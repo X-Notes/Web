@@ -48,10 +48,10 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpGet("force/{noteId}")]
-        public OperationResult<bool> ForceLockNote(Guid noteId)
+        public async Task<OperationResult<bool>> ForceLockNote(Guid noteId)
         {
-            var result = userNoteEncryptStorage.RemoveUnlockTime(noteId);
-            return new OperationResult<bool>(result, result);
+            await userNoteEncryptStorage.RemoveUnlockTime(noteId);
+            return new OperationResult<bool>(true, true);
         }
     }
 }

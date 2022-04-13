@@ -30,7 +30,7 @@ namespace BI.Services.Encryption
             {
                 if(appEncryptor.Compare(request.Password, permissions.Note.Password))
                 {
-                    userNoteEncryptStorage.SetUnlockTime(request.NoteId);
+                    await userNoteEncryptStorage.SetUnlockTime(request.NoteId);
                     return new OperationResult<bool>(true, true);
                 }
 

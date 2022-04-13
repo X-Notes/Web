@@ -58,9 +58,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            if (permissions.Note.IsLocked)
             {
-                return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
+                if (!isUnlocked)
+                {
+                    return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
+                }
             }
 
             if (permissions.CanRead)
@@ -78,9 +82,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            if (permissions.Note.IsLocked)
             {
-                return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
+                if (!isUnlocked)
+                {
+                    return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
+                }
             }
 
             if (permissions.CanRead)
@@ -98,9 +106,13 @@ namespace BI.Services.History
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            if (permissions.Note.IsLocked)
             {
-                return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
+                if (!isUnlocked)
+                {
+                    return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+                }
             }
 
             if (permissions.CanRead)

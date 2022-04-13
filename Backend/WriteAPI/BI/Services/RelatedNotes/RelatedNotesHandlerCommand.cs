@@ -80,7 +80,7 @@ namespace BI.Services.RelatedNotes
 
             if (permissions.CanWrite)
             {
-                var currentRelateds = await relatedRepository.GetRelatedNotesOnlyRelated(request.NoteId);
+                var currentRelateds = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
 
                 var find = currentRelateds.First(x => x.RelatedNoteId == request.Id);
                 currentRelateds.Remove(find);

@@ -306,9 +306,13 @@ namespace BI.Services.Notes
                     foreach(var noteForCopy in notesForCopy)
                     {
 
-                        if (noteForCopy.IsLocked && !userNoteEncryptStorage.IsUnlocked(noteForCopy.Id))
+                        if (noteForCopy.IsLocked)
                         {
-                            continue;
+                            var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
+                            if (!isUnlocked)
+                            {
+                                continue;
+                            }
                         }
 
                         var newNote = new Note()

@@ -71,6 +71,8 @@ namespace WriteContext.Repositories.Notes
 
         private async Task<List<Note>> GetWithFilteredContent(List<Note> notes, PersonalizationSettingDTO settings)
         {
+            settings = settings ?? new PersonalizationSettingDTO().GetDefault();
+
             var types = GetFilterTypes(settings);
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();

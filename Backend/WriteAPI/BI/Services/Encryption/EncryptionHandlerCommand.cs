@@ -78,7 +78,7 @@ namespace BI.Services.Encryption
                     var note = permissions.Note;
                     note.Password = null;
                     await noteRepository.UpdateAsync(note);
-                    userNoteEncryptStorage.RemoveUnlockTime(note.Id);
+                    await userNoteEncryptStorage.RemoveUnlockTime(note.Id);
                     return new OperationResult<bool>(true, true);
                 }
 

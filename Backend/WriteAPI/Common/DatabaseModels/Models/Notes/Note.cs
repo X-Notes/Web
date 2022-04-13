@@ -30,10 +30,10 @@ namespace Common.DatabaseModels.Models.Notes
 
         public string Password { set; get; }
 
+        public DateTimeOffset? UnlockTime { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
-
-        public NoteLockState NoteLockState { set; get; }
 
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
