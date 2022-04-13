@@ -118,6 +118,8 @@ namespace BI.Mapping
 
         private bool IsLocked(Note note) => note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id);
 
+        private DateTimeOffset? GetUnlockedTime(Guid noteId) => userNoteEncryptStorage.GetUnlockedTime(noteId);
+
         // TYPES
         public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {
@@ -196,6 +198,7 @@ namespace BI.Mapping
                 Contents = GetContentsDTOFromContents(tuple.note, tuple.note.Contents, tuple.note.UserId),
                 IsLocked = tuple.note.IsLocked,
                 IsLockedNow = IsLocked(tuple.note),
+                UnlockedTime = GetUnlockedTime(tuple.note.Id),
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
                 UpdatedAt = tuple.note.UpdatedAt
@@ -218,6 +221,7 @@ namespace BI.Mapping
                 Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
                 IsLocked = note.IsLocked,
                 IsLockedNow = IsLocked(note),
+                UnlockedTime = GetUnlockedTime(note.Id),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt,
@@ -237,6 +241,7 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 IsLocked = note.IsLocked,
                 IsLockedNow = IsLocked(note),
+                UnlockedTime = GetUnlockedTime(note.Id),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -260,6 +265,7 @@ namespace BI.Mapping
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
                 IsLockedNow = IsLocked(note),
+                UnlockedTime = GetUnlockedTime(note.Id),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt

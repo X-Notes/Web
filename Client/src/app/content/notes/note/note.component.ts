@@ -5,6 +5,7 @@ import { SmallNote } from '../models/small-note.model';
 import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
 import { BaseText, NoteTextTypeENUM } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-note',
@@ -36,6 +37,10 @@ export class NoteComponent implements OnInit {
     return this.note.additionalInfo?.noteFolderInfos?.filter(
       (folder) => folder.folderId !== this.currentFolderId,
     );
+  }
+
+  get unlockedTime() {
+    return moment(this.note.unlockedTime).add(5, 'minutes').format('LT');
   }
 
   ngOnInit(): void {

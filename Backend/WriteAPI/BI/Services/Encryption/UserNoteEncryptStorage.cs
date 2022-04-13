@@ -48,6 +48,15 @@ namespace BI.Services.Encryption
             return false;
         } 
 
+        public DateTimeOffset? GetUnlockedTime(Guid noteId)
+        {
+            if (noteId_unlockTime.ContainsKey(noteId))
+            {
+                return noteId_unlockTime[noteId];
+            }
+            return null;
+        }
+
         public void ClearTimers()
         {
             var valuesToRemove = noteId_unlockTime.Where(x =>
