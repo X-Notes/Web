@@ -423,7 +423,7 @@ export class NoteStore {
   @Action(TransformTypeNotes)
   async transformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
+    { typeTo, selectedIds, isAddToDom, refTypeId, deleteIds }: TransformTypeNotes,
   ) {
 
     const typeFrom = getState()
@@ -435,8 +435,7 @@ export class NoteStore {
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
     dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
-    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
-
+    let notesAdded = notesFrom.filter((x) => this.itemsFromFilterArray(deleteIds ?? selectedIds, x));
     let notesTo = this.getNotesByType(getState, typeTo).map(x => ({...x}));
     notesTo.forEach((x) => x.order = x.order + notesAdded.length);
 
@@ -497,7 +496,7 @@ export class NoteStore {
       case NoteTypeENUM.Deleted: {
         resp = await this.api.setDelete(selectedIds).toPromise();
         if (resp.success) {
-          dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
+          dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom, null, resp.data));
           if (successCallback) {
             successCallback();
           }

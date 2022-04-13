@@ -265,7 +265,8 @@ export class NotesService
 
   loadNoteAndAddToDom(notes: SmallNote[]) {
     if (notes && notes.length > 0) {
-      this.entities.unshift(...notes);
+      const m = notes.map((x) => ({ ...x }));
+      this.entities.unshift(...m);
     }
   }
 }

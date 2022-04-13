@@ -67,7 +67,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("delete")]
-        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
+        public async Task<OperationResult<List<Guid>>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

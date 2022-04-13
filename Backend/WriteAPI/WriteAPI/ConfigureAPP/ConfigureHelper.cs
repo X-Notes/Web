@@ -135,7 +135,7 @@ namespace WriteAPI.ConfigureAPP
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
@@ -204,7 +204,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();

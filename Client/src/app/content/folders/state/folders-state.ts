@@ -299,7 +299,7 @@ export class FolderStore {
       case FolderTypeENUM.Deleted: {
         resp = await this.api.setDelete(selectedIds).toPromise();
         if (resp.success) {
-          dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
+          dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom, null, resp.data));
           if (successCallback) {
             successCallback();
           }
@@ -357,7 +357,7 @@ export class FolderStore {
   @Action(TransformTypeFolders)
   async transformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeFolders,
+    { typeTo, selectedIds, isAddToDom, refTypeId, deleteIds }: TransformTypeFolders,
   ) {
     const typeFrom = getState()
       .folders.map((x) => x.folders)
@@ -370,7 +370,7 @@ export class FolderStore {
     const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
     dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
 
-    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
+    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(deleteIds ?? selectedIds, x));
 
     let foldersTo = this.getFoldersByType(getState, typeTo).map(x => ({...x}));
     foldersTo.forEach((x) => x.order = x.order + foldersAdded.length);

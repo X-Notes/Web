@@ -121,7 +121,7 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<string[]>>(
       `${environment.writeAPI}/api/note/delete`,
       obj,
     );

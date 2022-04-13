@@ -58,8 +58,8 @@ export class MenuButtonsService {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
       isVisible: of(true),
-      isOnlyForAuthor: true,
-      IsNeedEditRightsToSee: true,
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: false,
     },
   ];
 
@@ -141,8 +141,8 @@ export class MenuButtonsService {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
       isVisible: of(true),
-      isOnlyForAuthor: true,
-      IsNeedEditRightsToSee: true,
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: false,
     },
   ];
 

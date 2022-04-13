@@ -221,7 +221,8 @@ export class FolderService
 
   loadFolderAndAddToDom(folders: SmallFolder[]) {
     if (folders && folders.length > 0) {
-      this.entities.unshift(...folders);
+      const m = folders.map((x) => ({ ...x }));
+      this.entities.unshift(...m);
     }
   }
 }

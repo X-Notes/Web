@@ -303,7 +303,7 @@
     "notesPermDeleted": "Notes deleted permanently",
     "folderPermDeleted": "Folder deleted permanently",
     "foldersPermDeleted": "Folders deleted permanently",
-    "movedToMany": "moved to ",
+    "movedToMany": " moved to ",
     "movedToSingle": " moved to ",
     "reloadPage": "Unstable connection please refresh the page"
   },

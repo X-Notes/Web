@@ -152,16 +152,13 @@ export class LoadFullFolder {
 export class TransformTypeFolders {
   static type = '[Folders] transform type folders';
 
-  refTypeId?: RefTypeENUM;
-
   constructor(
     public typeTo: FolderTypeENUM,
     public selectedIds: string[],
     public isAddToDom: boolean,
-    refTypeId?: RefTypeENUM,
-  ) {
-    this.refTypeId = refTypeId;
-  }
+    public refTypeId?: RefTypeENUM,
+    public deleteIds?: string[],
+  ) {}
 }
 
 export class ChangeTypeFullFolder {

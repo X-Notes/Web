@@ -116,7 +116,7 @@ export class ApiFoldersService {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<string[]>>(
       `${environment.writeAPI}/api/folder/delete`,
       obj,
     );

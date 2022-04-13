@@ -235,14 +235,11 @@ export class ChangeIsLockedFullNote {
 export class TransformTypeNotes {
   static type = '[Notes] transform type notes';
 
-  refTypeId?: RefTypeENUM;
-
   constructor(
     public typeTo: NoteTypeENUM,
     public selectedIds: string[],
     public isAddToDom: boolean,
-    refTypeId?: RefTypeENUM,
-  ) {
-    this.refTypeId = refTypeId;
-  }
+    public refTypeId?: RefTypeENUM,
+    public deleteIds?: string[],
+  ) {}
 }
