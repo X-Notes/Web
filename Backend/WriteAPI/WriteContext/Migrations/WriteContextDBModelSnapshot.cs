@@ -582,6 +582,19 @@ namespace WriteContext.Migrations
                     b.ToTable("Note", "note");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.NoteLockState", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UnlockTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("NoteId");
+
+                    b.ToTable("NoteLockState", "note");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.NoteType", b =>
                 {
                     b.Property<int>("Id")
@@ -1330,6 +1343,17 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.NoteLockState", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithOne("NoteLockState")
+                        .HasForeignKey("Common.DatabaseModels.Models.Notes.NoteLockState", "NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
@@ -1620,6 +1644,8 @@ namespace WriteContext.Migrations
                     b.Navigation("History");
 
                     b.Navigation("LabelsNotes");
+
+                    b.Navigation("NoteLockState");
 
                     b.Navigation("ReletatedNoteToInnerNotesFrom");
 

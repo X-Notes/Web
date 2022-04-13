@@ -17,9 +17,9 @@ namespace WriteAPI.Controllers.Note
     public class LockController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public LockController(IMediator _mediator, UserNoteEncryptStorage userNoteEncryptStorage)
+        public LockController(IMediator _mediator, UserNoteEncryptService userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.userNoteEncryptStorage = userNoteEncryptStorage;

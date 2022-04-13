@@ -100,7 +100,7 @@ export class SignalRService {
     this.hubConnection.onclose(() => {
       this.wsConnectionClosed.next(true);
       const message = this.translateService.instant('snackBar.reloadPage');
-      this.snackbarService.openSnackBar(message);
+      this.snackbarService.openSnackBar(message, null, null, Infinity);
     });
 
     this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));

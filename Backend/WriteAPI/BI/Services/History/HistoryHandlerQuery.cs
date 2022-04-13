@@ -35,7 +35,7 @@ namespace BI.Services.History
 
         private readonly FileRepository fileRepository;
 
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
         public HistoryHandlerQuery(
             IMediator _mediator,
@@ -43,7 +43,7 @@ namespace BI.Services.History
             NoteFolderLabelMapper noteCustomMapper,
             BaseNoteContentRepository baseNoteContentRepository,
             FileRepository fileRepository,
-            UserNoteEncryptStorage userNoteEncryptStorage)
+            UserNoteEncryptService userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.noteHistoryRepository = noteHistoryRepository;

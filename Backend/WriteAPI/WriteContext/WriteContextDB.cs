@@ -49,6 +49,7 @@ namespace WriteContext
 
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
+        public DbSet<NoteLockState> NoteLockStates { set; get; }
 
         // FILES
         public DbSet<AppFile> Files { set; get; }
@@ -163,6 +164,8 @@ namespace WriteContext
 
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
+
+            modelBuilder.Entity<NoteLockState>().HasKey(x => new { x.NoteId });
 
             modelBuilder.Entity<LabelsNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.LabelId });

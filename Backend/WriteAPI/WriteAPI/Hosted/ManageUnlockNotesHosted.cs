@@ -9,9 +9,9 @@ namespace WriteAPI.Hosted
     public class ManageUnlockNotesHosted : BackgroundService
     {
         private readonly HostedTimersConfig hostedTimersConfig;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public ManageUnlockNotesHosted(HostedTimersConfig hostedTimersConfig, UserNoteEncryptStorage userNoteEncryptStorage)
+        public ManageUnlockNotesHosted(HostedTimersConfig hostedTimersConfig, UserNoteEncryptService userNoteEncryptStorage)
         {
             this.hostedTimersConfig = hostedTimersConfig;
             this.userNoteEncryptStorage = userNoteEncryptStorage;

@@ -28,9 +28,9 @@ namespace BI.Mapping
 {
     public class NoteFolderLabelMapper : BaseMapper
     {
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public NoteFolderLabelMapper(AzureConfig azureConfig, UserNoteEncryptStorage userNoteEncryptStorage) : base(azureConfig)
+        public NoteFolderLabelMapper(AzureConfig azureConfig, UserNoteEncryptService userNoteEncryptStorage) : base(azureConfig)
         {
             this.userNoteEncryptStorage = userNoteEncryptStorage;
         }

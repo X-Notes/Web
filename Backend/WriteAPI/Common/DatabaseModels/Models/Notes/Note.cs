@@ -33,6 +33,8 @@ namespace Common.DatabaseModels.Models.Notes
         public Guid UserId { set; get; }
         public User User { set; get; }
 
+        public NoteLockState NoteLockState { set; get; }
+
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }

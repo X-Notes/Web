@@ -56,7 +56,7 @@ namespace BI.Services.Notes
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly CollectionLinkedService collectionLinkedService;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
         public NoteHandlerCommand(
@@ -70,7 +70,7 @@ namespace BI.Services.Notes
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
             CollectionLinkedService collectionLinkedService,
-            UserNoteEncryptStorage userNoteEncryptStorage,
+            UserNoteEncryptService userNoteEncryptStorage,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
         {
             this.noteRepository = noteRepository;

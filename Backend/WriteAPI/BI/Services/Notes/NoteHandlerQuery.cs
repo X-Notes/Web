@@ -44,7 +44,7 @@ namespace BI.Services.Notes
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly UserBackgroundMapper userBackgroundMapper;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -56,7 +56,7 @@ namespace BI.Services.Notes
             FoldersNotesRepository foldersNotesRepository,
             WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper,
-            UserNoteEncryptStorage userNoteEncryptStorage)
+            UserNoteEncryptService userNoteEncryptStorage)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
