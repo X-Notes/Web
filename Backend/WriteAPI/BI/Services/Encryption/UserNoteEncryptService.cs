@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace BI.Services.Encryption
 {
-    public class UserNoteEncryptStorage
+    public class UserNoteEncryptService
     {
         protected static ConcurrentDictionary<Guid, DateTimeOffset> noteId_unlockTime = new ConcurrentDictionary<Guid, DateTimeOffset>();
         private readonly TimersConfig timersConfig;
 
-        public UserNoteEncryptStorage(TimersConfig timersConfig)
+        public UserNoteEncryptService(TimersConfig timersConfig)
         {
             this.timersConfig = timersConfig;
         }
