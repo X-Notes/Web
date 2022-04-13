@@ -56,7 +56,6 @@ export class FaqComponent implements OnInit {
   match() {
     for (const item of this.items) {
       if (item.title.includes(this.search)) {
-        console.log(item.id);
         this.matchedIds.push(item.id);
       }
     }

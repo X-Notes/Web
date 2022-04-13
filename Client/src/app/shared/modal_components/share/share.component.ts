@@ -218,7 +218,6 @@ export class ShareComponent implements OnInit, OnDestroy {
       .map((note) => {
         return { ...note };
       });
-    console.log('notes: ', this.notes);
     this.selectNote(this.notes[0]);
   }
 

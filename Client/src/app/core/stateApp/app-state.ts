@@ -214,7 +214,6 @@ export class AppStore {
       }
       default: {
         if (state.routing) {
-          console.log(state.routing);
           throw new Error('Incorrect type');
         }
       }

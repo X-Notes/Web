@@ -5,7 +5,6 @@
 >
   <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
     <app-dialog-generic-header
-      [icon]="'icon-plus'"
       [message]="'modal.ShareModal.selectedNotes' | translate"
       [autoClose]="false"
       [isMessage]="pService.isCollapseShared"
@@ -64,10 +63,7 @@
     </ng-scrollbar>
   </div>
   <div class="sharing">
-    <app-dialog-generic-header
-      [icon]="'icon-plus'"
-      [message]="'modal.ShareModal.Share' | translate"
-    >
+    <app-dialog-generic-header [message]="'modal.ShareModal.Share' | translate">
     </app-dialog-generic-header>
 
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
