@@ -18,5 +18,7 @@ namespace Common.DatabaseModels
         public const string User = "user";
 
         public const string File = "file";
+
+        public const string WS = "ws";
     }
 }

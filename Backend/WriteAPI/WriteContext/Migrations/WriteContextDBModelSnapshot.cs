@@ -1037,6 +1037,19 @@ namespace WriteContext.Migrations
                     b.ToTable("UserProfilePhoto", "user");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "ConnectionId");
+
+                    b.ToTable("UserIdentifierConnectionId", "ws");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.Models.NoteContent.BaseNoteContent");
@@ -1541,6 +1554,17 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
+                        .WithMany("UserIdentifierConnectionIds")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.FileType", "FileType")
@@ -1729,6 +1753,8 @@ namespace WriteContext.Migrations
                     b.Navigation("PersonalizationSetting");
 
                     b.Navigation("UserHistories");
+
+                    b.Navigation("UserIdentifierConnectionIds");
 
                     b.Navigation("UserOnPrivateNotes");
 

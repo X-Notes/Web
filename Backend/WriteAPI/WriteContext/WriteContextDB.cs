@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.WS;
 using Microsoft.EntityFrameworkCore;
 
 namespace WriteContext
@@ -67,7 +68,12 @@ namespace WriteContext
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
 
+        public DbSet<CacheNoteHistory> CacheNoteHistory { set; get; }
+
         public DbSet<UserNoteSnapshotManyToMany> UserNoteHistoryManyToMany { set; get; }
+
+        // WS
+        public DbSet<UserIdentifierConnectionId> UserIdentifierConnectionId { set; get; }
 
         // SYSTEMS
         public DbSet<Language> Languages { set; get; }
@@ -122,6 +128,9 @@ namespace WriteContext
 
             modelBuilder.Entity<UserProfilePhoto>()
                 .HasKey(x => x.UserId);
+
+            // WS
+            modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.UserId, x.ConnectionId });
 
             // PersonalizationSetting
 

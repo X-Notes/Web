@@ -37,7 +37,7 @@ namespace BI.SignalR
 
             if(userIds != null && userIds.Any())
             {
-                var additionalConnections = appSignalRService.GetConnections(userIds);
+                var additionalConnections = await appSignalRService.GetConnections(userIds);
                 connections.AddRange(additionalConnections);
             }
 

@@ -90,6 +90,7 @@ using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
 using Common.Timers;
+using WriteContext.Repositories.WS;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -355,6 +356,9 @@ namespace WriteAPI.ConfigureAPP
 
             // Personalization
             services.AddScoped<PersonalizationSettingRepository>();
+
+            // WS
+            services.AddScoped<UserIdentifierConnectionIdRepository>();
 
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
