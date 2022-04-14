@@ -38,7 +38,7 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -50,7 +50,7 @@ namespace BI.Services.Notes
                                         AppFileUploadInfoRepository appFileUploadInfoRepository,
                                         CollectionNoteRepository documentNoteRepository,
                                         CollectionAppFileRepository documentNoteAppFileRepository,
-                                        HistoryCacheServiceStorage historyCacheService,
+                                        HistoryCacheService historyCacheService,
                                         AppSignalRService appSignalRService,
                                         CollectionLinkedService collectionLinkedService)
         {
@@ -118,7 +118,7 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
                     {
@@ -151,7 +151,7 @@ namespace BI.Services.Notes
 
                     await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt) { 
                         Name = request.Name,
@@ -198,7 +198,7 @@ namespace BI.Services.Notes
 
                     var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt)
                     {
@@ -240,7 +240,7 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
                     {

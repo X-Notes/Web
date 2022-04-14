@@ -176,6 +176,9 @@ namespace WriteContext
                 .WithMany(c => c.LabelsNotes)
                 .HasForeignKey(bc => bc.NoteId);
 
+            modelBuilder.Entity<CacheNoteHistory>()
+                .HasKey(bc => new { bc.NoteId });
+
 
             modelBuilder.Entity<FoldersNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.FolderId });

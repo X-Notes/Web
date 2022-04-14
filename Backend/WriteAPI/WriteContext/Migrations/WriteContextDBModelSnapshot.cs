@@ -272,6 +272,22 @@ namespace WriteContext.Migrations
                     b.ToTable("UsersOnPrivateFolders", "folder");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.CacheNoteHistory", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<HashSet<Guid>>("UsersThatEditIds")
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("NoteId");
+
+                    b.ToTable("CacheNoteHistory", "note_history");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.History.NoteSnapshot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1173,6 +1189,17 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.CacheNoteHistory", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithOne("CacheNoteHistory")
+                        .HasForeignKey("Common.DatabaseModels.Models.History.CacheNoteHistory", "NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.History.NoteSnapshot", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
@@ -1616,6 +1643,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
                 {
+                    b.Navigation("CacheNoteHistory");
+
                     b.Navigation("Contents");
 
                     b.Navigation("FoldersNotes");

@@ -28,7 +28,7 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -42,7 +42,7 @@ namespace BI.Services.Notes
 
         public FullNoteContentHandlerCommand(
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheServiceStorage historyCacheService,
+            HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             CollectionNoteRepository collectionNoteRepository,
@@ -204,7 +204,7 @@ namespace BI.Services.Notes
                     }
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                 var updates = new UpdateNoteStructureWS()
                 {

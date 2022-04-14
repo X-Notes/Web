@@ -351,6 +351,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<NoteSnapshotRepository>();
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
             services.AddScoped<SnapshotFileContentRepository>();
+            services.AddScoped<CacheNoteHistoryRepository>();
 
             // Personalization
             services.AddScoped<PersonalizationSettingRepository>();
@@ -427,7 +428,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesServiceStorage>();
             services.AddSingleton<WebsocketsFoldersServiceStorage>();
-            services.AddTransient<UserNoteEncryptService>();
+            services.AddScoped<UserNoteEncryptService>();
 
             services.AddSingleton<AppEncryptor>();
 
@@ -436,9 +437,8 @@ namespace WriteAPI.ConfigureAPP
             // BACKGROUND JOBS
             services.AddScoped<EntitiesDeleteJobHandler>();
 
-            services.AddSingleton<ConfigForHistoryMaker>();
-            services.AddSingleton<HistoryCacheServiceStorage>();
-            services.AddSingleton<HistoryJobHandler>();
+            services.AddScoped<HistoryCacheService>();
+            services.AddScoped<HistoryJobHandler>();
 
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
         }

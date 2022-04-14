@@ -51,7 +51,7 @@ namespace BI.Services.Notes
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
@@ -65,7 +65,7 @@ namespace BI.Services.Notes
             IMediator _mediator, 
             LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheServiceStorage historyCacheService, 
+            HistoryCacheService historyCacheService, 
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
@@ -134,7 +134,7 @@ namespace BI.Services.Notes
                 // HISTORY
                 foreach(var perm in permissions)
                 {
-                    historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id, perm.perm.Author.Email);
+                    await historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id);
                 }
 
                 // WS UPDATES
@@ -366,10 +366,10 @@ namespace BI.Services.Notes
                     notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
-                    permissions.ForEach(x =>
+                    foreach (var perm in permissions)
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
-                    });
+                        await historyCacheService.UpdateNote(perm.perm.Note.Id, perm.perm.Caller.Id);
+                    }
 
                     // WS UPDATES
                     var updates = permissions.Select(x => 
@@ -406,10 +406,10 @@ namespace BI.Services.Notes
                     notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
-                    permissions.ForEach(x =>
+                    foreach(var perm in permissions)
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
-                    });
+                        await historyCacheService.UpdateNote(perm.perm.Note.Id, perm.perm.Caller.Id);
+                    }
 
                     // WS UPDATES
                     var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.LabelId);

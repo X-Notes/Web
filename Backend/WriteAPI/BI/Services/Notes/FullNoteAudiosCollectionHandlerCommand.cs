@@ -34,7 +34,7 @@ namespace BI.Services.Notes
 
         private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -45,7 +45,7 @@ namespace BI.Services.Notes
             BaseNoteContentRepository baseNoteContentRepository,
             CollectionNoteRepository collectionNoteRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
-            HistoryCacheServiceStorage historyCacheService,
+            HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService)
         {
@@ -118,7 +118,7 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
                     { 
@@ -151,7 +151,7 @@ namespace BI.Services.Notes
 
                     await collectionNoteRepository.UpdateAsync(audiosCollection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt)
                     {
@@ -201,7 +201,7 @@ namespace BI.Services.Notes
 
                     var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
                     {
@@ -243,7 +243,7 @@ namespace BI.Services.Notes
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
                     {

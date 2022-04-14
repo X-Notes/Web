@@ -13,5 +13,7 @@ namespace Common.Timers
         public int DeleteNotesNDays { set; get; }
 
         public int DeleteHistoriesNDays { set; get; }
+
+        public int MakeSnapshotAfterNMinutes { set; get; }
     }
 }

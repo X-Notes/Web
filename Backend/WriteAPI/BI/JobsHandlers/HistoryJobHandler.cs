@@ -3,33 +3,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using BI.Services.History;
 using Common;
+using Common.Timers;
 using Domain.Commands.Notes;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BI.JobsHandlers
 {
-    public class ConfigForHistoryMaker
-    {
-        public int MakeSnapshotAfterNMinutes { set; get; } = 1;
-    }
-
     public class HistoryJobHandler
     {
-        private HistoryCacheServiceStorage historyCacheService;
-
+        private HistoryCacheService historyCacheService;
         private readonly IServiceScopeFactory serviceScopeFactory;
-
-        private readonly ConfigForHistoryMaker config;
+        private readonly TimersConfig timersConfig;
 
         public HistoryJobHandler(
-            HistoryCacheServiceStorage historyCacheServicу,
+            HistoryCacheService historyCacheServicу,
             IServiceScopeFactory serviceScopeFactory,
-            ConfigForHistoryMaker config)
+            TimersConfig timersConfig)
         {
             historyCacheService = historyCacheServicу;
             this.serviceScopeFactory = serviceScopeFactory;
-            this.config = config;
+            this.timersConfig = timersConfig;
         }
 
         public async Task MakeHistoryHandler()
@@ -38,8 +32,8 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start make history");
 
-                var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-config.MakeSnapshotAfterNMinutes);
-                var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(earliestTimestamp);
+                var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-timersConfig.MakeSnapshotAfterNMinutes);
+                var histories = await historyCacheService.GetCacheHistoriesForSnapshotingByTime(earliestTimestamp);
                 if (histories.Any())
                 {
                     try
@@ -58,7 +52,7 @@ namespace BI.JobsHandlers
                     }
                     finally
                     {
-                        historyCacheService.RemoveFromList(histories);
+                        await historyCacheService.RemoveUpdateDates(histories);
                     }
                 }
 
