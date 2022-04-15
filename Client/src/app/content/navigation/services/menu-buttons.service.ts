@@ -25,6 +25,7 @@ import {
 } from '../../notes/state/notes-actions';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
 import { UpdateNoteUI } from '../../notes/state/update-note-ui.model';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -191,6 +192,7 @@ export class MenuButtonsService {
     private menuButtonsFoldersService: MenuButtonsFoldersService,
     private lockEncryptService: LockEncryptService,
     private router: Router,
+    private updaterEntitiesService: UpdaterEntitiesService
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
@@ -464,6 +466,7 @@ export class MenuButtonsService {
         const id = this.getSelectedNoteId();
         if (this.isCanForceLock()) {
           await this.setLockedInState(id);
+          this.updaterEntitiesService.clearLock(id);
           this.router.navigate(['notes']);
           return;
         }

@@ -49,7 +49,7 @@ export class NoteComponent implements OnInit {
   }
 
   get updateTime() {
-    return moment(this.note.updatedAt).format('DD.MM hh:mm');
+    return moment(this.date ?? this.note.updatedAt).format('DD.MM hh:mm');
   }
 
   get size() {

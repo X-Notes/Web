@@ -48,7 +48,7 @@
           class="date"
           [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
         >
-          <p>{{date ?? folder.updatedAt | date: 'medium' }}</p>
+          <p>{{ updateTime }}</p>
         </div>
         <div class="help-icons">
           <div

@@ -5,14 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import {
-  ChangeIsLockedFullNote,
-  PatchUpdatesUINotes,
-  UpdateOneNote,
-} from 'src/app/content/notes/state/notes-actions';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { shake } from '../../services/personalization.service';
 import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
 
@@ -61,6 +54,7 @@ export class LockComponent implements OnInit, OnDestroy {
     private snackService: SnackBarWrapperService,
     public dialogRef: MatDialogRef<LockComponent>,
     private translate: TranslateService,
+    private updaterEntitiesService: UpdaterEntitiesService,
     @Inject(MAT_DIALOG_DATA)
     public data: { id: string; state: LockPopupState; callback: () => Promise<any> },
   ) {
@@ -117,10 +111,6 @@ export class LockComponent implements OnInit, OnDestroy {
     this.setFormValidation();
   }
 
-  getNote(id: string): SmallNote {
-    return this.store.selectSnapshot(NoteStore.getSmallNotes).find((x) => x.id === id);
-  }
-
   setFormValidation() {
     if (this.state === LockPopupState.Lock) {
       this.form = this.fb.group(
@@ -166,21 +156,6 @@ export class LockComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  async setLockedInState(isLocked?: boolean, isLockedNow?: boolean) {
-    const updatedNote = { ...this.getNote(this.data.id) };
-    updatedNote.isLocked = isLocked ?? updatedNote.isLocked;
-    updatedNote.isLockedNow = isLockedNow ?? updatedNote.isLockedNow;
-    updatedNote.unlockedTime = !updatedNote.isLocked ? new Date() : null;
-    await this.store.dispatch(new UpdateOneNote(updatedNote)).toPromise();
-    this.store.dispatch(new ChangeIsLockedFullNote(isLocked, isLockedNow));
-    //
-    const obj = new UpdateNoteUI(this.data.id);
-    obj.isLocked = updatedNote.isLocked;
-    obj.isLockedNow = updatedNote.isLockedNow;
-    obj.unlockedTime = updatedNote.unlockedTime;
-    this.store.dispatch(new PatchUpdatesUINotes([obj]));
-  }
-
   async encryptNote(noteId: string) {
     const { data } = await this.lockEncryptService
       .encryptNote(noteId, this.form.controls.password.value, this.form.controls.confirmation.value)
@@ -198,7 +173,7 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.Lock: {
         const isSuccess = await this.encryptNote(this.data.id);
         if (isSuccess) {
-          await this.setLockedInState(true, true);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, true, true);
           if (this.data.callback) {
             await this.data.callback();
           }
@@ -209,7 +184,8 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.Unlock: {
         const isSuccess = await this.tryUnlockNote(this.data.id);
         if (isSuccess) {
-          await this.setLockedInState(null, false);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, null, false);
+          this.updaterEntitiesService.lockNoteAfter(this.data.id);
           if (this.data.callback) {
             await this.data.callback();
           }
@@ -220,7 +196,7 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.RemoveLock: {
         const isSuccess = await this.decryptNote(this.data.id);
         if (isSuccess) {
-          await this.setLockedInState(false, false);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, false, false);
           if (this.data.callback) {
             await this.data.callback();
           }

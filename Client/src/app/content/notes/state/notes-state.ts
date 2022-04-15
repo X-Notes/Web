@@ -64,6 +64,7 @@ import { LongTermsIcons } from '../../long-term-operations-handler/models/long-t
 import { Router } from '@angular/router';
 import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 import { PositionEntityModel } from '../models/position-note.model';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 
 interface FullNoteState {
   note: FullNote;
@@ -112,6 +113,7 @@ export class NoteStore {
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
+    private updaterEntitiesService: UpdaterEntitiesService
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -786,11 +788,7 @@ export class NoteStore {
       });
       if (isUpdate) {
         const state = new Notes(note.noteTypeId, [...notes]);
-        console.log('state: ', state);
         dispatch(new UpdateNotes(state, note.noteTypeId));
-      }
-      if(!note.isLockedNow){
-        console.log('timer for unlock');
       }
     }
   }
@@ -943,6 +941,9 @@ export class NoteStore {
       patchState({
         notes: [...getState().notes, notesAPI],
       });
+      // process unlocked;
+      const notesToUpdate = notesAPI.notes.filter(x => x.isLocked && !x.isLockedNow && x.unlockedTime);
+      notesToUpdate.forEach((note) => this.updaterEntitiesService.lockNoteAfter(note.id));
     }
   }
 
