@@ -192,7 +192,7 @@ export class MenuButtonsService {
     private menuButtonsFoldersService: MenuButtonsFoldersService,
     private lockEncryptService: LockEncryptService,
     private router: Router,
-    private updaterEntitiesService: UpdaterEntitiesService
+    private updaterEntitiesService: UpdaterEntitiesService,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
