@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.SignalR;
@@ -103,7 +104,7 @@ namespace BI.SignalR
                 var entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
                 if (entity == null)
                 {
-                    var newEnt = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId };
+                    var newEnt = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
                     await userIdentifierConnectionIdRepository.AddAsync(newEnt);
                 }
             }

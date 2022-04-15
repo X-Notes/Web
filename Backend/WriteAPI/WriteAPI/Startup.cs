@@ -80,6 +80,7 @@ namespace WriteAPI
             services.AddHostedService<JobRegisterHosted>();
             services.AddHostedService<ManageUsersOnEntitiesHosted>();
             services.AddHostedService<SetupServicesHosted>();
+            services.AddHostedService<StartDBCleanerHosted>();
 
             services.AddHttpClient();
 

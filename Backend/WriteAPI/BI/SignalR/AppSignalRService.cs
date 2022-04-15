@@ -25,13 +25,13 @@ namespace BI.SignalR
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         }
 
-        public async Task<IEnumerable<string>> GetConnections(List<Guid> userIds)
+        public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds)
         {
             var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => userIds.Contains(x.UserId));
             return connections.Select(x => x.ConnectionId);
         }
 
-        public async Task<List<string>> GetConnections(Guid userId)
+        public async Task<List<string>> GetAuthorizedConnections(Guid userId)
         {
             var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId == userId);
             return connections.Select(x => x.ConnectionId).ToList();
@@ -58,38 +58,38 @@ namespace BI.SignalR
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {
-           var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateTextContent", updates);
         }
 
         public async Task UpdateNoteStructure(Guid noteId, Guid userId, UpdateNoteStructureWS updates)
         {
-            var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateNoteStructure", updates);
         }
 
         // FILE CONTENT
         public async Task UpdateDocumentsCollection(Guid noteId, Guid userId, UpdateDocumentsCollectionWS updates)
         {
-            var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateDocumentsCollection", updates);
         }
 
         public async Task UpdatePhotosCollection(Guid noteId, Guid userId, UpdatePhotosCollectionWS updates)
         {
-            var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updatePhotosCollection", updates);
         }
 
         public async Task UpdateVideosCollection(Guid noteId, Guid userId, UpdateVideosCollectionWS updates)
         {
-            var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateVideosCollection", updates);
         }
 
         public async Task UpdateAudiosCollection(Guid noteId, Guid userId, UpdateAudiosCollectionWS updates)
         {
-            var connectionsId = await GetConnections(userId);
+            var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateAudiosCollection", updates);
         }
 

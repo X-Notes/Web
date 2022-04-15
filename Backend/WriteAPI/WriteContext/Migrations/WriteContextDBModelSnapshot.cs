@@ -1045,6 +1045,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("ConnectionId")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("ConnectedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("UserId", "ConnectionId");
 
                     b.ToTable("UserIdentifierConnectionId", "ws");

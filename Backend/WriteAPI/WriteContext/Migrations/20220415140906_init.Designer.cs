@@ -16,7 +16,7 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20220319190413_init")]
+    [Migration("20220415140906_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -272,6 +272,22 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UsersOnPrivateFolders", "folder");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.CacheNoteHistory", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<HashSet<Guid>>("UsersThatEditIds")
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("NoteId");
+
+                    b.ToTable("CacheNoteHistory", "note_history");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.History.NoteSnapshot", b =>
@@ -552,9 +568,6 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsLocked")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("NoteTypeId")
                         .HasColumnType("integer");
 
@@ -569,6 +582,9 @@ namespace WriteContext.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UnlockTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1023,6 +1039,25 @@ namespace WriteContext.Migrations
                     b.ToTable("UserProfilePhoto", "user");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ConnectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "ConnectionId");
+
+                    b.ToTable("UserIdentifierConnectionId", "ws");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.Models.NoteContent.BaseNoteContent");
@@ -1173,6 +1208,17 @@ namespace WriteContext.Migrations
                     b.Navigation("Folder");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.CacheNoteHistory", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithOne("CacheNoteHistory")
+                        .HasForeignKey("Common.DatabaseModels.Models.History.CacheNoteHistory", "NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.History.NoteSnapshot", b =>
@@ -1516,6 +1562,17 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
+                        .WithMany("UserIdentifierConnectionIds")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.FileType", "FileType")
@@ -1618,6 +1675,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
                 {
+                    b.Navigation("CacheNoteHistory");
+
                     b.Navigation("Contents");
 
                     b.Navigation("FoldersNotes");
@@ -1702,6 +1761,8 @@ namespace WriteContext.Migrations
                     b.Navigation("PersonalizationSetting");
 
                     b.Navigation("UserHistories");
+
+                    b.Navigation("UserIdentifierConnectionIds");
 
                     b.Navigation("UserOnPrivateNotes");
 

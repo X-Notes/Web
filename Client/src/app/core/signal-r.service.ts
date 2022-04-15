@@ -154,6 +154,7 @@ export class SignalRService {
 
     // UPDATE CONTENT
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
+      console.log('updates: ', updates);
       this.updateTextContentEvent.next(updates);
     });
 
