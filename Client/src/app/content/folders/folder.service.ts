@@ -166,9 +166,11 @@ export class FolderService
         this.store.dispatch(actionsForUpdate);
         const transformFolders = this.transformSpread(folders);
         transformFolders.forEach((folder) => {
-          const index = this.entities.findIndex((x) => x.id === folder.id);
-          this.entities[index].previewNotes = folder.previewNotes;
-          this.loadAdditionInformation(ids);
+          const folderFinded = this.entities.find((x) => x.id === folder.id);
+          if (folderFinded) {
+            folderFinded.previewNotes = folder.previewNotes;
+            this.loadAdditionInformation(ids);
+          }
         });
         await this.murriService.refreshLayoutAsync();
         this.updateService.foldersIds$.next([]);
@@ -181,8 +183,10 @@ export class FolderService
     if (folderIds.length > 0) {
       const additionalInfo = await this.apiFolders.getAdditionalInfos(folderIds).toPromise();
       for (const info of additionalInfo) {
-        const noteIndex = this.entities.findIndex((x) => x.id === info.folderId);
-        this.entities[noteIndex].additionalInfo = info;
+        const index = this.entities.findIndex((x) => x.id === info.folderId);
+        if (index !== -1) {
+          this.entities[index].additionalInfo = info;
+        }
       }
     }
   }
@@ -217,7 +221,8 @@ export class FolderService
 
   loadFolderAndAddToDom(folders: SmallFolder[]) {
     if (folders && folders.length > 0) {
-      this.entities.unshift(...folders);
+      const m = folders.map((x) => ({ ...x }));
+      this.entities.unshift(...m);
     }
   }
 }

@@ -22,5 +22,15 @@ namespace Common.DTO.Personalization
 
         public SortedByENUM SortedFolderByTypeId { set; get; }
 
+        public PersonalizationSettingDTO GetDefault()
+        {
+            NotesInFolderCount = 10;
+            ContentInNoteCount = 10;
+            IsViewVideoOnNote = true;
+            IsViewAudioOnNote = true;
+            IsViewDocumentOnNote = true;    
+            IsViewPhotosOnNote = true; 
+            return this;
+        }
     }
 }

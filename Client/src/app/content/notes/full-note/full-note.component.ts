@@ -18,7 +18,7 @@ import { MenuSelectionService } from './content-editor-services/menu-selection.s
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
-import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 @Component({
@@ -95,13 +95,14 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       const instance = this.dialogsManageService.openLockDialog(
         this.id,
         LockPopupState.Unlock,
-        false,
+        null,
       );
       instance
         .afterClosed()
         .pipe(take(1))
         .subscribe(async (flag) => {
           if (flag) {
+            await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
             await this.loadIternalContent();
             await this.loadLeftMenuWithNotes();
           }

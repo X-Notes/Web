@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';

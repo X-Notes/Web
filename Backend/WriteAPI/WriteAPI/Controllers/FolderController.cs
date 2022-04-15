@@ -50,9 +50,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<FullFolderAnswer> Get(Guid id)
         {
-            var query = new GetFullFolderQuery(this.GetUserId(), id);
+            var query = new GetFullFolderQuery(this.GetUserIdUnStrict(), id);
             return await _mediator.Send(query);
         }
 
@@ -66,7 +67,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("delete")]
-        public async Task<OperationResult<Unit>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
+        public async Task<OperationResult<List<Guid>>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

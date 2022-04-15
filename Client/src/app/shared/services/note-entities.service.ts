@@ -1,7 +1,8 @@
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { SelectIdNote, UnSelectIdNote } from 'src/app/content/notes/state/notes-actions';
@@ -19,6 +20,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     public store: Store,
     murriService: MurriService,
     public apiService: ApiServiceNotes,
+    protected router: Router,
   ) {
     super(store, murriService);
 
@@ -54,7 +56,8 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       this.highlightNote(note);
     } else {
       if (note.isLockedNow) {
-        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock);
+        const callback = () => this.router.navigate([`notes/${note.id}`]);
+        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock, callback);
         return;
       }
       navigateFunc();
@@ -67,7 +70,9 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
       for (const info of additionalInfo) {
         const noteIndex = this.entities.findIndex((x) => x.id === info.noteId);
-        this.entities[noteIndex].additionalInfo = info;
+        if (noteIndex !== -1) {
+          this.entities[noteIndex].additionalInfo = info;
+        }
       }
     }
   }

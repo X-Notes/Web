@@ -26,7 +26,7 @@ import {
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
-import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 
 @Component({
   selector: 'app-deleted',

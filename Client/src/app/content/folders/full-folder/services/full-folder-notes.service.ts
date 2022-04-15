@@ -2,7 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
@@ -27,10 +27,10 @@ export class FullFolderNotesService
     private apiFullFolder: ApiFullFolderService,
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
-    private router: Router,
+    router: Router,
     private updateService: UpdaterEntitiesService,
   ) {
-    super(dialogsManageService, store, murriService, apiNoteService);
+    super(dialogsManageService, store, murriService, apiNoteService, router);
   }
 
   ngOnDestroy(): void {
@@ -49,6 +49,10 @@ export class FullFolderNotesService
     super.initState();
 
     await super.loadAdditionNoteInformation();
+  }
+
+  removeFromLayout(ids: string[]) {
+    this.entities = this.entities.filter((x) => !ids.some((id) => id === x.id));
   }
 
   async updateNotesLayout(folderId: string) {

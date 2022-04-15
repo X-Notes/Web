@@ -31,6 +31,7 @@ export class TransformNoteUtil {
 
   // eslint-disable-next-line class-methods-use-this
   public static transformContent(contents: ContentModelBase[]) {
+    if (!contents) return [];
     return contents.map((z) => {
       if (z.typeId === ContentTypeENUM.Photos) {
         const collection = z as ApiPhotosCollection;

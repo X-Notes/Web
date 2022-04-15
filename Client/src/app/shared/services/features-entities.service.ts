@@ -52,6 +52,9 @@ export class FeaturesEntitiesService<
         }
         note.color = value.color ?? note.color;
         note.title = value.title ?? note.title;
+        note.isLocked = value.isLocked ?? note.isLocked;
+        note.isLockedNow = value.isLockedNow ?? note.isLockedNow;
+        note.unlockedTime = value.unlockedTime ?? note.unlockedTime;
       }
     }
     if (updates.length > 0) {

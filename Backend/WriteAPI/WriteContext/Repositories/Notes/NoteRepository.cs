@@ -71,6 +71,8 @@ namespace WriteContext.Repositories.Notes
 
         private async Task<List<Note>> GetWithFilteredContent(List<Note> notes, PersonalizationSettingDTO settings)
         {
+            settings = settings ?? new PersonalizationSettingDTO().GetDefault();
+
             var types = GetFilterTypes(settings);
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();
@@ -161,6 +163,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Include(x => x.UsersOnPrivateNotes)
                     .Where(x => noteIds.Contains(x.Id))
                     .ToListAsync();
 
@@ -171,6 +174,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
@@ -195,11 +199,11 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
+        public async Task<List<Note>> GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.Id != noteId)
+                .Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);

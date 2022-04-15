@@ -9,6 +9,8 @@ import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-folder',
@@ -24,17 +26,29 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() isSelectedMode: boolean;
 
+  @Input() userId: string;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
-  nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+  folderType = FolderTypeENUM;
+
+  nameChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private store: Store,
     private router: Router,
     public pService: PersonalizationService,
   ) {}
+
+  get isAuthor(): boolean {
+    return this.userId === this.folder.userId;
+  }
+
+  get updateTime() {
+    return moment(this.date ?? this.folder.updatedAt).format('DD.MM hh:mm');
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();

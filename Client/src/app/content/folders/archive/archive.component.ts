@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 
 @Component({
   selector: 'app-archive',
@@ -29,6 +31,9 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(FolderStore.archiveCount)
   archiveCount$: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   fontSize = FontSizeENUM;
 

@@ -20,8 +20,7 @@ namespace WriteContext.GenericRepositories
             entities = context.Set<T>();
         }
 
-        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
-            => await entities.FirstOrDefaultAsync(predicate);
+        public Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => entities.FirstOrDefaultAsync(predicate);
 
         public async Task<EntityEntry<T>> AddAsync(T entity)
         {
@@ -42,19 +41,24 @@ namespace WriteContext.GenericRepositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public Task<List<T>> GetAllAsync()
         {
-            return await entities.ToListAsync();
+            return entities.ToListAsync();
         }
 
-        public async Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
+        public Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
         {
-            return await entities.Where(predicate).ToListAsync();
+            return entities.Where(predicate).ToListAsync();
         }
 
-        public async Task<int> GetCountAsync(Expression<Func<T, bool>> predicate)
+        public Task<int> GetCountAsync(Expression<Func<T, bool>> predicate)
         {
-            return await entities.Where(predicate).CountAsync();
+            return entities.Where(predicate).CountAsync();
+        }
+
+        public Task<bool> GetAnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            return entities.AnyAsync(predicate);
         }
 
         public async Task UpdateRangeAsync(IEnumerable<T> ents)

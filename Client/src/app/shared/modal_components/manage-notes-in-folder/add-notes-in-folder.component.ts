@@ -9,13 +9,14 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiFullFolderService } from 'src/app/content/folders/full-folder/services/api-full-folder.service';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
@@ -30,6 +31,9 @@ import { PersonalizationService } from '../../services/personalization.service';
 })
 export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   searchChanged: Subject<string> = new Subject<string>();
 

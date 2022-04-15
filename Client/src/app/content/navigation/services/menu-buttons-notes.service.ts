@@ -10,12 +10,12 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import {
-  ChangeTypeFullNote,
-  ChangeTypeNote,
   CopyNotes,
+  ChangeTypeNote,
+  ChangeTypeFullNote,
   DeleteNotesPermanently,
-} from '../notes/state/notes-actions';
-import { NoteStore } from '../notes/state/notes-state';
+} from '../../notes/state/notes-actions';
+import { NoteStore } from '../../notes/state/notes-state';
 import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({

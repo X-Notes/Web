@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BI.Services.Encryption;
 using BI.Services.Notes;
 using Common.Azure;
@@ -12,6 +13,7 @@ using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.App;
 using Common.DTO.Folders;
@@ -27,9 +29,11 @@ namespace BI.Mapping
 {
     public class NoteFolderLabelMapper : BaseMapper
     {
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public NoteFolderLabelMapper(AzureConfig azureConfig, UserNoteEncryptStorage userNoteEncryptStorage) : base(azureConfig)
+        public NoteFolderLabelMapper(
+            AzureConfig azureConfig, 
+            UserNoteEncryptService userNoteEncryptStorage) : base(azureConfig)
         {
             this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
@@ -106,17 +110,6 @@ namespace BI.Mapping
             return resultList;
         }
 
-        private List<BaseNoteContentDTO> GetContentsDTOFromContents(Note note, List<BaseNoteContent> contents, Guid ownerId)
-        {
-            if (IsLocked(note))
-            {
-                return new List<BaseNoteContentDTO>();
-            }
-            return MapContentsToContentsDTO(contents, ownerId).ToList();
-        }
-
-        private bool IsLocked(Note note) => note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id);
-
         // TYPES
         public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {
@@ -179,30 +172,50 @@ namespace BI.Mapping
 
 
         // NOTES 
-        public RelatedNote MapNoteToRelatedNoteDTO((Note note, bool isOpened) tuple)
+
+        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes)
+        {
+            return notes.Select(note =>
+            {
+                var m = MapNoteToRelatedNoteDTO(note);
+                m = SetLockedState(m, note.RelatedNote);
+                m = SetContent(m);
+                return m;
+            }).ToList(); ;
+        }
+
+        public RelatedNote MapNoteToRelatedNoteDTO(ReletatedNoteToInnerNote note)
         {
             return new RelatedNote()
             {
-                Id = tuple.note.Id,
-                Color = tuple.note.Color,
-                Title = tuple.note.Title,
-                Order = tuple.note.Order,
-                UserId = tuple.note.UserId,
-                IsOpened = tuple.isOpened,
-                Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteTypeId = tuple.note.NoteTypeId,
-                RefTypeId = tuple.note.RefTypeId,
-                Contents = GetContentsDTOFromContents(tuple.note, tuple.note.Contents, tuple.note.UserId),
-                IsLocked = tuple.note.IsLocked,
-                IsLockedNow = IsLocked(tuple.note),
-                DeletedAt = tuple.note.DeletedAt,
-                CreatedAt = tuple.note.CreatedAt,
-                UpdatedAt = tuple.note.UpdatedAt
+                Id = note.RelatedNote.Id,
+                Color = note.RelatedNote.Color,
+                Title = note.RelatedNote.Title,
+                Order = note.Order,
+                UserId = note.RelatedNote.UserId,
+                IsOpened = note.IsOpened,
+                Labels = note.RelatedNote.LabelsNotes != null ? MapLabelsToLabelsDTO(note.RelatedNote.LabelsNotes?.GetLabelUnDesc()) : null,
+                NoteTypeId = note.RelatedNote.NoteTypeId,
+                RefTypeId = note.RelatedNote.RefTypeId,
+                Contents = MapContentsToContentsDTO(note.RelatedNote.Contents, note.RelatedNote.UserId).ToList(),
+                DeletedAt = note.RelatedNote.DeletedAt,
+                CreatedAt = note.RelatedNote.CreatedAt,
+                UpdatedAt = note.RelatedNote.UpdatedAt
             };
         }
 
+        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, Guid callerId)
+        {
+            return notes.Select(note =>
+            {
+                var m = MapNoteToSmallNoteDTO(note, IsCanEdit(note, callerId));
+                m = SetLockedState(m, note);
+                m = SetContent(m);
+                return m;
+            }).ToList();
+        }
 
-        public SmallNote MapNoteToSmallNoteDTO(Note note)
+        public SmallNote MapNoteToSmallNoteDTO(Note note, bool isCanEdit)
         {
             return new SmallNote()
             {
@@ -214,12 +227,11 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
-                IsLocked = note.IsLocked,
-                IsLockedNow = IsLocked(note),
+                Contents = MapContentsToContentsDTO(note.Contents, note.UserId).ToList(),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
+                UpdatedAt = note.UpdatedAt,
+                IsCanEdit = isCanEdit
             };
         }
 
@@ -233,13 +245,23 @@ namespace BI.Mapping
                 RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                IsLocked = note.IsLocked,
-                IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
             };
+            _fullNote = SetLockedState(_fullNote, note);
             return _fullNote;
+        }
+
+        public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids)
+        {
+            return notes.Select(note =>
+            {
+                var m = MapNoteToPreviewNoteDTO(note, ids);
+                m = SetLockedState(m, note);
+                m = SetContent(m);
+                return m;
+            }).ToList();
         }
 
         public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids)
@@ -254,35 +276,40 @@ namespace BI.Mapping
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note, note.Contents, note.UserId),
+                Contents = MapContentsToContentsDTO(note.Contents, note.UserId).ToList(),
                 IsSelected = ids.Contains(note.Id),
-                IsLocked = note.IsLocked,
-                IsLockedNow = IsLocked(note),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
             };
-            var dates = result.Contents.Select(x => x.UpdatedAt);
-            dates.Append(result.UpdatedAt);
-            result.UpdatedAt = dates.Count() > 0 ? dates.Max() : DateTimeOffset.MinValue; 
             return result;
         }
 
-        public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids)
+        private T SetLockedState<T>(T note, Note dbNote) where T : LockNoteDTO
         {
-            return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids)).ToList();
+            note.IsLocked = dbNote.IsLocked;
+            note.IsLockedNow = dbNote.IsLocked ? !userNoteEncryptStorage.IsUnlocked(dbNote.UnlockTime) : false;
+            note.UnlockedTime = dbNote.UnlockTime;
+            return note;
         }
 
-        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes)
+        private T SetContent<T>(T note) where T : SmallNote
         {
-            return notes.Select(note => MapNoteToSmallNoteDTO(note)).ToList();
+            note.Contents = note.IsLockedNow ? null : note.Contents;
+            return note;
         }
 
-        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes)
+        private bool IsCanEdit(Note note, Guid callerId)
         {
-            var resultList = new List<(Note, bool)>();
-            notes.ForEach(note => resultList.Add((note.RelatedNote, note.IsOpened)));
-            return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple)).ToList();
+            if(note.UserId == callerId)
+            {
+                return true;
+            }
+            if(note.UsersOnPrivateNotes != null && note.UsersOnPrivateNotes.Any())
+            {
+                return note.UsersOnPrivateNotes.Any(x => x.UserId == callerId && x.AccessTypeId == RefTypeENUM.Editor);
+            }
+            return false;
         }
 
         public List<NotePreviewInFolder> MapNotesToNotesPreviewInFolder(IEnumerable<Note> notes)
@@ -299,12 +326,28 @@ namespace BI.Mapping
         }
 
         // FOLDERS
-        public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders)
+
+        private bool IsCanEdit(Folder folder, Guid callerId)
         {
-            return folders.Select(folder => MapFolderToSmallFolder(folder)).ToList();
+            if (folder.UserId == callerId)
+            {
+                return true;
+            }
+
+            if (folder.UsersOnPrivateFolders != null && folder.UsersOnPrivateFolders.Any())
+            {
+                return folder.UsersOnPrivateFolders.Any(x => x.UserId == callerId && x.AccessTypeId == RefTypeENUM.Editor);
+            }
+
+            return false;
         }
 
-        public SmallFolder MapFolderToSmallFolder(Folder folder)
+        public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders, Guid callerId)
+        {
+            return folders.Select(folder => MapFolderToSmallFolder(folder, IsCanEdit(folder, callerId))).ToList();
+        }
+
+        public SmallFolder MapFolderToSmallFolder(Folder folder, bool isCanEdit)
         {
             var notes = folder.FoldersNotes?.Select(x => x.Note);
             return new SmallFolder()
@@ -312,12 +355,14 @@ namespace BI.Mapping
                 Id = folder.Id,
                 Color = folder.Color,
                 Order = folder.Order,
+                UserId = folder.UserId, 
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
                 FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId,
+                IsCanEdit = isCanEdit,
                 PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
             };
         }

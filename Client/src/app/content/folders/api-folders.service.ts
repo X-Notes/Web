@@ -54,10 +54,10 @@ export class ApiFoldersService {
       );
   }
 
-  changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {
+  changeUserPermission(folderId: string, permissionUserId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       folderId,
-      userId,
+      permissionUserId,
       accessTypeId,
     };
     return this.httpClient.post<OperationResult<any>>(
@@ -116,7 +116,7 @@ export class ApiFoldersService {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<string[]>>(
       `${environment.writeAPI}/api/folder/delete`,
       obj,
     );

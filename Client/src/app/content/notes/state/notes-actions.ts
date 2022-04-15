@@ -5,6 +5,7 @@ import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { PositionEntityModel } from '../models/position-note.model';
+import { UpdateNoteUI } from './update-note-ui.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -45,8 +46,14 @@ export class ChangeColorNote {
   ) {}
 }
 
+export class PatchUpdatesUINotes {
+  static type = '[Notes] Patch UI note updates';
+
+  constructor(public updates: UpdateNoteUI[]) {}
+}
+
 export class ClearUpdatesUINotes {
-  static type = '[Notes] Clear color note';
+  static type = '[Notes] Remove UI note updates';
 }
 
 export class CopyNotes {
@@ -229,20 +236,17 @@ export class ChangeTypeFullNote {
 export class ChangeIsLockedFullNote {
   static type = '[Notes] change isLocked fullNote';
 
-  constructor(public isLocked: boolean) {}
+  constructor(public isLocked: boolean, public isLockedNow) {}
 }
 
 export class TransformTypeNotes {
   static type = '[Notes] transform type notes';
 
-  refTypeId?: RefTypeENUM;
-
   constructor(
     public typeTo: NoteTypeENUM,
     public selectedIds: string[],
     public isAddToDom: boolean,
-    refTypeId?: RefTypeENUM,
-  ) {
-    this.refTypeId = refTypeId;
-  }
+    public refTypeId?: RefTypeENUM,
+    public deleteIds?: string[],
+  ) {}
 }

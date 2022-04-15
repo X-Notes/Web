@@ -48,11 +48,22 @@
           class="date"
           [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
         >
-          <p>{{date ?? folder.updatedAt | date: 'medium' }}</p>
+          <p>{{ updateTime }}</p>
         </div>
         <div class="help-icons">
-          <div *ngIf="folder.additionalInfo?.isHasUserOnNote" class="icon">
+          <div
+            *ngIf="folderType.Shared === folder.folderTypeId && isAuthor"
+            class="icon"
+            [CustomTooltip]="'entity-bottom-tooltip.ownerFolder' | translate"
+          >
             <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+          </div>
+          <div
+            *ngIf="folder.additionalInfo?.isHasUserOnNote"
+            class="icon"
+            [CustomTooltip]="'entity-bottom-tooltip.hasUsersFolder' | translate"
+          >
+            <mat-icon svgIcon="people-many" [inline]="true"></mat-icon>
           </div>
         </div>
       </div>

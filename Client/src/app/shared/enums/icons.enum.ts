@@ -28,6 +28,7 @@ export enum Icons {
   notes = 'notes',
   notification = 'notification',
   people = 'people',
+  peopleMany = 'people-many',
   plus = 'plus',
   private = 'private',
   question = 'question',

@@ -71,7 +71,8 @@
     "delete": "Delete",
     "history": "History",
     "private": "Personal",
-    "privateFolder": "Personal"
+    "privateFolder": "Personal",
+    "removeFromFolder": "Remove notes from folder"
   },
   "profile": {
     "sectionProfile": "Profile",
@@ -155,7 +156,8 @@
       "required": "Required field",
       "minLength": "Password must be at least 6 characters",
       "incorrect": "Incorrect password",
-      "timeMessage": "After unlocking the note will be available for 5 minutes"
+      "timeMessage": "After unlocking the note will be available for 5 minutes",
+      "revokeMessage": "All users who can view or edit this note will lose access to it"
     },
     "reviewModal": {
       "review": "Review document",
@@ -301,7 +303,7 @@
     "notesPermDeleted": "Notes deleted permanently",
     "folderPermDeleted": "Folder deleted permanently",
     "foldersPermDeleted": "Folders deleted permanently",
-    "movedToMany": "moved to ",
+    "movedToMany": " moved to ",
     "movedToSingle": " moved to ",
     "reloadPage": "Unstable connection please refresh the page"
   },
@@ -321,6 +323,11 @@
   },
   "entity-bottom-tooltip":{
     "updated": "date of last changes",
-    "deleted": "date of deletion"
+    "deleted": "date of deletion",
+    "hasUsersNote": "Note can be viewed or edited by multiple users",
+    "hasUsersFolder": "Folder can be viewed or edited by multiple users",
+    "unlockTime": "Note will be locked at {{time}}",
+    "owner": "You are the owner of the note",
+    "ownerFolder": "You are the owner of the folder"
   }
 }

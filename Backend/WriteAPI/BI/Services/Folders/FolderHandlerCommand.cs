@@ -24,7 +24,7 @@ namespace BI.Services.Folders
         IRequestHandler<NewFolderCommand, SmallFolder>,
         IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>,
-        IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
         IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>,
         IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>,
@@ -33,6 +33,7 @@ namespace BI.Services.Folders
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
+        private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
         private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly IMediator _mediator;
 
@@ -41,13 +42,15 @@ namespace BI.Services.Folders
             NoteFolderLabelMapper appCustomMapper, 
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
-            FolderWSUpdateService folderWSUpdateService)
+            FolderWSUpdateService folderWSUpdateService,
+            UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
         {
             this.folderRepository = folderRepository;
             this.appCustomMapper = appCustomMapper;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
             this.folderWSUpdateService = folderWSUpdateService;
+            this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
         }
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
@@ -65,7 +68,7 @@ namespace BI.Services.Folders
             };
 
             await folderRepository.AddAsync(folder);
-            return appCustomMapper.MapFolderToSmallFolder(folder);
+            return appCustomMapper.MapFolderToSmallFolder(folder, true);
         }
 
         public async Task<OperationResult<Unit>> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
@@ -111,21 +114,28 @@ namespace BI.Services.Folders
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Guid>>> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
-            if (folders.Any())
-            {
-                folders.ForEach(x => x.ToType(FolderTypeENUM.Deleted, DateTimeProvider.Time));
-                await folderRepository.UpdateRangeAsync(folders);
+            var processedIds = new List<Guid>();
 
-                return new OperationResult<Unit>(true, Unit.Value);
+            var foldersOwner = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
+            if (foldersOwner.Any())
+            {
+                foldersOwner.ForEach(x => x.ToType(FolderTypeENUM.Deleted, DateTimeProvider.Time));
+                await folderRepository.UpdateRangeAsync(foldersOwner);
+                processedIds = foldersOwner.Select(x => x.Id).ToList();
             }
 
-            return new OperationResult<Unit>().SetNotFound();
+            var usersOnPrivate = await usersOnPrivateFoldersRepository.GetWhereAsync(x => request.UserId == x.UserId && request.Ids.Contains(x.FolderId));
+            if (usersOnPrivate.Any())
+            {
+                await usersOnPrivateFoldersRepository.RemoveRangeAsync(usersOnPrivate);
+            }
+
+            return new OperationResult<List<Guid>>(true, processedIds);
         }
 
         public async Task<List<SmallFolder>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
@@ -175,7 +185,7 @@ namespace BI.Services.Folders
 
                     await folderRepository.UpdateRangeAsync(dbFolders);
                     var resultFolders = dbFolders.Where(dbFolder => resultIds.Contains(dbFolder.Id)).ToList();
-                    return appCustomMapper.MapFoldersToSmallFolders(resultFolders);
+                    return appCustomMapper.MapFoldersToSmallFolders(resultFolders, request.UserId);
                 }
             }
 

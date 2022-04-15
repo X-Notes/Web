@@ -7,6 +7,7 @@ export interface SmallNote extends FullNote {
   contents: ContentModelBase[];
   order: number;
   userId: string;
+  isCanEdit: boolean;
   isSelected?: boolean;
   lockRedirect?: boolean;
   additionalInfo?: BottomNoteContent;

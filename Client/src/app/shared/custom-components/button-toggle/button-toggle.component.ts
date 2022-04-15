@@ -16,7 +16,6 @@ export class ButtonToggleComponent {
   valueChange = new EventEmitter<boolean>();
 
   modelChangeFn(value) {
-    this.value = value;
-    this.valueChange.emit(this.value);
+    this.valueChange.emit(value);
   }
 }

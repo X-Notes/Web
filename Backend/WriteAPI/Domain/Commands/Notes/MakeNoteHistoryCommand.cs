@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using System.Linq;
 
 namespace Domain.Commands.Notes
 {
@@ -14,10 +15,10 @@ namespace Domain.Commands.Notes
         [RequiredListNotEmptyAttribute]
         public List<Guid> UserIds { set; get; }
 
-        public MakeNoteHistoryCommand(Guid id, List<Guid> userIds)
+        public MakeNoteHistoryCommand(Guid id, HashSet<Guid> userIds)
         {
             this.Id = id;
-            this.UserIds = userIds;
+            this.UserIds = userIds.ToList();
         }
     }
 }

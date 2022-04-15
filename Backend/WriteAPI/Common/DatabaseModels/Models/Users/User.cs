@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
+using Common.DatabaseModels.Models.WS;
 
 namespace Common.DatabaseModels.Models.Users
 {
@@ -34,6 +35,8 @@ namespace Common.DatabaseModels.Models.Users
         public PersonalizationSetting PersonalizationSetting { set; get; }
 
         public List<Label> Labels { set; get; }
+
+        public List<UserIdentifierConnectionId> UserIdentifierConnectionIds { set; get; }
 
         public List<Background> Backgrounds { set; get; }
 

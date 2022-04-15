@@ -44,7 +44,8 @@ namespace BI.Services.Notes
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly UserBackgroundMapper userBackgroundMapper;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -56,7 +57,8 @@ namespace BI.Services.Notes
             FoldersNotesRepository foldersNotesRepository,
             WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper,
-            UserNoteEncryptStorage userNoteEncryptStorage)
+            UserNoteEncryptService userNoteEncryptStorage,
+            CollectionNoteRepository collectionNoteRepository)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -68,6 +70,7 @@ namespace BI.Services.Notes
             this.websocketsNotesService = websocketsNotesService;
             this.userBackgroundMapper = userBackgroundMapper;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
+            this.collectionNoteRepository = collectionNoteRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -83,7 +86,7 @@ namespace BI.Services.Notes
 
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
 
@@ -123,13 +126,18 @@ namespace BI.Services.Notes
             {
                 var note = await noteRepository.GetNoteWithLabels(request.NoteId);
 
-                if (note.IsLocked && !userNoteEncryptStorage.IsUnlocked(note.Id))
+                if (note.IsLocked)
                 {
-                    return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                    var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
+                    if (!isUnlocked)
+                    {
+                        return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                    }
                 }
 
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, appCustomMapper.MapNoteToFullNote(note));
+                var ent = appCustomMapper.MapNoteToFullNote(note);
+                var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, ent);
                 return new OperationResult<FullNoteAnswer>(true, data);
             }
 
@@ -141,9 +149,13 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            if (permissions.Note.IsLocked)
             {
-                return new List<OnlineUserOnNote>();
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
+                if (!isUnlocked)
+                {
+                    return new List<OnlineUserOnNote>();
+                }
             }
 
             if (permissions.CanRead)
@@ -161,9 +173,13 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.Note.IsLocked && !userNoteEncryptStorage.IsUnlocked(permissions.Note.Id))
+            if (permissions.Note.IsLocked)
             {
-                return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
+                if (!isUnlocked)
+                {
+                    return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
+                }
             }
 
             if (permissions.CanRead)
@@ -186,7 +202,7 @@ namespace BI.Services.Notes
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
             notes = notes.OrderBy(x => x.Order).ToList();
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
         public async Task<OperationResult<List<SmallNote>>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
@@ -206,7 +222,7 @@ namespace BI.Services.Notes
                     }
                 });
 
-                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes);
+                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
                 return new OperationResult<List<SmallNote>>(true, result);
             }
 
@@ -217,6 +233,7 @@ namespace BI.Services.Notes
         {
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
+            var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
 
             var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
             var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
@@ -225,7 +242,8 @@ namespace BI.Services.Notes
             {
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
-                NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null
+                NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
+                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : null
             }).ToList();
         }
     }

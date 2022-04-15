@@ -3,9 +3,8 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { MenuButtonsService } from '../menu-buttons.service';
 import { NoteStore } from '../../notes/state/notes-state';
-import { MenuItem } from '../menu-Item.model';
+import { MenuItem } from '../models/menu-Item.model';
 
 @Component({
   selector: 'app-menu',
@@ -22,7 +21,7 @@ export class MenuComponent {
   @Input()
   public items: MenuItem[] = [];
 
-  constructor(public pService: PersonalizationService, public buttonService: MenuButtonsService) {}
+  constructor(public pService: PersonalizationService) {}
 
   // eslint-disable-next-line consistent-return
   disableTooltpUser = () => {

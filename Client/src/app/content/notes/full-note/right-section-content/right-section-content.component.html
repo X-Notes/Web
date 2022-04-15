@@ -1,9 +1,9 @@
 <div appTheme class="secondary-content" [style.width.px]="sliderService.mainWidth">
-  <div class="open" #open (click)="sideBarService.openSideModal(note.id)">
+  <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(note.id)">
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
-    <p>{{'innerNote.openNoteOrFile' | translate }}</p>
+    <p>{{ 'innerNote.openNoteOrFile' | translate }}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
   </div>
   <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
@@ -27,7 +27,7 @@
     <div class="content-inner-small">
       <div
         class="grid"
-        [ngStyle]="{'opacity': sideBarService.murriService.flagForOpacity ? '1' : '0'}"
+        [ngStyle]="{ opacity: sideBarService.murriService.flagForOpacity ? '1' : '0' }"
       >
         <div
           #relatedItem
@@ -37,6 +37,7 @@
         >
           <app-related-note
             [note]="item"
+            [isCanTurnUp]="canEdit$ | async"
             (deleteNote)="sideBarService.deleteSmallNote($event, note.id)"
             (changeState)="sideBarService.changeState($event, note.id)"
           ></app-related-note>

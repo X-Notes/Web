@@ -134,11 +134,10 @@
 
           .icon {
             height: 18px;
-            width: 18px;
             display: flex;
-            margin-left: 1.25rem;
+            margin-left: 1rem;
             color: #969696;
-            transform: 0.2s ease;
+            transition: 0.2s ease;
             &:hover {
               color: darken(#969696, 20%);
             }

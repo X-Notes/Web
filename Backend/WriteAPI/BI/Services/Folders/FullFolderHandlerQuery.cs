@@ -50,7 +50,7 @@ namespace BI.Services.Folders
                 var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 var notesIds = foldersNotes.Select(x => x.NoteId);
                 var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
-                return noteMapper.MapNotesToSmallNotesDTO(notes);
+                return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
             }
 
             return new List<SmallNote>();
@@ -68,7 +68,7 @@ namespace BI.Services.Folders
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     var notes = await noteRepository.GetNotesByUserIdNoLocked(permissions.Caller.Id, folderNoteIds, request.Settings);
-                    return noteMapper.MapNotesToSmallNotesDTO(notes);
+                    return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace BI.Services.Folders
                     if (noteIds.Any())
                     {
                         notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteIds, request.Settings);
-                        return noteMapper.MapNotesToSmallNotesDTO(notes);
+                        return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
                     }
                 }
             }

@@ -9,14 +9,15 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
 import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
@@ -32,6 +33,9 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
 })
 export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   loaded = false;
 

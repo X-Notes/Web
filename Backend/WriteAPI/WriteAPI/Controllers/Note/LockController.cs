@@ -17,9 +17,9 @@ namespace WriteAPI.Controllers.Note
     public class LockController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly UserNoteEncryptStorage userNoteEncryptStorage;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public LockController(IMediator _mediator, UserNoteEncryptStorage userNoteEncryptStorage)
+        public LockController(IMediator _mediator, UserNoteEncryptService userNoteEncryptStorage)
         {
             this._mediator = _mediator;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
@@ -48,10 +48,10 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpGet("force/{noteId}")]
-        public OperationResult<bool> ForceLockNote(Guid noteId)
+        public async Task<OperationResult<bool>> ForceLockNote(Guid noteId)
         {
-            var result = userNoteEncryptStorage.RemoveUnlockTime(noteId);
-            return new OperationResult<bool>(result, result);
+            await userNoteEncryptStorage.RemoveUnlockTime(noteId);
+            return new OperationResult<bool>(true, true);
         }
     }
 }

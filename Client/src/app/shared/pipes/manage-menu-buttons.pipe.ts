@@ -1,20 +1,24 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { MenuItem } from 'src/app/content/navigation/menu-Item.model';
-import { AppStore } from 'src/app/core/stateApp/app-state';
+import { MenuItem } from 'src/app/content/navigation/models/menu-Item.model';
 
 @Pipe({
   name: 'manageMenuButtons',
 })
 export class ManageMenuButtonsPipe implements PipeTransform {
-  constructor(private store: Store) {}
-
-  transform = (items: MenuItem[], isOwner: boolean): MenuItem[] => {
-    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-      return items.filter((x) => x.isViewOnFullFolder === true);
+  transform = (
+    items: MenuItem[],
+    isHasEditRights: boolean,
+    isOwner: boolean,
+    isAllNotesNoShared: boolean,
+  ): MenuItem[] => {
+    if (!isAllNotesNoShared) {
+      items = items.filter((x) => !x.isDisableForShared);
     }
     if (!isOwner) {
-      return items.filter((x) => x.isNoOwnerCanSee === true);
+      items = items.filter((x) => x.isOnlyForAuthor === false);
+    }
+    if (!isHasEditRights) {
+      items = items.filter((x) => x.IsNeedEditRightsToSee === false);
     }
     return items;
   };

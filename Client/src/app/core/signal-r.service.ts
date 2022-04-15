@@ -100,7 +100,7 @@ export class SignalRService {
     this.hubConnection.onclose(() => {
       this.wsConnectionClosed.next(true);
       const message = this.translateService.instant('snackBar.reloadPage');
-      this.snackbarService.openSnackBar(message);
+      this.snackbarService.openSnackBar(message, null, null, Infinity);
     });
 
     this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));
@@ -133,8 +133,7 @@ export class SignalRService {
       }
 
       //
-      const result = new UpdateNoteUI();
-      result.id = updates.noteId;
+      const result = new UpdateNoteUI(updates.noteId);
       result.title = updates.title;
       result.color = updates.color;
       result.removeLabelIds = updates.removeLabelIds;
@@ -153,7 +152,6 @@ export class SignalRService {
     });
 
     // UPDATE CONTENT
-    console.log(5555);
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
       console.log('updates: ', updates);
       this.updateTextContentEvent.next(updates);

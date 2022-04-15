@@ -11,6 +11,7 @@ export interface FullNote {
   noteTypeId: NoteTypeENUM;
   isLocked: boolean;
   isLockedNow: boolean;
+  unlockedTime?: Date;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

@@ -1,6 +1,5 @@
 <div class="wrapper" appTheme>
   <app-dialog-generic-header
-    [icon]="'icon-plus'"
     [message]="'modal.folderManage.notes' | translate"
   ></app-dialog-generic-header>
   <div class="dialog-content">
@@ -39,6 +38,7 @@
             >
               <app-note
                 [note]="item"
+                [userId]="(user$ | async).id"
                 (highlightNote)="highlightNote($event)"
                 (clickOnNote)="highlightNote($event)"
                 [ngStyle]="{'backgroundColor': item.color }"

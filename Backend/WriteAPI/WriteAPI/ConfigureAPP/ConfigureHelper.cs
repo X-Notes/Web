@@ -90,6 +90,7 @@ using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
 using Common.Timers;
+using WriteContext.Repositories.WS;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -135,11 +136,11 @@ namespace WriteAPI.ConfigureAPP
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyNoteCommand, List<Guid>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakeNoteHistoryCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
@@ -204,7 +205,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
@@ -234,7 +235,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<SendInvitesToUsersNotes, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>, SharingHandlerCommand>();
 
             services.AddScoped<IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
@@ -351,9 +352,13 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<NoteSnapshotRepository>();
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
             services.AddScoped<SnapshotFileContentRepository>();
+            services.AddScoped<CacheNoteHistoryRepository>();
 
             // Personalization
             services.AddScoped<PersonalizationSettingRepository>();
+
+            // WS
+            services.AddScoped<UserIdentifierConnectionIdRepository>();
 
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
@@ -427,7 +432,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesServiceStorage>();
             services.AddSingleton<WebsocketsFoldersServiceStorage>();
-            services.AddSingleton<UserNoteEncryptStorage>();
+            services.AddScoped<UserNoteEncryptService>();
 
             services.AddSingleton<AppEncryptor>();
 
@@ -436,9 +441,8 @@ namespace WriteAPI.ConfigureAPP
             // BACKGROUND JOBS
             services.AddScoped<EntitiesDeleteJobHandler>();
 
-            services.AddSingleton<ConfigForHistoryMaker>();
-            services.AddSingleton<HistoryCacheServiceStorage>();
-            services.AddSingleton<HistoryJobHandler>();
+            services.AddScoped<HistoryCacheService>();
+            services.AddScoped<HistoryJobHandler>();
 
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
         }

@@ -12,8 +12,8 @@ import {
   ChangeTypeFullFolder,
   CopyFolders,
   DeleteFoldersPermanently,
-} from '../folders/state/folders-actions';
-import { FolderStore } from '../folders/state/folders-state';
+} from '../../folders/state/folders-actions';
+import { FolderStore } from '../../folders/state/folders-state';
 import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({

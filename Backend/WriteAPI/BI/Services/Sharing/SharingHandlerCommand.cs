@@ -27,12 +27,11 @@ namespace BI.Services.Sharing
         IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>,
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
-        IRequestHandler<SendInvitesToUsersNotes, Unit>,
+        IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>,
         IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
-        private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
@@ -42,7 +41,6 @@ namespace BI.Services.Sharing
         private readonly NotificationRepository notificationRepository;
         public SharingHandlerCommand(
             FolderRepository folderRepository,
-            UserRepository userRepository,
             NoteRepository noteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
@@ -51,7 +49,6 @@ namespace BI.Services.Sharing
             AppSignalRService appSignalRHub)
         {
             this.folderRepository = folderRepository;
-            this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
@@ -91,6 +88,12 @@ namespace BI.Services.Sharing
                 foreach (var perm in permissions)
                 {
                     var note = perm.perm.Note;
+
+                    if (note.IsLocked)
+                    {
+                        return new OperationResult<Unit>().SetContentLocked();
+                    }
+
                     note.RefTypeId = request.RefTypeId;
                     note.ToType(NoteTypeENUM.Shared);
                     await noteRepository.UpdateAsync(note);
@@ -108,7 +111,7 @@ namespace BI.Services.Sharing
             if (permissions.IsOwner)
             {
                 var access = await usersOnPrivateFoldersRepository
-                    .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
+                    .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
 
                 if (access == null)
                 {
@@ -121,14 +124,14 @@ namespace BI.Services.Sharing
                 var notification = new Notification() // TODO MOVE TO SERVICE
                 {
                     UserFromId = permissions.Caller.Id,
-                    UserToId = request.UserId,
+                    UserToId = request.PermissionUserId,
                     TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
                     Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
 
-                await appSignalRHub.SendNewNotification(request.UserId, true);
+                await appSignalRHub.SendNewNotification(request.PermissionUserId, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -143,8 +146,14 @@ namespace BI.Services.Sharing
 
             if (permissions.IsOwner)
             {
+
+                if (permissions.Note.IsLocked)
+                {
+                    return new OperationResult<Unit>().SetContentLocked();
+                }
+
                 var access = await usersOnPrivateNotesRepository
-                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
+                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
 
                 if (access == null)
                 {
@@ -157,14 +166,14 @@ namespace BI.Services.Sharing
                 var notification = new Notification()
                 {
                     UserFromId = permissions.Caller.Id,
-                    UserToId = request.UserId,
+                    UserToId = request.PermissionUserId,
                     TranslateKeyMessage = "notification.ChangeUserPermissionNote",
                     Date = DateTimeProvider.Time
                 };
 
                 await notificationRepository.AddAsync(notification);
      
-                await appSignalRHub.SendNewNotification(request.UserId, true);
+                await appSignalRHub.SendNewNotification(request.PermissionUserId, true);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -277,13 +286,19 @@ namespace BI.Services.Sharing
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
             {
+
+                if (permissions.Note.IsLocked)
+                {
+                    return new OperationResult<Unit>().SetContentLocked();
+                }
+
                 var permissionsRequests = request.UserIds.Select(userId => new UserOnPrivateNotes()
                 {
                     AccessTypeId = request.RefTypeId,
@@ -309,9 +324,11 @@ namespace BI.Services.Sharing
                     await appSignalRHub.AddNoteToShared(request.NoteId, notification.UserToId);
                     await appSignalRHub.SendNewNotification(notification.UserToId, true);
                 }
+
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Common.DTO.Folders
 
         public int Order { set; get; }
 
+        public Guid UserId { set; get; }
+
         public RefTypeENUM RefTypeId { set; get; }
 
         public FolderTypeENUM FolderTypeId { set; get; }
@@ -25,6 +27,8 @@ namespace Common.DTO.Folders
         public DateTimeOffset UpdatedAt { set; get; }
 
         public DateTimeOffset CreatedAt { set; get; }
+
+        public bool IsCanEdit { set; get; }
 
         public List<NotePreviewInFolder> PreviewNotes { set; get; }
     }

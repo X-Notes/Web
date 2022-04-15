@@ -5,7 +5,6 @@
 >
   <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
     <app-dialog-generic-header
-      [icon]="'icon-plus'"
       [message]="'modal.ShareModal.selectedNotes' | translate"
       [autoClose]="false"
       [isMessage]="pService.isCollapseShared"
@@ -14,7 +13,7 @@
     </app-dialog-generic-header>
 
     <ng-scrollbar
-      *ngIf="currentWindowType === windowType.Note"
+      *ngIf="data.currentWindowType === windowType.Note"
       class="notes-sharing"
       [visibility]="'hover'"
       [track]="'all'"
@@ -39,7 +38,7 @@
     </ng-scrollbar>
 
     <ng-scrollbar
-      *ngIf="currentWindowType === windowType.Folder"
+      *ngIf="data.currentWindowType === windowType.Folder"
       class="notes-sharing"
       [visibility]="'hover'"
       [track]="'all'"
@@ -64,10 +63,7 @@
     </ng-scrollbar>
   </div>
   <div class="sharing">
-    <app-dialog-generic-header
-      [icon]="'icon-plus'"
-      [message]="'modal.ShareModal.Share' | translate"
-    >
+    <app-dialog-generic-header [message]="'modal.ShareModal.Share' | translate">
     </app-dialog-generic-header>
 
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
@@ -76,22 +72,22 @@
           <div class="content-access">
             <div class="link-access-field">
               <input
-                *ngIf="currentWindowType === windowType.Note"
+                *ngIf="data.currentWindowType === windowType.Note"
                 readonly
                 type="text"
-                value="{{ currentNote?.id | sharingLink: currentWindowType}}"
+                value="{{ currentNote?.id | sharingLink: data.currentWindowType}}"
                 id="linkInputNote"
               />
               <input
-                *ngIf="currentWindowType === windowType.Folder"
+                *ngIf="data.currentWindowType === windowType.Folder"
                 readonly
                 type="text"
-                value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
+                value="{{ currentFolder?.id | sharingLink: data.currentWindowType}}"
                 id="linkInputFolder"
               />
               <div
                 class="dropdown-wrapper"
-                *ngIf="currentFolder?.folderTypeId === folderType.Shared && currentWindowType === windowType.Folder"
+                *ngIf="currentFolder?.folderTypeId === folderType.Shared && data.currentWindowType === windowType.Folder"
               >
                 <app-select
                   class="dropdown-button"
@@ -109,7 +105,7 @@
               </div>
               <div
                 class="dropdown-wrapper"
-                *ngIf="currentNote?.noteTypeId === noteType.Shared && currentWindowType === windowType.Note"
+                *ngIf="currentNote?.noteTypeId === noteType.Shared && data.currentWindowType === windowType.Note"
               >
                 <app-select
                   class="dropdown-button"
@@ -132,7 +128,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
+            <div *ngIf="data.currentWindowType === windowType.Note" class="toggle-field">
               <app-button-toggle
                 class="toggle"
                 [value]="isPrivateButtonActive ?  false : true"
@@ -161,7 +157,7 @@
                 </p>
               </div>
             </div>
-            <div *ngIf="currentWindowType === windowType.Folder" class="toggle-field">
+            <div *ngIf="data.currentWindowType === windowType.Folder" class="toggle-field">
               <app-button-toggle
                 class="toggle"
                 [value]="isPrivateButtonActive ?  false : true"
@@ -192,7 +188,7 @@
             </div>
           </div>
           <ng-scrollbar
-            *ngIf="currentWindowType === windowType.Note"
+            *ngIf="data.currentWindowType === windowType.Note"
             class="user-access"
             [visibility]="'hover'"
             [appearance]="'compact'"
@@ -208,7 +204,7 @@
           </ng-scrollbar>
 
           <ng-scrollbar
-            *ngIf="currentWindowType === windowType.Folder"
+            *ngIf="data.currentWindowType === windowType.Folder"
             class="user-access"
             [visibility]="'hover'"
             [appearance]="'compact'"

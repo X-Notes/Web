@@ -21,7 +21,7 @@ import {
 } from './state/notes-actions';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
-import { DialogsManageService } from '../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 
@@ -41,13 +41,13 @@ export class NotesService
     public pService: PersonalizationService,
     store: Store,
     murriService: MurriService,
-    private router: Router,
+    router: Router,
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
     private updateService: UpdaterEntitiesService,
   ) {
-    super(dialogsManageService, store, murriService, apiService);
+    super(dialogsManageService, store, murriService, apiService, router);
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
@@ -178,8 +178,10 @@ export class NotesService
         this.store.dispatch(actionsForUpdate);
         const transformNotes = this.transformSpread(notes);
         transformNotes.forEach((note) => {
-          const index = this.entities.findIndex((x) => x.id === note.id);
-          this.entities[index].contents = note.contents;
+          const entity = this.entities.find((x) => x.id === note.id);
+          if (entity) {
+            entity.contents = note.contents;
+          }
         });
         super.loadAdditionNoteInformation(ids);
         await this.murriService.refreshLayoutAsync();
@@ -263,7 +265,8 @@ export class NotesService
 
   loadNoteAndAddToDom(notes: SmallNote[]) {
     if (notes && notes.length > 0) {
-      this.entities.unshift(...notes);
+      const m = notes.map((x) => ({ ...x }));
+      this.entities.unshift(...m);
     }
   }
 }

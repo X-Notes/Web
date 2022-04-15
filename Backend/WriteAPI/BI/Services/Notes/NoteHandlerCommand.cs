@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
+using BI.Services.Encryption;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -25,56 +26,53 @@ using Domain.Commands.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
 using Storage;
-using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.Labels;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
-
 namespace BI.Services.Notes
 {
     public class NoteHandlerCommand :
         IRequestHandler<NewPrivateNoteCommand, SmallNote>,
         IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<SetDeleteNoteCommand, OperationResult<Unit>>,
+        IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>,
         IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>,
         IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>,
         IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<CopyNoteCommand, List<Guid>>,
+        IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>,
         IRequestHandler<MakeNoteHistoryCommand, Unit>,
         IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>,
         IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>
     {
 
-        private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly NoteFolderLabelMapper appCustomMapper;
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
-        private readonly FileRepository fileRepository;
         private readonly CollectionLinkedService collectionLinkedService;
+        private readonly UserNoteEncryptService userNoteEncryptStorage;
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+
         public NoteHandlerCommand(
-            UserRepository userRepository, 
             NoteRepository noteRepository,
             NoteFolderLabelMapper noteCustomMapper, 
             IMediator _mediator, 
             LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheServiceStorage historyCacheService, 
+            HistoryCacheService historyCacheService, 
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
-            FileRepository fileRepository,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            UserNoteEncryptService userNoteEncryptStorage,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
         {
-            this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
@@ -84,8 +82,9 @@ namespace BI.Services.Notes
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.labelRepository = labelRepository;
             this.noteWSUpdateService = noteWSUpdateService;
-            this.fileRepository = fileRepository;
             this.collectionLinkedService = collectionLinkedService;
+            this.userNoteEncryptStorage = userNoteEncryptStorage;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
 
 
@@ -112,7 +111,7 @@ namespace BI.Services.Notes
             await noteRepository.AddAsync(note);
             note.LabelsNotes = new List<LabelsNotes>();
 
-            return appCustomMapper.MapNoteToSmallNoteDTO(note);
+            return appCustomMapper.MapNoteToSmallNoteDTO(note, true);
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
@@ -135,7 +134,7 @@ namespace BI.Services.Notes
                 // HISTORY
                 foreach(var perm in permissions)
                 {
-                    historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id, perm.perm.Author.Email);
+                    await historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id);
                 }
 
                 // WS UPDATES
@@ -151,20 +150,28 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Guid>>> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var notes = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Note).ToList();
-            if (notes.Any())
+            var processedIds = new List<Guid>();
+
+            var notesOwner = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Note).ToList();
+            if (notesOwner.Any())
             {
-                notes.ForEach(x => x.ToType(NoteTypeENUM.Deleted, DateTimeProvider.Time));
-                await noteRepository.UpdateRangeAsync(notes);
-                return new OperationResult<Unit>(true, Unit.Value);
+                notesOwner.ForEach(x => x.ToType(NoteTypeENUM.Deleted, DateTimeProvider.Time));
+                await noteRepository.UpdateRangeAsync(notesOwner);
+                processedIds = notesOwner.Select(x => x.Id).ToList();
             }
 
-            return new OperationResult<Unit>().SetNotFound();
+            var usersOnPrivate = await usersOnPrivateNotesRepository.GetWhereAsync(x => request.UserId == x.UserId && request.Ids.Contains(x.NoteId));
+            if (usersOnPrivate.Any())
+            {
+                await usersOnPrivateNotesRepository.RemoveRangeAsync(usersOnPrivate);
+            }
+
+            return new OperationResult<List<Guid>>(true, processedIds);
         }
 
         public async Task<OperationResult<Unit>> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
@@ -172,10 +179,11 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            var isCanDelete = permissions.All(x => x.perm.IsOwner);
-            if (isCanDelete)
+            var notes = permissions.Where(x => x.perm.IsOwner);
+            if (notes.Any())
             {
-                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => request.Ids.Contains(x.NoteId));
+                var noteIds = notes.Select(x => x.noteId);
+                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
 
                 var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                 if (fileContents.Any())
@@ -183,7 +191,7 @@ namespace BI.Services.Notes
                     await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, Guid.Empty, request.UserId, false);
                 }
 
-                var notesToDelete = permissions.Select(x => x.perm.Note);
+                var notesToDelete = notes.Select(x => x.perm.Note);
                 await noteRepository.RemoveRangeAsync(notesToDelete);
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -280,7 +288,7 @@ namespace BI.Services.Notes
             return contents;
         }
 
-        public async Task<List<Guid>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var resultIds = new List<Guid>();
             var order = -1;
@@ -290,13 +298,23 @@ namespace BI.Services.Notes
 
             if (permissions.Any())
             {
-                var idsForCopy = permissions.Where(x => x.Item2.CanRead).Select(x => x.Item1).ToList();
-                var permission = permissions.First().Item2;
+                var idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+                var permission = permissions.First().perm;
                 if (idsForCopy.Any())
                 {
                     var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
                     foreach(var noteForCopy in notesForCopy)
                     {
+
+                        if (noteForCopy.IsLocked)
+                        {
+                            var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
+                            if (!isUnlocked)
+                            {
+                                continue;
+                            }
+                        }
+
                         var newNote = new Note()
                         {
                             Title = noteForCopy.Title,
@@ -322,19 +340,11 @@ namespace BI.Services.Notes
                         await baseNoteContentRepository.AddRangeAsync(contents);
                     }
 
-                    var dbNotes = await noteRepository.GetWhereAsync(x => x.UserId == permission.Caller.Id && x.NoteTypeId == NoteTypeENUM.Private);
-                    var orders = Enumerable.Range(1, dbNotes.Count);
-                    dbNotes = dbNotes.OrderBy(x => x.Order).Zip(orders, (note, order) =>
-                    {
-                        note.Order = order;
-                        return note;
-                    }).ToList();
-
-                    await noteRepository.UpdateRangeAsync(dbNotes);
+                    return new OperationResult<List<Guid>>(true, resultIds);
                 }
             }
 
-            return resultIds;
+            return new OperationResult<List<Guid>>(false, resultIds).SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
@@ -356,10 +366,10 @@ namespace BI.Services.Notes
                     notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
-                    permissions.ForEach(x =>
+                    foreach (var perm in permissions)
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
-                    });
+                        await historyCacheService.UpdateNote(perm.perm.Note.Id, perm.perm.Caller.Id);
+                    }
 
                     // WS UPDATES
                     var updates = permissions.Select(x => 
@@ -396,10 +406,10 @@ namespace BI.Services.Notes
                     notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
                     await noteRepository.UpdateRangeAsync(notes);
 
-                    permissions.ForEach(x =>
+                    foreach(var perm in permissions)
                     {
-                        historyCacheService.UpdateNote(x.perm.Note.Id, x.perm.Caller.Id, x.perm.Author.Email);
-                    });
+                        await historyCacheService.UpdateNote(perm.perm.Note.Id, perm.perm.Caller.Id);
+                    }
 
                     // WS UPDATES
                     var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.LabelId);

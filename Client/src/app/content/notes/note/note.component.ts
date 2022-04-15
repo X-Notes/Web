@@ -5,6 +5,8 @@ import { SmallNote } from '../models/small-note.model';
 import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
 import { BaseText, NoteTextTypeENUM } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
+import * as moment from 'moment';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 
 @Component({
   selector: 'app-note',
@@ -20,11 +22,15 @@ export class NoteComponent implements OnInit {
 
   @Input() currentFolderId: string;
 
+  @Input() userId: string;
+
   @Output() highlightNote = new EventEmitter<SmallNote>();
 
   @Output() clickOnNote = new EventEmitter<SmallNote>();
 
   fontSize = FontSizeENUM;
+
+  noteType = NoteTypeENUM;
 
   contentType = ContentTypeENUM;
 
@@ -36,6 +42,28 @@ export class NoteComponent implements OnInit {
     return this.note.additionalInfo?.noteFolderInfos?.filter(
       (folder) => folder.folderId !== this.currentFolderId,
     );
+  }
+
+  get isAuthor(): boolean {
+    return this.userId === this.note.userId;
+  }
+
+  get updateTime() {
+    return moment(this.date ?? this.note.updatedAt).format('DD.MM hh:mm');
+  }
+
+  get size() {
+    if (this.note.additionalInfo?.totalSize) {
+      const mb = Math.ceil(this.note.additionalInfo.totalSize / Math.pow(1024, 2));
+      if (mb) {
+        return `, ${mb}mb`;
+      }
+    }
+    return null;
+  }
+
+  get unlockedTime() {
+    return moment(this.note.unlockedTime).add(5, 'minutes').format('LT');
   }
 
   ngOnInit(): void {

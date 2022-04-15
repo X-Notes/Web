@@ -12,9 +12,9 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -24,17 +24,21 @@ import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
-import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
 import { SmallFolder } from '../models/folder.model';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
-import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
-import { SelectIdNote } from '../../notes/state/notes-actions';
+import { SelectIdNote, UnSelectAllNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
+import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
+import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
+import { NoteStore } from '../../notes/state/notes-state';
+import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
+import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
+import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -70,6 +74,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
+  destroy = new Subject<void>();
+
+  nameChanged: Subject<string> = new Subject<string>();
+
   private routeSubscription: Subscription;
 
   private id: string;
@@ -87,6 +95,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
+    public pB: PermissionsButtonsService,
   ) {}
 
   get folderMenu() {
@@ -104,16 +113,38 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
     this.webSocketsFolderUpdaterService.leaveFolder(this.id);
     this.updateNoteService.addFolderToUpdate(this.id);
     this.routeSubscription.unsubscribe();
+  }
+
+  changeNameSubscribtion() {
+    this.nameChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
+      .subscribe((title) => {
+        if (title) {
+          this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
+        }
+      });
+  }
+
+  openSharePopup() {
+    const ids = [this.store.selectSnapshot(FolderStore.full).id];
+    return this.dialogsService.openShareEntity(EntityPopupType.Folder, ids);
+  }
+
+  openChangeColorPopup() {
+    const ids = [this.store.selectSnapshot(FolderStore.full).id];
+    return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
   }
 
   async ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false; // TODO NEED REMOVE THIS CRUNCH
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
-
+    this.changeNameSubscribtion();
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.id = params.id;
       await this.loadFolder(); // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
@@ -180,20 +211,29 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initManageButtonSubscribe() {
-    this.pService.manageNotesInFolderSubject
+    this.pService.addNotesToFolderSubject.pipe(takeUntil(this.ffnService.destroy)).subscribe(() => {
+      const instanse = this.dialogsService.openAddNotesToFolder();
+      instanse
+        .afterClosed()
+        .pipe(takeUntil(this.ffnService.destroy))
+        .subscribe(async (resp) => {
+          if (resp) {
+            const ids = resp.map((x) => x.id);
+            await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
+            await this.ffnService.updateNotesLayout(this.folder.id);
+          }
+        });
+    });
+
+    this.pService.removeNotesToFolderSubject
       .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe(() => {
-        const instanse = this.dialogsService.openAddNotesToFolder();
-        instanse
-          .afterClosed()
-          .pipe(takeUntil(this.ffnService.destroy))
-          .subscribe(async (resp) => {
-            if (resp) {
-              const ids = resp.map((x) => x.id);
-              await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
-              await this.ffnService.updateNotesLayout(this.folder.id);
-            }
-          });
+      .subscribe(async () => {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        const res = await this.apiFullFolder.removeNotesFromFolder(ids, this.folder.id).toPromise();
+        if (res.success) {
+          this.ffnService.removeFromLayout(ids);
+        }
+        this.store.dispatch(UnSelectAllNote);
       });
   }
 

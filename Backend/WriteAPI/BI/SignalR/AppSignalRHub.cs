@@ -3,30 +3,29 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
+using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.SignalR;
 using WriteContext.Repositories.Users;
+using WriteContext.Repositories.WS;
 
 namespace BI.SignalR
 {
     public class AppSignalRHub : Hub
     {
-        public static ConcurrentDictionary<string, HashSet<string>> UsersIdentifier_ConnectionId { set; get; } = new();
-
         private readonly WebsocketsNotesServiceStorage wsNotesService;
         private readonly WebsocketsFoldersServiceStorage wsFoldersService;
+        private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
 
         public AppSignalRHub(
             WebsocketsNotesServiceStorage websocketsNotesService,
-            WebsocketsFoldersServiceStorage websocketsFoldersService)
+            WebsocketsFoldersServiceStorage websocketsFoldersService,
+            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository)
         {
             this.wsNotesService = websocketsNotesService;
             this.wsFoldersService = websocketsFoldersService;
-        }
-
-        public static List<string> GetConnectionsByUserId(Guid userId)
-        {
-           return UsersIdentifier_ConnectionId.GetValueOrDefault(userId.ToString()).ToList();
+            this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -97,40 +96,35 @@ namespace BI.SignalR
 
         public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
-            if (!string.IsNullOrEmpty(Context.UserIdentifier))
+            var userId = GetUserId();
+            if (userId.HasValue)
             {
-                if (!UsersIdentifier_ConnectionId.ContainsKey(Context.UserIdentifier))
+                var entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
+                if (entity == null)
                 {
-                    UsersIdentifier_ConnectionId.TryAdd(Context.UserIdentifier, new HashSet<string>());
+                    var newEnt = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
+                    await userIdentifierConnectionIdRepository.AddAsync(newEnt);
                 }
-
-                UsersIdentifier_ConnectionId[Context.UserIdentifier].Add(Context.ConnectionId);
-            } 
-         
-            return base.OnConnectedAsync();
+            }
+            await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            if (!string.IsNullOrEmpty(Context.UserIdentifier))
+            var userId = GetUserId();
+            if (userId.HasValue)
             {
-                var isContains = UsersIdentifier_ConnectionId.ContainsKey(Context.UserIdentifier);
-                if (isContains)
+                var entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
+                if(entity != null)
                 {
-                    UsersIdentifier_ConnectionId[Context.UserIdentifier].Remove(Context.ConnectionId);
-                }
-
-                if (isContains && !UsersIdentifier_ConnectionId[Context.UserIdentifier].Any())
-                {
-                    UsersIdentifier_ConnectionId.Remove(Context.UserIdentifier, out var value);
+                    await userIdentifierConnectionIdRepository.RemoveAsync(entity);
                 }
             }
 
             // TODO MAYBE THERE ARE NEED DISCONNECT FROM FOLDER AND NOTE
             // If need use channels or background jobs
-
             await base.OnDisconnectedAsync(exception);
         }
     }

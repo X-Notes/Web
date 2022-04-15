@@ -30,7 +30,7 @@ namespace BI.Services.Notes
 
         private readonly NoteRepository noteRepository;
 
-        private readonly HistoryCacheServiceStorage historyCacheService;
+        private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
 
@@ -41,7 +41,7 @@ namespace BI.Services.Notes
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
             NoteRepository noteRepository,
-            HistoryCacheServiceStorage historyCacheService,
+            HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             NoteWSUpdateService noteWSUpdateService)
@@ -66,7 +66,7 @@ namespace BI.Services.Notes
                 note.UpdatedAt = DateTimeProvider.Time;
                 await noteRepository.UpdateAsync(note);
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                 // WS UPDATES
                 await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers());
@@ -96,7 +96,7 @@ namespace BI.Services.Notes
                     }
                 }
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id, permissions.Author.Email);
+                await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                 return new OperationResult<Unit>(success: true, Unit.Value);
             }

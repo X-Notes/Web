@@ -12,6 +12,7 @@
   >
     <app-folder
       [date]="item.deletedAt"
+      [userId]="(user$ | async).id"
       [tooltipDateMessage]="'entity-bottom-tooltip.deleted'"
       [folder]="item"
       [isSelectedMode]="folderService.isAnySelected"

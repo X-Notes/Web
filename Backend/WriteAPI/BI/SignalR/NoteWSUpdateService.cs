@@ -11,16 +11,13 @@ namespace BI.SignalR
     {
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly AppSignalRService appSignalRService;
-        private readonly UserRepository userRepository;
 
         public NoteWSUpdateService(
             WebsocketsNotesServiceStorage websocketsNotesService, 
-            AppSignalRService appSignalRService,
-            UserRepository userRepository)
+            AppSignalRService appSignalRService)
         {
             this.websocketsNotesService = websocketsNotesService;
             this.appSignalRService = appSignalRService;
-            this.userRepository = userRepository;
         }
 
         public async Task UpdateNotes(IEnumerable<(UpdateNoteWS value, List<Guid> ids)> updates)
@@ -37,7 +34,7 @@ namespace BI.SignalR
 
             if(userIds != null && userIds.Any())
             {
-                var additionalConnections = appSignalRService.GetConnections(userIds);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds);
                 connections.AddRange(additionalConnections);
             }
 

@@ -6,7 +6,8 @@ export interface MenuItem {
   isActive?: Observable<boolean>;
   class?: string;
   operation: () => void;
-  isNoOwnerCanSee: boolean;
-  isViewOnFullFolder: boolean;
+  isOnlyForAuthor: boolean;
+  IsNeedEditRightsToSee: boolean;
+  isDisableForShared?: boolean;
   tooltip?: Observable<string>;
 }

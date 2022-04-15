@@ -12,6 +12,7 @@ import { AddNotesInFolderComponent } from 'src/app/shared/modal_components/manag
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { ViewDocComponent } from 'src/app/shared/modal_components/view-doc/view-doc.component';
+import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +46,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(AddNotesInFolderComponent, config);
   }
 
-  changeLabels() {
+  openChangeLabels() {
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -58,7 +59,8 @@ export class DialogsManageService {
     return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 
-  changeColor() {
+  openChangeColorDialog(currentWindowType: EntityPopupType, ids: string[]) {
+    this.validateIds(ids);
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
@@ -66,6 +68,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
+      data: { currentWindowType, ids },
     };
     return this.dialogService.openDialog(ChangeColorComponent, config);
   }
@@ -83,7 +86,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
   }
 
-  openLockDialog(id: string, state: LockPopupState, isCallActionAfterSave: boolean = true) {
+  openLockDialog(id: string, state: LockPopupState, callback: () => Promise<any>) {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
@@ -91,7 +94,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
-      data: { id, state, isCallActionAfterSave },
+      data: { id, state, callback },
     };
     return this.dialogService.openDialog(LockComponent, config);
   }
@@ -109,7 +112,8 @@ export class DialogsManageService {
     return this.dialogService.openDialog(ViewDocComponent, config);
   }
 
-  shareEntity() {
+  openShareEntity(currentWindowType: EntityPopupType, ids: string[]) {
+    this.validateIds(ids);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -118,11 +122,18 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? ['custom-dialog-class-light', 'sharing-modal']
           : ['custom-dialog-class-dark', 'sharing-modal'],
+      data: { currentWindowType, ids },
     };
     return this.dialogService.openDialog(ShareComponent, config);
   }
 
   getTheme(): ThemeENUM {
     return this.store.selectSnapshot(UserStore.getUserTheme);
+  }
+
+  private validateIds(ids: string[]) {
+    if (!ids || ids.length === 0) {
+      throw new Error('Ids missing');
+    }
   }
 }

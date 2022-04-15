@@ -23,6 +23,9 @@ namespace WriteContext.Migrations
                 name: "note_content");
 
             migrationBuilder.EnsureSchema(
+                name: "note_history");
+
+            migrationBuilder.EnsureSchema(
                 name: "folder");
 
             migrationBuilder.EnsureSchema(
@@ -35,7 +38,7 @@ namespace WriteContext.Migrations
                 name: "note");
 
             migrationBuilder.EnsureSchema(
-                name: "note_history");
+                name: "ws");
 
             migrationBuilder.CreateTable(
                 name: "AppFileUploadStatus",
@@ -415,8 +418,8 @@ namespace WriteContext.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
-                    IsLocked = table.Column<bool>(type: "boolean", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: true),
+                    UnlockTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -545,6 +548,28 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserIdentifierConnectionId",
+                schema: "ws",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConnectionId = table.Column<string>(type: "text", nullable: false),
+                    ConnectedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserIdentifierConnectionId", x => new { x.UserId, x.ConnectionId });
+                    table.ForeignKey(
+                        name: "FK_UserIdentifierConnectionId_User_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "user",
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserProfilePhoto",
                 schema: "user",
                 columns: table => new
@@ -629,6 +654,27 @@ namespace WriteContext.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BaseNoteContent_Note_NoteId",
+                        column: x => x.NoteId,
+                        principalSchema: "note",
+                        principalTable: "Note",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CacheNoteHistory",
+                schema: "note_history",
+                columns: table => new
+                {
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UsersThatEditIds = table.Column<HashSet<Guid>>(type: "jsonb", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CacheNoteHistory", x => x.NoteId);
+                    table.ForeignKey(
+                        name: "FK_CacheNoteHistory_Note_NoteId",
                         column: x => x.NoteId,
                         principalSchema: "note",
                         principalTable: "Note",
@@ -1402,6 +1448,10 @@ namespace WriteContext.Migrations
                 schema: "file");
 
             migrationBuilder.DropTable(
+                name: "CacheNoteHistory",
+                schema: "note_history");
+
+            migrationBuilder.DropTable(
                 name: "CollectionNoteAppFile",
                 schema: "note_content");
 
@@ -1436,6 +1486,10 @@ namespace WriteContext.Migrations
             migrationBuilder.DropTable(
                 name: "TextNote",
                 schema: "note_content");
+
+            migrationBuilder.DropTable(
+                name: "UserIdentifierConnectionId",
+                schema: "ws");
 
             migrationBuilder.DropTable(
                 name: "UserNoteSnapshotManyToMany",

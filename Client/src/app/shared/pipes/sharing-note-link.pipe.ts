@@ -1,17 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SharedType } from '../modal_components/share/share.component';
+import { EntityPopupType } from '../models/entity-popup-type.enum';
 
 @Pipe({
   name: 'sharingLink',
 })
 export class SharingLinkPipe implements PipeTransform {
-  transform = (value: string, type: SharedType) => {
+  transform = (value: string, type: EntityPopupType) => {
     switch (type) {
-      case SharedType.Note: {
+      case EntityPopupType.Note: {
         const mainUrl = window.location.href.split('/');
         return `${mainUrl[0]}//${mainUrl[2]}/notes/${value}`;
       }
-      case SharedType.Folder: {
+      case EntityPopupType.Folder: {
         const mainUrl = window.location.href.split('/');
         return `${mainUrl[0]}//${mainUrl[2]}/folders/${value}`;
       }

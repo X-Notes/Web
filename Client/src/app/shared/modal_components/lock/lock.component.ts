@@ -1,19 +1,16 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { ChangeIsLockedFullNote, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { shake } from '../../services/personalization.service';
 import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
 
 export enum LockPopupState {
-  Lock,
+  Lock = 1,
   Unlock,
   RemoveLock,
 }
@@ -54,16 +51,19 @@ export class LockComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private store: Store,
     private lockEncryptService: LockEncryptService,
-    private router: Router,
     private snackService: SnackBarWrapperService,
     public dialogRef: MatDialogRef<LockComponent>,
     private translate: TranslateService,
+    private updaterEntitiesService: UpdaterEntitiesService,
     @Inject(MAT_DIALOG_DATA)
-    public data: { id: string; state: LockPopupState; isCallActionAfterSave: boolean },
+    public data: { id: string; state: LockPopupState; callback: () => Promise<any> },
   ) {
     this.state = data.state;
     if (!data.id) {
       throw new Error('id not seted');
+    }
+    if (!data.state) {
+      throw new Error('state not seted');
     }
   }
 
@@ -111,10 +111,6 @@ export class LockComponent implements OnInit, OnDestroy {
     this.setFormValidation();
   }
 
-  getNote(id: string): SmallNote {
-    return this.store.selectSnapshot(NoteStore.getSmallNotes).find((x) => x.id === id);
-  }
-
   setFormValidation() {
     if (this.state === LockPopupState.Lock) {
       this.form = this.fb.group(
@@ -160,13 +156,6 @@ export class LockComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  setLockedInState(isLocked: boolean) {
-    const updatedNote = { ...this.getNote(this.data.id) };
-    updatedNote.isLockedNow = isLocked;
-    this.store.dispatch(new UpdateOneNote(updatedNote));
-    this.store.dispatch(new ChangeIsLockedFullNote(isLocked));
-  }
-
   async encryptNote(noteId: string) {
     const { data } = await this.lockEncryptService
       .encryptNote(noteId, this.form.controls.password.value, this.form.controls.confirmation.value)
@@ -184,9 +173,9 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.Lock: {
         const isSuccess = await this.encryptNote(this.data.id);
         if (isSuccess) {
-          if (this.data.isCallActionAfterSave) {
-            this.setLockedInState(true);
-            this.router.navigate([`notes/${this.data.id}`]);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, true, true);
+          if (this.data.callback) {
+            await this.data.callback();
           }
           this.dialogRef.close(true);
         }
@@ -195,9 +184,10 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.Unlock: {
         const isSuccess = await this.tryUnlockNote(this.data.id);
         if (isSuccess) {
-          if (this.data.isCallActionAfterSave) {
-            this.setLockedInState(false);
-            this.router.navigate([`notes/${this.data.id}`]);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, null, false);
+          this.updaterEntitiesService.lockNoteAfter(this.data.id);
+          if (this.data.callback) {
+            await this.data.callback();
           }
           this.dialogRef.close(true);
         }
@@ -206,9 +196,9 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.RemoveLock: {
         const isSuccess = await this.decryptNote(this.data.id);
         if (isSuccess) {
-          if (this.data.isCallActionAfterSave) {
-            this.setLockedInState(false);
-            this.router.navigate([`notes/${this.data.id}`]);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, false, false);
+          if (this.data.callback) {
+            await this.data.callback();
           }
           this.dialogRef.close(true);
         }

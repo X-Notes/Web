@@ -34,7 +34,7 @@
 
   <app-menu
     class="menu-inner"
-    [items]="buttonService.items | manageMenuButtons:(isOwner$ | async)"
+    [items]="buttonService.items | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
     [@.disabled]="pService.AnimationInnerMenu"
@@ -47,7 +47,7 @@
   ></app-general-header-button>
 
   <app-general-header-button
-    (clickEvent)="dialogsManageService.changeLabels()"
+    (clickEvent)="dialogsManageService.openChangeLabels()"
     [tooltipMessage]="'menu.label' | translate"
     tooltipPosition="Bottom"
     styleClasses="generic-2 mobile-buttons"
@@ -55,7 +55,7 @@
   ></app-general-header-button>
 
   <app-general-header-button
-    (clickEvent)="dialogsManageService.shareEntity()"
+    (clickEvent)="openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
     styleClasses="generic-2 mobile-buttons"

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Microsoft.EntityFrameworkCore;
 using WriteContext.GenericRepositories;
@@ -34,6 +35,16 @@ namespace WriteContext.Repositories.NoteContent
         public Task<List<CollectionNote>> GetManyIncludePhotos(List<Guid> ids)
         {
             return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
+        }
+
+        public async Task<Dictionary<Guid, (Guid, long)>> GetMemoryOfNotes(List<Guid> ids)
+        {
+            var ents = await entities.Where(x => ids.Contains(x.NoteId))
+                                     .Include(x => x.Files)
+                                     .Select(x => new { noteId = x.NoteId, size = x.Files.Sum(x => x.Size) })
+                                     .ToListAsync();
+
+            return ents.Select(x => (x.noteId, x.size)).ToDictionary(x => x.noteId);
         }
     }
 }

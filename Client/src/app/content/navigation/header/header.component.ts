@@ -10,18 +10,17 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { NoteStore } from '../../notes/state/notes-state';
-import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/full-note.model';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
+import { MenuButtonsService } from '../services/menu-buttons.service';
+import { PermissionsButtonsService } from '../services/permissions-buttons.service';
 
 @Component({
   selector: 'app-header',
@@ -79,6 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private store: Store,
     public menuButtonService: MenuButtonsService,
     private signalRService: SignalRService,
+    public pB: PermissionsButtonsService,
   ) {}
 
   ngOnDestroy(): void {
@@ -133,27 +133,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!folder) {
       return;
     }
-    switch (folder.folderTypeId) {
-      case FolderTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        break;
-      }
-      case FolderTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        break;
-      }
-      case FolderTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case FolderTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
+
+    this.menuButtonService.setFoldersItems(this.menuButtonService.folderInnerNotesItems);
   }
 
   routeChangeFullNote(note: FullNote) {
@@ -161,27 +142,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!note) {
       return;
     }
-    switch (note.noteTypeId) {
-      case NoteTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        break;
-      }
-      case NoteTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        break;
-      }
-      case NoteTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case NoteTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
+    const items = this.menuButtonService.getNoteMenuByNoteType(note.noteTypeId);
+    this.menuButtonService.setNotesItems(items);
   }
 
   newButton() {
@@ -200,19 +162,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (type) {
       // FOLDER
       case EntityType.FolderPrivate: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
+        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsPrivate);
         break;
       }
       case EntityType.FolderShared: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
+        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsShared);
         break;
       }
       case EntityType.FolderArchive: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
+        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsArchive);
         break;
       }
       case EntityType.FolderDeleted: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
+        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsDeleted);
         break;
       }
       case EntityType.FolderInner: {
@@ -224,19 +186,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       // NOTES
       case EntityType.NotePrivate: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsPrivate);
         break;
       }
       case EntityType.NoteShared: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsShared);
         break;
       }
       case EntityType.NoteArchive: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsArchive);
         break;
       }
       case EntityType.NoteDeleted: {
-        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsDeleted);
         break;
       }
       case EntityType.NoteInner: {
