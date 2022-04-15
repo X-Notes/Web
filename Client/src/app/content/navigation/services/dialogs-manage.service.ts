@@ -86,7 +86,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
   }
 
-  openLockDialog(id: string, state: LockPopupState, isCallActionAfterSave: boolean = true) {
+  openLockDialog(id: string, state: LockPopupState, callback: () => Promise<any>) {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
@@ -94,7 +94,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
-      data: { id, state, isCallActionAfterSave },
+      data: { id, state, callback },
     };
     return this.dialogService.openDialog(LockComponent, config);
   }

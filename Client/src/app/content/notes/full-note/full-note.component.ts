@@ -95,7 +95,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       const instance = this.dialogsManageService.openLockDialog(
         this.id,
         LockPopupState.Unlock,
-        false,
+        null,
       );
       instance
         .afterClosed()

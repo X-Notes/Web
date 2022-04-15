@@ -27,10 +27,10 @@ export class FullFolderNotesService
     private apiFullFolder: ApiFullFolderService,
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
-    private router: Router,
+    router: Router,
     private updateService: UpdaterEntitiesService,
   ) {
-    super(dialogsManageService, store, murriService, apiNoteService);
+    super(dialogsManageService, store, murriService, apiNoteService, router);
   }
 
   ngOnDestroy(): void {

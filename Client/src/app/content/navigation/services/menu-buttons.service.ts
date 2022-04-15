@@ -17,8 +17,14 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { LockEncryptService } from '../../notes/lock-encrypt.service';
 import { FolderStore } from '../../folders/state/folders-state';
 import { SmallNote } from '../../notes/models/small-note.model';
-import { ChangeIsLockedFullNote, UpdateOneNote } from '../../notes/state/notes-actions';
+import {
+  ChangeIsLockedFullNote,
+  PatchUpdatesUINotes,
+  UnSelectAllNote,
+  UpdateOneNote,
+} from '../../notes/state/notes-actions';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
+import { UpdateNoteUI } from '../../notes/state/update-note-ui.model';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -179,7 +185,7 @@ export class MenuButtonsService {
 
   constructor(
     private store: Store,
-    private dialogsManageService: DialogsManageService,
+    private dialogsService: DialogsManageService,
     private pService: PersonalizationService,
     private menuButtonsNotesService: MenuButtonsNotesService,
     private menuButtonsFoldersService: MenuButtonsFoldersService,
@@ -233,9 +239,9 @@ export class MenuButtonsService {
   openShareWithNotes() {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
-      return this.dialogsManageService.openShareEntity(EntityPopupType.Note, ids);
+      return this.dialogsService.openShareEntity(EntityPopupType.Note, ids);
     }
-    return this.dialogsManageService.openShareEntity(
+    return this.dialogsService.openShareEntity(
       EntityPopupType.Note,
       this.store.selectSnapshot(NoteStore.selectedIds),
     );
@@ -245,19 +251,19 @@ export class MenuButtonsService {
     const type = EntityPopupType.Folder;
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
       const idsI = [this.store.selectSnapshot(FolderStore.full).id];
-      return this.dialogsManageService.openShareEntity(type, idsI);
+      return this.dialogsService.openShareEntity(type, idsI);
     }
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    return this.dialogsManageService.openShareEntity(type, ids);
+    return this.dialogsService.openShareEntity(type, ids);
   }
 
   // COLORS
   openColorWithNotes() {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
-      return this.dialogsManageService.openChangeColorDialog(EntityPopupType.Note, ids);
+      return this.dialogsService.openChangeColorDialog(EntityPopupType.Note, ids);
     }
-    return this.dialogsManageService.openChangeColorDialog(
+    return this.dialogsService.openChangeColorDialog(
       EntityPopupType.Note,
       this.store.selectSnapshot(NoteStore.selectedIds),
     );
@@ -266,20 +272,12 @@ export class MenuButtonsService {
   openColorWithFolders() {
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
       const ids = [this.store.selectSnapshot(FolderStore.full).id];
-      return this.dialogsManageService.openChangeColorDialog(EntityPopupType.Folder, ids);
+      return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
     }
-    return this.dialogsManageService.openChangeColorDialog(
+    return this.dialogsService.openChangeColorDialog(
       EntityPopupType.Folder,
       this.store.selectSnapshot(FolderStore.selectedIds),
     );
-  }
-
-  // LOCK
-  isActiveForceLock(): Observable<string> {
-    return combineLatest([
-      this.store.select(AppStore.isNoteInner),
-      this.store.select(NoteStore.isCanForceLocked),
-    ]).pipe(map(([n, f]) => (n && f ? 'menu.forceLock' : 'menu.lock')));
   }
 
   // MENU ITEMS
@@ -404,7 +402,7 @@ export class MenuButtonsService {
   getLabelItem(): MenuItem {
     return {
       icon: 'label',
-      operation: () => this.dialogsManageService.openChangeLabels(),
+      operation: () => this.dialogsService.openChangeLabels(),
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -427,15 +425,33 @@ export class MenuButtonsService {
     return {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () =>
-        this.dialogsManageService.openLockDialog(
-          this.getSelectedNoteId(),
-          LockPopupState.RemoveLock,
-        ),
+      operation: () => {
+        const id = this.getSelectedNoteId();
+        this.dialogsService.openLockDialog(id, LockPopupState.RemoveLock, () =>
+          this.router.navigate([`notes/${id}`]),
+        );
+      },
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
       isDisableForShared: true,
     };
+  }
+
+  // LOCK
+  isActiveForceLock(): Observable<string> {
+    return combineLatest([
+      this.store.select(AppStore.isNoteInner),
+      this.store.select(NoteStore.isCanForceLocked),
+      this.store.select(NoteStore.isCanBeForceLockNotes),
+    ]).pipe(map(([n, f, s]) => ((n && f) || s ? 'menu.forceLock' : 'menu.lock')));
+  }
+
+  isCanForceLock(): boolean {
+    return (
+      (this.store.selectSnapshot(AppStore.isNoteInner) &&
+        this.store.selectSnapshot(NoteStore.isCanForceLocked)) ||
+      this.store.selectSnapshot(NoteStore.isCanBeForceLockNotes)
+    );
   }
 
   getLockItem(): MenuItem {
@@ -446,15 +462,15 @@ export class MenuButtonsService {
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
       operation: async () => {
         const id = this.getSelectedNoteId();
-        if (
-          this.store.selectSnapshot(AppStore.isNoteInner) &&
-          this.store.selectSnapshot(NoteStore.isCanForceLocked)
-        ) {
+        if (this.isCanForceLock()) {
           await this.setLockedInState(id);
           this.router.navigate(['notes']);
           return;
         }
-        return this.dialogsManageService.openLockDialog(id, LockPopupState.Lock);
+        const route = this.store.selectSnapshot(AppStore.isNoteInner) ? `notes` : `notes/${id}`;
+        return this.dialogsService.openLockDialog(id, LockPopupState.Lock, () =>
+          this.router.navigate([route]),
+        );
       },
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -470,8 +486,15 @@ export class MenuButtonsService {
     await this.lockEncryptService.forceLock(id).toPromise();
     const updatedNote = { ...this.getNote(id) };
     updatedNote.isLockedNow = true;
+    updatedNote.isLocked = true;
     this.store.dispatch(new UpdateOneNote(updatedNote));
-    this.store.dispatch(new ChangeIsLockedFullNote(true));
+    this.store.dispatch(new ChangeIsLockedFullNote(true, true));
+
+    const obj = new UpdateNoteUI(id);
+    obj.isLocked = true;
+    obj.isLockedNow = true;
+    this.store.dispatch(new PatchUpdatesUINotes([obj]));
+    this.store.dispatch(UnSelectAllNote);
   }
 
   getSelectedNoteId(): string {

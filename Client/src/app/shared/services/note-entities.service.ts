@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,6 +20,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     public store: Store,
     murriService: MurriService,
     public apiService: ApiServiceNotes,
+    protected router: Router,
   ) {
     super(store, murriService);
 
@@ -54,7 +56,8 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       this.highlightNote(note);
     } else {
       if (note.isLockedNow) {
-        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock);
+        const callback = () => this.router.navigate([`notes/${note.id}`]);
+        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock, callback);
         return;
       }
       navigateFunc();

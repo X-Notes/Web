@@ -236,7 +236,7 @@ export class ChangeTypeFullNote {
 export class ChangeIsLockedFullNote {
   static type = '[Notes] change isLocked fullNote';
 
-  constructor(public isLocked: boolean) {}
+  constructor(public isLocked: boolean, public isLockedNow) {}
 }
 
 export class TransformTypeNotes {

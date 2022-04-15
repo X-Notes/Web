@@ -41,13 +41,13 @@ export class NotesService
     public pService: PersonalizationService,
     store: Store,
     murriService: MurriService,
-    private router: Router,
+    router: Router,
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
     private updateService: UpdaterEntitiesService,
   ) {
-    super(dialogsManageService, store, murriService, apiService);
+    super(dialogsManageService, store, murriService, apiService, router);
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
