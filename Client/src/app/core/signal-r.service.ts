@@ -133,8 +133,7 @@ export class SignalRService {
       }
 
       //
-      const result = new UpdateNoteUI();
-      result.id = updates.noteId;
+      const result = new UpdateNoteUI(updates.noteId);
       result.title = updates.title;
       result.color = updates.color;
       result.removeLabelIds = updates.removeLabelIds;

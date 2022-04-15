@@ -5,6 +5,7 @@ import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { PositionEntityModel } from '../models/position-note.model';
+import { UpdateNoteUI } from './update-note-ui.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -45,8 +46,14 @@ export class ChangeColorNote {
   ) {}
 }
 
+export class PatchUpdatesUINotes {
+  static type = '[Notes] Patch UI note updates';
+
+  constructor(public updates: UpdateNoteUI[]) {}
+}
+
 export class ClearUpdatesUINotes {
-  static type = '[Notes] Clear color note';
+  static type = '[Notes] Remove UI note updates';
 }
 
 export class CopyNotes {

@@ -12,4 +12,14 @@ export class UpdateNoteUI {
   addLabels: Label[];
 
   allLabels: Label[];
+
+  isLocked?: boolean;
+
+  isLockedNow?: boolean;
+
+  unlockedTime: Date;
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }
