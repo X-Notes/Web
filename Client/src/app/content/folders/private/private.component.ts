@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 
 @Component({
   selector: 'app-private',
@@ -29,6 +31,9 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(FolderStore.privateCount)
   privateCount$: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   fontSize = FontSizeENUM;
 

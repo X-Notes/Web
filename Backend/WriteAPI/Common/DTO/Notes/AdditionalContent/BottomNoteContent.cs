@@ -11,5 +11,7 @@ namespace Common.DTO.Notes.AdditionalContent
         public bool IsHasUserOnNote { set; get; }
 
         public List<NoteFolderInfo> NoteFolderInfos { set; get; }
+
+        public long? TotalSize { set; get; }
     }
 }

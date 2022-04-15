@@ -45,6 +45,7 @@ namespace BI.Services.Notes
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
         private readonly UserBackgroundMapper userBackgroundMapper;
         private readonly UserNoteEncryptService userNoteEncryptStorage;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -56,7 +57,8 @@ namespace BI.Services.Notes
             FoldersNotesRepository foldersNotesRepository,
             WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper,
-            UserNoteEncryptService userNoteEncryptStorage)
+            UserNoteEncryptService userNoteEncryptStorage,
+            CollectionNoteRepository collectionNoteRepository)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -68,6 +70,7 @@ namespace BI.Services.Notes
             this.websocketsNotesService = websocketsNotesService;
             this.userBackgroundMapper = userBackgroundMapper;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
+            this.collectionNoteRepository = collectionNoteRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -230,6 +233,7 @@ namespace BI.Services.Notes
         {
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
+            var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
 
             var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
             var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
@@ -238,7 +242,8 @@ namespace BI.Services.Notes
             {
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
-                NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null
+                NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
+                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : null
             }).ToList();
         }
     }

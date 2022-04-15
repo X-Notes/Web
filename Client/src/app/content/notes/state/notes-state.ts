@@ -368,7 +368,7 @@ export class NoteStore {
     const note = await this.api.new().toPromise();
     const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
     const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
-    dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private));
+    await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
     this.router.navigate([`notes/${note.id}`]);
   }
 

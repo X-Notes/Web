@@ -89,13 +89,14 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 0.75rem;
-    margin-top: 0.125rem;
+    margin-bottom: 0.4rem;
+    margin-top: 0.5rem;
+    min-height: 1rem;
 
     .date {
       display: flex;
       color: #a1a1a1;
-      font-size: 0.75rem;
+      font-size: 0.875rem;
     }
 
     .help-icons {
@@ -104,11 +105,10 @@
 
       .icon {
         height: 18px;
-        width: 18px;
         display: flex;
-        margin-left: 1.25rem;
+        margin-left: 1rem;
         color: #969696;
-        transform: 0.2s ease;
+        transition: 0.2s ease;
         &:hover {
           color: darken(#969696, 20%);
         }
@@ -203,17 +203,13 @@
     .footer {
       flex-direction: column;
       justify-content: flex-start;
-
       .date {
         justify-content: flex-end;
         order: 2;
       }
-
       .help-icons {
         justify-content: space-between;
         order: 1;
-        margin-bottom: 0.5rem;
-
         .icon {
           margin-left: 0;
         }

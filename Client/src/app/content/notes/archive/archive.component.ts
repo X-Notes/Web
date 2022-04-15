@@ -17,6 +17,8 @@ import { Observable } from 'rxjs';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 
 @Component({
   selector: 'app-archive',
@@ -29,6 +31,9 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(NoteStore.archiveCount)
   archiveCount$: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   fontSize = FontSizeENUM;
 

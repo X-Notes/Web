@@ -99,6 +99,7 @@
             (highlightNote)="ffnService.highlightNote($event)"
             (clickOnNote)="ffnService.toNote($event)"
             [ngStyle]="{'backgroundColor': item.color }"
+            [userId]="(user$ | async).id"
             class="note"
           ></app-note>
         </div>

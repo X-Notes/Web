@@ -9,6 +9,7 @@ import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 
 @Component({
   selector: 'app-folder',
@@ -24,9 +25,13 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() isSelectedMode: boolean;
 
+  @Input() userId: string;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
+
+  folderType = FolderTypeENUM;
 
   nameChanged: Subject<string> = new Subject<string>();
 
@@ -35,6 +40,10 @@ export class FolderComponent implements OnInit, OnDestroy {
     private router: Router,
     public pService: PersonalizationService,
   ) {}
+
+  get isAuthor(): boolean {
+    return this.userId === this.folder.userId;
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();

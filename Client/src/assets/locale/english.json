@@ -326,6 +326,8 @@
     "deleted": "date of deletion",
     "hasUsersNote": "Note can be viewed or edited by multiple users",
     "hasUsersFolder": "Folder can be viewed or edited by multiple users",
-    "unlockTime": "Note will be locked at {{time}}"
+    "unlockTime": "Note will be locked at {{time}}",
+    "owner": "You are the owner of the note",
+    "ownerFolder": "You are the owner of the folder"
   }
 }

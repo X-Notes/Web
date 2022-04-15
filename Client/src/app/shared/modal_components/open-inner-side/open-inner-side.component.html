@@ -39,6 +39,7 @@
             >
               <app-note
                 [note]="item"
+                [userId]="(user$ | async).id"
                 (highlightNote)="highlightNote($event)"
                 (clickOnNote)="highlightNote($event)"
                 [ngStyle]="{ backgroundColor: item.color }"
