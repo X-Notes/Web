@@ -99,7 +99,7 @@ namespace WriteAPI.ConfigureAPP
 
         public static void Mediatr(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(Startup));
+            services.AddMediatR(typeof(Program));
 
             // USER
             services.AddScoped<IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
