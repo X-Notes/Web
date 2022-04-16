@@ -10,6 +10,7 @@ namespace Domain.Commands.Share.Notes
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid PermissionUserId { set; get; }
 

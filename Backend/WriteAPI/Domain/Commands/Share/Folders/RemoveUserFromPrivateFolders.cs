@@ -9,7 +9,8 @@ namespace Domain.Commands.Share.Folders
     {
         [ValidationGuid]
         public Guid FolderId { set; get; }
+
         [ValidationGuid]
-        public Guid UserId { set; get; }
+        public Guid PermissionUserId { set; get; }
     }
 }

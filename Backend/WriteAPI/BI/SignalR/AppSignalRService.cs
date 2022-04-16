@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
+using Common.DTO.WebSockets.Permissions;
 using Microsoft.AspNetCore.SignalR;
 using WriteContext.Repositories.WS;
 
@@ -95,26 +96,16 @@ namespace BI.SignalR
 
         // Note permissions
 
-        public async Task RevokePermissionUserNote(Guid noteId, Guid userId)
+        public async Task UpdatePermissionUserNote(UpdatePermissionNoteWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("revokeNotePermissions", noteId);
-        }
-
-        public async Task AddNoteToShared(Guid noteId, Guid userId)
-        {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("addNoteToShared", noteId);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserNote", updates);
         }
 
         // Folder permissions
 
-        public async Task RevokePermissionUserFolder(Guid folderId, Guid userId)
+        public async Task UpdatePermissionUserFolder(UpdatePermissionFolderWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("revokeFolderPermissions", folderId);
-        }
-
-        public async Task AddFolderToShared(Guid folderId, Guid userId)
-        {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("addFolderToShared", folderId);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserFolder", updates);
         }
     }
 }

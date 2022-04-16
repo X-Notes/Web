@@ -83,10 +83,10 @@ export class ApiFoldersService {
     return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/invites`, obj);
   }
 
-  removeUserFromPrivateFolder(folderId: string, userId: string) {
+  removeUserFromPrivateFolder(folderId: string, permissionUserId: string) {
     const obj = {
       folderId,
-      userId,
+      permissionUserId,
     };
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/share/folders/user/remove`,

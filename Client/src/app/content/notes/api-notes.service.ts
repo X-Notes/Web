@@ -242,10 +242,10 @@ export class ApiServiceNotes {
     );
   }
 
-  removeUserFromPrivateNote(noteId: string, userId: string) {
+  removeUserFromPrivateNote(noteId: string, permissionUserId: string) {
     const obj = {
       noteId,
-      userId,
+      permissionUserId,
     };
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/share/notes/user/remove`,

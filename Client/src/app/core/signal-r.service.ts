@@ -11,7 +11,9 @@ import {
   ChangeColorFolder,
   DeleteFoldersPermanently,
   UpdateFolderTitle,
+  UpdateOneFolder,
 } from '../content/folders/state/folders-actions';
+import { FolderStore } from '../content/folders/state/folders-state';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
@@ -22,11 +24,14 @@ import {
   LoadOnlineUsersOnNote,
   RemoveLabelFromNote,
   UpdateNoteTitle,
+  UpdateOneNote,
 } from '../content/notes/state/notes-actions';
+import { NoteStore } from '../content/notes/state/notes-state';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
 import { EntityType } from '../shared/enums/entity-types.enum';
 import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
 import { NoteTypeENUM } from '../shared/enums/note-types.enum';
+import { RefTypeENUM } from '../shared/enums/ref-type.enum';
 import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
 import { AuthService } from './auth.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
@@ -36,6 +41,8 @@ import { UpdateNoteStructureWS } from './models/signal-r/innerNote/update-note-s
 import { UpdateNoteTextWS } from './models/signal-r/innerNote/update-note-text-ws';
 import { UpdatePhotosCollectionWS } from './models/signal-r/innerNote/update-photos-collection-ws';
 import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-videos-collection-ws';
+import { UpdatePermissionFolder } from './models/signal-r/permissions/update-permission-folder';
+import { UpdatePermissionNote } from './models/signal-r/permissions/update-permission-note';
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
@@ -153,7 +160,6 @@ export class SignalRService {
 
     // UPDATE CONTENT
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
-      console.log('updates: ', updates);
       this.updateTextContentEvent.next(updates);
     });
 
@@ -189,34 +195,68 @@ export class SignalRService {
 
     // Note permissions
 
-    this.hubConnection.on('revokeNotePermissions', (noteId: string) => {
-      this.store.dispatch(new DeleteNotesPermanently([noteId], false));
-    });
-
-    this.hubConnection.on('addNoteToShared', async (noteId: string) => {
-      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const notes = await this.apiNotes.getNotesMany([noteId], pr).toPromise();
-      await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
-      const route = this.store.selectSnapshot(AppStore.getRouting);
-      if (route === EntityType.NoteShared) {
-        this.addNotesToSharedEvent.next(notes);
-      }
-    });
+    this.hubConnection.on(
+      'updatePermissionUserNote',
+      async (updatePermissionNote: UpdatePermissionNote) => {
+        if (updatePermissionNote.revokeIds && updatePermissionNote.revokeIds.length > 0) {
+          this.store.dispatch(new DeleteNotesPermanently(updatePermissionNote.revokeIds, false));
+        }
+        const idsToAdd = updatePermissionNote.idsToAdd;
+        if (idsToAdd && idsToAdd.length > 0) {
+          const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+          const notes = await this.apiNotes.getNotesMany(idsToAdd, pr).toPromise();
+          await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
+          const route = this.store.selectSnapshot(AppStore.getRouting);
+          if (route === EntityType.NoteShared) {
+            this.addNotesToSharedEvent.next(notes);
+          }
+        }
+        const updatePermissions = updatePermissionNote.updatePermissions;
+        for (const update of updatePermissions) {
+          let note = this.store
+            .selectSnapshot(NoteStore.getSmallNotes)
+            .find((z) => z.id === update.entityId);
+          note = { ...note };
+          note.refTypeId = update.refTypeId;
+          note.isCanEdit = note.refTypeId === RefTypeENUM.Editor;
+          this.store.dispatch(new UpdateOneNote(note));
+        }
+        this.store.dispatch(LoadNotifications);
+      },
+    );
 
     // Folder permissions
 
-    this.hubConnection.on('revokeFolderPermissions', (folderId: string) => {
-      this.store.dispatch(new DeleteFoldersPermanently([folderId], false));
-    });
-
-    this.hubConnection.on('addFolderToShared', async (folderId: string) => {
-      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const folders = await this.apiFolders.getFoldersMany([folderId], pr).toPromise();
-      await this.store.dispatch(new AddFolders(folders, FolderTypeENUM.Shared)).toPromise();
-      const route = this.store.selectSnapshot(AppStore.getRouting);
-      if (route === EntityType.FolderShared) {
-        this.addFoldersToSharedEvent.next(folders);
-      }
-    });
+    this.hubConnection.on(
+      'updatePermissionUserFolder',
+      async (updatePermissionFolder: UpdatePermissionFolder) => {
+        if (updatePermissionFolder.revokeIds && updatePermissionFolder.revokeIds.length > 0) {
+          this.store.dispatch(
+            new DeleteFoldersPermanently(updatePermissionFolder.revokeIds, false),
+          );
+        }
+        const idsToAdd = updatePermissionFolder.idsToAdd;
+        if (idsToAdd && idsToAdd.length > 0) {
+          const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+          const folders = await this.apiFolders.getFoldersMany(idsToAdd, pr).toPromise();
+          await this.store.dispatch(new AddFolders(folders, FolderTypeENUM.Shared)).toPromise();
+          const route = this.store.selectSnapshot(AppStore.getRouting);
+          if (route === EntityType.FolderShared) {
+            this.addFoldersToSharedEvent.next(folders);
+          }
+        }
+        const updatePermissions = updatePermissionFolder.updatePermissions;
+        for (const update of updatePermissions) {
+          let folder = this.store
+            .selectSnapshot(FolderStore.getSmallFolders)
+            .find((z) => z.id === update.entityId);
+          folder = { ...folder };
+          folder.refTypeId = update.refTypeId;
+          folder.isCanEdit = folder.refTypeId === RefTypeENUM.Editor;
+          this.store.dispatch(new UpdateOneFolder(folder));
+        }
+        this.store.dispatch(LoadNotifications);
+      },
+    );
   };
 }
