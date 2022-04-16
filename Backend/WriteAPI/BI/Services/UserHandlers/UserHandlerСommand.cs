@@ -105,7 +105,7 @@ namespace BI.Services.UserHandlers
             var success = await userRepository.UpdatePhoto(user, appFile);
             if (success)
             {
-                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = userBackgroundMapper.BuildPhotoPath(request.UserId, appFile.GetFromSmallPath) };
+                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = userBackgroundMapper.BuildFilePath(request.UserId, appFile.GetFromSmallPath) };
                 return new OperationResult<AnswerChangeUserPhoto>(true, result);
             }
             else

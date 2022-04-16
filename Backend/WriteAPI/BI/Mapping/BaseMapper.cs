@@ -14,7 +14,7 @@ namespace BI.Mapping
             this.azureConfig = azureConfig; 
         }
 
-        public string BuildPhotoPath(Guid userId, string path)
+        public string BuildFilePath(Guid userId, string path)
         {
             if (string.IsNullOrEmpty(path))
             {

@@ -65,7 +65,7 @@ namespace BI.Mapping
                             {
                                 case FileTypeEnum.Audio:
                                     {
-                                        var audiosDTO = aN.Files.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, item.MetaData?.ImagePath, item.CreatedAt)).ToList();
+                                        var audiosDTO = aN.Files.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, BuildFilePath(ownerId, item.MetaData?.ImagePath), item.CreatedAt)).ToList();
                                         var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO);
                                         resultList.Add(collectionDTO);
                                         break;
@@ -75,9 +75,9 @@ namespace BI.Mapping
                                        var photosDTO = aN.Files.Select(item => new PhotoNoteDTO(
                                                                 item.Id, 
                                                                 item.Name, 
-                                                                BuildPhotoPath(ownerId, item.PathPhotoSmall),
-                                                                BuildPhotoPath(ownerId, item.PathPhotoMedium), 
-                                                                BuildPhotoPath(ownerId, item.PathPhotoBig), 
+                                                                BuildFilePath(ownerId, item.PathPhotoSmall),
+                                                                BuildFilePath(ownerId, item.PathPhotoMedium), 
+                                                                BuildFilePath(ownerId, item.PathPhotoBig), 
                                                                 item.UserId, 
                                                                 item.CreatedAt)).ToList();
                                         var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData.Width, aN.MetaData.Height, aN.Id, aN.Order, aN.MetaData.CountInRow, aN.UpdatedAt);
@@ -86,14 +86,14 @@ namespace BI.Mapping
                                     }
                                 case FileTypeEnum.Video:
                                     {
-                                        var videosDTO = aN.Files.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
+                                        var videosDTO = aN.Files.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
                                         var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Document:
                                     {
-                                        var documentsDTO = aN.Files.Select(item => new DocumentNoteDTO(item.Name, BuildPhotoPath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
+                                        var documentsDTO = aN.Files.Select(item => new DocumentNoteDTO(item.Name, BuildFilePath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
                                         var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO);
                                         resultList.Add(collectionDTO);
                                         break;
