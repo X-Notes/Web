@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using BI.SignalR;
 using Common;
 using Microsoft.Extensions.Hosting;
@@ -28,9 +29,19 @@ namespace WriteAPI.Hosted
             if (props.Value.DefaultServiceVersion != version)
             {
                 props.Value.DefaultServiceVersion = version;
-                await blobServiceClient.SetPropertiesAsync(props);
             }
-            
+
+            props.Value.Cors.Clear();
+            props.Value.Cors.Add(
+                new BlobCorsRule{ 
+                    AllowedOrigins = "*",
+                    AllowedHeaders = "*",
+                    ExposedHeaders = "*",
+                    AllowedMethods = "GET,OPTIONS,POST,MERGE,HEAD,DELETE,PATCH,PUT"
+                }
+            );
+
+            await blobServiceClient.SetPropertiesAsync(props);
         }
     }
 }

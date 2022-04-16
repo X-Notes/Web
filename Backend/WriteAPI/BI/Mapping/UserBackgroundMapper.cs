@@ -25,7 +25,7 @@ namespace BI.Mapping
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
                 CurrentBackground = user.CurrentBackground != null ? MapToBackgroundDTO(user.CurrentBackground) : null,
                 LanguageId = user.LanguageId,
                 ThemeId = user.ThemeId,
@@ -40,7 +40,7 @@ namespace BI.Mapping
                 Id = user.Id,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
 
@@ -52,7 +52,7 @@ namespace BI.Mapping
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
 
@@ -64,7 +64,7 @@ namespace BI.Mapping
                 Name = user.User.Name,
                 Email = user.User.Email,
                 PhotoId = user.User.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.User.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
+                PhotoPath = user.User.UserProfilePhoto != null ? BuildFilePath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
                 AccessTypeId = user.AccessTypeId
             };
         }
@@ -77,7 +77,7 @@ namespace BI.Mapping
                 Name = user.User.Name,
                 Email = user.User.Email,
                 PhotoId = user.User.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.User.UserProfilePhoto != null ? BuildPhotoPath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
+                PhotoPath = user.User.UserProfilePhoto != null ? BuildFilePath(user.Id, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
                 AccessTypeId = user.AccessTypeId
             };
         }
@@ -88,7 +88,7 @@ namespace BI.Mapping
             {
                 Id = background.Id,
                 PhotoId = background.FileId,
-                PhotoPath = BuildPhotoPath(background.UserId, background.File.GetFromBigPath)
+                PhotoPath = BuildFilePath(background.UserId, background.File.GetFromBigPath)
             };
         }
 

@@ -1,10 +1,27 @@
-export interface StreamAudioState {
+import * as moment from 'moment';
+
+export class StreamAudioState {
   id: string;
+
   playing: boolean;
-  readableCurrentTime: string | undefined;
+
   currentTime: number | undefined;
+
   currentVolume: number | undefined;
+
   loop: boolean;
+
   canplay: boolean;
+
   error: boolean;
+
+  constructor(currentVolume: number) {
+    this.currentVolume = currentVolume;
+  }
+
+  get readableCurrentTime(): string | undefined {
+    const format = 'mm:ss';
+    const momentTime = this.currentTime * 1000;
+    return moment.utc(momentTime).format(format);
+  }
 }

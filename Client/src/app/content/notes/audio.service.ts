@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as moment from 'moment';
 import { Store } from '@ngxs/store';
 import * as mm from 'music-metadata-browser';
 import { generateFormData } from 'src/app/core/defaults/form-data-generator';
@@ -24,16 +23,7 @@ export class AudioService {
 
   volumeHelper: number;
 
-  private state: StreamAudioState = {
-    id: '',
-    playing: false,
-    readableCurrentTime: undefined,
-    currentTime: undefined,
-    canplay: false,
-    error: false,
-    loop: false,
-    currentVolume: 0.25,
-  };
+  private state: StreamAudioState = new StreamAudioState(0.25);
 
   private stop$ = new Subject();
 
@@ -95,11 +85,6 @@ export class AudioService {
   seekToVolume(volume) {
     this.audioObj.volume = volume;
   }
-
-  formatTime = (time: number, format: string = 'mm:ss'): string => {
-    const momentTime = time * 1000;
-    return moment.utc(momentTime).format(format);
-  };
 
   async tryToUpdateMetaDataIfNeed(audio: AudioModel) {
     if (audio.isNeedUpdateMetaData()) {
@@ -199,7 +184,6 @@ export class AudioService {
         break;
       case this.audioEvents.timeupdate:
         this.state.currentTime = this.audioObj.currentTime;
-        this.state.readableCurrentTime = this.formatTime(this.state.currentTime);
         break;
       case this.audioEvents.volumechange:
         this.state.currentVolume = this.audioObj.volume;
@@ -226,15 +210,6 @@ export class AudioService {
   }
 
   private resetState() {
-    this.state = {
-      id: '',
-      playing: false,
-      readableCurrentTime: undefined,
-      currentTime: undefined,
-      canplay: false,
-      error: false,
-      loop: false,
-      currentVolume: 0.25,
-    };
+    this.state = new StreamAudioState(0.25);
   }
 }

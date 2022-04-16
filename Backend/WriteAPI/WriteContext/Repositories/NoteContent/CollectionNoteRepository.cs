@@ -41,7 +41,8 @@ namespace WriteContext.Repositories.NoteContent
         {
             var ents = await entities.Where(x => ids.Contains(x.NoteId))
                                      .Include(x => x.Files)
-                                     .Select(x => new { noteId = x.NoteId, size = x.Files.Sum(x => x.Size) })
+                                     .GroupBy(x => x.NoteId)
+                                     .Select(x => new { noteId = x.Key, size = x.Sum(q => q.Files.Sum(x => x.Size)) })
                                      .ToListAsync();
 
             return ents.Select(x => (x.noteId, x.size)).ToDictionary(x => x.noteId);

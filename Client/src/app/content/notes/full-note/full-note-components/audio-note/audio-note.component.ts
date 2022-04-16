@@ -14,7 +14,6 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
-import { ContentEditorAudiosCollectionService } from '../../content-editor-services/file-content/content-editor-audios.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -36,7 +35,6 @@ export class AudioNoteComponent
     clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    private contentEditorAudiosService: ContentEditorAudiosCollectionService,
   ) {
     super(cdr, clickableContentService);
   }
@@ -58,7 +56,7 @@ export class AudioNoteComponent
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
-      // TODO listening for fun here
+      this.cdr.markForCheck();
     });
   }
 
