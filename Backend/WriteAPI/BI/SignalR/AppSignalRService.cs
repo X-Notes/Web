@@ -7,6 +7,7 @@ using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
+using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
 using WriteContext.Repositories.WS;
 
@@ -56,6 +57,12 @@ namespace BI.SignalR
         }
 
         // INNER NOTE
+
+        public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
+        {
+            var connectionsId = await GetAuthorizedConnections(userId);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateRelatedNotes", updates);
+        }
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {

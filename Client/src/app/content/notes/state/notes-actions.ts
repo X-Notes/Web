@@ -145,6 +145,12 @@ export class UpdatePositionsNotes {
   constructor(public positions: PositionEntityModel[]) {}
 }
 
+export class UpdatePositionsRelatedNotes {
+  static type = '[Notes] Position related notes';
+
+  constructor(public positions: PositionEntityModel[], public noteId: string) {}
+}
+
 // SHARING
 
 export class GetInvitedUsersToNote {

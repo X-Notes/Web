@@ -47,6 +47,7 @@ import {
   ChangeTypeNote,
   AddNotes,
   PatchUpdatesUINotes,
+  UpdatePositionsRelatedNotes,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -65,6 +66,7 @@ import { Router } from '@angular/router';
 import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { ApiRelatedNotesService } from '../api-related-notes.service';
 
 interface FullNoteState {
   note: FullNote;
@@ -113,7 +115,8 @@ export class NoteStore {
     private historyApi: ApiNoteHistoryService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
-    private updaterEntitiesService: UpdaterEntitiesService
+    private updaterEntitiesService: UpdaterEntitiesService,
+    private apiRelated: ApiRelatedNotesService,
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -772,6 +775,11 @@ export class NoteStore {
         dispatch(new UpdateOneNote(note));
       });
     }
+  }
+
+  @Action(UpdatePositionsRelatedNotes)
+  async updateRelationNotePositions({ }: StateContext<NoteState>,{ positions, noteId }: UpdatePositionsRelatedNotes){
+    await this.apiRelated.updateOrder(noteId, positions).toPromise();
   }
 
   @Action(UpdateOneNote)

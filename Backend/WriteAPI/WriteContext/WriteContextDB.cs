@@ -48,6 +48,8 @@ namespace WriteContext
 
         public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
 
+        public DbSet<RelatedNoteUserState> RelatedNoteUserState { set; get; }
+
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
         // FILES
@@ -230,8 +232,8 @@ namespace WriteContext
 
             // RELATION NOTES
 
-            modelBuilder.Entity<ReletatedNoteToInnerNote>()
-                .HasKey(bc => new { bc.NoteId, bc.RelatedNoteId });
+            modelBuilder.Entity<RelatedNoteUserState>()
+                .HasKey(bc => new { bc.UserId, bc.ReletatedNoteInnerNoteId });
 
             modelBuilder.Entity<ReletatedNoteToInnerNote>()
                 .HasOne(bc => bc.Note)

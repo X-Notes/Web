@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { ChangeStateRelatedNote } from '../models/change-state-related-note.model';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { RelatedNote } from '../../models/related-note.model';
 import { NoteTextTypeENUM } from '../../models/editor-models/base-text';
@@ -17,11 +16,11 @@ import { Observable } from 'rxjs';
 export class RelatedNoteComponent {
   @Input() note: RelatedNote;
 
-  @Input() isCanTurnUp: RelatedNote;
+  @Input() isCanTurnUp: boolean;
 
   @Output() deleteNote = new EventEmitter<string>();
 
-  @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();
+  @Output() changeState = new EventEmitter<RelatedNote>();
 
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
@@ -34,8 +33,8 @@ export class RelatedNoteComponent {
 
   turnUpSmallNote() {
     if (!this.isCanTurnUp) return;
-    this.changeState.emit({ isOpened: !this.note.isOpened, relatedNoteId: this.note.id });
     this.note.isOpened = !this.note.isOpened;
+    this.changeState.emit(this.note);
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 100);
   }
 

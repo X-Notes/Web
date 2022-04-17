@@ -7,6 +7,7 @@ import { PersonalizationSetting } from 'src/app/core/models/personalization-sett
 import { PreviewNote } from './models/preview-note.model';
 import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
+import { PositionEntityModel } from './models/position-note.model';
 
 @Injectable()
 export class ApiRelatedNotesService {
@@ -40,10 +41,10 @@ export class ApiRelatedNotesService {
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
-  updateState(noteId: string, relatedNoteId: string, isOpened: boolean) {
+  updateState(noteId: string, reletatedNoteInnerNoteId: number, isOpened: boolean) {
     const obj = {
       noteId,
-      relatedNoteId,
+      reletatedNoteInnerNoteId,
       isOpened,
     };
     return this.httpClient.patch<OperationResult<any>>(
@@ -52,10 +53,9 @@ export class ApiRelatedNotesService {
     );
   }
 
-  updateOrder(noteId: string, id: string, insertAfter: string) {
+  updateOrder(noteId: string, positions: PositionEntityModel[]) {
     const obj = {
-      insertAfter,
-      id,
+      positions,
       noteId,
     };
     return this.httpClient.patch<OperationResult<any>>(

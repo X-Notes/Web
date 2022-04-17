@@ -4,7 +4,6 @@ import { takeUntil } from 'rxjs/operators';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { DialogsManageService } from '../../../navigation/services/dialogs-manage.service';
 import { ApiRelatedNotesService } from '../../api-related-notes.service';
-import { ChangeStateRelatedNote } from '../models/change-state-related-note.model';
 import { RelatedNote } from '../../models/related-note.model';
 import { SmallNote } from '../../models/small-note.model';
 import { MenuButtonsService } from 'src/app/content/navigation/services/menu-buttons.service';
@@ -32,13 +31,15 @@ export class SidebarNotesService implements OnDestroy {
 
   async loadNotes(noteId: string) {
     if (!this.firstInitedMurri) {
-      this.notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
+      const notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
+      this.notes = notes.sort((a, b) => a.order - b.order);
     } else {
       await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
-      this.notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
-      await this.murriService.initSidebarNotesAsync(this.apiRelatedNotes, noteId);
+      const notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
+      this.notes = notes.sort((a, b) => a.order - b.order);
+      await this.murriService.initSidebarNotesAsync(noteId);
       await this.murriService.setOpacityFlagAsync();
     }
   }
@@ -47,7 +48,7 @@ export class SidebarNotesService implements OnDestroy {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
         await this.murriService.wait(100);
-        await this.murriService.initSidebarNotesAsync(this.apiRelatedNotes, noteId);
+        await this.murriService.initSidebarNotesAsync(noteId);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
@@ -90,7 +91,7 @@ export class SidebarNotesService implements OnDestroy {
       });
   }
 
-  async changeState(state: ChangeStateRelatedNote, noteId: string) {
-    await this.apiRelatedNotes.updateState(noteId, state.relatedNoteId, state.isOpened).toPromise();
+  async changeState(note: RelatedNote) {
+    await this.apiRelatedNotes.updateState(note.id, note.reletionId, note.isOpened).toPromise();
   }
 }

@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using Common.Attributes;
 using Common.DTO;
+using Common.DTO.Notes;
 using MediatR;
 
 namespace Domain.Commands.RelatedNotes
 {
     public class ChangeOrderRelatedNotesCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        public Guid? InsertAfter { set; get; }
+        [RequiredListNotEmptyAttribute]
+        public List<EntityPositionDTO> Positions { set; get; }
 
         [ValidationGuid]
         public Guid NoteId { set; get; }
-
-        [ValidationGuid]
-        public Guid Id { set; get; }
     }
 }
