@@ -91,6 +91,7 @@ using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
 using Common.Timers;
 using WriteContext.Repositories.WS;
+using Common.DTO.WebSockets.ReletedNotes;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -157,7 +158,7 @@ namespace WriteAPI.ConfigureAPP
 
             // RELATED NOTES
             services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();

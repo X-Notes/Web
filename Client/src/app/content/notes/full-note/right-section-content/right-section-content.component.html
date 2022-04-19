@@ -32,12 +32,13 @@
         <div
           #relatedItem
           [id]="item.id"
+          [attr.order]="item.order"
           class="grid-item-small"
-          *ngFor="let item of sideBarService.notes"
+          *ngFor="let item of sideBarService.entities"
         >
           <app-related-note
             [note]="item"
-            [isCanTurnUp]="canEdit$ | async"
+            [isCanEdit]="canEdit$ | async"
             (deleteNote)="sideBarService.deleteSmallNote($event, note.id)"
             (changeState)="sideBarService.changeState($event)"
           ></app-related-note>

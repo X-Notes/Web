@@ -8,6 +8,7 @@ import { PreviewNote } from './models/preview-note.model';
 import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
 import { PositionEntityModel } from './models/position-note.model';
+import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
 
 @Injectable()
 export class ApiRelatedNotesService {
@@ -18,7 +19,7 @@ export class ApiRelatedNotesService {
       noteId,
       relatedNoteIds,
     };
-    return this.httpClient.post<OperationResult<any>>(
+    return this.httpClient.post<OperationResult<UpdateRelatedNotesWS>>(
       `${environment.writeAPI}/api/relatedNotes`,
       obj,
     );

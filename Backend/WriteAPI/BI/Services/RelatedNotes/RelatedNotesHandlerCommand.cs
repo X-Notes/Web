@@ -13,7 +13,7 @@ using WriteContext.Repositories.Notes;
 namespace BI.Services.RelatedNotes
 {
     public class RelatedNotesHandlerCommand
-        : IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>,
+        : IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>,
           IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>,
           IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>
     {
@@ -34,7 +34,7 @@ namespace BI.Services.RelatedNotes
             this.relatedNoteUserStateRepository = relatedNoteUserStateRepository;
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateRelatedNotesWS>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -65,12 +65,12 @@ namespace BI.Services.RelatedNotes
                 }
 
                 var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
-                await appSignalRService.UpdateRelatedNotes(request.NoteId, updates);
+                await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
 
-                return new OperationResult<Unit>(true, Unit.Value);
+                return new OperationResult<UpdateRelatedNotesWS>(true, updates);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<UpdateRelatedNotesWS>(false, null);
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateRelatedNoteStateCommand request, CancellationToken cancellationToken)
@@ -137,7 +137,7 @@ namespace BI.Services.RelatedNotes
                     await relatedRepository.UpdateRangeAsync(currentRelateds);
 
                     var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
-                    await appSignalRService.UpdateRelatedNotes(request.NoteId, updates);
+                    await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }

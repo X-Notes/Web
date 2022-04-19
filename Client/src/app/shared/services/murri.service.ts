@@ -88,6 +88,14 @@ export class MurriService {
     });
   }
 
+  sort(attribute: string = 'order') {
+    this.grid.sort((itemA, itemB) => {
+      const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
+      const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);
+      return aId - bId;
+    });
+  }
+
   initMurriNote(type: NoteTypeENUM, isDragEnabled: boolean) {
     const gridItemName = '.grid-item'; // TODO move to const
     const gridElement = document.querySelector('.grid') as HTMLElement;

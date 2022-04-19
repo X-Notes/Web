@@ -92,7 +92,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     // eslint-disable-next-line no-underscore-dangle
     const item = this.murriService.grid.getItems().find((x) => x._element.id === id);
     if (item) {
-      this.murriService.grid.remove([item], { removeElements: true });
+      this.murriService.grid.remove([item], { removeElements: false });
     }
   }
 

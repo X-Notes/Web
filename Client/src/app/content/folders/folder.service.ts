@@ -219,7 +219,7 @@ export class FolderService
     await this.loadAdditionInformation();
   }
 
-  loadFolderAndAddToDom(folders: SmallFolder[]) {
+  addToDom(folders: SmallFolder[]) {
     if (folders && folders.length > 0) {
       const m = folders.map((x) => ({ ...x }));
       this.entities.unshift(...m);

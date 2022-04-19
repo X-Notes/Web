@@ -58,9 +58,10 @@ namespace BI.SignalR
 
         // INNER NOTE
 
-        public async Task UpdateRelatedNotes(Guid noteId, UpdateRelatedNotesWS updates)
+        public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
         {
-            await signalRContext.Clients.Group(AppSignalRHub.GetNoteGroupName(noteId)).SendAsync("updateRelatedNotes", updates);
+            var connectionsId = await GetAuthorizedConnections(userId);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateRelatedNotes", updates);
         }
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)

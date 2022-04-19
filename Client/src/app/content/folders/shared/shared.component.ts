@@ -75,7 +75,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.folderService.destroy))
       .subscribe((folders) => {
         if (folders && folders.length > 0) {
-          this.folderService.loadFolderAndAddToDom(folders);
+          this.folderService.addToDom(folders);
           this.signalRService.addFoldersToSharedEvent.next([]);
         }
       });

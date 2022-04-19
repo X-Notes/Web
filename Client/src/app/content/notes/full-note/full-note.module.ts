@@ -30,7 +30,6 @@ import { LeftSectionContentNotesListComponent } from './left-section-content-not
 import { ContentEditorComponent } from './content-editor/content-editor.component';
 import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { SelectionService } from './content-editor-services/selection.service';
-import { SidebarNotesService } from './services/sidebar-notes.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
@@ -91,7 +90,6 @@ import { HtmlBaseService } from './full-note-components/html-components/html-bas
   providers: [
     MenuSelectionService,
     SelectionService,
-    SidebarNotesService,
     ClickableContentService,
     ContentEditorElementsListenerService,
     ContentEditorListenerService,
