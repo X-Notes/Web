@@ -40,6 +40,7 @@ import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-
 import { UpdateNoteStructureWS } from './models/signal-r/innerNote/update-note-structure-ws';
 import { UpdateNoteTextWS } from './models/signal-r/innerNote/update-note-text-ws';
 import { UpdatePhotosCollectionWS } from './models/signal-r/innerNote/update-photos-collection-ws';
+import { UpdateRelatedNotesWS } from './models/signal-r/innerNote/update-related-notes-ws';
 import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-videos-collection-ws';
 import { UpdatePermissionFolder } from './models/signal-r/permissions/update-permission-folder';
 import { UpdatePermissionNote } from './models/signal-r/permissions/update-permission-note';
@@ -66,6 +67,8 @@ export class SignalRService {
   public updateAudiosCollectionEvent = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
 
   public updateDocumentsCollectionEvent = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
+
+  public updateRelationNotes = new BehaviorSubject<UpdateRelatedNotesWS>(null);
 
   public setAsJoinedToNote = new BehaviorSubject(null);
 
@@ -159,6 +162,11 @@ export class SignalRService {
     });
 
     // UPDATE CONTENT
+
+    this.hubConnection.on('updateRelatedNotes', (updates: UpdateRelatedNotesWS) => {
+      this.updateRelationNotes.next(updates);
+    });
+
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
       this.updateTextContentEvent.next(updates);
     });

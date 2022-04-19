@@ -11,5 +11,12 @@ namespace Common.DTO.WebSockets.ReletedNotes
         public List<EntityPositionDTO> Positions { set; get; }
 
         public List<Guid> IdsToRemove { set; get; }
+
+        public List<Guid> IdsToAdd { set; get; }
+
+        public UpdateRelatedNotesWS(Guid noteId)
+        {
+                NoteId = noteId;
+        }
     }
 }

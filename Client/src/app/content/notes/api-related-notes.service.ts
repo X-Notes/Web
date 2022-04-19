@@ -13,7 +13,7 @@ import { PositionEntityModel } from './models/position-note.model';
 export class ApiRelatedNotesService {
   constructor(private httpClient: HttpClient) {}
 
-  addToRelatedNotesNotes(noteId: string, relatedNoteIds: string[]) {
+  updateRelatedNotes(noteId: string, relatedNoteIds: string[]) {
     const obj = {
       noteId,
       relatedNoteIds,

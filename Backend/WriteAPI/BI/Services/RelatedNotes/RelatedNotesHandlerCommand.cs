@@ -42,21 +42,31 @@ namespace BI.Services.RelatedNotes
 
             if (permissions.CanWrite)
             {
-                var currentRelateds = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-                await relatedRepository.RemoveRangeAsync(currentRelateds);
+                var dbValues = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+                var dbRelatedIds = dbValues.Select(x => x.RelatedNoteId).ToHashSet();
 
-                var orders = Enumerable.Range(1, request.RelatedNoteIds.Count);
-                var nodes = request.RelatedNoteIds.Zip(orders, (id, order) =>
+                var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId));
+                var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
+                if (valuesToRemove.Any())
                 {
-                    return new ReletatedNoteToInnerNote()
-                    {
-                        NoteId = request.NoteId,
-                        RelatedNoteId = id,
-                        Order = order
-                    };
-                }).ToList();
+                    await relatedRepository.RemoveRangeAsync(valuesToRemove);
+                }
 
-                await relatedRepository.AddRangeAsync(nodes);
+                var idsToAdd = request.RelatedNoteIds.Where(id => !dbRelatedIds.Contains(id)).ToList();
+                var valuesToAdd = idsToAdd.Select(relatedId => new ReletatedNoteToInnerNote()
+                {
+                    NoteId = request.NoteId,
+                    RelatedNoteId = relatedId,
+                });
+
+                if (valuesToAdd.Any())
+                {
+                    await relatedRepository.AddRangeAsync(valuesToAdd);
+                }
+
+                var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
+                await appSignalRService.UpdateRelatedNotes(request.NoteId, updates);
+
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
@@ -69,7 +79,7 @@ namespace BI.Services.RelatedNotes
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
-            if (permissions.CanWrite)
+            if (permissions.CanRead)
             {
                 var relatedNote = await relatedNoteUserStateRepository.FirstOrDefaultAsync(x => x.ReletatedNoteInnerNoteId == request.ReletatedNoteInnerNoteId 
                                             && x.UserId == request.UserId);
@@ -126,8 +136,8 @@ namespace BI.Services.RelatedNotes
 
                     await relatedRepository.UpdateRangeAsync(currentRelateds);
 
-                    var updates = new UpdateRelatedNotesWS { Positions = request.Positions };
-                    await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                    var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
+                    await appSignalRService.UpdateRelatedNotes(request.NoteId, updates);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
