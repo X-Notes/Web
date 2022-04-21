@@ -183,12 +183,18 @@ namespace BI.Services.Notes
             if (notes.Any())
             {
                 var noteIds = notes.Select(x => x.noteId);
-                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
 
+                // HISTORY DELETION
+                var histories = await noteSnapshotRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
+                await noteSnapshotRepository.RemoveRangeAsync(histories);
+
+                // CONTENT DELETION
+                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
                 var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                 if (fileContents.Any())
                 {
-                    await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, Guid.Empty, request.UserId, false);
+                    var ids = fileContents.Select(x => x.Id).ToHashSet();
+                    await collectionLinkedService.UnLinkCollections(ids);
                 }
 
                 var notesToDelete = notes.Select(x => x.perm.Note);

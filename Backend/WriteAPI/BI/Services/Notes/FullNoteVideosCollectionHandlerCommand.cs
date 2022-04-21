@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -12,18 +10,14 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
-using Domain.Commands.Files;
-using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Queries.Permissions;
 using MediatR;
-using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
     public class FullNoteVideosCollectionHandlerCommand :
-        IRequestHandler<UnlinkFilesAndRemoveVideosCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
         IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>,
@@ -60,44 +54,6 @@ namespace BI.Services.Notes
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
-        }
-
-
-        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveVideosCollectionsCommand request, CancellationToken cancellationToken)
-        {
-            async Task<OperationResult<Unit>> UnLink()
-            {
-                var videos = await collectionNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.CollectionNoteId));
-
-                if (videos.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(videos);
-
-                    var ids = videos.Select(x => x.AppFileId).ToArray();
-                    await collectionLinkedService.TryToUnlink(ids.ToArray());
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                else
-                {
-                    return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
-                }
-            }
-
-
-            if (!request.IsCheckPermissions)
-            {
-                return await UnLink();
-            }
-
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-            if (permissions.CanWrite)
-            {
-                return await UnLink();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveVideosFromCollectionCommand request, CancellationToken cancellationToken)

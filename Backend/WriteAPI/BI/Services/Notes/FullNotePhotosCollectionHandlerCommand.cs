@@ -22,7 +22,6 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNotePhotosCollectionHandlerCommand :
-        IRequestHandler<UnlinkFilesAndRemovePhotosCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>,
@@ -59,44 +58,6 @@ namespace BI.Services.Notes
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
-        }
-
-
-        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemovePhotosCollectionsCommand request, CancellationToken cancellationToken)
-        {
-            async Task<OperationResult<Unit>> UnLink()
-            {
-                var photos = await collectionNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.CollectionNoteId));
-
-                if (photos.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(photos);
-
-                    var ids = photos.Select(x => x.AppFileId).ToArray();
-                    await collectionLinkedService.TryToUnlink(ids.ToArray());
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                else
-                {
-                    return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
-                }
-            }
-
-
-            if (!request.IsCheckPermissions)
-            {
-                return await UnLink();
-            }
-
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-            if (permissions.CanWrite)
-            {
-                return await UnLink();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemovePhotosFromCollectionCommand request, CancellationToken cancellationToken)

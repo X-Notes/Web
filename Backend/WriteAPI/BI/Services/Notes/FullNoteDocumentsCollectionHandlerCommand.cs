@@ -23,7 +23,6 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNoteDocumentsCollectionHandlerCommand :
-        IRequestHandler<UnlinkFilesAndRemoveDocumentsCollectionsCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
         IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<Unit>>,
@@ -63,41 +62,6 @@ namespace BI.Services.Notes
             this.collectionLinkedService = collectionLinkedService;
         }
 
-        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveDocumentsCollectionsCommand request, CancellationToken cancellationToken)
-        {
-            async Task<OperationResult<Unit>> UnLink()
-            {
-                var documents = await collectionNoteAppFileRepository.GetWhereAsync(x => request.ContentIds.Contains(x.CollectionNoteId));
-
-                if (documents.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(documents);
-
-                    var ids = documents.Select(x => x.AppFileId).ToArray();
-                    await collectionLinkedService.TryToUnlink(ids.ToArray());
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                else
-                {
-                    return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
-                }
-            }
-
-            if (!request.IsCheckPermissions)
-            {
-                return await UnLink();
-            }
-
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-            if (permissions.CanWrite)
-            {
-                return await UnLink();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
 
         public async Task<OperationResult<Unit>> Handle(RemoveDocumentsFromCollectionCommand request, CancellationToken cancellationToken)
         {

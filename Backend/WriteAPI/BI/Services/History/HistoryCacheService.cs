@@ -45,7 +45,11 @@ namespace BI.Services.History
 
         public async Task RemoveUpdateDates(List<CacheNoteHistory> histories)
         {
-            histories.ForEach(x => x.UpdatedAt = null);
+            histories.ForEach(x => 
+            { 
+                x.UpdatedAt = null;
+                x.UsersThatEditIds = new HashSet<Guid>();
+            });
             await cacheNoteHistoryRepository.UpdateRangeAsync(histories);
         }
 
