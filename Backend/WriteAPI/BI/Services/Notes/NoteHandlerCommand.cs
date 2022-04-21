@@ -193,7 +193,7 @@ namespace BI.Services.Notes
                 var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                 if (fileContents.Any())
                 {
-                    var ids = fileContents.Select(x => x.Id).ToHashSet();
+                    var ids = fileContents.Select(x => x.Id);
                     await collectionLinkedService.UnLinkCollections(ids);
                 }
 

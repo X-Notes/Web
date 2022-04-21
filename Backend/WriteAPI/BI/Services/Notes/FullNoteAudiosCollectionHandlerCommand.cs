@@ -8,6 +8,7 @@ using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
+using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Audios;
@@ -65,13 +66,17 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                var collectionItems = await collectionNoteAppFileRepository.GetAppFilesByFileIds(request.FileIds);
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
-                    var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryToUnlink(idsToUnlink.ToArray());
+                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData
+                    {
+                        Id = x.Id,
+                        AdditionalIds = x.GetAdditionalIds()
+                    });
+                    var idsToUnlink = await collectionLinkedService.TryToUnlink(filesToProcess);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);

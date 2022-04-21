@@ -19,6 +19,7 @@ using Domain.Queries.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
@@ -46,6 +47,7 @@ namespace BI.Services.Notes
         private readonly UserBackgroundMapper userBackgroundMapper;
         private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly CollectionNoteRepository collectionNoteRepository;
+        private readonly NoteSnapshotRepository noteSnapshotRepository;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -58,7 +60,8 @@ namespace BI.Services.Notes
             WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper,
             UserNoteEncryptService userNoteEncryptStorage,
-            CollectionNoteRepository collectionNoteRepository)
+            CollectionNoteRepository collectionNoteRepository,
+            NoteSnapshotRepository noteSnapshotRepository)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -71,6 +74,7 @@ namespace BI.Services.Notes
             this.userBackgroundMapper = userBackgroundMapper;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
             this.collectionNoteRepository = collectionNoteRepository;
+            this.noteSnapshotRepository = noteSnapshotRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -234,6 +238,7 @@ namespace BI.Services.Notes
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
             var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
+            var sizeSnapshots = await noteSnapshotRepository.GetMemoryOfNotesSnapshots(request.NoteIds);
 
             var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
             var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
@@ -243,7 +248,8 @@ namespace BI.Services.Notes
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
                 NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
-                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : null
+                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : 0,
+                SnapshotSize = sizeSnapshots.ContainsKey(noteId) ? sizeSnapshots[noteId].Item2 : 0,
             }).ToList();
         }
     }

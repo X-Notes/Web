@@ -146,5 +146,15 @@ namespace Common.DatabaseModels.Models.Files
             }
             return result;
         }
+
+        public List<Guid> GetAdditionalIds()
+        {
+           var ids = new List<Guid>(); 
+           if (MetaData != null && MetaData.ImageFileId.HasValue)
+           {
+                ids.Add(MetaData.ImageFileId.Value);
+           }
+           return ids;
+        }
     }
 }

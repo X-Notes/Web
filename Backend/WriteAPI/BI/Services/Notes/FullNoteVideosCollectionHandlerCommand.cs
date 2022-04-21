@@ -8,6 +8,7 @@ using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
+using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Videos;
@@ -69,8 +70,8 @@ namespace BI.Services.Notes
                 {
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
-                    var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryToUnlink(idsToUnlink.ToArray());
+                    var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
+                    var idsToUnlink =  await collectionLinkedService.TryToUnlink(data);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);
