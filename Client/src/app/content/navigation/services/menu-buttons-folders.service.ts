@@ -9,7 +9,7 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import {
   ChangeTypeFolder,
-  ChangeTypeFullFolder,
+  UpdateFullFolder,
   CopyFolders,
   DeleteFoldersPermanently,
 } from '../../folders/state/folders-actions';
@@ -196,7 +196,7 @@ export class MenuButtonsFoldersService {
 
   private changeFullFolderType(typeTo: FolderTypeENUM) {
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-      this.store.dispatch(new ChangeTypeFullFolder(typeTo));
+      this.store.dispatch(new UpdateFullFolder({ folderTypeId: typeTo }));
     }
   }
 }

@@ -6,12 +6,12 @@
     <div
       class="folder"
       *ngFor="let item of foldersLink"
-      [ngStyle]="{'backgroundColor': item.color}"
+      [ngStyle]="{ backgroundColor: item.color }"
       [routerLink]="['/folders/', item.id]"
     >
       <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
       <p *ngIf="!item.title" class="empty-placeholder">
-        {{'placeholder.unnamedFolder' | translate}}
+        {{ 'placeholder.unnamedFolder' | translate }}
       </p>
     </div>
   </ng-scrollbar>
@@ -20,7 +20,9 @@
 <div
   *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
-  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{
+    'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
+  }"
 >
   <div
     class="folder-sub-header"
@@ -30,9 +32,9 @@
     <div class="container info-container">
       <div class="dot" [ngStyle]="{ backgroundColor: folder?.color }"></div>
       <div class="navigation">
-        <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link"
-          >{{ (folder?.folderTypeId | folderType)?.tranlate | translate }}</a
-        >
+        <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link">{{
+          (folder?.folderTypeId | folderType)?.tranlate | translate
+        }}</a>
         <span class="divider">/</span>
         <input
           [ngModel]="folder?.title"
@@ -43,6 +45,7 @@
     </div>
     <div class="container buttons-container">
       <button
+        *ngIf="canEdit$ | async"
         class="side-button"
         type="button"
         name="Color"
@@ -57,7 +60,14 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
       </button>
-      <button class="side-button" type="button" name="share" #share (click)="openSharePopup()">
+      <button
+        *ngIf="isOwner$ | async"
+        class="side-button"
+        type="button"
+        name="share"
+        #share
+        (click)="openSharePopup()"
+      >
         <div class="inner-content">
           <div class="icon">
             <mat-icon svgIcon="share" [inline]="true"></mat-icon>
@@ -85,20 +95,23 @@
   </div>
   <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
     <div class="content-inner">
-      <div class="grid" [ngStyle]="{'opacity': ffnService.murriService.flagForOpacity ? '1' : '0'}">
+      <div class="grid" [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }">
         <div
           #item
           class="grid-item"
           [id]="item.id"
           *ngFor="let item of ffnService.entities"
-          [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+          [ngClass]="[
+            pService.orientationMobile ? 'grid-plus' : '',
+            (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''
+          ]"
         >
           <app-note
             [note]="item"
             [currentFolderId]="folder.id"
             (highlightNote)="ffnService.highlightNote($event)"
             (clickOnNote)="ffnService.toNote($event)"
-            [ngStyle]="{'backgroundColor': item.color }"
+            [ngStyle]="{ backgroundColor: item.color }"
             [userId]="(user$ | async).id"
             class="note"
           ></app-note>
@@ -125,7 +138,9 @@
 </div>
 <div class="drag-helper main-helper"></div>
 <mat-menu #menu="matMenu">
-  <ng-container *ngFor="let item of folderMenu | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: true">
+  <ng-container
+    *ngFor="let item of folderMenu | manageMenuButtons: (canEdit$ | async) : (isOwner$ | async) : true"
+  >
     <button
       (click)="item.operation()"
       mat-menu-item
@@ -138,7 +153,7 @@
         [svgIcon]="item.icon"
         style="width: 1rem; height: 1rem; font-size: 1rem"
       ></mat-icon>
-      <span> {{ ('menu.' + item.icon) | translate }} </span>
+      <span> {{ 'menu.' + item.icon | translate }} </span>
     </button>
   </ng-container>
 </mat-menu>

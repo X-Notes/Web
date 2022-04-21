@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
 import { SmallFolder } from 'src/app/content/folders/models/folder.model';
 import {
-  ChangeTypeFullFolder,
+  UpdateFullFolder,
   GetInvitedUsersToFolder,
   TransformTypeFolders,
   UpdateOneFolder,
@@ -17,7 +17,7 @@ import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invited-users-to-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import {
-  ChangeTypeFullNote,
+  UpdateFullNote,
   GetInvitedUsersToNote,
   TransformTypeNotes,
   UpdateOneNote,
@@ -261,7 +261,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
     this.currentNote.noteTypeId = type;
     this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = type;
-    this.store.dispatch(new ChangeTypeFullNote(type));
+    this.store.dispatch(new UpdateFullNote({ noteTypeId: type }));
   }
 
   async changeFolderType() {
@@ -286,7 +286,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
     this.currentFolder.folderTypeId = type;
     this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = type;
-    this.store.dispatch([new ChangeTypeFullFolder(type)]);
+    this.store.dispatch([new UpdateFullFolder({ folderTypeId: type })]);
   }
 
   factoryForCommandNote = (id: string, typeTo: NoteTypeENUM): TransformTypeNotes => {

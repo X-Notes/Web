@@ -51,6 +51,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatMenu) menu: MatMenu;
 
+  @Select(FolderStore.canEdit)
+  public canEdit$: Observable<boolean>;
+
   @Select(FolderStore.canView)
   public canView$: Observable<boolean>;
 

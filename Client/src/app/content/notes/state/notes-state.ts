@@ -38,7 +38,7 @@ import {
   UpdateNoteTitle,
   GetInvitedUsersToNote,
   TransformTypeNotes,
-  ChangeTypeFullNote,
+  UpdateFullNote,
   LoadOnlineUsersOnNote,
   ChangeIsLockedFullNote,
   AddToDomNotes,
@@ -67,6 +67,7 @@ import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 interface FullNoteState {
   note: FullNote;
@@ -894,16 +895,17 @@ export class NoteStore {
     }
   }
 
-  @Action(ChangeTypeFullNote)
+  @Action(UpdateFullNote)
   // eslint-disable-next-line class-methods-use-this
   async changeTypeFullNote(
     { getState, patchState }: StateContext<NoteState>,
-    { type }: ChangeTypeFullNote,
+    { note }: UpdateFullNote,
   ) {
-    const note = getState().fullNoteState?.note;
+    const noteState = getState().fullNoteState?.note;
     if (note) {
-      const newNote: FullNote = { ...note, noteTypeId: type };
-      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+      const newNote: FullNote = { ...noteState, ...note };
+      const isCanEdit = newNote.refTypeId === RefTypeENUM.Editor;
+      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote, canEdit: isCanEdit } });
     }
   }
 

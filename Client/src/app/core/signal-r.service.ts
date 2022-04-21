@@ -11,6 +11,7 @@ import {
   ChangeColorFolder,
   DeleteFoldersPermanently,
   UpdateFolderTitle,
+  UpdateFullFolder,
   UpdateOneFolder,
 } from '../content/folders/state/folders-actions';
 import { FolderStore } from '../content/folders/state/folders-state';
@@ -23,6 +24,7 @@ import {
   DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
   RemoveLabelFromNote,
+  UpdateFullNote,
   UpdateNoteTitle,
   UpdateOneNote,
 } from '../content/notes/state/notes-actions';
@@ -219,6 +221,7 @@ export class SignalRService {
             this.addNotesToSharedEvent.next(notes);
           }
         }
+        const fullNoteId = this.store.selectSnapshot(NoteStore.oneFull).id;
         const updatePermissions = updatePermissionNote.updatePermissions;
         for (const update of updatePermissions) {
           let note = this.store
@@ -228,6 +231,9 @@ export class SignalRService {
           note.refTypeId = update.refTypeId;
           note.isCanEdit = note.refTypeId === RefTypeENUM.Editor;
           this.store.dispatch(new UpdateOneNote(note));
+          if (update.entityId === fullNoteId) {
+            this.store.dispatch(new UpdateFullNote({ refTypeId: update.refTypeId }));
+          }
         }
         this.store.dispatch(LoadNotifications);
       },
@@ -254,6 +260,7 @@ export class SignalRService {
           }
         }
         const updatePermissions = updatePermissionFolder.updatePermissions;
+        const fullFolderId = this.store.selectSnapshot(FolderStore.full).id;
         for (const update of updatePermissions) {
           let folder = this.store
             .selectSnapshot(FolderStore.getSmallFolders)
@@ -262,6 +269,9 @@ export class SignalRService {
           folder.refTypeId = update.refTypeId;
           folder.isCanEdit = folder.refTypeId === RefTypeENUM.Editor;
           this.store.dispatch(new UpdateOneFolder(folder));
+          if (update.entityId === fullFolderId) {
+            this.store.dispatch(new UpdateFullFolder({ refTypeId: update.refTypeId }));
+          }
         }
         this.store.dispatch(LoadNotifications);
       },

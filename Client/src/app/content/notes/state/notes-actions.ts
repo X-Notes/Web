@@ -6,6 +6,7 @@ import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
+import { FullNote } from '../models/full-note.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -233,10 +234,10 @@ export class UpdateNoteTitle {
     public errorPermissionMessage?: string,
   ) {}
 }
-export class ChangeTypeFullNote {
-  static type = '[Notes] change type fullNote';
+export class UpdateFullNote {
+  static type = '[Notes] update fullNote';
 
-  constructor(public type: NoteTypeENUM) {}
+  constructor(public note: Partial<FullNote>) {}
 }
 
 export class ChangeIsLockedFullNote {

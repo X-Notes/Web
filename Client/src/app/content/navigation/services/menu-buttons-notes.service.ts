@@ -12,7 +12,7 @@ import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-b
 import {
   CopyNotes,
   ChangeTypeNote,
-  ChangeTypeFullNote,
+  UpdateFullNote,
   DeleteNotesPermanently,
 } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
@@ -168,7 +168,7 @@ export class MenuButtonsNotesService {
 
   private changeFullNoteType(typeTo: NoteTypeENUM) {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      this.store.dispatch(new ChangeTypeFullNote(typeTo));
+      this.store.dispatch(new UpdateFullNote({ noteTypeId: typeTo }));
     }
   }
 

@@ -33,7 +33,7 @@ import {
   UpdateOneFolder,
   LoadFullFolder,
   TransformTypeFolders,
-  ChangeTypeFullFolder,
+  UpdateFullFolder,
   GetInvitedUsersToFolder,
   AddToDomFolders,
   ResetFolders,
@@ -44,12 +44,13 @@ import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-
 import { UpdateFolderUI } from './update-folder-ui.model';
 import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 interface FullFolderState {
   isOwner: boolean;
   folder: FullFolder;
   canView: boolean;
-  caEdit: boolean;
+  canEdit: boolean;
 }
 
 interface FolderState {
@@ -97,6 +98,11 @@ export class FolderStore {
   @Selector()
   static full(state: FolderState) {
     return state.fullFolderState.folder;
+  }
+
+  @Selector()
+  static canEdit(state: FolderState): boolean {
+    return state.fullFolderState?.canEdit;
   }
 
   @Selector()
@@ -567,22 +573,23 @@ export class FolderStore {
       fullFolderState: {
         isOwner: request.isOwner,
         canView: request.canView,
-        caEdit: request.canEdit,
+        canEdit: request.canEdit,
         folder: request.fullFolder,
       },
     });
   }
 
-  @Action(ChangeTypeFullFolder)
+  @Action(UpdateFullFolder)
   // eslint-disable-next-line class-methods-use-this
   async changeTypeFullFolder(
     { getState, patchState }: StateContext<FolderState>,
-    { type }: ChangeTypeFullFolder,
+    { folder }: UpdateFullFolder,
   ) {
-    const folder = getState().fullFolderState?.folder;
+    const folderState = getState().fullFolderState?.folder;
     if (folder) {
-      const newFolder: FullFolder = { ...folder, folderTypeId: type };
-      patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
+      const newFolder: FullFolder = { ...folderState, ...folder };
+      const isCanEdit = newFolder.refTypeId === RefTypeENUM.Editor;
+      patchState({ fullFolderState: { ...getState().fullFolderState, canEdit: isCanEdit, folder: newFolder } });
     }
   }
 
