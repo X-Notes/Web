@@ -15,6 +15,7 @@
   ></app-general-header-button>
 
   <app-general-header-button
+    *ngIf="(pService.isInnerFolderSelectAllActive$ | async)"
     (clickEvent)="selectAll()"
     [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
     [classOnSize]="'hide-tag-text'"

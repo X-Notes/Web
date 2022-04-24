@@ -32,9 +32,9 @@
     <div class="container info-container">
       <div class="dot" [ngStyle]="{ backgroundColor: folder?.color }"></div>
       <div class="navigation">
-        <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link">{{
-          (folder?.folderTypeId | folderType)?.tranlate | translate
-        }}</a>
+        <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link">
+          {{ (folder?.folderTypeId | folderType)?.tranlate | translate}}
+        </a>
         <span class="divider">/</span>
         <input
           [ngModel]="folder?.title"
@@ -139,7 +139,7 @@
 <div class="drag-helper main-helper"></div>
 <mat-menu #menu="matMenu">
   <ng-container
-    *ngFor="let item of folderMenu | manageMenuButtons: (canEdit$ | async) : (isOwner$ | async) : true"
+    *ngFor="let item of folderMenu | manageMenuButtons: (canEdit$ | async) : (isOwner$ | async) :true"
   >
     <button
       (click)="item.operation()"

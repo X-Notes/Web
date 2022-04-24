@@ -51,10 +51,6 @@ export class FullFolderNotesService
     await super.loadAdditionNoteInformation();
   }
 
-  removeFromLayout(ids: string[]) {
-    this.entities = this.entities.filter((x) => !ids.some((id) => id === x.id));
-  }
-
   async updateNotesLayout(folderId: string) {
     await this.destroyGridAsync();
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);

@@ -186,15 +186,13 @@ export class PersonalizationService {
 
   windowWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerWidth);
 
+  isInnerFolderSelectAllActive$ = new BehaviorSubject<boolean>(false);
+
   icon = Icons;
 
   isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    public lockEncryptService: LockEncryptService,
-    private translate: TranslateService,
-    private store: Store,
-  ) {
+  constructor(public lockEncryptService: LockEncryptService, private store: Store) {
     this.onResize();
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();

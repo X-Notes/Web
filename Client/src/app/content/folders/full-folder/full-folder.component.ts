@@ -156,6 +156,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
         await this.ffnService.initializeEntities(notes);
+        this.updateStateSelectButton();
       }
 
       this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
@@ -179,6 +180,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           const newNote = await this.noteApiService.new().toPromise();
           await this.apiFullFolder.addNotesToFolder([newNote.id], this.folder.id).toPromise();
           this.ffnService.addToDom([newNote]);
+          this.updateStateSelectButton();
         }
       });
 
@@ -224,6 +226,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             const ids = resp.map((x) => x.id);
             await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
             await this.ffnService.updateNotesLayout(this.folder.id);
+            this.updateStateSelectButton();
           }
         });
     });
@@ -234,7 +237,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
         const res = await this.apiFullFolder.removeNotesFromFolder(ids, this.folder.id).toPromise();
         if (res.success) {
-          this.ffnService.removeFromLayout(ids);
+          this.ffnService.deleteFromDom(ids);
+          this.updateStateSelectButton();
         }
         this.store.dispatch(UnSelectAllNote);
       });
@@ -246,6 +250,11 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .select(FolderStore.full)
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe((folder) => (this.folder = folder));
+  }
+
+  updateStateSelectButton(): void {
+    const isHasEntities = this.ffnService.entities?.length > 0;
+    this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
   }
 
   async loadSideBar() {
