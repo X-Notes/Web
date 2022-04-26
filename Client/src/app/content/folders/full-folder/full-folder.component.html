@@ -40,6 +40,7 @@
           [ngModel]="folder?.title"
           [placeholder]="'placeholder.folderSmall' | translate"
           (ngModelChange)="nameChanged.next($event)"
+          [disabled]="(canEdit$ | async) === false"
         />
       </div>
     </div>

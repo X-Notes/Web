@@ -72,6 +72,8 @@ export class SignalRService {
 
   public updateRelationNotes = new BehaviorSubject<UpdateRelatedNotesWS>(null);
 
+  public updateFolder$ = new BehaviorSubject<UpdateFolderWS>(null);
+
   public setAsJoinedToNote = new BehaviorSubject(null);
 
   public setAsJoinedToFolder = new BehaviorSubject(null);
@@ -161,6 +163,7 @@ export class SignalRService {
       if (updates.title) {
         this.store.dispatch(new UpdateFolderTitle(updates.title, updates.folderId, false));
       }
+      this.updateFolder$.next(updates);
     });
 
     // UPDATE CONTENT

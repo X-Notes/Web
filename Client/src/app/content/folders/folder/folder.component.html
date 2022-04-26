@@ -23,7 +23,7 @@
       [placeholder]="'placeholder.folderSmall' | translate"
       [ngModel]="folder.title"
       (ngModelChange)="changed($event)"
-      [disabled]="isSelectedMode"
+      [disabled]="isSelectedMode || !folder.isCanEdit"
     />
     <div
       class="folder-content"

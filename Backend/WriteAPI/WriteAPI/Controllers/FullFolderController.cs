@@ -27,7 +27,7 @@ namespace WriteAPI.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<List<SmallNote>> GetNoteByFolderId(Guid id, [FromQuery] PersonalizationSettingDTO settings)
+        public async Task<List<SmallNote>> GetNotesByFolderId(Guid id, [FromQuery] PersonalizationSettingDTO settings)
         {
             return await _mediator.Send(new GetFolderNotesByFolderIdQuery(id, this.GetUserIdUnStrict(), settings));
         }

@@ -1,4 +1,5 @@
 ﻿using Common.DTO.Folders;
+using Common.DTO.Notes;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,12 @@ namespace Common.DTO.WebSockets
 
         public string Title { set; get; }
 
-        public List<NotePreviewInFolder> PreviewNotes { set; get; }
+        public List<EntityPositionDTO> Positions { set; get; } = new();
+
+        public List<Guid> IdsToAdd { set; get; } = new();
+
+        public List<Guid> IdsToRemove { private set; get; } = new();
+
+        public List<NotePreviewInFolder> PreviewNotes { set; get; } = new();
     }
 }

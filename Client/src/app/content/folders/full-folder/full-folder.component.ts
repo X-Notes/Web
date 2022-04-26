@@ -39,6 +39,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
 import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -99,6 +100,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
     public pB: PermissionsButtonsService,
+    private signalR: SignalRService,
   ) {}
 
   get folderMenu() {
@@ -157,6 +159,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
         await this.ffnService.initializeEntities(notes);
         this.updateStateSelectButton();
+        this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(x => console.log('x: ', x));
       }
 
       this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
