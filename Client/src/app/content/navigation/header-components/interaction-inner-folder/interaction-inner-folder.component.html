@@ -1,13 +1,13 @@
 <ng-container *ngIf="(canView$ | async) && (folder$ | async)">
   <app-general-header-button
-    *ngIf="(pService.isMenuActive$ | async) === (false)"
+    *ngIf="(canEdit$ | async) && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
     [styleClasses]="'manage-notes'"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(pService.isMenuActive$ | async) === (false)"
+    *ngIf="(canEdit$ | async) && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="newButton()"
     [message]="'new.' + (route$ | async ) | translate"
     [iconClass]="'plus'"

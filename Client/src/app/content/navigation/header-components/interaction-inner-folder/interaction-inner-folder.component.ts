@@ -18,6 +18,9 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
   @Select(FolderStore.canView)
   canView$: Observable<boolean>;
 
+  @Select(FolderStore.canEdit)
+  canEdit$: Observable<boolean>;
+
   @Select(FolderStore.full)
   folder$: Observable<FullFolder>;
 

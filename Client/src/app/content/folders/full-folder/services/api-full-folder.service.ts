@@ -14,15 +14,14 @@ export class ApiFullFolderService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getFolderNotes(folderId: string, settings: PersonalizationSetting) {
-    let params = new HttpParams();
-    if (settings) {
-      Object.keys(settings).forEach((key) => {
-        params = params.append(key, settings[key]);
-      });
-    }
+  getFolderNotes(folderId: string, settings: PersonalizationSetting, noteIds?: string[]) {
+    const obj = {
+      folderId,
+      settings,
+      noteIds,
+    };
     return this.httpClient
-      .get<SmallNote[]>(`${this.controllerApi}/${folderId}`, { params })
+      .post<SmallNote[]>(`${this.controllerApi}`, obj)
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 

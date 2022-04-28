@@ -9,7 +9,6 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FeaturesEntitiesService } from 'src/app/shared/services/features-entities.service';
-import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from './models/folder.model';
 import { FolderStore } from './state/folders-state';
@@ -23,10 +22,7 @@ import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */
 @Injectable()
-export class FolderService
-  extends FeaturesEntitiesService<SmallFolder>
-  implements OnDestroy, IMurriEntityService<SmallFolder, FolderTypeENUM>
-{
+export class FolderService extends FeaturesEntitiesService<SmallFolder> implements OnDestroy {
   destroy = new Subject<void>();
 
   prevSortedFolderByTypeId: SortedByENUM = null;
@@ -140,16 +136,12 @@ export class FolderService
     this.destroy.complete();
   }
 
-  murriInitialise(
-    refElements: QueryList<ElementRef>,
-    folderType: FolderTypeENUM,
-    isDragEnabled: boolean = true,
-  ) {
+  murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled: boolean = true) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (this.getIsFirstInit(z)) {
         // eslint-disable-next-line no-param-reassign
         isDragEnabled = isDragEnabled && this.isSortable;
-        this.murriService.initMurriFolder(folderType, isDragEnabled);
+        this.murriService.initMurriFolder(isDragEnabled);
         await this.setInitMurriFlagShowLayout();
         await this.loadWithUpdates();
       }
@@ -196,7 +188,7 @@ export class FolderService
     this.entities = this.orderBy(this.entities, sortType);
     const roadType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const isDraggable = roadType !== FolderTypeENUM.Shared && this.isSortable;
-    this.murriService.initMurriFolderAsync(roadType, isDraggable);
+    this.murriService.initMurriFolderAsync(isDraggable);
     await this.murriService.setOpacityFlagAsync(0);
   }
 
@@ -217,12 +209,5 @@ export class FolderService
     super.initState();
 
     await this.loadAdditionInformation();
-  }
-
-  addToDom(folders: SmallFolder[]) {
-    if (folders && folders.length > 0) {
-      const m = folders.map((x) => ({ ...x }));
-      this.entities.unshift(...m);
-    }
   }
 }

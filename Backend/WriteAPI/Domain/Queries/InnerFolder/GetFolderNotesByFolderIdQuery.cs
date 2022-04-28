@@ -13,11 +13,14 @@ namespace Domain.Queries.InnerFolder
 
         public PersonalizationSettingDTO Settings { set; get; }
 
-        public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, PersonalizationSettingDTO settings)
+        public List<Guid> NoteIds { set; get; }
+
+        public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, PersonalizationSettingDTO settings, List<Guid> noteIds)
         {
             this.FolderId = folderId;
             this.UserId = userId;
             this.Settings = settings;
+            NoteIds = noteIds;  
         }
     }
 }

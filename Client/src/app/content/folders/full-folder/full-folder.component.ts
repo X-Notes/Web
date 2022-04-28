@@ -157,9 +157,12 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.folder) {
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
-        await this.ffnService.initializeEntities(notes);
+        await this.ffnService.initializeEntities(notes, this.folder.id);
         this.updateStateSelectButton();
-        this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(x => console.log('x: ', x));
+        this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(async (x) => {
+          await this.ffnService.handlerUpdates(x);
+          this.updateStateSelectButton();
+        });
       }
 
       this.htmlTitleService.setCustomOrDefault(this.folder?.title, 'titles.folder');
@@ -228,7 +231,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           if (resp) {
             const ids = resp.map((x) => x.id);
             await this.apiFullFolder.addNotesToFolder(ids, this.folder.id).toPromise();
-            await this.ffnService.updateNotesLayout(this.folder.id);
+            await this.ffnService.handleAdding(ids);
             this.updateStateSelectButton();
           }
         });

@@ -9,8 +9,6 @@ import { UpdatePositionsFolders } from 'src/app/content/folders/state/folders-ac
 import { UpdatePositionsLabels } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
 import { PersonalizationService } from './personalization.service';
-import { FolderTypeENUM } from '../enums/folder-types.enum';
-import { NoteTypeENUM } from '../enums/note-types.enum';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 
 @Injectable()
@@ -73,10 +71,10 @@ export class MurriService {
 
   /// NOTE MURRI
 
-  initMurriNoteAsync(type: NoteTypeENUM, isDragEnabled: boolean) {
+  initMurriNoteAsync(isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.initMurriNote(type, isDragEnabled);
+        this.initMurriNote(isDragEnabled);
         resolve(true);
       }),
     );
@@ -88,7 +86,7 @@ export class MurriService {
     });
   }
 
-  sort(attribute: string = 'order') {
+  sortByHtml(attribute: string = 'order') {
     this.grid.sort((itemA, itemB) => {
       const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
       const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);
@@ -96,7 +94,7 @@ export class MurriService {
     });
   }
 
-  initMurriNote(type: NoteTypeENUM, isDragEnabled: boolean) {
+  initMurriNote(isDragEnabled: boolean) {
     const gridItemName = '.grid-item'; // TODO move to const
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -134,16 +132,16 @@ export class MurriService {
 
   /// FOLDERS
 
-  initMurriFolderAsync(type: FolderTypeENUM, isDragEnabled: boolean) {
+  initMurriFolderAsync(isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.initMurriFolder(type, isDragEnabled);
+        this.initMurriFolder(isDragEnabled);
         resolve(true);
       }),
     );
   }
 
-  initMurriFolder(type: FolderTypeENUM, isDragEnabled: boolean = true) {
+  initMurriFolder(isDragEnabled: boolean = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {

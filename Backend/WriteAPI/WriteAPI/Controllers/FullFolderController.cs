@@ -25,11 +25,12 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpPost]
         [AllowAnonymous]
-        public async Task<List<SmallNote>> GetNotesByFolderId(Guid id, [FromQuery] PersonalizationSettingDTO settings)
+        public async Task<List<SmallNote>> GetNotesByFolderId(GetFolderNotesByFolderIdQuery query)
         {
-            return await _mediator.Send(new GetFolderNotesByFolderIdQuery(id, this.GetUserIdUnStrict(), settings));
+            query.UserId = this.GetUserIdUnStrict();
+            return await _mediator.Send(query);
         }
 
         [HttpPost("preview")]

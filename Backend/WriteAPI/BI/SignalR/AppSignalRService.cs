@@ -44,16 +44,16 @@ namespace BI.SignalR
             await signalRContext.Clients.User(userId.ToString()).SendAsync("newNotification", flag);
         }
 
-        public async Task UpdateNotesInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateNotesGeneral", updates);
+            await signalRContext.Clients.Clients(list).SendAsync("updateNoteGeneral", updates);
         }
 
-        public async Task UpdateFoldersInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateFolderInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateFoldersGeneral", updates);
+            await signalRContext.Clients.Clients(list).SendAsync("updateFolderGeneral", updates);
         }
 
         // INNER NOTE

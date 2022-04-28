@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
+using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
@@ -47,7 +48,17 @@ namespace BI.Services.Folders
 
             if (permissions.CanRead)
             {
-                var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
+                List<FoldersNotes> foldersNotes = new();
+
+                if(request.NoteIds != null && request.NoteIds.Any())
+                {
+                    foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId && request.NoteIds.Contains(x.NoteId));
+                }
+                else
+                {
+                    foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
+                }
+
                 var notesIds = foldersNotes.Select(x => x.NoteId);
                 var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
                 return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);

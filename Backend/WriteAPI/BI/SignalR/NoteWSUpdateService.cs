@@ -38,7 +38,7 @@ namespace BI.SignalR
                 connections.AddRange(additionalConnections);
             }
 
-            await appSignalRService.UpdateNotesInManyUsers(update, connections.Distinct());
+            await appSignalRService.UpdateNoteInManyUsers(update, connections.Distinct());
         }
     }
 }

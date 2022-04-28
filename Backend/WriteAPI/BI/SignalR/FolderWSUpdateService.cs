@@ -42,7 +42,7 @@ namespace BI.SignalR
                 connections.AddRange(additionalConnections);
             }
 
-            await appSignalRService.UpdateFoldersInManyUsers(update, connections.Distinct());
+            await appSignalRService.UpdateFolderInManyUsers(update, connections.Distinct());
         }
     }
 }

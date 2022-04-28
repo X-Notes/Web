@@ -7,19 +7,17 @@ import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { UpdateFolderWS } from 'src/app/core/models/signal-r/update-folder-ws';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import { ApiFullFolderService } from './api-full-folder.service';
 
 @Injectable()
-export class FullFolderNotesService
-  extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
-{
+export class FullFolderNotesService extends NoteEntitiesService implements OnDestroy {
+  folderId: string;
+
   constructor(
     store: Store,
     murriService: MurriService,
@@ -40,7 +38,8 @@ export class FullFolderNotesService
     this.destroy.complete();
   }
 
-  async initializeEntities(notes: SmallNote[]) {
+  async initializeEntities(notes: SmallNote[], folderId: string) {
+    this.folderId = folderId;
     let tempNotes = this.transformSpread(notes);
     tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
 
@@ -49,14 +48,6 @@ export class FullFolderNotesService
     super.initState();
 
     await super.loadAdditionNoteInformation();
-  }
-
-  async updateNotesLayout(folderId: string) {
-    await this.destroyGridAsync();
-    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    this.entities = await this.apiFullFolder.getFolderNotes(folderId, pr).toPromise();
-    await this.murriService.initFolderNotesAsync();
-    await this.murriService.setOpacityFlagAsync();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {
@@ -79,6 +70,35 @@ export class FullFolderNotesService
           this.updateService.updateNotesInFolder$.next([]);
         }
       });
+  }
+
+  async handlerUpdates(updates: UpdateFolderWS) {
+    if (updates && updates.idsToRemove?.length > 0) {
+      this.deleteFromDom(updates.idsToRemove);
+    }
+    await this.handleAdding(updates.idsToAdd);
+  }
+
+  async handleAdding(idsToAdd: string[]) {
+    if (idsToAdd && idsToAdd.length > 0) {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const newNotes = await this.apiFullFolder
+        .getFolderNotes(this.folderId, pr, idsToAdd)
+        .toPromise();
+      const isAdded = this.addToDom(newNotes);
+      if (isAdded) {
+        this.updateOrder();
+      }
+    }
+  }
+
+  updateOrder(): void {
+    const sorted = this.entities.sort(
+      (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+    );
+    let order = 1;
+    sorted.forEach((item) => (item.order = order++));
+    setTimeout(() => this.murriService.sortByHtml(), 100);
   }
 
   navigateFunc(note: SmallNote) {

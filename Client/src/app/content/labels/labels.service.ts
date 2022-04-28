@@ -2,7 +2,6 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { MurriEntityService } from 'src/app/shared/services/murri-entity.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Label } from './models/label.model';
@@ -10,10 +9,7 @@ import { UpdatePositionsLabels } from './state/labels-actions';
 
 /** Injection only in component */
 @Injectable()
-export class LabelsService
-  extends MurriEntityService<Label>
-  implements OnDestroy, IMurriEntityService<Label, boolean>
-{
+export class LabelsService extends MurriEntityService<Label> implements OnDestroy {
   destroy = new Subject<void>();
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

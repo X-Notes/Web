@@ -39,7 +39,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
   async handleUpdates(updates: UpdateRelatedNotesWS): Promise<void> {
     if (!updates) return;
     if (updates.idsToRemove && updates.idsToRemove.length > 0) {
-      this.entities = this.entities.filter((x) => !updates.idsToRemove.some((z) => z === x.id));
+      this.deleteFromDom(updates.idsToRemove);
     }
     if (updates.idsToAdd && updates.idsToAdd.length > 0) {
       const newNotes = await this.apiRelated.getRelatedNotes(this.noteId).toPromise();
@@ -51,7 +51,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
         const ent = this.entities.find((q) => q.id === pos.entityId);
         ent.order = pos.position;
       });
-      requestAnimationFrame(() => this.murriService.sort());
+      requestAnimationFrame(() => this.murriService.sortByHtml());
     }
   }
 
@@ -59,13 +59,6 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
     if (!this.isCanEdit) return;
     const command = new UpdatePositionsRelatedNotes(this.murriService.getPositions(), this.noteId);
     this.store.dispatch(command);
-  }
-
-  addToDom(notes: RelatedNote[]) {
-    if (notes && notes.length > 0) {
-      const m = notes.map((x) => ({ ...x }));
-      this.entities.unshift(...m);
-    }
   }
 
   ngOnDestroy(): void {

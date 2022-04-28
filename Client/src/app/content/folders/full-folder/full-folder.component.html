@@ -101,6 +101,7 @@
           #item
           class="grid-item"
           [id]="item.id"
+          [attr.order]="item.order"
           *ngFor="let item of ffnService.entities"
           [ngClass]="[
             pService.orientationMobile ? 'grid-plus' : '',

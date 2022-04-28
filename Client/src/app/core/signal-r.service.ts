@@ -128,7 +128,7 @@ export class SignalRService {
       // TODO
     });
 
-    this.hubConnection.on('updateNotesGeneral', (updates: UpdateNoteWS) => {
+    this.hubConnection.on('updateNoteGeneral', (updates: UpdateNoteWS) => {
       if (updates.color) {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
@@ -156,7 +156,7 @@ export class SignalRService {
       this.updaterEntitiesService.updateNotesInFolder$.next([result]);
     });
 
-    this.hubConnection.on('updateFoldersGeneral', (updates: UpdateFolderWS) => {
+    this.hubConnection.on('updateFolderGeneral', (updates: UpdateFolderWS) => {
       if (updates.color) {
         this.store.dispatch(new ChangeColorFolder(updates.color, [updates.folderId], false));
       }

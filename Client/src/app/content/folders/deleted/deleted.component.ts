@@ -46,7 +46,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Deleted);
+    this.folderService.murriInitialise(this.refElements);
   }
 
   ngOnDestroy(): void {
