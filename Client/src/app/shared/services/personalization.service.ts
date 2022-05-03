@@ -4,7 +4,6 @@ import { Subject, Observable, BehaviorSubject, combineLatest, fromEvent } from '
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';

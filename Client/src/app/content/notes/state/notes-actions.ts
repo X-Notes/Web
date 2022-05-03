@@ -7,6 +7,7 @@ import { SmallNote } from '../models/small-note.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { FullNote } from '../models/full-note.model';
+import { AddNotesToDom } from './add-notes-to-dom.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -67,9 +68,9 @@ export class CopyNotes {
   static type = '[Notes] Copy notes';
 
   constructor(
-    public typeNote: NoteTypeENUM,
     public selectedIds: string[],
     public pr: PersonalizationSetting,
+    public folderId?: string,
   ) {}
 }
 
@@ -80,7 +81,7 @@ export class ClearAddToDomNotes {
 export class AddToDomNotes {
   static type = '[Notes] Add AddToDomNotes notes';
 
-  constructor(public notes: SmallNote[]) {}
+  constructor(public notes: AddNotesToDom) {}
 }
 
 // CHANGE STATE

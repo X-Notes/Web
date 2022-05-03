@@ -137,9 +137,15 @@ export class ApiServiceNotes {
     );
   }
 
-  copyNotes(ids: string[], mini: OperationDetailMini, operation: LongTermOperation) {
+  copyNotes(
+    ids: string[],
+    mini: OperationDetailMini,
+    operation: LongTermOperation,
+    folderId?: string,
+  ) {
     const obj = {
       ids,
+      folderId,
     };
     return this.httpClient
       .patch<OperationResult<string[]>>(`${environment.writeAPI}/api/note/copy`, obj, {

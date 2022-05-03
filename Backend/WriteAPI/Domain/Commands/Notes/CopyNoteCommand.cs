@@ -11,10 +11,8 @@ namespace Domain.Commands.Notes
         [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
-        public CopyNoteCommand()
-        {
+        public Guid? FolderId { set; get; }
 
-        }
 
         public CopyNoteCommand(Guid userId) : base(userId)
         {

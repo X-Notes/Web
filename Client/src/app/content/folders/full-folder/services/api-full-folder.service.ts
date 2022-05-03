@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';

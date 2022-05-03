@@ -9,6 +9,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
+import { FolderStore } from '../../folders/state/folders-state';
 import {
   CopyNotes,
   ChangeTypeNote,
@@ -46,15 +47,16 @@ export class MenuButtonsNotesService {
 
   copyNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const isInnerFolder = this.store.selectSnapshot(AppStore.isFolderInner);
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids = [note.id];
-      this.store.dispatch(new CopyNotes(note.noteTypeId, ids, pr));
+      this.store.dispatch(new CopyNotes(ids, pr));
     } else {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const folderId = isInnerFolder ? this.store.selectSnapshot(FolderStore.full).id : null;
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids, pr));
+      this.store.dispatch(new CopyNotes(ids, pr, folderId));
     }
   }
 

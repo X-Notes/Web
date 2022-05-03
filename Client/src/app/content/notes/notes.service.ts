@@ -86,9 +86,12 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .select(NoteStore.notesAddingToDOM)
       .pipe(takeUntil(this.destroy))
       .subscribe((x) => {
-        if (x.length > 0) {
-          this.addToDom(x);
-          this.store.dispatch(ClearAddToDomNotes);
+        if (x && x.notes?.length > 0) {
+          const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
+          if (!x.type || x.type === roadType) {
+            this.addToDom(x.notes);
+            this.store.dispatch(ClearAddToDomNotes);
+          }
         }
       });
   }

@@ -69,6 +69,7 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { AddNotesToDom } from './add-notes-to-dom.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -86,7 +87,7 @@ interface NoteState {
   selectedIds: string[];
   updateNoteEvent: UpdateNoteUI[];
   removeFromMurriEvent: string[];
-  notesAddingToDom: SmallNote[];
+  notesAddingToDom: AddNotesToDom;
   selectedLabelsFilter: string[];
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
@@ -103,7 +104,7 @@ interface NoteState {
     selectedIds: [],
     updateNoteEvent: [],
     removeFromMurriEvent: [],
-    notesAddingToDom: [],
+    notesAddingToDom: null,
     selectedLabelsFilter: [],
     isCanceled: false,
     InvitedUsersToNote: [],
@@ -226,7 +227,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static notesAddingToDOM(state: NoteState): SmallNote[] {
+  static notesAddingToDOM(state: NoteState): AddNotesToDom {
     return state.notesAddingToDom;
   }
 
@@ -510,7 +511,8 @@ export class NoteStore {
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
 
     if (isAddToDom) {
-      dispatch(new AddToDomNotes(notesAdded));
+      const obj: AddNotesToDom = { notes: notesAdded };
+      dispatch(new AddToDomNotes(obj));
     }
   }
 
@@ -620,7 +622,7 @@ export class NoteStore {
   @Action(CopyNotes)
   async copyNotes(
     { getState, dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds, pr }: CopyNotes,
+    { selectedIds, pr, folderId }: CopyNotes,
   ) {
     const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
     const mini = this.longTermOperationsHandler.getNewMini(
@@ -631,8 +633,8 @@ export class NoteStore {
       true,
     );
 
-    const resp = await this.api.copyNotes(selectedIds, mini, operation).toPromise();
-    if (resp.eventBody.success) {
+    const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
+    if (resp.eventBody.success && getState().notes.length > 0) {
       const newIds = resp.eventBody.data;
       const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
       const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
@@ -642,12 +644,10 @@ export class NoteStore {
           NoteTypeENUM.Private,
         ),
       );
-      dispatch([UnSelectAllNote]);
-
-      if (typeNote === NoteTypeENUM.Private) {
-        dispatch(new AddToDomNotes([...newNotes]));
-      }
+      const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
+      dispatch(new AddToDomNotes(obj));
     }
+    dispatch([UnSelectAllNote]);
   }
 
   @Action(AddLabelOnNote)
@@ -773,7 +773,7 @@ export class NoteStore {
   // eslint-disable-next-line class-methods-use-this
   clearAddedPrivateNotesEvent({ patchState }: StateContext<NoteState>) {
     patchState({
-      notesAddingToDom: [],
+      notesAddingToDom: null,
     });
   }
 
