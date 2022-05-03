@@ -147,7 +147,7 @@ export class PersonalizationService {
 
   spinnerActive = false;
 
-  timeForSpinnerLoading = 150;
+  timeForSpinnerLoading = 100;
 
   selectAllButton = new Subject();
 

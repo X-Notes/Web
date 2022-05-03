@@ -8,8 +8,8 @@ namespace Domain.Commands.FolderInner
 {
     public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [Required]
         public string Title { set; get; }
+
         [ValidationGuid]
         public Guid Id { set; get; }
     }

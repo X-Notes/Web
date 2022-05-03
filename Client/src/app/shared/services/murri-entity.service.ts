@@ -45,7 +45,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     this.firstInitedMurri = true;
   }
 
-  async destroyGridAsync(wait: number = 150) {
+  async destroyGridAsync(wait: number = 100) {
     await this.murriService.setOpacityFlagAsync(0, false);
     await this.murriService.wait(wait);
     this.murriService.grid?.destroy(); // TODO INVESTIGATE WHY GRID IS UNDEFINED
