@@ -49,6 +49,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
+  @Select(AppStore.isFolderInner)
+  public isFolderInner$: Observable<boolean>;
+
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

@@ -1,13 +1,13 @@
 <ng-container *ngIf="(canView$ | async) && (folder$ | async)">
   <app-general-header-button
-    *ngIf="(canEdit$ | async) && (pService.isMenuActive$ | async) === (false)"
+    *ngIf="(isOwner$ | async) && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
     [styleClasses]="'manage-notes'"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(canEdit$ | async) && (pService.isMenuActive$ | async) === (false)"
+    *ngIf="(isOwner$ | async) && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="newButton()"
     [message]="'new.' + (route$ | async ) | translate"
     [iconClass]="'plus'"
@@ -33,4 +33,11 @@
     [iconClass]="'plus'"
     [styleClasses]="'generic-2 generic-unfixed rotate'"
   ></app-general-header-button>
+
+  <div class="interactions menu" *ngIf="(isSelectedNotes$ | async)" [@showMenuLeftRight]>
+    <app-menu
+      [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEditFullFolderNotes: pB.IsOwnerFullFolderNotes: pB.isAllFullFolderNotesNoShared"
+      class="menu-inner"
+    ></app-menu>
+  </div>
 </ng-container>

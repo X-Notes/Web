@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
+import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { NoteEntitiesService } from 'src/app/shared/services/note-entities.servi
 import { ApiFullFolderService } from './api-full-folder.service';
 
 @Injectable()
-export class FullFolderNotesService extends NoteEntitiesService implements OnDestroy {
+export class FullFolderNotesService extends NoteEntitiesService {
   folderId: string;
 
   constructor(
@@ -31,7 +31,7 @@ export class FullFolderNotesService extends NoteEntitiesService implements OnDes
     super(dialogsManageService, store, murriService, apiNoteService, router);
   }
 
-  ngOnDestroy(): void {
+  onDestroy(): void {
     console.log('full folder notes destroy');
     super.destroyLayout();
     this.destroy.next();
@@ -73,7 +73,8 @@ export class FullFolderNotesService extends NoteEntitiesService implements OnDes
   }
 
   async handlerUpdates(updates: UpdateFolderWS) {
-    if (updates && updates.idsToRemove?.length > 0) {
+    if (!updates) return;
+    if (updates.idsToRemove?.length > 0) {
       this.deleteFromDom(updates.idsToRemove);
     }
     await this.handleAdding(updates.idsToAdd);

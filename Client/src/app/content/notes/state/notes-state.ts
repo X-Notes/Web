@@ -48,6 +48,7 @@ import {
   AddNotes,
   PatchUpdatesUINotes,
   UpdatePositionsRelatedNotes,
+  SetFolderNotes,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -90,6 +91,7 @@ interface NoteState {
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
   onlineUsers: OnlineUsersNote[];
+  folderNotes: SmallNote[];
 }
 
 @State<NoteState>({
@@ -106,6 +108,7 @@ interface NoteState {
     isCanceled: false,
     InvitedUsersToNote: [],
     onlineUsers: [],
+    folderNotes: []
   },
 })
 @Injectable()
@@ -168,6 +171,16 @@ export class NoteStore {
   }
 
   @Selector()
+  static getSelectedFolderNotes(state: NoteState): SmallNote[] {
+    return state.folderNotes.filter((note) => state.selectedIds.some((z) => z === note.id));
+  }
+
+  @Selector()
+  static getAllSelectedFolderNotesCanEdit(state: NoteState): boolean {
+    return this.getSelectedFolderNotes(state).every((x) => x.isCanEdit);
+  }
+
+  @Selector()
   static getAllSelectedNotesCanEdit(state: NoteState): boolean {
     return this.getSelectedNotes(state).every((x) => x.isCanEdit);
   }
@@ -175,6 +188,11 @@ export class NoteStore {
   @Selector()
   static getAllSelectedNotesNoShared(state: NoteState): boolean {
     return this.getSelectedNotes(state).every((x) => x.noteTypeId !== NoteTypeENUM.Shared);
+  }
+
+  @Selector()
+  static getAllSelectedFullFolderNotesNoShared(state: NoteState): boolean {
+    return this.getSelectedFolderNotes(state).every((x) => x.noteTypeId !== NoteTypeENUM.Shared);
   }
 
   @Selector()
@@ -190,6 +208,11 @@ export class NoteStore {
   @Selector()
   static getAllSelectedNotesAuthors(state: NoteState): string[] {
     return [...new Set(this.getSelectedNotes(state).map((x) => x.userId))];
+  }
+
+  @Selector()
+  static getAllSelectedFullFolderNotesAuthors(state: NoteState): string[] {
+    return [...new Set(this.getSelectedFolderNotes(state).map((x) => x.userId))];
   }
 
   @Selector()
@@ -373,6 +396,11 @@ export class NoteStore {
   @Selector()
   static getIsCanceled(state: NoteState): boolean {
     return state.isCanceled;
+  }
+
+  @Action(SetFolderNotes)
+  async setFolderNotes({ patchState }: StateContext<NoteState>, { notes }: SetFolderNotes) {
+    patchState({ folderNotes: notes });
   }
 
   @Action(CreateNote)

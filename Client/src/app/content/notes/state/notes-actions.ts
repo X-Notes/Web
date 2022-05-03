@@ -18,6 +18,12 @@ export class LoadNotes {
   constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
 }
 
+export class SetFolderNotes {
+  static type = '[Notes] Set folder notes';
+
+  constructor(public notes: SmallNote[]) {}
+}
+
 export class CreateNote {
   static type = '[Notes] Create note';
 }

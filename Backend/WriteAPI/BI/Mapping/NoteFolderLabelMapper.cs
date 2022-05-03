@@ -303,6 +303,10 @@ namespace BI.Mapping
 
         private bool IsCanEdit(Note note, Guid callerId)
         {
+            if(note.IsShared() && note.RefTypeId == RefTypeENUM.Editor)
+            {
+                return true;
+            }
             if(note.UserId == callerId)
             {
                 return true;

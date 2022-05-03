@@ -119,6 +119,7 @@ export class MenuButtonsService {
       IsNeedEditRightsToSee: true,
       tooltip: of('menu.removeFromFolder'),
     },
+    this.getCopyNotesItem(),
   ];
 
   // FOLDERS

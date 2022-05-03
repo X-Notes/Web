@@ -105,7 +105,7 @@
 
     <div
       class="interactions menu"
-      *ngIf="(pService.isMenuActive$ | async) === (true)"
+      *ngIf="(pService.isMenuActive$ | async) && (isFolderInner$ | async) === false"
       [@showMenuLeftRight]
     >
       <app-menu
@@ -114,6 +114,6 @@
       ></app-menu>
     </div>
 
-    <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
+    <app-interaction-tools class="right-tools"></app-interaction-tools>
   </div>
 </header>

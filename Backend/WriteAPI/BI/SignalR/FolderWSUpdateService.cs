@@ -12,16 +12,13 @@ namespace BI.SignalR
     {
         private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
         private readonly AppSignalRService appSignalRService;
-        private readonly UserRepository userRepository;
 
         public FolderWSUpdateService(
             WebsocketsFoldersServiceStorage websocketsFoldersService, 
-            AppSignalRService appSignalRService,
-            UserRepository userRepository)
+            AppSignalRService appSignalRService)
         {
             this.websocketsFoldersService = websocketsFoldersService;
             this.appSignalRService = appSignalRService;
-            this.userRepository = userRepository;
         }
 
         public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates)
