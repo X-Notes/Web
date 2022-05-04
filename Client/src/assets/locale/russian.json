@@ -72,7 +72,8 @@
     "history": "История",
     "private": "Личные",
     "privateFolder": "Личные",
-    "removeFromFolder": "Удалить заметки с папки"
+    "removeFromFolder": "Удалить заметки с папки",
+    "restore": "Восстановить"
   },
   "profile": {
     "sectionProfile": "Профиль",

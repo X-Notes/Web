@@ -3,7 +3,12 @@
   class="interactions"
   [ngClass]="[(pService.isMenuActive$ | async) === (true) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
 >
-  <div class="search-section" #search [ngClass]="isInputFocus ? 'active-search' : ''">
+  <div
+    *ngIf="(pService.isMenuActive$ | async) === false"
+    class="search-section"
+    #search
+    [ngClass]="isInputFocus ? 'active-search' : ''"
+  >
     <div class="search">
       <input
         #searchInput
@@ -40,7 +45,7 @@
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleTheme()"
-    *ngIf="pService.check()"
+    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false"
     #themeApp
   >
     <div class="icon">
@@ -53,7 +58,7 @@
     [CustomTooltip]="'header.questions' | translate"
     position="Bottom"
     class="auxiliary-icon"
-    *ngIf="pService.check()"
+    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false"
     [matMenuTriggerFor]="menu"
     #question
   >
@@ -94,7 +99,7 @@
     position="Bottom"
     class="auxiliary-icon"
     (click)="isOpenNotification = !isOpenNotification"
-    *ngIf="!pService.check()"
+    *ngIf="!pService.widthMoreThan1024()"
     #notificationHeader
     cdk-overlay-origin
     #origin="cdkOverlayOrigin"
@@ -126,7 +131,7 @@
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleOrientation()"
-    *ngIf="(isProfile$ | async) === false && !pService.check()"
+    *ngIf="(isProfile$ | async) === false && !pService.widthMoreThan1024()"
     #orientationNote
   >
     <div class="icon">

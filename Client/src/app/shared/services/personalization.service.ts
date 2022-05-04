@@ -179,6 +179,8 @@ export class PersonalizationService {
 
   isMenuActive$: Observable<boolean> = new Observable<boolean>();
 
+  isDisableRightToolsActive$: Observable<boolean> = new Observable<boolean>();
+
   isMobileHistoryActive$: Observable<boolean> = new Observable<boolean>();
 
   windowHeight$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerHeight);
@@ -196,6 +198,12 @@ export class PersonalizationService {
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();
+    this.subscribeDisableRightsTools();
+  }
+
+
+  get isActiveFullNoteMobileButtons$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
   }
 
   get isHistoryButtonInMobileMenu$() {
@@ -203,7 +211,7 @@ export class PersonalizationService {
   }
 
   get isHideTextOnSmall$() {
-    return this.windowWidth$.pipe(map((value) => value < 1400));
+    return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
   subscribeWindowEvents() {
@@ -229,8 +237,15 @@ export class PersonalizationService {
     ]).pipe(map(([n, f]) => n || f));
   }
 
+  subscribeDisableRightsTools() {
+    this.isDisableRightToolsActive$ = combineLatest([
+      this.windowWidth$.pipe(map((value) => value < 1180)).pipe(startWith(false)),
+      this.isMenuActive$.pipe(startWith(false)),
+    ]).pipe(map(([n, f]) => n && f));
+  }
+
   onResize(): void {
-    if (this.check()) {
+    if (this.widthMoreThan1024()) {
       if (!this.hideInnerMenu) {
         this.hideInnerMenu = true;
       }
@@ -246,7 +261,7 @@ export class PersonalizationService {
       }
     }
 
-    if (this.check()) {
+    if (this.widthMoreThan1024()) {
       if (!this.AnimationInnerMenu) {
         this.AnimationInnerMenu = true;
       }
@@ -254,7 +269,7 @@ export class PersonalizationService {
       this.AnimationInnerMenu = false;
     }
 
-    if (this.check()) {
+    if (this.widthMoreThan1024()) {
       if (!this.isCollapseShared) {
         this.isCollapseShared = true;
       }
@@ -285,7 +300,7 @@ export class PersonalizationService {
     this.toggleHistory = !this.toggleHistory;
   }
 
-  check = () => {
+  widthMoreThan1024 = () => {
     return window.innerWidth > 1024;
   };
 

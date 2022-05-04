@@ -54,7 +54,7 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.sliderService.getSize();
     } else {
       this.sliderService.mainWidth = null;

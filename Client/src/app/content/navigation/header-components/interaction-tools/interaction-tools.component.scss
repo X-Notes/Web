@@ -241,25 +241,13 @@
     .search {
       display: none;
     }
-    .auxiliary-icon:nth-child(2) {
-      margin-left: 0;
-    }
   }
 }
 
-@media (max-width: 1100px) {
-  .help-func {
-    display: none;
-  }
-}
 
 @media (max-width: 1024px) {
   .interactions {
     .auxiliary-icon {
-      margin-left: 1rem;
-    }
-
-    .auxiliary-icon:nth-child(2) {
       margin-left: 1rem;
     }
   }

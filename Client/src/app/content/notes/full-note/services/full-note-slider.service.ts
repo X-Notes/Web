@@ -29,7 +29,7 @@ export class FullNoteSliderService {
   constructor(public pService: PersonalizationService, public builder: AnimationBuilder) {}
 
   initWidthSlide() {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.getSize();
     } else {
       this.mainWidth = null;
@@ -78,14 +78,14 @@ export class FullNoteSliderService {
   }
 
   panStart() {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.getSize();
     }
   }
 
   panMove(e, wrap: ElementRef) {
     this.helper = document.getElementsByClassName('second-helper').item(0);
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.perc = ((100 / this.total) * e.deltaX) / (this.mainWidth * this.total);
       this.pos = this.perc - (100 / this.total) * this.active;
       if (this.active === 0 && (this.pos > 2 || this.pos > 0)) {
@@ -102,7 +102,7 @@ export class FullNoteSliderService {
   }
 
   panEnd(e, wrap: ElementRef) {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       if (e.velocityX > 1) {
         if (this.active === 0 && this.pos > 0) {
           this.goTo(this.active, wrap);

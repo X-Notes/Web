@@ -52,7 +52,7 @@ export class InteractionInnerNoteComponent {
       this.pService.users = false;
     }
 
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.pService.hideInnerMenu = false;
     }
   }

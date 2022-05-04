@@ -25,7 +25,7 @@ export class MenuComponent {
 
   // eslint-disable-next-line consistent-return
   disableTooltpUser = () => {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       return true;
     }
     return false;

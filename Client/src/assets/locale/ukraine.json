@@ -72,7 +72,8 @@
     "history": "Історія",
     "private": "Особисті",
     "privateFolder": "Особисті",
-    "removeFromFolder": "Видалити нотатки з папки"
+    "removeFromFolder": "Видалити нотатки з папки",
+    "restore": "Відновити"
   },
   "profile": {
     "sectionProfile": "Профіль",

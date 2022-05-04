@@ -72,7 +72,8 @@
     "history": "History",
     "private": "Personal",
     "privateFolder": "Personal",
-    "removeFromFolder": "Remove notes from folder"
+    "removeFromFolder": "Remove notes from folder",
+    "restore": "Restore"
   },
   "profile": {
     "sectionProfile": "Profile",
