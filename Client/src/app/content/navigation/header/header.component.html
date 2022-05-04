@@ -104,13 +104,12 @@
     <!-- INNER FOLDER END -->
 
     <div
-      class="interactions menu"
+      class="interactions"
       *ngIf="(pService.isMenuActive$ | async) && (isFolderInner$ | async) === false"
       [@showMenuLeftRight]
     >
       <app-menu
         [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
-        class="menu-inner"
       ></app-menu>
     </div>
 

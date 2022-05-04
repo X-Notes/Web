@@ -106,15 +106,6 @@
   }
 }
 
-.interactions > button,
-.menu-inner {
-  margin-right: 1rem;
-
-  &:last-child {
-    margin-right: 0;
-  }
-}
-
 .light {
   .user-circle {
     background-color: white;
@@ -135,20 +126,9 @@
       background-image: linear-gradient(90deg, hsla(0, 0%, 100%, 0), white);
     }
   }
-
-  .menu-inner {
-    border-color: $light-button;
-    background-color: white;
-    color: $light-text-color;
-  }
 }
 
 .dark {
-  .menu-inner {
-    border-color: transparent;
-    background-color: $dark-button;
-  }
-
   .user-circle {
     border-color: transparent;
     background-color: $dark-button;
@@ -248,7 +228,6 @@
 @media (max-width: 1024px) {
   .visible {
     button,
-    .menu-inner,
     .overlay {
       display: block;
     }
@@ -257,14 +236,6 @@
   .interactions {
     width: 100%;
     justify-content: flex-end;
-
-    .menu-inner {
-      position: absolute;
-      z-index: $header-menu;
-      top: 50px;
-      right: 4vw;
-      margin-right: 0;
-    }
 
     .user-circle {
       display: none;
@@ -328,10 +299,6 @@
 
 @media (max-width: 320px) {
   .interactions {
-    .menu-inner {
-      top: 45px;
-    }
-
     .wrapper-people {
       .people-editing {
         .person {

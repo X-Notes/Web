@@ -37,7 +37,6 @@
   <div class="interactions menu" *ngIf="(isSelectedNotes$ | async)" [@showMenuLeftRight]>
     <app-menu
       [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEditFullFolderNotes: pB.IsOwnerFullFolderNotes: pB.isAllFullFolderNotesNoShared"
-      class="menu-inner"
     ></app-menu>
   </div>
 </ng-container>
