@@ -329,6 +329,10 @@
     "hasUsersFolder": "Folder can be viewed or edited by multiple users",
     "unlockTime": "Note will be locked at {{time}}",
     "owner": "You are the owner of the note",
-    "ownerFolder": "You are the owner of the folder"
+    "ownerFolder": "You are the owner of the folder",
+    "editNote": "You can edit note",
+    "editFolder": "You can edit folder",
+    "readNote": "You can only read note",
+    "readFolder": "You can only read folder"
   }
 }

@@ -113,6 +113,7 @@
         >
           <app-note
             [note]="item"
+            [isShowWrightRead]="true"
             [currentFolderId]="(folder$ | async).id"
             (highlightNote)="ffnService.highlightNote($event)"
             (clickOnNote)="ffnService.toNote($event)"

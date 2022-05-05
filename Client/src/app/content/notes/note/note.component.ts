@@ -18,6 +18,8 @@ export class NoteComponent implements OnInit {
 
   @Input() date: string;
 
+  @Input() isShowWrightRead = false;
+
   @Input() tooltipDateMessage: string;
 
   @Input() currentFolderId: string;
