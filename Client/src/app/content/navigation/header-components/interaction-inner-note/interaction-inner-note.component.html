@@ -42,7 +42,7 @@
   <app-general-header-button
     (clickEvent)="pService.toggleHistoryMethod()"
     [message]="('menu.history' | translate)"
-    styleClasses="generic-2 history"
+    [styleClasses]="'generic-2 history'"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -50,7 +50,7 @@
     (clickEvent)="dialogsManageService.openChangeLabels()"
     [tooltipMessage]="'menu.label' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2"
+    [styleClasses]="'generic-2'"
     iconClass="label"
   ></app-general-header-button>
 
@@ -59,7 +59,7 @@
     (clickEvent)="openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2"
+    [styleClasses]="'generic-2'"
     iconClass="share"
   ></app-general-header-button>
 
@@ -68,7 +68,7 @@
     (clickEvent)="hideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2 more_vert"
+    [styleClasses]="'generic-2 more_vert'"
     iconClass="more_vert"
     [isDefault]="true"
   ></app-general-header-button>

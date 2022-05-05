@@ -249,9 +249,16 @@ export class AppStore {
   @Selector()
   static getNewButtonActive(state: AppState): boolean {
     return (
-      !this.isNoteInner(state) &&
-      !this.isFolderInner(state) &&
-      state.routing !== EntityType.LabelDeleted &&
+      (state.routing === EntityType.LabelPrivate ||
+        state.routing === EntityType.NoteArchive ||
+        state.routing === EntityType.NoteDeleted ||
+        state.routing === EntityType.NotePrivate ||
+        state.routing === EntityType.NoteShared ||
+        state.routing === EntityType.FolderArchive ||
+        state.routing === EntityType.FolderDeleted ||
+        state.routing === EntityType.FolderPrivate ||
+        state.routing === EntityType.FolderShared ||
+        state.routing === EntityType.FolderInner) &&
       state.routing !== null
     );
   }

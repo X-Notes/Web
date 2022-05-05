@@ -73,7 +73,7 @@
       (clickEvent)="newButton()"
       [message]="'new.' + (route$ | async ) | translate"
       [iconClass]="'plus'"
-      [styleClasses]="'generic-unfixed generic-create'"
+      [styleClasses]="'generic-unfixed generic-create generic-hide-text'"
     ></app-general-header-button>
     <!-- LABEL DEFAULT END -->
 
@@ -84,7 +84,7 @@
         (click)="deleteAllFromBin()"
         [message]="('header.emptyTrash' | translate)"
         [iconClass]="'delete'"
-        [styleClasses]="'generic-2 generic-unfixed'"
+        [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
       ></app-general-header-button>
     </ng-container>
     <!-- LABEL DELETE END -->

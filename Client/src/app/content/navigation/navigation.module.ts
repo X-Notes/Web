@@ -14,6 +14,7 @@ import { InteractionInnerFolderComponent } from './header-components/interaction
 import { GeneralHeaderButtonComponent } from './header-components/general-header-button/general-header-button.component';
 import { SearchResultComponent } from './header-components/interaction-tools/search-result/search-result.component';
 import { NotificationMessageComponent } from './header-components/notification/notification-message/notification-message.component';
+import { SearchInputComponent } from './header-components/interaction-tools/search-input/search-input.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { NotificationMessageComponent } from './header-components/notification/n
     GeneralHeaderButtonComponent,
     SearchResultComponent,
     NotificationMessageComponent,
+    SearchInputComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
   exports: [SideBarComponent, HeaderComponent],

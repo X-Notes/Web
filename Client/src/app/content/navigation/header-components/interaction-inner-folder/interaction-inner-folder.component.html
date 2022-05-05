@@ -3,7 +3,8 @@
     *ngIf="(isOwner$ | async) && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
-    [styleClasses]="'manage-notes'"
+    [iconClass]="'notes'"
+    [styleClasses]="'generic-unfixed generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -11,7 +12,7 @@
     (clickEvent)="newButton()"
     [message]="'new.' + (route$ | async ) | translate"
     [iconClass]="'plus'"
-    [styleClasses]="'generic-2 generic-unfixed generic-create'"
+    [styleClasses]="'generic-2 generic-unfixed generic-create generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -21,7 +22,7 @@
     [classOnSize]="'hide-tag-text'"
     [message]="('header.select' | translate)"
     [iconClass]="'select'"
-    [styleClasses]="'generic-2 generic-unfixed'"
+    [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button

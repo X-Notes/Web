@@ -2,7 +2,7 @@
   (clickEvent)="newButton()"
   [message]="'new.' + (route$ | async ) | translate"
   [iconClass]="'plus'"
-  [styleClasses]="'generic-unfixed profile-create'"
+  [styleClasses]="'generic-unfixed profile-create generic-hide-text'"
 ></app-general-header-button>
 <app-general-header-button
   (clickEvent)="setDefaultColorProfile()"
