@@ -36,7 +36,7 @@
     [items]="buttonService.items | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
-    [@.disabled]="pService.AnimationInnerMenu"
+    [@.disabled]="!pService.widthMoreThan1024()"
   ></app-menu>
 
   <app-general-header-button

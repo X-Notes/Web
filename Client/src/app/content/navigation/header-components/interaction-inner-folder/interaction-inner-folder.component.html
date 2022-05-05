@@ -35,7 +35,12 @@
     [styleClasses]="'generic-2 generic-unfixed rotate'"
   ></app-general-header-button>
 
-  <div class="interactions menu" *ngIf="(isSelectedNotes$ | async)" [@showMenuLeftRight]>
+  <div
+    class="interactions menu"
+    *ngIf="(isSelectedNotes$ | async)"
+    [@showMenuLeftRight]
+    [@.disabled]="!pService.widthMoreThan1024()"
+  >
     <app-menu
       [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEditFullFolderNotes: pB.IsOwnerFullFolderNotes: pB.isAllFullFolderNotesNoShared"
     ></app-menu>

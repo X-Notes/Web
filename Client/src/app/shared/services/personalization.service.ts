@@ -165,8 +165,6 @@ export class PersonalizationService {
 
   hideInnerMenu = false;
 
-  AnimationInnerMenu = true;
-
   AnimationInnerUsers = true;
 
   users = true;
@@ -200,7 +198,6 @@ export class PersonalizationService {
     this.subscribeMobileActiveMenu();
     this.subscribeDisableRightsTools();
   }
-
 
   get isActiveFullNoteMobileButtons$() {
     return this.windowWidth$.pipe(map((value) => value < 1025));
@@ -259,14 +256,6 @@ export class PersonalizationService {
       if (this.stateSidebar) {
         this.stateSidebar = false;
       }
-    }
-
-    if (this.widthMoreThan1024()) {
-      if (!this.AnimationInnerMenu) {
-        this.AnimationInnerMenu = true;
-      }
-    } else if (this.AnimationInnerMenu) {
-      this.AnimationInnerMenu = false;
     }
 
     if (this.widthMoreThan1024()) {
