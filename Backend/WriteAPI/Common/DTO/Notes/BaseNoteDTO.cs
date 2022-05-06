@@ -17,6 +17,8 @@ namespace Common.DTO.Notes
 
         public Guid UserId { set; get; }
 
+        public bool IsCanEdit { set; get; }
+
         public List<LabelDTO> Labels { set; get; }
 
         public RefTypeENUM RefTypeId { set; get; }

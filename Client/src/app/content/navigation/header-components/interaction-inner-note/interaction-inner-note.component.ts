@@ -6,6 +6,7 @@ import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import {
   PersonalizationService,
@@ -22,14 +23,11 @@ import { PermissionsButtonsService } from '../../services/permissions-buttons.se
   animations: [showMenuLeftRight],
 })
 export class InteractionInnerNoteComponent {
-  @Select(NoteStore.canView)
-  canView$: Observable<boolean>;
-
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
-  @Select(NoteStore.isOwner)
-  isOwner$: Observable<boolean>;
+  @Select(NoteStore.fullNoteType)
+  noteType$: Observable<NoteTypeENUM>;
 
   @Select(NoteStore.getOnlineUsersOnNote)
   onlineUsers$: Observable<OnlineUsersNote[]>;

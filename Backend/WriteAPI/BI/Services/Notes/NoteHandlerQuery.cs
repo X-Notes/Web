@@ -107,7 +107,6 @@ namespace BI.Services.Notes
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
-            var isCanWrite = permissions.CanWrite;
             var isCanRead = permissions.CanRead;
 
             if (request.FolderId.HasValue && !isCanRead)
@@ -120,7 +119,6 @@ namespace BI.Services.Notes
             if (isCanRead)
             {
                 var note = await noteRepository.GetNoteWithLabels(request.NoteId);
-
                 if (note.IsLocked)
                 {
                     var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
@@ -131,7 +129,7 @@ namespace BI.Services.Notes
                 }
 
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                var ent = appCustomMapper.MapNoteToFullNote(note);
+                var ent = appCustomMapper.MapNoteToFullNote(note, permissions.CanWrite);
                 return new OperationResult<FullNote>(true, ent);
             }
 

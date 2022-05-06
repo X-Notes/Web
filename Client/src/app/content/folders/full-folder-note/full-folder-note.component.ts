@@ -30,14 +30,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
 
-  @Select(NoteStore.canView)
-  public canView$: Observable<boolean>;
-
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
-
-  @Select(NoteStore.canNoView)
-  public canNoView$: Observable<boolean>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -92,8 +86,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.noteId, this.folderId)).toPromise();
-    const isCanView = this.store.selectSnapshot(NoteStore.canView);
-    if (isCanView) {
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    if (note) {
       await this.loadContent();
     }
     this.loaded = true;

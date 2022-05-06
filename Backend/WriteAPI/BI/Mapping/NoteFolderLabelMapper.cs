@@ -237,7 +237,7 @@ namespace BI.Mapping
             };
         }
 
-        public FullNote MapNoteToFullNote(Note note)
+        public FullNote MapNoteToFullNote(Note note, bool isCanWrite)
         {
             var _fullNote = new FullNote()
             {
@@ -247,6 +247,7 @@ namespace BI.Mapping
                 RefTypeId = note.RefTypeId,
                 UserId = note.UserId,
                 Title = note.Title,
+                IsCanEdit = isCanWrite,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,

@@ -11,6 +11,10 @@ export class FullNote {
 
   labels: Label[];
 
+  userId: string;
+
+  isCanEdit: boolean;
+
   refTypeId: RefTypeENUM;
 
   noteTypeId: NoteTypeENUM;

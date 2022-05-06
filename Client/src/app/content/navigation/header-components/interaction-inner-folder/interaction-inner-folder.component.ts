@@ -4,9 +4,11 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FullFolder } from 'src/app/content/folders/models/full-folder.model';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
   PersonalizationService,
   showMenuLeftRight,
@@ -29,6 +31,9 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
 
   @Select(FolderStore.full)
   folder$: Observable<FullFolder>;
+
+  @Select(NoteStore.fullNoteType)
+  noteType$: Observable<NoteTypeENUM>;
 
   @Select(AppStore.getName)
   public route$: Observable<string>;

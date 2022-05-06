@@ -5,7 +5,7 @@
   [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div
-    *ngIf="(canView$ | async) && loaded"
+    *ngIf="(note$ | async) && loaded"
     class="wrapper-note"
     #fullWrap
     (panstart)="sliderService.panStart()"
@@ -20,7 +20,7 @@
     ></app-content-editor>
     <app-right-section-content [note]="note$ | async" [wrap]="wrap"></app-right-section-content>
   </div>
-  <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
+  <div *ngIf="(note$ | async) === null && loaded" class="wrapper">
     <app-no-results-illustration
       [isShow]="true"
       [message]="'noResult.noAccessViewNote' | translate"

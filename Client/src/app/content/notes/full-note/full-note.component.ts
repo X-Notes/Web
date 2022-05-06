@@ -32,14 +32,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
-  @Select(NoteStore.canView)
-  public canView$: Observable<boolean>;
-
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
-
-  @Select(NoteStore.canNoView)
-  public canNoView$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
@@ -116,8 +110,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   }
 
   async loadIternalContent() {
-    const isCanView = this.store.selectSnapshot(NoteStore.canView);
-    if (isCanView) {
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    if (note) {
       await this.loadContent();
     }
   }

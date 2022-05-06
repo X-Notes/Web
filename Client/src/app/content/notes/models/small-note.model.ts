@@ -7,10 +7,6 @@ export class SmallNote extends FullNote {
 
   order: number;
 
-  userId: string;
-
-  isCanEdit: boolean;
-
   isSelected?: boolean;
 
   lockRedirect?: boolean;

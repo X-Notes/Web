@@ -1,4 +1,4 @@
-<div *ngIf="(note$ | async) && (canView$ | async)" appTheme class="interactions">
+<div *ngIf="(note$ | async)" appTheme class="interactions">
   <div
     [CustomTooltip]="'header.countUsers' | translate"
     position="Bottom"
@@ -33,7 +33,7 @@
   </div>
 
   <app-menu
-    [items]="buttonService.items | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
+    [items]="buttonService.getNoteMenuByNoteType(noteType$ | async) | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
     [@.disabled]="!pService.widthMoreThan1024()"
