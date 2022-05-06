@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.FullNoteAPI
 {
     [Authorize]
     [Route("api/note/inner/contents")]

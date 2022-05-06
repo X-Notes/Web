@@ -8,8 +8,6 @@ namespace Common.DTO.Notes
     {
         public int Order { set; get; }
 
-        public Guid UserId { set; get; }
-
         public List<BaseNoteContentDTO> Contents { set; get; }
 
         public bool IsCanEdit { set; get; }

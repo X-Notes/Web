@@ -31,7 +31,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
         IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
-        IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>,
+        IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>,
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
@@ -103,27 +103,18 @@ namespace BI.Services.Notes
             return sharedNotes;
         }
 
-        public async Task<OperationResult<FullNoteAnswer>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<FullNote>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var isCanWrite = false;
-            var isCanRead = false;
-            var isOwner = false;
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
+            var permissions = await _mediator.Send(command);
+            var isCanWrite = permissions.CanWrite;
+            var isCanRead = permissions.CanRead;
 
-            if (request.FolderId.HasValue)
+            if (request.FolderId.HasValue && !isCanRead)
             {
-                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
-                var permissions = await _mediator.Send(command);
-                isCanWrite = permissions.CanWrite;
-                isCanRead = permissions.CanRead;
-                isOwner = permissions.IsOwner;
-            }
-            else
-            {
-                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-                var permissions = await _mediator.Send(command);
-                isCanWrite = permissions.CanWrite;
-                isCanRead = permissions.CanRead;
-                isOwner = permissions.IsOwner;
+                var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+                var permissionsFolder = await _mediator.Send(queryFolder);
+                isCanRead = permissionsFolder.CanRead;
             }
 
             if (isCanRead)
@@ -135,17 +126,16 @@ namespace BI.Services.Notes
                     var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
                     if (!isUnlocked)
                     {
-                        return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                        return new OperationResult<FullNote>(false, null).SetContentLocked();
                     }
                 }
 
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 var ent = appCustomMapper.MapNoteToFullNote(note);
-                var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, ent);
-                return new OperationResult<FullNoteAnswer>(true, data);
+                return new OperationResult<FullNote>(true, ent);
             }
 
-            return new OperationResult<FullNoteAnswer>(false, null).SetNoPermissions();
+            return new OperationResult<FullNote>(false, null).SetNoPermissions();
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)

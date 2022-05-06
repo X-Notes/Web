@@ -245,6 +245,7 @@ namespace BI.Mapping
                 Color = note.Color,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
+                UserId = note.UserId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,
@@ -335,6 +336,10 @@ namespace BI.Mapping
 
         private bool IsCanEdit(Folder folder, Guid callerId)
         {
+            if (folder.IsShared() && folder.RefTypeId == RefTypeENUM.Editor)
+            {
+                return true;
+            }
             if (folder.UserId == callerId)
             {
                 return true;

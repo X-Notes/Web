@@ -6,8 +6,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Controllers.FullNoteAPI;
 
-namespace WriteAPI.Controllers.FullNote
+namespace WriteAPI.Controllers.FullNoteAPI
 {
     [Authorize]
     [Route("api/note/inner/videos")]

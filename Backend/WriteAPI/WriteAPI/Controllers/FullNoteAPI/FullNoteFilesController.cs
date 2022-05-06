@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers.FullNote
+namespace WriteAPI.Controllers.FullNoteAPI
 {
     [Route("api/note/inner/files")]
     [ApiController]

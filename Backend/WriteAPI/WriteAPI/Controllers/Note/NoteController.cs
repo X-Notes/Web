@@ -128,7 +128,7 @@ namespace WriteAPI.Controllers.Note
 
         [HttpGet("{noteId}")]
         [AllowAnonymous]
-        public async Task<OperationResult<FullNoteAnswer>> Get(Guid noteId, [FromQuery] Guid? folderId)
+        public async Task<OperationResult<FullNote>> Get(Guid noteId, [FromQuery] Guid? folderId)
         {
             var query = new GetFullNoteQuery(this.GetUserIdUnStrict(), noteId, folderId);
             return await _mediator.Send(query);

@@ -36,5 +36,7 @@ namespace Common.DatabaseModels.Models.Folders
             FolderTypeId = folderTypeId;
             UpdatedAt = DateTimeProvider.Time;
         }
+
+        public bool IsShared() => FolderTypeId == FolderTypeENUM.Shared;
     }
 }
