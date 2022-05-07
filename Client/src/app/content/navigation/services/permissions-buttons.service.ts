@@ -49,7 +49,12 @@ export class PermissionsButtonsService {
   }
 
   get IsOwnerFullNote(): boolean {
-    return this.store.selectSnapshot(NoteStore.isOwner);
+    const userId = this.store.selectSnapshot(UserStore.getUser).id;
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    if (note && userId) {
+      return note.userId === userId;
+    }
+    return false;
   }
 
   get isFullNoteNoShared(): boolean {

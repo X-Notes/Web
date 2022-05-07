@@ -199,7 +199,7 @@ export class SelectAllNote {
 export class UpdateOneNote {
   static type = '[Notes] update one one';
 
-  constructor(public note: SmallNote) {}
+  constructor(public note: Partial<SmallNote>) {}
 }
 
 export class CancelAllSelectedLabels {
@@ -244,13 +244,7 @@ export class UpdateNoteTitle {
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';
 
-  constructor(public note: Partial<FullNote>) {}
-}
-
-export class ChangeIsLockedFullNote {
-  static type = '[Notes] change isLocked fullNote';
-
-  constructor(public isLocked: boolean, public isLockedNow) {}
+  constructor(public note: Partial<FullNote>, public noteId: string) {}
 }
 
 export class TransformTypeNotes {

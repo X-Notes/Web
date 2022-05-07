@@ -10,11 +10,12 @@ import {
   AddFolders,
   ChangeColorFolder,
   DeleteFoldersPermanently,
+  PatchUpdatesUIFolders,
   UpdateFolderTitle,
   UpdateFullFolder,
   UpdateOneFolder,
 } from '../content/folders/state/folders-actions';
-import { FolderStore } from '../content/folders/state/folders-state';
+import { UpdateFolderUI } from '../content/folders/state/update-folder-ui.model';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
@@ -23,12 +24,12 @@ import {
   ChangeColorNote,
   DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
+  PatchUpdatesUINotes,
   RemoveLabelFromNote,
   UpdateFullNote,
   UpdateNoteTitle,
   UpdateOneNote,
 } from '../content/notes/state/notes-actions';
-import { NoteStore } from '../content/notes/state/notes-state';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
 import { EntityType } from '../shared/enums/entity-types.enum';
 import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
@@ -224,20 +225,24 @@ export class SignalRService {
             this.addNotesToSharedEvent.next(notes);
           }
         }
-        const fullNoteId = this.store.selectSnapshot(NoteStore.oneFull).id;
         const updatePermissions = updatePermissionNote.updatePermissions;
+        const noteUI: UpdateNoteUI[] = [];
         for (const update of updatePermissions) {
-          let note = this.store
-            .selectSnapshot(NoteStore.getSmallNotes)
-            .find((z) => z.id === update.entityId);
-          note = { ...note };
+          const note = new SmallNote();
+          note.id = update.entityId;
           note.refTypeId = update.refTypeId;
           note.isCanEdit = note.refTypeId === RefTypeENUM.Editor;
           this.store.dispatch(new UpdateOneNote(note));
-          if (update.entityId === fullNoteId) {
-            this.store.dispatch(new UpdateFullNote({ refTypeId: update.refTypeId }));
-          }
+
+          // FULL NOTE
+          this.store.dispatch(new UpdateFullNote(note, update.entityId));
+
+          // UI
+          const updateUINote = new UpdateNoteUI(update.entityId);
+          updateUINote.isCanEdit = note.isCanEdit;
+          noteUI.push(updateUINote);
         }
+        this.store.dispatch(new PatchUpdatesUINotes(noteUI));
         this.store.dispatch(LoadNotifications);
       },
     );
@@ -263,19 +268,23 @@ export class SignalRService {
           }
         }
         const updatePermissions = updatePermissionFolder.updatePermissions;
-        const fullFolderId = this.store.selectSnapshot(FolderStore.full).id;
+        const folderUI: UpdateFolderUI[] = [];
         for (const update of updatePermissions) {
-          let folder = this.store
-            .selectSnapshot(FolderStore.getSmallFolders)
-            .find((z) => z.id === update.entityId);
-          folder = { ...folder };
+          const folder = new SmallFolder();
+          folder.id = update.entityId;
           folder.refTypeId = update.refTypeId;
           folder.isCanEdit = folder.refTypeId === RefTypeENUM.Editor;
           this.store.dispatch(new UpdateOneFolder(folder));
-          if (update.entityId === fullFolderId) {
-            this.store.dispatch(new UpdateFullFolder({ refTypeId: update.refTypeId }));
-          }
+
+          // FULL FOLDER
+          this.store.dispatch(new UpdateFullFolder(folder, folder.id));
+
+          // UI
+          const updateUIFolder = new UpdateFolderUI(update.entityId);
+          updateUIFolder.isCanEdit = folder.isCanEdit;
+          folderUI.push(updateUIFolder);
         }
+        this.store.dispatch(new PatchUpdatesUIFolders(folderUI));
         this.store.dispatch(LoadNotifications);
       },
     );

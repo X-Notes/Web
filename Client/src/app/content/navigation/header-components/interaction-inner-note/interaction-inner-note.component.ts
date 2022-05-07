@@ -1,13 +1,11 @@
 import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 
-import { Select, Store } from '@ngxs/store';
+import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import {
   PersonalizationService,
   showMenuLeftRight,
@@ -41,7 +39,6 @@ export class InteractionInnerNoteComponent {
     public renderer: Renderer2,
     public buttonService: MenuButtonsService,
     public dialogsManageService: DialogsManageService,
-    private store: Store,
     public pB: PermissionsButtonsService,
   ) {}
 
@@ -53,17 +50,6 @@ export class InteractionInnerNoteComponent {
     if (!this.pService.widthMoreThan1024()) {
       this.pService.hideInnerMenu = false;
     }
-  }
-
-  openShareWithNotes() {
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
-      return this.dialogsManageService.openShareEntity(EntityPopupType.Note, ids);
-    }
-    return this.dialogsManageService.openShareEntity(
-      EntityPopupType.Note,
-      this.store.selectSnapshot(NoteStore.selectedIds),
-    );
   }
 
   hideMenu() {

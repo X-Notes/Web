@@ -4,8 +4,8 @@ import { BehaviorSubject } from 'rxjs';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   UpdateOneNote,
-  ChangeIsLockedFullNote,
   PatchUpdatesUINotes,
+  UpdateFullNote,
 } from '../content/notes/state/notes-actions';
 import { NoteStore } from '../content/notes/state/notes-state';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
@@ -46,7 +46,8 @@ export class UpdaterEntitiesService {
     updatedNote.isLockedNow = isLockedNow ?? updatedNote.isLockedNow;
     updatedNote.unlockedTime = !isLockedNow ? new Date() : null;
     await this.store.dispatch(new UpdateOneNote(updatedNote)).toPromise();
-    this.store.dispatch(new ChangeIsLockedFullNote(isLocked, isLockedNow));
+    this.store.dispatch(new UpdateFullNote({ isLocked, isLockedNow }, noteid));
+
     //
     const obj = new UpdateNoteUI(noteid);
     obj.isLocked = updatedNote.isLocked;

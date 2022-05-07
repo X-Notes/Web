@@ -56,7 +56,7 @@
 
   <app-general-header-button
     *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
-    (clickEvent)="openShareWithNotes()"
+    (clickEvent)="buttonService.openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
     [styleClasses]="'generic-2'"

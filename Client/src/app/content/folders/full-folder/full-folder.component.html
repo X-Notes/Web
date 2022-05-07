@@ -18,7 +18,7 @@
 </app-left-section-wrapper>
 
 <div
-  *ngIf="loaded && (canView$ | async)"
+  *ngIf="loaded && (folder$ | async)"
   class="content-generic-project"
   [ngStyle]="{
     'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
@@ -65,12 +65,12 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
       </button>
       <button
-        *ngIf="isOwner$ | async"
+        *ngIf="(user$ | async).id === (folder$ | async).userId"
         class="side-button"
         type="button"
         name="share"
         #share
-        (click)="openSharePopup()"
+        (click)="menuButtonService.openShareWithFolders()"
       >
         <div class="inner-content">
           <div class="icon">
@@ -134,7 +134,7 @@
   </ng-scrollbar>
   <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
 </div>
-<div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
+<div *ngIf="(folder$ | async) === null && loaded" class="wrapper">
   <app-no-results-illustration
     [isShow]="true"
     [message]="'noResult.noAccessViewFolder' | translate"
@@ -145,7 +145,7 @@
 <div class="drag-helper main-helper"></div>
 <mat-menu #menu="matMenu">
   <ng-container
-    *ngFor="let item of getFolderMenu(folder$ | async) | manageMenuButtons: (canEdit$ | async) : (isOwner$ | async) :true"
+    *ngFor="let item of getFolderMenu(folder$ | async) | manageMenuButtons: (canEdit$ | async) : (user$ | async).id === (folder$ | async)?.userId : true"
   >
     <button
       (click)="item.operation()"

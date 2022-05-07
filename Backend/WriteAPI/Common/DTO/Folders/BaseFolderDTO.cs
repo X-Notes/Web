@@ -14,6 +14,10 @@ namespace Common.DTO.Folders
 
         public string Color { set; get; }
 
+        public Guid UserId { set; get; }
+
+        public bool IsCanEdit { set; get; }
+
         public FolderTypeENUM FolderTypeId { set; get; }
 
         public RefTypeENUM RefTypeId { set; get; }

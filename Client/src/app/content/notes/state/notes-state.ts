@@ -40,7 +40,6 @@ import {
   TransformTypeNotes,
   UpdateFullNote,
   LoadOnlineUsersOnNote,
-  ChangeIsLockedFullNote,
   AddToDomNotes,
   LoadSnapshotNote,
   ResetNotes,
@@ -68,15 +67,10 @@ import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 
 interface FullNoteState {
   note: FullNote;
-  canView: boolean;
-  canEdit: boolean;
-  isOwner: boolean;
-  authorId: string;
   isLocked: boolean;
 }
 
@@ -280,23 +274,13 @@ export class NoteStore {
   }
 
   @Selector()
+  static fullNoteType(state: NoteState): NoteTypeENUM {
+    return state.fullNoteState?.note?.noteTypeId;
+  }
+
+  @Selector()
   static canEdit(state: NoteState): boolean {
-    return state.fullNoteState?.canEdit;
-  }
-
-  @Selector()
-  static canView(state: NoteState): boolean {
-    return state.fullNoteState?.canView;
-  }
-
-  @Selector() // TODO REMOVE
-  static canNoView(state: NoteState): boolean {
-    return !state.fullNoteState?.canView;
-  }
-
-  @Selector()
-  static isOwner(state: NoteState): boolean {
-    return state.fullNoteState?.isOwner;
+    return state.fullNoteState?.note?.isCanEdit;
   }
 
   @Selector()
@@ -307,11 +291,6 @@ export class NoteStore {
   @Selector()
   static isCanForceLocked(state: NoteState): boolean {
     return !state.fullNoteState?.note?.isLockedNow && state.fullNoteState?.note?.isLocked;
-  }
-
-  @Selector()
-  static authorId(state: NoteState): string {
-    return state.fullNoteState?.authorId;
   }
 
   @Selector()
@@ -499,6 +478,13 @@ export class NoteStore {
     const newNotesTo = [...notesAdded, ...notesTo];
     await dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo)).toPromise();
 
+    // UPDATE FULL NOTE
+    const idToUpdate = selectedIds.find(id => id === getState().fullNoteState?.note?.id);
+    if(idToUpdate){
+      dispatch(new UpdateFullNote({ noteTypeId: typeTo, refTypeId }, idToUpdate));
+    }
+
+    // UPDATE POSITIONS
     notesTo = this.getNotesByType(getState, typeTo);
     const positions = notesTo.map(
       (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
@@ -815,13 +801,12 @@ export class NoteStore {
   updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note }: UpdateOneNote) {
     for (const noteState of getState().notes) {
       let isUpdate = false;
-      const notes = noteState.notes.map((x) => {
-        let nt = { ...x };
-        if (nt.id === note.id) {
-          nt = { ...note };
+      const notes = noteState.notes.map((storeNote) => {
+        if (storeNote.id === note.id) {
           isUpdate = true;
+          return { ...storeNote, ...note };
         }
-        return nt;
+        return storeNote;
       });
       if (isUpdate) {
         const state = new Notes(note.noteTypeId, [...notes]);
@@ -836,11 +821,7 @@ export class NoteStore {
     if (request.success) {
       patchState({
         fullNoteState: {
-          canView: request.data.canView,
-          canEdit: request.data.canEdit,
-          note: request.data.fullNote,
-          isOwner: request.data.isOwner,
-          authorId: request.data.authorId,
+          note: request.data,
           isLocked: false,
         },
       });
@@ -848,11 +829,7 @@ export class NoteStore {
     if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
       patchState({
         fullNoteState: {
-          canView: null,
-          canEdit: null,
           note: null,
-          isOwner: null,
-          authorId: null,
           isLocked: true,
         },
       });
@@ -927,28 +904,15 @@ export class NoteStore {
   // eslint-disable-next-line class-methods-use-this
   async changeTypeFullNote(
     { getState, patchState }: StateContext<NoteState>,
-    { note }: UpdateFullNote,
+    { note, noteId }: UpdateFullNote,
   ) {
     const noteState = getState().fullNoteState?.note;
-    if (note) {
+    if (note && noteId === noteState.id) {
       const newNote: FullNote = { ...noteState, ...note };
-      const isCanEdit = newNote.refTypeId === RefTypeENUM.Editor;
-      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote, canEdit: isCanEdit } });
-    }
-  }
-
-  @Action(ChangeIsLockedFullNote)
-  // eslint-disable-next-line class-methods-use-this
-  async changeIsLockedFullNote(
-    { getState, patchState }: StateContext<NoteState>,
-    { isLocked, isLockedNow }: ChangeIsLockedFullNote,
-  ) {
-    const note = getState().fullNoteState?.note;
-    if (note) {
-      const newNote: FullNote = { ...note, isLocked, isLockedNow, }; // TODO
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }
+
 
   @Action(GetInvitedUsersToNote)
   async getInvitedUsersToNote(

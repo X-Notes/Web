@@ -379,17 +379,14 @@ namespace BI.Mapping
             };
         }
 
-        public IEnumerable<FullFolder> MapFoldersToFullFolders(IEnumerable<Folder> folders)
-        {
-            return folders.Select(folder => MapFolderToFullFolder(folder));
-        }
-
-        public FullFolder MapFolderToFullFolder(Folder folder)
+        public FullFolder MapFolderToFullFolder(Folder folder, bool isCanEdit)
         {
             return new FullFolder()
             {
                 Id = folder.Id,
                 Color = folder.Color,
+                UserId = folder.UserId,
+                IsCanEdit = isCanEdit,
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,

@@ -52,6 +52,7 @@ export class FeaturesEntitiesService<
         }
         note.color = value.color ?? note.color;
         note.title = value.title ?? note.title;
+        note.isCanEdit = value.isCanEdit ?? note.isCanEdit;
         note.isLocked = value.isLocked ?? note.isLocked;
         note.isLockedNow = value.isLockedNow ?? note.isLockedNow;
         note.unlockedTime = value.unlockedTime ?? note.unlockedTime;
@@ -69,6 +70,7 @@ export class FeaturesEntitiesService<
       if (folder !== undefined) {
         folder.color = value.color ?? folder.color;
         folder.title = value.title ?? folder.title;
+        folder.isCanEdit = value.isCanEdit ?? folder.isCanEdit;
       }
     }
     if (updates.length > 0) {

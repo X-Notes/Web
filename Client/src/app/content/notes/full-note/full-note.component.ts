@@ -7,7 +7,6 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
@@ -37,9 +36,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
-
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;

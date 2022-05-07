@@ -90,6 +90,11 @@ export class AppStore {
   }
 
   @Selector()
+  static isSharedFolder(state: AppState): boolean {
+    return state.routing === EntityType.FolderShared;
+  }
+
+  @Selector()
   static isNote(state: AppState): boolean {
     return (
       state.routing === EntityType.NoteShared ||
@@ -98,6 +103,11 @@ export class AppStore {
       state.routing === EntityType.NoteArchive ||
       state.routing === EntityType.NoteInner
     );
+  }
+
+  @Selector()
+  static isSharedNote(state: AppState): boolean {
+    return state.routing === EntityType.NoteShared;
   }
 
   @Selector()

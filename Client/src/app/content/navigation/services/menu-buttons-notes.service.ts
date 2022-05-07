@@ -10,12 +10,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { FolderStore } from '../../folders/state/folders-state';
-import {
-  CopyNotes,
-  ChangeTypeNote,
-  UpdateFullNote,
-  DeleteNotesPermanently,
-} from '../../notes/state/notes-actions';
+import { CopyNotes, ChangeTypeNote, DeleteNotesPermanently } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { DialogsManageService } from './dialogs-manage.service';
 
@@ -67,7 +62,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toBin');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Deleted, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Deleted,
       ids,
@@ -85,7 +80,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toPrivate');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Private, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Private,
       ids,
@@ -103,7 +98,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.archive');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Archive, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Archive,
       ids,
@@ -127,23 +122,15 @@ export class MenuButtonsNotesService {
 
   private getSelectedNoteType(): NoteTypeENUM {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      return note.noteTypeId;
+      return this.store.selectSnapshot(NoteStore.fullNoteType);
     }
     return this.store.selectSnapshot(AppStore.getTypeNote);
   }
 
-  private successNoteCallback = (
-    ids: string[],
-    typeFrom: NoteTypeENUM,
-    typeTo: NoteTypeENUM,
-    message: string,
-  ) => {
+  private successNoteCallback = (ids: string[], typeFrom: NoteTypeENUM, message: string) => {
     this.sbws.build(() => {
       this.store.dispatch(this.getRevertActionNotes(typeFrom, ids));
-      this.changeFullNoteType(typeFrom);
     }, message);
-    this.changeFullNoteType(typeTo);
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -165,12 +152,6 @@ export class MenuButtonsNotesService {
       default: {
         throw new Error('incorrect type');
       }
-    }
-  }
-
-  private changeFullNoteType(typeTo: NoteTypeENUM) {
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      this.store.dispatch(new UpdateFullNote({ noteTypeId: typeTo }));
     }
   }
 

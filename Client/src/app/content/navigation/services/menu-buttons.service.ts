@@ -18,14 +18,15 @@ import { LockEncryptService } from '../../notes/lock-encrypt.service';
 import { FolderStore } from '../../folders/state/folders-state';
 import { SmallNote } from '../../notes/models/small-note.model';
 import {
-  ChangeIsLockedFullNote,
   PatchUpdatesUINotes,
   UnSelectAllNote,
+  UpdateFullNote,
   UpdateOneNote,
 } from '../../notes/state/notes-actions';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
 import { UpdateNoteUI } from '../../notes/state/update-note-ui.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
+import { SmallFolder } from '../../folders/models/folder.model';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -64,7 +65,7 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => this.menuButtonsNotesService.setDeleteNotes(),
-      isVisible: of(true),
+      isVisible: this.store.select(AppStore.isSharedNote),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     },
@@ -109,6 +110,7 @@ export class MenuButtonsService {
 
   // INNER FOLDER
   public folderInnerNotesItems: MenuItem[] = [
+    this.getNoteShareItem(),
     this.getChangeColorNoteItem(),
     this.getLabelItem(),
     {
@@ -148,7 +150,7 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => this.menuButtonsFoldersService.setDeleteFolders(),
-      isVisible: of(true),
+      isVisible: this.store.select(AppStore.isSharedFolder),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     },
@@ -199,6 +201,7 @@ export class MenuButtonsService {
   // eslint-disable-next-line class-methods-use-this
 
   getFolderMenuByFolderType(type: FolderTypeENUM) {
+    if (!type) return [];
     switch (type) {
       case FolderTypeENUM.Private: {
         return this.foldersItemsPrivate;
@@ -212,13 +215,11 @@ export class MenuButtonsService {
       case FolderTypeENUM.Deleted: {
         return this.foldersItemsDeleted;
       }
-      default: {
-        throw new Error('Incorrect type');
-      }
     }
   }
 
   getNoteMenuByNoteType(type: NoteTypeENUM) {
+    if (!type) return [];
     switch (type) {
       case NoteTypeENUM.Private: {
         return this.notesItemsPrivate;
@@ -232,32 +233,31 @@ export class MenuButtonsService {
       case NoteTypeENUM.Deleted: {
         return this.notesItemsDeleted;
       }
-      default: {
-        throw new Error('Incorrect type');
-      }
     }
   }
 
   // SHARE
   openShareWithNotes() {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const ids = [this.store.selectSnapshot(NoteStore.oneFull).id];
-      return this.dialogsService.openShareEntity(EntityPopupType.Note, ids);
+      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as SmallNote];
+      return this.dialogsService.openShareEntity(EntityPopupType.Note, notes);
     }
-    return this.dialogsService.openShareEntity(
-      EntityPopupType.Note,
-      this.store.selectSnapshot(NoteStore.selectedIds),
-    );
+    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
+      const folderNotes = this.store.selectSnapshot(NoteStore.getSelectedFolderNotes);
+      return this.dialogsService.openShareEntity(EntityPopupType.Note, folderNotes);
+    }
+    const smallNotes = this.store.selectSnapshot(NoteStore.getSelectedNotes);
+    return this.dialogsService.openShareEntity(EntityPopupType.Note, smallNotes);
   }
 
   openShareWithFolders() {
     const type = EntityPopupType.Folder;
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-      const idsI = [this.store.selectSnapshot(FolderStore.full).id];
-      return this.dialogsService.openShareEntity(type, idsI);
+      const folders = [this.store.selectSnapshot(FolderStore.full) as SmallFolder];
+      return this.dialogsService.openShareEntity(type, folders);
     }
-    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    return this.dialogsService.openShareEntity(type, ids);
+    const smallFolders = this.store.selectSnapshot(FolderStore.getSelectedFolders);
+    return this.dialogsService.openShareEntity(type, smallFolders);
   }
 
   // COLORS
@@ -492,7 +492,7 @@ export class MenuButtonsService {
     updatedNote.isLockedNow = true;
     updatedNote.isLocked = true;
     this.store.dispatch(new UpdateOneNote(updatedNote));
-    this.store.dispatch(new ChangeIsLockedFullNote(true, true));
+    this.store.dispatch(new UpdateFullNote({ isLocked: true, isLockedNow: true }, id));
 
     const obj = new UpdateNoteUI(id);
     obj.isLocked = true;

@@ -58,15 +58,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(FolderStore.full)
   public folder$: Observable<FullFolder>;
 
-  @Select(FolderStore.canView)
-  public canView$: Observable<boolean>;
-
-  @Select(FolderStore.canNoView)
-  public canNoView$: Observable<boolean>;
-
-  @Select(FolderStore.isOwner)
-  public isOwner$: Observable<boolean>;
-
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
 
@@ -132,11 +123,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.store.dispatch(new UpdateFolderTitle(title, this.folderId));
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
       });
-  }
-
-  openSharePopup() {
-    const ids = [this.store.selectSnapshot(FolderStore.full).id];
-    return this.dialogsService.openShareEntity(EntityPopupType.Folder, ids);
   }
 
   openChangeColorPopup() {

@@ -38,24 +38,18 @@ import {
   AddToDomFolders,
   ResetFolders,
   AddFolders,
+  PatchUpdatesUIFolders,
 } from './folders-actions';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
 import { UpdateFolderUI } from './update-folder-ui.model';
 import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
-interface FullFolderState {
-  isOwner: boolean;
-  folder: FullFolder;
-  canView: boolean;
-  canEdit: boolean;
-}
 
 interface FolderState {
   folders: Folders[];
-  fullFolderState: FullFolderState;
+  fullFolder: FullFolder;
   selectedIds: string[];
   removeFromMurriEvent: string[];
   updateFolderEvent: UpdateFolderUI[];
@@ -67,7 +61,7 @@ interface FolderState {
   name: 'Folders',
   defaults: {
     folders: [],
-    fullFolderState: null,
+    fullFolder: null,
     selectedIds: [],
     removeFromMurriEvent: [],
     updateFolderEvent: [],
@@ -97,27 +91,12 @@ export class FolderStore {
 
   @Selector()
   static full(state: FolderState) {
-    return state.fullFolderState.folder;
+    return state.fullFolder;
   }
 
   @Selector()
   static canEdit(state: FolderState): boolean {
-    return state.fullFolderState?.canEdit;
-  }
-
-  @Selector()
-  static canView(state: FolderState): boolean {
-    return state.fullFolderState?.canView;
-  }
-
-  @Selector()
-  static canNoView(state: FolderState): boolean {
-    return !state.fullFolderState?.canView;
-  }
-
-  @Selector()
-  static isOwner(state: FolderState): boolean {
-    return state.fullFolderState?.isOwner;
+    return state.fullFolder?.isCanEdit;
   }
 
   @Selector()
@@ -217,6 +196,12 @@ export class FolderStore {
   // eslint-disable-next-line class-methods-use-this
   clearUpdates({ patchState }: StateContext<FolderState>) {
     patchState({ updateFolderEvent: [] });
+  }
+
+  @Action(PatchUpdatesUIFolders)
+  // eslint-disable-next-line class-methods-use-this
+  patchUpdatesUIFolders({ patchState }: StateContext<FolderState>, { updates }: PatchUpdatesUIFolders) {
+    patchState({ updateFolderEvent: updates });
   }
 
   @Action(CopyFolders)
@@ -393,6 +378,13 @@ export class FolderStore {
     const newFoldersTo = [...foldersAdded, ...foldersTo];
     await dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo)).toPromise();
 
+    // UPDATE FULL NOTE
+    const idToUpdate = selectedIds.find(id => id === getState().fullFolder?.id);
+    if(idToUpdate){
+      dispatch(new UpdateFullFolder({ folderTypeId: typeTo, refTypeId }, idToUpdate));
+    }
+
+    // UPDATE POSITIONS
     foldersTo = this.getFoldersByType(getState, typeTo);
     const positions = foldersTo.map(
       (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
@@ -509,9 +501,9 @@ export class FolderStore {
       resp = await this.api.changeColor(selectedIds, color).toPromise();
     }
     if (resp.success) {
-      const fullFolder = getState().fullFolderState?.folder;
+      const fullFolder = getState().fullFolder;
       if (fullFolder && selectedIds.some(id => id === fullFolder.id)) {
-        patchState({ fullFolderState: { ...getState().fullFolderState, folder: {...fullFolder, color }}});
+        patchState({ fullFolder: { ...fullFolder, color }});
       }
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
       foldersForUpdate.forEach((folder) => folder.color = color);
@@ -529,17 +521,20 @@ export class FolderStore {
 
   @Action(UpdateOneFolder)
   updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder }: UpdateOneFolder) {
-    let folders = this.getFoldersByType(getState, folder.folderTypeId);
-    folders = folders.map((x) => {
-      let nt = { ...x };
-      if (nt.id === folder.id) {
-        nt = { ...folder };
+    for (const foldersState of getState().folders) {
+      let isUpdate = false;
+      const folders = foldersState.folders.map((storeFolder) => {
+        if (storeFolder.id === folder.id) {
+          isUpdate = true;
+          return { ...storeFolder, ...folder };
+        }
+        return storeFolder;
+      });
+      if (isUpdate) {
+        const state = new Folders(folder.folderTypeId, [...folders]);
+        dispatch(new UpdateFolders(state, folder.folderTypeId));
       }
-      return nt;
-    });
-    dispatch(
-      new UpdateFolders(new Folders(folder.folderTypeId, [...folders]), folder.folderTypeId),
-    );
+    }
   }
 
   @Action(UpdateFolderTitle)
@@ -552,9 +547,9 @@ export class FolderStore {
       resp = await this.api.updateTitle(str, folderId).toPromise();
     }
     if (resp.success) {
-      const folder = getState().fullFolderState?.folder;
+      const folder = getState().fullFolder;
       if (folder && folder.id === folderId) {
-        patchState({ fullFolderState: { ...getState().fullFolderState, folder: {...folder, title: str} } });
+        patchState({ fullFolder: { ...folder, title: str } });
       }
       const folderUpdate = this.getFolderById(getState, folderId);
       folderUpdate.title = str;
@@ -570,12 +565,7 @@ export class FolderStore {
   async loadFull({ patchState }: StateContext<FolderState>, { id }: LoadFullFolder) {
     const request = await this.api.get(id).toPromise();
     patchState({
-      fullFolderState: {
-        isOwner: request.isOwner,
-        canView: request.canView,
-        canEdit: request.canEdit,
-        folder: request.fullFolder,
-      },
+      fullFolder: request.data,
     });
   }
 
@@ -583,13 +573,12 @@ export class FolderStore {
   // eslint-disable-next-line class-methods-use-this
   async changeTypeFullFolder(
     { getState, patchState }: StateContext<FolderState>,
-    { folder }: UpdateFullFolder,
+    { folder, folderId }: UpdateFullFolder,
   ) {
-    const folderState = getState().fullFolderState?.folder;
-    if (folder) {
+    const folderState = getState().fullFolder;
+    if (folder && folderId === folderState.id) {
       const newFolder: FullFolder = { ...folderState, ...folder };
-      const isCanEdit = newFolder.refTypeId === RefTypeENUM.Editor;
-      patchState({ fullFolderState: { ...getState().fullFolderState, canEdit: isCanEdit, folder: newFolder } });
+      patchState({ fullFolder: newFolder });
     }
   }
 
@@ -605,8 +594,7 @@ export class FolderStore {
   }
 
   toUpdateFolderUI = (id: string, color: string, title: string) => {
-    const obj = new UpdateFolderUI();
-    obj.id = id;
+    const obj = new UpdateFolderUI(id);
     obj.color = color;
     obj.title = title;
     return obj;

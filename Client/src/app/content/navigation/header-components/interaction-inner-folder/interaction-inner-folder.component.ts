@@ -7,7 +7,9 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
   PersonalizationService,
@@ -23,11 +25,8 @@ import { PermissionsButtonsService } from '../../services/permissions-buttons.se
   animations: [showMenuLeftRight],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-  @Select(FolderStore.canView)
-  canView$: Observable<boolean>;
-
-  @Select(FolderStore.isOwner)
-  isOwner$: Observable<boolean>;
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   @Select(FolderStore.full)
   folder$: Observable<FullFolder>;

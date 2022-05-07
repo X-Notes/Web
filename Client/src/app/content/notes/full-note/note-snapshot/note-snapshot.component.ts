@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
@@ -20,9 +19,6 @@ import { ApiNoteHistoryService } from '../services/api-note-history.service';
   styleUrls: ['./note-snapshot.component.scss'],
 })
 export class NoteSnapshotComponent implements OnInit, OnDestroy {
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
-
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
 

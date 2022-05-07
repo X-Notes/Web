@@ -117,7 +117,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     public data: {
       currentWindowType: EntityPopupType;
-      ids: string[];
+      ents: SmallFolder[] | SmallNote[];
     },
   ) {}
 
@@ -202,22 +202,12 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   getFolders() {
-    this.folders = this.store
-      .selectSnapshot(FolderStore.getSmallFolders)
-      .filter((z) => this.data.ids.some((x) => x === z.id))
-      .map((folder) => {
-        return { ...folder };
-      });
+    this.folders = this.data.ents.map((folder) => ({ ...folder }));
     this.selectFolder(this.folders[0]);
   }
 
   getNotes() {
-    this.notes = this.store
-      .selectSnapshot(NoteStore.getSmallNotes)
-      .filter((z) => this.data.ids.some((x) => x === z.id))
-      .map((note) => {
-        return { ...note };
-      });
+    this.notes = this.data.ents.map((note) => ({ ...note }));
     this.selectNote(this.notes[0]);
   }
 
@@ -261,7 +251,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
     this.currentNote.noteTypeId = type;
     this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = type;
-    this.store.dispatch(new UpdateFullNote({ noteTypeId: type }));
+    this.store.dispatch(new UpdateFullNote({ noteTypeId: type }, this.currentNote.id));
   }
 
   async changeFolderType() {
@@ -286,7 +276,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
     this.currentFolder.folderTypeId = type;
     this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = type;
-    this.store.dispatch([new UpdateFullFolder({ folderTypeId: type })]);
+    this.store.dispatch([new UpdateFullFolder({ folderTypeId: type }, this.currentFolder.id)]);
   }
 
   factoryForCommandNote = (id: string, typeTo: NoteTypeENUM): TransformTypeNotes => {
