@@ -584,22 +584,23 @@ export class NoteStore {
       resp = await this.api.changeColor(selectedIds, color).toPromise();
     }
     if (resp.success) {
+      // UPDATE FULL NOTE
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && selectedIds.some((id) => id === fullNote.id)) {
         patchState({
           fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color } },
         });
       }
+      // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
-        notesForUpdate.forEach((note) => (note.color = color));
-        const updatesUI = notesForUpdate.map((note) =>
-          this.toUpdateNoteUI(note.id, note.color, null, null, null, null),
-        );
-        patchState({ updateNoteEvent: updatesUI });
-        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote(note)));
-        dispatch([UnSelectAllNote]);
+        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({...note, color})));
       }
+
+      // UPDATE UI 
+      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, color, null, null, null, null));
+      patchState({ updateNoteEvent: updatesUI });
+      dispatch([UnSelectAllNote]);
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
@@ -647,6 +648,7 @@ export class NoteStore {
       resp = await this.api.addLabel(label.id, selectedIds).toPromise();
     }
     if (resp.success) {
+      // UPDATE FULL NOTE
       const note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
         patchState({
@@ -656,29 +658,19 @@ export class NoteStore {
           },
         });
       }
-      // Updates small notes
+      // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      const updateNoteEvent: UpdateNoteUI[] = [];
       notesForUpdate.forEach((x) => {
         if (!x.labels.some((z) => z.id === label.id)) {
-          // eslint-disable-next-line no-param-reassign
-          x.labels = [
-            ...x.labels,
-            {
-              id: label.id,
-              color: label.color,
-              name: label.name,
-              isDeleted: label.isDeleted,
-              countNotes: 0,
-              order: 0,
-            },
-          ];
-          updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
+          x.labels = [...x.labels, label];
         }
       });
-      patchState({ updateNoteEvent });
       notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
       dispatch([new UpdateLabelCount(label.id)]);
+
+      // UPDATE UI 
+      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, null, null, [label], null, null));
+      patchState({ updateNoteEvent: updatesUI });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
@@ -695,20 +687,21 @@ export class NoteStore {
       resp = await this.api.removeLabel(labelId, selectedIds).toPromise();
     }
     if (resp.success) {
+      // UPDATE FULL NOTE
       let note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
         note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
+
+      // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      const updateNoteEvent: UpdateNoteUI[] = [];
-      notesForUpdate.forEach((x: SmallNote) => {
-        x.labels = x.labels.filter((z) => z.id !== labelId);
-        updateNoteEvent.push(this.toUpdateNoteUI(x.id, null, null, null, x.labels, null));
-      });
-      patchState({ updateNoteEvent });
-      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
+      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote({labels: x.labels.filter((z) => z.id !== labelId)})));
       dispatch([new UpdateLabelCount(labelId)]);
+
+      // UPDATE UI 
+      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, null, [labelId], null, null, null));
+      patchState({ updateNoteEvent: updatesUI });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
@@ -879,22 +872,22 @@ export class NoteStore {
       resp = await this.apiText.updateTitle(str, noteId).toPromise();
     }
     if (resp.success) {
+      // UPDATE FULL NOTE
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && fullNote.id === noteId) {
         patchState({
           fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: str } },
         });
       }
+      // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
-        noteUpdate.title = str;
-        patchState({
-          updateNoteEvent: [
-            this.toUpdateNoteUI(noteUpdate.id, null, null, null, null, noteUpdate.title),
-          ],
-        });
-        dispatch(new UpdateOneNote(noteUpdate));
+        dispatch(new UpdateOneNote({...noteUpdate, title: str}));
       }
+
+      // UPDATE UI
+      const uiChanges = this.toUpdateNoteUI(noteId, null, null, null, null, str);
+      patchState({ updateNoteEvent: [uiChanges] });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
@@ -1017,6 +1010,23 @@ export class NoteStore {
     }
   }
 
+  toUpdateNoteUI = (
+    id: string,
+    color: string,
+    removeLabelIds: string[],
+    addLabels: Label[],
+    labels: Label[],
+    title: string,
+  ) => {
+    const obj = new UpdateNoteUI(id);
+    obj.color = color;
+    obj.removeLabelIds = removeLabelIds;
+    obj.allLabels = labels;
+    obj.addLabels = addLabels;
+    obj.title = title;
+    return obj;
+  };
+
   getNoteById = (getState: () => NoteState, id: string): SmallNote => {
     for (const notes of getState().notes) {
       for (const x of notes.notes) {
@@ -1040,23 +1050,6 @@ export class NoteStore {
       }
     });
     return result;
-  };
-
-  toUpdateNoteUI = (
-    id: string,
-    color: string,
-    removeLabelIds: string[],
-    addLabels: Label[],
-    labels: Label[],
-    title: string,
-  ) => {
-    const obj = new UpdateNoteUI(id);
-    obj.color = color;
-    obj.removeLabelIds = removeLabelIds;
-    obj.allLabels = labels;
-    obj.addLabels = addLabels;
-    obj.title = title;
-    return obj;
   };
 
   getNotesByType = (getState: () => NoteState, type: NoteTypeENUM) => {

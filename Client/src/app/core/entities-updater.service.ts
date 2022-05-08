@@ -16,8 +16,6 @@ export class UpdaterEntitiesService {
 
   foldersIds$ = new BehaviorSubject<string[]>([]);
 
-  updateNotesInFolder$ = new BehaviorSubject<UpdateNoteUI[]>([]);
-
   unlockNotesState: { [noteId: string]: NodeJS.Timeout } = {};
 
   constructor(private store: Store) {}

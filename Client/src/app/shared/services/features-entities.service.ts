@@ -45,7 +45,7 @@ export class FeaturesEntitiesService<
           note.labels = note.labels.filter((x) => !value.removeLabelIds.some((id) => x.id === id));
         }
         if (value.addLabels && value.addLabels.length > 0) {
-          note.labels = [...value.addLabels, ...note.labels];
+          note.labels = [...note.labels, ...value.addLabels];
         }
         if (value.allLabels) {
           note.labels = value.allLabels;

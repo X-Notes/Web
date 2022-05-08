@@ -146,15 +146,6 @@ export class SignalRService {
           this.store.dispatch(new RemoveLabelFromNote(labelId, [updates.noteId], false));
         });
       }
-
-      //
-      const result = new UpdateNoteUI(updates.noteId);
-      result.title = updates.title;
-      result.color = updates.color;
-      result.removeLabelIds = updates.removeLabelIds;
-      result.addLabels = updates.addLabels;
-      //
-      this.updaterEntitiesService.updateNotesInFolder$.next([result]);
     });
 
     this.hubConnection.on('updateFolderGeneral', (updates: UpdateFolderWS) => {
