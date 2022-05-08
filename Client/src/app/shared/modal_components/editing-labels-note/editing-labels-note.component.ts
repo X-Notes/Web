@@ -26,6 +26,9 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   @Select(LabelStore.noDeleted)
   public labels$: Observable<Label[]>;
 
+  @Select(LabelStore.countNoDeleted)
+  countAll$: Observable<number>;
+
   destroy = new Subject<void>();
 
   loaded = false;

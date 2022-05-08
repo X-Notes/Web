@@ -74,6 +74,18 @@
   }
 }
 
+.popup-module {
+  max-width: 65%;
+
+  .container {
+    padding: 1.5rem;
+
+    .title {
+      font-size: 1.25rem;
+    }
+  }
+}
+
 .type-notification {
   max-width: 85%;
   max-height: 90%;

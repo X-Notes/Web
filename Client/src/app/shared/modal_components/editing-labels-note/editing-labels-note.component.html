@@ -15,29 +15,38 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="createLabel"></div>
     </button>
   </div>
-  <ng-scrollbar
-    class="label-container"
-    *ngIf="loaded"
-    [@smoothOpacity]
-    [visibility]="'hover'"
-    [appearance]="'compact'"
-  >
-    <div class="content-inner">
-      <div
-        *ngFor="let item of (labels$ | async) | searchLabel: searchStr; trackBy: trackByFn"
-        class="label"
-      >
-        <app-label
-          [label]="item"
-          [isSelected]="isSelected(item.id)"
-          (updateLabel)="update($event)"
-          [selectedMode]="true"
-          (deleteLabel)="deleteLabel($event)"
-          (selectLabel)="onSelectLabel($event, item)"
+  <div class="content-container">
+    <ng-scrollbar
+      class="label-container"
+      *ngIf="loaded"
+      [@smoothOpacity]
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
+      <div class="content-inner">
+        <div
+          *ngFor="let item of labels$ | async | searchLabel: searchStr; trackBy: trackByFn"
+          class="label"
         >
-        </app-label>
+          <app-label
+            [label]="item"
+            [isSelected]="isSelected(item.id)"
+            (updateLabel)="update($event)"
+            [selectedMode]="true"
+            (deleteLabel)="deleteLabel($event)"
+            (selectLabel)="onSelectLabel($event, item)"
+          >
+          </app-label>
+        </div>
       </div>
-    </div>
-  </ng-scrollbar>
-  <app-spinner *ngIf="!loaded"></app-spinner>
+    </ng-scrollbar>
+    <app-spinner *ngIf="!loaded"></app-spinner>
+    <app-no-results-illustration
+      *ngIf="loaded && ((countAll$ | async) ? false : true)"
+      [isShow]="loaded && ((countAll$ | async) ? false : true)"
+      [message]="'noResult.allLabels' | translate"
+      [illustration]="pService.icon.allLabelIllustration"
+      typeClass="popup-module"
+    ></app-no-results-illustration>
+  </div>
 </div>
