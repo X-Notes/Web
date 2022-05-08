@@ -18,12 +18,11 @@
   <div class="content-container">
     <ng-scrollbar
       class="label-container"
-      *ngIf="loaded"
       [@smoothOpacity]
       [visibility]="'hover'"
       [appearance]="'compact'"
     >
-      <div class="content-inner">
+      <div *ngIf="loaded" class="content-inner">
         <div
           *ngFor="let item of labels$ | async | searchLabel: searchStr; trackBy: trackByFn"
           class="label"
