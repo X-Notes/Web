@@ -69,6 +69,8 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   refType = RefTypeENUM;
 
+  refTypes = Object.values(RefTypeENUM).filter((x) => typeof x === 'string');
+
   notes: SmallNote[] = [];
 
   currentNote: SmallNote;
@@ -120,6 +122,30 @@ export class ShareComponent implements OnInit, OnDestroy {
       ents: SmallFolder[] | SmallNote[];
     },
   ) {}
+
+  get folderDropdownActive(): boolean {
+    return (
+      this.currentFolder?.folderTypeId === FolderTypeENUM.Shared &&
+      this.data.currentWindowType === this.windowType.Folder &&
+      this.currentFolder.refTypeId !== null
+    );
+  }
+
+  get noteDropdownActive(): boolean {
+    return (
+      this.currentNote?.noteTypeId === NoteTypeENUM.Shared &&
+      this.data.currentWindowType === this.windowType.Note &&
+      this.currentNote.noteTypeId !== null
+    );
+  }
+
+  get folderSelectedValue(): string {
+    return this.refType[this.currentFolder?.refTypeId];
+  }
+
+  get noteSelectedValue(): string {
+    return this.refType[this.currentNote?.refTypeId];
+  }
 
   get isPrivateButtonActive() {
     if (this.data.currentWindowType === EntityPopupType.Note) {
@@ -287,17 +313,19 @@ export class ShareComponent implements OnInit, OnDestroy {
     return new TransformTypeFolders(typeTo, [id], false);
   };
 
-  async changeRefTypeNote(refTypeId: RefTypeENUM) {
-    await this.apiNote.makePublic(refTypeId, [this.currentNote.id]).toPromise();
-    this.currentNote.refTypeId = refTypeId;
-    this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refTypeId;
+  async changeRefTypeNote(refTypeId: string) {
+    const refType = this.refType[refTypeId]; // map from string to number;
+    await this.apiNote.makePublic(refType, [this.currentNote.id]).toPromise();
+    this.currentNote.refTypeId = refType;
+    this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
     this.store.dispatch(new UpdateOneNote(this.currentNote));
   }
 
-  async changeRefTypeFolder(refTypeId: RefTypeENUM) {
-    await this.apiFolder.makePublic(refTypeId, [this.currentFolder.id]).toPromise();
-    this.currentFolder.refTypeId = refTypeId;
-    this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refTypeId;
+  async changeRefTypeFolder(refTypeId: string) {
+    const refType = this.refType[refTypeId]; // map from string to number;
+    await this.apiFolder.makePublic(refType, [this.currentFolder.id]).toPromise();
+    this.currentFolder.refTypeId = refType;
+    this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
     this.store.dispatch(new UpdateOneFolder(this.currentFolder));
   }
 

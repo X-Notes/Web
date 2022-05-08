@@ -119,13 +119,8 @@
               display: flex;
               justify-content: flex-end;
               align-items: center;
-              flex-grow: 1;
               margin-left: 1rem;
-              font-size: 0.875rem;
-
-              p {
-                @include text-overflow;
-              }
+              font-size: 0.75rem;
             }
           }
         }

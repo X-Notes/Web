@@ -127,7 +127,7 @@
       "incorrect": "Incorrect input",
       "close": "Close"
     },
-    "ShareModal": {
+    "shareModal": {
       "Share": "Share",
       "access": "Access",
       "personal": "Personal",
@@ -135,9 +135,11 @@
       "selectedNotes": "Selected notes",
       "search": "Search...",
       "alert": "Send alert",
-      "editor": "Editor",
-      "viewer": "Viewer",
-      "send": "Send"
+      "Editor": "Editor",
+      "Viewer": "Viewer",
+      "send": "Send",
+      "sharedMessage": "Anyone on the internet with this link",
+      "noSharedMessage": "Only people added can open with this link"
     },
     "folderManage": {
       "notes": "Add notes to folder"
