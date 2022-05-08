@@ -95,11 +95,11 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     const lId = label.id;
     if (isSelected) {
       const command = new AddLabelOnNote(label, this.selectedIds, true, this.errorMessage());
-      await this.store.dispatch(command).toPromise();
+      this.store.dispatch(command);
       this.data.labelIds.add(lId);
     } else {
       const command = new RemoveLabelFromNote(lId, this.selectedIds, true, this.errorMessage());
-      await this.store.dispatch(command).toPromise();
+      this.store.dispatch(command);
       this.data.labelIds.delete(lId);
     }
   }

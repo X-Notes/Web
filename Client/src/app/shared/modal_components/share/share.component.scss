@@ -41,7 +41,6 @@
         .content-access {
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
           margin: 0 2.5rem;
 
           &::after {
@@ -127,13 +126,11 @@
         .user-access {
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
           margin: 1.25rem 0;
           .content-inner {
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100%;
             padding: 0 2.5rem;
           }
         }
