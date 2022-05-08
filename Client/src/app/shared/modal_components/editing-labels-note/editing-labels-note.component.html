@@ -23,13 +23,17 @@
     [appearance]="'compact'"
   >
     <div class="content-inner">
-      <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
+      <div
+        *ngFor="let item of (labels$ | async) | searchLabel: searchStr; trackBy: trackByFn"
+        class="label"
+      >
         <app-label
           [label]="item"
-          [isSelected]="item.isSelectedValue"
+          [isSelected]="isSelected(item.id)"
           (updateLabel)="update($event)"
           [selectedMode]="true"
           (deleteLabel)="deleteLabel($event)"
+          (selectLabel)="onSelectLabel($event, item)"
         >
         </app-label>
       </div>

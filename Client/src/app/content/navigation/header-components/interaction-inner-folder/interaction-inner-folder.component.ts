@@ -4,7 +4,6 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FullFolder } from 'src/app/content/folders/models/full-folder.model';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';

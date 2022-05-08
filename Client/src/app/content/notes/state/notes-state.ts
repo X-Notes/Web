@@ -242,11 +242,12 @@ export class NoteStore {
 
   @Selector()
   static labelsIds(state: NoteState): string[] {
-    return this.getSmallNotes(state)
-      .filter((note) => state.selectedIds.some((id) => id === note.id))
+    const notes = [...this.getSelectedNotes(state), ... this.getSelectedFolderNotes(state)];
+    const labelIds = notes
       .map((x) => x.labels)
       .flat()
       .map((x) => x.id);
+    return [...new Set<string>(labelIds)];
   }
 
   // SHARING

@@ -40,6 +40,7 @@ import { MenuButtonsService } from '../../navigation/services/menu-buttons.servi
 import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { LoadLabels } from '../../labels/state/labels-actions';
 
 @Component({
   selector: 'app-full-folder',
@@ -131,6 +132,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.store.dispatch(new LoadLabels());
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
     this.changeNameSubscribtion();

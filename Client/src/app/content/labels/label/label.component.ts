@@ -5,17 +5,11 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
 import { LabelsColor } from 'src/app/shared/enums/labels-colors.enum';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import { TranslateService } from '@ngx-translate/core';
-import { AddLabelOnNote, RemoveLabelFromNote } from '../../notes/state/notes-actions';
-import { NoteStore } from '../../notes/state/notes-state';
 import { Label } from '../models/label.model';
 
 @Component({
@@ -27,13 +21,15 @@ import { Label } from '../models/label.model';
 export class LabelComponent implements OnInit, OnDestroy {
   @Input() label: Label;
 
-  @Input() isSelected: boolean;
+  @Input() readonly isSelected: boolean;
 
   @Output() updateLabel = new EventEmitter<Label>();
 
   @Output() deleteLabel = new EventEmitter<Label>();
 
   @Output() restoreLabel = new EventEmitter<Label>();
+
+  @Output() selectLabel = new EventEmitter<boolean>();
 
   @Input() selectedMode: boolean;
 
@@ -45,13 +41,12 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   isUpdate = false;
 
+  title: string;
+
   nameChanged: Subject<string> = new Subject<string>();
 
   constructor(
     public pService: PersonalizationService,
-    private store: Store,
-    private sbws: SnackBarWrapperService,
-    private apiTranslate: TranslateService,
     @Optional() private murriService: MurriService,
   ) {}
 
@@ -63,6 +58,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.title = this.label.name;
     this.nameChanged
       .pipe(debounceTime(updateTitleEntitesDelay), distinctUntilChanged(), takeUntil(this.destroy))
       .subscribe((name) => {
@@ -74,20 +70,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   select() {
-    let ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
-    if (isInner) {
-      ids = [...ids, this.store.selectSnapshot(NoteStore.oneFull).id];
-    }
-    if (!this.isSelected) {
-      this.store.dispatch(
-        new AddLabelOnNote(this.label, ids, true, this.permissionsErrorMessage()),
-      );
-    } else {
-      this.store.dispatch(
-        new RemoveLabelFromNote(this.label.id, ids, true, this.permissionsErrorMessage()),
-      );
-    }
+    this.selectLabel.emit(!this.isSelected);
   }
 
   openColors() {
@@ -124,7 +107,4 @@ export class LabelComponent implements OnInit, OnDestroy {
   changed(text: string) {
     this.nameChanged.next(text);
   }
-
-  private permissionsErrorMessage = (): string =>
-    this.apiTranslate.instant('snackBar.noPermissionsForEdit');
 }
