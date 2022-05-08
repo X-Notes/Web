@@ -6,6 +6,8 @@ import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
+import { FullNote } from '../models/full-note.model';
+import { AddNotesToDom } from './add-notes-to-dom.model';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -15,6 +17,12 @@ export class LoadNotes {
   static type = '[Notes] Load notes';
 
   constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
+}
+
+export class SetFolderNotes {
+  static type = '[Notes] Set folder notes';
+
+  constructor(public notes: SmallNote[]) {}
 }
 
 export class CreateNote {
@@ -60,9 +68,9 @@ export class CopyNotes {
   static type = '[Notes] Copy notes';
 
   constructor(
-    public typeNote: NoteTypeENUM,
     public selectedIds: string[],
     public pr: PersonalizationSetting,
+    public folderId?: string,
   ) {}
 }
 
@@ -73,7 +81,7 @@ export class ClearAddToDomNotes {
 export class AddToDomNotes {
   static type = '[Notes] Add AddToDomNotes notes';
 
-  constructor(public notes: SmallNote[]) {}
+  constructor(public notes: AddNotesToDom) {}
 }
 
 // CHANGE STATE
@@ -145,6 +153,12 @@ export class UpdatePositionsNotes {
   constructor(public positions: PositionEntityModel[]) {}
 }
 
+export class UpdatePositionsRelatedNotes {
+  static type = '[Notes] Position related notes';
+
+  constructor(public positions: PositionEntityModel[], public noteId: string) {}
+}
+
 // SHARING
 
 export class GetInvitedUsersToNote {
@@ -185,7 +199,7 @@ export class SelectAllNote {
 export class UpdateOneNote {
   static type = '[Notes] update one one';
 
-  constructor(public note: SmallNote) {}
+  constructor(public note: Partial<SmallNote>) {}
 }
 
 export class CancelAllSelectedLabels {
@@ -227,16 +241,10 @@ export class UpdateNoteTitle {
     public errorPermissionMessage?: string,
   ) {}
 }
-export class ChangeTypeFullNote {
-  static type = '[Notes] change type fullNote';
+export class UpdateFullNote {
+  static type = '[Notes] update fullNote';
 
-  constructor(public type: NoteTypeENUM) {}
-}
-
-export class ChangeIsLockedFullNote {
-  static type = '[Notes] change isLocked fullNote';
-
-  constructor(public isLocked: boolean, public isLockedNow) {}
+  constructor(public note: Partial<FullNote>, public noteId: string) {}
 }
 
 export class TransformTypeNotes {

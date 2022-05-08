@@ -138,7 +138,7 @@ header {
 
     .right-tools {
       width: 35%;
-      padding-right: 2vw;
+      display: flex;
       justify-content: flex-end;
     }
 
@@ -178,12 +178,6 @@ header {
     }
 
     .interactions {
-      .menu-inner {
-        border-color: $light-button;
-        background-color: white;
-        color: $light-text-color;
-      }
-
       .hamburger {
         border-color: transparent;
       }
@@ -213,13 +207,6 @@ header {
   .management-section {
     .right-tools {
       background-color: $dark-color;
-    }
-
-    .interactions {
-      .menu-inner {
-        border-color: transparent;
-        background-color: $dark-button;
-      }
     }
   }
 }
@@ -256,15 +243,6 @@ header {
     .management-section {
       position: relative;
       width: 100%;
-
-      .menu {
-        position: fixed;
-        right: 20px;
-        top: 50px;
-        z-index: $header-menu;
-        height: auto;
-      }
-
       .interactions {
         .hamburger {
           display: flex;
@@ -277,12 +255,7 @@ header {
 @media (max-width: 320px) {
   header {
     height: 45px;
-
     .management-section {
-      .menu {
-        top: 45px;
-      }
-
       .interactions {
         .hamburger {
           width: 26px;

@@ -9,7 +9,7 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Permissions;
+using Common.DTO.WebSockets.Permissions;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
 using Domain.Queries.Permissions;
@@ -17,7 +17,6 @@ using MediatR;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Sharing
 {
@@ -131,7 +130,10 @@ namespace BI.Services.Sharing
 
                 await notificationRepository.AddAsync(notification);
 
-                await appSignalRHub.SendNewNotification(request.PermissionUserId, true);
+                var updateCommand = new UpdatePermissionFolderWS();
+                updateCommand.UpdatePermission(new UpdatePermissionEntity(access.FolderId, access.AccessTypeId));
+
+                await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -172,8 +174,11 @@ namespace BI.Services.Sharing
                 };
 
                 await notificationRepository.AddAsync(notification);
-     
-                await appSignalRHub.SendNewNotification(request.PermissionUserId, true);
+
+                var updateCommand = new UpdatePermissionNoteWS();
+                updateCommand.UpdatePermission(new UpdatePermissionEntity(access.NoteId, access.AccessTypeId));
+
+                await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -188,7 +193,7 @@ namespace BI.Services.Sharing
             if (permissions.IsOwner)
             {
                 var access = await usersOnPrivateFoldersRepository
-                    .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
+                    .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
                     await usersOnPrivateFoldersRepository.RemoveAsync(access);
@@ -196,15 +201,17 @@ namespace BI.Services.Sharing
                     var notification = new Notification()
                     {
                         UserFromId = permissions.Caller.Id,
-                        UserToId = request.UserId,
+                        UserToId = request.PermissionUserId,
                         TranslateKeyMessage = "notification.RemoveUserFromFolder",
                         Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
 
-                    await appSignalRHub.RevokePermissionUserFolder(request.FolderId, request.UserId);
-                    await appSignalRHub.SendNewNotification(request.UserId, true);
+                    var updateCommand = new UpdatePermissionFolderWS();
+                    updateCommand.RevokeIds.Add(request.FolderId);
+
+                    await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
@@ -223,7 +230,7 @@ namespace BI.Services.Sharing
             if (permissions.IsOwner)
             {
                 var access = await usersOnPrivateNotesRepository
-                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
+                    .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
                 if (access != null)
                 {
                     await usersOnPrivateNotesRepository.RemoveAsync(access);
@@ -231,15 +238,17 @@ namespace BI.Services.Sharing
                     var notification = new Notification()
                     {
                         UserFromId = permissions.Caller.Id,
-                        UserToId = request.UserId,
+                        UserToId = request.PermissionUserId,
                         TranslateKeyMessage = "notification.RemoveUserFromNote",
                         Date = DateTimeProvider.Time
                     };
 
                     await notificationRepository.AddAsync(notification);
 
-                    await appSignalRHub.RevokePermissionUserNote(request.NoteId, request.UserId);
-                    await appSignalRHub.SendNewNotification(request.UserId, true);
+                    var updateCommand = new UpdatePermissionNoteWS();
+                    updateCommand.RevokeIds.Add(request.NoteId);
+
+                    await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
@@ -276,10 +285,12 @@ namespace BI.Services.Sharing
 
                 await notificationRepository.AddRangeAsync(notifications);
 
+                var updateCommand = new UpdatePermissionFolderWS();
+                updateCommand.IdsToAdd.Add(request.FolderId);
+
                 foreach (var notification in notifications)
                 {
-                    await appSignalRHub.AddFolderToShared(request.FolderId, notification.UserToId);
-                    await appSignalRHub.SendNewNotification(notification.UserToId, true);
+                    await appSignalRHub.UpdatePermissionUserFolder(updateCommand, notification.UserToId);
                 }
             }
 
@@ -319,10 +330,12 @@ namespace BI.Services.Sharing
 
                 await notificationRepository.AddRangeAsync(notifications);
 
+                var updateCommand = new UpdatePermissionNoteWS();
+                updateCommand.IdsToAdd.Add(request.NoteId);
+
                 foreach (var notification in notifications)
                 {
-                    await appSignalRHub.AddNoteToShared(request.NoteId, notification.UserToId);
-                    await appSignalRHub.SendNewNotification(notification.UserToId, true);
+                    await appSignalRHub.UpdatePermissionUserNote(updateCommand, notification.UserToId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);

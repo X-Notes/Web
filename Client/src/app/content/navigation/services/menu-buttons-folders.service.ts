@@ -9,7 +9,6 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import {
   ChangeTypeFolder,
-  ChangeTypeFullFolder,
   CopyFolders,
   DeleteFoldersPermanently,
 } from '../../folders/state/folders-actions';
@@ -34,12 +33,7 @@ export class MenuButtonsFoldersService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toBin');
     const successCallback = () =>
-      this.successFolderCallback(
-        ids,
-        this.getSelectedFolderType(),
-        FolderTypeENUM.Deleted,
-        message,
-      );
+      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Deleted,
       ids,
@@ -57,12 +51,7 @@ export class MenuButtonsFoldersService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toPrivate');
     const successCallback = () =>
-      this.successFolderCallback(
-        ids,
-        this.getSelectedFolderType(),
-        FolderTypeENUM.Private,
-        message,
-      );
+      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Private,
       ids,
@@ -80,12 +69,7 @@ export class MenuButtonsFoldersService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.archive');
     const successCallback = () =>
-      this.successFolderCallback(
-        ids,
-        this.getSelectedFolderType(),
-        FolderTypeENUM.Archive,
-        message,
-      );
+      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Archive,
       ids,
@@ -137,17 +121,10 @@ export class MenuButtonsFoldersService {
   private permissionsErrorMessage = (): string =>
     this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
-  private successFolderCallback = (
-    ids: string[],
-    typeFrom: FolderTypeENUM,
-    typeTo: FolderTypeENUM,
-    message: string,
-  ) => {
+  private successFolderCallback = (ids: string[], typeFrom: FolderTypeENUM, message: string) => {
     this.sbws.build(() => {
       this.store.dispatch(this.getRevertActionFolders(typeFrom, ids));
-      this.changeFullFolderType(typeFrom);
     }, message);
-    this.changeFullFolderType(typeTo);
   };
 
   private getRevertActionFolders = (type: FolderTypeENUM, ids): ChangeTypeFolder => {
@@ -192,11 +169,5 @@ export class MenuButtonsFoldersService {
       return [folder.id];
     }
     return this.store.selectSnapshot(FolderStore.selectedIds);
-  }
-
-  private changeFullFolderType(typeTo: FolderTypeENUM) {
-    if (this.store.selectSnapshot(AppStore.isFolderInner)) {
-      this.store.dispatch(new ChangeTypeFullFolder(typeTo));
-    }
   }
 }

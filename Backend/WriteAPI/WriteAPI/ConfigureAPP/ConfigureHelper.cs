@@ -91,6 +91,7 @@ using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
 using Common.Timers;
 using WriteContext.Repositories.WS;
+using Common.DTO.WebSockets.ReletedNotes;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -151,13 +152,13 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
 
             // RELATED NOTES
             services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
@@ -171,28 +172,24 @@ namespace WriteAPI.ConfigureAPP
 
 
             // FULL NOTE ALBUM
-            services.AddScoped<IRequestHandler<UnlinkFilesAndRemovePhotosCollectionsCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>, FullNotePhotosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddPhotosToCollectionCommand, OperationResult<Unit>>, FullNotePhotosCollectionHandlerCommand>();
 
             // FULL NOTE AUDIOS
-            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveAudiosCollectionsCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>, FullNoteAudiosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddAudiosToCollectionCommand, OperationResult<Unit>>, FullNoteAudiosCollectionHandlerCommand>();
 
             // FULL NOTE VIDEOS
-            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveVideosCollectionsCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateVideosCollectionInfoCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
-            services.AddScoped<IRequestHandler<UnlinkFilesAndRemoveDocumentsCollectionsCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
@@ -214,7 +211,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>, FolderHandlerQuery>();
 
             // FULL-FOLDER
@@ -329,6 +326,7 @@ namespace WriteAPI.ConfigureAPP
             // NOTES
             services.AddScoped<NoteRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
+            services.AddScoped<RelatedNoteUserStateRepository>();
             services.AddScoped<UsersOnPrivateNotesRepository>();
 
             //LABELS

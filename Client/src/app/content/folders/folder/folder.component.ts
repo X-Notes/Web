@@ -22,6 +22,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() date: string;
 
+  @Input() isShowWrightRead = false;
+
   @Input() tooltipDateMessage: string;
 
   @Input() isSelectedMode: boolean;

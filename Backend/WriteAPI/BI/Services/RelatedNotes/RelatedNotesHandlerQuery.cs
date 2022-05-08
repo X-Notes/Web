@@ -20,32 +20,29 @@ namespace BI.Services.RelatedNotes
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
         private readonly NoteRepository noteRepository;
-        private readonly UserRepository userRepository;
         private readonly NoteFolderLabelMapper noteMapper;
         private readonly IMediator _mediator;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
-            UserRepository userRepository,
             NoteFolderLabelMapper noteMapper,
             IMediator _mediator)
         {
             this.relatedRepository = relatedRepository;
             this.noteRepository = noteRepository;
-            this.userRepository = userRepository;
             this.noteMapper = noteMapper;
             this._mediator = _mediator;
         }
 
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
         {
-            var relatedNotes = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+            var relatedNotes = await relatedRepository.GetByNoteId(request.NoteId);
             var ids = relatedNotes.Select(x => x.RelatedNoteId);
             var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, null);
             var lookUp = notes.ToDictionary(x => x.Id);
             relatedNotes.ForEach(x => x.RelatedNote = lookUp.ContainsKey(x.RelatedNoteId) ? lookUp[x.RelatedNoteId] : null);
-            return noteMapper.MapNotesToRelatedNotes(relatedNotes);
+            return noteMapper.MapNotesToRelatedNotes(relatedNotes, request.UserId);
         }
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)

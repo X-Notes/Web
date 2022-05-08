@@ -1,14 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { UpdatePositionsNotes } from 'src/app/content/notes/state/notes-actions';
+import {
+  UpdatePositionsNotes,
+  UpdatePositionsRelatedNotes,
+} from 'src/app/content/notes/state/notes-actions';
 import { UpdatePositionsFolders } from 'src/app/content/folders/state/folders-actions';
 import { UpdatePositionsLabels } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
-import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
 import { PersonalizationService } from './personalization.service';
-import { FolderTypeENUM } from '../enums/folder-types.enum';
-import { NoteTypeENUM } from '../enums/note-types.enum';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 
 @Injectable()
@@ -46,16 +46,16 @@ export class MurriService {
 
   /// SIDE BAR
 
-  initSidebarNotesAsync(apiRelatedNotes: ApiRelatedNotesService, noteId: string, delay = 0) {
+  initSidebarNotesAsync(noteId: string, delay = 0) {
     return new Promise<boolean>((resolve) =>
       setTimeout(async () => {
-        this.initSidebarNotes(apiRelatedNotes, noteId);
+        this.initSidebarNotes(noteId);
         resolve(true);
       }, delay),
     );
   }
 
-  initSidebarNotes(apiRelatedNotes: ApiRelatedNotesService, noteId: string) {
+  initSidebarNotes(noteId: string) {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -63,24 +63,18 @@ export class MurriService {
     }
 
     this.gridSettings(gridItemName, gridElement, true);
-    this.grid.on('dragEnd', async (item) => {
+    this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
-      const index = item.getGrid().getItems().indexOf(item);
-      if (index === 0) {
-        await apiRelatedNotes.updateOrder(noteId, item._element.id, null).toPromise();
-      } else {
-        const prevId = item.getGrid().getItem(index - 1)._element.id;
-        await apiRelatedNotes.updateOrder(noteId, item._element.id, prevId).toPromise();
-      }
+      this.store.dispatch(new UpdatePositionsRelatedNotes(this.getPositions(), noteId));
     });
   }
 
   /// NOTE MURRI
 
-  initMurriNoteAsync(type: NoteTypeENUM, isDragEnabled: boolean) {
+  initMurriNoteAsync(isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.initMurriNote(type, isDragEnabled);
+        this.initMurriNote(isDragEnabled);
         resolve(true);
       }),
     );
@@ -92,7 +86,15 @@ export class MurriService {
     });
   }
 
-  initMurriNote(type: NoteTypeENUM, isDragEnabled: boolean) {
+  sortByHtml(attribute: string = 'order') {
+    this.grid.sort((itemA, itemB) => {
+      const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
+      const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);
+      return aId - bId;
+    });
+  }
+
+  initMurriNote(isDragEnabled: boolean) {
     const gridItemName = '.grid-item'; // TODO move to const
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -130,16 +132,16 @@ export class MurriService {
 
   /// FOLDERS
 
-  initMurriFolderAsync(type: FolderTypeENUM, isDragEnabled: boolean) {
+  initMurriFolderAsync(isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.initMurriFolder(type, isDragEnabled);
+        this.initMurriFolder(isDragEnabled);
         resolve(true);
       }),
     );
   }
 
-  initMurriFolder(type: FolderTypeENUM, isDragEnabled: boolean = true) {
+  initMurriFolder(isDragEnabled: boolean = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {

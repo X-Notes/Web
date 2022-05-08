@@ -10,7 +10,6 @@ import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { SmallNote } from './models/small-note.model';
-import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
 import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
@@ -22,6 +21,7 @@ import {
 } from '../long-term-operations-handler/models/long-term-operation';
 import { ContentModelBase } from './models/editor-models/content-model-base';
 import { PositionEntityModel } from './models/position-note.model';
+import { FullNote } from './models/full-note.model';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -137,9 +137,15 @@ export class ApiServiceNotes {
     );
   }
 
-  copyNotes(ids: string[], mini: OperationDetailMini, operation: LongTermOperation) {
+  copyNotes(
+    ids: string[],
+    mini: OperationDetailMini,
+    operation: LongTermOperation,
+    folderId?: string,
+  ) {
     const obj = {
       ids,
+      folderId,
     };
     return this.httpClient
       .patch<OperationResult<string[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
@@ -173,12 +179,12 @@ export class ApiServiceNotes {
     );
   }
 
-  get(noteId: string, folderId: string = null) {
+  get(noteId: string, folderId: string = null): Observable<OperationResult<FullNote>> {
     let params = new HttpParams();
     if (folderId) {
       params = params.append('folderId', folderId);
     }
-    return this.httpClient.get<OperationResult<RequestFullNote>>(
+    return this.httpClient.get<OperationResult<FullNote>>(
       `${environment.writeAPI}/api/note/${noteId}`,
       {
         params,
@@ -242,10 +248,10 @@ export class ApiServiceNotes {
     );
   }
 
-  removeUserFromPrivateNote(noteId: string, userId: string) {
+  removeUserFromPrivateNote(noteId: string, permissionUserId: string) {
     const obj = {
       noteId,
-      userId,
+      permissionUserId,
     };
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/share/notes/user/remove`,

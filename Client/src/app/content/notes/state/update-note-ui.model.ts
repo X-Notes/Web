@@ -9,6 +9,8 @@ export class UpdateNoteUI {
 
   removeLabelIds: string[];
 
+  isCanEdit: boolean;
+
   addLabels: Label[];
 
   allLabels: Label[];

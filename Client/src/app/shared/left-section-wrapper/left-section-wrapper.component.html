@@ -3,7 +3,7 @@
     class="sub-nav-section"
     *ngIf="pService.stateSidebar"
     [@sidebarCloseOpen]
-    [@.disabled]="pService.check()"
+    [@.disabled]="pService.widthMoreThan1024()"
   >
     <ng-content></ng-content>
     <div class="information">

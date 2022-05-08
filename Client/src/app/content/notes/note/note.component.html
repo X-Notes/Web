@@ -73,6 +73,20 @@
         <mat-icon svgIcon="unlock" [inline]="true"></mat-icon>
       </div>
       <div
+        *ngIf="isShowWrightRead && note.isCanEdit && !isAuthor"
+        class="icon"
+        [CustomTooltip]="'entity-bottom-tooltip.editNote' | translate"
+      >
+        <mat-icon svgIcon="bigPencil" [inline]="true"></mat-icon>
+      </div>
+      <div
+        *ngIf="isShowWrightRead && !note.isCanEdit && !isAuthor"
+        class="icon"
+        [CustomTooltip]="'entity-bottom-tooltip.readNote' | translate"
+      >
+        <mat-icon svgIcon="glas" [inline]="true"></mat-icon>
+      </div>
+      <div
         *ngIf="noteType.Shared === note.noteTypeId && isAuthor"
         class="icon"
         [CustomTooltip]="'entity-bottom-tooltip.owner' | translate"

@@ -26,6 +26,7 @@ using Domain.Commands.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
 using Storage;
+using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.Labels;
 using WriteContext.Repositories.NoteContent;
@@ -58,6 +59,7 @@ namespace BI.Services.Notes
         private readonly CollectionLinkedService collectionLinkedService;
         private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+        private readonly FoldersNotesRepository foldersNotesRepository;
 
         public NoteHandlerCommand(
             NoteRepository noteRepository,
@@ -71,7 +73,8 @@ namespace BI.Services.Notes
             NoteWSUpdateService noteWSUpdateService,
             CollectionLinkedService collectionLinkedService,
             UserNoteEncryptService userNoteEncryptStorage,
-            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+            FoldersNotesRepository foldersNotesRepository)
         {
             this.noteRepository = noteRepository;
             this.appCustomMapper = noteCustomMapper;
@@ -85,6 +88,7 @@ namespace BI.Services.Notes
             this.collectionLinkedService = collectionLinkedService;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+            this.foldersNotesRepository = foldersNotesRepository;
         }
 
 
@@ -143,7 +147,7 @@ namespace BI.Services.Notes
                     x.perm.GetAllUsers()
                 ));
 
-                await noteWSUpdateService.UpdateNotes(updates);
+                await noteWSUpdateService.UpdateNotes(updates, request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -183,12 +187,18 @@ namespace BI.Services.Notes
             if (notes.Any())
             {
                 var noteIds = notes.Select(x => x.noteId);
-                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
 
+                // HISTORY DELETION
+                var histories = await noteSnapshotRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
+                await noteSnapshotRepository.RemoveRangeAsync(histories);
+
+                // CONTENT DELETION
+                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
                 var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                 if (fileContents.Any())
                 {
-                    await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, Guid.Empty, request.UserId, false);
+                    var ids = fileContents.Select(x => x.Id);
+                    await collectionLinkedService.UnLinkCollections(ids);
                 }
 
                 var notesToDelete = notes.Select(x => x.perm.Note);
@@ -246,8 +256,10 @@ namespace BI.Services.Notes
             throw new ArgumentException("Incorrect type");
         }
 
-        public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, bool isOwner, Guid? authorId, Guid? userId)
+        public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, Guid authorId, Guid callerId)
         {
+            var isOwner = authorId == callerId;
+
             var contents = new List<BaseNoteContent>();
 
             foreach (var contentForCopy in noteContents)
@@ -271,7 +283,7 @@ namespace BI.Services.Notes
                             }
                             else
                             {
-                                var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, MapToContentTypesFile(collection.FileTypeId)));
+                                var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId, callerId, file, MapToContentTypesFile(collection.FileTypeId)));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 contents.Add(new CollectionNote(collection, copies, noteId, collection.FileTypeId));
@@ -291,60 +303,79 @@ namespace BI.Services.Notes
         public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var resultIds = new List<Guid>();
-            var order = -1;
+            List<Guid> idsForCopy = new();
 
-            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.Any())
+            if (request.FolderId.HasValue)
             {
-                var idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
-                var permission = permissions.First().perm;
-                if (idsForCopy.Any())
+                var commandFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+                var permissionFolder = await _mediator.Send(commandFolder);
+
+                if (permissionFolder.CanRead)
                 {
-                    var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
-                    foreach(var noteForCopy in notesForCopy)
-                    {
-
-                        if (noteForCopy.IsLocked)
-                        {
-                            var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
-                            if (!isUnlocked)
-                            {
-                                continue;
-                            }
-                        }
-
-                        var newNote = new Note()
-                        {
-                            Title = noteForCopy.Title,
-                            Color = noteForCopy.Color,
-                            CreatedAt = DateTimeProvider.Time,
-                            UpdatedAt = DateTimeProvider.Time,
-                            NoteTypeId = NoteTypeENUM.Private,
-                            RefTypeId = noteForCopy.RefTypeId,
-                            Order = order--,
-                            UserId = permission.Caller.Id,
-                        };
-                        var dbNote = await noteRepository.AddAsync(newNote);
-                        resultIds.Add(dbNote.Entity.Id);
-                        var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
-                        {
-                            NoteId = dbNote.Entity.Id,
-                            LabelId = label.LabelId,
-                            AddedAt = DateTimeProvider.Time
-                        });
-
-                        await labelsNotesRepository.AddRangeAsync(labels);
-                        var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, permission.IsOwner, permission.Author.Id, permission.Caller.Id);
-                        await baseNoteContentRepository.AddRangeAsync(contents);
-                    }
-
-                    return new OperationResult<List<Guid>>(true, resultIds);
+                    var folderNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId.Value && request.Ids.Contains(x.NoteId));
+                    idsForCopy = folderNotes.Select(x => x.NoteId).ToList();
+                }
+                else
+                {
+                    return new OperationResult<List<Guid>>().SetNoPermissions();
                 }
             }
+            else
+            {
+                var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
+                var permissions = await _mediator.Send(command);
+                idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+            }
 
-            return new OperationResult<List<Guid>>(false, resultIds).SetNoPermissions();
+            if (!idsForCopy.Any())
+            {
+                return new OperationResult<List<Guid>>().SetNotFound();
+            }
+
+            var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
+            foreach (var noteForCopy in notesForCopy)
+            {
+                var isNoteOwner = noteForCopy.UserId == request.UserId;
+
+                if (noteForCopy.IsLocked)
+                {
+                    var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
+                    if (!isUnlocked)
+                    {
+                        continue;
+                    }
+                }
+
+                var newNote = new Note()
+                {
+                    Title = noteForCopy.Title,
+                    Color = noteForCopy.Color,
+                    CreatedAt = DateTimeProvider.Time,
+                    UpdatedAt = DateTimeProvider.Time,
+                    NoteTypeId = NoteTypeENUM.Private,
+                    RefTypeId = noteForCopy.RefTypeId,
+                    UserId = request.UserId,
+                };
+                var dbNote = await noteRepository.AddAsync(newNote);
+
+                if (isNoteOwner)
+                {
+                    var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
+                    {
+                        NoteId = dbNote.Entity.Id,
+                        LabelId = label.LabelId,
+                        AddedAt = DateTimeProvider.Time
+                    });
+                    await labelsNotesRepository.AddRangeAsync(labels);
+                }
+
+                var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, noteForCopy.UserId, request.UserId);
+                await baseNoteContentRepository.AddRangeAsync(contents);
+
+                resultIds.Add(dbNote.Entity.Id);
+            }
+
+            return new OperationResult<List<Guid>>(true, resultIds);
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
@@ -376,7 +407,7 @@ namespace BI.Services.Notes
                      (new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = x.noteId },
                      x.perm.GetAllUsers()));
 
-                    await noteWSUpdateService.UpdateNotes(updates);
+                    await noteWSUpdateService.UpdateNotes(updates, request.UserId);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -418,7 +449,7 @@ namespace BI.Services.Notes
                         var value = permissions.FirstOrDefault(x => x.noteId == labelNote.NoteId);
                         if (value.perm != null) {
                             var update = new UpdateNoteWS { AddLabels = labels, NoteId = value.noteId };
-                            await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers());
+                            await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers(), request.UserId);
                         }
                     }
                 }

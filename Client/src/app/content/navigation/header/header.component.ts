@@ -43,11 +43,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.getMenuSwitch)
   public menuSwitch$: Observable<string>;
 
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
-
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
+
+  @Select(AppStore.isFolderInner)
+  public isFolderInner$: Observable<boolean>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -56,8 +56,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   countDeleted$: Observable<number>;
 
   destroy = new Subject<void>();
-
-  newButtonActive = false;
 
   isOpenNotification = false;
 
@@ -87,13 +85,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store
-      .select(AppStore.getNewButtonActive)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((z) => {
-        this.newButtonActive = z;
-      });
-
     this.store
       .select(AppStore.getRouting)
       .pipe(takeUntil(this.destroy))

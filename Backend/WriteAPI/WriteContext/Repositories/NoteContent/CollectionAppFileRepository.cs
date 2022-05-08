@@ -24,5 +24,10 @@ namespace WriteContext.Repositories.NoteContent
         {
             return entities.Include(x => x.AppFile).Where(x => contentIds.Contains(x.CollectionNoteId)).ToListAsync();
         }
+
+        public Task<List<CollectionNoteAppFile>> GetAppFilesByFileIds(List<Guid> fileIds)
+        {
+            return entities.Include(x => x.AppFile).Where(x => fileIds.Contains(x.AppFileId)).ToListAsync();
+        }
     }
 }

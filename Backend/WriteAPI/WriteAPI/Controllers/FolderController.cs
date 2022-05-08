@@ -51,7 +51,7 @@ namespace WriteAPI.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<FullFolderAnswer> Get(Guid id)
+        public async Task<OperationResult<FullFolder>> Get(Guid id)
         {
             var query = new GetFullFolderQuery(this.GetUserIdUnStrict(), id);
             return await _mediator.Send(query);

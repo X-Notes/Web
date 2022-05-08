@@ -106,7 +106,7 @@ namespace BI.Services.Folders
 
                 // WS UPDATES
                 var updates = permissions.Select(x => (new UpdateFolderWS { Color = request.Color, FolderId = x.folderId }, x.perm.GetAllUsers()));
-                await folderWSUpdateService.UpdateFolders(updates);
+                await folderWSUpdateService.UpdateFolders(updates, request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

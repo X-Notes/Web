@@ -1,16 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Select, Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
 import { Label } from 'src/app/content/labels/models/label.model';
 import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
-import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
-import { AppStore } from 'src/app/core/stateApp/app-state';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { LabelSelect } from 'src/app/content/labels/models/label-select.model';
+import {
+  AddLabelOnNote,
+  RemoveLabelFromNote,
+  UnSelectAllNote,
+} from 'src/app/content/notes/state/notes-actions';
+import { Observable, Subject } from 'rxjs';
 import { PersonalizationService, smoothOpacity } from '../../services/personalization.service';
+import { map } from 'rxjs/operators';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-editing-labels-note',
@@ -19,19 +23,42 @@ import { PersonalizationService, smoothOpacity } from '../../services/personaliz
   animations: [smoothOpacity()],
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
+
+  @Select(LabelStore.countNoDeleted)
+  countAll$: Observable<number>;
+
   destroy = new Subject<void>();
 
   loaded = false;
 
   searchStr = '';
 
-  public labels: LabelSelect[];
-
   constructor(
     public dialogRef: MatDialogRef<EditingLabelsNoteComponent>,
     public pService: PersonalizationService,
     private store: Store,
+    private apiTranslate: TranslateService,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      labelIds: Set<string>;
+    },
   ) {}
+
+  get labels(): Observable<Label[]> {
+    return this.store
+      .select(LabelStore.noDeleted)
+      .pipe(map((labels) => labels.map((x) => ({ ...x }))));
+  }
+
+  private get selectedIds(): string[] {
+    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInner) {
+      return [this.store.selectSnapshot(NoteStore.oneFull).id];
+    }
+    return this.store.selectSnapshot(NoteStore.selectedIds);
+  }
 
   ngOnDestroy(): void {
     this.store.dispatch(new UnSelectAllNote());
@@ -40,51 +67,12 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.initLabels();
-
     await this.pService.waitPreloading();
     this.loaded = true;
-    this.checkSelect();
   }
 
-  initLabels() {
-    const labels = this.store.selectSnapshot(LabelStore.noDeleted);
-    this.labels = this.transformLabels(labels);
-  }
-
-  transformLabels = (items: Label[]) => {
-    return [...items].map((label) => {
-      return { ...label, isSelectedValue: false };
-    });
-  };
-
-  checkSelect() {
-    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
-    if (isInner) {
-      this.store
-        .select(NoteStore.oneFull)
-        .pipe(takeUntil(this.destroy))
-        .subscribe((note) => {
-          if (note) {
-            const ids = note.labels.map((label) => label.id);
-            this.tryFind(ids);
-          }
-        });
-    } else {
-      this.store
-        .select(NoteStore.labelsIds)
-        .pipe(takeUntil(this.destroy))
-        .subscribe((ids) => {
-          this.tryFind(ids);
-        });
-    }
-  }
-
-  tryFind(labelIds: string[]) {
-    for (const label of this.labels) {
-      const flag = labelIds.some((x) => x === label.id);
-      label.isSelectedValue = flag;
-    }
+  isSelected(labelId: string): boolean {
+    return this.data.labelIds.has(labelId);
   }
 
   changed(value): void {
@@ -99,9 +87,26 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SetDeleteLabel(label));
   }
 
-  async newLabel() {
-    await this.store.dispatch(new AddLabel()).toPromise();
-    const newLabel = this.store.selectSnapshot(LabelStore.noDeleted)[0] as LabelSelect;
-    this.labels = [{ ...newLabel }, ...this.labels];
+  newLabel() {
+    this.store.dispatch(new AddLabel());
   }
+
+  async onSelectLabel(isSelected: boolean, label: Label): Promise<void> {
+    const lId = label.id;
+    if (isSelected) {
+      const command = new AddLabelOnNote(label, this.selectedIds, true, this.errorMessage());
+      this.store.dispatch(command);
+      this.data.labelIds.add(lId);
+    } else {
+      const command = new RemoveLabelFromNote(lId, this.selectedIds, true, this.errorMessage());
+      this.store.dispatch(command);
+      this.data.labelIds.delete(lId);
+    }
+  }
+
+  trackByFn(index, item: Label) {
+    return item.id;
+  }
+
+  private errorMessage = (): string => this.apiTranslate.instant('snackBar.noPermissionsForEdit');
 }

@@ -4,7 +4,6 @@ import { Subject, Observable, BehaviorSubject, combineLatest, fromEvent } from '
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
@@ -148,7 +147,7 @@ export class PersonalizationService {
 
   spinnerActive = false;
 
-  timeForSpinnerLoading = 150;
+  timeForSpinnerLoading = 100;
 
   selectAllButton = new Subject();
 
@@ -166,8 +165,6 @@ export class PersonalizationService {
 
   hideInnerMenu = false;
 
-  AnimationInnerMenu = true;
-
   AnimationInnerUsers = true;
 
   users = true;
@@ -180,25 +177,30 @@ export class PersonalizationService {
 
   isMenuActive$: Observable<boolean> = new Observable<boolean>();
 
+  isDisableRightToolsActive$: Observable<boolean> = new Observable<boolean>();
+
   isMobileHistoryActive$: Observable<boolean> = new Observable<boolean>();
 
   windowHeight$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerHeight);
 
   windowWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerWidth);
 
+  isInnerFolderSelectAllActive$ = new BehaviorSubject<boolean>(false);
+
   icon = Icons;
 
   isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    public lockEncryptService: LockEncryptService,
-    private translate: TranslateService,
-    private store: Store,
-  ) {
+  constructor(public lockEncryptService: LockEncryptService, private store: Store) {
     this.onResize();
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();
+    this.subscribeDisableRightsTools();
+  }
+
+  get isActiveFullNoteMobileButtons$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
   }
 
   get isHistoryButtonInMobileMenu$() {
@@ -206,7 +208,7 @@ export class PersonalizationService {
   }
 
   get isHideTextOnSmall$() {
-    return this.windowWidth$.pipe(map((value) => value < 1400));
+    return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
   subscribeWindowEvents() {
@@ -232,8 +234,15 @@ export class PersonalizationService {
     ]).pipe(map(([n, f]) => n || f));
   }
 
+  subscribeDisableRightsTools() {
+    this.isDisableRightToolsActive$ = combineLatest([
+      this.windowWidth$.pipe(map((value) => value < 1180)).pipe(startWith(false)),
+      this.isMenuActive$.pipe(startWith(false)),
+    ]).pipe(map(([n, f]) => n && f));
+  }
+
   onResize(): void {
-    if (this.check()) {
+    if (this.widthMoreThan1024()) {
       if (!this.hideInnerMenu) {
         this.hideInnerMenu = true;
       }
@@ -249,15 +258,7 @@ export class PersonalizationService {
       }
     }
 
-    if (this.check()) {
-      if (!this.AnimationInnerMenu) {
-        this.AnimationInnerMenu = true;
-      }
-    } else if (this.AnimationInnerMenu) {
-      this.AnimationInnerMenu = false;
-    }
-
-    if (this.check()) {
+    if (this.widthMoreThan1024()) {
       if (!this.isCollapseShared) {
         this.isCollapseShared = true;
       }
@@ -288,7 +289,7 @@ export class PersonalizationService {
     this.toggleHistory = !this.toggleHistory;
   }
 
-  check = () => {
+  widthMoreThan1024 = () => {
     return window.innerWidth > 1024;
   };
 

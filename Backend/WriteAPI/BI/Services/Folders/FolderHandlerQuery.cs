@@ -20,7 +20,7 @@ namespace BI.Services.Folders
 {
     public class FolderHandlerQuery :
         IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>,
-        IRequestHandler<GetFullFolderQuery, FullFolderAnswer>,
+        IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>,
         IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>,
         IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>
     {
@@ -67,7 +67,7 @@ namespace BI.Services.Folders
         }
 
 
-        public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<FullFolder>> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -75,15 +75,17 @@ namespace BI.Services.Folders
 
             if(permissions.CanWrite)
             {
-                return new FullFolderAnswer(permissions.IsOwner, true, true, folder.UserId, appCustomMapper.MapFolderToFullFolder(folder));
+                var ent = appCustomMapper.MapFolderToFullFolder(folder, true);
+                return new OperationResult<FullFolder>(true, ent);
             }
 
             if(permissions.CanRead)
             {
-                return new FullFolderAnswer(permissions.IsOwner, true, false, folder.UserId, appCustomMapper.MapFolderToFullFolder(folder));
+                var ent = appCustomMapper.MapFolderToFullFolder(folder, false);
+                return new OperationResult<FullFolder>(true, ent);
             }
 
-            return new FullFolderAnswer(permissions.IsOwner, false, false, null, null);
+            return new OperationResult<FullFolder>().SetNotFound();
 
         }
 

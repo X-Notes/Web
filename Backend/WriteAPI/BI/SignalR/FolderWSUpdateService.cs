@@ -12,37 +12,34 @@ namespace BI.SignalR
     {
         private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
         private readonly AppSignalRService appSignalRService;
-        private readonly UserRepository userRepository;
 
         public FolderWSUpdateService(
             WebsocketsFoldersServiceStorage websocketsFoldersService, 
-            AppSignalRService appSignalRService,
-            UserRepository userRepository)
+            AppSignalRService appSignalRService)
         {
             this.websocketsFoldersService = websocketsFoldersService;
             this.appSignalRService = appSignalRService;
-            this.userRepository = userRepository;
         }
 
-        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates)
+        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates, Guid exceptUserId)
         {
             foreach (var update in updates)
             {
-                await UpdateFolder(update.value, update.ids);
+                await UpdateFolder(update.value, update.ids, exceptUserId);
             }
         }
 
-        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds)
+        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId);
+            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId, exceptUserId);
 
             if (userIds != null && userIds.Any())
             {
-                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
                 connections.AddRange(additionalConnections);
             }
 
-            await appSignalRService.UpdateFoldersInManyUsers(update, connections.Distinct());
+            await appSignalRService.UpdateFolderInManyUsers(update, connections.Distinct());
         }
     }
 }

@@ -46,7 +46,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Private);
+    this.folderService.murriInitialise(this.refElements);
   }
 
   ngOnDestroy(): void {

@@ -173,34 +173,36 @@ namespace BI.Mapping
 
         // NOTES 
 
-        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes)
+        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, Guid callerId)
         {
             return notes.Select(note =>
             {
-                var m = MapNoteToRelatedNoteDTO(note);
+                var m = MapNoteToRelatedNoteDTO(note, callerId);
                 m = SetLockedState(m, note.RelatedNote);
                 m = SetContent(m);
                 return m;
             }).ToList(); ;
         }
 
-        public RelatedNote MapNoteToRelatedNoteDTO(ReletatedNoteToInnerNote note)
+        public RelatedNote MapNoteToRelatedNoteDTO(ReletatedNoteToInnerNote relation, Guid callerId)
         {
+            var state = relation.RelatedNoteUserStates.FirstOrDefault(x => x.UserId == callerId);
             return new RelatedNote()
             {
-                Id = note.RelatedNote.Id,
-                Color = note.RelatedNote.Color,
-                Title = note.RelatedNote.Title,
-                Order = note.Order,
-                UserId = note.RelatedNote.UserId,
-                IsOpened = note.IsOpened,
-                Labels = note.RelatedNote.LabelsNotes != null ? MapLabelsToLabelsDTO(note.RelatedNote.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteTypeId = note.RelatedNote.NoteTypeId,
-                RefTypeId = note.RelatedNote.RefTypeId,
-                Contents = MapContentsToContentsDTO(note.RelatedNote.Contents, note.RelatedNote.UserId).ToList(),
-                DeletedAt = note.RelatedNote.DeletedAt,
-                CreatedAt = note.RelatedNote.CreatedAt,
-                UpdatedAt = note.RelatedNote.UpdatedAt
+                ReletionId = relation.Id,
+                Id = relation.RelatedNote.Id,
+                Color = relation.RelatedNote.Color,
+                Title = relation.RelatedNote.Title,
+                Order = relation.Order,
+                UserId = relation.RelatedNote.UserId,
+                IsOpened = state != null ? state.IsOpened : true,
+                Labels = relation.RelatedNote.LabelsNotes != null ? MapLabelsToLabelsDTO(relation.RelatedNote.LabelsNotes?.GetLabelUnDesc()) : null,
+                NoteTypeId = relation.RelatedNote.NoteTypeId,
+                RefTypeId = relation.RelatedNote.RefTypeId,
+                Contents = MapContentsToContentsDTO(relation.RelatedNote.Contents, relation.RelatedNote.UserId).ToList(),
+                DeletedAt = relation.RelatedNote.DeletedAt,
+                CreatedAt = relation.RelatedNote.CreatedAt,
+                UpdatedAt = relation.RelatedNote.UpdatedAt
             };
         }
 
@@ -235,7 +237,7 @@ namespace BI.Mapping
             };
         }
 
-        public FullNote MapNoteToFullNote(Note note)
+        public FullNote MapNoteToFullNote(Note note, bool isCanWrite)
         {
             var _fullNote = new FullNote()
             {
@@ -243,7 +245,9 @@ namespace BI.Mapping
                 Color = note.Color,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
+                UserId = note.UserId,
                 Title = note.Title,
+                IsCanEdit = isCanWrite,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
@@ -301,6 +305,10 @@ namespace BI.Mapping
 
         private bool IsCanEdit(Note note, Guid callerId)
         {
+            if(note.IsShared() && note.RefTypeId == RefTypeENUM.Editor)
+            {
+                return true;
+            }
             if(note.UserId == callerId)
             {
                 return true;
@@ -329,6 +337,10 @@ namespace BI.Mapping
 
         private bool IsCanEdit(Folder folder, Guid callerId)
         {
+            if (folder.IsShared() && folder.RefTypeId == RefTypeENUM.Editor)
+            {
+                return true;
+            }
             if (folder.UserId == callerId)
             {
                 return true;
@@ -367,17 +379,14 @@ namespace BI.Mapping
             };
         }
 
-        public IEnumerable<FullFolder> MapFoldersToFullFolders(IEnumerable<Folder> folders)
-        {
-            return folders.Select(folder => MapFolderToFullFolder(folder));
-        }
-
-        public FullFolder MapFolderToFullFolder(Folder folder)
+        public FullFolder MapFolderToFullFolder(Folder folder, bool isCanEdit)
         {
             return new FullFolder()
             {
                 Id = folder.Id,
                 Color = folder.Color,
+                UserId = folder.UserId,
+                IsCanEdit = isCanEdit,
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,

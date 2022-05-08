@@ -45,6 +45,8 @@ export enum Icons {
   viewOnly = 'viewOnly',
   stickyNote = 'stickyNote',
   cancelThin = 'cancelThin',
+  glas = 'glas',
+  bigPencil = 'bigPencil',
   privateFolder = 'privateFolder',
   unlock = 'unlock',
   privatesIllustration = 'privatesIllustration',

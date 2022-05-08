@@ -73,7 +73,7 @@
       (clickEvent)="newButton()"
       [message]="'new.' + (route$ | async ) | translate"
       [iconClass]="'plus'"
-      [styleClasses]="'generic-unfixed generic-create'"
+      [styleClasses]="'generic-unfixed generic-create generic-hide-text'"
     ></app-general-header-button>
     <!-- LABEL DEFAULT END -->
 
@@ -84,7 +84,7 @@
         (click)="deleteAllFromBin()"
         [message]="('header.emptyTrash' | translate)"
         [iconClass]="'delete'"
-        [styleClasses]="'generic-2 generic-unfixed'"
+        [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
       ></app-general-header-button>
     </ng-container>
     <!-- LABEL DELETE END -->
@@ -104,16 +104,16 @@
     <!-- INNER FOLDER END -->
 
     <div
-      class="interactions menu"
-      *ngIf="(pService.isMenuActive$ | async) === (true)"
+      class="interactions"
+      *ngIf="(pService.isMenuActive$ | async) && (isFolderInner$ | async) === false"
       [@showMenuLeftRight]
+      [@.disabled]="!pService.widthMoreThan1024()"
     >
       <app-menu
         [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
-        class="menu-inner"
       ></app-menu>
     </div>
 
-    <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
+    <app-interaction-tools class="right-tools"></app-interaction-tools>
   </div>
 </header>

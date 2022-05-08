@@ -8,6 +8,7 @@ using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
+using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Audios;
@@ -19,7 +20,6 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNoteAudiosCollectionHandlerCommand :
-                IRequestHandler<UnlinkFilesAndRemoveAudiosCollectionsCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>,
                 IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
@@ -58,47 +58,6 @@ namespace BI.Services.Notes
             this.collectionLinkedService = collectionLinkedService;
         }
 
-
-        public async Task<OperationResult<Unit>> Handle(UnlinkFilesAndRemoveAudiosCollectionsCommand request, CancellationToken cancellationToken)
-        {
-            async Task<OperationResult<Unit>> UnLink()
-            {
-                var audios = await collectionNoteAppFileRepository.GetAppFilesByContentIds(request.ContentIds);
-                if (audios.Any())
-                {
-                    var files = audios.Select(x => x.AppFile);
-                    var ids = files.Select(x => x.Id).ToList();
-                    var imageFileIds = files.Where(x => x.MetaData != null && x.MetaData.ImageFileId.HasValue).Select(x => x.MetaData.ImageFileId.Value);
-                    ids.AddRange(imageFileIds);
-                    ids = ids.Distinct().ToList();
-
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(audios);
-                    await collectionLinkedService.TryToUnlink(ids.ToArray());
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                else
-                {
-                    return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
-                }
-            }
-
-
-            if (!request.IsCheckPermissions)
-            {
-                return await UnLink();
-            }
-
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-            if (permissions.CanWrite)
-            {
-                return await UnLink();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
         public async Task<OperationResult<Unit>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
@@ -107,13 +66,17 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                var collectionItems = await collectionNoteAppFileRepository.GetAppFilesByFileIds(request.FileIds);
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
-                    var idsToUnlink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryToUnlink(idsToUnlink.ToArray());
+                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData
+                    {
+                        Id = x.Id,
+                        AdditionalIds = x.GetAdditionalIds()
+                    });
+                    var idsToUnlink = await collectionLinkedService.TryToUnlink(filesToProcess);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);

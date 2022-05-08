@@ -19,7 +19,12 @@ namespace BI.Helpers
 
         public static bool IsMatchContent(List<TextBlock> contents, string search)
         {
-            var contentText = contents.Any() ? contents.Select(x => x.Text).Aggregate((pv, cv) => pv + cv) : string.Empty;
+            if(contents == null || contents.Count == 0)
+            {
+                return false;
+            }
+
+            var contentText = contents.Select(x => x.Text).Aggregate((pv, cv) => pv + cv);
             if (!string.IsNullOrEmpty(contentText) && contentText.Contains(search))
             {
                 return true;

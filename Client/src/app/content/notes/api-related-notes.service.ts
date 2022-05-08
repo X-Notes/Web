@@ -7,17 +7,19 @@ import { PersonalizationSetting } from 'src/app/core/models/personalization-sett
 import { PreviewNote } from './models/preview-note.model';
 import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
+import { PositionEntityModel } from './models/position-note.model';
+import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
 
 @Injectable()
 export class ApiRelatedNotesService {
   constructor(private httpClient: HttpClient) {}
 
-  addToRelatedNotesNotes(noteId: string, relatedNoteIds: string[]) {
+  updateRelatedNotes(noteId: string, relatedNoteIds: string[]) {
     const obj = {
       noteId,
       relatedNoteIds,
     };
-    return this.httpClient.post<OperationResult<any>>(
+    return this.httpClient.post<OperationResult<UpdateRelatedNotesWS>>(
       `${environment.writeAPI}/api/relatedNotes`,
       obj,
     );
@@ -40,10 +42,10 @@ export class ApiRelatedNotesService {
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
-  updateState(noteId: string, relatedNoteId: string, isOpened: boolean) {
+  updateState(noteId: string, reletatedNoteInnerNoteId: number, isOpened: boolean) {
     const obj = {
       noteId,
-      relatedNoteId,
+      reletatedNoteInnerNoteId,
       isOpened,
     };
     return this.httpClient.patch<OperationResult<any>>(
@@ -52,10 +54,9 @@ export class ApiRelatedNotesService {
     );
   }
 
-  updateOrder(noteId: string, id: string, insertAfter: string) {
+  updateOrder(noteId: string, positions: PositionEntityModel[]) {
     const obj = {
-      insertAfter,
-      id,
+      positions,
       noteId,
     };
     return this.httpClient.patch<OperationResult<any>>(

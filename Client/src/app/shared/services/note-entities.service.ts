@@ -42,14 +42,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       });
   }
 
-  changeColorHandler(updateColor: UpdateNoteUI[]) {
-    for (const update of updateColor) {
-      if (this.entities.length > 0) {
-        this.entities.find((x) => x.id === update.id).color = update.color;
-      }
-    }
-  }
-
   baseToNote(note: SmallNote, navigateFunc: () => Promise<boolean>) {
     const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0;
     if (isSelectedMode) {

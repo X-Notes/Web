@@ -46,7 +46,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Archive);
+    this.folderService.murriInitialise(this.refElements);
   }
 
   ngOnDestroy(): void {

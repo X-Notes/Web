@@ -90,21 +90,24 @@
 
 @media (max-width: 1320px) {
   .generic-unfixed {
-    min-width: auto;
+    min-width: 54px;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1270px) {
   .generic {
     .inner-content {
-      padding: 0;
       justify-content: center;
 
       .icon {
         height: 16px;
         width: 16px;
       }
+    }
+  }
 
+  .generic-hide-text {
+    .inner-content {
       p {
         display: none;
       }
@@ -115,8 +118,8 @@
     width: 54px;
   }
 
-  .generic-unfixed {
-    min-width: auto;
+  .generic-create {
+    width: 54px;
   }
 }
 

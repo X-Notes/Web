@@ -65,5 +65,7 @@ namespace Common.DatabaseModels.Models.Users
 
         public BillingPlanTypeENUM BillingPlanId { set; get; }
         public BillingPlan BillingPlan { set; get; }
+
+        public List<RelatedNoteUserState> RelatedNoteUserStates { set; get; }
     }
 }

@@ -1,10 +1,3 @@
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { BaseFolder } from './base-folder.model';
 
-export interface FullFolder {
-  id: string;
-  title: string;
-  color: string;
-  refTypeId: RefTypeENUM;
-  folderTypeId: FolderTypeENUM;
-}
+export type FullFolder = BaseFolder;

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers.FullNote
+namespace WriteAPI.Controllers.FullNoteAPI
 {
-    public class BaseNoteFileContentController<Y, U, I> : ControllerBase 
+    public class BaseNoteFileContentController<Y, U, I> : ControllerBase
         where Y : BaseRemoveFromCollectionItems
         where U : BaseAddToCollectionItems
         where I : BaseUpdateCollectionInfo

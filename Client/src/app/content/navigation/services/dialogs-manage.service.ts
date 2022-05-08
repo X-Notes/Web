@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
@@ -13,6 +14,9 @@ import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inn
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { ViewDocComponent } from 'src/app/shared/modal_components/view-doc/view-doc.component';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
+import { SmallFolder } from '../../folders/models/folder.model';
+import { SmallNote } from '../../notes/models/small-note.model';
+import { NoteStore } from '../../notes/state/notes-state';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +51,12 @@ export class DialogsManageService {
   }
 
   openChangeLabels() {
+    let labelIds: string[] = [];
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      labelIds = this.store.selectSnapshot(NoteStore.oneFull).labels.map((label) => label.id);
+    } else {
+      labelIds = this.store.selectSnapshot(NoteStore.labelsIds);
+    }
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -55,6 +65,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
+      data: { labelIds: new Set(labelIds) },
     };
     return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
@@ -112,8 +123,8 @@ export class DialogsManageService {
     return this.dialogService.openDialog(ViewDocComponent, config);
   }
 
-  openShareEntity(currentWindowType: EntityPopupType, ids: string[]) {
-    this.validateIds(ids);
+  openShareEntity(currentWindowType: EntityPopupType, ents: SmallNote[] | SmallFolder[]) {
+    this.validateIds(ents);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -122,7 +133,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? ['custom-dialog-class-light', 'sharing-modal']
           : ['custom-dialog-class-dark', 'sharing-modal'],
-      data: { currentWindowType, ids },
+      data: { currentWindowType, ents },
     };
     return this.dialogService.openDialog(ShareComponent, config);
   }
@@ -131,8 +142,8 @@ export class DialogsManageService {
     return this.store.selectSnapshot(UserStore.getUserTheme);
   }
 
-  private validateIds(ids: string[]) {
-    if (!ids || ids.length === 0) {
+  private validateIds(ents: SmallNote[] | SmallFolder[] | string[]) {
+    if (!ents || ents.length === 0) {
       throw new Error('Ids missing');
     }
   }

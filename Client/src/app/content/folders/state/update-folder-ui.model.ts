@@ -4,4 +4,10 @@ export class UpdateFolderUI {
   color: string;
 
   title: string;
+
+  isCanEdit: boolean;
+
+  constructor(folderId: string) {
+    this.id = folderId;
+  }
 }

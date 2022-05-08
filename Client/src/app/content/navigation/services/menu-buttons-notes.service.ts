@@ -9,12 +9,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import {
-  CopyNotes,
-  ChangeTypeNote,
-  ChangeTypeFullNote,
-  DeleteNotesPermanently,
-} from '../../notes/state/notes-actions';
+import { FolderStore } from '../../folders/state/folders-state';
+import { CopyNotes, ChangeTypeNote, DeleteNotesPermanently } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { DialogsManageService } from './dialogs-manage.service';
 
@@ -46,15 +42,16 @@ export class MenuButtonsNotesService {
 
   copyNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const isInnerFolder = this.store.selectSnapshot(AppStore.isFolderInner);
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids = [note.id];
-      this.store.dispatch(new CopyNotes(note.noteTypeId, ids, pr));
+      this.store.dispatch(new CopyNotes(ids, pr));
     } else {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const folderId = isInnerFolder ? this.store.selectSnapshot(FolderStore.full).id : null;
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids, pr));
+      this.store.dispatch(new CopyNotes(ids, pr, folderId));
     }
   }
 
@@ -65,7 +62,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toBin');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Deleted, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Deleted,
       ids,
@@ -83,7 +80,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toPrivate');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Private, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Private,
       ids,
@@ -101,7 +98,7 @@ export class MenuButtonsNotesService {
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.archive');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), NoteTypeENUM.Archive, message);
+      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Archive,
       ids,
@@ -125,23 +122,15 @@ export class MenuButtonsNotesService {
 
   private getSelectedNoteType(): NoteTypeENUM {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      return note.noteTypeId;
+      return this.store.selectSnapshot(NoteStore.fullNoteType);
     }
     return this.store.selectSnapshot(AppStore.getTypeNote);
   }
 
-  private successNoteCallback = (
-    ids: string[],
-    typeFrom: NoteTypeENUM,
-    typeTo: NoteTypeENUM,
-    message: string,
-  ) => {
+  private successNoteCallback = (ids: string[], typeFrom: NoteTypeENUM, message: string) => {
     this.sbws.build(() => {
       this.store.dispatch(this.getRevertActionNotes(typeFrom, ids));
-      this.changeFullNoteType(typeFrom);
     }, message);
-    this.changeFullNoteType(typeTo);
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -163,12 +152,6 @@ export class MenuButtonsNotesService {
       default: {
         throw new Error('incorrect type');
       }
-    }
-  }
-
-  private changeFullNoteType(typeTo: NoteTypeENUM) {
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      this.store.dispatch(new ChangeTypeFullNote(typeTo));
     }
   }
 

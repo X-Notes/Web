@@ -4,6 +4,8 @@ import { PersonalizationSetting } from 'src/app/core/models/personalization-sett
 import { Folders } from '../models/folders.model';
 import { SmallFolder } from '../models/folder.model';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
+import { FullFolder } from '../models/full-folder.model';
+import { UpdateFolderUI } from './update-folder-ui.model';
 
 export class LoadFolders {
   static type = '[Folders] Load folders';
@@ -56,6 +58,12 @@ export class ChangeColorFolder {
 
 export class ClearUpdatesUIFolders {
   static type = '[Folders] Clear color folder';
+}
+
+export class PatchUpdatesUIFolders {
+  static type = '[Folders] Patch UI folder updates';
+
+  constructor(public updates: UpdateFolderUI[]) {}
 }
 
 // //////////////////
@@ -140,7 +148,7 @@ export class UpdateFolderTitle {
 export class UpdateOneFolder {
   static type = '[Folders] update one one';
 
-  constructor(public folder: SmallFolder) {}
+  constructor(public folder: Partial<SmallFolder>) {}
 }
 
 export class LoadFullFolder {
@@ -161,10 +169,10 @@ export class TransformTypeFolders {
   ) {}
 }
 
-export class ChangeTypeFullFolder {
-  static type = '[Folders] change type fullFolder';
+export class UpdateFullFolder {
+  static type = '[Folders] update fullFolder';
 
-  constructor(public type: FolderTypeENUM) {}
+  constructor(public folder: Partial<FullFolder>, public folderId: string) {}
 }
 
 export class GetInvitedUsersToFolder {

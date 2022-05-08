@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
+using Common.DTO.WebSockets.Permissions;
+using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
 using WriteContext.Repositories.WS;
 
@@ -25,9 +27,10 @@ namespace BI.SignalR
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         }
 
-        public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds)
+
+        public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => userIds.Contains(x.UserId));
+            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId != exceptUserId && userIds.Contains(x.UserId));
             return connections.Select(x => x.ConnectionId);
         }
 
@@ -42,19 +45,25 @@ namespace BI.SignalR
             await signalRContext.Clients.User(userId.ToString()).SendAsync("newNotification", flag);
         }
 
-        public async Task UpdateNotesInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateNotesGeneral", updates);
+            await signalRContext.Clients.Clients(list).SendAsync("updateNoteGeneral", updates);
         }
 
-        public async Task UpdateFoldersInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateFolderInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateFoldersGeneral", updates);
+            await signalRContext.Clients.Clients(list).SendAsync("updateFolderGeneral", updates);
         }
 
         // INNER NOTE
+
+        public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
+        {
+            var connectionsId = await GetAuthorizedConnections(userId);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateRelatedNotes", updates);
+        }
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {
@@ -95,26 +104,16 @@ namespace BI.SignalR
 
         // Note permissions
 
-        public async Task RevokePermissionUserNote(Guid noteId, Guid userId)
+        public async Task UpdatePermissionUserNote(UpdatePermissionNoteWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("revokeNotePermissions", noteId);
-        }
-
-        public async Task AddNoteToShared(Guid noteId, Guid userId)
-        {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("addNoteToShared", noteId);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserNote", updates);
         }
 
         // Folder permissions
 
-        public async Task RevokePermissionUserFolder(Guid folderId, Guid userId)
+        public async Task UpdatePermissionUserFolder(UpdatePermissionFolderWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("revokeFolderPermissions", folderId);
-        }
-
-        public async Task AddFolderToShared(Guid folderId, Guid userId)
-        {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("addFolderToShared", folderId);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserFolder", updates);
         }
     }
 }

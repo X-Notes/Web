@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Domain.Queries.Notes
 {
-    public class GetFullNoteQuery: BaseQueryEntity, IRequest<OperationResult<FullNoteAnswer>>
+    public class GetFullNoteQuery: BaseQueryEntity, IRequest<OperationResult<FullNote>>
     {
         public Guid NoteId { set; get; }
 

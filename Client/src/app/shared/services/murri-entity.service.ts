@@ -17,6 +17,10 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     return this.entities.length > 0;
   }
 
+  noExistIsState(id: string): boolean {
+    return !this.state[id];
+  }
+
   initState() {
     // eslint-disable-next-line no-return-assign
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
@@ -41,7 +45,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     this.firstInitedMurri = true;
   }
 
-  async destroyGridAsync(wait: number = 150) {
+  async destroyGridAsync(wait: number = 100) {
     await this.murriService.setOpacityFlagAsync(0, false);
     await this.murriService.wait(wait);
     this.murriService.grid?.destroy(); // TODO INVESTIGATE WHY GRID IS UNDEFINED
@@ -58,10 +62,13 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     );
   }
 
-  addToDom(ents: Entity[]) {
-    if (ents.length > 0) {
-      this.entities = [...ents.map((ent) => ({ ...ent })).reverse(), ...this.entities];
+  addToDom(ents: Entity[]): boolean {
+    if (ents && ents.length > 0) {
+      const m = ents.filter((x) => this.noExistIsState(x.id)).map((x) => ({ ...x }));
+      this.entities.unshift(...m);
+      return true;
     }
+    return false;
   }
 
   deleteFromDom(ids: string[]) {
@@ -92,7 +99,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     // eslint-disable-next-line no-underscore-dangle
     const item = this.murriService.grid.getItems().find((x) => x._element.id === id);
     if (item) {
-      this.murriService.grid.remove([item], { removeElements: true });
+      this.murriService.grid.remove([item], { removeElements: false });
     }
   }
 

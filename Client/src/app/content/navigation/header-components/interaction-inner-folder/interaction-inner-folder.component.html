@@ -1,26 +1,28 @@
-<ng-container *ngIf="(canView$ | async) && (folder$ | async)">
+<ng-container *ngIf="folder$ | async">
   <app-general-header-button
-    *ngIf="(pService.isMenuActive$ | async) === (false)"
+    *ngIf="(folder$ | async).userId === (user$ | async).id && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
-    [styleClasses]="'manage-notes'"
+    [iconClass]="'notes'"
+    [styleClasses]="'generic-unfixed generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(pService.isMenuActive$ | async) === (false)"
+    *ngIf="(folder$ | async)?.userId === (user$ | async).id && (pService.isMenuActive$ | async) === (false)"
     (clickEvent)="newButton()"
     [message]="'new.' + (route$ | async ) | translate"
     [iconClass]="'plus'"
-    [styleClasses]="'generic-2 generic-unfixed generic-create'"
+    [styleClasses]="'generic-2 generic-unfixed generic-create generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button
+    *ngIf="(pService.isInnerFolderSelectAllActive$ | async)"
     (clickEvent)="selectAll()"
     [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
     [classOnSize]="'hide-tag-text'"
     [message]="('header.select' | translate)"
     [iconClass]="'select'"
-    [styleClasses]="'generic-2 generic-unfixed'"
+    [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -32,4 +34,15 @@
     [iconClass]="'plus'"
     [styleClasses]="'generic-2 generic-unfixed rotate'"
   ></app-general-header-button>
+
+  <div
+    class="interactions menu"
+    *ngIf="(isSelectedNotes$ | async)"
+    [@showMenuLeftRight]
+    [@.disabled]="!pService.widthMoreThan1024()"
+  >
+    <app-menu
+      [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEditFullFolderNotes: pB.IsOwnerFullFolderNotes: pB.isAllFullFolderNotesNoShared"
+    ></app-menu>
+  </div>
 </ng-container>

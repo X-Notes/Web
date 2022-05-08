@@ -23,7 +23,7 @@
       [placeholder]="'placeholder.folderSmall' | translate"
       [ngModel]="folder.title"
       (ngModelChange)="changed($event)"
-      [disabled]="isSelectedMode"
+      [disabled]="isSelectedMode || !folder.isCanEdit"
     />
     <div
       class="folder-content"
@@ -51,6 +51,20 @@
           <p>{{ updateTime }}</p>
         </div>
         <div class="help-icons">
+          <div
+            *ngIf="isShowWrightRead && folder.isCanEdit && !isAuthor"
+            class="icon"
+            [CustomTooltip]="'entity-bottom-tooltip.editNote' | translate"
+          >
+            <mat-icon svgIcon="bigPencil" [inline]="true"></mat-icon>
+          </div>
+          <div
+            *ngIf="isShowWrightRead && !folder.isCanEdit && !isAuthor"
+            class="icon"
+            [CustomTooltip]="'entity-bottom-tooltip.readFolder' | translate"
+          >
+            <mat-icon svgIcon="glas" [inline]="true"></mat-icon>
+          </div>
           <div
             *ngIf="folderType.Shared === folder.folderTypeId && isAuthor"
             class="icon"

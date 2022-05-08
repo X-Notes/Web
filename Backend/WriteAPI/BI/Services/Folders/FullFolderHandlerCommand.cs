@@ -58,12 +58,12 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateAsync(folder);
 
                 // WS UPDATES
-                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers());
+                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(AddNotesToFolderCommand request, CancellationToken cancellationToken)
@@ -93,13 +93,14 @@ namespace BI.Services.Folders
                     // WS UPDATES
                     var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
                     var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                    updates.IdsToAdd.AddRange(noLockedNoteIds);
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveNotesFromFolderCommand request, CancellationToken cancellationToken)
@@ -120,15 +121,17 @@ namespace BI.Services.Folders
                     await folderRepository.UpdateAsync(folder);
 
                     // WS UPDATES
+                    var noteIdsToDelete = foldersNotesToDelete.Select(x => x.NoteId);
                     var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
                     var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                    updates.IdsToRemove.AddRange(noteIdsToDelete);
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateNotesPositionsInFolderCommand request, CancellationToken cancellationToken)
@@ -157,12 +160,15 @@ namespace BI.Services.Folders
 
                     await foldersNotesRepository.UpdateRangeAsync(foldersNotesToUpdateOrder);
                     await folderRepository.UpdateAsync(folder);
+
+                    var updates = new UpdateFolderWS { Positions = request.Positions };
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

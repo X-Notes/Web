@@ -38,6 +38,8 @@ namespace BI.Services.Personalizations
             pr.IsViewVideoOnNote = request.PersonalizationSetting.IsViewVideoOnNote;
             pr.NotesInFolderCount = request.PersonalizationSetting.NotesInFolderCount;
             pr.ContentInNoteCount = request.PersonalizationSetting.ContentInNoteCount;
+            pr.SortedNoteByTypeId = request.PersonalizationSetting.SortedNoteByTypeId;
+            pr.SortedFolderByTypeId = request.PersonalizationSetting.SortedFolderByTypeId;
 
             await personalizationSettingRepository.UpdateAsync(pr);
 

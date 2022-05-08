@@ -49,7 +49,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Shared, false);
+    this.folderService.murriInitialise(this.refElements, false);
   }
 
   ngOnDestroy(): void {
@@ -75,7 +75,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.folderService.destroy))
       .subscribe((folders) => {
         if (folders && folders.length > 0) {
-          this.folderService.loadFolderAndAddToDom(folders);
+          this.folderService.addToDom(folders);
           this.signalRService.addFoldersToSharedEvent.next([]);
         }
       });

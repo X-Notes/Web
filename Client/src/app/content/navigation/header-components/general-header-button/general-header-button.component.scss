@@ -32,20 +32,10 @@
   margin-left: auto;
   font-size: 1.125rem;
   font-weight: 500;
-
+  margin-left: 2.5rem;
   .inner-content {
     p {
       padding-right: 0;
-    }
-  }
-}
-
-.manage-notes {
-  .inner-content {
-    padding: 0 0.75rem;
-    p {
-      padding-right: 0;
-      display: block;
     }
   }
 }
@@ -71,16 +61,6 @@
   }
 }
 
-.mobile-buttons {
-  display: none;
-
-  .inner-content {
-    .icon {
-      display: flex;
-    }
-  }
-}
-
 .more_vert {
   margin-right: 0px;
   width: 28px;
@@ -99,18 +79,13 @@
 @media (max-width: 1320px) {
   .history {
     margin-left: initial;
+    margin-right: 2rem;
   }
 }
 
 @media (max-width: 1024px) {
   .history {
     display: none;
-  }
-
-  .mobile-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   .more_vert {

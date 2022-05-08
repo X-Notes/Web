@@ -9,10 +9,10 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { Observable } from 'rxjs';
 import { SmallFolder } from './models/folder.model';
 import { Folders } from './models/folders.model';
-import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
+import { FullFolder } from './models/full-folder.model';
 
 @Injectable()
 export class ApiFoldersService {
@@ -83,10 +83,10 @@ export class ApiFoldersService {
     return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/invites`, obj);
   }
 
-  removeUserFromPrivateFolder(folderId: string, userId: string) {
+  removeUserFromPrivateFolder(folderId: string, permissionUserId: string) {
     const obj = {
       folderId,
-      userId,
+      permissionUserId,
     };
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/share/folders/user/remove`,
@@ -94,8 +94,10 @@ export class ApiFoldersService {
     );
   }
 
-  get(id: string) {
-    return this.httpClient.get<RequestFullFolder>(`${environment.writeAPI}/api/folder/${id}`);
+  get(id: string): Observable<OperationResult<FullFolder>> {
+    return this.httpClient.get<OperationResult<FullFolder>>(
+      `${environment.writeAPI}/api/folder/${id}`,
+    );
   }
 
   new() {

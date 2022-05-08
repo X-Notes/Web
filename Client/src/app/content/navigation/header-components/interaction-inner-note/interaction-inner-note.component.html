@@ -1,4 +1,4 @@
-<div *ngIf="(note$ | async) && (canView$ | async)" appTheme class="interactions">
+<div *ngIf="(note$ | async)" appTheme class="interactions">
   <div
     [CustomTooltip]="'header.countUsers' | translate"
     position="Bottom"
@@ -33,40 +33,42 @@
   </div>
 
   <app-menu
-    class="menu-inner"
-    [items]="buttonService.items | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
+    [items]="buttonService.getNoteMenuByNoteType(noteType$ | async) | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
-    [@.disabled]="pService.AnimationInnerMenu"
+    [@.disabled]="!pService.widthMoreThan1024()"
   ></app-menu>
 
   <app-general-header-button
     (clickEvent)="pService.toggleHistoryMethod()"
     [message]="('menu.history' | translate)"
-    styleClasses="generic-2 history"
+    [styleClasses]="'generic-2 history'"
   ></app-general-header-button>
 
   <app-general-header-button
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
     (clickEvent)="dialogsManageService.openChangeLabels()"
     [tooltipMessage]="'menu.label' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2 mobile-buttons"
+    [styleClasses]="'generic-2'"
     iconClass="label"
   ></app-general-header-button>
 
   <app-general-header-button
-    (clickEvent)="openShareWithNotes()"
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
+    (clickEvent)="buttonService.openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2 mobile-buttons"
+    [styleClasses]="'generic-2'"
     iconClass="share"
   ></app-general-header-button>
 
   <app-general-header-button
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
     (clickEvent)="hideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2 more_vert"
+    [styleClasses]="'generic-2 more_vert'"
     iconClass="more_vert"
     [isDefault]="true"
   ></app-general-header-button>

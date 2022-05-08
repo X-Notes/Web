@@ -2,7 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
@@ -24,20 +23,11 @@ import { ApiFullFolderService } from '../full-folder/services/api-full-folder.se
   providers: [FullNoteSliderService],
 })
 export class FullFolderNoteComponent implements OnInit, OnDestroy {
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
-
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
 
-  @Select(NoteStore.canView)
-  public canView$: Observable<boolean>;
-
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
-
-  @Select(NoteStore.canNoView)
-  public canNoView$: Observable<boolean>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -92,8 +82,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.noteId, this.folderId)).toPromise();
-    const isCanView = this.store.selectSnapshot(NoteStore.canView);
-    if (isCanView) {
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    if (note) {
       await this.loadContent();
     }
     this.loaded = true;

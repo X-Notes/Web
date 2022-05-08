@@ -19,6 +19,7 @@ using Domain.Queries.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
@@ -30,7 +31,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
         IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
-        IRequestHandler<GetFullNoteQuery, OperationResult<FullNoteAnswer>>,
+        IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>,
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
@@ -46,6 +47,7 @@ namespace BI.Services.Notes
         private readonly UserBackgroundMapper userBackgroundMapper;
         private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly CollectionNoteRepository collectionNoteRepository;
+        private readonly NoteSnapshotRepository noteSnapshotRepository;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -58,7 +60,8 @@ namespace BI.Services.Notes
             WebsocketsNotesServiceStorage websocketsNotesService,
             UserBackgroundMapper userBackgroundMapper,
             UserNoteEncryptService userNoteEncryptStorage,
-            CollectionNoteRepository collectionNoteRepository)
+            CollectionNoteRepository collectionNoteRepository,
+            NoteSnapshotRepository noteSnapshotRepository)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -71,6 +74,7 @@ namespace BI.Services.Notes
             this.userBackgroundMapper = userBackgroundMapper;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
             this.collectionNoteRepository = collectionNoteRepository;
+            this.noteSnapshotRepository = noteSnapshotRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -99,49 +103,37 @@ namespace BI.Services.Notes
             return sharedNotes;
         }
 
-        public async Task<OperationResult<FullNoteAnswer>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<FullNote>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var isCanWrite = false;
-            var isCanRead = false;
-            var isOwner = false;
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
+            var permissions = await _mediator.Send(command);
+            var isCanRead = permissions.CanRead;
 
-            if (request.FolderId.HasValue)
+            if (request.FolderId.HasValue && !isCanRead)
             {
-                var command = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
-                var permissions = await _mediator.Send(command);
-                isCanWrite = permissions.CanWrite;
-                isCanRead = permissions.CanRead;
-                isOwner = permissions.IsOwner;
-            }
-            else
-            {
-                var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-                var permissions = await _mediator.Send(command);
-                isCanWrite = permissions.CanWrite;
-                isCanRead = permissions.CanRead;
-                isOwner = permissions.IsOwner;
+                var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+                var permissionsFolder = await _mediator.Send(queryFolder);
+                isCanRead = permissionsFolder.CanRead;
             }
 
             if (isCanRead)
             {
                 var note = await noteRepository.GetNoteWithLabels(request.NoteId);
-
                 if (note.IsLocked)
                 {
                     var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
                     if (!isUnlocked)
                     {
-                        return new OperationResult<FullNoteAnswer>(false, null).SetContentLocked();
+                        return new OperationResult<FullNote>(false, null).SetContentLocked();
                     }
                 }
 
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                var ent = appCustomMapper.MapNoteToFullNote(note);
-                var data = new FullNoteAnswer(isOwner, isCanRead, isCanWrite, note.UserId, ent);
-                return new OperationResult<FullNoteAnswer>(true, data);
+                var ent = appCustomMapper.MapNoteToFullNote(note, permissions.CanWrite);
+                return new OperationResult<FullNote>(true, ent);
             }
 
-            return new OperationResult<FullNoteAnswer>(false, null).SetNoPermissions();
+            return new OperationResult<FullNote>(false, null).SetNoPermissions();
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
@@ -234,6 +226,7 @@ namespace BI.Services.Notes
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
             var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
+            var sizeSnapshots = await noteSnapshotRepository.GetMemoryOfNotesSnapshots(request.NoteIds);
 
             var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
             var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
@@ -243,7 +236,8 @@ namespace BI.Services.Notes
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
                 NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
-                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : null
+                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : 0,
+                SnapshotSize = sizeSnapshots.ContainsKey(noteId) ? sizeSnapshots[noteId].Item2 : 0,
             }).ToList();
         }
     }

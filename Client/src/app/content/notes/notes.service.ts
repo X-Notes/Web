@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import {
   CancelAllSelectedLabels,
@@ -27,10 +26,7 @@ import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 
 /** Injection only in component */
 @Injectable()
-export class NotesService
-  extends NoteEntitiesService
-  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM>
-{
+export class NotesService extends NoteEntitiesService implements OnDestroy {
   labelsIds: Subscription;
 
   firstInitFlag = false;
@@ -67,7 +63,7 @@ export class NotesService
           const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
 
           const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
-          await this.murriService.initMurriNoteAsync(roadType, isDraggable);
+          await this.murriService.initMurriNoteAsync(isDraggable);
 
           await this.murriService.setOpacityFlagAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
@@ -90,9 +86,12 @@ export class NotesService
       .select(NoteStore.notesAddingToDOM)
       .pipe(takeUntil(this.destroy))
       .subscribe((x) => {
-        if (x.length > 0) {
-          this.addToDom(x);
-          this.store.dispatch(ClearAddToDomNotes);
+        if (x && x.notes?.length > 0) {
+          const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
+          if (!x.type || x.type === roadType) {
+            this.addToDom(x.notes);
+            this.store.dispatch(ClearAddToDomNotes);
+          }
         }
       });
   }
@@ -146,7 +145,7 @@ export class NotesService
     this.entities = this.orderBy(this.entities, sortedType);
     const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
     const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
-    this.murriService.initMurriNoteAsync(roadType, isDraggable);
+    this.murriService.initMurriNoteAsync(isDraggable);
     await this.murriService.setOpacityFlagAsync(0);
   }
 
@@ -161,7 +160,7 @@ export class NotesService
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (this.getIsFirstInit(z)) {
-        await this.murriService.initMurriNoteAsync(noteType, this.getIsDraggable(noteType));
+        await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
         await this.setInitMurriFlagShowLayout();
         await this.loadNotesWithUpdates();
       }
@@ -257,8 +256,7 @@ export class NotesService
       );
       this.entities = this.orderBy(tempNotes, this.pageSortType);
 
-      const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-      await this.murriService.initMurriNoteAsync(roadType, false);
+      await this.murriService.initMurriNoteAsync(false);
       await this.murriService.setOpacityFlagAsync(0);
     }
   }

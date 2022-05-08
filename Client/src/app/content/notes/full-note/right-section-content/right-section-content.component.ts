@@ -29,6 +29,7 @@ import { SidebarNotesService } from '../services/sidebar-notes.service';
   templateUrl: './right-section-content.component.html',
   styleUrls: ['./right-section-content.component.scss'],
   animations: [deleteSmallNote, showHistory],
+  providers: [SidebarNotesService],
 })
 export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() note: SmallNote;
@@ -53,7 +54,7 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
-    if (!this.pService.check()) {
+    if (!this.pService.widthMoreThan1024()) {
       this.sliderService.getSize();
     } else {
       this.sliderService.mainWidth = null;
@@ -62,15 +63,14 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     }
   }
 
-  ngOnDestroy(): void {
-    this.sideBarService.murriService.flagForOpacity = false;
-  }
+  ngOnDestroy(): void {}
 
   async ngOnInit() {
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 
-    await this.sideBarService.loadNotes(this.note.id);
+    const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
+    await this.sideBarService.initializeEntities(this.note.id, isCanEdit);
     const result = await this.apiHistory.getHistory(this.note.id).toPromise();
     if (result.success) {
       this.histories = result.data;

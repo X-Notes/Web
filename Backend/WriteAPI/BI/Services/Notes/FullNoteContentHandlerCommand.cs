@@ -87,7 +87,8 @@ namespace BI.Services.Notes
                     var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                     if (fileContents.Any())
                     {
-                        unlinkedItemIds = await collectionLinkedService.UnlinkAndRemoveFileItems(fileContents, note.Id, request.UserId);
+                        var ids = fileContents.Select(x => x.Id);
+                        unlinkedItemIds = await collectionLinkedService.UnLinkCollections(ids);
                     }
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);

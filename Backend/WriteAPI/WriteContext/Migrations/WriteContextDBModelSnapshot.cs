@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
 
+#nullable disable
+
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
@@ -22,9 +24,10 @@ namespace WriteContext.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Noots")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.9")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFile", b =>
                 {
@@ -199,6 +202,24 @@ namespace WriteContext.Migrations
                     b.ToTable("Folder", "folder");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Folders.FoldersNotes", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("NoteId", "FolderId");
+
+                    b.HasIndex("FolderId");
+
+                    b.ToTable("FoldersNotes", "folder");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.FolderType", b =>
                 {
                     b.Property<int>("Id")
@@ -232,24 +253,6 @@ namespace WriteContext.Migrations
                             Id = 4,
                             Name = "Deleted"
                         });
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Folders.FoldersNotes", b =>
-                {
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FolderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.HasKey("NoteId", "FolderId");
-
-                    b.HasIndex("FolderId");
-
-                    b.ToTable("FoldersNotes", "folder");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.UsersOnPrivateFolders", b =>
@@ -636,21 +639,44 @@ namespace WriteContext.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
                 {
-                    b.Property<Guid>("NoteId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RelatedNoteId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("ReletatedNoteInnerNoteId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsOpened")
                         .HasColumnType("boolean");
 
+                    b.HasKey("UserId", "ReletatedNoteInnerNoteId");
+
+                    b.HasIndex("ReletatedNoteInnerNoteId");
+
+                    b.ToTable("RelatedNoteUserState", "note");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.HasKey("NoteId", "RelatedNoteId");
+                    b.Property<Guid>("RelatedNoteId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
 
                     b.HasIndex("RelatedNoteId");
 
@@ -1376,6 +1402,25 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", "ReletatedNoteInnerNote")
+                        .WithMany("RelatedNoteUserStates")
+                        .HasForeignKey("ReletatedNoteInnerNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
+                        .WithMany("RelatedNoteUserStates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReletatedNoteInnerNote");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
@@ -1692,6 +1737,11 @@ namespace WriteContext.Migrations
                     b.Navigation("Notes");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+                {
+                    b.Navigation("RelatedNoteUserStates");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Plan.BillingPlan", b =>
                 {
                     b.Navigation("Users");
@@ -1754,6 +1804,8 @@ namespace WriteContext.Migrations
                     b.Navigation("NotificationsTo");
 
                     b.Navigation("PersonalizationSetting");
+
+                    b.Navigation("RelatedNoteUserStates");
 
                     b.Navigation("UserHistories");
 

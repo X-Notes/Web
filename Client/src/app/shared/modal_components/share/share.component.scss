@@ -41,7 +41,6 @@
         .content-access {
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
           margin: 0 2.5rem;
 
           &::after {
@@ -119,26 +118,19 @@
               display: flex;
               justify-content: flex-end;
               align-items: center;
-              flex-grow: 1;
               margin-left: 1rem;
-              font-size: 0.875rem;
-
-              p {
-                @include text-overflow;
-              }
+              font-size: 0.75rem;
             }
           }
         }
         .user-access {
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
           margin: 1.25rem 0;
           .content-inner {
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100%;
             padding: 0 2.5rem;
           }
         }

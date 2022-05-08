@@ -69,7 +69,7 @@ namespace BI.Services.Notes
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
                 // WS UPDATES
-                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers());
+                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

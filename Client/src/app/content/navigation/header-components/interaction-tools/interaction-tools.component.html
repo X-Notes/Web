@@ -1,46 +1,12 @@
-<div
-  appTheme
-  class="interactions"
-  [ngClass]="[(pService.isMenuActive$ | async) === (true) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
->
-  <div class="search-section" #search [ngClass]="isInputFocus ? 'active-search' : ''">
-    <div class="search">
-      <input
-        #searchInput
-        (focus)="isInputFocus = true"
-        (blur)="unFocusSearch()"
-        (ngModelChange)="searchStrChanged.next($event)"
-        [ngModel]="searchStr"
-        type="search"
-        [placeholder]="'header.search' | translate"
-        aria-label="Search"
-      />
-      <button type="button" name="search button" #searchButton (click)="searchData()">
-        <div class="icon">
-          <mat-icon svgIcon="search" [inline]="true"></mat-icon>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="searchButton"></div>
-      </button>
-    </div>
-    <div class="search-suggestion" *ngIf="isInputFocus">
-      <div class="results">
-        <app-search-result
-          #searchResult
-          *ngFor="let item of searchResult"
-          [type]="item.type"
-          [name]="item.name"
-          (click)="goTo(item.id, item.type)"
-        ></app-search-result>
-      </div>
-    </div>
-  </div>
+<div appTheme class="interactions">
+  <app-search-input *ngIf="(pService.isMenuActive$ | async) === false"></app-search-input>
 
   <div
     [CustomTooltip]="'header.theme' | translate"
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleTheme()"
-    *ngIf="pService.check()"
+    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false"
     #themeApp
   >
     <div class="icon">
@@ -53,7 +19,7 @@
     [CustomTooltip]="'header.questions' | translate"
     position="Bottom"
     class="auxiliary-icon"
-    *ngIf="pService.check()"
+    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false"
     [matMenuTriggerFor]="menu"
     #question
   >
@@ -94,7 +60,7 @@
     position="Bottom"
     class="auxiliary-icon"
     (click)="isOpenNotification = !isOpenNotification"
-    *ngIf="!pService.check()"
+    *ngIf="!pService.widthMoreThan1024()"
     #notificationHeader
     cdk-overlay-origin
     #origin="cdkOverlayOrigin"
@@ -126,7 +92,7 @@
     position="Bottom"
     class="auxiliary-icon"
     (click)="toggleOrientation()"
-    *ngIf="(isProfile$ | async) === false && !pService.check()"
+    *ngIf="(isProfile$ | async) === false && !pService.widthMoreThan1024()"
     #orientationNote
   >
     <div class="icon">

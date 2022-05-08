@@ -9,6 +9,7 @@ using Domain.Queries.RelatedNotes;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO;
+using Common.DTO.WebSockets.ReletedNotes;
 
 namespace WriteAPI.Controllers.Note
 {
@@ -30,17 +31,15 @@ namespace WriteAPI.Controllers.Note
             return await _mediator.Send(command);
         }
 
-
-        [HttpGet("{id}")]
-        [AllowAnonymous]
-        public async Task<List<RelatedNote>> GetRelatedNotes(Guid id)
+        [HttpGet("{noteId}")]
+        public async Task<List<RelatedNote>> GetRelatedNotes(Guid noteId)
         {
-            var command = new GetRelatedNotesQuery(this.GetUserIdUnStrict(), id);
+            var command = new GetRelatedNotesQuery(this.GetUserId(), noteId);
             return await _mediator.Send(command);
         }
 
         [HttpPost]
-        public async Task<OperationResult<Unit>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        public async Task<OperationResult<UpdateRelatedNotesWS>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
         {
             command.UserId = this.GetUserId();
             return await _mediator.Send(command);

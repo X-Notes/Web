@@ -7,9 +7,12 @@ import {
   EventEmitter,
   forwardRef,
   Input,
+  OnChanges,
+  OnInit,
   Optional,
   Output,
   QueryList,
+  SimpleChanges,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ENTER } from '@angular/cdk/keycodes';
@@ -32,7 +35,7 @@ import { SelectOptionComponent } from '../select-option/select-option.component'
     SelectService,
   ],
 })
-export class SelectComponent implements AfterContentInit {
+export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
   @ContentChildren(SelectOptionComponent)
   public options: QueryList<SelectOptionComponent>;
 
@@ -75,9 +78,18 @@ export class SelectComponent implements AfterContentInit {
     this.selectService.register(this);
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('changes: ', changes);
+  }
+
+  ngOnInit(): void {
+    console.log('selectValue: ', this.selectValue);
+  }
+
   ngAfterContentInit(): void {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
+      if (!this.selectValue) return;
       if (typeof this.selectValue === 'object') {
         this.selectedOption = this.options
           .toArray()
