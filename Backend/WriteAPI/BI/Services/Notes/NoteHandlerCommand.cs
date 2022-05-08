@@ -147,10 +147,7 @@ namespace BI.Services.Notes
                     x.perm.GetAllUsers()
                 ));
 
-                var updatesInFolder = permissions.Select(x => new UpdateNoteWS { Color = request.Color, NoteId = x.noteId });
-
-                await noteWSUpdateService.UpdateNotes(updates);
-                await noteWSUpdateService.UpdateNotesInFolder(updatesInFolder);
+                await noteWSUpdateService.UpdateNotes(updates, request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -410,10 +407,7 @@ namespace BI.Services.Notes
                      (new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = x.noteId },
                      x.perm.GetAllUsers()));
 
-                    var updatesInFolder = permissions.Select(x => new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = x.noteId });
-
-                    await noteWSUpdateService.UpdateNotes(updates);
-                    await noteWSUpdateService.UpdateNotesInFolder(updatesInFolder);
+                    await noteWSUpdateService.UpdateNotes(updates, request.UserId);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -451,16 +445,13 @@ namespace BI.Services.Notes
                     // WS UPDATES
                     var label = await labelRepository.FirstOrDefaultAsync(x => x.Id == request.LabelId);
                     var labels = appCustomMapper.MapLabelsToLabelsDTO(new List<Label> { label });
-                    List<UpdateNoteWS> updatesInFolder = new();
                     foreach (var labelNote in labelsToAdd) {
                         var value = permissions.FirstOrDefault(x => x.noteId == labelNote.NoteId);
                         if (value.perm != null) {
                             var update = new UpdateNoteWS { AddLabels = labels, NoteId = value.noteId };
-                            updatesInFolder.Add(update);
-                            await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers());
+                            await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers(), request.UserId);
                         }
                     }
-                    await noteWSUpdateService.UpdateNotesInFolder(updatesInFolder);
                 }
                 return new OperationResult<Unit>(true, Unit.Value);
             }

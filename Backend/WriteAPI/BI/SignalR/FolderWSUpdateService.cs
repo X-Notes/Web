@@ -21,21 +21,21 @@ namespace BI.SignalR
             this.appSignalRService = appSignalRService;
         }
 
-        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates)
+        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates, Guid exceptUserId)
         {
             foreach (var update in updates)
             {
-                await UpdateFolder(update.value, update.ids);
+                await UpdateFolder(update.value, update.ids, exceptUserId);
             }
         }
 
-        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds)
+        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId);
+            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId, exceptUserId);
 
             if (userIds != null && userIds.Any())
             {
-                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
                 connections.AddRange(additionalConnections);
             }
 

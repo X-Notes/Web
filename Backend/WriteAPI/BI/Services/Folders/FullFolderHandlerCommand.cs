@@ -58,7 +58,7 @@ namespace BI.Services.Folders
                 await folderRepository.UpdateAsync(folder);
 
                 // WS UPDATES
-                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers());
+                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -94,7 +94,7 @@ namespace BI.Services.Folders
                     var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
                     var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
                     updates.IdsToAdd.AddRange(noLockedNoteIds);
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -125,7 +125,7 @@ namespace BI.Services.Folders
                     var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
                     var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
                     updates.IdsToRemove.AddRange(noteIdsToDelete);
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
@@ -162,7 +162,7 @@ namespace BI.Services.Folders
                     await folderRepository.UpdateAsync(folder);
 
                     var updates = new UpdateFolderWS { Positions = request.Positions };
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers());
+                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);

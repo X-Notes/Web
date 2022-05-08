@@ -40,11 +40,11 @@ namespace BI.SignalR
             return new List<WsEntityInfo>();
         }
 
-        public List<string> GetConnectiondsById(Guid entityId)
+        public List<string> GetConnectiondsById(Guid entityId, Guid exceptUserId)
         {
             if (entityId_users.TryGetValue(entityId, out var value))
             {
-                return value.Users.Select(x => x.Value.ConnectionId).ToList();
+                return value.Users.Where(x => x.Value.UserId != exceptUserId).Select(x => x.Value.ConnectionId).ToList();
             }
             return new List<string>();
         }

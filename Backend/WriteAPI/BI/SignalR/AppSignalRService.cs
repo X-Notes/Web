@@ -27,9 +27,10 @@ namespace BI.SignalR
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         }
 
-        public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds)
+
+        public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => userIds.Contains(x.UserId));
+            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId != exceptUserId && userIds.Contains(x.UserId));
             return connections.Select(x => x.ConnectionId);
         }
 

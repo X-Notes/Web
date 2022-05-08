@@ -27,44 +27,38 @@ namespace BI.SignalR
             this.foldersNotesRepository = foldersNotesRepository;
         }
 
-        public async Task UpdateNotes(IEnumerable<(UpdateNoteWS value, List<Guid> userIds)> updates)
+        public async Task UpdateNotes(IEnumerable<(UpdateNoteWS value, List<Guid> userIds)> updates, Guid exceptUserId)
         {
             foreach(var update in updates)
             {
-                await UpdateNote(update.value, update.userIds);
+                await UpdateNote(update.value, update.userIds, exceptUserId);
             }
         }
 
-        public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds)
+        public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = websocketsNotesService.GetConnectiondsById(update.NoteId);
+            var connections = websocketsNotesService.GetConnectiondsById(update.NoteId, exceptUserId);
 
             if(userIds != null && userIds.Any())
             {
-                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
                 connections.AddRange(additionalConnections);
+            }
+
+            var folderConnections = await GetFolderConnections(update, exceptUserId);
+            if (folderConnections.Any())
+            {
+                connections.AddRange(folderConnections);
             }
 
             await appSignalRService.UpdateNoteInManyUsers(update, connections.Distinct());
         }
 
-        public async Task UpdateNotesInFolder(IEnumerable<UpdateNoteWS> updates)
+        private async Task<List<string>> GetFolderConnections(UpdateNoteWS updates, Guid exceptUserId)
         {
-            var noteIds = updates.Select(x => x.NoteId).ToList();
-            var ents = await foldersNotesRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
-            var foldersNotes = ents.ToLookup(x => x.FolderId);
-            foreach(var folderNotes in foldersNotes)
-            {
-                var connections = websocketsFoldersService.GetConnectiondsById(folderNotes.Key).Distinct();
-                var updatesWS = updates.Where(x => folderNotes.Any(q => q.NoteId == x.NoteId));
-                if (connections.Any())
-                {
-                    foreach(var update in updatesWS)
-                    {
-                        await appSignalRService.UpdateNoteInManyUsers(update, connections);
-                    }
-                }
-            }
+            var ents = await foldersNotesRepository.GetWhereAsync(x => updates.NoteId == x.NoteId);
+            var folderIds = ents.Select(x => x.FolderId).Distinct();
+            return folderIds.SelectMany(id => websocketsFoldersService.GetConnectiondsById(id, exceptUserId)).ToList();
         }
     }
 }
