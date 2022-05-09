@@ -29,7 +29,7 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { FolderTypeENUM } from '../../enums/folder-types.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { SearchUserForShareModal } from '../../models/short-user-for-share-modal.model';
-import { PersonalizationService, showDropdown } from '../../services/personalization.service';
+import { PersonalizationService, showDropdown, smoothOpacity } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
@@ -45,7 +45,7 @@ export interface StartType {
   selector: 'app-share',
   templateUrl: './share.component.html',
   styleUrls: ['./share.component.scss'],
-  animations: [showDropdown],
+  animations: [showDropdown, smoothOpacity()],
 })
 export class ShareComponent implements OnInit, OnDestroy {
   @ViewChild('tabs', { static: false }) tabs;
@@ -68,6 +68,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   folderType = FolderTypeENUM;
 
   refType = RefTypeENUM;
+
+  defaultRefType = RefTypeENUM.Viewer;
 
   refTypes = Object.values(RefTypeENUM).filter((x) => typeof x === 'string');
 
@@ -348,6 +350,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
+        this.selectedUsers = [];
         break;
       }
       case EntityPopupType.Note: {
@@ -363,6 +366,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
+        this.selectedUsers = [];
         break;
       }
       default: {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.Plan;
 
 namespace FakeData
 {
@@ -16,11 +17,11 @@ namespace FakeData
         public UserGenerator()
         {
             fakeUsers
-                .RuleFor(u => u.Id, y => Guid.NewGuid())
-
                 .RuleFor(u => u.Name, (f, y) => f.Internet.UserName(y.Name))
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.Name))
+                .RuleFor(u => u.DefaultPhotoUrl, (f, y) => "https://lh3.googleusercontent.com/-l2fMop7j1hw/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rcL2pg2Nfx60NEpPT4jrHIfRDdfzg/photo.jpg")
 
+                .RuleFor(u => u.BillingPlanId, (f, u) => BillingPlanTypeENUM.Free)
                 .RuleFor(u => u.LanguageId, f => LanguageENUM.English)
                 .RuleFor(u => u.ThemeId, f => ThemeENUM.Dark)
                 .RuleFor(u => u.FontSizeId, f => FontSizeENUM.Medium);
