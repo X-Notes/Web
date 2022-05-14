@@ -39,14 +39,18 @@ namespace WriteContext.Repositories.Users
             return context.Users.Include(x => x.Backgrounds).ThenInclude(x => x.File).FirstOrDefaultAsync(x => x.Id == userId);
         }
 
-        public Task<List<User>> SearchByEmailAndName(string search, Guid userId) // TODO BAD TOLOWER MAYBE FIX
+        public Task<List<User>> SearchByEmailAndName(string search, Guid userId, int? take)
         {
-            return context.Users
+            var query = context.Users
                 .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
                 .Where(x => x.Id != userId)
                 .Include(x => x.UserProfilePhoto)
-                .ThenInclude(x => x.AppFile)
-                .ToListAsync();
+                .ThenInclude(x => x.AppFile);
+            if (take.HasValue)
+            {
+                return query.Take(take.Value).ToListAsync();
+            }
+            return query.ToListAsync();
         }
 
 
