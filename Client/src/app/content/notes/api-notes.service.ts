@@ -217,6 +217,16 @@ export class ApiServiceNotes {
     );
   }
 
+  clearAll(noteId: string) {
+    const obj = {
+      noteId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/notes/clear`,
+      obj,
+    );
+  }
+
   makePublic(refTypeId: RefTypeENUM, ids: string[]) {
     const obj = {
       refTypeId,

@@ -59,10 +59,10 @@ export class ShareComponent implements OnInit, OnDestroy {
   public theme$: Observable<ThemeENUM>;
 
   @Select(FolderStore.getUsersOnPrivateFolder)
-  public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
+  private usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 
   @Select(NoteStore.getUsersOnPrivateNote)
-  public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
+  private usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
 
   windowType = EntityPopupType;
 
@@ -167,6 +167,16 @@ export class ShareComponent implements OnInit, OnDestroy {
     throw new Error('Incorrect type');
   }
 
+  get invitedUsers$(): Observable<InvitedUsersToNoteOrFolder[]> {
+    if (this.data.currentWindowType === this.windowType.Note) {
+      return this.usersOnPrivateNote$;
+    }
+    if (this.data.currentWindowType === this.windowType.Folder) {
+      return this.usersOnPrivateFolder$;
+    }
+    return null;
+  }
+
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
@@ -211,6 +221,26 @@ export class ShareComponent implements OnInit, OnDestroy {
           this.searchUsers = [];
         }
       });
+  }
+
+  async clearAll(): Promise<void> {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
+        await this.apiFolder.clearAll(this.currentFolder.id).toPromise();
+        this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
+        this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
+        break;
+      }
+      case EntityPopupType.Note: {
+        await this.apiNote.clearAll(this.currentNote.id).toPromise();
+        this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+        this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
+        break;
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
   }
 
   userFilters(items: SearchUserForShareModal[]) {
@@ -346,6 +376,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
+        this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
       case EntityPopupType.Note: {
@@ -359,13 +390,13 @@ export class ShareComponent implements OnInit, OnDestroy {
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+        this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
         break;
       }
       default: {
         throw new Error('error');
       }
     }
-    this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
     this.selectedUsers = [];
   }
 

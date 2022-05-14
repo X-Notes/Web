@@ -238,6 +238,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
 
+            services.AddScoped<IRequestHandler<RemoveAllUsersFromNoteCommand, OperationResult<Unit>>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveAllUsersFromFolderCommand, OperationResult<Unit>>, SharingHandlerCommand>();
+
             //LOCK
             services.AddScoped<IRequestHandler<DecriptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
             services.AddScoped<IRequestHandler<EncryptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();

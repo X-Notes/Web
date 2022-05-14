@@ -576,7 +576,7 @@ export class FolderStore {
     { folder, folderId }: UpdateFullFolder,
   ) {
     const folderState = getState().fullFolder;
-    if (folder && folderId === folderState.id) {
+    if (folder && folderId === folderState?.id) {
       const newFolder: FullFolder = { ...folderState, ...folder };
       patchState({ fullFolder: newFolder });
     }

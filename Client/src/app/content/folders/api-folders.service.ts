@@ -37,6 +37,16 @@ export class ApiFoldersService {
     );
   }
 
+  clearAll(folderId: string) {
+    const obj = {
+      folderId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/clear`,
+      obj,
+    );
+  }
+
   getFoldersMany(folderIds: string[], settings: PersonalizationSetting): Observable<SmallFolder[]> {
     const obj = {
       folderIds,

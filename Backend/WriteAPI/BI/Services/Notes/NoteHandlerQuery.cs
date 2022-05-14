@@ -128,6 +128,11 @@ namespace BI.Services.Notes
                     }
                 }
 
+                if(permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
+                {
+                    await usersOnPrivateNotesRepository.AddAsync(new UserOnPrivateNotes { NoteId = note.Id, AccessTypeId = note.RefTypeId, UserId = permissions.Caller.Id });
+                }
+
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 var ent = appCustomMapper.MapNoteToFullNote(note, permissions.CanWrite);
                 return new OperationResult<FullNote>(true, ent);

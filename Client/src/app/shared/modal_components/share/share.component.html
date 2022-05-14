@@ -176,17 +176,23 @@
             </div>
           </div>
           <ng-container *ngIf="!isLoading">
+            <div
+              *ngIf="(invitedUsers$ | async).length !== 0"
+              class="clear-container content-padding"
+            >
+              <p (click)="clearAll()">{{ 'modal.shareModal.clearAll' | translate }}</p>
+            </div>
             <ng-scrollbar class="user-access" [visibility]="'hover'" [appearance]="'compact'">
               <div class="content-inner content-padding">
                 <ng-container *ngIf="data.currentWindowType === windowType.Note">
                   <app-user-on-entity-card
-                    *ngFor="let user of usersOnPrivateNote$ | async"
+                    *ngFor="let user of invitedUsers$ | async"
                     [user]="user"
                     (changeUserPermission)="changeUserPermission($event, user.id)"
                     (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
                   ></app-user-on-entity-card>
                   <div
-                    *ngIf="(usersOnPrivateNote$ | async).length === 0"
+                    *ngIf="(invitedUsers$ | async).length === 0"
                     class="empty-placeholder-container"
                   >
                     <p>{{ 'modal.shareModal.noPeopleNote' | translate }}</p>
@@ -194,13 +200,13 @@
                 </ng-container>
                 <ng-container *ngIf="data.currentWindowType === windowType.Folder">
                   <app-user-on-entity-card
-                    *ngFor="let user of usersOnPrivateFolder$| async"
+                    *ngFor="let user of invitedUsers$| async"
                     [user]="user"
                     (changeUserPermission)="changeUserPermission($event, user.id)"
                     (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
                   ></app-user-on-entity-card>
                   <div
-                    *ngIf="(usersOnPrivateFolder$ | async).length === 0"
+                    *ngIf="(invitedUsers$ | async).length === 0"
                     class="empty-placeholder-container"
                   >
                     <p>{{ 'modal.shareModal.noPeopleFolder' | translate }}</p>

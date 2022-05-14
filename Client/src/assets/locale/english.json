@@ -141,7 +141,8 @@
       "sharedMessage": "Anyone on the internet with this link",
       "noSharedMessage": "Only people added can open with this link",
       "noPeopleNote": "The people who have access to the note will be displayed here",
-      "noPeopleFolder": "The people who have access to the folder will be displayed here"
+      "noPeopleFolder": "The people who have access to the folder will be displayed here",
+      "clearAll": "Clear all"
     },
     "folderManage": {
       "notes": "Add notes to folder"

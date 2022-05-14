@@ -122,6 +122,18 @@
             }
           }
         }
+
+        .clear-container{
+          margin-top: 1rem;
+          display: flex;
+          justify-content: flex-end;
+          p {
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+          }
+        }
+
         .user-access {
           display: flex;
           flex-direction: column;

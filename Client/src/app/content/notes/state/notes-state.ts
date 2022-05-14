@@ -901,7 +901,7 @@ export class NoteStore {
     { note, noteId }: UpdateFullNote,
   ) {
     const noteState = getState().fullNoteState?.note;
-    if (note && noteId === noteState.id) {
+    if (note && noteId === noteState?.id) {
       const newNote: FullNote = { ...noteState, ...note };
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
