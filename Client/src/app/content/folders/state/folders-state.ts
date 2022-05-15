@@ -95,6 +95,11 @@ export class FolderStore {
   }
 
   @Selector()
+  static fullFolderTitle(state: FolderState): string {
+    return state.fullFolder?.title;
+  }
+
+  @Selector()
   static canEdit(state: FolderState): boolean {
     return state.fullFolder?.isCanEdit;
   }
@@ -540,21 +545,30 @@ export class FolderStore {
   @Action(UpdateFolderTitle)
   async updateTitleFolder(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { str, folderId, isCallApi, errorPermissionMessage }: UpdateFolderTitle,
+    { diffs, str, folderId, isCallApi, errorPermissionMessage, isUpdateFullNote }: UpdateFolderTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.updateTitle(str, folderId).toPromise();
+      resp = await this.api.updateTitle(diffs, str, folderId).toPromise();
     }
     if (resp.success) {
-      const folder = getState().fullFolder;
-      if (folder && folder.id === folderId) {
-        patchState({ fullFolder: { ...folder, title: str } });
+      // FULL NOTE
+      if(isUpdateFullNote) {
+        const folder = getState().fullFolder;
+        if (folder && folder.id === folderId) {
+          patchState({ fullFolder: { ...folder, title: str } });
+        }
       }
+      
+      // UPDATE SMALL NOTE
       const folderUpdate = this.getFolderById(getState, folderId);
-      folderUpdate.title = str;
-      patchState({ updateFolderEvent: [this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title)] });
-      dispatch(new UpdateOneFolder(folderUpdate));
+      if (folderUpdate) {
+        dispatch(new UpdateOneFolder({...folderUpdate, title: str}));
+      }
+
+      // UI CHANGES
+      const uiChanges = this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title);
+      patchState({ updateFolderEvent: [uiChanges] });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));

@@ -7,7 +7,7 @@ export interface BreakEnterModel {
   nextHtml?: string;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ContentEditableService {
   constructor(private apiBrowserService: ApiBrowserTextService) {}
 

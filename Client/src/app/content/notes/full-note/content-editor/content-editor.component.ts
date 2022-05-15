@@ -61,7 +61,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
-  providers: [ContentEditableService, WebSocketsNoteUpdaterService],
+  providers: [WebSocketsNoteUpdaterService],
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;

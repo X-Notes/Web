@@ -82,9 +82,7 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
     console.log('changes: ', changes);
   }
 
-  ngOnInit(): void {
-    console.log('selectValue: ', this.selectValue);
-  }
+  ngOnInit(): void {}
 
   ngAfterContentInit(): void {
     requestAnimationFrame(() => {

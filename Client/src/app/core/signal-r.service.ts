@@ -152,8 +152,8 @@ export class SignalRService {
       if (updates.color) {
         this.store.dispatch(new ChangeColorFolder(updates.color, [updates.folderId], false));
       }
-      if (updates.title) {
-        this.store.dispatch(new UpdateFolderTitle(updates.title, updates.folderId, false));
+      if (updates.isUpdateTitle) {
+        this.store.dispatch(new UpdateFolderTitle(null, updates.title, updates.folderId, false));
       }
       this.updateFolder$.next(updates);
     });

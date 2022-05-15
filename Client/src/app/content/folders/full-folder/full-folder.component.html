@@ -40,9 +40,10 @@
         </a>
         <span class="divider">/</span>
         <input
-          [ngModel]="(folder$ | async).title"
+          #folderTitle
+          [ngModel]="uiTitle"
           [placeholder]="'placeholder.folderSmall' | translate"
-          (ngModelChange)="nameChanged.next($event)"
+          (ngModelChange)="titleChange$.next($event)"
           [disabled]="(canEdit$ | async) === false"
         />
       </div>

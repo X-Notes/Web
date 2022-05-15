@@ -5,6 +5,7 @@ export interface UpdateFolderWS {
   folderId: string;
   color: string;
   title: string;
+  isUpdateTitle: string;
   previewNotes: PreviewNotesInFolder[];
   idsToRemove: string[];
   idsToAdd: string[];

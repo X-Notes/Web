@@ -13,6 +13,8 @@ namespace Common.DTO.WebSockets
 
         public string Title { set; get; }
 
+        public bool IsUpdateTitle { set; get; }
+
         public List<EntityPositionDTO> Positions { set; get; } = new();
 
         public List<Guid> IdsToAdd { set; get; } = new();

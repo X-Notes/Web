@@ -41,6 +41,9 @@ import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
+import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
+import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { ContentEditableService } from '../../notes/full-note/content-editor-services/content-editable.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -51,6 +54,8 @@ import { LoadLabels } from '../../labels/state/labels-actions';
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
+
   @ViewChild(MatMenu) menu: MatMenu;
 
   @Select(FolderStore.canEdit)
@@ -58,6 +63,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Select(FolderStore.full)
   public folder$: Observable<FullFolder>;
+
+  @Select(FolderStore.fullFolderTitle)
+  folderTitle$: Observable<string>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
@@ -71,7 +79,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
-  nameChanged: Subject<string> = new Subject<string>();
+  // TITLE
+  title: string;
+
+  uiTitle: string;
+
+  titleChange$: Subject<string> = new Subject<string>();
+
+  //
 
   private routeSubscription: Subscription;
 
@@ -92,50 +107,54 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
     public pB: PermissionsButtonsService,
     private signalR: SignalRService,
+    private diffCheckerService: DiffCheckerService,
+    private apiBrowserFunctions: ApiBrowserTextService,
+    private contentEditableService: ContentEditableService,
   ) {}
 
-  getFolderMenu(folder: FullFolder) {
-    if (!folder) return [];
-    return this.menuButtonService.getFolderMenuByFolderType(folder.folderTypeId);
-  }
+  setTitle(): void {
+    const folder = this.store.selectSnapshot(FolderStore.full);
+    // SET
+    this.uiTitle = folder.title;
+    this.title = folder.title;
+    this.htmlTitleService.setCustomOrDefault(this.title, 'titles.folder');
 
-  ngAfterViewInit(): void {
-    this.ffnService.murriInitialise(this.refElements);
-    this.initPanelClassStyleSubscribe();
-  }
+    // UPDATE WS
+    this.store
+      .select(FolderStore.fullFolderTitle)
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe((title) => this.updateTitle(title));
 
-  navigateToFolder(folderId: string): void {
-    this.store.dispatch(UnSelectAllNote);
-    this.router.navigate(['/folders/', folderId]);
-  }
-
-  ngOnDestroy(): void {
-    this.store.dispatch(UnSelectAllNote);
-    this.ffnService.onDestroy();
-    this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
-    this.updateNoteService.addFolderToUpdate(this.folderId);
-    this.routeSubscription.unsubscribe();
-  }
-
-  changeNameSubscribtion() {
-    this.nameChanged
+    // UPDATE CURRENT
+    this.titleChange$
       .pipe(takeUntil(this.ffnService.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        this.store.dispatch(new UpdateFolderTitle(title, this.folderId));
+        const diffs = this.diffCheckerService.getDiffs(this.title, title);
+        this.store.dispatch(new UpdateFolderTitle(diffs, title, this.folderId, true, null, false));
+        this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
       });
   }
 
-  openChangeColorPopup() {
-    const ids = [this.store.selectSnapshot(FolderStore.full).id];
-    return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
+  updateTitle(title: string): void {
+    if (this.title !== title && this.folderTitleEl?.nativeElement) {
+      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
+        this.folderTitleEl?.nativeElement,
+      );
+      this.uiTitle = title;
+      this.title = title;
+      this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
+      requestAnimationFrame(() =>
+        this.contentEditableService.setCaret(this.folderTitleEl?.nativeElement, pos?.start),
+      );
+    }
   }
 
   async ngOnInit() {
     this.store.dispatch(new LoadLabels());
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
-    this.changeNameSubscribtion();
+
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       // REINIT LAYOUT
       let isReinit = false;
@@ -147,6 +166,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       // lOAD FOLDER
       this.folderId = params.id;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
+      this.setTitle();
 
       // INIT FOLDER NOTES
       const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
@@ -179,6 +199,11 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
+  }
+
+  openChangeColorPopup() {
+    const ids = [this.store.selectSnapshot(FolderStore.full).id];
+    return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
   }
 
   initHeaderButtonSubscribe() {
@@ -256,6 +281,29 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
     const mappedNotes = this.ffnService.entities.map((x) => ({ ...x }));
     this.store.dispatch(new SetFolderNotes(mappedNotes));
+  }
+
+  getFolderMenu(folder: FullFolder) {
+    if (!folder) return [];
+    return this.menuButtonService.getFolderMenuByFolderType(folder.folderTypeId);
+  }
+
+  ngAfterViewInit(): void {
+    this.ffnService.murriInitialise(this.refElements);
+    this.initPanelClassStyleSubscribe();
+  }
+
+  navigateToFolder(folderId: string): void {
+    this.store.dispatch(UnSelectAllNote);
+    this.router.navigate(['/folders/', folderId]);
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(UnSelectAllNote);
+    this.ffnService.onDestroy();
+    this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
+    this.updateNoteService.addFolderToUpdate(this.folderId);
+    this.routeSubscription.unsubscribe();
   }
 
   async loadSideBar() {
