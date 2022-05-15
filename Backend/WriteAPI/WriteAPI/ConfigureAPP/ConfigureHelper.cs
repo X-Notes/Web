@@ -92,6 +92,7 @@ using BI.Services.Auth;
 using Common.Timers;
 using WriteContext.Repositories.WS;
 using Common.DTO.WebSockets.ReletedNotes;
+using BI.Services.DiffsMatchPatch;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -428,6 +429,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<AppSignalRService>();
             services.AddScoped<FolderWSUpdateService>();
             services.AddScoped<NoteWSUpdateService>();
+            services.AddScoped<DiffsMatchPatchService>();
 
             services.AddScoped<CollectionLinkedService>();
 

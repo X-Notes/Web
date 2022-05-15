@@ -45,6 +45,12 @@ export class ApiBrowserTextService {
 
     let startOffset = 0;
     let endOffset = 0;
+    const selection = this.getSelection();
+
+    if (selection.type === 'None') {
+      return null;
+    }
+
     const range = this.getSelection().getRangeAt(0);
     const preCaretRange = range.cloneRange();
     preCaretRange.selectNodeContents(element);

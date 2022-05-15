@@ -865,28 +865,30 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { str, isCallApi, noteId, errorPermissionMessage }: UpdateNoteTitle,
+    {  diffs, newTitle, isCallApi, noteId, errorPermissionMessage, isUpdateFullNote}: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.apiText.updateTitle(str, noteId).toPromise();
+      resp = await this.apiText.updateTitle(diffs, newTitle, noteId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
-      const fullNote = getState().fullNoteState?.note;
-      if (fullNote && fullNote.id === noteId) {
-        patchState({
-          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: str } },
-        });
+      if(isUpdateFullNote){
+        const fullNote = getState().fullNoteState?.note;
+        if (fullNote && fullNote.id === noteId) {
+          patchState({
+            fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
+          });
+        }
       }
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
-        dispatch(new UpdateOneNote({...noteUpdate, title: str}));
+        dispatch(new UpdateOneNote({...noteUpdate, title: newTitle}));
       }
 
       // UPDATE UI
-      const uiChanges = this.toUpdateNoteUI(noteId, null, null, null, null, str);
+      const uiChanges = this.toUpdateNoteUI(noteId, null, null, null, null, newTitle);
       patchState({ updateNoteEvent: [uiChanges] });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {

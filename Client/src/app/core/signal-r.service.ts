@@ -133,8 +133,8 @@ export class SignalRService {
       if (updates.color) {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
-      if (updates.title) {
-        this.store.dispatch(new UpdateNoteTitle(updates.title, updates.noteId, false));
+      if (updates.isUpdateTitle) {
+        this.store.dispatch(new UpdateNoteTitle(null, updates.title, updates.noteId, false));
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {
