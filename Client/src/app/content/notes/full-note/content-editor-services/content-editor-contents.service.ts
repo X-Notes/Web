@@ -82,7 +82,7 @@ export class ContentEditorContentsService {
     this.updateSubject
       .pipe(
         filter((x) => x === true),
-        debounceTime(200),
+        debounceTime(1),
       )
       .subscribe(() => {
         this.processChanges();
@@ -96,7 +96,7 @@ export class ContentEditorContentsService {
     this.saveSubject
       .pipe(
         filter((x) => x === true),
-        debounceTime(200),
+        debounceTime(1),
       )
       .subscribe(() => this.contentEditorMomentoStateService.save(this.getContents));
   }
@@ -197,18 +197,14 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Photos,
     );
-    console.log('diffs: ', diffs);
     for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
       if (itemsToAdd && itemsToAdd.length > 0) {
         const ids = itemsToAdd.map((x) => x.fileId);
-        console.log('ids: ', ids);
         this.apiPhotos
           .addItemsToCollection(new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids))
           .pipe(take(1))
           .subscribe(() => {
             const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
-            console.log(this.contentsSync.find((x) => x.id === contentId) === item);
-            console.log('itemsToAdd: ', itemsToAdd);
             item?.addItemsToCollection(itemsToAdd);
           });
       }

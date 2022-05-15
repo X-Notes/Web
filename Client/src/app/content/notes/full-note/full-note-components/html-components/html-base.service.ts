@@ -8,8 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { takeUntil } from 'rxjs/operators';
 import { BaseText, TextBlock } from '../../../models/editor-models/base-text';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { BaseHtmlComponent } from '../base-html-components';
@@ -37,14 +36,13 @@ export class HtmlBaseService extends BaseHtmlComponent {
   constructor(cdr: ChangeDetectorRef) {
     super(cdr);
 
-    this.textChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(() => {
-        this.inputHtmlEvent.emit({
-          content: this.content,
-          html: this.contentHtml.nativeElement.innerHTML,
-        });
+    this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
+      if (!this.contentHtml) return;
+      this.inputHtmlEvent.emit({
+        content: this.content,
+        html: this.contentHtml.nativeElement.innerHTML,
       });
+    });
   }
 
   onInput() {

@@ -15,7 +15,6 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -55,6 +54,8 @@ import { VideosCollection } from '../../models/editor-models/videos-collection';
 import { DocumentsCollection } from '../../models/editor-models/documents-collection';
 import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { DiffCheckerService } from './diffs/diff-checker.service';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-content-editor',
@@ -69,7 +70,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
-  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<any>;
+  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
   @Input()
   isReadOnlyMode = true;
@@ -85,13 +86,15 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   title: string;
 
+  uiTitle: string;
+
+  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
+
   theme = ThemeENUM;
 
   contentType = ContentTypeENUM;
 
   textType = NoteTextTypeENUM;
-
-  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   destroy = new Subject<void>();
 
@@ -113,6 +116,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
     private contentEditableService: ContentEditableService,
+    private diffCheckerService: DiffCheckerService,
   ) {}
 
   get contents() {
@@ -142,29 +146,53 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.contentEditorListenerService.destroysListeners();
   }
 
+  setTitle(): void {
+    // SET
+    this.uiTitle = this.note.title;
+    this.title = this.note.title;
+    this.htmlTitleService.setCustomOrDefault(this.title, 'titles.note');
+
+    // UPDATE WS
+    this.title$.pipe(takeUntil(this.destroy)).subscribe((title) => this.updateTitle(title));
+
+    // UPDATE CURRENT
+    this.noteTitleChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((title) => {
+        const diffs = this.diffCheckerService.getDiffs(this.title, title);
+        this.store.dispatch(new UpdateNoteTitle(diffs, title, this.note.id, true, null, false));
+        this.title = title;
+        this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
+      });
+  }
+
   updateTitle(title: string): void {
-    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
-      this.noteTitleEl?.nativeElement,
-    );
-    if (this.title !== title) {
+    if (this.title !== title && this.noteTitleEl?.nativeElement) {
+      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
+        this.noteTitleEl?.nativeElement,
+      );
+      this.uiTitle = title;
       this.title = title;
+      this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       requestAnimationFrame(() =>
         this.contentEditableService.setCaret(this.noteTitleEl?.nativeElement, pos?.start),
       );
     }
   }
 
+  onTitleInput($event) {
+    this.noteTitleChanged.next($event.target.innerText);
+  }
+
+  handlerTitleEnter($event: KeyboardEvent) {
+    $event.preventDefault();
+    this.contentEditorTextService.appendNewEmptyContentToStart();
+    setTimeout(() => this.elements?.first?.setFocus());
+    this.postAction();
+  }
+
   ngOnInit(): void {
-    this.htmlTitleService.setCustomOrDefault(this.note.title, 'titles.note');
-
-    this.title$.pipe(takeUntil(this.destroy)).subscribe((title) => this.updateTitle(title));
-
-    this.noteTitleChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((title) => {
-        this.store.dispatch(new UpdateNoteTitle(title, this.note.id));
-        this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
-      });
+    this.setTitle();
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))
@@ -206,17 +234,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFocusHandler(content: ParentInteraction) {
     this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
-  }
-
-  onTitleInput($event) {
-    this.noteTitleChanged.next($event.target.innerText);
-  }
-
-  handlerTitleEnter($event: KeyboardEvent) {
-    $event.preventDefault();
-    this.contentEditorTextService.appendNewEmptyContentToStart();
-    setTimeout(() => this.elements?.first?.setFocus());
-    this.postAction();
   }
 
   pasteCommandHandler(e) {
