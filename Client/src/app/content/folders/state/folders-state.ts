@@ -513,7 +513,7 @@ export class FolderStore {
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
       foldersForUpdate.forEach((folder) => folder.color = color);
       const updatesUI = foldersForUpdate.map((folder) =>
-        this.toUpdateFolderUI(folder.id, folder.color, null),
+        this.toUpdateFolderUI(folder.id, folder.color, null, false),
       );
       patchState({ updateFolderEvent: updatesUI });
       foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder)));
@@ -567,7 +567,7 @@ export class FolderStore {
       }
 
       // UI CHANGES
-      const uiChanges = this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title);
+      const uiChanges = this.toUpdateFolderUI(folderUpdate.id, null, str, true);
       patchState({ updateFolderEvent: [uiChanges] });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
@@ -607,10 +607,11 @@ export class FolderStore {
     });
   }
 
-  toUpdateFolderUI = (id: string, color: string, title: string) => {
+  toUpdateFolderUI = (id: string, color: string, title: string, isUpdateTitle: boolean) => {
     const obj = new UpdateFolderUI(id);
     obj.color = color;
     obj.title = title;
+    obj.isUpdateTitle = isUpdateTitle;
     return obj;
   };
 

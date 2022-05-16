@@ -84,6 +84,8 @@ export class FullFolderNotesService extends NoteEntitiesService {
     }
   }
 
+  updatePositions() {}
+
   updateOrder(): void {
     const sorted = this.entities.sort(
       (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),

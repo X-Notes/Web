@@ -23,10 +23,13 @@ import { SmallNote } from './models/small-note.model';
 import { DialogsManageService } from '../navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
+import { NoteComponent } from './note/note.component';
 
 /** Injection only in component */
 @Injectable()
 export class NotesService extends NoteEntitiesService implements OnDestroy {
+  viewElements: QueryList<NoteComponent>;
+
   labelsIds: Subscription;
 
   firstInitFlag = false;
