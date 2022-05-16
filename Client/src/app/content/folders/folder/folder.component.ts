@@ -73,13 +73,14 @@ export class FolderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
         const diffs = this.diffCheckerService.getDiffs(this.folder.title, title);
-        this.store.dispatch(new UpdateFolderTitle(diffs, title, this.folder.id, true, null, false));
+        this.store.dispatch(
+          new UpdateFolderTitle(diffs, title, this.folder.id, true, null, false, false),
+        );
         this.folder.title = title;
       });
   }
 
   updateTitle(title: string): void {
-    console.log('title: ', title);
     if (this.folder.title !== title && this.folderTitleEl?.nativeElement) {
       const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
         this.folderTitleEl?.nativeElement,

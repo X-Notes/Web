@@ -145,6 +145,7 @@ export class UpdateFolderTitle {
     public isCallApi = true,
     public errorPermissionMessage?: string,
     public isUpdateFullNote = true,
+    public isUpdateSmallFolders = true,
   ) {}
 }
 

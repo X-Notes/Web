@@ -17,20 +17,32 @@ namespace BI.Services.DiffsMatchPatch
 
         public string PatchToStr(List<List<object>> valuesDiffs, string str)
         {
-            var diffs = valuesDiffs.ConvertToDiffs();
-            var patches = dmp.patch_make(diffs);
-
             str = str ?? string.Empty;
-            try
+
+            string Update(List<Diff> diffs)
             {
                 var patchDB = dmp.patch_make(str, diffs);
                 return dmp.patch_apply(patchDB, str)[0] as string;
             }
-            catch (ArgumentOutOfRangeException ex)
+
+            var diffs = valuesDiffs.ConvertToDiffs();
+            // var patches = dmp.patch_make(diffs);
+
+            try
+            {
+                return Update(diffs);
+            }
+            catch (ArgumentOutOfRangeException argEx)
             {
                 diffs = diffs.Where(x => x.operation != Operation.DELETE).ToList();
-                var patchDB = dmp.patch_make(str, diffs);
-                return dmp.patch_apply(patchDB, str)[0] as string;
+                try
+                {
+                    return Update(diffs);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return str;
+                }
             }
             catch(Exception ex)
             {
