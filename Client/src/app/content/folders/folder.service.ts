@@ -14,15 +14,20 @@ import { SmallFolder } from './models/folder.model';
 import { FolderStore } from './state/folders-state';
 import {
   ClearAddToDomFolders,
+  ClearUpdatesUIFolders,
   LoadFolders,
   UpdateOneFolder,
   UpdatePositionsFolders,
 } from './state/folders-actions';
 import { ApiFoldersService } from './api-folders.service';
+import { FolderComponent } from './folder/folder.component';
+import { UpdateFolderUI } from './state/update-folder-ui.model';
 
 /** Injection only in component */
 @Injectable()
 export class FolderService extends FeaturesEntitiesService<SmallFolder> implements OnDestroy {
+  viewElements: QueryList<FolderComponent>;
+
   destroy = new Subject<void>();
 
   prevSortedFolderByTypeId: SortedByENUM = null;
@@ -123,6 +128,28 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
       return SortedByENUM.DescDate;
     }
     return this.sortFolderType;
+  }
+
+  async updateFolders(updates: UpdateFolderUI[]) {
+    for (const value of updates) {
+      const folder = this.entities.find((x) => x.id === value.id) as SmallFolder;
+      if (folder !== undefined) {
+        folder.color = value.color ?? folder.color;
+
+        if (value.isUpdateTitle) {
+          const viewChid = this.viewElements.toArray().find((x) => x.folder.id === value.id);
+          if (viewChid) {
+            viewChid.updateTitle(value.title);
+          }
+        }
+
+        folder.isCanEdit = value.isCanEdit ?? folder.isCanEdit;
+      }
+    }
+    if (updates.length > 0) {
+      await this.store.dispatch(new ClearUpdatesUIFolders()).toPromise();
+      await this.murriService.refreshLayoutAsync();
+    }
   }
 
   updatePositions(): void {

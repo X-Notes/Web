@@ -68,12 +68,6 @@ export class FolderComponent implements OnInit, OnDestroy {
     // SET
     this.uiTitle = this.folder.title;
 
-    // UPDATE WS
-    this.store
-      .select(FolderStore.fullFolderTitle)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((title) => this.updateTitle(title));
-
     // UPDATE CURRENT
     this.titleChange$
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
@@ -85,6 +79,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   updateTitle(title: string): void {
+    console.log('title: ', title);
     if (this.folder.title !== title && this.folderTitleEl?.nativeElement) {
       const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
         this.folderTitleEl?.nativeElement,
