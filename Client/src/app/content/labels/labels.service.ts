@@ -5,7 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { MurriEntityService } from 'src/app/shared/services/murri-entity.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Label } from './models/label.model';
-import { UpdatePositionsLabels } from './state/labels-actions';
+import { AddToDomLabels, UpdatePositionsLabels } from './state/labels-actions';
+import { LabelStore } from './state/labels-state';
 
 /** Injection only in component */
 @Injectable()
@@ -15,6 +16,16 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(murriService: MurriService, private store: Store) {
     super(murriService);
+
+    this.store
+      .select(LabelStore.labelsAddingToDOM)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((labels) => {
+        if (labels?.length > 0) {
+          this.addToDom(labels);
+          this.store.dispatch(new AddToDomLabels([]));
+        }
+      });
   }
 
   ngOnDestroy(): void {

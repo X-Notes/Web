@@ -13,6 +13,7 @@ import {
   RestoreLabel,
   DeleteAllLabelsFromBin,
   UpdateLabelCount,
+  AddToDomLabels,
 } from './labels-actions';
 import { ApiServiceLabels } from '../api-labels.service';
 import { Label } from '../models/label.model';
@@ -26,6 +27,7 @@ export interface LabelsForFiltersNotes {
 
 interface LabelState {
   labels: Label[];
+  labelsAddToDOM: Label[];
   loaded: boolean;
 }
 
@@ -33,6 +35,7 @@ interface LabelState {
   name: 'Labels',
   defaults: {
     labels: [],
+    labelsAddToDOM: [],
     loaded: false,
   },
 })
@@ -43,6 +46,11 @@ export class LabelStore {
   @Selector()
   static countNoDeleted(state: LabelState): number {
     return state.labels.filter((x) => !x.isDeleted).length;
+  }
+
+  @Selector()
+  static labelsAddingToDOM(state: LabelState): Label[] {
+    return state.labelsAddToDOM;
   }
 
   @Selector()
@@ -67,7 +75,7 @@ export class LabelStore {
       return this.api.getAll().pipe(
         tap((content) => {
           patchState({
-            labels: content,
+            labels: content.map((x) => new Label(x)),
             loaded: true,
           });
         }),
@@ -76,13 +84,25 @@ export class LabelStore {
   }
 
   @Action(AddLabel)
-  async newLabel({ getState, patchState }: StateContext<LabelState>) {
+  async newLabel({ patchState, dispatch, getState }: StateContext<LabelState>) {
     const id = await this.api.new().toPromise();
+    const newLabel = new Label({
+      name: '',
+      color: LabelsColor.Red,
+      id,
+      isDeleted: false,
+      countNotes: 0,
+      order: 1,
+    });
+    patchState({ labels: [newLabel, ...getState().labels] });
+    dispatch(new AddToDomLabels([newLabel]));
+  }
+
+  @Action(AddToDomLabels)
+  // eslint-disable-next-line class-methods-use-this
+  addToDomLabels({ patchState }: StateContext<LabelState>, { labels }: AddToDomLabels) {
     patchState({
-      labels: [
-        { name: '', color: LabelsColor.Red, id, isDeleted: false, countNotes: 0, order: 1 },
-        ...getState().labels,
-      ],
+      labelsAddToDOM: labels,
     });
   }
 

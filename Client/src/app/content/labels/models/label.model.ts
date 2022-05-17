@@ -16,4 +16,8 @@ export class Label {
   updatedAt?: Date;
 
   deletedAt?: Date;
+
+  constructor(obj: Partial<Label>) {
+    Object.assign(this, obj);
+  }
 }
