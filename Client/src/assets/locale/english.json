@@ -107,6 +107,7 @@
     "countCurrent": "Current: "
   },
   "modal": {
+    "notFound": "Not found",
     "labelModal": {
       "Labels": "Labels",
       "search": "Label name..."

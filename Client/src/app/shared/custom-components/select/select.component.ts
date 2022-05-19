@@ -79,7 +79,7 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes: ', changes);
+    this.initValue(changes.selectValue.currentValue);
   }
 
   ngOnInit(): void {}
@@ -88,25 +88,25 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
     requestAnimationFrame(() => {
       this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
       if (!this.selectValue) return;
-      if (typeof this.selectValue === 'object') {
-        this.selectedOption = this.options
-          .toArray()
-          .find(
-            (option) =>
-              option.value[this.selectObjectProperty] ===
-              this.selectValue[this.selectObjectProperty],
-          );
-        this.selected = this.selectedOption
-          ? this.selectedOption.value[this.selectObjectProperty]
-          : '';
-      } else {
-        this.selectedOption = this.options
-          .toArray()
-          .find((option) => option.value === this.selectValue);
-        this.selected = this.selectedOption ? this.selectedOption.value : '';
-      }
+      this.initValue(this.selectValue);
       this.keyManager.setActiveItem(this.options.toArray().indexOf(this.selectedOption));
     });
+  }
+
+  initValue(value) {
+    if (typeof value === 'object') {
+      this.selectedOption = this.options
+        .toArray()
+        .find(
+          (option) => option.value[this.selectObjectProperty] === value[this.selectObjectProperty],
+        );
+      this.selected = this.selectedOption
+        ? this.selectedOption.value[this.selectObjectProperty]
+        : '';
+    } else {
+      this.selectedOption = this.options.toArray().find((option) => option.value === value);
+      this.selected = this.selectedOption ? this.selectedOption.value : '';
+    }
   }
 
   onKeydown(event) {

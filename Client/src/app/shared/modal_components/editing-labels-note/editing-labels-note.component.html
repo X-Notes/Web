@@ -24,7 +24,10 @@
     >
       <div *ngIf="loaded" class="content-inner">
         <div
-          *ngFor="let item of labels$ | async | searchLabel: searchStr; trackBy: trackByFn"
+          *ngFor="
+            let item of labels$ | async | searchLabel: searchStr : filterMetadata;
+            trackBy: trackByFn
+          "
           class="label"
         >
           <app-label
@@ -37,6 +40,7 @@
           >
           </app-label>
         </div>
+        <app-empty-search-placeholder *ngIf="isNotFound"></app-empty-search-placeholder>
       </div>
     </ng-scrollbar>
     <app-spinner *ngIf="!loaded"></app-spinner>

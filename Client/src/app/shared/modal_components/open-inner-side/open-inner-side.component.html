@@ -3,11 +3,11 @@
   <div class="dialog-content" mat-dialog-content>
     <div class="tab-content">
       <div class="filter-row">
-        <app-search (changeOutput)="searchChanged.next($event)" class="search"></app-search>
+        <app-search (changeOutput)="onSearch($event)" class="search"></app-search>
         <app-select
           class="select"
           [translate]="'subMenu'"
-          [selectValue]="'all'"
+          [selectValue]="selectValue"
           (selectValueChange)="selectItem($event)"
         >
           <app-select-option *ngFor="let item of selectTypes" [value]="item">
@@ -47,6 +47,7 @@
               ></app-note>
             </div>
           </div>
+          <app-empty-search-placeholder *ngIf="isNotFound"></app-empty-search-placeholder>
         </div>
       </ng-scrollbar>
       <div class="fixed-filters" [hidden]="!(selectedNotesChips.length > 0)">

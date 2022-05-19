@@ -23,6 +23,7 @@ import { FontSizeENUM } from '../../enums/font-size.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
+import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
 
 @Component({
   selector: 'app-open-inner-side',
@@ -31,7 +32,10 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
   animations: [showDropdown],
   providers: [MurriService],
 })
-export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
+export class OpenInnerSideComponent
+  extends BaseSearchNotesTypes
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(UserStore.getUser)
@@ -43,25 +47,15 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   destroy = new Subject<void>();
 
-  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
-
-  currentType: string;
-
-  notes: PreviewNote[] = [];
-
-  viewNotes: PreviewNote[] = [];
-
-  firstInitedMurri = false;
-
-  searchChanged: Subject<string> = new Subject<string>();
-
   constructor(
     private store: Store,
-    public murriService: MurriService,
+    murriService: MurriService,
     public pService: PersonalizationService,
     public dialogRef: MatDialogRef<OpenInnerSideComponent>,
     private apiRelatedNotes: ApiRelatedNotesService,
-  ) {}
+  ) {
+    super(murriService);
+  }
 
   get selectedNotesChips() {
     return this.notes.filter((x) => x.isSelected);
@@ -79,8 +73,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngOnInit() {
     this.initSearch();
-    const [firstItem] = this.selectTypes;
-    this.currentType = firstItem;
     this.pService.setSpinnerState(true);
     this.dialogRef
       .afterOpened()
@@ -92,9 +84,10 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   initSearch() {
     const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
-    this.searchChanged
+    this.searchChanged$
       .pipe(debounceTime(searchDelay), distinctUntilChanged(), takeUntil(this.destroy))
       .subscribe(async (str) => {
+        if (!this.loaded) return;
         this.pService.setSpinnerState(true);
         await this.murriService.setOpacityFlagAsync(0, false);
         await this.murriService.wait(150);
@@ -105,6 +98,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
         await this.murriService.setOpacityFlagAsync(0);
+        this.selectValue = this.selectTypes[0];
       });
   }
 
@@ -136,44 +130,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
   }
-
-  selectItem = async (item) => {
-    const [all, personal, shared, archive, bin] = this.selectTypes;
-    let tempNotes: PreviewNote[] = [];
-    switch (item) {
-      case all: {
-        tempNotes = [...this.notes];
-        break;
-      }
-      case personal: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Private);
-        break;
-      }
-      case shared: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Shared);
-        break;
-      }
-      case archive: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Archive);
-        break;
-      }
-      case bin: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Deleted);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    if (this.firstInitedMurri) {
-      await this.murriService.setOpacityFlagAsync(0, false);
-      await this.murriService.wait(150);
-      this.murriService.grid.destroy();
-      this.viewNotes = tempNotes;
-      await this.murriService.initMurriPreviewDialogNoteAsync();
-      await this.murriService.setOpacityFlagAsync(0);
-    }
-  };
 
   close() {
     this.dialogRef.close(this.selectedNotesChips);

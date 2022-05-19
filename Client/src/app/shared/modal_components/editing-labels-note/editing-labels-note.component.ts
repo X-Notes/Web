@@ -35,6 +35,8 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   searchStr = '';
 
+  filterMetadata = { count: 0 };
+
   constructor(
     public dialogRef: MatDialogRef<EditingLabelsNoteComponent>,
     public pService: PersonalizationService,
@@ -52,6 +54,14 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
       .pipe(map((labels) => labels.map((x) => ({ ...x }))));
   }
 
+  get isSearchActive(): boolean {
+    return this.searchStr && this.searchStr.length > 0;
+  }
+
+  get isNotFound(): boolean {
+    return this.isSearchActive && this.filterMetadata.count === 0;
+  }
+
   private get selectedIds(): string[] {
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
@@ -67,7 +77,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.pService.waitPreloading();
+    await this.pService.waitPreloading(); // need for scroll bar
     this.loaded = true;
   }
 

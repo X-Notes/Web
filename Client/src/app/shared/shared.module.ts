@@ -77,6 +77,7 @@ import { GenericBottomButtonPopUpComponent } from './modal_components/generic-bo
 import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-message/generic-delete-entity-message.component';
 import { AddNotesInFolderComponent } from './modal_components/manage-notes-in-folder/add-notes-in-folder.component';
 import { MailInvitationsComponent } from './modal_components/share/mail-invitations/mail-invitations.component';
+import { EmptySearchPlaceholderComponent } from './modal_components/general-components/empty-search-placeholder/empty-search-placeholder.component';
 
 @NgModule({
   declarations: [
@@ -137,6 +138,7 @@ import { MailInvitationsComponent } from './modal_components/share/mail-invitati
     GenericBottomButtonPopUpComponent,
     GenericDeleteEntityMessageComponent,
     MailInvitationsComponent,
+    EmptySearchPlaceholderComponent,
   ],
   imports: [
     CommonModule,

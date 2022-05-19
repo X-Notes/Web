@@ -107,6 +107,7 @@
     "countCurrent": "Текущее: "
   },
   "modal": {
+    "notFound": "Не найдено",
     "labelModal": {
       "Labels": "Ярлыки",
       "search": "Название ярлыка..."
