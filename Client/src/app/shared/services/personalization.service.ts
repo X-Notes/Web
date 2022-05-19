@@ -301,9 +301,9 @@ export class PersonalizationService {
     return window.innerWidth >= 600;
   };
 
-  waitPreloading() {
+  waitPreloading(time: number = null) {
     return new Promise<boolean>((resolve) =>
-      setTimeout(() => resolve(false), this.timeForSpinnerLoading),
+      setTimeout(() => resolve(false), time ?? this.timeForSpinnerLoading),
     );
   }
 

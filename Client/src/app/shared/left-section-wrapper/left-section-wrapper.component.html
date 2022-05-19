@@ -5,7 +5,10 @@
     [@sidebarCloseOpen]
     [@.disabled]="pService.widthMoreThan1024()"
   >
-    <ng-content></ng-content>
+    <app-nav-profile-item *ngIf="isProfileActive"></app-nav-profile-item>
+    <div class="left-inner-content">
+      <ng-content></ng-content>
+    </div>
     <div class="information">
       <div class="separator"></div>
       <app-memory-indicator></app-memory-indicator>

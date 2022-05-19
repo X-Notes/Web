@@ -1,20 +1,20 @@
-<app-left-section-wrapper>
-  <div></div>
-</app-left-section-wrapper>
+<app-left-section-wrapper [isProfileActive]="true"> </app-left-section-wrapper>
 <div
   appTheme
   class="content-generic-project full-content"
-  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{
+    'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
+  }"
 >
   <div *ngIf="(snapshotState$ | async)?.canView" class="wrapper-note">
     <app-content-editor
-      [note]="(snapshotNote$ | async)"
+      [note]="snapshotNote$ | async"
       [title$]="snapshotNoteTitle$"
       [contents]="contents"
       [isReadOnlyMode]="true"
     ></app-content-editor>
   </div>
-  <div *ngIf="!isLoading &&!(snapshotState$ | async)?.canView" class="wrapper">
+  <div *ngIf="!isLoading && !(snapshotState$ | async)?.canView" class="wrapper">
     <app-no-results-illustration
       [isShow]="true"
       [message]="'noResult.noAccessViewNote' | translate"

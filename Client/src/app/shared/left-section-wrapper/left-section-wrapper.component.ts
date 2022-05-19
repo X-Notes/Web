@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PersonalizationService, sideBarCloseOpen } from '../services/personalization.service';
 
 @Component({
@@ -8,5 +8,7 @@ import { PersonalizationService, sideBarCloseOpen } from '../services/personaliz
   animations: [sideBarCloseOpen],
 })
 export class LeftSectionWrapperComponent {
+  @Input() isProfileActive = false;
+
   constructor(public pService: PersonalizationService) {}
 }

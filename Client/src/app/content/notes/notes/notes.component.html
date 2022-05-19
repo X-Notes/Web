@@ -1,33 +1,29 @@
-<app-left-section-wrapper>
-  <div>
-    <app-nav-profile-item></app-nav-profile-item>
+<app-left-section-wrapper [isProfileActive]="true">
+  <app-nav-menu-item
+    [count]="countPrivate | async"
+    [navName]="'subMenu.personal'"
+    [routerLink]="'/notes'"
+  ></app-nav-menu-item>
 
-    <app-nav-menu-item
-      [count]="countPrivate | async"
-      [navName]="'subMenu.personal'"
-      [routerLink]="'/notes'"
-    ></app-nav-menu-item>
+  <app-nav-menu-item
+    [count]="countShared | async"
+    [navName]="'subMenu.shared'"
+    [routerLink]="'/notes/shared'"
+  ></app-nav-menu-item>
 
-    <app-nav-menu-item
-      [count]="countShared | async"
-      [navName]="'subMenu.shared'"
-      [routerLink]="'/notes/shared'"
-    ></app-nav-menu-item>
+  <app-nav-menu-item
+    [count]="countArchive | async"
+    [navName]="'subMenu.archive'"
+    [routerLink]="'/notes/archive'"
+  ></app-nav-menu-item>
 
-    <app-nav-menu-item
-      [count]="countArchive | async"
-      [navName]="'subMenu.archive'"
-      [routerLink]="'/notes/archive'"
-    ></app-nav-menu-item>
+  <app-nav-menu-item
+    [count]="countDeleted | async"
+    [navName]="'subMenu.bin'"
+    [routerLink]="'/notes/deleted'"
+  ></app-nav-menu-item>
 
-    <app-nav-menu-item
-      [count]="countDeleted | async"
-      [navName]="'subMenu.bin'"
-      [routerLink]="'/notes/deleted'"
-    ></app-nav-menu-item>
-
-    <div class="separator"></div>
-  </div>
+  <div class="separator"></div>
 
   <div *ngIf="loaded" class="label-section" [ngClass]="labelsActive ? 'active-select' : ''">
     <div class="label-cancel" (click)="cancelLabel()">
@@ -40,15 +36,15 @@
         (click)="filterNotes(item.label.id)"
         [ngClass]="item.selected ? 'active-label' : ''"
       >
-        <div class="label-item" [ngStyle]="{'backgroundColor': item.label.color}">
+        <div class="label-item" [ngStyle]="{ backgroundColor: item.label.color }">
           <p *ngIf="item.label.name && item.label.name.length > 0" class="label-item-title">
             {{ item.label.name }}
           </p>
           <p *ngIf="!item.label.name" class="label-item-title empty-placeholder">
-            {{'placeholder.unnamedLabel' | translate}}
+            {{ 'placeholder.unnamedLabel' | translate }}
           </p>
           <p>{{ item.label.countNotes }}</p>
-          <div class="dot" [ngStyle]="{'backgroundColor': item.label.color}"></div>
+          <div class="dot" [ngStyle]="{ backgroundColor: item.label.color }"></div>
         </div>
       </div>
     </ng-scrollbar>
@@ -57,7 +53,9 @@
 
 <div
   class="content-generic-project"
-  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{
+    'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
+  }"
 >
   <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">

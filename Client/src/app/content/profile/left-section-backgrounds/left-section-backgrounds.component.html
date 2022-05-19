@@ -1,13 +1,20 @@
-<ng-scrollbar class="background-section" [visibility]="'hover'" [appearance]="'compact'">
-  <div
-    class="background"
-    *ngFor="let item of backgrounds$ | async"
-    [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''"
-  >
-    <img alt="background" [src]="item.photoPath" (click)="setCurrentBackground.emit(item.id)" />
-    <div class="thumbnail" (click)="removeBackground.emit(item.id)">
-      <div class="icon">
-        <mat-icon svgIcon="cancelThin" [inline]="true"></mat-icon>
+<ng-scrollbar
+  class="background-section"
+  [autoHeightDisabled]="true"
+  [visibility]="'hover'"
+  [appearance]="'compact'"
+>
+  <div *ngIf="loaded" class="background-container">
+    <div
+      class="background"
+      *ngFor="let item of backgrounds$ | async"
+      [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''"
+    >
+      <img alt="background" [src]="item.photoPath" (click)="setCurrentBackground.emit(item.id)" />
+      <div class="thumbnail" (click)="removeBackground.emit(item.id)">
+        <div class="icon">
+          <mat-icon svgIcon="cancelThin" [inline]="true"></mat-icon>
+        </div>
       </div>
     </div>
   </div>

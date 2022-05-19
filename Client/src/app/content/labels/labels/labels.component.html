@@ -1,22 +1,21 @@
-<app-left-section-wrapper>
-  <div>
-    <app-nav-profile-item></app-nav-profile-item>
-    <app-nav-menu-item
-      [count]="countAll$ | async"
-      [navName]="'subMenu.all'"
-      [routerLink]="'/labels'"
-    ></app-nav-menu-item>
-    <app-nav-menu-item
-      [count]="countDeleted$ | async"
-      [navName]="'subMenu.bin'"
-      [routerLink]="'/labels/deleted'"
-    ></app-nav-menu-item>
-    <div class="separator"></div>
-  </div>
+<app-left-section-wrapper [isProfileActive]="true">
+  <app-nav-menu-item
+    [count]="countAll$ | async"
+    [navName]="'subMenu.all'"
+    [routerLink]="'/labels'"
+  ></app-nav-menu-item>
+  <app-nav-menu-item
+    [count]="countDeleted$ | async"
+    [navName]="'subMenu.bin'"
+    [routerLink]="'/labels/deleted'"
+  ></app-nav-menu-item>
+  <div class="separator"></div>
 </app-left-section-wrapper>
 <div
   class="content-generic-project"
-  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{
+    'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
+  }"
 >
   <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">
