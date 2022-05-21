@@ -77,9 +77,8 @@ export class AddNotesInFolderComponent
       .subscribe(async (str) => {
         if (!this.loaded) return;
         this.pService.setSpinnerState(true);
-        await this.murriService.setOpacityFlagAsync(0, false);
-        await this.murriService.wait(150);
-        this.murriService.grid.destroy();
+        await this.murriService.destroyGridAsync();
+
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
         this.viewNotes = [...this.notes];

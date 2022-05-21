@@ -58,7 +58,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x === true) {
-          await this.destroyGridAsync();
+          await this.murriService.destroyGridAsync();
 
           const tempNotes = this.transformSpread(this.getNotesByCurrentType);
           this.entities = this.orderBy(tempNotes, this.pageSortType);
@@ -144,7 +144,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
   }
 
   async changeOrderTypeHandler(sortedType: SortedByENUM) {
-    await this.destroyGridAsync();
+    await this.murriService.destroyGridAsync();
     this.entities = this.orderBy(this.entities, sortedType);
     const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
     const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
@@ -252,7 +252,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
 
   async updateLabelSelected(ids: string[]) {
     if (ids.length !== 0 && this.firstInitFlag) {
-      await this.destroyGridAsync();
+      await this.murriService.destroyGridAsync();
 
       const tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),

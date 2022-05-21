@@ -211,7 +211,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   async changeOrderTypeHandler(sortType: SortedByENUM) {
-    await this.destroyGridAsync();
+    await this.murriService.destroyGridAsync();
     this.entities = this.orderBy(this.entities, sortType);
     const roadType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const isDraggable = roadType !== FolderTypeENUM.Shared && this.isSortable;

@@ -43,12 +43,6 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     this.firstInitedMurri = true;
   }
 
-  async destroyGridAsync(wait: number = 100) {
-    await this.murriService.setOpacityFlagAsync(0, false);
-    await this.murriService.wait(wait);
-    this.murriService.grid?.destroy(); // TODO INVESTIGATE WHY GRID IS UNDEFINED
-  }
-
   destroyLayout() {
     this.murriService.flagForOpacity = false;
     this.murriService.muuriDestroy();

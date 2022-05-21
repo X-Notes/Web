@@ -20,7 +20,6 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
-import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
@@ -89,9 +88,8 @@ export class OpenInnerSideComponent
       .subscribe(async (str) => {
         if (!this.loaded) return;
         this.pService.setSpinnerState(true);
-        await this.murriService.setOpacityFlagAsync(0, false);
-        await this.murriService.wait(150);
-        this.murriService.grid.destroy();
+        await this.murriService.destroyGridAsync();
+
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str, pr).toPromise();
         this.viewNotes = [...this.notes];

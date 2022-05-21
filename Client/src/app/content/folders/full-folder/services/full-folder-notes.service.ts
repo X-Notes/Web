@@ -49,10 +49,6 @@ export class FullFolderNotesService extends NoteEntitiesService {
     await super.loadAdditionNoteInformation();
   }
 
-  async reinitLayout() {
-    await this.destroyGridAsync();
-  }
-
   murriInitialise(refElements: QueryList<ElementRef>) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (this.getIsFirstInit(z)) {

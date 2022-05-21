@@ -159,7 +159,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       // REINIT LAYOUT
       let isReinit = false;
       if (this.folderId) {
-        await this.ffnService.reinitLayout();
+        await this.ffnService.murriService.destroyGridAsync();
         isReinit = true;
         this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
       }

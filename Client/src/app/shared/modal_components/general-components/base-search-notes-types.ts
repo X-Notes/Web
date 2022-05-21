@@ -59,9 +59,8 @@ export class BaseSearchNotesTypes {
       }
     }
     if (this.firstInitedMurri) {
-      await this.murriService.setOpacityFlagAsync(0, false);
-      await this.murriService.wait(150);
-      this.murriService.grid.destroy();
+      await this.murriService.destroyGridAsync();
+
       this.viewNotes = tempNotes;
       await this.murriService.initMurriPreviewDialogNoteAsync();
       await this.murriService.setOpacityFlagAsync(0);
