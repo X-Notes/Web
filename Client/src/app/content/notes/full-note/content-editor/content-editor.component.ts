@@ -130,6 +130,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       this.contentEditorContentsService.init(contents, this.note.id);
     }
+
+    if (contents.length === 0) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
   }
 
   ngAfterViewInit(): void {

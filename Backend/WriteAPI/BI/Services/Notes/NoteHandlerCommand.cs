@@ -94,11 +94,6 @@ namespace BI.Services.Notes
 
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var _contents = new List<BaseNoteContent>();
-
-            var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeProvider.Time };
-            _contents.Add(newText); // TODO REMOVE
-
             var note = new Note()
             {
                 UserId = request.UserId,
@@ -108,7 +103,6 @@ namespace BI.Services.Notes
                 RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeProvider.Time,
                 UpdatedAt = DateTimeProvider.Time,
-                Contents = _contents
             };
 
             await noteRepository.AddAsync(note);

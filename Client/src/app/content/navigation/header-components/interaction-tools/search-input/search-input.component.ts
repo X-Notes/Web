@@ -32,7 +32,7 @@ export class SearchInputComponent implements OnInit {
     this.searchStrChanged
       .pipe(debounceTime(searchDelay), distinctUntilChanged())
       .subscribe(async (searchStr) => {
-        if (searchStr?.length > 2) {
+        if (searchStr?.length > 1) {
           const items = await this.searchService.searchNotesAndFolder(searchStr).toPromise();
           const notes = items.noteSearchs.map((x) => ({ ...x, type: 'notes' }));
           const folders = items.folderSearchs.map((x) => ({ ...x, type: 'folders' }));

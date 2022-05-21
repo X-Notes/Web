@@ -64,7 +64,6 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
         return item;
       }
     }
-    throw new Error('Element was not founded');
   }
 
   ngOnDestroy(): void {
