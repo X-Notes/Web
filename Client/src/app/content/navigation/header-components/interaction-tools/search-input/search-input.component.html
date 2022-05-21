@@ -3,6 +3,7 @@
     <div class="search">
       <input
         #searchInput
+        id="search-element"
         (focus)="isInputFocus = true"
         (blur)="unFocusSearch()"
         (ngModelChange)="searchStrChanged.next($event)"

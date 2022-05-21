@@ -14,6 +14,8 @@ export class ContentEditorElementsListenerService {
 
   onPressCtrlSSubject = new Subject();
 
+  private ctrlAExceptValues = ['title-element', 'search-element'];
+
   private renderer: Renderer2;
 
   constructor(rendererFactory: RendererFactory2) {
@@ -46,7 +48,11 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      const htmlEl = e.target as HTMLElement;
       if (e.ctrlKey && e.code === 'KeyA') {
+        if (this.ctrlAExceptValues.some((z) => z === htmlEl.id)) {
+          return true;
+        }
         e.preventDefault();
         this.onPressCtrlASubject.next();
         return false;
