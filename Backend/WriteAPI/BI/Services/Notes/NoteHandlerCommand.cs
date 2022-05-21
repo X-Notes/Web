@@ -101,7 +101,6 @@ namespace BI.Services.Notes
 
             var note = new Note()
             {
-                Id = Guid.NewGuid(),
                 UserId = request.UserId,
                 Order = 1,
                 Color = NoteColorPallete.Green,
@@ -142,12 +141,14 @@ namespace BI.Services.Notes
                 }
 
                 // WS UPDATES
-                var updates = permissions.Select(x => (
-                    new UpdateNoteWS { Color = request.Color, NoteId = x.noteId },
-                    x.perm.GetAllUsers()
-                ));
+                var updates = permissions
+                    .Where(x => x.perm.IsMultiplyUpdate)
+                    .Select(x => ( new UpdateNoteWS { Color = request.Color, NoteId = x.noteId }, x.perm.GetAllUsers()));
 
-                await noteWSUpdateService.UpdateNotes(updates, request.UserId);
+                if (updates.Any())
+                {
+                    await noteWSUpdateService.UpdateNotes(updates, request.UserId);
+                }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

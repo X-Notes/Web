@@ -75,7 +75,7 @@ namespace BI.Services.Notes
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
                 }
 
-                if (!note.IsShared() && note.UsersOnPrivateNotes.Count == 0)
+                if (permissions.IsSingleUpdate)
                 {
                     await UpdateNoteTitle(request.Title);
                     return new OperationResult<Unit>(true, Unit.Value);
@@ -100,16 +100,9 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                if(request.Texts.Count == 1)
+                foreach (var text in request.Texts)
                 {
-                    await UpdateOne(request.Texts.First(), request.NoteId, permissions.Caller.Id);
-                }
-                else
-                {
-                    foreach (var text in request.Texts)
-                    {
-                        await UpdateOne(text, request.NoteId, permissions.Caller.Id);
-                    }
+                    await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate);
                 }
 
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
@@ -121,7 +114,7 @@ namespace BI.Services.Notes
         }
 
 
-        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId)
+        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId, bool isMultiplyUpdate)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate != null)
@@ -134,8 +127,11 @@ namespace BI.Services.Notes
 
                 await textNotesRepository.UpdateAsync(textForUpdate);
 
-                var updates = new UpdateTextWS(text);
-                await appSignalRService.UpdateTextContent(noteId, userId, updates);
+                if (isMultiplyUpdate)
+                {
+                    var updates = new UpdateTextWS(text);
+                    await appSignalRService.UpdateTextContent(noteId, userId, updates);
+                }
             }
         }
     }

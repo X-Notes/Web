@@ -106,14 +106,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
                 {
                     textItemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (textItemsThatNeedAdd.Any())
                     {
                         var items = textItemsThatNeedAdd.Select(content => GetTextContent(content, note.Id));
                         await textNotesRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS TEXTS EXIST");
                     }
@@ -123,7 +123,7 @@ namespace BI.Services.Notes
                 if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
                 {
                     photosItemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (photosItemsThatNeedAdd.Any())
                     {
@@ -135,7 +135,7 @@ namespace BI.Services.Notes
                         });
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS PHOTOS EXIST");
                     }
@@ -143,14 +143,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
                 {
                     audiosItemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (audiosItemsThatNeedAdd.Any())
                     {
                         var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS AUDIOS EXIST");
                     }
@@ -158,14 +158,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
                 {
                     videosItemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (videosItemsThatNeedAdd.Any())
                     {
                         var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS VIDEOS EXIST");
                     }
@@ -173,14 +173,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
                 {
                     documentsItemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (documentsItemsThatNeedAdd.Any())
                     {
                         var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS DOCUMENTS EXIST");
                     }
@@ -207,17 +207,20 @@ namespace BI.Services.Notes
 
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                var updates = new UpdateNoteStructureWS()
+                if (permissions.IsMultiplyUpdate)
                 {
-                    ContentIdsToDelete = unlinkedItemIds,
-                    TextContentsToAdd = textItemsThatNeedAdd,
-                    PhotoContentsToAdd = photosItemsThatNeedAdd,
-                    VideoContentsToAdd = videosItemsThatNeedAdd,
-                    DocumentContentsToAdd = documentsItemsThatNeedAdd,
-                    AudioContentsToAdd = audiosItemsThatNeedAdd,
-                    Positions = positions
-                };
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
+                    var updates = new UpdateNoteStructureWS()
+                    {
+                        ContentIdsToDelete = unlinkedItemIds,
+                        TextContentsToAdd = textItemsThatNeedAdd,
+                        PhotoContentsToAdd = photosItemsThatNeedAdd,
+                        VideoContentsToAdd = videosItemsThatNeedAdd,
+                        DocumentContentsToAdd = documentsItemsThatNeedAdd,
+                        AudioContentsToAdd = audiosItemsThatNeedAdd,
+                        Positions = positions
+                    };
+                    await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
+                }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
+using System.Linq;
 
 namespace Common.DTO.Permissions
 {
@@ -32,6 +33,22 @@ namespace Common.DTO.Permissions
                 return Caller?.Id == Note.UserId;
             }
 
+        }
+
+        public bool IsMultiplyUpdate
+        {
+            get
+            {
+                return Note.IsShared() || Note.UsersOnPrivateNotes.Any();
+            }
+        }
+
+        public bool IsSingleUpdate
+        {
+            get
+            {
+                return !IsMultiplyUpdate;
+            }
         }
 
         public UserPermissionsForNote SetFullAccess(User user, Note note)

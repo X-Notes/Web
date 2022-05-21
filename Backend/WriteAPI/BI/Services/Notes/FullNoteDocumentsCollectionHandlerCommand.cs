@@ -89,7 +89,11 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -121,7 +125,11 @@ namespace BI.Services.Notes
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt) { 
                         Name = request.Name,
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -169,7 +177,11 @@ namespace BI.Services.Notes
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<DocumentsCollectionNoteDTO>(success: true, result);
                 }
@@ -211,7 +223,11 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

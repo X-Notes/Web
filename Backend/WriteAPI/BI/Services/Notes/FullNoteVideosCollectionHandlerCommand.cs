@@ -82,7 +82,11 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToUnlink
                     };
-                    await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -131,7 +135,11 @@ namespace BI.Services.Notes
                     {
                         Collection = result
                     };
-                    await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<VideosCollectionNoteDTO>(success: true, result);
                 }
@@ -169,7 +177,11 @@ namespace BI.Services.Notes
                     {
                         Name = request.Name,
                     };
-                    await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
@@ -208,7 +220,11 @@ namespace BI.Services.Notes
                     {
                         CollectionItemIds = idsToLink
                     };
-                    await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }

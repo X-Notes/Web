@@ -104,6 +104,7 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
         ? this.selectedOption.value[this.selectObjectProperty]
         : '';
     } else {
+      if (!this.options) return;
       this.selectedOption = this.options.toArray().find((option) => option.value === value);
       this.selected = this.selectedOption ? this.selectedOption.value : '';
     }

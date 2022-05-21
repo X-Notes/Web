@@ -57,7 +57,6 @@ namespace BI.Services.Folders
         {
             var folder = new Folder()
             {
-                Id = Guid.NewGuid(),
                 UserId = request.UserId,
                 Order = 1,
                 Color = FolderColorPallete.Green,
