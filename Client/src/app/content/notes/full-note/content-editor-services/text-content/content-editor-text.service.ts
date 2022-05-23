@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from '../../../models/editor-models/base-text';
 import { TransformContent } from '../../models/transform-content.model';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 
 @Injectable()
 export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(private contentsService: ContentEditorContentsService) {}
+  constructor(private contentsService: ContentEditorContentsSynchronizeService) {}
 
   deleteContent(contentId: string) {
     const index = this.contentsService.getIndexOrErrorById(contentId);

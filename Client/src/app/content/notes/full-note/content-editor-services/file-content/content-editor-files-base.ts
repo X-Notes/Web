@@ -14,7 +14,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 
 export class ContentEditorFilesBase {
   constructor(
@@ -23,7 +23,7 @@ export class ContentEditorFilesBase {
     protected uploadFilesService: UploadFilesService,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
     protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    protected contentsService: ContentEditorContentsService,
+    protected contentsService: ContentEditorContentsSynchronizeService,
   ) {}
 
   deleteContentHandler = (contentId: string) => {

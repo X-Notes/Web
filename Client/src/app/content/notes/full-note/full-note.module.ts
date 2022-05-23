@@ -32,7 +32,7 @@ import { MenuSelectionService } from './content-editor-services/menu-selection.s
 import { SelectionService } from './content-editor-services/selection.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
-import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from './content-editor-services/content-editor-contents.service';
 import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorDocumentsCollectionService } from './content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
@@ -93,7 +93,7 @@ import { HtmlBaseService } from './full-note-components/html-components/html-bas
     ClickableContentService,
     ContentEditorElementsListenerService,
     ContentEditorListenerService,
-    ContentEditorContentsService,
+    ContentEditorContentsSynchronizeService,
     ContentEditorAudiosCollectionService,
     ContentEditorDocumentsCollectionService,
     ContentEditorPhotosCollectionService,

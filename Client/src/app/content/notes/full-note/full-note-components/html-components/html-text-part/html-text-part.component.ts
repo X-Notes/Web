@@ -92,7 +92,7 @@ export class HtmlTextPartComponent
     return this.validURL(this.contentHtml?.nativeElement?.textContent);
   }
 
-  get CurrentTextCotent() {
+  get currentTextCotent() {
     return this.contentHtml?.nativeElement?.textContent;
   }
 

@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAudiosService } from '../../services/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
@@ -25,7 +25,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiAudiosCollection: ApiAudiosService,
-    contentEditorContentsService: ContentEditorContentsService,
+    contentEditorContentsService: ContentEditorContentsSynchronizeService,
     private apiFiles: ApiNoteFilesService,
   ) {
     super(
