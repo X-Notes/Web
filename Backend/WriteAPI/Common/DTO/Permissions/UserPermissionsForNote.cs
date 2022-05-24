@@ -24,7 +24,7 @@ namespace Common.DTO.Permissions
 
         public bool UserNotFound { set; get; }
 
-        public bool NoteNotFound { set; get; }
+        public bool NoteNotFound => Note == null;
 
         public bool IsOwner 
         {
@@ -86,7 +86,6 @@ namespace Common.DTO.Permissions
 
         public UserPermissionsForNote SetNoteNotFounded()
         {
-            NoteNotFound = true;
             return this;
         }
 

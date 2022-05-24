@@ -47,6 +47,7 @@ import { DocumentItemComponent } from './full-note-components/document-item/docu
 import { CollectionService } from './full-note-components/collection-services/collection.service';
 import { EmptyCollectionItemsPlaceholderComponent } from './full-note-components/collection-components/empty-collection-items-placeholder/empty-collection-items-placeholder.component';
 import { HtmlBaseService } from './full-note-components/html-components/html-base.service';
+import { ContentUpdateWsService } from './content-editor-services/content-update-ws.service';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { HtmlBaseService } from './full-note-components/html-components/html-bas
     ContentEditorMomentoStateService,
     CollectionService,
     HtmlBaseService,
+    ContentUpdateWsService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })
