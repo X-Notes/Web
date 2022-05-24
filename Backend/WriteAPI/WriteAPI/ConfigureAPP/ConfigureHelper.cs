@@ -93,6 +93,7 @@ using Common.Timers;
 using WriteContext.Repositories.WS;
 using Common.DTO.WebSockets.ReletedNotes;
 using BI.Services.DiffsMatchPatch;
+using Common.DTO.Notes.FullNoteSyncContents;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -169,7 +170,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
 
             // FULL NOTE CONTENT
-            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>, FullNoteContentHandlerCommand>();
 
 
             // FULL NOTE ALBUM

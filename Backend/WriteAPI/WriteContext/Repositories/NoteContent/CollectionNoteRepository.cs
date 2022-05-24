@@ -17,22 +17,22 @@ namespace WriteContext.Repositories.NoteContent
         }
 
 
-        public Task<CollectionNote> GetOneIncludePhotoNoteAppFiles(Guid id)
+        public Task<CollectionNote> GetOneIncludeNoteAppFiles(Guid id)
         {
             return entities.Include(x => x.CollectionNoteAppFiles).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<CollectionNote> GetOneIncludePhotos(Guid id)
+        public Task<CollectionNote> GetOneIncludeFiles(Guid id)
         {
             return entities.Include(x => x.Files).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<CollectionNote>> GetManyIncludePhotoNoteAppFiles(List<Guid> ids)
+        public Task<List<CollectionNote>> GetManyIncludeNoteAppFiles(List<Guid> ids)
         {
             return entities.Include(x => x.CollectionNoteAppFiles).Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<List<CollectionNote>> GetManyIncludePhotos(List<Guid> ids)
+        public Task<List<CollectionNote>> GetManyIncludeFiles(List<Guid> ids)
         {
             return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
         }

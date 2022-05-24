@@ -193,7 +193,7 @@ namespace BI.Services.Notes
                 if (fileContents.Any())
                 {
                     var ids = fileContents.Select(x => x.Id);
-                    await collectionLinkedService.UnLinkCollections(ids);
+                    await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(ids);
                 }
 
                 var notesToDelete = notes.Select(x => x.perm.Note);

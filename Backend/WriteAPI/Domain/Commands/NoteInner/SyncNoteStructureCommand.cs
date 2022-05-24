@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.NoteInner
 {
-    public class SyncNoteStructureCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class SyncNoteStructureCommand : BaseCommandEntity, IRequest<OperationResult<NoteStructureResult>>
     {
         [Required]
         public DiffsChanges Diffs { set; get; }

@@ -6,6 +6,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Audios;
@@ -23,7 +24,7 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<Unit>>
+    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
     {
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
@@ -60,13 +61,13 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
-            List<Guid> unlinkedItemIds = new();
+            NoteStructureResult result = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
@@ -87,20 +88,16 @@ namespace BI.Services.Notes
                     var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                     if (fileContents.Any())
                     {
-                        var ids = fileContents.Select(x => x.Id);
-                        unlinkedItemIds = await collectionLinkedService.UnLinkCollections(ids);
+                        var collectionIds = fileContents.Select(x => x.Id);
+                        result.RemovedIds = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
                     }
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     if (textIds.Any())
                     {
-                        unlinkedItemIds.AddRange(textIds);
-                    }
-
-                    if (unlinkedItemIds.Any())
-                    {
-                        contentsToDelete = contents.Where(x => unlinkedItemIds.Contains(x.Id));
-                        await baseNoteContentRepository.RemoveRangeAsync(contentsToDelete);
+                        result.RemovedIds.AddRange(textIds);
+                        var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
+                        await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
                     }
                 }
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
@@ -211,7 +208,7 @@ namespace BI.Services.Notes
                 {
                     var updates = new UpdateNoteStructureWS()
                     {
-                        ContentIdsToDelete = unlinkedItemIds,
+                        ContentIdsToDelete = result.RemovedIds,
                         TextContentsToAdd = textItemsThatNeedAdd,
                         PhotoContentsToAdd = photosItemsThatNeedAdd,
                         VideoContentsToAdd = videosItemsThatNeedAdd,
@@ -222,10 +219,10 @@ namespace BI.Services.Notes
                     await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
                 }
 
-                return new OperationResult<Unit>(true, Unit.Value);
+                return new OperationResult<NoteStructureResult>(true, result);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
         private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)
