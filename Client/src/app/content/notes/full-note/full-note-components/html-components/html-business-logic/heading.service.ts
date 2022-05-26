@@ -27,7 +27,7 @@ export class HeadingService extends HtmlService {
     enterEvent: EventEmitter<EnterEvent>,
   ) {
     $event.preventDefault();
-    const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
+    const breakModel = this.apiBrowserService.pressEnterHandler(this.getNativeElement(contentHtml));
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, content.id);
     enterEvent.emit(event);
   }

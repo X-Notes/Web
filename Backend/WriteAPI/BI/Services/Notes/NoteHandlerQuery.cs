@@ -146,6 +146,11 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
 
+            if (permissions.NoteNotFound)
+            {
+                return new List<OnlineUserOnNote>();
+            }
+
             if (permissions.Note.IsLocked)
             {
                 var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
@@ -162,6 +167,7 @@ namespace BI.Services.Notes
                 var users = await userRepository.GetUsersWithPhotos(ids);
                 return users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x)).ToList();
             }
+
             return new List<OnlineUserOnNote>();
         }
 

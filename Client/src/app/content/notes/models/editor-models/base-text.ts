@@ -92,7 +92,7 @@ export class BaseText extends ContentModelBase {
     return true;
   };
 
-  update(text: BaseText) {
+  patch(text: BaseText) {
     this.contents = text.contents;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;

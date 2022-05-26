@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -16,6 +17,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   selector: 'app-title-collection',
   templateUrl: './title-collection.component.html',
   styleUrls: ['./title-collection.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TitleCollectionComponent implements OnInit, OnDestroy {
   @ViewChild('titleHtml') titleHtml: ElementRef;
@@ -38,8 +40,6 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   @Input()
   textContent = '';
 
-  title = '';
-
   destroy = new Subject<void>();
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
@@ -49,7 +49,6 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.title = this.textContent;
     this.nameCollectionChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((name) => {

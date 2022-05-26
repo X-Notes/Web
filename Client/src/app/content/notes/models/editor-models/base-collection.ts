@@ -44,7 +44,7 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     return [true, null, null];
   }
 
-  updateInfo(entity: BaseCollection<T>) {
+  updateInfo(entity: Partial<BaseCollection<T>>) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
   }

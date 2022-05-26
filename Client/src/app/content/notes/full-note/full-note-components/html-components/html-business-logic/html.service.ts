@@ -2,10 +2,7 @@ import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
-import {
-  BreakEnterModel,
-  ContentEditableService,
-} from '../../../content-editor-services/content-editable.service';
+import { BreakEnterModel } from '../../../content-editor-services/break-enter.model';
 import { MenuSelectionService } from '../../../content-editor-services/menu-selection.service';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { SelectionService } from '../../../content-editor-services/selection.service';
@@ -23,7 +20,6 @@ export abstract class HtmlService {
     public selectionService: SelectionService,
     public menuSelectionService: MenuSelectionService,
     private renderer: Renderer2,
-    public contEditService: ContentEditableService,
     private clickableService: ClickableContentService,
   ) {}
 
@@ -44,7 +40,7 @@ export abstract class HtmlService {
 
     const selection = this.apiBrowserService.getSelection().toString();
     if (
-      this.contEditService.isStart(this.getNativeElement(contentHtml)) &&
+      this.apiBrowserService.isStart(this.getNativeElement(contentHtml)) &&
       !this.isContentEmpty(contentHtml) &&
       selection === ''
     ) {
@@ -164,7 +160,7 @@ export abstract class HtmlService {
   }
 
   setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModelBase) {
-    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
+    this.apiBrowserService.setCursor(this.getNativeElement(contentHtml), false);
     this.setFocusedElement(contentModel);
   }
 
