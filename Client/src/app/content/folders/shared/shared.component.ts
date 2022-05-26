@@ -77,12 +77,12 @@ export class SharedComponent
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.signalRService.addFoldersToSharedEvent
+    this.signalRService.addFoldersToSharedEvent$
       .pipe(takeUntil(this.folderService.destroy))
       .subscribe((folders) => {
         if (folders && folders.length > 0) {
           this.folderService.addToDom(folders);
-          this.signalRService.addFoldersToSharedEvent.next([]);
+          this.signalRService.addFoldersToSharedEvent$.next([]);
         }
       });
   }

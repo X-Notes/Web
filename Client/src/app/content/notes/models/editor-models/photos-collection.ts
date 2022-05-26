@@ -75,6 +75,14 @@ export class PhotosCollection extends BaseCollection<Photo> {
     obj.countInRow = null;
     return obj;
   }
+
+  patch(content: PhotosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+    this.height = content.height;
+    this.width = content.width;
+    this.countInRow = content.countInRow;
+  }
 }
 
 export class Photo extends BaseFile {

@@ -183,6 +183,7 @@ namespace BI.Services.Notes
 
                     var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
                     {
+                        CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
 

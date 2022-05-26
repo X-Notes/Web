@@ -73,12 +73,12 @@ export class SharedComponent
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.signalRService.addNotesToSharedEvent
+    this.signalRService.addNotesToSharedEvent$
       .pipe(takeUntil(this.noteService.destroy))
       .subscribe((notes) => {
         if (notes && notes.length > 0) {
           this.noteService.loadNoteAndAddToDom(notes);
-          this.signalRService.addNotesToSharedEvent.next([]);
+          this.signalRService.addNotesToSharedEvent$.next([]);
         }
       });
   }

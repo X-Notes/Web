@@ -1,7 +1,8 @@
-import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
+import { BaseCollection } from 'src/app/content/notes/models/editor-models/base-collection';
+import { BaseFile } from 'src/app/content/notes/models/editor-models/base-file';
 import { UpdateOperationWS } from './update-operation-ws.enum';
 
-export class BaseUpdateFileContent<T extends ContentModelBase> {
+export class BaseUpdateFileContent<T extends BaseCollection<BaseFile>> {
   contentId: string;
 
   collectionItemIds: string[];

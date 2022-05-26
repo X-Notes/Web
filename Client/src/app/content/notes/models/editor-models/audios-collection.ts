@@ -44,6 +44,11 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
     return obj;
   }
 
+  patch(content: AudiosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+  }
+
   isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
     return this.name === content.name;
   }

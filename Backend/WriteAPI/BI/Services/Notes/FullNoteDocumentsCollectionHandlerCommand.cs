@@ -175,6 +175,7 @@ namespace BI.Services.Notes
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt)
                     {
+                        CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
 

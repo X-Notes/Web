@@ -16,6 +16,10 @@ export abstract class ContentModelBase {
     this.order = order;
   }
 
+  transform(typeId: ContentTypeENUM): void {
+    this.typeId = typeId;
+  }
+
   abstract copy(): ContentModelBase;
 
   abstract copyBase(): ContentModelBase;
@@ -23,4 +27,6 @@ export abstract class ContentModelBase {
   abstract isTextOrCollectionInfoEqual(content: ContentModelBase): boolean;
 
   abstract isEqual(content: ContentModelBase): boolean;
+
+  abstract patch(content: ContentModelBase);
 }

@@ -44,6 +44,11 @@ export class VideosCollection extends BaseCollection<VideoModel> {
     return obj;
   }
 
+  patch(content: VideosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+  }
+
   isTextOrCollectionInfoEqual(content: VideosCollection): boolean {
     return this.name === content.name;
   }

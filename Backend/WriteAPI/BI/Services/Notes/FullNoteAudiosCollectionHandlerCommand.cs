@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -176,6 +177,7 @@ namespace BI.Services.Notes
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
                     {
+                        CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
 

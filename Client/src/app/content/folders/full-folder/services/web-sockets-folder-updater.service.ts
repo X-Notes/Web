@@ -17,7 +17,7 @@ export class WebSocketsFolderUpdaterService implements OnDestroy {
   attempts = 5;
 
   constructor(private signalRService: SignalRService) {
-    this.signalRService.setAsJoinedToFolder
+    this.signalRService.setAsJoinedToFolder$
       .pipe(takeUntil(this.destroy))
       .subscribe((folderId: string) => {
         if (this.folderId === folderId) {

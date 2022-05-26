@@ -17,7 +17,7 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
   attempts = 5;
 
   constructor(private signalRService: SignalRService) {
-    this.signalRService.setAsJoinedToNote
+    this.signalRService.setAsJoinedToNote$
       .pipe(takeUntil(this.destroy))
       .subscribe((noteId: string) => {
         if (this.noteId === noteId) {

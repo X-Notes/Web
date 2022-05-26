@@ -40,6 +40,11 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
     obj.items = null;
     return obj;
   }
+
+  patch(content: DocumentsCollection) {
+    this.name = content.name;
+    this.items = content.items;
+  }
 }
 
 export class DocumentModel extends BaseFile {

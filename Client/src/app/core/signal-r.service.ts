@@ -17,6 +17,7 @@ import {
 } from '../content/folders/state/folders-actions';
 import { UpdateFolderUI } from '../content/folders/state/update-folder-ui.model';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
+import { BaseText } from '../content/notes/models/editor-models/base-text';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
@@ -37,7 +38,6 @@ import { NoteTypeENUM } from '../shared/enums/note-types.enum';
 import { RefTypeENUM } from '../shared/enums/ref-type.enum';
 import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
 import { AuthService } from './auth.service';
-import { UpdaterEntitiesService } from './entities-updater.service';
 import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
 import { UpdateNoteStructureWS } from './models/signal-r/innerNote/update-note-structure-ws';
@@ -59,35 +59,34 @@ import { UserStore } from './stateUser/user-state';
 export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
-  public updateTextContentEvent = new BehaviorSubject<UpdateNoteTextWS>(null);
+  public updateTextContentEvent$ = new BehaviorSubject<UpdateNoteTextWS>(null);
 
-  public updateNoteStructureEvent = new BehaviorSubject<UpdateNoteStructureWS>(null);
+  public updateNoteStructureEvent$ = new BehaviorSubject<UpdateNoteStructureWS>(null);
 
-  public updatePhotosCollectionEvent = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
+  public updatePhotosCollectionEvent$ = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
 
-  public updateVideosCollectionEvent = new BehaviorSubject<UpdateVideosCollectionWS>(null);
+  public updateVideosCollectionEvent$ = new BehaviorSubject<UpdateVideosCollectionWS>(null);
 
-  public updateAudiosCollectionEvent = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
+  public updateAudiosCollectionEvent$ = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
 
-  public updateDocumentsCollectionEvent = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
+  public updateDocumentsCollectionEvent$ = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
 
-  public updateRelationNotes = new BehaviorSubject<UpdateRelatedNotesWS>(null);
+  public updateRelationNotes$ = new BehaviorSubject<UpdateRelatedNotesWS>(null);
 
   public updateFolder$ = new BehaviorSubject<UpdateFolderWS>(null);
 
-  public setAsJoinedToNote = new BehaviorSubject(null);
+  public setAsJoinedToNote$ = new BehaviorSubject(null);
 
-  public setAsJoinedToFolder = new BehaviorSubject(null);
+  public setAsJoinedToFolder$ = new BehaviorSubject(null);
 
-  public addNotesToSharedEvent = new BehaviorSubject<SmallNote[]>(null);
+  public addNotesToSharedEvent$ = new BehaviorSubject<SmallNote[]>(null);
 
-  public addFoldersToSharedEvent = new BehaviorSubject<SmallFolder[]>(null);
+  public addFoldersToSharedEvent$ = new BehaviorSubject<SmallFolder[]>(null);
 
-  public wsConnectionClosed = new Subject<boolean>();
+  public wsConnectionClosed$ = new Subject<boolean>();
 
   constructor(
     private store: Store,
-    private updaterEntitiesService: UpdaterEntitiesService,
     private apiFolders: ApiFoldersService,
     private apiNotes: ApiServiceNotes,
     private snackbarService: SnackbarService,
@@ -113,7 +112,7 @@ export class SignalRService {
       .catch((err) => console.log(`Error while starting connection: ${err}`));
 
     this.hubConnection.onclose(() => {
-      this.wsConnectionClosed.next(true);
+      this.wsConnectionClosed$.next(true);
       const message = this.translateService.instant('snackBar.reloadPage');
       this.snackbarService.openSnackBar(message, null, null, Infinity);
     });
@@ -161,41 +160,43 @@ export class SignalRService {
     // UPDATE CONTENT
 
     this.hubConnection.on('updateRelatedNotes', (updates: UpdateRelatedNotesWS) => {
-      this.updateRelationNotes.next(updates);
+      this.updateRelationNotes$.next(updates);
     });
 
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
-      this.updateTextContentEvent.next(updates);
+      updates.collection = new BaseText(updates.collection);
+      this.updateTextContentEvent$.next(updates);
     });
 
     this.hubConnection.on('updateNoteStructure', (updates: UpdateNoteStructureWS) => {
-      this.updateNoteStructureEvent.next(updates);
+      updates = new UpdateNoteStructureWS(updates);
+      this.updateNoteStructureEvent$.next(updates);
     });
 
     // FILES
     this.hubConnection.on('updateDocumentsCollection', (updates: UpdateDocumentsCollectionWS) => {
-      this.updateDocumentsCollectionEvent.next(updates);
+      this.updateDocumentsCollectionEvent$.next(updates);
     });
 
     this.hubConnection.on('updateAudiosCollection', (updates: UpdateAudiosCollectionWS) => {
-      this.updateAudiosCollectionEvent.next(updates);
+      this.updateAudiosCollectionEvent$.next(updates);
     });
 
     this.hubConnection.on('updateVideosCollection', (updates: UpdateVideosCollectionWS) => {
-      this.updateVideosCollectionEvent.next(updates);
+      this.updateVideosCollectionEvent$.next(updates);
     });
 
     this.hubConnection.on('updatePhotosCollection', (updates: UpdatePhotosCollectionWS) => {
-      this.updatePhotosCollectionEvent.next(updates);
+      this.updatePhotosCollectionEvent$.next(updates);
     });
 
     // JOINER
     this.hubConnection.on('setJoinedToNote', (noteId: string) => {
-      this.setAsJoinedToNote.next(noteId);
+      this.setAsJoinedToNote$.next(noteId);
     });
 
     this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
-      this.setAsJoinedToFolder.next(folderId);
+      this.setAsJoinedToFolder$.next(folderId);
     });
 
     // Note permissions
@@ -213,7 +214,7 @@ export class SignalRService {
           await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
           const route = this.store.selectSnapshot(AppStore.getRouting);
           if (route === EntityType.NoteShared) {
-            this.addNotesToSharedEvent.next(notes);
+            this.addNotesToSharedEvent$.next(notes);
           }
         }
         const updatePermissions = updatePermissionNote.updatePermissions;
@@ -255,7 +256,7 @@ export class SignalRService {
           await this.store.dispatch(new AddFolders(folders, FolderTypeENUM.Shared)).toPromise();
           const route = this.store.selectSnapshot(AppStore.getRouting);
           if (route === EntityType.FolderShared) {
-            this.addFoldersToSharedEvent.next(folders);
+            this.addFoldersToSharedEvent$.next(folders);
           }
         }
         const updatePermissions = updatePermissionFolder.updatePermissions;
