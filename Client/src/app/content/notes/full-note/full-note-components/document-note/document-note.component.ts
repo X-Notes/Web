@@ -6,7 +6,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -18,6 +17,7 @@ import {
   DocumentModel,
   DocumentsCollection,
 } from '../../../models/editor-models/documents-collection';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 
 @Component({
   selector: 'app-document-note',
@@ -34,14 +34,14 @@ export class DocumentNoteComponent
   formats = TypeUploadFormats.documents;
 
   constructor(
-    private dialogsManageService: DialogsManageService,
     private exportService: ExportService,
     private host: ElementRef,
     private clickableService: ClickableContentService,
     cdr: ChangeDetectorRef,
     clickableContentService: ClickableContentService,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService);
+    super(cdr, clickableContentService, apiBrowserTextService);
   }
 
   get isClicked() {

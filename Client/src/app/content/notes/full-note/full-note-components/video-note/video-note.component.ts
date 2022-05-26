@@ -18,7 +18,7 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
-import { ContentEditorVideosCollectionService } from '../../content-editor-services/file-content/content-editor-videos.service';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 
 @Component({
   selector: 'app-video-note',
@@ -63,9 +63,9 @@ export class VideoNoteComponent
     clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    private contentEditorVideosService: ContentEditorVideosCollectionService,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService);
+    super(cdr, clickableContentService, apiBrowserTextService);
   }
 
   get fullWidth() {

@@ -14,6 +14,7 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -35,8 +36,9 @@ export class AudioNoteComponent
     clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService);
+    super(cdr, clickableContentService, apiBrowserTextService);
   }
 
   get isEmpty(): boolean {

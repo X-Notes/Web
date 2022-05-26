@@ -20,7 +20,7 @@ import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
-import { ContentEditorPhotosCollectionService } from '../../content-editor-services/file-content/content-editor-photos.service';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -61,9 +61,9 @@ export class PhotosComponent
     clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    private contentEditorPhotosService: ContentEditorPhotosCollectionService,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService);
+    super(cdr, clickableContentService, apiBrowserTextService);
   }
 
   get countOfBlocks() {
