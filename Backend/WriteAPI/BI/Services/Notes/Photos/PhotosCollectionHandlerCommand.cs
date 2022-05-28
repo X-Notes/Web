@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -12,19 +13,20 @@ using Common.DTO;
 using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
-using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.Files;
+using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
-namespace BI.Services.Notes
+namespace BI.Services.Notes.Photos
 {
-    public class FullNoteAudiosCollectionHandlerCommand :
-                IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<Unit>>,
-                IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<Unit>>,
-                IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
-                IRequestHandler<AddAudiosToCollectionCommand, OperationResult<Unit>>
+    public class PhotosCollectionHandlerCommand :
+        IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdatePhotosCollectionInfoCommand, OperationResult<Unit>>,
+        IRequestHandler<TransformToPhotosCollectionCommand, OperationResult<PhotosCollectionNoteDTO>>,
+        IRequestHandler<AddPhotosToCollectionCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -41,7 +43,7 @@ namespace BI.Services.Notes
 
         private readonly CollectionLinkedService collectionLinkedService;
 
-        public FullNoteAudiosCollectionHandlerCommand(
+        public PhotosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             CollectionNoteRepository collectionNoteRepository,
@@ -59,7 +61,49 @@ namespace BI.Services.Notes
             this.collectionLinkedService = collectionLinkedService;
         }
 
-        public async Task<OperationResult<Unit>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemovePhotosFromCollectionCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                if (collection != null && collectionItems != null && collectionItems.Any())
+                {
+                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
+
+                    var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
+                    var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
+
+                    collection.UpdatedAt = DateTimeProvider.Time;
+                    await collectionNoteRepository.UpdateAsync(collection);
+
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
+                    {
+                        CollectionItemIds = idsToUnlink
+                    };
+
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
+                    }
+
+                    return new OperationResult<Unit>(success: true, Unit.Value);
+                }
+
+                return new OperationResult<Unit>().SetNotFound();
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+
+        public async Task<OperationResult<Unit>> Handle(UpdatePhotosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -67,68 +111,28 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetAppFilesByFileIds(request.FileIds);
-                if (collection != null && collectionItems != null && collectionItems.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
-                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData
-                    {
-                        Id = x.Id,
-                        AdditionalIds = x.GetAdditionalIds()
-                    });
-                    var idsToUnlink = await collectionLinkedService.TryToUnlink(filesToProcess);
+                if (collection != null)
+                {
+                    collection.SetMetaDataPhotos(request.Width, request.Height, request.Count);
+                    collection.Name = request.Name;
 
                     collection.UpdatedAt = DateTimeProvider.Time;
-                    await collectionNoteRepository.UpdateAsync(collection);
+                    await baseNoteContentRepository.UpdateAsync(collection);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt) 
-                    { 
-                        CollectionItemIds = idsToUnlink
-                    };
-
-                    if (permissions.IsMultiplyUpdate)
-                    {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
-                    }
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        public async Task<OperationResult<Unit>> Handle(UpdateAudiosCollectionInfoCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
-            {
-                var audiosCollection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-
-                if(audiosCollection != null)
-                {
-                    audiosCollection.Name = request.Name;
-                    audiosCollection.UpdatedAt = DateTimeProvider.Time;
-
-                    await collectionNoteRepository.UpdateAsync(audiosCollection);
-
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt)
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt)
                     {
                         Name = request.Name,
+                        CountInRow = request.Count,
+                        Height = request.Height,
+                        Width = request.Width
                     };
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
@@ -140,8 +144,7 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-
-        public async Task<OperationResult<AudiosCollectionNoteDTO>> Handle(TransformToAudiosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PhotosCollectionNoteDTO>> Handle(TransformToPhotosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -150,9 +153,9 @@ namespace BI.Services.Notes
             {
                 var contentForRemove = await baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
-                if(contentForRemove == null)
+                if (contentForRemove == null)
                 {
-                    return new OperationResult<AudiosCollectionNoteDTO>().SetNotFound();
+                    return new OperationResult<PhotosCollectionNoteDTO>().SetNotFound();
                 }
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -161,21 +164,24 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var collection = new CollectionNote(FileTypeEnum.Audio)
+                    var collection = new CollectionNote(FileTypeEnum.Photo)
                     {
                         NoteId = request.NoteId,
                         Order = contentForRemove.Order,
                     };
 
+                    collection.SetMetaDataPhotos("100%", "auto", 2);
+
                     await collectionNoteRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
-                    var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null);
+                    var result = new PhotosCollectionNoteDTO(null, collection.Name, collection.MetaData.Width, collection.MetaData.Height,
+                                        collection.Id, collection.Order, collection.MetaData.CountInRow, collection.UpdatedAt);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
@@ -183,10 +189,10 @@ namespace BI.Services.Notes
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
-                    return new OperationResult<AudiosCollectionNoteDTO>(success: true, result);
+                    return new OperationResult<PhotosCollectionNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -195,10 +201,11 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<AudiosCollectionNoteDTO>().SetNoPermissions();
+            return new OperationResult<PhotosCollectionNoteDTO>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(AddAudiosToCollectionCommand request, CancellationToken cancellationToken)
+
+        public async Task<OperationResult<Unit>> Handle(AddPhotosToCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -222,14 +229,14 @@ namespace BI.Services.Notes
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
+                    var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
                     {
                         CollectionItemIds = idsToLink
                     };
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        await appSignalRService.UpdatePhotosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
                     return new OperationResult<Unit>(success: true, Unit.Value);

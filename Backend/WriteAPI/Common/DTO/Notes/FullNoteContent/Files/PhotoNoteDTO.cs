@@ -1,22 +1,14 @@
 ﻿using System;
 
-namespace Common.DTO.Notes.FullNoteContent
+namespace Common.DTO.Notes.FullNoteContent.Files
 {
-    public class PhotoNoteDTO
+    public class PhotoNoteDTO : BaseFileNoteDTO
     {
-        public Guid FileId { set; get; }
-
         public string PhotoPathSmall { set; get; }
 
         public string PhotoPathMedium { set; get; }
 
         public string PhotoPathBig { set; get; }
-
-        public string Name { set; get; }
-
-        public Guid AuthorId { set; get; }
-
-        public DateTimeOffset UploadAt { set; get; }
 
         public PhotoNoteDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig, Guid userId, DateTimeOffset uploadAt)
         {

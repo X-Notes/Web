@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
+using Domain.Queries.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +15,16 @@ namespace WriteAPI.Controllers.FullNoteAPI
     [Authorize]
     [Route("api/note/inner/photos")]
     [ApiController]
-    public class FullNoteAlbumsController : BaseNoteFileContentController
+    public class FullNotePhotosController : BaseNoteFileContentController
         <
         RemovePhotosFromCollectionCommand,
         AddPhotosToCollectionCommand,
-        UpdatePhotosCollectionInfoCommand
+        UpdatePhotosCollectionInfoCommand,
+        GetNoteFilesByIdsQuery<PhotoNoteDTO>,
+        PhotoNoteDTO
         >
     {
-        public FullNoteAlbumsController(IMediator _mediator) : base(_mediator)
+        public FullNotePhotosController(IMediator _mediator) : base(_mediator)
         {
         }
 

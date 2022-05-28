@@ -1,19 +1,11 @@
 ﻿using System;
 
 
-namespace Common.DTO.Notes.FullNoteContent
+namespace Common.DTO.Notes.FullNoteContent.Files
 {
-    public class DocumentNoteDTO
+    public class DocumentNoteDTO : BaseFileNoteDTO
     {
-        public Guid FileId { set; get; }
-
-        public string Name { set; get; }
-
         public string DocumentPath { set; get; }
-
-        public Guid AuthorId { set; get; }
-
-        public DateTimeOffset UploadAt { set; get; }
 
         public DocumentNoteDTO(string name, string documentPath, Guid fileId, Guid userId, DateTimeOffset uploadAt)
         {

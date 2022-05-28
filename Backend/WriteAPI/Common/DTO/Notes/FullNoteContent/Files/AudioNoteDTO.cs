@@ -1,22 +1,14 @@
 ﻿using System;
 
-namespace Common.DTO.Notes.FullNoteContent
+namespace Common.DTO.Notes.FullNoteContent.Files
 {
-    public class AudioNoteDTO
+    public class AudioNoteDTO : BaseFileNoteDTO
     {
-        public Guid FileId { set; get; }
-
-        public string Name { set; get; }
-
         public string AudioPath { set; get; }
-
-        public Guid AuthorId { set; get; }
 
         public int? SecondsDuration { set; get; }
 
         public string PathToImage { set; get; }
-
-        public DateTimeOffset UploadAt { set; get; }
 
         public AudioNoteDTO(string name, Guid fileId, string audioPath, Guid userId, int? secondsDuration, string pathToImage, DateTimeOffset uploadAt)
         {

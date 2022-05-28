@@ -17,9 +17,9 @@ using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.NoteContent;
 
-namespace BI.Services.Notes
+namespace BI.Services.Notes.Videos
 {
-    public class FullNoteVideosCollectionHandlerCommand :
+    public class VideosCollectionHandlerCommand :
         IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
         IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>,
@@ -40,7 +40,7 @@ namespace BI.Services.Notes
 
         private readonly CollectionLinkedService collectionLinkedService;
 
-        public FullNoteVideosCollectionHandlerCommand(
+        public VideosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             CollectionNoteRepository collectionNoteRepository,
@@ -72,7 +72,7 @@ namespace BI.Services.Notes
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
 
                     var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
-                    var idsToUnlink =  await collectionLinkedService.TryToUnlink(data);
+                    var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);
