@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BreakEnterModel } from './full-note/content-editor-services/break-enter.model';
-
-export interface SaveCursorPosition {
-  startOffset: number;
-  endOffset: number;
-  startContainer: number[];
-  endContainer: number[];
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -137,10 +129,11 @@ export class ApiBrowserTextService {
     selection.addRange(range); // make the range you have just created the visible selection
   }
 
-  setCaret(el: Node, pos: number, isChild = true): void {
+  setCaret(el: Node, pos: number): void {
     if (!el) return;
     const range = document.createRange();
-    const containerStart = isChild ? el.childNodes[0] : el;
+    const containerStart = el.childNodes[0];
+    pos = pos > el.textContent.length ? el.textContent.length : pos;
     range.setStart(containerStart, pos);
     range.collapse(true);
     this.updateRange(range);
@@ -152,68 +145,8 @@ export class ApiBrowserTextService {
 
   saveRangePositionTextOnly(bE: Node): number {
     const sel = this.getSelection();
-    if (!bE || sel.type === 'None') return;
+    if (!bE || sel.type === 'None') return null;
     const range = sel.getRangeAt(0);
     return range.startOffset;
-  }
-
-  saveRangePosition(bE: Node): SaveCursorPosition {
-    const sel = this.getSelection();
-    if (!bE || sel.type === 'None') return;
-
-    const range = sel.getRangeAt(0);
-    let sC = range.startContainer;
-    let eC = range.endContainer;
-
-    const A: number[] = [];
-    while (sC !== bE) {
-      A.push(this.getNodeIndex(sC));
-      sC = sC.parentNode;
-    }
-    const B: number[] = [];
-    while (eC !== bE) {
-      B.push(this.getNodeIndex(eC));
-      eC = eC.parentNode;
-    }
-
-    const obj: SaveCursorPosition = {
-      startContainer: A,
-      endContainer: B,
-      startOffset: range.startOffset,
-      endOffset: range.endOffset,
-    };
-
-    return obj;
-  }
-
-  restoreRangePosition(bE: Node | HTMLElement, data: SaveCursorPosition) {
-    const sel = this.getSelection();
-    if (!bE || !data || Object.keys(data).length === 0 || sel.type === 'None') return;
-
-    (bE as HTMLElement).focus();
-    const range = sel.getRangeAt(0);
-    let x;
-    let C;
-    let sC = bE;
-    let eC = bE;
-
-    C = data.startContainer;
-    x = C.length;
-    while (x--) sC = sC.childNodes[C[x]];
-    C = data.endContainer;
-    x = C.length;
-    while (x--) eC = eC.childNodes[C[x]];
-
-    range.setStart(sC, data.startOffset);
-    range.setEnd(eC, data.endOffset);
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-
-  private getNodeIndex(n): number {
-    if (!n) return 0;
-    let i = 0;
-    while ((n = n.previousSibling)) i++;
-    return i;
   }
 }
