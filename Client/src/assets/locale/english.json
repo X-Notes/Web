@@ -188,8 +188,9 @@
     "text": "Text",
     "heading": "Heading",
     "menu": {
-      "addVideo": "Add new video",
-      "add": "Add new audio",
+      "addVideo": "Add new videos",
+      "addAudio": "Add new audios",
+      "addDocument": "Add new documents",
       "review": "Review",
       "download": "Download",
       "copy": "Copy url",
@@ -198,7 +199,7 @@
     "photoMenu": {
       "download": "Download",
       "delete": "Delete",
-      "upload": "Upload new",
+      "upload": "Upload new photos",
       "countRow": "Photo in row",
       "oneRow": "One in row",
       "twoRow": "Two in row",
@@ -312,7 +313,8 @@
     "foldersPermDeleted": "Folders deleted permanently",
     "movedToMany": " moved to ",
     "movedToSingle": " moved to ",
-    "reloadPage": "Unstable connection please refresh the page"
+    "reloadPage": "Unstable connection please refresh the page",
+    "noItemInExport": "Collection is empty"
   },
   "titles": {
     "labels": "Labels",

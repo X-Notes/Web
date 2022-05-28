@@ -89,18 +89,21 @@ export class DocumentNoteComponent
         this.clickDocumentHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
       this.clickDocumentHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickDocumentHandler(null);
+      this.cdr.detectChanges();
       return;
     }
 
@@ -108,6 +111,7 @@ export class DocumentNoteComponent
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       this.clickDocumentHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
@@ -120,6 +124,8 @@ export class DocumentNoteComponent
         this.titleComponent.focusOnTitle();
         this.clickDocumentHandler(null);
       }
+      this.cdr.detectChanges();
+      return;
     }
   };
 

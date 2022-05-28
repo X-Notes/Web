@@ -241,18 +241,21 @@ export class VideoNoteComponent
         this.clickVideoHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
       this.clickVideoHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickVideoHandler(null);
+      this.cdr.detectChanges();
       return;
     }
 
@@ -260,6 +263,7 @@ export class VideoNoteComponent
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       this.clickVideoHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
@@ -272,6 +276,8 @@ export class VideoNoteComponent
         this.titleComponent.focusOnTitle();
         this.clickVideoHandler(null);
       }
+      this.cdr.detectChanges();
+      return;
     }
   };
 

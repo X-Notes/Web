@@ -86,6 +86,7 @@ export class PhotosComponent
   }
 
   ngOnChanges(): void {
+    console.log('this: ', this.content);
     this.updateHeightByNativeOffset();
   }
 
@@ -176,7 +177,14 @@ export class PhotosComponent
     this.initPhotos();
   }
 
-  async setPhotosInRow(count: number) {
+  setPhotosInRowWrapper(count: number) {
+    this.someChangesEvent.emit();
+    this.setPhotosInRow(count);
+  }
+
+  async setPhotosInRow(count: number, isForse = false) {
+    if (this.content.countInRow === count && !isForse) return;
+
     this.content.countInRow = count;
 
     this.setFalseLoadedForAllPhotos();
@@ -205,6 +213,10 @@ export class PhotosComponent
 
   async exportPhoto(photo: Photo) {
     await this.exportService.exportPhoto(photo);
+  }
+
+  updateIternal() {
+    this.setPhotosInRow(this.content.countInRow, true);
   }
 
   initPhotos() {
@@ -237,7 +249,7 @@ export class PhotosComponent
         return 'fouth-child';
       }
       default: {
-        throw new Error('Style not found');
+        return 'fouth-child';
       }
     }
   };
@@ -253,7 +265,7 @@ export class PhotosComponent
     return false;
   }
 
-  setFocus = (entity?: SetFocus) => {
+  setFocus = (entity?: SetFocus): void => {
     const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
 
     if (entity.status === FocusDirection.Up && isExist) {
@@ -265,18 +277,21 @@ export class PhotosComponent
         this.clickPhotoHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
       this.clickPhotoHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickPhotoHandler(null);
+      this.cdr.detectChanges();
       return;
     }
 
@@ -284,6 +299,7 @@ export class PhotosComponent
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       this.clickPhotoHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
@@ -296,6 +312,8 @@ export class PhotosComponent
         this.titleComponent.focusOnTitle();
         this.clickPhotoHandler(null);
       }
+      this.cdr.detectChanges();
+      return;
     }
   };
 

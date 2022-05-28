@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { TextBlock } from '../../../models/editor-models/base-text';
@@ -52,7 +53,11 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
   themeE = ThemeENUM;
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(cdr: ChangeDetectorRef, protected clickableContentService: ClickableContentService) {
+  constructor(
+    cdr: ChangeDetectorRef,
+    protected clickableContentService: ClickableContentService,
+    protected apiBrowserTextService: ApiBrowserTextService,
+  ) {
     super(cdr);
   }
 
@@ -63,6 +68,14 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
   updateHTML = () => {
     return null;
   };
+
+  syncContentWithLayout() {
+    const el = this.titleComponent.titleHtml.nativeElement;
+    const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
+    this.updateIternal();
+    this.detectChanges();
+    this.apiBrowserTextService.setCaret(el, data);
+  }
 
   getTextBlocks = (): TextBlock[] => {
     return null;
@@ -79,4 +92,6 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
     this.content.name = name;
     this.someChangesEvent.emit();
   }
+
+  updateIternal() {}
 }

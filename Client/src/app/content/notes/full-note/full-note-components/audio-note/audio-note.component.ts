@@ -123,18 +123,21 @@ export class AudioNoteComponent
         this.clickAudioHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
       this.clickAudioHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
       this.titleComponent.focusOnTitle();
       this.clickAudioHandler(null);
+      this.cdr.detectChanges();
       return;
     }
 
@@ -142,6 +145,7 @@ export class AudioNoteComponent
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       this.clickAudioHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      this.cdr.detectChanges();
       return;
     }
 
@@ -154,6 +158,8 @@ export class AudioNoteComponent
         this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       }
+      this.cdr.detectChanges();
+      return;
     }
   };
 

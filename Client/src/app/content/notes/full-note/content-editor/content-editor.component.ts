@@ -30,11 +30,10 @@ import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { ContentEditableService } from '../content-editor-services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
@@ -56,6 +55,7 @@ import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
 import { DiffCheckerService } from './diffs/diff-checker.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -64,8 +64,6 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   providers: [WebSocketsNoteUpdaterService],
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
-
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
@@ -75,18 +73,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input()
   isReadOnlyMode = true;
 
-  @Input()
-  note: FullNote | NoteSnapshot;
-
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
 
   @Input()
   title$: Observable<string>;
 
+  elements: QueryList<ParentInteraction>;
+
   title: string;
 
   uiTitle: string;
+
+  _note: FullNote | NoteSnapshot;
 
   noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
@@ -104,7 +103,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    public contentEditorContentsService: ContentEditorContentsService,
+    public contentEditorContentsService: ContentEditorContentsSynchronizeService,
     public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
@@ -115,13 +114,12 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
-    private contentEditableService: ContentEditableService,
     private diffCheckerService: DiffCheckerService,
+    private contentUpdateWsService: ContentUpdateWsService,
   ) {}
 
   get contents() {
     return this.contentEditorContentsService.getContents;
-    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
   }
 
   @Input() set contents(contents: ContentModelBase[]) {
@@ -134,6 +132,23 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (contents.length === 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get note() {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._note;
+  }
+
+  @Input() set note(note: FullNote | NoteSnapshot) {
+    // eslint-disable-next-line no-underscore-dangle
+    this._note = note;
+    this.contentUpdateWsService.noteId = note.id;
+  }
+
+  @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction>) {
+    this.elements = elms;
+    this.contentUpdateWsService.elements = elms;
   }
 
   ngAfterViewInit(): void {
@@ -157,7 +172,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.htmlTitleService.setCustomOrDefault(this.title, 'titles.note');
 
     // UPDATE WS
-    this.title$.pipe(takeUntil(this.destroy)).subscribe((title) => this.updateTitle(title));
+    this.title$
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((title) => this.updateTitle(title));
 
     // UPDATE CURRENT
     this.noteTitleChanged
@@ -172,15 +189,15 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   updateTitle(title: string): void {
     if (this.title !== title && this.noteTitleEl?.nativeElement) {
-      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
-        this.noteTitleEl?.nativeElement,
-      );
+      const el = this.noteTitleEl.nativeElement;
+      const data = this.apiBrowserFunctions.saveRangePositionTextOnly(el);
+
       this.uiTitle = title;
       this.title = title;
+
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaret(el, data));
+
       this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
-      requestAnimationFrame(() =>
-        this.contentEditableService.setCaret(this.noteTitleEl?.nativeElement, pos?.start),
-      );
     }
   }
 

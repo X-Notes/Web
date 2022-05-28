@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
@@ -80,7 +82,7 @@ export class ContentEditorContentsSynchronizeService {
     this.updateSubject
       .pipe(
         filter((x) => x === true),
-        debounceTime(1),
+        debounceTime(updateNoteContentDelay),
       )
       .subscribe(() => {
         this.processChanges();
@@ -94,7 +96,7 @@ export class ContentEditorContentsSynchronizeService {
     this.saveSubject
       .pipe(
         filter((x) => x === true),
-        debounceTime(1),
+        debounceTime(updateNoteContentDelay),
       )
       .subscribe(() => this.contentEditorMomentoStateService.saveToStack(this.getContents));
   }
@@ -144,10 +146,17 @@ export class ContentEditorContentsSynchronizeService {
   private async processChanges() {
     const structureDiffs = this.getStructureDiffs(this.contentsSync, this.getContents);
     if (structureDiffs.isAnyChanges()) {
-      await this.apiNoteContentService
+      const resp = await this.apiNoteContentService
         .syncContentsStructure(this.noteId, structureDiffs)
         .toPromise();
-      this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
+
+      if (resp.success) {
+        this.contentsSync = this.patchStructuralChanges(
+          this.contentsSync,
+          structureDiffs,
+          resp.data.removedIds,
+        );
+      }
     }
     this.processTextsChanges();
     this.processFileEntities();
@@ -198,7 +207,7 @@ export class ContentEditorContentsSynchronizeService {
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
         await this.apiPhotos.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
-        item?.removeItemsFromCollection(itemsToRemove);
+        item?.removeItemsFromCollection(ids);
       }
     }
   }
@@ -239,7 +248,7 @@ export class ContentEditorContentsSynchronizeService {
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
         await this.apiAudios.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
-        item?.removeItemsFromCollection(itemsToRemove);
+        item?.removeItemsFromCollection(ids);
       }
     }
   }
@@ -280,7 +289,7 @@ export class ContentEditorContentsSynchronizeService {
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
         await this.apiDocuments.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
-        item?.removeItemsFromCollection(itemsToRemove);
+        item?.removeItemsFromCollection(ids);
       }
     }
   }
@@ -320,7 +329,7 @@ export class ContentEditorContentsSynchronizeService {
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
         await this.apiVideos.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
-        item?.removeItemsFromCollection(itemsToRemove);
+        item?.removeItemsFromCollection(ids);
       }
     }
   }
@@ -335,7 +344,7 @@ export class ContentEditorContentsSynchronizeService {
       await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
       for (const text of textDiffs) {
         const item = this.contentsSync.find((x) => x.id === text.id) as BaseText;
-        item.update(text);
+        item.patch(text);
       }
     }
   }
@@ -345,9 +354,10 @@ export class ContentEditorContentsSynchronizeService {
   private patchStructuralChanges(
     itemsForPatch: ContentModelBase[],
     diffs: StructureDiffs,
+    removedIds: string[],
   ): ContentModelBase[] {
-    if (diffs.removedItems.length > 0) {
-      itemsForPatch = itemsForPatch.filter((x) => !diffs.removedItems.some((z) => z.id === x.id));
+    if (removedIds && removedIds.length > 0) {
+      itemsForPatch = itemsForPatch.filter((x) => !removedIds.some((id) => id === x.id));
     }
     if (diffs.newTextItems.length > 0) {
       for (const item of diffs.newTextItems) {
@@ -479,7 +489,8 @@ export class ContentEditorContentsSynchronizeService {
       // STRUCTURE
       const structureDiffs = this.getStructureDiffs(this.contents, prev);
       if (structureDiffs.isAnyChanges()) {
-        this.contents = this.patchStructuralChanges(this.contents, structureDiffs);
+        const removeIds = structureDiffs.removedItems.map((x) => x.id);
+        this.contents = this.patchStructuralChanges(this.contents, structureDiffs, removeIds);
         isNeedChange = true;
       }
 
@@ -597,6 +608,10 @@ export class ContentEditorContentsSynchronizeService {
     return this.contents.find((x) => x.id === contentId) as T;
   }
 
+  getSyncContentById<T extends ContentModelBase>(contentId: string): T {
+    return this.contentsSync.find((x) => x.id === contentId) as T;
+  }
+
   getContentByIndex<T extends ContentModelBase>(index: number): T {
     return this.contents[index] as T;
   }
@@ -606,6 +621,13 @@ export class ContentEditorContentsSynchronizeService {
     this.contents = this.contents.filter((x) => x.id !== contentId);
     if (isDeleteInContentSync) {
       this.contentsSync = this.contentsSync.filter((x) => x.id !== contentId);
+    }
+  }
+
+  deleteByIds(contentIds: string[], isDeleteInContentSync: boolean) {
+    this.contents = this.contents.filter((x) => !contentIds.some((q) => q === x.id));
+    if (isDeleteInContentSync) {
+      this.contentsSync = this.contentsSync.filter((x) => !contentIds.some((q) => q === x.id));
     }
   }
 
@@ -620,15 +642,15 @@ export class ContentEditorContentsSynchronizeService {
     return obj.index;
   }
 
-  setSafeContentsAndSyncContents(data: ContentModelBase, contentId: string): number {
+  setSafeContentsAndSyncContents(data: ContentModelBase, contentId: string): void {
     const obj = this.getContentAndIndexById(contentId);
     const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
-    if (obj && obj2) {
+    if (obj) {
       this.contents[obj.index] = data;
-      this.contentsSync[obj2.index] = data.copy();
-      return obj.index;
     }
-    throw new Error('Content not found');
+    if (obj2) {
+      this.contentsSync[obj2.index] = data.copy();
+    }
   }
 
   setSafeSyncContents(data: ContentModelBase, contentId: string): void {
@@ -639,15 +661,90 @@ export class ContentEditorContentsSynchronizeService {
     throw new Error('Content not found');
   }
 
-  insertInto(data: ContentModelBase, index: number) {
+  // INSERT
+  insertInto(data: ContentModelBase, index: number, isSync = false) {
     this.contents.splice(index, 0, data);
+    if (isSync) {
+      this.contentsSync.splice(index, 0, data);
+    }
   }
 
-  insertToEnd(data: ContentModelBase) {
+  insertToEnd(data: ContentModelBase, isSync = false) {
     this.contents.push(data);
+    if (isSync) {
+      this.contentsSync.push(data);
+    }
   }
 
-  insertToStart(data: ContentModelBase) {
+  insertToStart(data: ContentModelBase, isSync = false) {
     this.contents.unshift(data);
+    if (isSync) {
+      this.contentsSync.unshift(data);
+    }
+  }
+
+  // UPDATE & PATCH
+  updatePositions(positions: UpdateContentPosition[]): void {
+    for (const pos of positions) {
+      const content = this.getContentById(pos.contentId);
+      if (content) {
+        content.order = pos.order;
+      }
+      const contentSync = this.contentsSync.find((x) => x.id === pos.contentId);
+      if (contentSync) {
+        contentSync.order = pos.order;
+      }
+    }
+    this.contents = this.contents.sort((a, b) => a.order - b.order);
+    this.contentsSync = this.contentsSync.sort((a, b) => a.order - b.order);
+  }
+
+  transformTo(collection: BaseCollection<BaseFile>, idsToDelete: string[]) {
+    this.deleteByIds(idsToDelete, true);
+    this.insertInto(collection, collection.order, true);
+  }
+
+  patchText(data: BaseText, isSync = false): void {
+    const content = this.getContentById(data.id);
+    if (content) {
+      content.patch(content);
+    }
+    const contentSync = this.getSyncContentById(data.id);
+    if (contentSync && isSync) {
+      contentSync.patch(content);
+    }
+  }
+
+  patchCollectionInfo(data: Partial<BaseCollection<BaseFile>>, isSync = false): void {
+    const content = this.getContentById<BaseCollection<BaseFile>>(data.id);
+    if (content) {
+      content.updateInfo(data);
+    }
+    const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(data.id);
+    if (contentSync && isSync) {
+      contentSync.updateInfo(data);
+    }
+  }
+
+  addItemsToCollections<T extends BaseFile>(files: T[], contentId: string, isSync = false): void {
+    const content = this.getContentById<BaseCollection<BaseFile>>(contentId);
+    if (content) {
+      content.addItemsToCollection(files);
+    }
+    const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(contentId);
+    if (contentSync && isSync) {
+      contentSync.addItemsToCollection(files);
+    }
+  }
+
+  removeItemsFromCollections(fileIds: string[], contentId: string, isSync = false): void {
+    const content = this.getContentById<BaseCollection<BaseFile>>(contentId);
+    if (content) {
+      content.removeItemsFromCollection(fileIds);
+    }
+    const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(contentId);
+    if (contentSync && isSync) {
+      contentSync.removeItemsFromCollection(fileIds);
+    }
   }
 }

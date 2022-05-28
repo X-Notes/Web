@@ -98,16 +98,16 @@
   attributeName="panelClass"
   [element]="secondMenu"
 >
-  <button mat-menu-item type="button" name="One row" (click)="setPhotosInRow(1)">
+  <button mat-menu-item type="button" name="One row" (click)="setPhotosInRowWrapper(1)">
     {{ 'innerNote.photoMenu.oneRow' | translate }}
   </button>
-  <button mat-menu-item type="button" name="Two row" (click)="setPhotosInRow(2)">
+  <button mat-menu-item type="button" name="Two row" (click)="setPhotosInRowWrapper(2)">
     {{ 'innerNote.photoMenu.twoRow' | translate }}
   </button>
-  <button mat-menu-item type="button" name="Three row" (click)="setPhotosInRow(3)">
+  <button mat-menu-item type="button" name="Three row" (click)="setPhotosInRowWrapper(3)">
     {{ 'innerNote.photoMenu.threeRow' | translate }}
   </button>
-  <button mat-menu-item type="button" name="Four row" (click)="setPhotosInRow(4)">
+  <button mat-menu-item type="button" name="Four row" (click)="setPhotosInRowWrapper(4)">
     {{ 'innerNote.photoMenu.fourRow' | translate }}
   </button>
 </mat-menu>
