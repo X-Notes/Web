@@ -12,7 +12,6 @@ import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import * as moment from 'moment';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
-import { ContentEditableService } from '../../notes/full-note/content-editor-services/content-editable.service';
 import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 
 @Component({
@@ -53,7 +52,6 @@ export class FolderComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
-    private contentEditableService: ContentEditableService,
   ) {}
 
   get isAuthor(): boolean {
@@ -81,15 +79,14 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   updateTitle(title: string): void {
-    if (this.folder.title !== title && this.folderTitleEl?.nativeElement) {
-      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
-        this.folderTitleEl?.nativeElement,
-      );
+    const el = this.folderTitleEl?.nativeElement;
+    if (this.folder.title !== title && el) {
+      const pos = this.apiBrowserFunctions.getInputSelection(el);
+
       this.uiTitle = title;
       this.folder.title = title;
-      requestAnimationFrame(() =>
-        this.contentEditableService.setCaret(this.folderTitleEl?.nativeElement, pos?.start),
-      );
+
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretInput(el, pos));
     }
   }
 

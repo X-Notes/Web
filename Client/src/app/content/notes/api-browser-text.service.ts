@@ -48,6 +48,10 @@ export class ApiBrowserTextService {
     return window.getSelection();
   };
 
+  getInputSelection(el: HTMLInputElement): number {
+    return el.selectionStart;
+  }
+
   getSelectionCharacterOffsetsWithin = (element) => {
     if (!element) return null;
 
@@ -59,7 +63,7 @@ export class ApiBrowserTextService {
       return null;
     }
 
-    const range = this.getSelection().getRangeAt(0);
+    const range = selection.getRangeAt(0);
     const preCaretRange = range.cloneRange();
     preCaretRange.selectNodeContents(element);
     preCaretRange.setEnd(range.startContainer, range.startOffset);
@@ -133,16 +137,31 @@ export class ApiBrowserTextService {
     selection.addRange(range); // make the range you have just created the visible selection
   }
 
-  setCaret(el: Node, pos: number): void {
+  setCaret(el: Node, pos: number, isChild = true): void {
     if (!el) return;
     const range = document.createRange();
-    range.setStart(el.childNodes[0], pos);
+    const containerStart = isChild ? el.childNodes[0] : el;
+    range.setStart(containerStart, pos);
     range.collapse(true);
     this.updateRange(range);
   }
 
-  saveRangePosition(bE: HTMLElement): SaveCursorPosition {
-    const range = window.getSelection().getRangeAt(0);
+  setCaretInput(el: HTMLInputElement, startPos: number) {
+    el.setSelectionRange(startPos, startPos);
+  }
+
+  saveRangePositionTextOnly(bE: Node): number {
+    const sel = this.getSelection();
+    if (!bE || sel.type === 'None') return;
+    const range = sel.getRangeAt(0);
+    return range.startOffset;
+  }
+
+  saveRangePosition(bE: Node): SaveCursorPosition {
+    const sel = this.getSelection();
+    if (!bE || sel.type === 'None') return;
+
+    const range = sel.getRangeAt(0);
     let sC = range.startContainer;
     let eC = range.endContainer;
 
@@ -167,9 +186,11 @@ export class ApiBrowserTextService {
     return obj;
   }
 
-  restoreRangePosition(bE: any, data: SaveCursorPosition) {
-    bE.focus();
+  restoreRangePosition(bE: Node | HTMLElement, data: SaveCursorPosition) {
     const sel = this.getSelection();
+    if (!bE || !data || Object.keys(data).length === 0 || sel.type === 'None') return;
+
+    (bE as HTMLElement).focus();
     const range = sel.getRangeAt(0);
     let x;
     let C;
@@ -190,6 +211,7 @@ export class ApiBrowserTextService {
   }
 
   private getNodeIndex(n): number {
+    if (!n) return 0;
     let i = 0;
     while ((n = n.previousSibling)) i++;
     return i;

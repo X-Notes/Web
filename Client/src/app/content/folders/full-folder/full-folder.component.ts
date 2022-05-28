@@ -43,7 +43,6 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
-import { ContentEditableService } from '../../notes/full-note/content-editor-services/content-editable.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -109,7 +108,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private signalR: SignalRService,
     private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
-    private contentEditableService: ContentEditableService,
   ) {}
 
   setTitle(): void {
@@ -138,15 +136,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateTitle(title: string): void {
     if (this.title !== title && this.folderTitleEl?.nativeElement) {
-      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
-        this.folderTitleEl?.nativeElement,
-      );
+      const el = this.folderTitleEl?.nativeElement;
+      const startPos = this.apiBrowserFunctions.getInputSelection(el);
+
       this.uiTitle = title;
       this.title = title;
       this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
-      requestAnimationFrame(() =>
-        this.contentEditableService.setCaret(this.folderTitleEl?.nativeElement, pos?.start),
-      );
+
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretInput(el, startPos));
     }
   }
 
