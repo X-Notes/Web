@@ -54,6 +54,7 @@ export class HtmlBaseService extends BaseHtmlComponent {
   }
 
   initBaseHTML(): void {
+    console.log('init');
     const delta = DeltaConverter.convertToDelta(this.content.contents);
     this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
     this.syncHtmlWithLayout();
@@ -64,6 +65,15 @@ export class HtmlBaseService extends BaseHtmlComponent {
     const html = DeltaConverter.convertDeltaToHtml(delta);
     this.updateNativeHTML(html);
     this.syncHtmlWithLayout();
+  }
+
+  syncContentWithLayout() {
+    const sel = document.getSelection();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const saved = [sel.focusNode, sel.focusOffset];
+    // this.updateHTML(content.contents);
+    console.log('focus');
+    setTimeout(() => this.contentHtml.nativeElement.focus(), 2000);
   }
 
   getContent(): BaseText {
