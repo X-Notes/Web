@@ -8,6 +8,10 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
 
   isLoading = false;
 
+  get orderedItems(): T[] {
+    return this.items.sort((a, b) => a.uploadAt.getTime() - b.uploadAt.getTime());
+  }
+
   isEqual(content: BaseCollection<T>): boolean {
     return (
       this.isTextOrCollectionInfoEqual(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0]

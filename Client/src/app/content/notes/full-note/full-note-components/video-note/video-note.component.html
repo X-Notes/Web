@@ -104,7 +104,7 @@
       >
         <div
           class="thumb-video-wrapper"
-          *ngFor="let item of content.items; let i = index"
+          *ngFor="let item of content.orderedItems; let i = index"
           (click)="openThumbVideo(i)"
         >
           <div class="thumb-video">

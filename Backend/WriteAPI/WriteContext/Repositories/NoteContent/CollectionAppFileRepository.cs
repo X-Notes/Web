@@ -25,9 +25,9 @@ namespace WriteContext.Repositories.NoteContent
             return entities.Include(x => x.AppFile).Where(x => contentIds.Contains(x.CollectionNoteId)).ToListAsync();
         }
 
-        public Task<List<CollectionNoteAppFile>> GetAppFilesByFileIds(List<Guid> fileIds)
+        public Task<List<CollectionNoteAppFile>> GetCollectionItems(List<Guid> fileIds, Guid contentId)
         {
-            return entities.Include(x => x.AppFile).Where(x => fileIds.Contains(x.AppFileId)).ToListAsync();
+            return entities.Include(x => x.AppFile).Where(x => fileIds.Contains(x.AppFileId) && x.CollectionNoteId == contentId).ToListAsync();
         }
     }
 }

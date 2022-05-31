@@ -94,7 +94,7 @@ namespace BI.Mapping
                                 case FileTypeEnum.Photo:
                                     {
                                        var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData.Width, aN.MetaData.Height, aN.Id, aN.Order, aN.MetaData.CountInRow, aN.UpdatedAt);
+                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }

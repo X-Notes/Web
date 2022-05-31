@@ -17,14 +17,14 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public int CountInRow { set; get; }
 
-        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int countInRow, DateTimeOffset updatedAt)
+        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int? countInRow, DateTimeOffset updatedAt)
             : base(id, order, ContentTypeEnumDTO.Photos, updatedAt)
         {
             this.Photos = files;
             this.Name = name;
             this.Height = height;
             this.Width = width;
-            this.CountInRow = countInRow;
+            this.CountInRow = countInRow.HasValue ? countInRow.Value : 2;
         }
     }
 }

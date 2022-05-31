@@ -20,7 +20,7 @@
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-document-item
-        *ngFor="let item of content.items;"
+        *ngFor="let item of content.orderedItems;"
         [document]="item"
         [isReadOnlyMode]="isReadOnlyMode"
         (deleteDocument)="deleteContentItemEvent.emit($event)"

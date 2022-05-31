@@ -67,10 +67,11 @@ namespace BI.Services.Notes.Audios
             if (permissions.CanWrite)
             {
                 var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetAppFilesByFileIds(request.FileIds);
+                var collectionItems = await collectionNoteAppFileRepository.GetCollectionItems(request.FileIds, request.ContentId);
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
+                    var fileIds = collectionItems.Select(x => x.AppFileId);
 
                     var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData
                     {
@@ -84,13 +85,12 @@ namespace BI.Services.Notes.Audios
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
-                    {
-                        CollectionItemIds = idsToUnlink
-                    };
-
                     if (permissions.IsMultiplyUpdate)
                     {
+                        var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
+                        {
+                            CollectionItemIds = fileIds
+                        };
                         await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 

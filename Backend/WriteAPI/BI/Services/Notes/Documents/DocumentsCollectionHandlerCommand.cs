@@ -72,10 +72,11 @@ namespace BI.Services.Notes.Documents
             if (permissions.CanWrite)
             {
                 var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
+                var collectionItems = await collectionNoteAppFileRepository.GetCollectionItems(request.FileIds, request.ContentId);
                 if (collection != null && collectionItems != null && collectionItems.Any())
                 {
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
+                    var fileIds = collectionItems.Select(x => x.AppFileId);
 
                     var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
@@ -85,13 +86,12 @@ namespace BI.Services.Notes.Documents
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
-                    {
-                        CollectionItemIds = idsToUnlink
-                    };
-
                     if (permissions.IsMultiplyUpdate)
                     {
+                        var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
+                        {
+                            CollectionItemIds = fileIds
+                        };
                         await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
