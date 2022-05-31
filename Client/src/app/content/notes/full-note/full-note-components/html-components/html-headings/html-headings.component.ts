@@ -10,6 +10,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { EnterEvent } from '../../../models/enter-event.model';
@@ -60,8 +61,9 @@ export class HtmlHeadingsComponent
     public headingService: HeadingService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr);
+    super(cdr, apiBrowserTextService);
   }
 
   get isActive() {

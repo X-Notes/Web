@@ -71,8 +71,9 @@ export class BaseText extends ContentModelBase {
   }
 
   isTextOrCollectionInfoEqual(content: BaseText): boolean {
+    const isEqualText = this.isEqualText(this.contents, content.contents);
     return (
-      this.isEqualText(this.contents, content.contents) &&
+      isEqualText &&
       this.headingTypeId === content.headingTypeId &&
       this.noteTextTypeId === content.noteTextTypeId &&
       this.checked === content.checked
@@ -85,8 +86,7 @@ export class BaseText extends ContentModelBase {
     if (blockF.length !== blockS.length) return false;
 
     for (let i = 0; i < blockF.length; i += 1) {
-      // TODO CHANGES
-      if (blockF[i] !== blockS[i]) return false;
+      if (!blockF[i].isEqual(blockS[i])) return false;
     }
 
     return true;
@@ -97,7 +97,6 @@ export class BaseText extends ContentModelBase {
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
-    this.updatedAt = text.updatedAt;
   }
 
   getConcatedText(): string {

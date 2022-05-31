@@ -707,11 +707,11 @@ export class ContentEditorContentsSynchronizeService {
   patchText(data: BaseText, isSync = false): void {
     const content = this.getContentById(data.id);
     if (content) {
-      content.patch(content);
+      content.patch(data);
     }
     const contentSync = this.getSyncContentById(data.id);
     if (contentSync && isSync) {
-      contentSync.patch(content);
+      contentSync.patch(data);
     }
   }
 

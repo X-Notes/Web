@@ -25,6 +25,7 @@ import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enu
 import { TextService } from '../html-business-logic/text.service';
 import { SetFocus } from '../../../models/set-focus';
 import { HtmlBaseService } from '../html-base.service';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 
 @Component({
   selector: 'app-html-text-part',
@@ -80,8 +81,13 @@ export class HtmlTextPartComponent
 
   isMulptiply = false;
 
-  constructor(public textService: TextService, private host: ElementRef, cdr: ChangeDetectorRef) {
-    super(cdr);
+  constructor(
+    public textService: TextService,
+    private host: ElementRef,
+    cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
+  ) {
+    super(cdr, apiBrowserTextService);
   }
 
   get isFocused() {

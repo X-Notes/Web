@@ -162,7 +162,6 @@ export class ContentUpdateWsService implements OnDestroy {
             this.contentEditorContentsService.addItemsToCollections(files, content.contentId, true);
           }
           if (content.operation === UpdateOperationWS.DeleteCollectionItems) {
-            console.log('content: ', content);
             this.contentEditorContentsService.removeItemsFromCollections(
               content.collectionItemIds,
               content.contentId,

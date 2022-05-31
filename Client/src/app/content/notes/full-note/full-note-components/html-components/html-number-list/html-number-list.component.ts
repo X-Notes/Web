@@ -11,6 +11,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
@@ -69,8 +70,9 @@ export class HtmlNumberListComponent
     public numberService: NumberListService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr);
+    super(cdr, apiBrowserTextService);
   }
 
   get isActive() {

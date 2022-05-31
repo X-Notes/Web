@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseText, TextBlock } from '../../../models/editor-models/base-text';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { BaseHtmlComponent } from '../base-html-components';
@@ -33,7 +34,7 @@ export class HtmlBaseService extends BaseHtmlComponent {
 
   viewHtml: string;
 
-  constructor(cdr: ChangeDetectorRef) {
+  constructor(cdr: ChangeDetectorRef, protected apiBrowserTextService: ApiBrowserTextService) {
     super(cdr);
 
     this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
@@ -55,6 +56,7 @@ export class HtmlBaseService extends BaseHtmlComponent {
 
   initBaseHTML(): void {
     console.log('init');
+
     const delta = DeltaConverter.convertToDelta(this.content.contents);
     this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
     this.syncHtmlWithLayout();
@@ -68,12 +70,10 @@ export class HtmlBaseService extends BaseHtmlComponent {
   }
 
   syncContentWithLayout() {
-    const sel = document.getSelection();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const saved = [sel.focusNode, sel.focusOffset];
-    // this.updateHTML(content.contents);
-    console.log('focus');
-    setTimeout(() => this.contentHtml.nativeElement.focus(), 2000);
+    const el = this.contentHtml.nativeElement;
+    const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
+    this.updateHTML(this.content.contents);
+    this.apiBrowserTextService.setCaret(el, data);
   }
 
   getContent(): BaseText {
