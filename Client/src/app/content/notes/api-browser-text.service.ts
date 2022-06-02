@@ -123,13 +123,7 @@ export class ApiBrowserTextService {
     this.updateRange(range);
   }
 
-  updateRange(range: Range): void {
-    const selection = this.getSelection();
-    selection.removeAllRanges(); // remove any selections already made
-    selection.addRange(range); // make the range you have just created the visible selection
-  }
-
-  setCaret(el: Node, pos: number): void {
+  setCaretFirstChild(el: Node, pos: number): void {
     if (!el) return;
     const range = document.createRange();
     const containerStart = el.childNodes[0];
@@ -148,5 +142,60 @@ export class ApiBrowserTextService {
     if (!bE || sel.type === 'None') return null;
     const range = sel.getRangeAt(0);
     return range.startOffset;
+  }
+
+  // SELECTION
+
+  saveSelection(containerEl) {
+    const range = window.getSelection().getRangeAt(0);
+    const preSelectionRange = range.cloneRange();
+    preSelectionRange.selectNodeContents(containerEl);
+    preSelectionRange.setEnd(range.startContainer, range.startOffset);
+    const start = preSelectionRange.toString().length;
+    return {
+      start,
+      end: start + range.toString().length,
+    };
+  }
+
+  restoreSelection(containerEl, savedSel) {
+    let charIndex = 0;
+    const range = document.createRange();
+    range.setStart(containerEl, 0);
+    range.collapse(true);
+    const nodeStack = [containerEl];
+    let node;
+    let foundStart = false;
+    let stop = false;
+
+    while (!stop && (node = nodeStack.pop())) {
+      if (node.nodeType === 3) {
+        const nextCharIndex = charIndex + node.length;
+        if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+          range.setStart(node, savedSel.start - charIndex);
+          foundStart = true;
+        }
+        if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+          range.setEnd(node, savedSel.end - charIndex);
+          stop = true;
+        }
+        charIndex = nextCharIndex;
+      } else {
+        let i = node.childNodes.length;
+        while (i--) {
+          nodeStack.push(node.childNodes[i]);
+        }
+      }
+    }
+
+    const sel = this.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  private updateRange(range: Range): void {
+    const selection = this.getSelection();
+    selection.removeAllRanges(); // remove any selections already made
+    selection.addRange(range); // make the range you have just created the visible selection
   }
 }

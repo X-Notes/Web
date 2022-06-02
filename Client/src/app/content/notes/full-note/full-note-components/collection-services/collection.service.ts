@@ -74,7 +74,7 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
     const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
     this.updateIternal();
     this.detectChanges();
-    this.apiBrowserTextService.setCaret(el, data);
+    this.apiBrowserTextService.setCaretFirstChild(el, data);
   }
 
   getTextBlocks = (): TextBlock[] => {

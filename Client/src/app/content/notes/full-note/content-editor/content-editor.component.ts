@@ -195,7 +195,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.uiTitle = title;
       this.title = title;
 
-      requestAnimationFrame(() => this.apiBrowserFunctions.setCaret(el, data));
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretFirstChild(el, data));
 
       this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
     }

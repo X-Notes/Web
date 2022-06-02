@@ -55,8 +55,6 @@ export class HtmlBaseService extends BaseHtmlComponent {
   }
 
   initBaseHTML(): void {
-    console.log('init');
-
     const delta = DeltaConverter.convertToDelta(this.content.contents);
     this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
     this.syncHtmlWithLayout();
@@ -71,9 +69,9 @@ export class HtmlBaseService extends BaseHtmlComponent {
 
   syncContentWithLayout() {
     const el = this.contentHtml.nativeElement;
-    const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
+    const savedSel = this.apiBrowserTextService.saveSelection(el);
     this.updateHTML(this.content.contents);
-    this.apiBrowserTextService.setCaret(el, data);
+    this.apiBrowserTextService.restoreSelection(el, savedSel);
   }
 
   getContent(): BaseText {
