@@ -147,7 +147,9 @@ export class ApiBrowserTextService {
   // SELECTION
 
   saveSelection(containerEl) {
-    const range = window.getSelection().getRangeAt(0);
+    const sel = this.getSelection();
+    if (sel.type === 'None') return;
+    const range = sel.getRangeAt(0);
     const preSelectionRange = range.cloneRange();
     preSelectionRange.selectNodeContents(containerEl);
     preSelectionRange.setEnd(range.startContainer, range.startOffset);
@@ -159,6 +161,7 @@ export class ApiBrowserTextService {
   }
 
   restoreSelection(containerEl, savedSel) {
+    if (!savedSel) return;
     let charIndex = 0;
     const range = document.createRange();
     range.setStart(containerEl, 0);

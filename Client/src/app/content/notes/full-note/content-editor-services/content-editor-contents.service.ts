@@ -665,7 +665,7 @@ export class ContentEditorContentsSynchronizeService {
   insertInto(data: ContentModelBase, index: number, isSync = false) {
     this.contents.splice(index, 0, data);
     if (isSync) {
-      this.contentsSync.splice(index, 0, data);
+      this.contentsSync.splice(index, 0, data.copy());
     }
   }
 

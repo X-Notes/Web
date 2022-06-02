@@ -1,6 +1,13 @@
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
 
+@Component({
+  template: '',
+})
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BaseHtmlComponent {
+  @Output()
+  someChangesEvent = new EventEmitter();
+
   public isMouseOver = false;
 
   protected cdr: ChangeDetectorRef;

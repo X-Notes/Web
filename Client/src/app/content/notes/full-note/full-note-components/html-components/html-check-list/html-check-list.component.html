@@ -12,14 +12,14 @@
   <div class="check-list">
     <div class="checkbox-container inner-box-list">
       <mat-checkbox
-        [ngModel]="content.checked"
+        [(ngModel)]="content.checked"
         (change)="changeCheckBox()"
         (click)="clickHandler($event)"
       ></mat-checkbox>
     </div>
     <div class="text-container">
       <p
-        class="block-generic default-text-size"
+        class="block-generic default-text-size default-text-id"
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
         (input)="onInput()"

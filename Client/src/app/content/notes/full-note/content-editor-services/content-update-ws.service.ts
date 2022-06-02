@@ -17,9 +17,12 @@ import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiPhotosService } from '../services/api-photos.service';
 import { ApiVideosService } from '../services/api-videos.service';
 import { ContentEditorContentsSynchronizeService } from './content-editor-contents.service';
-import { DocumentModel } from '../../models/editor-models/documents-collection';
-import { VideoModel } from '../../models/editor-models/videos-collection';
-import { AudioModel } from '../../models/editor-models/audios-collection';
+import {
+  DocumentModel,
+  DocumentsCollection,
+} from '../../models/editor-models/documents-collection';
+import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
+import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
 
 @Injectable()
 export class ContentUpdateWsService implements OnDestroy {
@@ -121,7 +124,11 @@ export class ContentUpdateWsService implements OnDestroy {
       .subscribe(async (content) => {
         if (content) {
           try {
-            this.handleCollectionTransform(content);
+            if (content.operation === UpdateOperationWS.Transform) {
+              content.collection = new VideosCollection(content.collection, []);
+              this.handleTransform(content.collection, content.collectionItemIds);
+              this.updateUI(content.contentId);
+            }
             this.handleUpdateInfoBase(content);
             this.handleInsert(content, ContentTypeENUM.Videos);
             this.handleCollectionDeletion(content);
@@ -138,7 +145,11 @@ export class ContentUpdateWsService implements OnDestroy {
       .subscribe(async (content) => {
         if (content) {
           try {
-            this.handleCollectionTransform(content);
+            if (content.operation === UpdateOperationWS.Transform) {
+              content.collection = new DocumentsCollection(content.collection, []);
+              this.handleTransform(content.collection, content.collectionItemIds);
+              this.updateUI(content.contentId);
+            }
             this.handleUpdateInfoBase(content);
             this.handleInsert(content, ContentTypeENUM.Documents);
             this.handleCollectionDeletion(content);
@@ -155,7 +166,11 @@ export class ContentUpdateWsService implements OnDestroy {
       .subscribe(async (content) => {
         if (content) {
           try {
-            this.handleCollectionTransform(content);
+            if (content.operation === UpdateOperationWS.Transform) {
+              content.collection = new PhotosCollection(content.collection, []);
+              this.handleTransform(content.collection, content.collectionItemIds);
+              this.updateUI(content.contentId);
+            }
             this.handleUpdateInfoPhotos(content);
             this.handleInsert(content, ContentTypeENUM.Photos);
             this.handleCollectionDeletion(content);
@@ -172,7 +187,11 @@ export class ContentUpdateWsService implements OnDestroy {
       .subscribe(async (content) => {
         if (content) {
           try {
-            this.handleCollectionTransform(content);
+            if (content.operation === UpdateOperationWS.Transform) {
+              content.collection = new AudiosCollection(content.collection, []);
+              this.handleTransform(content.collection, content.collectionItemIds);
+              this.updateUI(content.contentId);
+            }
             this.handleUpdateInfoBase(content);
             this.handleInsert(content, ContentTypeENUM.Audios);
             this.handleCollectionDeletion(content);
@@ -249,13 +268,6 @@ export class ContentUpdateWsService implements OnDestroy {
         this.contentEditorContentsService.addItemsToCollections(files, content.contentId, true);
       }
 
-      this.updateUI(content.contentId);
-    }
-  }
-
-  handleCollectionTransform(content: BaseUpdateFileContent<BaseCollection<BaseFile>>): void {
-    if (content.operation === UpdateOperationWS.Transform) {
-      this.handleTransform(content.collection, content.collectionItemIds);
       this.updateUI(content.contentId);
     }
   }

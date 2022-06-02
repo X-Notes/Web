@@ -30,9 +30,6 @@ export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseH
   @Output()
   deleteContentItemEvent = new EventEmitter<string>();
 
-  @Output()
-  someChangesEvent = new EventEmitter();
-
   @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
   @Input()
