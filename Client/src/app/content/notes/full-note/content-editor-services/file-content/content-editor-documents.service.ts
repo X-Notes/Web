@@ -92,8 +92,15 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     }
 
     const documentsMapped = documents.map(
-      (x) => new DocumentModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new DocumentModel({
+          ...x,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          documentPath: x.pathNonPhotoContent,
+        }),
     );
+
     const prevCollection = this.contentsService.getContentById<DocumentsCollection>(
       $event.contentId,
     );

@@ -5,6 +5,7 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import {
   ApiDocumentsCollection,
+  DocumentModel,
   DocumentsCollection,
 } from '../../models/editor-models/documents-collection';
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
@@ -16,7 +17,8 @@ import { BaseNoteFileContentApiService } from './base-note-file-content-api.serv
 export class ApiDocumentsService extends BaseNoteFileContentApiService<
   BaseRemoveFromCollectionItemsCommand,
   BaseAddToCollectionItemsCommand,
-  BaseUpdateCollectionInfoCommand
+  BaseUpdateCollectionInfoCommand,
+  DocumentModel
 > {
   static baseApi = `${environment.writeAPI}/api/note/inner/documents`;
 

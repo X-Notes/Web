@@ -2,7 +2,7 @@
   class="card"
   appTheme
   (click)="clickEvent.emit(document.fileId)"
-  [ngClass]="{'is-selected' : isClicked}"
+  [ngClass]="{ 'is-selected': isClicked }"
 >
   <div class="preview">
     <div class="icon">
@@ -15,7 +15,11 @@
   <div class="card-body">
     <div class="card-info">
       <div class="title">{{ document.name | fileName }}</div>
-      <div class="link">{{ document.uploadAt | date: 'medium' }}</div>
+      <div class="link">
+        <ng-container *ngIf="document.uploadAt">
+          {{ document.uploadAt | date: 'medium' }}
+        </ng-container>
+      </div>
     </div>
     <div class="card-action">
       <app-button-collection

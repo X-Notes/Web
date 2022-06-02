@@ -10,6 +10,7 @@ export class BaseNoteFileContentApiService<
   Y extends BaseRemoveFromCollectionItemsCommand,
   U extends BaseAddToCollectionItemsCommand,
   I extends BaseUpdateCollectionInfoCommand,
+  File extends BaseFile,
 > {
   constructor(protected httpClient: HttpClient, protected baseApi: string) {}
 
@@ -25,7 +26,7 @@ export class BaseNoteFileContentApiService<
     return this.httpClient.patch<OperationResult<any>>(`${this.baseApi}/info`, command);
   }
 
-  getFilesByIds<File extends BaseFile>(query: BaseGetNoteFilesByIdsQuery) {
+  getFilesByIds(query: BaseGetNoteFilesByIdsQuery) {
     return this.httpClient.post<File[]>(`${this.baseApi}/get/files`, query);
   }
 }

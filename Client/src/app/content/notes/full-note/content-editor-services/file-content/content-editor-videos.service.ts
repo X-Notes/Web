@@ -90,7 +90,13 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     }
 
     const videosMapped = videos.map(
-      (x) => new VideoModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new VideoModel({
+          ...x,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          videoPath: x.pathNonPhotoContent,
+        }),
     );
 
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);

@@ -7,14 +7,8 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
   constructor(collection: Partial<DocumentsCollection>, items: DocumentModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.items = items
-      ? items.map(
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          (z) =>
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId, z.uploadAt),
-        )
-      : [];
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.items = items && items.length > 0 ? items.map((q) => new DocumentModel(q)) : [];
   }
 
   static getNew(): DocumentsCollection {
@@ -50,15 +44,9 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
 export class DocumentModel extends BaseFile {
   documentPath: string;
 
-  constructor(
-    name: string,
-    documentPath: string,
-    fileId: string,
-    authorId: string,
-    uploadAt: Date,
-  ) {
-    super(name, fileId, authorId, uploadAt);
-    this.documentPath = documentPath;
+  constructor(data: Partial<DocumentModel>) {
+    super(data);
+    this.documentPath = data.documentPath;
   }
 
   isEqual(content: DocumentModel): boolean {

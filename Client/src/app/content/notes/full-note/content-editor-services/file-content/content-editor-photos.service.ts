@@ -86,18 +86,9 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     }
 
     const photosMapped = photos.map(
-      (x) =>
-        new Photo(
-          x.id,
-          x.pathPhotoSmall,
-          x.pathPhotoMedium,
-          x.pathPhotoBig,
-          false,
-          x.name,
-          x.authorId,
-          x.createdAt,
-        ),
+      (x) => new Photo({ ...x, loaded: false, fileId: x.id, uploadAt: x.createdAt }),
     );
+
     const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
     this.insertPhotosToAlbum(photosMapped, collection, $event.contentId);
 
@@ -105,19 +96,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
   };
 
   insertPhotosToAlbum(photos: Photo[], prevCollection: PhotosCollection, contentId: string) {
-    const newPhotos: Photo[] = photos.map(
-      (x) =>
-        new Photo(
-          x.fileId,
-          x.photoPathSmall,
-          x.photoPathMedium,
-          x.photoPathBig,
-          false,
-          x.name,
-          x.authorId,
-          x.uploadAt,
-        ),
-    );
+    const newPhotos: Photo[] = photos.map((x) => new Photo({ ...x, loaded: false }));
     const prev = prevCollection.items ?? [];
 
     const newCollection = new PhotosCollection(prevCollection, prevCollection.items);

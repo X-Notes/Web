@@ -9,7 +9,7 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { BaseCollection } from '../../models/editor-models/base-collection';
 import { BaseFile } from '../../models/editor-models/base-file';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
-import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { Photo, PhotosCollection } from '../../models/editor-models/photos-collection';
 import { BaseGetNoteFilesByIdsQuery } from '../models/api/base-get-note-files-byIds-query';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { ApiAudiosService } from '../services/api-audios.service';
@@ -17,6 +17,9 @@ import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiPhotosService } from '../services/api-photos.service';
 import { ApiVideosService } from '../services/api-videos.service';
 import { ContentEditorContentsSynchronizeService } from './content-editor-contents.service';
+import { DocumentModel } from '../../models/editor-models/documents-collection';
+import { VideoModel } from '../../models/editor-models/videos-collection';
+import { AudioModel } from '../../models/editor-models/audios-collection';
 
 @Injectable()
 export class ContentUpdateWsService implements OnDestroy {
@@ -221,19 +224,23 @@ export class ContentUpdateWsService implements OnDestroy {
       let files: BaseFile[];
       switch (typeId) {
         case ContentTypeENUM.Audios: {
-          files = await this.apiAudios.getFilesByIds(obj).toPromise();
+          const audiosFiles = await this.apiAudios.getFilesByIds(obj).toPromise();
+          files = audiosFiles?.map((x) => new AudioModel(x));
           break;
         }
         case ContentTypeENUM.Videos: {
-          files = await this.apiVideos.getFilesByIds(obj).toPromise();
+          const videosFiles = await this.apiVideos.getFilesByIds(obj).toPromise();
+          files = videosFiles?.map((x) => new VideoModel(x));
           break;
         }
         case ContentTypeENUM.Documents: {
-          files = await this.apiDocuments.getFilesByIds(obj).toPromise();
+          const documentsFiles = await this.apiDocuments.getFilesByIds(obj).toPromise();
+          files = documentsFiles?.map((x) => new DocumentModel(x));
           break;
         }
         case ContentTypeENUM.Photos: {
-          files = await this.apiPhotos.getFilesByIds(obj).toPromise();
+          const photosFiles = await this.apiPhotos.getFilesByIds(obj).toPromise();
+          files = photosFiles?.map((x) => new Photo(x));
           break;
         }
       }
@@ -241,12 +248,15 @@ export class ContentUpdateWsService implements OnDestroy {
       if (files && files.length > 0) {
         this.contentEditorContentsService.addItemsToCollections(files, content.contentId, true);
       }
+
+      this.updateUI(content.contentId);
     }
   }
 
   handleCollectionTransform(content: BaseUpdateFileContent<BaseCollection<BaseFile>>): void {
     if (content.operation === UpdateOperationWS.Transform) {
       this.handleTransform(content.collection, content.collectionItemIds);
+      this.updateUI(content.contentId);
     }
   }
 
@@ -257,6 +267,7 @@ export class ContentUpdateWsService implements OnDestroy {
         content.contentId,
         true,
       );
+      this.updateUI(content.contentId);
     }
   }
 
