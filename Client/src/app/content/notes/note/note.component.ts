@@ -56,7 +56,7 @@ export class NoteComponent implements OnInit {
 
   get size() {
     if (this.note.additionalInfo) {
-      const size = this.note.additionalInfo.totalSize + this.note.additionalInfo.snapshotSize;
+      const size = this.note.additionalInfo.totalSize;
       const mb = Math.ceil(size / Math.pow(1024, 2));
       if (mb) {
         return `, ${mb}mb`;

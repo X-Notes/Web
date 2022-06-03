@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Mapping;
 using BI.Services.Encryption;
 using BI.SignalR;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
@@ -234,6 +235,15 @@ namespace BI.Services.Notes
 
         public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
         {
+            long GetSize(Guid noteId, params Dictionary<Guid, (Guid, IEnumerable<AppFile>)>[] filesDict)
+            {
+                return filesDict
+                    .Where(x => x.ContainsKey(noteId))
+                    .SelectMany(x => x[noteId].Item2)
+                    .DistinctBy(x => x.Id)
+                    .Sum(x => x.Size);
+            }
+
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
             var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
@@ -247,8 +257,7 @@ namespace BI.Services.Notes
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
                 NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
-                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : 0,
-                SnapshotSize = sizeSnapshots.ContainsKey(noteId) ? sizeSnapshots[noteId].Item2 : 0,
+                TotalSize = GetSize(noteId, size, sizeSnapshots)
             }).ToList();
         }
     }

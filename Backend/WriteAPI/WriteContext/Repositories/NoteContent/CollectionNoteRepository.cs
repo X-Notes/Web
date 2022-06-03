@@ -37,15 +37,15 @@ namespace WriteContext.Repositories.NoteContent
             return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<Dictionary<Guid, (Guid, long)>> GetMemoryOfNotes(List<Guid> ids)
+        public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotes(List<Guid> ids)
         {
             var ents = await entities.Where(x => ids.Contains(x.NoteId))
                                      .Include(x => x.Files)
                                      .GroupBy(x => x.NoteId)
-                                     .Select(x => new { noteId = x.Key, size = x.Sum(q => q.Files.Sum(x => x.Size)) })
+                                     .Select(x => new { noteId = x.Key, files = x.SelectMany(q => q.Files) })
                                      .ToListAsync();
 
-            return ents.Select(x => (x.noteId, x.size)).ToDictionary(x => x.noteId);
+            return ents.Select(x => (x.noteId, x.files)).ToDictionary(x => x.noteId);
         }
     }
 }

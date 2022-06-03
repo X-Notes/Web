@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.History;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.Files;
 
 namespace WriteContext.Repositories.Histories
 {
@@ -30,14 +31,17 @@ namespace WriteContext.Repositories.Histories
             return entities.Where(x => x.SnapshotTime < earliestTimestamp).ToListAsync();
         }
 
-        public async Task<Dictionary<Guid, (Guid, long)>> GetMemoryOfNotesSnapshots(List<Guid> ids)
+
+        public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotesSnapshots(List<Guid> ids)
         {
-            var ents = await entities.Where(x => ids.Contains(x.NoteId))
-                                     .Include(x => x.AppFiles)
-                                     .GroupBy(x => x.NoteId)
-                                     .Select(x => new { noteId = x.Key, size = x.Sum(q => q.AppFiles.Sum(x => x.Size)) })
-                                     .ToListAsync();
-            return ents.Select(x => (x.noteId, x.size)).ToDictionary(x => x.noteId);
+            var ents = await entities
+                         .Where(x => ids.Contains(x.NoteId))
+                         .Include(x => x.AppFiles)
+                         .GroupBy(x => x.NoteId)
+                         .Select( x => new { noteId = x.Key, files = x.SelectMany(q => q.AppFiles) })
+                         .ToListAsync();
+
+            return ents.Select(x => (x.noteId, x.files)).ToDictionary(x => x.noteId);
         }
     }
 }

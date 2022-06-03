@@ -8,5 +8,4 @@ export interface BottomNoteContent {
   isHasUserOnNote: boolean;
   noteFolderInfos: NoteFolderInfo[];
   totalSize: number;
-  snapshotSize: number;
 }
