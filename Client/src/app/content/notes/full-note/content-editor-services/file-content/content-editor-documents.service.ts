@@ -41,7 +41,11 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     );
   }
 
-  async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
+  async transformToDocumentsCollection(
+    noteId: string,
+    contentId: string,
+    files: File[],
+  ): Promise<string> {
     const collectionResult = await this.apiDocuments.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
@@ -51,7 +55,9 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {

@@ -216,6 +216,7 @@ export class PhotosComponent
   }
 
   updateIternal() {
+    console.log('this.content: ', this.content);
     this.setPhotosInRow(this.content.countInRow, true);
   }
 

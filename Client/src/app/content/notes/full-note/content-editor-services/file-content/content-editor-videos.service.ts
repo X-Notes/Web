@@ -48,7 +48,9 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {

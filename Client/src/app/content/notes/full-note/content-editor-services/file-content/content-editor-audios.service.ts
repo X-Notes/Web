@@ -38,7 +38,11 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  async transformToAudiosCollection(noteId: string, contentId: string, files: File[]) {
+  async transformToAudiosCollection(
+    noteId: string,
+    contentId: string,
+    files: File[],
+  ): Promise<string> {
     const collectionResult = await this.apiAudiosCollection
       .transformTo(noteId, contentId)
       .toPromise();
@@ -50,7 +54,9 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {

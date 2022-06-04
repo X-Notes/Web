@@ -422,7 +422,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         AudiosCollection.getNew(),
       );
       this.postAction();
-      await this.contentEditorPhotosService.uploadPhotoToAlbumHandler(
+      await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
@@ -470,9 +470,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
+    let newContentId: string;
     switch (event.typeFile) {
       case TypeUploadFile.photos: {
-        await this.contentEditorPhotosService.transformToPhotosCollection(
+        newContentId = await this.contentEditorPhotosService.transformToPhotosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -480,7 +481,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.audios: {
-        await this.contentEditorAudiosService.transformToAudiosCollection(
+        newContentId = await this.contentEditorAudiosService.transformToAudiosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -488,7 +489,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.documents: {
-        await this.contentEditorDocumentsService.transformToDocumentsCollection(
+        newContentId = await this.contentEditorDocumentsService.transformToDocumentsCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -496,7 +497,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.videos: {
-        await this.contentEditorVideosService.transformToVideosCollection(
+        newContentId = await this.contentEditorVideosService.transformToVideosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -505,6 +506,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       default: {
         throw new Error('incorrect type');
+      }
+    }
+
+    if (newContentId) {
+      const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);
+      if (el) {
+        el.syncContentWithLayout();
       }
     }
   }
@@ -569,7 +577,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    await this.contentEditorPhotosService.uploadPhotoToAlbumHandler($event, noteId);
+    await this.contentEditorPhotosService.uploadPhotosToCollectionHandler($event, noteId);
     this.postAction();
   };
 }
