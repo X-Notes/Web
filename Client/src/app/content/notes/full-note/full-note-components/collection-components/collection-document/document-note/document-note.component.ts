@@ -6,18 +6,18 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ExportService } from '../../../export.service';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { FocusDirection, SetFocus } from '../../models/set-focus';
-import { CollectionService } from '../collection-services/collection.service';
-import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
-import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
+import { ExportService } from '../../../../../export.service';
+import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../../../models/set-focus';
+import { CollectionBaseComponent } from '../../collection.base.component';
+import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
+import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
 import {
   DocumentModel,
   DocumentsCollection,
-} from '../../../models/editor-models/documents-collection';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
+} from '../../../../../models/editor-models/documents-collection';
+import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 
 @Component({
   selector: 'app-document-note',
@@ -26,7 +26,7 @@ import { ApiBrowserTextService } from '../../../api-browser-text.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentNoteComponent
-  extends CollectionService<DocumentsCollection>
+  extends CollectionBaseComponent<DocumentsCollection>
   implements OnInit, ParentInteraction
 {
   @ViewChild('uploadRef') uploadRef: ElementRef;

@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/cor
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BaseHtmlComponent {
+export class BaseEditorElementComponent {
   @Output()
   someChangesEvent = new EventEmitter();
 

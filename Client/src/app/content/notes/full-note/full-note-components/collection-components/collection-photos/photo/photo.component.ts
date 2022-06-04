@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
-import { Photo } from '../../../models/editor-models/photos-collection';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { Photo } from '../../../../../models/editor-models/photos-collection';
+import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-photo',

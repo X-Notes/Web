@@ -12,15 +12,15 @@ import {
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ExportService } from '../../../export.service';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { SelectionService } from '../../content-editor-services/selection.service';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { FocusDirection, SetFocus } from '../../models/set-focus';
-import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
-import { CollectionService } from '../collection-services/collection.service';
-import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
+import { ExportService } from '../../../../../export.service';
+import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../../../models/set-focus';
+import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
+import { CollectionBaseComponent } from '../../collection.base.component';
+import { Photo, PhotosCollection } from '../../../../../models/editor-models/photos-collection';
+import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -28,7 +28,7 @@ import { ApiBrowserTextService } from '../../../api-browser-text.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotosComponent
-  extends CollectionService<PhotosCollection>
+  extends CollectionBaseComponent<PhotosCollection>
   implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
 {
   @ViewChild('album') albumChild: ElementRef;

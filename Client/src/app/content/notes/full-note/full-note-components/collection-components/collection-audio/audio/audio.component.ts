@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AudioService } from '../../../audio.service';
-import { StreamAudioState } from '../../../models/stream-audio-state.model';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { AudioModel } from '../../../models/editor-models/audios-collection';
+import { AudioService } from '../../../../../audio.service';
+import { StreamAudioState } from '../../../../../models/stream-audio-state.model';
+import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { AudioModel } from '../../../../../models/editor-models/audios-collection';
 
 @Component({
   selector: 'app-audio',

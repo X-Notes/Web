@@ -1,18 +1,13 @@
 import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
-import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
-import { BreakEnterModel } from '../../../content-editor-services/break-enter.model';
+import { BreakEnterModel } from '../../../content-editor-services/models/break-enter.model';
 import { MenuSelectionService } from '../../../content-editor-services/menu-selection.service';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { SelectionService } from '../../../content-editor-services/selection.service';
-import { ClickableSelectableEntities } from '../../../content-editor-services/clickable-selectable-entities.enum';
-import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 
 @Injectable()
-export abstract class HtmlService {
-  preFocus = false;
-
+export abstract class HtmlTextElementsService {
   listeners = [];
 
   constructor(
@@ -20,7 +15,6 @@ export abstract class HtmlService {
     public selectionService: SelectionService,
     public menuSelectionService: MenuSelectionService,
     private renderer: Renderer2,
-    private clickableService: ClickableContentService,
   ) {}
 
   pasteCommandHandler(e) {
@@ -122,24 +116,6 @@ export abstract class HtmlService {
     }
   }
 
-  isActive(contentHtml: ElementRef) {
-    return (
-      (this.isContentEmpty(contentHtml) &&
-        document.activeElement === this.getNativeElement(contentHtml)) ||
-      (this.preFocus && this.isContentEmpty(contentHtml))
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseEnter($event, contentHtml: ElementRef) {
-    this.preFocus = !this.selectionService.ismousedown;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseLeave($event, contentHtml: ElementRef) {
-    this.preFocus = false;
-  }
-
   // eslint-disable-next-line class-methods-use-this
   eventEventFactory(
     breakModel: BreakEnterModel,
@@ -152,20 +128,6 @@ export abstract class HtmlService {
       contentId,
     };
     return eventModel;
-  }
-
-  setFocus(contentHtml: ElementRef<any>, contentModel: ContentModelBase) {
-    this.getNativeElement(contentHtml).focus();
-    this.setFocusedElement(contentModel);
-  }
-
-  setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModelBase) {
-    this.apiBrowserService.setCursor(this.getNativeElement(contentHtml), false);
-    this.setFocusedElement(contentModel);
-  }
-
-  setFocusedElement(contentModel: ContentModelBase) {
-    this.clickableService.setSontent(contentModel.id, null, ClickableSelectableEntities.Text);
   }
 
   abstract onBlur(e);

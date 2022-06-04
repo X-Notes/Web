@@ -13,14 +13,16 @@ import { BaseFile } from '../../../models/editor-models/base-file';
 import { TextBlock } from '../../../models/editor-models/base-text';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { BaseHtmlComponent } from '../base-html-components';
-import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
+import { BaseEditorElementComponent } from '../base-html-components';
+import { TitleCollectionComponent } from './title-collection/title-collection.component';
 
 @Component({
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class CollectionService<T extends BaseCollection<BaseFile>> extends BaseHtmlComponent {
+export class CollectionBaseComponent<
+  T extends BaseCollection<BaseFile>,
+> extends BaseEditorElementComponent {
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 

@@ -2,10 +2,10 @@ import { ElementRef, EventEmitter, Injectable } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { TransformContent } from '../../../models/transform-content.model';
-import { HtmlService } from './html.service';
+import { HtmlTextElementsService } from './html.text.elements.service';
 
 @Injectable()
-export class CheckListService extends HtmlService {
+export class CheckListService extends HtmlTextElementsService {
   transformTo = new EventEmitter<TransformContent>();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

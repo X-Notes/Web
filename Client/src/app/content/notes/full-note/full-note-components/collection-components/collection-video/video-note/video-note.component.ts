@@ -10,15 +10,18 @@ import {
 } from '@angular/core';
 
 import { Subject } from 'rxjs';
-import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
-import { ExportService } from '../../../export.service';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { FocusDirection, SetFocus } from '../../models/set-focus';
-import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
-import { CollectionService } from '../collection-services/collection.service';
-import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
+import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
+import { ExportService } from '../../../../../export.service';
+import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../../../models/set-focus';
+import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
+import { CollectionBaseComponent } from '../../collection.base.component';
+import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
+import {
+  VideoModel,
+  VideosCollection,
+} from 'src/app/content/notes/models/editor-models/videos-collection';
 
 @Component({
   selector: 'app-video-note',
@@ -27,7 +30,7 @@ import { ApiBrowserTextService } from '../../../api-browser-text.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoNoteComponent
-  extends CollectionService<VideosCollection>
+  extends CollectionBaseComponent<VideosCollection>
   implements ParentInteraction, AfterViewInit, OnDestroy
 {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;

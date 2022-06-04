@@ -23,9 +23,11 @@ import { TransformToFileContent } from '../../../models/transform-file-content.m
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../html-business-logic/text.service';
-import { SetFocus } from '../../../models/set-focus';
-import { HtmlBaseService } from '../html-base.service';
+import { BaseTextElementComponent } from '../html-base.component';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { SelectionService } from '../../../content-editor-services/selection.service';
+import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-html-text-part',
@@ -35,7 +37,7 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent
-  extends HtmlBaseService
+  extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
 {
   @Output()
@@ -86,12 +88,11 @@ export class HtmlTextPartComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
+    public pS: PersonalizationService,
+    selectionService: SelectionService,
+    clickableService: ClickableContentService,
   ) {
-    super(cdr, apiBrowserTextService);
-  }
-
-  get isFocused() {
-    return this.textService.isActive(this.contentHtml);
+    super(cdr, apiBrowserTextService, selectionService, clickableService);
   }
 
   get isLink() {
@@ -157,33 +158,11 @@ export class HtmlTextPartComponent
     $event.preventDefault();
   };
 
-  mouseEnter($event) {
-    $event.preventDefault();
-    this.textService.mouseEnter($event, this.contentHtml);
-    this.isMouseOver = true;
-  }
-
-  mouseLeave($event) {
-    this.textService.mouseLeave($event, this.contentHtml);
-    this.isMouseOver = false;
-  }
-
   isFocusToNext = () => true;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFocus(entity: SetFocus) {
-    this.textService.setFocus(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
 
   changeDetectionChecker = (): void => {
     console.log('Check text');
   };
-
-  setFocusToEnd() {
-    this.textService.setFocusToEnd(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
 
   validURL = (str) => {
     let url;
@@ -195,7 +174,7 @@ export class HtmlTextPartComponent
     return url.protocol === 'http:' || url.protocol === 'https:';
   };
 
-  async uploadFiles(event) {
+  uploadFiles(event) {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
     const files = event.target.files as File[];
     this.transformToFile.emit({ contentId: this.content.id, typeFile: type, files: [...files] });

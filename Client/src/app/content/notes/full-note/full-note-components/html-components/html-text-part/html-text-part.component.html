@@ -17,9 +17,13 @@
       [attr.contenteditable]="!isReadOnlyMode"
       [innerHTML]="viewHtml"
     ></p>
-    <div *ngIf="isFocused && !isReadOnlyMode" class="no-content">
+    <div *ngIf="isActiveState && !isReadOnlyMode" class="no-content">
       <p>{{'innerNote.text' | translate}}</p>
-      <div class="buttons" (mousedown)="preventClick($event)">
+      <div
+        *ngIf="(pS.isTranformMenuMobile$ | async) === false"
+        class="buttons"
+        (mousedown)="preventClick($event)"
+      >
         <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
           <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
         </div>
