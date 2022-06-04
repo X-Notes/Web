@@ -207,6 +207,10 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < 1025));
   }
 
+  get isTranformMenuMobile$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
+  }
+
   get isHideTextOnSmall$() {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }

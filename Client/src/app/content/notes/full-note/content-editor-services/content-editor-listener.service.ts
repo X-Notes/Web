@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { FocusDirection } from '../models/set-focus';
 import { ClickableContentService } from './clickable-content.service';
-import { ClickableSelectableEntities } from './clickable-selectable-entities.enum';
+import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
 
 @Injectable()
 export class ContentEditorListenerService {

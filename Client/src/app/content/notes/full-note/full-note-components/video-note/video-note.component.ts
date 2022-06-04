@@ -15,7 +15,7 @@ import { ExportService } from '../../../export.service';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
-import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BreakEnterModel } from './full-note/content-editor-services/break-enter.model';
+import { BreakEnterModel } from './full-note/content-editor-services/models/break-enter.model';
 @Injectable({
   providedIn: 'root',
 })

@@ -12,7 +12,7 @@ import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
-import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 

@@ -17,7 +17,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
-import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
 import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
@@ -86,7 +86,6 @@ export class PhotosComponent
   }
 
   ngOnChanges(): void {
-    console.log('this: ', this.content);
     this.updateHeightByNativeOffset();
   }
 
@@ -216,7 +215,6 @@ export class PhotosComponent
   }
 
   updateIternal() {
-    console.log('this.content: ', this.content);
     this.setPhotosInRow(this.content.countInRow, true);
   }
 

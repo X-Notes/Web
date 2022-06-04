@@ -11,7 +11,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
-import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import {
   DocumentModel,
