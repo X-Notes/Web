@@ -2,7 +2,7 @@
   <div
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H1)"
-    [ngClass]="{'active': getIsActiveHeader(textType.Heading, headingType.H1)}"
+    [ngClass]="{'active': getIsActiveHeader(headingType.H1)}"
   >
     <div class="icon">
       <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
@@ -11,7 +11,7 @@
   <div
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H2)"
-    [ngClass]="{'active': getIsActiveHeader(textType.Heading, headingType.H2)}"
+    [ngClass]="{'active': getIsActiveHeader(headingType.H2)}"
   >
     <div class="icon">
       <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
@@ -20,7 +20,7 @@
   <div
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H3)"
-    [ngClass]="{'active': getIsActiveHeader(textType.Heading, headingType.H3)}"
+    [ngClass]="{'active': getIsActiveHeader(headingType.H3)}"
   >
     <div class="icon">
       <mat-icon svgIcon="h3" [inline]="true"></mat-icon>

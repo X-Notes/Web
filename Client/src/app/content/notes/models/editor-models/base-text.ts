@@ -24,26 +24,27 @@ export class BaseText extends ContentModelBase {
     this.listId = text.listId;
   }
 
-  set contentSG(contents: TextBlock[]) {
+  updateContent(contents: TextBlock[]) {
     this.contents = contents;
     this.updateDate();
   }
 
-  set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
+  updateHeadingTypeId(headingTypeId: HeadingTypeENUM) {
     this.headingTypeId = headingTypeId;
     this.updateDate();
   }
 
-  set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
+  updateNoteTextTypeId(noteTextTypeId: NoteTextTypeENUM) {
     this.noteTextTypeId = noteTextTypeId;
     this.updateDate();
   }
 
-  set checkedSG(_checked: boolean) {
+  updateChecked(_checked: boolean) {
     this.checked = _checked;
     this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   static getNew(): BaseText {
     const obj: Partial<BaseText> = {
       typeId: ContentTypeENUM.Text,

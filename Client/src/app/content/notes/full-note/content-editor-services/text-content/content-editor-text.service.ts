@@ -25,23 +25,23 @@ export class ContentEditorTextService {
       index += 1;
     }
     const nContent = BaseText.getNew();
-    nContent.noteTextTypeIdSG = nextRowType;
+    nContent.updateNoteTextTypeId(nextRowType);
     this.contentsService.insertInto(nContent, index);
     return { index, content: nContent };
   }
 
   tranformTextContentTo(value: TransformContent) {
     const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
-    item.content.noteTextTypeIdSG = value.textType;
+    item.content.updateNoteTextTypeId(value.textType);
     if (value.headingType) {
-      item.content.headingTypeIdSG = value.headingType;
+      item.content.updateHeadingTypeId(value.headingType);
     }
     return item.index;
   }
 
   getNewTextContent = (): BaseText => {
     const nContent = BaseText.getNew();
-    nContent.noteTextTypeIdSG = NoteTextTypeENUM.Default;
+    nContent.updateNoteTextTypeId(NoteTextTypeENUM.Default);
     return nContent;
   };
 
