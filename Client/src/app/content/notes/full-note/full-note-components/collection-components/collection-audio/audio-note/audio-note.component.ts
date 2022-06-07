@@ -56,7 +56,12 @@ export class AudioNoteComponent
   }
 
   clickAudioHandler(audioId: string) {
-    this.clickableContentService.set(ClickableSelectableEntities.Audio, audioId, this.content.id);
+    this.clickableContentService.setSontent(
+      this.content.id,
+      audioId,
+      ClickableSelectableEntities.Audio,
+      null,
+    );
   }
 
   playStream(url, id) {

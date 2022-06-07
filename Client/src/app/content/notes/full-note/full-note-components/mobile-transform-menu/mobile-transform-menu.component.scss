@@ -1,0 +1,68 @@
+@import 'variables';
+
+:host {
+  position: relative;
+  bottom: 50px;
+  z-index: $full-main-menu;
+}
+
+.transform-buttons-container {
+  height: 50px;
+  background-color: $dark-color;
+
+  .buttons {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .icon {
+      display: flex;
+      width: 24px;
+      height: 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 0.13rem;
+      border-radius: 2px;
+      box-sizing: content-box;
+      transition: 0.2s ease;
+
+      .mat-icon {
+        display: flex;
+        font-size: 1.5rem;
+      }
+
+      &:not(:first-child) {
+        margin-left: 18px;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .transform-buttons-container {
+    padding-left: 26px;
+    padding-right: 26px;
+    .buttons {
+      height: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      .icon {
+        width: 20px;
+        height: 20px;
+        .mat-icon {
+          font-size: 1.25rem;
+        }
+        &:not(:first-child) {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .transform-buttons-container {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}

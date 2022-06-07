@@ -56,6 +56,8 @@ import { PhotosCollection } from '../../models/editor-models/photos-collection';
 import { DiffCheckerService } from './diffs/diff-checker.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -116,6 +118,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
     private diffCheckerService: DiffCheckerService,
     private contentUpdateWsService: ContentUpdateWsService,
+    public pS: PersonalizationService,
+    public clickableContentService: ClickableContentService,
   ) {}
 
   get contents() {
@@ -383,9 +387,24 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     console.log(event);
   };
 
+  isCanAddNewItem(content: ContentModelBase) {
+    if (!content) return false;
+    if (content.typeId !== ContentTypeENUM.Text) {
+      return true;
+    }
+    const text = content as BaseText;
+    if (text.noteTextTypeId !== NoteTextTypeENUM.Default) {
+      return true;
+    }
+    if (text.contents && text.contents?.length !== 0) {
+      return true;
+    }
+    return false;
+  }
+
   postAction(): void {
-    const native = this.elements?.last?.getEditableNative();
-    if (native?.textContent.length !== 0) {
+    const isCanAppend = this.isCanAddNewItem(this.elements?.last?.getContent());
+    if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
     this.contentEditorContentsService.changeAndSave();
@@ -393,11 +412,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   placeHolderClick($event) {
     $event.preventDefault();
-    if (this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
-      this.contentEditorTextService.appendNewEmptyContentToEnd();
-    }
-    this.contentEditorContentsService.changeAndSave();
-    setTimeout(() => this.elements?.last?.setFocus());
+    this.postAction();
+    requestAnimationFrame(() => this.elements?.last?.setFocus());
   }
 
   mouseEnter($event) {

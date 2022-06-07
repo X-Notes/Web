@@ -63,7 +63,12 @@ export class DocumentNoteComponent
   }
 
   clickDocumentHandler(documentId: string) {
-    this.clickableService.set(ClickableSelectableEntities.Document, documentId, this.content.id);
+    this.clickableService.setSontent(
+      this.content.id,
+      documentId,
+      ClickableSelectableEntities.Document,
+      null,
+    );
   }
 
   isFocusToNext(entity: SetFocus) {

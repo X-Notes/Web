@@ -1,0 +1,42 @@
+<div class="transform-buttons-container">
+  <div class="buttons" (mousedown)="preventClick($event)">
+    <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
+      <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
+      <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
+      <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
+      <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
+      <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
+      <mat-icon svgIcon="list" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.photos, true)">
+      <mat-icon svgIcon="image" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.documents, true)">
+      <mat-icon svgIcon="file" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.videos, true)">
+      <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
+    </div>
+    <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.audios, true)">
+      <mat-icon [inline]="true">library_music</mat-icon>
+    </div>
+  </div>
+</div>
+<input
+  #uploadFile
+  type="file"
+  [multiple]="isMulptiply"
+  [accept]="formats"
+  hidden="true"
+  (change)="uploadFiles($event)"
+/>

@@ -110,7 +110,12 @@ export class PhotosComponent
   }
 
   clickPhotoHandler(photoId: string) {
-    this.clickableContentService.set(ClickableSelectableEntities.Photo, photoId, this.content.id);
+    this.clickableContentService.setSontent(
+      this.content.id,
+      photoId,
+      ClickableSelectableEntities.Photo,
+      null,
+    );
   }
 
   changeWidth(diffrence: number) {

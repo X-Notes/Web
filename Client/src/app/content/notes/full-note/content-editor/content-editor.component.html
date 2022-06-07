@@ -6,7 +6,7 @@
   [appCopy]="refElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
-  [ngStyle]="{'width': sliderService ? sliderService?.mainWidth : ''}"
+  [ngStyle]="{ width: sliderService ? sliderService?.mainWidth : '' }"
   class="main-content"
 >
   <div class="top-section">
@@ -31,7 +31,7 @@
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"
       ></div>
-      <div class="placeholder">{{'innerNote.title' | translate}}</div>
+      <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>
     </div>
   </div>
@@ -207,6 +207,11 @@
     ></div>
   </div>
 </div>
+<app-mobile-transform-menu
+  *ngIf="(pS.isTranformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus"
+  (transformTo)="transformToTypeText($event)"
+  (transformToFile)="transformToFileType($event)"
+></app-mobile-transform-menu>
 <app-text-edit-menu
   [style.top.px]="menuSelectionService.getTop"
   [style.left.px]="menuSelectionService.left"

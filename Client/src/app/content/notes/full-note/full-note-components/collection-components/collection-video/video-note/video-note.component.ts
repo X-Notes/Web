@@ -216,7 +216,12 @@ export class VideoNoteComponent
   }
 
   clickVideoHandler(videoId: string) {
-    this.clickableContentService.set(ClickableSelectableEntities.Video, videoId, this.content.id);
+    this.clickableContentService.setSontent(
+      this.content.id,
+      videoId,
+      ClickableSelectableEntities.Video,
+      null,
+    );
   }
 
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
