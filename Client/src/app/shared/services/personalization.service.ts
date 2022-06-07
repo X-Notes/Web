@@ -147,6 +147,8 @@ export class PersonalizationService {
 
   spinnerActive = false;
 
+  startMobileWidth = 1025;
+
   timeForSpinnerLoading = 100;
 
   selectAllButton = new Subject();
@@ -200,15 +202,15 @@ export class PersonalizationService {
   }
 
   get isActiveFullNoteMobileButtons$() {
-    return this.windowWidth$.pipe(map((value) => value < 1025));
+    return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 
   get isHistoryButtonInMobileMenu$() {
-    return this.windowWidth$.pipe(map((value) => value < 1025));
+    return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 
   get isTranformMenuMobile$() {
-    return this.windowWidth$.pipe(map((value) => value < 1025));
+    return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 
   get isHideTextOnSmall$() {

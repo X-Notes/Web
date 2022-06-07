@@ -214,7 +214,7 @@
 ></app-mobile-transform-menu>
 <app-text-edit-menu
   [style.top.px]="menuSelectionService.getTop"
-  [style.left.px]="menuSelectionService.left"
+  [style.left.px]="menuSelectionService.getLeft"
   [style.visibility]="menuSelectionService.menuActive ? 'visible' : 'hidden'"
   (eventTransform)="transformToTypeText($event)"
   (updateText)="updateTextStyles($event)"

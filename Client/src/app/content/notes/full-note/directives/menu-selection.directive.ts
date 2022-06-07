@@ -38,13 +38,17 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   mouseUp() {
     const selection = this.apiBrowserService.getSelection();
     if (selection.toString() !== '') {
-      const coords = selection.getRangeAt(0).getBoundingClientRect();
-      const left = (coords.left + coords.right) / 2;
-      const top = coords.top - 48;
+      const range = selection.getRangeAt(0);
+      const coords = range.getBoundingClientRect();
+      const deltaSide = this.selectionService.sidebarWidth * 2;
+      const deltaMenuWidth = 100;
+      const left = (coords.left + coords.right - deltaSide - deltaMenuWidth) / 2;
+      const top = coords.top - 100;
 
       this.menuSelectionService.currentTextItem = this.getCurrentItem().getContent() as BaseText;
       this.menuSelectionService.currentHtmlItem =
         this.getCurrentItem().getEditableNative().innerHTML;
+
       this.menuSelectionService.left = left;
       this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;

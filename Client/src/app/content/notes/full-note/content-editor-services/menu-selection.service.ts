@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { BaseText } from '../../models/editor-models/base-text';
 
 @Injectable()
@@ -15,17 +16,23 @@ export class MenuSelectionService {
 
   public left = 0;
 
+  constructor(private pS: PersonalizationService) {}
+
   get menuActive() {
     return this.currentTextItem !== null && this.currentTextItem !== undefined;
   }
 
+  get getLeft(): number {
+    if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
+      return 0;
+    }
+    return this.left;
+  }
+
   get getTop() {
-    const positionNumber = this.startTop + this.startScroll - this.currentScroll;
-    /*
-    if (positionNumber < 0)
-    {
-      return 5;
-    } */
-    return positionNumber;
+    if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
+      return 0;
+    }
+    return this.startTop + this.startScroll - this.currentScroll;
   }
 }
