@@ -17,35 +17,35 @@ namespace WriteContext.Repositories.NoteContent
         }
 
 
-        public Task<CollectionNote> GetOneIncludePhotoNoteAppFiles(Guid id)
+        public Task<CollectionNote> GetOneIncludeNoteAppFiles(Guid id)
         {
             return entities.Include(x => x.CollectionNoteAppFiles).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<CollectionNote> GetOneIncludePhotos(Guid id)
+        public Task<CollectionNote> GetOneIncludeFiles(Guid id)
         {
             return entities.Include(x => x.Files).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<CollectionNote>> GetManyIncludePhotoNoteAppFiles(List<Guid> ids)
+        public Task<List<CollectionNote>> GetManyIncludeNoteAppFiles(List<Guid> ids)
         {
             return entities.Include(x => x.CollectionNoteAppFiles).Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<List<CollectionNote>> GetManyIncludePhotos(List<Guid> ids)
+        public Task<List<CollectionNote>> GetManyIncludeFiles(List<Guid> ids)
         {
             return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<Dictionary<Guid, (Guid, long)>> GetMemoryOfNotes(List<Guid> ids)
+        public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotes(List<Guid> ids)
         {
             var ents = await entities.Where(x => ids.Contains(x.NoteId))
                                      .Include(x => x.Files)
                                      .GroupBy(x => x.NoteId)
-                                     .Select(x => new { noteId = x.Key, size = x.Sum(q => q.Files.Sum(x => x.Size)) })
+                                     .Select(x => new { noteId = x.Key, files = x.SelectMany(q => q.Files) })
                                      .ToListAsync();
 
-            return ents.Select(x => (x.noteId, x.size)).ToDictionary(x => x.noteId);
+            return ents.Select(x => (x.noteId, x.files)).ToDictionary(x => x.noteId);
         }
     }
 }

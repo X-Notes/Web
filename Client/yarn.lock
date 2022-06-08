@@ -3445,6 +3445,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/diff-match-patch@npm:^1.0.32":
+  version: 1.0.32
+  resolution: "@types/diff-match-patch@npm:1.0.32"
+  checksum: 8431ab2bf2f0e96ece30beddeae3bc8024429bd6071f1ab695c3f64112b2551446fc4a746a44a7a7d14e47ffce622333286c1c78869cfb510c775a9e8c47a1b1
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.0":
   version: 3.7.3
   resolution: "@types/eslint-scope@npm:3.7.3"
@@ -5216,6 +5223,7 @@ __metadata:
     "@ngxs/storage-plugin": ^3.7.3
     "@ngxs/store": ^3.7.3
     "@semantic-release/git": ^10.0.1
+    "@types/diff-match-patch": ^1.0.32
     "@types/jasmine": ~3.10.3
     "@types/jasminewd2": ~2.0.10
     "@types/node": ^17.0.17
@@ -5225,6 +5233,7 @@ __metadata:
     autoprefixer: ^10.4.2
     buffer: ^6.0.3
     codelyzer: ^6.0.2
+    diff-match-patch: ^1.0.5
     eslint: ^8.9.0
     eslint-config-airbnb-typescript: ^16.1.0
     eslint-config-prettier: ^8.3.0
@@ -6167,6 +6176,13 @@ __metadata:
   version: 0.0.1
   resolution: "di@npm:0.0.1"
   checksum: 3f09a99534d33e49264585db7f863ea8bc76c25c4d5a60df387c946018ecf1e1516b2c05a2092e5ca51fcdc08cefe609a6adc5253fa831626cb78cad4746505e
+  languageName: node
+  linkType: hard
+
+"diff-match-patch@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "diff-match-patch@npm:1.0.5"
+  checksum: 841522d01b09cccbc4e4402cf61514a81b906349a7d97b67222390f2d35cf5df277cb23959eeed212d5e46afb5629cebab41b87918672c5a05c11c73688630e3
   languageName: node
   linkType: hard
 

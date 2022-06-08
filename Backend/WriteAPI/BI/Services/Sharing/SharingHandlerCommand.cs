@@ -28,7 +28,9 @@ namespace BI.Services.Sharing
         IRequestHandler<SendInvitesToUsersFolders, Unit>,
         IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>,
         IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>,
-        IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
+        IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>,
+        IRequestHandler<RemoveAllUsersFromFolderCommand, OperationResult<Unit>>,
+        IRequestHandler<RemoveAllUsersFromNoteCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
         private readonly NoteRepository noteRepository;
@@ -336,6 +338,52 @@ namespace BI.Services.Sharing
                 foreach (var notification in notifications)
                 {
                     await appSignalRHub.UpdatePermissionUserNote(updateCommand, notification.UserToId);
+                }
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(RemoveAllUsersFromFolderCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.IsOwner)
+            { 
+                var ents = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
+                await usersOnPrivateFoldersRepository.RemoveRangeAsync(ents);
+
+                foreach (var en in ents)
+                {
+                    var updateCommand = new UpdatePermissionFolderWS();
+                    updateCommand.RevokeIds.Add(request.FolderId);
+                    await appSignalRHub.UpdatePermissionUserFolder(updateCommand, en.UserId);
+                }
+
+                return new OperationResult<Unit>(true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(RemoveAllUsersFromNoteCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.IsOwner)
+            {
+                var ents = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+                await usersOnPrivateNotesRepository.RemoveRangeAsync(ents);
+
+                foreach(var en in ents)
+                {
+                    var updateCommand = new UpdatePermissionNoteWS();
+                    updateCommand.RevokeIds.Add(request.NoteId);
+                    await appSignalRHub.UpdatePermissionUserNote(updateCommand, en.UserId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);

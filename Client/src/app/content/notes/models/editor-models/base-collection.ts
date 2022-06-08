@@ -8,6 +8,10 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
 
   isLoading = false;
 
+  get orderedItems(): T[] {
+    return this.items.sort((a, b) => a.uploadAt.getTime() - b.uploadAt.getTime());
+  }
+
   isEqual(content: BaseCollection<T>): boolean {
     return (
       this.isTextOrCollectionInfoEqual(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0]
@@ -44,17 +48,18 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     return [true, null, null];
   }
 
-  updateInfo(entity: BaseCollection<T>) {
+  updateInfo(entity: Partial<BaseCollection<T>>) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
   }
 
   addItemsToCollection(files: T[]): void {
+    if (!files || files.length === 0) return;
     this.items.push(...files);
   }
 
-  removeItemsFromCollection(files: BaseFile[]): void {
-    const ids = files.map((x) => x.fileId);
-    this.items = this.items.filter((x) => ids.some((z) => z === x.fileId));
+  removeItemsFromCollection(fileIds: string[]): void {
+    if (!fileIds || fileIds.length === 0) return;
+    this.items = this.items.filter((x) => !fileIds.some((z) => z === x.fileId));
   }
 }

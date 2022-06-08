@@ -19,6 +19,8 @@ import { Photo, PhotosCollection } from './models/editor-models/photos-collectio
 import { AudioModel, AudiosCollection } from './models/editor-models/audios-collection';
 import { DocumentsCollection, DocumentModel } from './models/editor-models/documents-collection';
 import { VideosCollection, VideoModel } from './models/editor-models/videos-collection';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +30,8 @@ export class ExportService {
     private httpClient: HttpClient,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
     protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+    private snackbarService: SnackbarService,
+    private translateService: TranslateService,
   ) {}
 
   zipFiles = async (tasks: Observable<{ blob: FileProcessTracker<Blob>; name: string }>[]) => {
@@ -55,7 +59,8 @@ export class ExportService {
   // PHOTOS
   async exportAlbum(collection: PhotosCollection) {
     if (collection.items.length === 0) {
-      // TODO SNACKBAR WITH WARNING
+      const message = this.translateService.instant('snackBar.noItemInExport');
+      this.snackbarService.openSnackBar(message, null, null);
       return;
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportPhotos');
@@ -96,7 +101,8 @@ export class ExportService {
   // AUDIOS
   async exportPlaylist(collection: AudiosCollection) {
     if (collection.items.length === 0) {
-      // TODO SNACKBAR WITH WARNING
+      const message = this.translateService.instant('snackBar.noItemInExport');
+      this.snackbarService.openSnackBar(message, null, null);
       return;
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportAudios');
@@ -137,7 +143,8 @@ export class ExportService {
   // DOCUMENT
   async exportDocuments(collection: DocumentsCollection) {
     if (collection.items.length === 0) {
-      // TODO SNACKBAR WITH WARNING
+      const message = this.translateService.instant('snackBar.noItemInExport');
+      this.snackbarService.openSnackBar(message, null, null);
       return;
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation(
@@ -182,7 +189,8 @@ export class ExportService {
   // VIDEOS
   async exportVideos(collection: VideosCollection) {
     if (collection.items.length === 0) {
-      // TODO SNACKBAR WITH WARNING
+      const message = this.translateService.instant('snackBar.noItemInExport');
+      this.snackbarService.openSnackBar(message, null, null);
       return;
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportVideos');

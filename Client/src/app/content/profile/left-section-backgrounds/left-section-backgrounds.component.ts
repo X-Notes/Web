@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
@@ -11,7 +11,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
   templateUrl: './left-section-backgrounds.component.html',
   styleUrls: ['./left-section-backgrounds.component.scss'],
 })
-export class LeftSectionBackgroundsComponent {
+export class LeftSectionBackgroundsComponent implements AfterViewInit {
   @Select(BackgroundStore.getUserBackgrounds)
   public backgrounds$: Observable<Background[]>;
 
@@ -21,4 +21,10 @@ export class LeftSectionBackgroundsComponent {
   @Output() removeBackground = new EventEmitter<string>();
 
   @Output() setCurrentBackground = new EventEmitter<string>();
+
+  loaded = false;
+
+  ngAfterViewInit(): void {
+    setTimeout(() => (this.loaded = true), 100);
+  }
 }

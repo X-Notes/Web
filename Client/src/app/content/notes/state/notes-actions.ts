@@ -8,6 +8,7 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { FullNote } from '../models/full-note.model';
 import { AddNotesToDom } from './add-notes-to-dom.model';
+import { Diff } from 'diff-match-patch';
 
 export class ResetNotes {
   static type = '[Notes] Reset notes';
@@ -235,10 +236,12 @@ export class UpdateNoteTitle {
   static type = '[Notes] update title';
 
   constructor(
-    public str: string,
+    public diffs: Diff[],
+    public newTitle: string,
     public noteId: string,
     public isCallApi = true,
     public errorPermissionMessage?: string,
+    public isUpdateFullNote = true,
   ) {}
 }
 export class UpdateFullNote {

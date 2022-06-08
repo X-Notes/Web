@@ -5,6 +5,7 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import {
   ApiAudiosCollection,
+  AudioModel,
   AudiosCollection,
 } from '../../models/editor-models/audios-collection';
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
@@ -16,7 +17,8 @@ import { BaseNoteFileContentApiService } from './base-note-file-content-api.serv
 export class ApiAudiosService extends BaseNoteFileContentApiService<
   BaseRemoveFromCollectionItemsCommand,
   BaseAddToCollectionItemsCommand,
-  BaseUpdateCollectionInfoCommand
+  BaseUpdateCollectionInfoCommand,
+  AudioModel
 > {
   static baseApi = `${environment.writeAPI}/api/note/inner/audios`;
 

@@ -9,11 +9,11 @@ namespace WriteAPI.Hosted
 {
     public class JobRegisterHosted : IHostedService
     {
-        Func<string> Delay;  
+        string Delay;  
 
         public JobRegisterHosted()
         {
-            Delay = Cron.Minutely; // TODO REMOVE AFTER TESTING
+            Delay = Cron.Hourly(2); // TODO REMOVE AFTER TESTING
         }
 
         public void DeleteNotes()

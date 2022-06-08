@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Queries.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,9 @@ namespace WriteAPI.Controllers.FullNoteAPI
         <
         RemoveDocumentsFromCollectionCommand,
         AddDocumentsToCollectionCommand,
-        UpdateDocumentsCollectionInfoCommand
+        UpdateDocumentsCollectionInfoCommand,
+        GetNoteFilesByIdsQuery<DocumentNoteDTO>,
+        DocumentNoteDTO
         >
     {
         public FullNoteDocumentsController(IMediator _mediator) : base(_mediator)

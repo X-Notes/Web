@@ -1,7 +1,7 @@
 @import 'variables';
 
 :host {
-  height: 100%;
+  flex: 1;
 }
 .progress-section {
   display: flex;
@@ -55,7 +55,6 @@
 
 @media (max-width: 1024px) {
   .progress-section {
-    height: calc(100% - 2px);
 
     .billing {
       display: flex;
@@ -65,11 +64,5 @@
     .progress-bar-section {
       width: calc(100% - 34px);
     }
-  }
-}
-
-@media (max-width: 320px) {
-  .progress-section {
-    height: calc(100% - 1px);
   }
 }

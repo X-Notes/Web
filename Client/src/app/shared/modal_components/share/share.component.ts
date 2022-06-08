@@ -29,12 +29,17 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { FolderTypeENUM } from '../../enums/folder-types.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { SearchUserForShareModal } from '../../models/short-user-for-share-modal.model';
-import { PersonalizationService, showDropdown } from '../../services/personalization.service';
+import {
+  PersonalizationService,
+  showDropdown,
+  smoothOpacity,
+} from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
+import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
 
 export interface StartType {
   id: string;
@@ -45,7 +50,7 @@ export interface StartType {
   selector: 'app-share',
   templateUrl: './share.component.html',
   styleUrls: ['./share.component.scss'],
-  animations: [showDropdown],
+  animations: [showDropdown, smoothOpacity()],
 })
 export class ShareComponent implements OnInit, OnDestroy {
   @ViewChild('tabs', { static: false }) tabs;
@@ -54,10 +59,10 @@ export class ShareComponent implements OnInit, OnDestroy {
   public theme$: Observable<ThemeENUM>;
 
   @Select(FolderStore.getUsersOnPrivateFolder)
-  public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
+  private usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 
   @Select(NoteStore.getUsersOnPrivateNote)
-  public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
+  private usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
 
   windowType = EntityPopupType;
 
@@ -79,11 +84,13 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   currentFolder: SmallFolder;
 
-  searchStr: string;
-
   searchStrChanged: Subject<string> = new Subject<string>();
 
   searchUsers: SearchUserForShareModal[] = [];
+
+  isSearching = false;
+
+  isLoading = true;
 
   selectedUsers: SearchUserForShareModal[] = [];
 
@@ -100,13 +107,6 @@ export class ShareComponent implements OnInit, OnDestroy {
       1,
     ),
   ];
-
-  // INVITES
-  messageTextArea: string;
-
-  isSendNotification: boolean;
-
-  refTypeForInvite: RefTypeENUM = RefTypeENUM.Viewer;
 
   constructor(
     public pService: PersonalizationService,
@@ -167,6 +167,16 @@ export class ShareComponent implements OnInit, OnDestroy {
     throw new Error('Incorrect type');
   }
 
+  get invitedUsers$(): Observable<InvitedUsersToNoteOrFolder[]> {
+    if (this.data.currentWindowType === this.windowType.Note) {
+      return this.usersOnPrivateNote$;
+    }
+    if (this.data.currentWindowType === this.windowType.Folder) {
+      return this.usersOnPrivateFolder$;
+    }
+    return null;
+  }
+
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
@@ -202,12 +212,35 @@ export class ShareComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(searchDelay), distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
+          this.isSearching = true;
           const users = await this.searchService.searchUsers(searchStr).toPromise();
+          this.isSearching = false;
           this.searchUsers = this.userFilters(users);
         } else {
+          this.isSearching = false;
           this.searchUsers = [];
         }
       });
+  }
+
+  async clearAll(): Promise<void> {
+    switch (this.data.currentWindowType) {
+      case EntityPopupType.Folder: {
+        await this.apiFolder.clearAll(this.currentFolder.id).toPromise();
+        this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
+        this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
+        break;
+      }
+      case EntityPopupType.Note: {
+        await this.apiNote.clearAll(this.currentNote.id).toPromise();
+        this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+        this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
+        break;
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
   }
 
   userFilters(items: SearchUserForShareModal[]) {
@@ -329,21 +362,17 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateOneFolder(this.currentFolder));
   }
 
-  refTypeNotification(refType: RefTypeENUM): void {
-    this.refTypeForInvite = refType;
-  }
-
-  async sendInvites() {
+  async sendInvites(model: InvitationFormResult) {
+    const userIds = this.selectedUsers.map((user) => user.id);
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
-        const userIds = this.selectedUsers.map((user) => user.id);
         await this.apiFolder
           .sendInvitesToFolder(
             userIds,
             this.currentFolder.id,
-            this.refTypeForInvite,
-            this.isSendNotification,
-            this.messageTextArea,
+            model.refTypeForInvite,
+            model.isSendNotification,
+            model.messageTextArea,
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
@@ -351,14 +380,13 @@ export class ShareComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityPopupType.Note: {
-        const userIds = this.selectedUsers.map((user) => user.id);
         await this.apiNote
           .sendInvitesToNote(
             userIds,
             this.currentNote.id,
-            this.refTypeForInvite,
-            this.isSendNotification,
-            this.messageTextArea,
+            model.refTypeForInvite,
+            model.isSendNotification,
+            model.messageTextArea,
           )
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
@@ -369,16 +397,21 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
+    this.selectedUsers = [];
   }
 
-  selectNote(note: SmallNote) {
+  async selectNote(note: SmallNote) {
     this.currentNote = { ...note };
-    this.store.dispatch(new GetInvitedUsersToNote(note.id));
+    this.isLoading = true;
+    await this.store.dispatch(new GetInvitedUsersToNote(note.id)).toPromise();
+    this.isLoading = false;
   }
 
-  selectFolder(folder: SmallFolder) {
+  async selectFolder(folder: SmallFolder) {
     this.currentFolder = { ...folder };
-    this.store.dispatch(new GetInvitedUsersToFolder(folder.id));
+    this.isLoading = true;
+    await this.store.dispatch(new GetInvitedUsersToFolder(folder.id)).toPromise();
+    this.isLoading = false;
   }
 
   collapseToggle() {

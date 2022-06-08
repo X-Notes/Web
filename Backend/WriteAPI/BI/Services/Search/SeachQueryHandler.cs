@@ -34,7 +34,7 @@ namespace BI.Services.Search
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
         {
             request.SearchString = request.SearchString.ToLower();
-            var users = await userRepository.SearchByEmailAndName(request.SearchString, request.UserId);
+            var users = await userRepository.SearchByEmailAndName(request.SearchString, request.UserId, 100);
             return users.Select(x => userBackgroundMapper.MapToShortUserForShareModal(x)).ToList();
         }
 

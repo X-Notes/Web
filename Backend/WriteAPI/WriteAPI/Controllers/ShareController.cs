@@ -27,6 +27,13 @@ namespace WriteAPI.Controllers
 
         // FOLDERS
 
+        [HttpPost("folders/clear")]
+        public async Task<OperationResult<Unit>> RemoveAllUsersFromNote(RemoveAllUsersFromFolderCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
+
         [HttpPost("folders/share")]
         public async Task<OperationResult<Unit>> ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
@@ -64,6 +71,13 @@ namespace WriteAPI.Controllers
 
 
         // NOTES 
+
+        [HttpPost("notes/clear")]
+        public async Task<OperationResult<Unit>> RemoveAllUsersFromNote(RemoveAllUsersFromNoteCommand command)
+        {
+            command.UserId = this.GetUserId();
+            return await this._mediator.Send(command);
+        }
 
         [HttpPost("notes/share")]
         public async Task<OperationResult<Unit>> ToPublicEditShareNotes(ChangeRefTypeNotes command)

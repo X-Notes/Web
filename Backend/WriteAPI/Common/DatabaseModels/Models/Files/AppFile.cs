@@ -156,5 +156,14 @@ namespace Common.DatabaseModels.Models.Files
            }
            return ids;
         }
+
+        public void SetAuthorPath(Func<Guid, string, string> setFieldAction, Guid authorId)
+        {
+            PathNonPhotoContent = setFieldAction(authorId, PathNonPhotoContent);
+
+            PathPhotoSmall = setFieldAction(authorId, PathPhotoSmall);
+            PathPhotoMedium = setFieldAction(authorId, PathPhotoMedium);
+            PathPhotoBig = setFieldAction(authorId, PathPhotoBig);
+        }
     }
 }

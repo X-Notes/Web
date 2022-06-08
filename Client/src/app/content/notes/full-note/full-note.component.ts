@@ -74,6 +74,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     });
   }
 
+  async ngOnInit() {
+    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
+  }
+
   async loadContent() {
     this.contents = await this.api.getContents(this.id).toPromise();
   }
@@ -120,10 +124,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     await this.store.dispatch(actions).toPromise();
     const note = this.store.selectSnapshot(NoteStore.oneFull);
     await this.setSideBarNotes(note.noteTypeId);
-  }
-
-  async ngOnInit() {
-    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
   }
 
   panMove(e) {

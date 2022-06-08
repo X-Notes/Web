@@ -19,6 +19,7 @@ import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
+import { BaseFoldersComponent } from '../base-folders-component';
 
 @Component({
   selector: 'app-deleted',
@@ -26,7 +27,10 @@ import { ShortUser } from 'src/app/core/models/short-user.model';
   styleUrls: ['./deleted.component.scss'],
   providers: [FolderService],
 })
-export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DeletedComponent
+  extends BaseFoldersComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(FolderStore.deletedCount)
@@ -42,8 +46,10 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public folderService: FolderService,
-  ) {}
+    folderService: FolderService,
+  ) {
+    super(folderService);
+  }
 
   ngAfterViewInit(): void {
     this.folderService.murriInitialise(this.refElements);

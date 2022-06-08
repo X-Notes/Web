@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
+using BI.Services.DiffsMatchPatch;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
@@ -12,12 +11,12 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
+using DiffMatchPatch;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Notes
 {
@@ -37,6 +36,8 @@ namespace BI.Services.Notes
         private readonly TextNotesRepository textNotesRepository;
 
         private readonly NoteWSUpdateService noteWSUpdateService;
+        
+        private readonly DiffsMatchPatchService diffsMatchPatchService;
 
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
@@ -44,7 +45,8 @@ namespace BI.Services.Notes
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
-            NoteWSUpdateService noteWSUpdateService)
+            NoteWSUpdateService noteWSUpdateService,
+            DiffsMatchPatchService diffsMatchPatchService)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
@@ -52,6 +54,7 @@ namespace BI.Services.Notes
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
             this.noteWSUpdateService = noteWSUpdateService;
+            this.diffsMatchPatchService = diffsMatchPatchService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -59,17 +62,30 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+           if (permissions.CanWrite)
             {
                 var note = permissions.Note;
-                note.Title = request.Title;
-                note.UpdatedAt = DateTimeProvider.Time;
-                await noteRepository.UpdateAsync(note);
 
-                await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                async Task UpdateNoteTitle(string title)
+                {
+                    note.Title = title;
+                    note.UpdatedAt = DateTimeProvider.Time;
+                    await noteRepository.UpdateAsync(note);
+
+                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                }
+
+                if (permissions.IsSingleUpdate)
+                {
+                    await UpdateNoteTitle(request.Title);
+                    return new OperationResult<Unit>(true, Unit.Value);
+                }
+
+                var title = diffsMatchPatchService.PatchToStr(request.Diffs, note.Title);
+                await UpdateNoteTitle(title);
 
                 // WS UPDATES
-                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id }, permissions.GetAllUsers(), request.UserId);
+                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true }, permissions.GetAllUsers(), Guid.Empty);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -84,16 +100,9 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                if(request.Texts.Count == 1)
+                foreach (var text in request.Texts)
                 {
-                    await UpdateOne(request.Texts.First(), request.NoteId, permissions.Caller.Id);
-                }
-                else
-                {
-                    foreach (var text in request.Texts)
-                    {
-                        await UpdateOne(text, request.NoteId, permissions.Caller.Id);
-                    }
+                    await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate);
                 }
 
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
@@ -105,7 +114,7 @@ namespace BI.Services.Notes
         }
 
 
-        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId)
+        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId, bool isMultiplyUpdate)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate != null)
@@ -118,8 +127,11 @@ namespace BI.Services.Notes
 
                 await textNotesRepository.UpdateAsync(textForUpdate);
 
-                var updates = new UpdateTextWS(text);
-                await appSignalRService.UpdateTextContent(noteId, userId, updates);
+                if (isMultiplyUpdate)
+                {
+                    var updates = new UpdateTextWS(text);
+                    await appSignalRService.UpdateTextContent(noteId, userId, updates);
+                }
             }
         }
     }

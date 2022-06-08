@@ -19,10 +19,11 @@
   </div>
   <div (click)="handelEntityClick($event, folder.id)" class="folder-inner">
     <input
+      #folderTitle
       type="text"
       [placeholder]="'placeholder.folderSmall' | translate"
-      [ngModel]="folder.title"
-      (ngModelChange)="changed($event)"
+      [ngModel]="uiTitle"
+      (ngModelChange)="titleChange$.next($event)"
       [disabled]="isSelectedMode || !folder.isCanEdit"
     />
     <div

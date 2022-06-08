@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
+using BI.Services.DiffsMatchPatch;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Folders;
@@ -15,7 +16,6 @@ using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Folders
 {
@@ -29,6 +29,7 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly NoteRepository noteRepository;
+        private readonly DiffsMatchPatchService diffsMatchPatchService;
         private readonly IMediator _mediator;
 
         public FullFolderHandlerCommand(
@@ -36,13 +37,15 @@ namespace BI.Services.Folders
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
             FolderWSUpdateService folderWSUpdateService,
-            NoteRepository noteRepository)
+            NoteRepository noteRepository,
+            DiffsMatchPatchService diffsMatchPatchService)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
             this.folderWSUpdateService = folderWSUpdateService;
             this.noteRepository = noteRepository;
+            this.diffsMatchPatchService = diffsMatchPatchService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
@@ -53,12 +56,24 @@ namespace BI.Services.Folders
 
             if (permissions.CanWrite)
             {
-                folder.Title = request.Title;
-                folder.UpdatedAt = DateTimeProvider.Time;
-                await folderRepository.UpdateAsync(folder);
+                async Task UpdateFolderTitle(string title)
+                {
+                    folder.Title = title;
+                    folder.UpdatedAt = DateTimeProvider.Time;
+                    await folderRepository.UpdateAsync(folder);
+                }
+
+                if (!folder.IsShared() && folder.UsersOnPrivateFolders.Count == 0)
+                {
+                    await UpdateFolderTitle(request.Title);
+                    return new OperationResult<Unit>(true, Unit.Value);
+                }
+
+                var title = diffsMatchPatchService.PatchToStr(request.Diffs, folder.Title);
+                await UpdateFolderTitle(title);
 
                 // WS UPDATES
-                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, FolderId = folder.Id }, permissions.GetAllUsers(), request.UserId);
+                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id }, permissions.GetAllUsers(), Guid.Empty);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -12,6 +12,7 @@ export interface ParentInteraction {
   setFocus(entity?: SetFocus);
   setFocusToEnd();
   updateHTML(contents: TextBlock[]);
+  syncContentWithLayout();
   syncHtmlWithLayout();
   getEditableNative(): HTMLElement | Element;
   getHost(): ElementRef<HTMLElement>;

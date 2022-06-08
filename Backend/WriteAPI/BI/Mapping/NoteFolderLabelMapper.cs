@@ -21,6 +21,7 @@ using Common.DTO.History;
 using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
 using Common.DTO.Personalization;
 using Common.DTO.Users;
 
@@ -36,6 +37,26 @@ namespace BI.Mapping
             UserNoteEncryptService userNoteEncryptStorage) : base(azureConfig)
         {
             this.userNoteEncryptStorage = userNoteEncryptStorage;
+        }
+
+        public AudioNoteDTO MapToAudioDTO(AppFile item, Guid ownerId)
+        {
+            return new AudioNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, BuildFilePath(ownerId, item.MetaData?.ImagePath), item.CreatedAt);
+        }
+
+        public VideoNoteDTO MapToVideoDTO(AppFile item, Guid ownerId)
+        {
+            return new VideoNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt);
+        }
+
+        public DocumentNoteDTO MapToDocumentDTO(AppFile item, Guid ownerId)
+        {
+            return new DocumentNoteDTO(item.Name, BuildFilePath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt);
+        }
+
+        public PhotoNoteDTO MapToPhotoDTO(AppFile item, Guid ownerId)
+        {
+            return new PhotoNoteDTO(item.Id, item.Name, BuildFilePath(ownerId, item.PathPhotoSmall), BuildFilePath(ownerId, item.PathPhotoMedium), BuildFilePath(ownerId, item.PathPhotoBig), item.UserId, item.CreatedAt);
         }
 
         // CONTENTS
@@ -65,35 +86,28 @@ namespace BI.Mapping
                             {
                                 case FileTypeEnum.Audio:
                                     {
-                                        var audiosDTO = aN.Files.Select(item => new AudioNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, BuildFilePath(ownerId, item.MetaData?.ImagePath), item.CreatedAt)).ToList();
+                                        var audiosDTO = aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList();
                                         var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Photo:
                                     {
-                                       var photosDTO = aN.Files.Select(item => new PhotoNoteDTO(
-                                                                item.Id, 
-                                                                item.Name, 
-                                                                BuildFilePath(ownerId, item.PathPhotoSmall),
-                                                                BuildFilePath(ownerId, item.PathPhotoMedium), 
-                                                                BuildFilePath(ownerId, item.PathPhotoBig), 
-                                                                item.UserId, 
-                                                                item.CreatedAt)).ToList();
-                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData.Width, aN.MetaData.Height, aN.Id, aN.Order, aN.MetaData.CountInRow, aN.UpdatedAt);
+                                       var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
+                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Video:
                                     {
-                                        var videosDTO = aN.Files.Select(item => new VideoNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt)).ToList();
+                                        var videosDTO = aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList();
                                         var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Document:
                                     {
-                                        var documentsDTO = aN.Files.Select(item => new DocumentNoteDTO(item.Name, BuildFilePath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt)).ToList();
+                                        var documentsDTO = aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList();
                                         var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO);
                                         resultList.Add(collectionDTO);
                                         break;

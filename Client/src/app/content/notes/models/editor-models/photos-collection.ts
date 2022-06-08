@@ -16,23 +16,8 @@ export class PhotosCollection extends BaseCollection<Photo> {
     this.height = collection.height;
     this.width = collection.width;
     this.name = collection.name;
-    this.items = items
-      ? items.map(
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          (z) =>
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new Photo(
-              z.fileId,
-              z.photoPathSmall,
-              z.photoPathMedium,
-              z.photoPathBig,
-              z.loaded,
-              z.name,
-              z.authorId,
-              z.uploadAt,
-            ),
-        )
-      : [];
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.items = items && items.length > 0 ? items.map((q) => new Photo(q)) : [];
   }
 
   static getNew(): PhotosCollection {
@@ -75,6 +60,14 @@ export class PhotosCollection extends BaseCollection<Photo> {
     obj.countInRow = null;
     return obj;
   }
+
+  patch(content: PhotosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+    this.height = content.height;
+    this.width = content.width;
+    this.countInRow = content.countInRow;
+  }
 }
 
 export class Photo extends BaseFile {
@@ -86,21 +79,12 @@ export class Photo extends BaseFile {
 
   loaded: boolean;
 
-  constructor(
-    fileId: string,
-    photoPathSmall: string,
-    photoPathMedium: string,
-    photoPathBig: string,
-    loaded: boolean,
-    name: string,
-    authorId: string,
-    uploadAt: Date,
-  ) {
-    super(name, fileId, authorId, uploadAt);
-    this.photoPathSmall = photoPathSmall;
-    this.photoPathMedium = photoPathMedium;
-    this.photoPathBig = photoPathBig;
-    this.loaded = loaded;
+  constructor(data: Partial<Photo>) {
+    super(data);
+    this.photoPathSmall = data.photoPathSmall;
+    this.photoPathMedium = data.photoPathMedium;
+    this.photoPathBig = data.photoPathBig;
+    this.loaded = data.loaded;
   }
 
   get photoFromBig() {

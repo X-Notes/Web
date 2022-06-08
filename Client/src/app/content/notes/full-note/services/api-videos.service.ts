@@ -6,6 +6,7 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import {
   ApiVideosCollection,
+  VideoModel,
   VideosCollection,
 } from '../../models/editor-models/videos-collection';
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
@@ -17,7 +18,8 @@ import { BaseNoteFileContentApiService } from './base-note-file-content-api.serv
 export class ApiVideosService extends BaseNoteFileContentApiService<
   BaseRemoveFromCollectionItemsCommand,
   BaseAddToCollectionItemsCommand,
-  BaseUpdateCollectionInfoCommand
+  BaseUpdateCollectionInfoCommand,
+  VideoModel
 > {
   static baseApi = `${environment.writeAPI}/api/note/inner/videos`;
 

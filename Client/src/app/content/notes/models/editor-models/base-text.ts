@@ -24,26 +24,27 @@ export class BaseText extends ContentModelBase {
     this.listId = text.listId;
   }
 
-  set contentSG(contents: TextBlock[]) {
+  updateContent(contents: TextBlock[]) {
     this.contents = contents;
     this.updateDate();
   }
 
-  set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
+  updateHeadingTypeId(headingTypeId: HeadingTypeENUM) {
     this.headingTypeId = headingTypeId;
     this.updateDate();
   }
 
-  set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
+  updateNoteTextTypeId(noteTextTypeId: NoteTextTypeENUM) {
     this.noteTextTypeId = noteTextTypeId;
     this.updateDate();
   }
 
-  set checkedSG(_checked: boolean) {
+  updateChecked(_checked: boolean) {
     this.checked = _checked;
     this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   static getNew(): BaseText {
     const obj: Partial<BaseText> = {
       typeId: ContentTypeENUM.Text,
@@ -71,8 +72,9 @@ export class BaseText extends ContentModelBase {
   }
 
   isTextOrCollectionInfoEqual(content: BaseText): boolean {
+    const isEqualText = this.isEqualText(this.contents, content.contents);
     return (
-      this.isEqualText(this.contents, content.contents) &&
+      isEqualText &&
       this.headingTypeId === content.headingTypeId &&
       this.noteTextTypeId === content.noteTextTypeId &&
       this.checked === content.checked
@@ -85,19 +87,17 @@ export class BaseText extends ContentModelBase {
     if (blockF.length !== blockS.length) return false;
 
     for (let i = 0; i < blockF.length; i += 1) {
-      // TODO CHANGES
-      if (blockF[i] !== blockS[i]) return false;
+      if (!blockF[i].isEqual(blockS[i])) return false;
     }
 
     return true;
   };
 
-  update(text: BaseText) {
+  patch(text: BaseText) {
     this.contents = text.contents;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
-    this.updatedAt = text.updatedAt;
   }
 
   getConcatedText(): string {

@@ -94,14 +94,8 @@ namespace BI.Services.Notes
 
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var _contents = new List<BaseNoteContent>();
-
-            var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeProvider.Time };
-            _contents.Add(newText); // TODO REMOVE
-
             var note = new Note()
             {
-                Id = Guid.NewGuid(),
                 UserId = request.UserId,
                 Order = 1,
                 Color = NoteColorPallete.Green,
@@ -109,7 +103,6 @@ namespace BI.Services.Notes
                 RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeProvider.Time,
                 UpdatedAt = DateTimeProvider.Time,
-                Contents = _contents
             };
 
             await noteRepository.AddAsync(note);
@@ -142,12 +135,14 @@ namespace BI.Services.Notes
                 }
 
                 // WS UPDATES
-                var updates = permissions.Select(x => (
-                    new UpdateNoteWS { Color = request.Color, NoteId = x.noteId },
-                    x.perm.GetAllUsers()
-                ));
+                var updates = permissions
+                    .Where(x => x.perm.IsMultiplyUpdate)
+                    .Select(x => ( new UpdateNoteWS { Color = request.Color, NoteId = x.noteId }, x.perm.GetAllUsers()));
 
-                await noteWSUpdateService.UpdateNotes(updates, request.UserId);
+                if (updates.Any())
+                {
+                    await noteWSUpdateService.UpdateNotes(updates, request.UserId);
+                }
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -161,7 +156,7 @@ namespace BI.Services.Notes
 
             var processedIds = new List<Guid>();
 
-            var notesOwner = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Note).ToList();
+            var notesOwner = permissions.Where(x => !x.perm.NoteNotFound && x.perm.IsOwner).Select(x => x.perm.Note).ToList();
             if (notesOwner.Any())
             {
                 notesOwner.ForEach(x => x.ToType(NoteTypeENUM.Deleted, DateTimeProvider.Time));
@@ -198,7 +193,7 @@ namespace BI.Services.Notes
                 if (fileContents.Any())
                 {
                     var ids = fileContents.Select(x => x.Id);
-                    await collectionLinkedService.UnLinkCollections(ids);
+                    await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(ids);
                 }
 
                 var notesToDelete = notes.Select(x => x.perm.Note);

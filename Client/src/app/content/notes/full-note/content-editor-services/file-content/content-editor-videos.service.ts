@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
@@ -24,7 +24,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    contentEditorContentsService: ContentEditorContentsService,
+    contentEditorContentsService: ContentEditorContentsSynchronizeService,
     private apiVideos: ApiVideosService,
     private apiFiles: ApiNoteFilesService,
   ) {
@@ -48,7 +48,9 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -90,7 +92,13 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     }
 
     const videosMapped = videos.map(
-      (x) => new VideoModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new VideoModel({
+          ...x,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          videoPath: x.pathNonPhotoContent,
+        }),
     );
 
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);

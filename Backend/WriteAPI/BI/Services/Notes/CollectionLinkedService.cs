@@ -18,14 +18,18 @@ namespace BI.Services.Notes
 
         private readonly SnapshotFileContentRepository snapshotFileContentRepository;
 
+        private readonly CollectionNoteRepository collectionNoteRepository;
+
         public CollectionLinkedService(
             AppFileUploadInfoRepository appFileUploadInfoRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
-            SnapshotFileContentRepository snapshotFileContentRepository)
+            SnapshotFileContentRepository snapshotFileContentRepository,
+            CollectionNoteRepository collectionNoteRepository)
         {
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
             this.collectionNoteAppFileRepository = collectionNoteAppFileRepository;
             this.snapshotFileContentRepository = snapshotFileContentRepository;
+            this.collectionNoteRepository = collectionNoteRepository;
         }
 
         public async Task<List<Guid>> TryToUnlink(IEnumerable<UnlinkMetaData> data)
@@ -66,22 +70,22 @@ namespace BI.Services.Notes
             return false;
         }
 
-        public async Task<List<Guid>> UnLinkCollections(IEnumerable<Guid> collectionIdsToDelete)
+        public async Task<List<Guid>> RemoveCollectionsAndUnLinkFiles(IEnumerable<Guid> collectionIdsToDelete)
         {
             if (!collectionIdsToDelete.Any()) return new List<Guid>();
 
-            var collections = await collectionNoteAppFileRepository.GetAppFilesByContentIds(collectionIdsToDelete.ToList());
+            var collections = await collectionNoteRepository.GetManyIncludeFiles(collectionIdsToDelete.ToList());
 
-            var filesToProcess = collections.Select(x => x.AppFile).Select(x => new UnlinkMetaData
+            var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData
             {
                 Id = x.Id,
                 AdditionalIds = x.GetAdditionalIds() 
             });
 
-            await collectionNoteAppFileRepository.RemoveRangeAsync(collections);
+            await collectionNoteRepository.RemoveRangeAsync(collections);
             await TryToUnlink(filesToProcess);
 
-            return collections.Select(x => x.CollectionNoteId).ToList();
+            return collections.Select(x => x.Id).ToList();
         }
     }
 }

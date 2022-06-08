@@ -1,8 +1,8 @@
 :host {
   display: flex;
-  flex-grow: 1;
   height: 34px;
   border-radius: 5px;
+  width: 100%;
   transition: 0.2s ease;
 
   &:focus-within {

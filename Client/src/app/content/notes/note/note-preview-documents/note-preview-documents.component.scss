@@ -25,9 +25,5 @@
         display: flex;
         font-size: 0.875rem;
         font-weight: 300;
-
-        p {
-            @include text-overflow;
-        }
     }
 }

@@ -7,21 +7,8 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.items = items
-      ? items.map(
-          (z) =>
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new AudioModel(
-              z.name,
-              z.audioPath,
-              z.fileId,
-              z.authorId,
-              z.uploadAt,
-              z.pathToImage,
-              z.secondsDuration,
-            ),
-        )
-      : [];
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.items = items ? items.map((q) => new AudioModel(q)) : [];
   }
 
   static getNew(): AudiosCollection {
@@ -44,6 +31,11 @@ export class AudiosCollection extends BaseCollection<AudioModel> {
     return obj;
   }
 
+  patch(content: AudiosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+  }
+
   isTextOrCollectionInfoEqual(content: AudiosCollection): boolean {
     return this.name === content.name;
   }
@@ -56,19 +48,11 @@ export class AudioModel extends BaseFile {
 
   secondsDuration?: number;
 
-  constructor(
-    name: string,
-    audioPath: string,
-    fileId: string,
-    authorId: string,
-    uploadAt: Date,
-    pathToImage?: string,
-    secondsDuration?: number,
-  ) {
-    super(name, fileId, authorId, uploadAt);
-    this.audioPath = audioPath;
-    this.secondsDuration = secondsDuration;
-    this.pathToImage = pathToImage;
+  constructor(data: Partial<AudioModel>) {
+    super(data);
+    this.audioPath = data.audioPath;
+    this.secondsDuration = data.secondsDuration;
+    this.pathToImage = data.pathToImage;
   }
 
   isNeedUpdateMetaData(): boolean {

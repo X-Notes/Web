@@ -1,0 +1,222 @@
+@import 'variables';
+
+:host {
+  position: absolute;
+  bottom: 1px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  width: 100%;
+  z-index: 1;
+}
+
+.mail-notification {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  border: 2px solid #00a9e1;
+
+  .mail-container {
+    height: 160px;
+    width: 100%;
+
+    .user-container {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      height: 1px;
+      .user-mail {
+        display: flex;
+        padding: 0.375rem 0.75rem;
+        color: $text-color;
+        border-radius: 5px;
+        cursor: pointer;
+        max-width: 100%;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        p {
+          @include text-overflow;
+          display: flex;
+          flex-grow: 1;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        .icon {
+          display: flex;
+          align-items: center;
+          margin-left: 0.625rem;
+        }
+      }
+    }
+  }
+
+  .checkbox-notification {
+    display: flex;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    color: $text-color;
+  }
+
+  .interaction-mail {
+    display: flex;
+    width: 100%;
+    padding: 0.625rem 1rem;
+
+    textarea {
+      display: flex;
+      flex-grow: 1;
+      min-height: 60px;
+      margin-right: 0.75rem;
+      resize: none;
+      border-radius: 5px;
+      border: 0;
+      outline: none;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .interaction-buttons {
+      display: flex;
+      flex-direction: column;
+      width: 130px;
+
+      .send-button {
+        position: relative;
+        height: 32px;
+        border: 0.8px solid transparent;
+        padding: 0;
+        outline: none;
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        border-radius: 5px;
+        background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
+        margin-top: 0.5rem;
+
+        .content-button {
+          position: relative;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 0.75rem;
+          font-size: 1rem;
+          color: white;
+        }
+      }
+
+      .dropdown-button {
+        width: 100%;
+        height: 32px;
+      }
+    }
+  }
+
+  ng-scrollbar {
+    --scrollbar-thumb-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.light {
+  .mail-notification {
+    .mail-container {
+      .user-container {
+        .user-mail {
+          background-color: white;
+        }
+      }
+    }
+
+    .interaction-mail {
+      textarea {
+        background-color: white;
+      }
+    }
+  }
+}
+
+.dark {
+  .mail-notification {
+    .mail-container {
+      .user-container {
+        .user-mail {
+          border: 1px solid #a6a6a6;
+        }
+      }
+    }
+
+    .interaction-mail {
+      textarea {
+        background-color: #e8e8e8;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .mail-notification {
+    margin-top: 0.5rem;
+
+    .mail-container {
+      .user-container {
+        .user-mail {
+          margin-bottom: 0.5rem;
+          margin-right: 0.5rem;
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    .checkbox-notification {
+      font-size: 0.875rem;
+    }
+
+    .interaction-mail {
+      flex-direction: column;
+
+      textarea {
+        width: 100%;
+      }
+
+      .interaction-buttons {
+        flex-direction: row;
+        width: 100%;
+        margin-top: 0.5rem;
+
+        .send-button {
+          flex: 1;
+          width: auto;
+          margin-left: 0.25rem;
+          margin-top: 0;
+        }
+
+        .dropdown-button {
+          flex: 1;
+          margin-right: 0.25rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .mail-notification {
+    .interaction-mail {
+      .interaction-buttons {
+        flex-wrap: wrap;
+
+        .send-button {
+          margin-top: 0.5rem;
+          margin-left: 0;
+        }
+
+        .dropdown-button {
+          flex: initial;
+        }
+      }
+    }
+  }
+}

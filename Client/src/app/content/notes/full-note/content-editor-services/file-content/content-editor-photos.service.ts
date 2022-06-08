@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
@@ -25,7 +25,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiPhotos: ApiPhotosService,
-    contentEditorContentsService: ContentEditorContentsService,
+    contentEditorContentsService: ContentEditorContentsSynchronizeService,
     private apiFiles: ApiNoteFilesService,
   ) {
     super(
@@ -38,17 +38,26 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
+  async transformToPhotosCollection(
+    noteId: string,
+    contentId: string,
+    files: File[],
+  ): Promise<string> {
     const collectionResult = await this.apiPhotos.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
       this.transformContentToOrWarning(collectionResult, contentId);
-      await this.uploadPhotoToAlbumHandler({ contentId: collectionResult.data.id, files }, noteId);
+      await this.uploadPhotosToCollectionHandler(
+        { contentId: collectionResult.data.id, files },
+        noteId,
+      );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
-  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
+  uploadPhotosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {
       return;
@@ -87,44 +96,22 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
 
     const photosMapped = photos.map(
       (x) =>
-        new Photo(
-          x.id,
-          x.pathPhotoSmall,
-          x.pathPhotoMedium,
-          x.pathPhotoBig,
-          false,
-          x.name,
-          x.authorId,
-          x.createdAt,
-        ),
+        new Photo({
+          ...x,
+          loaded: false,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          photoPathBig: x.pathPhotoBig,
+          photoPathMedium: x.pathPhotoMedium,
+          photoPathSmall: x.pathPhotoSmall,
+        }),
     );
+
     const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
-    this.insertPhotosToAlbum(photosMapped, collection, $event.contentId);
+    collection.addItemsToCollection(photosMapped);
 
     this.afterUploadFilesToCollection(photosResult);
   };
-
-  insertPhotosToAlbum(photos: Photo[], prevCollection: PhotosCollection, contentId: string) {
-    const newPhotos: Photo[] = photos.map(
-      (x) =>
-        new Photo(
-          x.fileId,
-          x.photoPathSmall,
-          x.photoPathMedium,
-          x.photoPathBig,
-          false,
-          x.name,
-          x.authorId,
-          x.uploadAt,
-        ),
-    );
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new PhotosCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...newPhotos];
-
-    this.contentsService.setSafe(newCollection, contentId);
-  }
 
   deletePhotoHandler(photoId: string, content: PhotosCollection) {
     if (content.items.length === 1) {

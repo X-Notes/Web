@@ -15,13 +15,14 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiFullFolderService } from 'src/app/content/folders/full-folder/services/api-full-folder.service';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
-import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService } from '../../services/personalization.service';
+import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
 
 @Component({
   selector: 'app-add-notes-in-folder',
@@ -29,37 +30,30 @@ import { PersonalizationService } from '../../services/personalization.service';
   styleUrls: ['./add-notes-in-folder.component.scss'],
   providers: [MurriService],
 })
-export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AddNotesInFolderComponent
+  extends BaseSearchNotesTypes
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  searchChanged: Subject<string> = new Subject<string>();
-
   loaded = false;
 
   destroy = new Subject<void>();
 
-  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
-
-  selectValue = 'all';
-
   fontSize = FontSizeENUM;
 
-  notes: SmallNote[] = [];
-
-  viewNotes: SmallNote[] = [];
-
-  firstInitedMurri = false;
-
   constructor(
-    public murriService: MurriService,
+    murriService: MurriService,
     public pService: PersonalizationService,
     private apiFullFolder: ApiFullFolderService,
     public dialogRef: MatDialogRef<AddNotesInFolderComponent>,
     private store: Store,
-  ) {}
+  ) {
+    super(murriService);
+  }
 
   get selectedNotesChips() {
     return this.notes.filter((x) => x.isSelected);
@@ -78,19 +72,20 @@ export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewIn
 
   initSearch() {
     const folderId = this.store.selectSnapshot(FolderStore.full).id;
-    this.searchChanged
+    this.searchChanged$
       .pipe(debounceTime(searchDelay), distinctUntilChanged(), takeUntil(this.destroy))
       .subscribe(async (str) => {
+        if (!this.loaded) return;
         this.pService.setSpinnerState(true);
-        await this.murriService.setOpacityFlagAsync(0, false);
-        await this.murriService.wait(150);
-        this.murriService.grid.destroy();
+        await this.murriService.destroyGridAsync();
+
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
         await this.murriService.setOpacityFlagAsync(0);
+        this.selectValue = this.selectTypes[0];
       });
   }
 
@@ -104,44 +99,6 @@ export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewIn
     this.pService.setSpinnerState(false);
     this.loaded = true;
   }
-
-  selectItem = async (item) => {
-    const [all, personal, shared, archive, bin] = this.selectTypes;
-    let tempNotes: SmallNote[] = [];
-    switch (item) {
-      case all: {
-        tempNotes = [...this.notes];
-        break;
-      }
-      case personal: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Private);
-        break;
-      }
-      case shared: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Shared);
-        break;
-      }
-      case archive: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Archive);
-        break;
-      }
-      case bin: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Deleted);
-        break;
-      }
-      default: {
-        throw new Error('incorrect type');
-      }
-    }
-    if (this.firstInitedMurri) {
-      await this.murriService.setOpacityFlagAsync(0, false);
-      await this.murriService.wait(150);
-      this.murriService.grid.destroy();
-      this.viewNotes = tempNotes;
-      await this.murriService.initMurriPreviewDialogNoteAsync();
-      await this.murriService.setOpacityFlagAsync(0);
-    }
-  };
 
   async ngAfterViewInit(): Promise<void> {
     this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
@@ -160,8 +117,10 @@ export class AddNotesInFolderComponent implements OnInit, OnDestroy, AfterViewIn
   unSelectNote = (note: SmallNote) => (note.isSelected = false);
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new UnSelectAllNote());
   }
 }

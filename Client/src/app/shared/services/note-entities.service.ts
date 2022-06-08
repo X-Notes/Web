@@ -5,7 +5,11 @@ import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { SelectIdNote, UnSelectIdNote } from 'src/app/content/notes/state/notes-actions';
+import {
+  ClearUpdatesUINotes,
+  SelectIdNote,
+  UnSelectIdNote,
+} from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { LockPopupState } from '../modal_components/lock/lock.component';
@@ -40,6 +44,33 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       .subscribe(async (values: UpdateNoteUI[]) => {
         await this.updateNotes(values);
       });
+  }
+
+  async updateNotes(updates: UpdateNoteUI[]) {
+    for (const value of updates) {
+      const note = this.entities.find((x) => x.id === value.id) as SmallNote;
+      if (note !== undefined) {
+        if (value.removeLabelIds && value.removeLabelIds.length > 0) {
+          note.labels = note.labels.filter((x) => !value.removeLabelIds.some((id) => x.id === id));
+        }
+        if (value.addLabels && value.addLabels.length > 0) {
+          note.labels = [...note.labels, ...value.addLabels];
+        }
+        if (value.allLabels) {
+          note.labels = value.allLabels;
+        }
+        note.color = value.color ?? note.color;
+        note.title = value.title ?? note.title;
+        note.isCanEdit = value.isCanEdit ?? note.isCanEdit;
+        note.isLocked = value.isLocked ?? note.isLocked;
+        note.isLockedNow = value.isLockedNow ?? note.isLockedNow;
+        note.unlockedTime = value.unlockedTime ?? note.unlockedTime;
+      }
+    }
+    if (updates.length > 0) {
+      await this.store.dispatch(new ClearUpdatesUINotes()).toPromise();
+      await this.murriService.refreshLayoutAsync();
+    }
   }
 
   baseToNote(note: SmallNote, navigateFunc: () => Promise<boolean>) {

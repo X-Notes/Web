@@ -7,21 +7,8 @@ export class VideosCollection extends BaseCollection<VideoModel> {
   constructor(collection: Partial<VideosCollection>, items: VideoModel[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.items = items
-      ? items.map(
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          (z) =>
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            new VideoModel(
-              z.name,
-              z.videoPath,
-              z.fileId,
-              z.authorId,
-              z.uploadAt,
-              z.secondsDuration,
-            ),
-        )
-      : [];
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.items = items ? items.map((q) => new VideoModel(q)) : [];
   }
 
   static getNew(): VideosCollection {
@@ -44,6 +31,11 @@ export class VideosCollection extends BaseCollection<VideoModel> {
     return obj;
   }
 
+  patch(content: VideosCollection) {
+    this.name = content.name;
+    this.items = content.items;
+  }
+
   isTextOrCollectionInfoEqual(content: VideosCollection): boolean {
     return this.name === content.name;
   }
@@ -54,17 +46,10 @@ export class VideoModel extends BaseFile {
 
   secondsDuration?: number;
 
-  constructor(
-    name: string,
-    videoPath: string,
-    fileId: string,
-    authorId: string,
-    uploadAt: Date,
-    secondsDuration?: number,
-  ) {
-    super(name, fileId, authorId, uploadAt);
-    this.videoPath = videoPath;
-    this.secondsDuration = secondsDuration;
+  constructor(data: Partial<VideoModel>) {
+    super(data);
+    this.videoPath = data.videoPath;
+    this.secondsDuration = data.secondsDuration;
   }
 
   isNeedUpdateMetaData(): boolean {

@@ -11,14 +11,16 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
+import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
+import { SelectionService } from '../../../content-editor-services/selection.service';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
-import { HtmlBaseService } from '../html-base.service';
+import { BaseTextElementComponent } from '../html-base.component';
 import { NumberListService } from '../html-business-logic/numberList.service';
 
 @Component({
@@ -29,7 +31,7 @@ import { NumberListService } from '../html-business-logic/numberList.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlNumberListComponent
-  extends HtmlBaseService
+  extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges
 {
   @Output()
@@ -69,12 +71,11 @@ export class HtmlNumberListComponent
     public numberService: NumberListService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
+    selectionService: SelectionService,
+    clickableService: ClickableContentService,
   ) {
-    super(cdr);
-  }
-
-  get isActive() {
-    return this.numberService.isActive(this.contentHtml);
+    super(cdr, apiBrowserTextService, selectionService, clickableService);
   }
 
   getHost() {
@@ -115,27 +116,6 @@ export class HtmlNumberListComponent
   }
 
   isFocusToNext = () => true;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFocus(entity: SetFocus) {
-    this.numberService.setFocus(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
-
-  setFocusToEnd() {
-    this.numberService.setFocusToEnd(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
-
-  mouseEnter($event) {
-    this.numberService.mouseEnter($event, this.contentHtml);
-    this.isMouseOver = true;
-  }
-
-  mouseLeave($event) {
-    this.numberService.mouseLeave($event, this.contentHtml);
-    this.isMouseOver = false;
-  }
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

@@ -6,6 +6,7 @@ import { SmallFolder } from '../models/folder.model';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { FullFolder } from '../models/full-folder.model';
 import { UpdateFolderUI } from './update-folder-ui.model';
+import { Diff } from 'diff-match-patch';
 
 export class LoadFolders {
   static type = '[Folders] Load folders';
@@ -138,10 +139,13 @@ export class UpdateFolderTitle {
   static type = '[Folders] update title';
 
   constructor(
+    public diffs: Diff[],
     public str: string,
     public folderId: string,
     public isCallApi = true,
     public errorPermissionMessage?: string,
+    public isUpdateFullNote = true,
+    public isUpdateSmallFolders = true,
   ) {}
 }
 

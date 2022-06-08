@@ -8,7 +8,7 @@ export class ContentEditorMomentoStateService {
 
   private state = new Stack<ContentModelBase[]>();
 
-  save(nState: ContentModelBase[]): void {
+  saveToStack(nState: ContentModelBase[]): void {
     if (this.prev) {
       this.state.push(this.prev);
     }

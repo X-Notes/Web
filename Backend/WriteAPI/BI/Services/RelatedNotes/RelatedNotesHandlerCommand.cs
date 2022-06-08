@@ -65,7 +65,10 @@ namespace BI.Services.RelatedNotes
                 }
 
                 var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
-                await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                if (permissions.IsMultiplyUpdate)
+                {
+                    await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                }
 
                 return new OperationResult<UpdateRelatedNotesWS>(true, updates);
             }
@@ -136,8 +139,11 @@ namespace BI.Services.RelatedNotes
 
                     await relatedRepository.UpdateRangeAsync(currentRelateds);
 
-                    var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
-                    await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                    if (permissions.IsMultiplyUpdate)
+                    {
+                        var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
+                        await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                    }
 
                     return new OperationResult<Unit>(true, Unit.Value);
                 }

@@ -6,7 +6,7 @@
   [appCopy]="refElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
-  [ngStyle]="{'width': sliderService ? sliderService?.mainWidth : ''}"
+  [ngStyle]="{ width: sliderService ? sliderService?.mainWidth : '' }"
   class="main-content"
 >
   <div class="top-section">
@@ -22,15 +22,16 @@
     </div>
     <div class="title-section">
       <div
+        id="title-element"
         #noteTitle
         [attr.contenteditable]="!isReadOnlyMode"
         (paste)="pasteCommandHandler($event)"
-        [textContent]="title"
+        [textContent]="uiTitle"
         class="title"
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"
       ></div>
-      <div class="placeholder">{{'innerNote.title' | translate}}</div>
+      <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>
     </div>
   </div>
@@ -63,6 +64,7 @@
             (transformToFile)="transformToFileType($event)"
             (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
+            (someChangesEvent)="postAction()"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
           </app-html-text-part>
@@ -81,6 +83,7 @@
             (inputHtmlEvent)="updateHtmlHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (onFocus)="onFocusHandler($event)"
+            (someChangesEvent)="postAction()"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-number-list>
@@ -97,6 +100,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
+            (someChangesEvent)="postAction()"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-dot-list>
@@ -113,6 +117,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
+            (someChangesEvent)="postAction()"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-check-list>
@@ -128,6 +133,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (inputHtmlEvent)="updateHtmlHandler($event)"
             (onFocus)="onFocusHandler($event)"
+            (someChangesEvent)="postAction()"
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-headings>
@@ -201,9 +207,14 @@
     ></div>
   </div>
 </div>
+<app-mobile-transform-menu
+  *ngIf="(pS.isTranformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus"
+  (transformTo)="transformToTypeText($event)"
+  (transformToFile)="transformToFileType($event)"
+></app-mobile-transform-menu>
 <app-text-edit-menu
   [style.top.px]="menuSelectionService.getTop"
-  [style.left.px]="menuSelectionService.left"
+  [style.left.px]="menuSelectionService.getLeft"
   [style.visibility]="menuSelectionService.menuActive ? 'visible' : 'hidden'"
   (eventTransform)="transformToTypeText($event)"
   (updateText)="updateTextStyles($event)"

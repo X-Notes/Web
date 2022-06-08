@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
 using System;
 using System.Collections.Generic;
 

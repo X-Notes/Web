@@ -14,6 +14,10 @@ export class ContentEditorElementsListenerService {
 
   onPressCtrlSSubject = new Subject();
 
+  private ctrlAExceptValuesIds = ['title-element', 'search-element'];
+
+  private ctrlAExceptValuesClasses = ['default-text-id', 'collection-title-text-id'];
+
   private renderer: Renderer2;
 
   constructor(rendererFactory: RendererFactory2) {
@@ -46,7 +50,17 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      const htmlEl = e.target as HTMLElement;
+      const classes = [...(htmlEl.classList as any)];
       if (e.ctrlKey && e.code === 'KeyA') {
+        if (this.ctrlAExceptValuesIds.some((q) => q === htmlEl.id)) {
+          return true;
+        }
+        for (const className of classes) {
+          if (this.ctrlAExceptValuesClasses.some((q) => q === className)) {
+            return true;
+          }
+        }
         e.preventDefault();
         this.onPressCtrlASubject.next();
         return false;

@@ -15,13 +15,13 @@
     </div>
     <div class="text-container">
       <p
-        class="block-generic default-text-size"
+        class="block-generic default-text-size default-text-id"
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
         [innerHTML]="viewHtml"
         (input)="onInput()"
       ></p>
-      <p class="no-content-list" *ngIf="isActive">{{'innerNote.text' | translate}}</p>
+      <p class="no-content-list" *ngIf="isActiveState">{{'innerNote.text' | translate}}</p>
     </div>
   </div>
 </div>

@@ -68,15 +68,17 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 100px);
+    height: 100%;
     .label-container {
       width: 100%;
+      height: 100%;
       margin: 1.25rem 0;
 
       .content-inner {
         display: flex;
         flex-direction: column;
         width: 100%;
+        height: 100%;
         padding: 0 2.25rem;
 
         .label {

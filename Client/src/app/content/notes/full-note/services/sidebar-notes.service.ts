@@ -31,7 +31,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
   ) {
     super(murriService);
 
-    this.signalR.updateRelationNotes
+    this.signalR.updateRelationNotes$
       .pipe(takeUntil(this.destroy))
       .subscribe(async (updates) => this.handleUpdates(updates));
   }

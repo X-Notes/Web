@@ -21,6 +21,7 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
+import { BaseNotesComponent } from '../base-notes-component';
 
 @Component({
   selector: 'app-shared',
@@ -28,7 +29,10 @@ import { ShortUser } from 'src/app/core/models/short-user.model';
   styleUrls: ['./shared.component.scss'],
   providers: [NotesService],
 })
-export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SharedComponent
+  extends BaseNotesComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(NoteStore.sharedCount)
@@ -44,9 +48,11 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public noteService: NotesService,
+    noteService: NotesService,
     private signalRService: SignalRService,
-  ) {}
+  ) {
+    super(noteService);
+  }
 
   ngAfterViewInit(): void {
     this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Shared);
@@ -67,12 +73,12 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.signalRService.addNotesToSharedEvent
+    this.signalRService.addNotesToSharedEvent$
       .pipe(takeUntil(this.noteService.destroy))
       .subscribe((notes) => {
         if (notes && notes.length > 0) {
           this.noteService.loadNoteAndAddToDom(notes);
-          this.signalRService.addNotesToSharedEvent.next([]);
+          this.signalRService.addNotesToSharedEvent$.next([]);
         }
       });
   }

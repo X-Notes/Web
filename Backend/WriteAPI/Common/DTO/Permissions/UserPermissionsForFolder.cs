@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Users;
+using System.Linq;
 
 namespace Common.DTO.Permissions
 {
@@ -32,6 +33,14 @@ namespace Common.DTO.Permissions
                 return Caller?.Id == Folder.UserId;
             }
 
+        }
+
+        public bool IsMultiplyUpdate
+        {
+            get
+            {
+                return Folder.IsShared() || Folder.UsersOnPrivateFolders.Any();
+            }
         }
 
         public UserPermissionsForFolder GetFullAccess(User user, Folder folder)

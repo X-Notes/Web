@@ -16,8 +16,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100% - 162px - 54px);
-  // background: #fafafa;
+  flex: 1;
 
   .label-cancel {
     display: flex;
@@ -124,7 +123,6 @@
 
 @media (max-width: 1024px) {
   .label-section {
-    height: calc(100% - 262px);
 
     .label-cancel {
       margin-right: 1rem;
@@ -145,11 +143,5 @@
         padding-left: 0.625rem;
       }
     }
-  }
-}
-
-@media (max-width: 320px) {
-  .label-section {
-    height: calc(100% - 256px);
   }
 }

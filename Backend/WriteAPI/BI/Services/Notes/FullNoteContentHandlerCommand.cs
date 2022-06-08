@@ -6,6 +6,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Audios;
@@ -23,7 +24,7 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<Unit>>
+    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
     {
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
@@ -60,13 +61,13 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
-            List<Guid> unlinkedItemIds = new();
+            NoteStructureResult result = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
             List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
@@ -87,33 +88,29 @@ namespace BI.Services.Notes
                     var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
                     if (fileContents.Any())
                     {
-                        var ids = fileContents.Select(x => x.Id);
-                        unlinkedItemIds = await collectionLinkedService.UnLinkCollections(ids);
+                        var collectionIds = fileContents.Select(x => x.Id);
+                        result.RemovedIds = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
                     }
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     if (textIds.Any())
                     {
-                        unlinkedItemIds.AddRange(textIds);
-                    }
-
-                    if (unlinkedItemIds.Any())
-                    {
-                        contentsToDelete = contents.Where(x => unlinkedItemIds.Contains(x.Id));
-                        await baseNoteContentRepository.RemoveRangeAsync(contentsToDelete);
+                        result.RemovedIds.AddRange(textIds);
+                        var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
+                        await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
                     }
                 }
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
                 {
                     textItemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (textItemsThatNeedAdd.Any())
                     {
                         var items = textItemsThatNeedAdd.Select(content => GetTextContent(content, note.Id));
                         await textNotesRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS TEXTS EXIST");
                     }
@@ -123,7 +120,7 @@ namespace BI.Services.Notes
                 if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
                 {
                     photosItemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (photosItemsThatNeedAdd.Any())
                     {
@@ -135,7 +132,7 @@ namespace BI.Services.Notes
                         });
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS PHOTOS EXIST");
                     }
@@ -143,14 +140,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
                 {
                     audiosItemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (audiosItemsThatNeedAdd.Any())
                     {
                         var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS AUDIOS EXIST");
                     }
@@ -158,14 +155,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
                 {
                     videosItemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (videosItemsThatNeedAdd.Any())
                     {
                         var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS VIDEOS EXIST");
                     }
@@ -173,14 +170,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
                 {
                     documentsItemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                    var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
                     if (documentsItemsThatNeedAdd.Any())
                     {
                         var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document));
                         await collectionNoteRepository.AddRangeAsync(items);
                     }
-                    if (itemsThatAlreadyAdded.Any())
+                    if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
                         Console.WriteLine("ITEMS DOCUMENTS EXIST");
                     }
@@ -207,22 +204,25 @@ namespace BI.Services.Notes
 
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                var updates = new UpdateNoteStructureWS()
+                if (permissions.IsMultiplyUpdate)
                 {
-                    ContentIdsToDelete = unlinkedItemIds,
-                    TextContentsToAdd = textItemsThatNeedAdd,
-                    PhotoContentsToAdd = photosItemsThatNeedAdd,
-                    VideoContentsToAdd = videosItemsThatNeedAdd,
-                    DocumentContentsToAdd = documentsItemsThatNeedAdd,
-                    AudioContentsToAdd = audiosItemsThatNeedAdd,
-                    Positions = positions
-                };
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
+                    var updates = new UpdateNoteStructureWS()
+                    {
+                        ContentIdsToDelete = result.RemovedIds,
+                        TextContentsToAdd = textItemsThatNeedAdd,
+                        PhotoContentsToAdd = photosItemsThatNeedAdd,
+                        VideoContentsToAdd = videosItemsThatNeedAdd,
+                        DocumentContentsToAdd = documentsItemsThatNeedAdd,
+                        AudioContentsToAdd = audiosItemsThatNeedAdd,
+                        Positions = positions
+                    };
+                    await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
+                }
 
-                return new OperationResult<Unit>(true, Unit.Value);
+                return new OperationResult<NoteStructureResult>(true, result);
             }
 
-            return new OperationResult<Unit>(false, Unit.Value);
+            return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
         private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)

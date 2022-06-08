@@ -255,4 +255,10 @@ export class MurriService {
       this.grid.destroy(flag);
     }
   }
+
+  async destroyGridAsync(wait: number = 100) {
+    await this.setOpacityFlagAsync(0, false);
+    await this.wait(wait);
+    this.grid?.destroy(); // TODO INVESTIGATE WHY GRID IS UNDEFINED
+  }
 }

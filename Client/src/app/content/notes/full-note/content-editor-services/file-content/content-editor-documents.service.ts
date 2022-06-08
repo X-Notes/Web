@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiDocumentsService } from '../../services/api-documents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import {
@@ -27,7 +27,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    contentEditorContentsService: ContentEditorContentsService,
+    contentEditorContentsService: ContentEditorContentsSynchronizeService,
     private apiDocuments: ApiDocumentsService,
     private apiFiles: ApiNoteFilesService,
   ) {
@@ -41,7 +41,11 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     );
   }
 
-  async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
+  async transformToDocumentsCollection(
+    noteId: string,
+    contentId: string,
+    files: File[],
+  ): Promise<string> {
     const collectionResult = await this.apiDocuments.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
@@ -51,7 +55,9 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -92,8 +98,15 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     }
 
     const documentsMapped = documents.map(
-      (x) => new DocumentModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new DocumentModel({
+          ...x,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          documentPath: x.pathNonPhotoContent,
+        }),
     );
+
     const prevCollection = this.contentsService.getContentById<DocumentsCollection>(
       $event.contentId,
     );

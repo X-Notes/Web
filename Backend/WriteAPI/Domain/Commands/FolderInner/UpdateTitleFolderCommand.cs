@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 using Common.Attributes;
 using Common.DTO;
 using MediatR;
@@ -8,6 +8,8 @@ namespace Domain.Commands.FolderInner
 {
     public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
+        public List<List<object>> Diffs { set; get; }
+
         public string Title { set; get; }
 
         [ValidationGuid]

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import * as moment from 'moment';
+import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 
 @Component({
   selector: 'app-folder',
@@ -19,6 +21,8 @@ import * as moment from 'moment';
 })
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
+
+  @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
 
   @Input() date: string;
 
@@ -36,12 +40,18 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   folderType = FolderTypeENUM;
 
-  nameChanged: Subject<string> = new Subject<string>();
+  // TITLE
+  uiTitle: string;
+
+  titleChange$: Subject<string> = new Subject<string>();
+  //
 
   constructor(
     private store: Store,
     private router: Router,
     public pService: PersonalizationService,
+    private diffCheckerService: DiffCheckerService,
+    private apiBrowserFunctions: ApiBrowserTextService,
   ) {}
 
   get isAuthor(): boolean {
@@ -52,19 +62,36 @@ export class FolderComponent implements OnInit, OnDestroy {
     return moment(this.date ?? this.folder.updatedAt).format('DD.MM hh:mm');
   }
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
+  setTitle(): void {
+    // SET
+    this.uiTitle = this.folder.title;
+
+    // UPDATE CURRENT
+    this.titleChange$
+      .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
+      .subscribe((title) => {
+        const diffs = this.diffCheckerService.getDiffs(this.folder.title, title);
+        this.store.dispatch(
+          new UpdateFolderTitle(diffs, title, this.folder.id, true, null, false, false),
+        );
+        this.folder.title = title;
+      });
+  }
+
+  updateTitle(title: string): void {
+    const el = this.folderTitleEl?.nativeElement;
+    if (this.folder.title !== title && el) {
+      const pos = this.apiBrowserFunctions.getInputSelection(el);
+
+      this.uiTitle = title;
+      this.folder.title = title;
+
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretInput(el, pos));
+    }
   }
 
   ngOnInit(): void {
-    this.nameChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
-      .subscribe((title) => {
-        if (title) {
-          this.store.dispatch(new UpdateFolderTitle(title, this.folder.id));
-        }
-      });
+    this.setTitle();
   }
 
   tryFind(z: string[]): boolean {
@@ -118,7 +145,8 @@ export class FolderComponent implements OnInit, OnDestroy {
     return `#${RR}${GG}${BB}`;
   };
 
-  changed(text) {
-    this.nameChanged.next(text);
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

@@ -46,7 +46,6 @@ import { UpdateFolderUI } from './update-folder-ui.model';
 import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 
-
 interface FolderState {
   folders: Folders[];
   fullFolder: FullFolder;
@@ -71,9 +70,7 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(
-    private api: ApiFoldersService,
-    private router: Router) {}
+  constructor(private api: ApiFoldersService, private router: Router) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -86,12 +83,17 @@ export class FolderStore {
 
   @Selector()
   static getSmallFolders(state: FolderState): SmallFolder[] {
-    return state.folders.flatMap(x => x.folders);
+    return state.folders.flatMap((x) => x.folders);
   }
 
   @Selector()
   static full(state: FolderState) {
     return state.fullFolder;
+  }
+
+  @Selector()
+  static fullFolderTitle(state: FolderState): string {
+    return state.fullFolder?.title;
   }
 
   @Selector()
@@ -157,17 +159,19 @@ export class FolderStore {
 
   @Selector()
   static getSelectedFolders(state: FolderState): SmallFolder[] {
-    return state.folders.flatMap(x => x.folders).filter((folder) => state.selectedIds.some(z => z === folder.id));
+    return state.folders
+      .flatMap((x) => x.folders)
+      .filter((folder) => state.selectedIds.some((z) => z === folder.id));
   }
 
   @Selector()
   static getAllSelectedFoldersCanEdit(state: FolderState): boolean {
-    return this.getSelectedFolders(state).every(x => x.isCanEdit);
+    return this.getSelectedFolders(state).every((x) => x.isCanEdit);
   }
 
   @Selector()
   static getAllSelectedFoldersAuthors(state: FolderState): string[] {
-    return [...new Set(this.getSelectedFolders(state).map(x => x.userId))];
+    return [...new Set(this.getSelectedFolders(state).map((x) => x.userId))];
   }
 
   // Get selected Ids
@@ -200,7 +204,10 @@ export class FolderStore {
 
   @Action(PatchUpdatesUIFolders)
   // eslint-disable-next-line class-methods-use-this
-  patchUpdatesUIFolders({ patchState }: StateContext<FolderState>, { updates }: PatchUpdatesUIFolders) {
+  patchUpdatesUIFolders(
+    { patchState }: StateContext<FolderState>,
+    { updates }: PatchUpdatesUIFolders,
+  ) {
     patchState({ updateFolderEvent: updates });
   }
 
@@ -246,8 +253,7 @@ export class FolderStore {
     { getState, dispatch, patchState }: StateContext<FolderState>,
     { selectedIds, isCallApi }: DeleteFoldersPermanently,
   ) {
-
-    if(isCallApi){
+    if (isCallApi) {
       await this.api.deleteFolders(selectedIds).toPromise();
     }
 
@@ -290,7 +296,15 @@ export class FolderStore {
       case FolderTypeENUM.Deleted: {
         resp = await this.api.setDelete(selectedIds).toPromise();
         if (resp.success) {
-          dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom, null, resp.data));
+          dispatch(
+            new TransformTypeFolders(
+              FolderTypeENUM.Deleted,
+              selectedIds,
+              isAddingToDom,
+              null,
+              resp.data,
+            ),
+          );
           if (successCallback) {
             successCallback();
           }
@@ -328,16 +342,15 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { positions }: UpdatePositionsFolders,
   ) {
-
-    if(!positions || positions.length === 0){
+    if (!positions || positions.length === 0) {
       return;
     }
 
     const resp = await this.api.updateOrder(positions).toPromise();
-    if(resp.success){
-      positions.forEach(pos => {
+    if (resp.success) {
+      positions.forEach((pos) => {
         const folder = this.getFolderById(getState, pos.entityId);
-        if(folder){
+        if (folder) {
           folder.order = pos.position;
         }
         dispatch(new UpdateOneFolder(folder));
@@ -355,16 +368,17 @@ export class FolderStore {
       .flat()
       .find((z) => selectedIds.some((x) => x === z.id)).folderTypeId;
 
-
     const foldersFrom = this.getFoldersByType(getState, typeFrom);
 
     const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
     dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
 
-    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(deleteIds ?? selectedIds, x));
+    let foldersAdded = foldersFrom.filter((x) =>
+      this.itemsFromFilterArray(deleteIds ?? selectedIds, x),
+    );
 
-    let foldersTo = this.getFoldersByType(getState, typeTo).map(x => ({...x}));
-    foldersTo.forEach((x) => x.order = x.order + foldersAdded.length);
+    let foldersTo = this.getFoldersByType(getState, typeTo).map((x) => ({ ...x }));
+    foldersTo.forEach((x) => (x.order = x.order + foldersAdded.length));
 
     foldersAdded = foldersAdded.map((x, index) => {
       const folder = { ...x };
@@ -379,8 +393,8 @@ export class FolderStore {
     await dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo)).toPromise();
 
     // UPDATE FULL NOTE
-    const idToUpdate = selectedIds.find(id => id === getState().fullFolder?.id);
-    if(idToUpdate){
+    const idToUpdate = selectedIds.find((id) => id === getState().fullFolder?.id);
+    if (idToUpdate) {
       dispatch(new UpdateFullFolder({ folderTypeId: typeTo, refTypeId }, idToUpdate));
     }
 
@@ -481,11 +495,11 @@ export class FolderStore {
     const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
     const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
     dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
-    this.router.navigate([`folders/${newF.id}`])
+    this.router.navigate([`folders/${newF.id}`]);
   }
 
   @Action(AddFolders)
-  addFolder({ getState, dispatch }: StateContext<FolderState>, { folders, type } : AddFolders) {
+  addFolder({ getState, dispatch }: StateContext<FolderState>, { folders, type }: AddFolders) {
     const foldersState = this.getFoldersByType(getState, type);
     const toUpdate = new Folders(type, [...folders, ...foldersState]);
     dispatch(new UpdateFolders(toUpdate, type));
@@ -502,13 +516,13 @@ export class FolderStore {
     }
     if (resp.success) {
       const fullFolder = getState().fullFolder;
-      if (fullFolder && selectedIds.some(id => id === fullFolder.id)) {
-        patchState({ fullFolder: { ...fullFolder, color }});
+      if (fullFolder && selectedIds.some((id) => id === fullFolder.id)) {
+        patchState({ fullFolder: { ...fullFolder, color } });
       }
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
-      foldersForUpdate.forEach((folder) => folder.color = color);
+      foldersForUpdate.forEach((folder) => (folder.color = color));
       const updatesUI = foldersForUpdate.map((folder) =>
-        this.toUpdateFolderUI(folder.id, folder.color, null),
+        this.toUpdateFolderUI(folder.id, folder.color, null, false),
       );
       patchState({ updateFolderEvent: updatesUI });
       foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder)));
@@ -540,21 +554,39 @@ export class FolderStore {
   @Action(UpdateFolderTitle)
   async updateTitleFolder(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { str, folderId, isCallApi, errorPermissionMessage }: UpdateFolderTitle,
+    {
+      diffs,
+      str,
+      folderId,
+      isCallApi,
+      errorPermissionMessage,
+      isUpdateFullNote,
+      isUpdateSmallFolders,
+    }: UpdateFolderTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.updateTitle(str, folderId).toPromise();
+      resp = await this.api.updateTitle(diffs, str, folderId).toPromise();
     }
     if (resp.success) {
-      const folder = getState().fullFolder;
-      if (folder && folder.id === folderId) {
-        patchState({ fullFolder: { ...folder, title: str } });
+      // FULL NOTE
+      if (isUpdateFullNote) {
+        const folder = getState().fullFolder;
+        if (folder && folder.id === folderId) {
+          patchState({ fullFolder: { ...folder, title: str } });
+        }
       }
-      const folderUpdate = this.getFolderById(getState, folderId);
-      folderUpdate.title = str;
-      patchState({ updateFolderEvent: [this.toUpdateFolderUI(folderUpdate.id, null, folderUpdate.title)] });
-      dispatch(new UpdateOneFolder(folderUpdate));
+
+      // UPDATE SMALL NOTE
+      if (isUpdateSmallFolders) {
+        const folderUpdate = this.getFolderById(getState, folderId);
+        if (folderUpdate) {
+          dispatch(new UpdateOneFolder({ ...folderUpdate, title: str }));
+        }
+        // UI CHANGES
+        const uiChanges = this.toUpdateFolderUI(folderId, null, str, true);
+        patchState({ updateFolderEvent: [uiChanges] });
+      }
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
@@ -576,7 +608,7 @@ export class FolderStore {
     { folder, folderId }: UpdateFullFolder,
   ) {
     const folderState = getState().fullFolder;
-    if (folder && folderId === folderState.id) {
+    if (folder && folderId === folderState?.id) {
       const newFolder: FullFolder = { ...folderState, ...folder };
       patchState({ fullFolder: newFolder });
     }
@@ -593,10 +625,11 @@ export class FolderStore {
     });
   }
 
-  toUpdateFolderUI = (id: string, color: string, title: string) => {
+  toUpdateFolderUI = (id: string, color: string, title: string, isUpdateTitle: boolean) => {
     const obj = new UpdateFolderUI(id);
     obj.color = color;
     obj.title = title;
+    obj.isUpdateTitle = isUpdateTitle;
     return obj;
   };
 

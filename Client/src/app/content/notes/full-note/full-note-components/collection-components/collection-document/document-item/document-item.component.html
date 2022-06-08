@@ -1,0 +1,63 @@
+<div
+  class="card"
+  appTheme
+  (click)="clickEvent.emit(document.fileId)"
+  [ngClass]="{ 'is-selected': isClicked }"
+>
+  <div class="preview">
+    <div class="icon">
+      <mat-icon
+        [svgIcon]="genericFileExtenstionService.documentIcon(document.name)"
+        [inline]="true"
+      ></mat-icon>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-info">
+      <div class="title">{{ document.name | fileName }}</div>
+      <div class="link">
+        <ng-container *ngIf="document.uploadAt">
+          {{ document.uploadAt | date: 'medium' }}
+        </ng-container>
+      </div>
+    </div>
+    <div class="card-action">
+      <app-button-collection
+        [matMenuTriggerFor]="menu"
+        [button]="'more_vert'"
+      ></app-button-collection>
+    </div>
+  </div>
+  <div *ngIf="isLoading" class="spinner-container">
+    <app-spinner [size]="16"></app-spinner>
+  </div>
+</div>
+
+<!-- ADDITIONAL -->
+
+<mat-menu
+  #menu="matMenu"
+  appLazyTheme
+  themeClass="menu"
+  attributeName="panelClass"
+  [element]="menu"
+>
+  <button mat-menu-item type="button" name="review" (click)="openModal(document)">
+    <mat-icon>wysiwyg</mat-icon>
+    <span>{{ 'innerNote.menu.review' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="download" (click)="exportAudio.emit(document)">
+    <mat-icon>download</mat-icon>
+    <span>{{ 'innerNote.menu.download' | translate }}</span>
+  </button>
+  <button
+    *ngIf="!isReadOnlyMode"
+    mat-menu-item
+    type="button"
+    name="delete"
+    (click)="deleteDocument.emit(document.fileId)"
+  >
+    <mat-icon>delete</mat-icon>
+    <span>{{ 'innerNote.menu.delete' | translate }}</span>
+  </button>
+</mat-menu>

@@ -1,0 +1,50 @@
+<div appTheme>
+  <div class="mail-notification">
+    <ng-scrollbar #scrollbar [visibility]="'hover'" [appearance]="'compact'" class="mail-container">
+      <div class="user-container">
+        <ng-container *ngIf="isInitView">
+          <div *ngFor="let user of selectedUsers" class="user-mail">
+            <p>{{user.email}}</p>
+            <div class="icon" (click)="removeUserFromInvites.emit(user)">
+              <mat-icon [inline]="true">close</mat-icon>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-scrollbar>
+    <div class="checkbox-notification">
+      <mat-checkbox
+        [checked]="form.isSendNotification"
+        (change)="form.isSendNotification = !form.isSendNotification"
+      >
+        {{ 'modal.shareModal.alert' | translate }}
+      </mat-checkbox>
+    </div>
+    <div class="interaction-mail">
+      <textarea [(ngModel)]="form.messageTextArea"></textarea>
+      <div class="interaction-buttons">
+        <app-select
+          class="dropdown-button"
+          [translate]="'modal.shareModal'"
+          [selectValue]="refType[defaultRefType]"
+          (selectValueChange)="refTypeNotification($event)"
+        >
+          <app-select-option *ngFor="let item of refTypes" [value]="item">
+            {{ ('modal.shareModal.' + item) | translate }}
+          </app-select-option>
+        </app-select>
+        <button
+          class="send-button"
+          type="button"
+          #changeAccessRipple
+          (click)="applyForm.emit(form)"
+        >
+          <div class="content-button">
+            <p>{{ 'modal.shareModal.send' | translate }}</p>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,12 +10,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
+import { SelectionService } from '../../../content-editor-services/selection.service';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { SetFocus } from '../../../models/set-focus';
-import { HtmlBaseService } from '../html-base.service';
+import { BaseTextElementComponent } from '../html-base.component';
 import { HeadingService } from '../html-business-logic/heading.service';
 
 @Component({
@@ -26,7 +28,7 @@ import { HeadingService } from '../html-business-logic/heading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlHeadingsComponent
-  extends HtmlBaseService
+  extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
 {
   @Output()
@@ -60,12 +62,11 @@ export class HtmlHeadingsComponent
     public headingService: HeadingService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
+    apiBrowserTextService: ApiBrowserTextService,
+    selectionService: SelectionService,
+    clickableService: ClickableContentService,
   ) {
-    super(cdr);
-  }
-
-  get isActive() {
-    return this.headingService.isActive(this.contentHtml);
+    super(cdr, apiBrowserTextService, selectionService, clickableService);
   }
 
   getHost() {
@@ -93,27 +94,6 @@ export class HtmlHeadingsComponent
   }
 
   isFocusToNext = () => true;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFocus(entity: SetFocus) {
-    this.headingService.setFocus(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
-
-  setFocusToEnd() {
-    this.headingService.setFocusToEnd(this.contentHtml, this.content);
-    this.onFocus.emit(this);
-  }
-
-  mouseEnter($event) {
-    this.headingService.mouseEnter($event, this.contentHtml);
-    this.isMouseOver = true;
-  }
-
-  mouseLeave($event) {
-    this.headingService.mouseLeave($event, this.contentHtml);
-    this.isMouseOver = false;
-  }
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

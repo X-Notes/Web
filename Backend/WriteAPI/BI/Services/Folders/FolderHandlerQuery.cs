@@ -73,15 +73,14 @@ namespace BI.Services.Folders
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if(permissions.CanWrite)
+            if (permissions.CanWrite || permissions.CanRead)
             {
-                var ent = appCustomMapper.MapFolderToFullFolder(folder, true);
-                return new OperationResult<FullFolder>(true, ent);
-            }
+                if (permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
+                {
+                    await usersOnPrivateFoldersRepository.AddAsync(new UsersOnPrivateFolders { FolderId = folder.Id, AccessTypeId = folder.RefTypeId, UserId = permissions.Caller.Id });
+                }
 
-            if(permissions.CanRead)
-            {
-                var ent = appCustomMapper.MapFolderToFullFolder(folder, false);
+                var ent = appCustomMapper.MapFolderToFullFolder(folder, permissions.CanWrite);
                 return new OperationResult<FullFolder>(true, ent);
             }
 

@@ -5,7 +5,15 @@ import { Label } from 'src/app/content/labels/models/label.model';
   name: 'searchLabel',
 })
 export class SearchLabelPipe implements PipeTransform {
-  transform = (values: Label[], searchStr: string) => {
-    return values.filter((x) => x.name?.includes(searchStr) || x.name === null);
+  transform = (values: Label[], searchStr: string, meta: { count: number }) => {
+    if (searchStr && searchStr.length > 0) {
+      const searchValues = values.filter((x) =>
+        x.name?.toLowerCase().includes(searchStr.toLowerCase()),
+      );
+      meta.count = searchValues.length;
+      return searchValues;
+    }
+    meta.count = 0;
+    return values;
   };
 }

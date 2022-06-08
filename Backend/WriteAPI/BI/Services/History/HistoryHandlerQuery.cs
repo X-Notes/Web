@@ -10,6 +10,7 @@ using Common.DatabaseModels.Models.History.Contents;
 using Common.DTO;
 using Common.DTO.History;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Queries.History;
 using Domain.Queries.Permissions;
 using MediatR;

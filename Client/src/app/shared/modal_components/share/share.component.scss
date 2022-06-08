@@ -21,14 +21,14 @@
       display: flex;
       flex-grow: 1;
       width: 100%;
-      padding-top: 1.25rem;
 
       .tab-content {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         height: 550px;
         width: 100%;
-
+        
         .dropdown-wrapper {
           display: flex;
 
@@ -41,13 +41,12 @@
         .content-access {
           display: flex;
           flex-direction: column;
-          margin: 0 2.5rem;
+          margin-top: 1.25rem;
 
           &::after {
             content: '';
             width: 100%;
             height: 1px;
-            margin-top: 1.25rem;
             background-color: #f2f2f2;
             border-radius: 5px;
           }
@@ -56,7 +55,6 @@
             display: flex;
             align-items: center;
             width: 100%;
-            margin-top: 1.25rem;
 
             input[type='text'] {
               display: flex;
@@ -107,7 +105,8 @@
           .toggle-field {
             display: flex;
             width: 100%;
-            margin-top: 1.25rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
 
             .toggle {
               height: 32px;
@@ -123,221 +122,150 @@
             }
           }
         }
+
+        .clear-container{
+          margin-top: 1rem;
+          display: flex;
+          justify-content: flex-end;
+          p {
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+          }
+        }
+
         .user-access {
           display: flex;
           flex-direction: column;
           margin: 1.25rem 0;
+          height: 100%;
           .content-inner {
             display: flex;
             flex-direction: column;
             width: 100%;
-            padding: 0 2.5rem;
+            height: 100%;
           }
         }
-
-        .search {
-          margin: 1.25rem 2.5rem 0.625rem 2.5rem;
+        
+        .search-container {
+          margin-top: 1.25rem;
         }
 
         .interaction-container {
           position: relative;
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
+          margin-top: 1.25rem;
 
-          .mail-notification {
+          .interaction-inner-container {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
-            border-radius: 5px;
-            background-color: #f2f2f2;
-            margin: 0.625rem 2.5rem 0 2.5rem;
 
-            .mail-container {
+            .user-suggestions {
               display: flex;
-              flex-wrap: wrap;
-              width: 100%;
-              padding: 0.625rem 1rem;
+              flex-direction: column;
+              height: 100%;
 
-              &::after {
-                content: '';
-                width: 100%;
-                height: 2px;
-                border-radius: 5px;
-              }
-
-              .user-mail {
+              .user {
                 display: flex;
-                padding: 0.375rem 0.75rem;
-                color: $text-color;
+                align-items: center;
+                width: 100%;
+                height: 40px;
                 border-radius: 5px;
-                cursor: pointer;
-                max-width: 100%;
-                margin-right: 1rem;
-                margin-bottom: 0.75rem;
+                margin-bottom: 0.9rem;
+                padding: 0 0.875rem;
+                background-color: #f2f2f2;
 
-                p {
-                  @include text-overflow;
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                .photo {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 30px;
+                  width: 30px;
+                  overflow: hidden;
+                  border-radius: 50%;
+
+                  img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+
+                  .no-photo {
+                    display: flex;
+                    width: 20px;
+                    height: 20px;
+                    color: #5f5f5f;
+                  }
+                }
+
+                .email {
                   display: flex;
                   flex-grow: 1;
+                  margin-left: 0.875rem;
+                  color: $text-color;
+
+                  p {
+                    @include text-overflow;
+                  }
                 }
 
-                .icon {
+                .user-access-func {
                   display: flex;
                   align-items: center;
-                  margin-left: 0.625rem;
-                }
-              }
-            }
+                  height: 100%;
 
-            .checkbox-notification {
-              display: flex;
-              width: 100%;
-              padding: 0.625rem 1rem;
-              color: $text-color;
-            }
-
-            .interaction-mail {
-              display: flex;
-              width: 100%;
-              padding: 0.625rem 1rem;
-
-              textarea {
-                display: flex;
-                flex-grow: 1;
-                min-height: 60px;
-                margin-right: 0.75rem;
-                resize: none;
-                border-radius: 5px;
-                border: 0;
-                outline: none;
-                font-size: 1rem;
-                padding: 0.5rem 1rem;
-              }
-
-              .interaction-buttons {
-                display: flex;
-                flex-direction: column;
-                width: 130px;
-
-                .send-button {
-                  position: relative;
-                  height: 32px;
-                  border: 0.8px solid transparent;
-                  padding: 0;
-                  outline: none;
-                  overflow: hidden;
-                  user-select: none;
-                  cursor: pointer;
-                  border-radius: 5px;
-                  background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
-                  margin-top: 0.5rem;
-
-                  .content-button {
-                    position: relative;
-                    z-index: 5;
+                  button[type='button'] {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    padding: 0 0.75rem;
-                    font-size: 1rem;
-                    color: white;
-                  }
-                }
+                    height: 100%;
+                    padding: 0 0.875rem;
+                    background-color: transparent;
+                    border: 0;
+                    outline: none;
+                    user-select: none;
+                    cursor: pointer;
 
-                .dropdown-button {
-                  width: 100%;
-                  height: 32px;
-                }
-              }
-            }
-          }
-
-          .user-suggestions {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            margin: 1.25rem 2.5rem 0 2.5rem;
-
-            .user {
-              display: flex;
-              align-items: center;
-              width: 100%;
-              height: 40px;
-              border-radius: 5px;
-              margin-bottom: 0.9rem;
-              padding: 0 0.875rem;
-              background-color: #f2f2f2;
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-
-              .photo {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 30px;
-                width: 30px;
-                overflow: hidden;
-                border-radius: 50%;
-
-                img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                }
-
-                .no-photo {
-                  display: flex;
-                  width: 20px;
-                  height: 20px;
-                  color: #5f5f5f;
-                }
-              }
-
-              .email {
-                display: flex;
-                flex-grow: 1;
-                margin-left: 0.875rem;
-                color: $text-color;
-
-                p {
-                  @include text-overflow;
-                }
-              }
-
-              .user-access-func {
-                display: flex;
-                align-items: center;
-                height: 100%;
-
-                button[type='button'] {
-                  display: flex;
-                  align-items: center;
-                  height: 100%;
-                  padding: 0 0.875rem;
-                  background-color: transparent;
-                  border: 0;
-                  outline: none;
-                  user-select: none;
-                  cursor: pointer;
-
-                  &:last-child {
-                    padding-right: 0;
-                  }
-
-                  .icon {
-                    display: flex;
-                    font-size: 1rem;
-                    width: 16px;
-                    height: 16px;
+                    .icon {
+                      display: flex;
+                      font-size: 1rem;
+                      width: 16px;
+                      height: 16px;
+                    }
                   }
                 }
               }
             }
           }
         }
+
+        .empty-placeholder-container {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          user-select: none;
+          p {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: #808080;
+          }
+        }
+
+        .spinner-container {
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+      }
+
+      .content-padding {
+        padding: 0 2.5rem;
       }
     }
   }
@@ -483,22 +411,6 @@
             }
           }
         }
-
-        .interaction-container {
-          .mail-notification {
-            .mail-container {
-              .user-mail {
-                background-color: white;
-              }
-            }
-
-            .interaction-mail {
-              textarea {
-                background-color: white;
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -518,22 +430,6 @@
           .link-access-field {
             input[type='text'] {
               border-color: #c5c5c5;
-            }
-          }
-        }
-
-        .interaction-container {
-          .mail-notification {
-            .mail-container {
-              .user-mail {
-                background-color: #e8e8e8;
-              }
-            }
-
-            .interaction-mail {
-              textarea {
-                background-color: #e8e8e8;
-              }
             }
           }
         }
@@ -568,12 +464,6 @@
 
           .interaction-container {
             margin: 0 1.875rem 1.25rem 1.875rem;
-
-            .mail-notification,
-            .user-suggestions {
-              margin-left: 0.625rem;
-              margin-right: 0.625rem;
-            }
           }
         }
       }
@@ -718,68 +608,24 @@
             margin: 1rem 1.875rem;
           }
 
-          .search {
-            margin: 1rem 2.5rem 0.5rem 2.5rem;
-          }
-
           .interaction-container {
             margin-bottom: 1rem;
 
-            .mail-notification {
-              margin-top: 0.5rem;
-
-              .mail-container {
-                .user-mail {
-                  margin-bottom: 0.5rem;
-                  margin-right: 0.5rem;
-                  font-size: 0.875rem;
-                }
-              }
-
-              .checkbox-notification {
-                font-size: 0.875rem;
-              }
-
-              .interaction-mail {
-                flex-direction: column;
-
-                textarea {
-                  width: 100%;
-                }
-
-                .interaction-buttons {
-                  flex-direction: row;
-                  width: 100%;
-                  margin-top: 0.5rem;
-
-                  .send-button {
-                    flex: 1;
-                    width: auto;
-                    margin-left: 0.25rem;
-                    margin-top: 0;
+            .interaction-inner-container {
+              .user-suggestions {
+                margin-top: 1rem;
+  
+                .user {
+                  height: 35px;
+  
+                  .photo {
+                    height: 25px;
+                    width: 25px;
                   }
-
-                  .dropdown-button {
-                    flex: 1;
-                    margin-right: 0.25rem;
+  
+                  .email {
+                    font-size: 0.875rem;
                   }
-                }
-              }
-            }
-
-            .user-suggestions {
-              margin-top: 1rem;
-
-              .user {
-                height: 35px;
-
-                .photo {
-                  height: 25px;
-                  width: 25px;
-                }
-
-                .email {
-                  font-size: 0.875rem;
                 }
               }
             }
@@ -791,33 +637,6 @@
 }
 
 @media (max-width: 450px) {
-  .outer {
-    .sharing {
-      .tabs {
-        .tab-content {
-          .interaction-container {
-            .mail-notification {
-              .interaction-mail {
-                .interaction-buttons {
-                  flex-wrap: wrap;
-
-                  .send-button {
-                    margin-top: 0.5rem;
-                    margin-left: 0;
-                  }
-
-                  .dropdown-button {
-                    flex: initial;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   .many-notes {
     .few-notes {
       height: 83px;
@@ -857,10 +676,6 @@
 
           .content-access {
             margin: 0 1.75rem;
-          }
-
-          .search {
-            margin: 1rem 1.75rem 0.5rem 1.75rem;
           }
 
           .interaction-container {

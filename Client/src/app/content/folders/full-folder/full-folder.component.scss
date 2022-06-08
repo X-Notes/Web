@@ -6,35 +6,27 @@
   height: 100%;
 }
 
-.full-folder-section {
+.folder {
+  font-size: 1rem;
+  width: calc(100% - 2.25rem);
+  margin: 0.875rem 1.125rem 0 1.125rem;
+  height: 40px;
   display: flex;
-  flex-direction: column;
-  height: calc(100% - 54px);
-  width: 100%;
-  transition: 0.2s ease;
+  padding: 0.4rem;
+  border-radius: 5px;
+  color: $text-color;
+  cursor: pointer;
 
-  .folder {
-    font-size: 1rem;
-    width: calc(100% - 2.25rem);
-    margin: 0.875rem 1.125rem 0 1.125rem;
-    height: 40px;
-    display: flex;
-    padding: 0.4rem;
-    border-radius: 5px;
-    color: $text-color;
-    cursor: pointer;
+  p {
+    @include text-overflow;
+  }
 
-    p {
-      @include text-overflow;
-    }
-    
-    .empty-placeholder{
-      color: #808080;
-    }
+  .empty-placeholder {
+    color: #808080;
+  }
 
-    &:last-child {
-      margin-bottom: 0.875rem;
-    }
+  &:last-child {
+    margin-bottom: 0.875rem;
   }
 }
 
@@ -82,8 +74,8 @@
           cursor: auto;
         }
       }
-      
-      input{
+
+      input {
         background-color: transparent;
         color: white;
         outline: none;
@@ -154,8 +146,8 @@
     }
   }
 
-  .info-container{
-    flex: 1
+  .info-container {
+    flex: 1;
   }
 
   .folder-color {
@@ -170,24 +162,27 @@
 }
 
 .dark {
-  .container {
-    .navigation {
-      .link {
-        color: #d4d4d4;
+  .folder-sub-header {
+    background-color: $dark-color;
+    .container {
+      .navigation {
+        .link {
+          color: #d4d4d4;
+        }
+
+        .divider {
+          color: #707070;
+        }
       }
 
-      .divider {
-        color: #707070;
-      }
-    }
+      .side-button {
+        &:hover {
+          background-color: rgb(52, 55, 62, 0.8);
+        }
 
-    .side-button {
-      &:hover {
-        background-color: rgb(52, 55, 62, 0.8);
-      }
-
-      .inner-content {
-        color: #e3e3e3;
+        .inner-content {
+          color: #e3e3e3;
+        }
       }
     }
   }
@@ -204,24 +199,31 @@
 }
 
 .light {
-  .container {
-    .navigation {
-      .link {
-        color: #808080;
+  .folder-sub-header {
+    background-color: $light-color;
+    .container {
+      .navigation {
+        .link {
+          color: #808080;
+        }
+
+        .divider {
+          color: #bfbfbf;
+        }
+
+        input {
+          color: #808080;
+        }
       }
 
-      .divider {
-        color: #bfbfbf;
-      }
-    }
+      .side-button {
+        &:hover {
+          background-color: rgb(240, 240, 240, 0.8);
+        }
 
-    .side-button {
-      &:hover {
-        background-color: rgb(240, 240, 240, 0.8);
-      }
-
-      .inner-content {
-        color: #808080;
+        .inner-content {
+          color: #808080;
+        }
       }
     }
   }

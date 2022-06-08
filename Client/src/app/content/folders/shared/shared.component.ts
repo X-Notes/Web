@@ -21,6 +21,7 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
+import { BaseFoldersComponent } from '../base-folders-component';
 
 @Component({
   selector: 'app-shared',
@@ -28,7 +29,10 @@ import { ShortUser } from 'src/app/core/models/short-user.model';
   styleUrls: ['./shared.component.scss'],
   providers: [FolderService],
 })
-export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SharedComponent
+  extends BaseFoldersComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(FolderStore.sharedCount)
@@ -44,9 +48,11 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public folderService: FolderService,
+    folderService: FolderService,
     private signalRService: SignalRService,
-  ) {}
+  ) {
+    super(folderService);
+  }
 
   ngAfterViewInit(): void {
     this.folderService.murriInitialise(this.refElements, false);
@@ -71,12 +77,12 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.signalRService.addFoldersToSharedEvent
+    this.signalRService.addFoldersToSharedEvent$
       .pipe(takeUntil(this.folderService.destroy))
       .subscribe((folders) => {
         if (folders && folders.length > 0) {
           this.folderService.addToDom(folders);
-          this.signalRService.addFoldersToSharedEvent.next([]);
+          this.signalRService.addFoldersToSharedEvent$.next([]);
         }
       });
   }

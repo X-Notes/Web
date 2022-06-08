@@ -72,23 +72,16 @@ export class AllComponent implements OnInit, AfterViewInit {
 
     this.pService.newButtonSubject
       .pipe(takeUntil(this.labelService.destroy))
-      .subscribe(() => this.newLabel());
+      .subscribe(() => this.store.dispatch(new AddLabel()));
   }
 
   async update(label: Label) {
     this.store.dispatch(new UpdateLabel(label));
   }
 
-  async newLabel() {
-    await this.store.dispatch(new AddLabel()).toPromise();
-
-    const labels = this.store.selectSnapshot(LabelStore.noDeleted);
-    this.labelService.entities.unshift(labels[0]);
-  }
-
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
-    this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
+    this.labelService.deleteFromDom([label.id]);
     const message =
       this.sbws.getLabelsNaming(false) +
       this.sbws.getMoveToMessage(false) +

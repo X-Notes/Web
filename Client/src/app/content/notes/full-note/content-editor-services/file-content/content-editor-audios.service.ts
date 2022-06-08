@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAudiosService } from '../../services/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
@@ -25,7 +25,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiAudiosCollection: ApiAudiosService,
-    contentEditorContentsService: ContentEditorContentsService,
+    contentEditorContentsService: ContentEditorContentsSynchronizeService,
     private apiFiles: ApiNoteFilesService,
   ) {
     super(
@@ -38,7 +38,11 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  async transformToAudiosCollection(noteId: string, contentId: string, files: File[]) {
+  async transformToAudiosCollection(
+    noteId: string,
+    contentId: string,
+    files: File[],
+  ): Promise<string> {
     const collectionResult = await this.apiAudiosCollection
       .transformTo(noteId, contentId)
       .toPromise();
@@ -50,7 +54,9 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
         noteId,
       );
       collectionResult.data.isLoading = false;
+      return collectionResult.data.id;
     }
+    return null;
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
@@ -92,8 +98,15 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
 
     const audiosMapped = audios.map(
-      (x) => new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+      (x) =>
+        new AudioModel({
+          ...x,
+          fileId: x.id,
+          uploadAt: x.createdAt,
+          audioPath: x.pathNonPhotoContent,
+        }),
     );
+
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.items ?? [];
 

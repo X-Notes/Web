@@ -19,6 +19,7 @@ import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user.model';
+import { BaseNotesComponent } from '../base-notes-component';
 
 @Component({
   selector: 'app-privates',
@@ -26,7 +27,10 @@ import { ShortUser } from 'src/app/core/models/short-user.model';
   styleUrls: ['./privates.component.scss'],
   providers: [NotesService],
 })
-export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PrivatesComponent
+  extends BaseNotesComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(NoteStore.privateCount)
@@ -42,8 +46,10 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public noteService: NotesService,
-  ) {}
+    noteService: NotesService,
+  ) {
+    super(noteService);
+  }
 
   ngAfterViewInit(): void {
     this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Private);

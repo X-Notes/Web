@@ -7,6 +7,7 @@ using BI.Helpers;
 using BI.Mapping;
 using BI.Services.Encryption;
 using BI.SignalR;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
@@ -128,6 +129,11 @@ namespace BI.Services.Notes
                     }
                 }
 
+                if(permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
+                {
+                    await usersOnPrivateNotesRepository.AddAsync(new UserOnPrivateNotes { NoteId = note.Id, AccessTypeId = note.RefTypeId, UserId = permissions.Caller.Id });
+                }
+
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 var ent = appCustomMapper.MapNoteToFullNote(note, permissions.CanWrite);
                 return new OperationResult<FullNote>(true, ent);
@@ -140,6 +146,11 @@ namespace BI.Services.Notes
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
+
+            if (permissions.NoteNotFound)
+            {
+                return new List<OnlineUserOnNote>();
+            }
 
             if (permissions.Note.IsLocked)
             {
@@ -157,6 +168,7 @@ namespace BI.Services.Notes
                 var users = await userRepository.GetUsersWithPhotos(ids);
                 return users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x)).ToList();
             }
+
             return new List<OnlineUserOnNote>();
         }
 
@@ -223,6 +235,15 @@ namespace BI.Services.Notes
 
         public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
         {
+            long GetSize(Guid noteId, params Dictionary<Guid, (Guid, IEnumerable<AppFile>)>[] filesDict)
+            {
+                return filesDict
+                    .Where(x => x.ContainsKey(noteId))
+                    .SelectMany(x => x[noteId].Item2)
+                    .DistinctBy(x => x.Id)
+                    .Sum(x => x.Size);
+            }
+
             var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
             var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
             var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
@@ -236,8 +257,7 @@ namespace BI.Services.Notes
                 IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
                 NoteId = noteId,
                 NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
-                TotalSize = size.ContainsKey(noteId) ? size[noteId].Item2 : 0,
-                SnapshotSize = sizeSnapshots.ContainsKey(noteId) ? sizeSnapshots[noteId].Item2 : 0,
+                TotalSize = GetSize(noteId, size, sizeSnapshots)
             }).ToList();
         }
     }

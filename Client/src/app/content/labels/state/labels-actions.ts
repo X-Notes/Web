@@ -48,3 +48,9 @@ export class RestoreLabel {
 export class DeleteAllLabelsFromBin {
   static type = '[Labels] Delete all from bin';
 }
+
+export class AddToDomLabels {
+  static type = '[Labels] Add to dom labels';
+
+  constructor(public labels: Label[]) {}
+}

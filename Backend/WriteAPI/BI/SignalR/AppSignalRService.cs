@@ -48,13 +48,19 @@ namespace BI.SignalR
         public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateNoteGeneral", updates);
+            if (list.Any())
+            {
+                await signalRContext.Clients.Clients(list).SendAsync("updateNoteGeneral", updates);
+            }
         }
 
         public async Task UpdateFolderInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
-            await signalRContext.Clients.Clients(list).SendAsync("updateFolderGeneral", updates);
+            if (list.Any())
+            {
+                await signalRContext.Clients.Clients(list).SendAsync("updateFolderGeneral", updates);
+            }
         }
 
         // INNER NOTE

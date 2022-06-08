@@ -5,6 +5,8 @@ export class UpdateFolderUI {
 
   title: string;
 
+  isUpdateTitle: boolean;
+
   isCanEdit: boolean;
 
   constructor(folderId: string) {

@@ -13,6 +13,7 @@ import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-not
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
+import { Diff } from 'diff-match-patch';
 
 @Injectable()
 export class ApiFoldersService {
@@ -34,6 +35,16 @@ export class ApiFoldersService {
   getUsersOnPrivateFolder(id: string) {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(
       `${environment.writeAPI}/api/share/folders/user/invites/${id}`,
+    );
+  }
+
+  clearAll(folderId: string) {
+    const obj = {
+      folderId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/share/folders/clear`,
+      obj,
     );
   }
 
@@ -185,8 +196,9 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(title: string, id: string) {
+  updateTitle(diffs: Diff[], title: string, id: string) {
     const obj = {
+      diffs,
       title,
       id,
     };

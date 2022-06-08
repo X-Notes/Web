@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
-import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
@@ -24,7 +24,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     private renderer: Renderer2,
     private apiBrowserFunctions: ApiBrowserTextService,
     private selectionService: SelectionService,
-    private contentEditorContentsService: ContentEditorContentsService,
+    private contentEditorContentsService: ContentEditorContentsSynchronizeService,
   ) {}
 
   ngOnInit(): void {

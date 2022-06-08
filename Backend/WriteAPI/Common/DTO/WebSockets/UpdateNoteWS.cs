@@ -12,8 +12,12 @@ namespace Common.DTO.WebSockets
 
         public string Title { set; get; }
 
+        public bool IsUpdateTitle { set; get; }
+
         public List<Guid> RemoveLabelIds { set; get; }
 
         public List<LabelDTO> AddLabels { set; get; }
+
+
     }
 }

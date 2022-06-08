@@ -15,7 +15,6 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -31,11 +30,10 @@ import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { ContentEditableService } from '../content-editor-services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
@@ -55,27 +53,27 @@ import { VideosCollection } from '../../models/editor-models/videos-collection';
 import { DocumentsCollection } from '../../models/editor-models/documents-collection';
 import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { DiffCheckerService } from './diffs/diff-checker.service';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
-  providers: [ContentEditableService, WebSocketsNoteUpdaterService],
+  providers: [WebSocketsNoteUpdaterService],
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
-
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
-  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<any>;
+  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
   @Input()
   isReadOnlyMode = true;
-
-  @Input()
-  note: FullNote | NoteSnapshot;
 
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
@@ -83,15 +81,21 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input()
   title$: Observable<string>;
 
+  elements: QueryList<ParentInteraction>;
+
   title: string;
+
+  uiTitle: string;
+
+  _note: FullNote | NoteSnapshot;
+
+  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   theme = ThemeENUM;
 
   contentType = ContentTypeENUM;
 
   textType = NoteTextTypeENUM;
-
-  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   destroy = new Subject<void>();
 
@@ -101,7 +105,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    public contentEditorContentsService: ContentEditorContentsService,
+    public contentEditorContentsService: ContentEditorContentsSynchronizeService,
     public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
@@ -112,12 +116,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
-    private contentEditableService: ContentEditableService,
+    private diffCheckerService: DiffCheckerService,
+    private contentUpdateWsService: ContentUpdateWsService,
+    public pS: PersonalizationService,
+    public clickableContentService: ClickableContentService,
   ) {}
 
   get contents() {
     return this.contentEditorContentsService.getContents;
-    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
   }
 
   @Input() set contents(contents: ContentModelBase[]) {
@@ -126,6 +132,27 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       this.contentEditorContentsService.init(contents, this.note.id);
     }
+
+    if (contents.length === 0) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get note() {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._note;
+  }
+
+  @Input() set note(note: FullNote | NoteSnapshot) {
+    // eslint-disable-next-line no-underscore-dangle
+    this._note = note;
+    this.contentUpdateWsService.noteId = note.id;
+  }
+
+  @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction>) {
+    this.elements = elms;
+    this.contentUpdateWsService.elements = elms;
   }
 
   ngAfterViewInit(): void {
@@ -142,29 +169,55 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.contentEditorListenerService.destroysListeners();
   }
 
-  updateTitle(title: string): void {
-    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(
-      this.noteTitleEl?.nativeElement,
-    );
-    if (this.title !== title) {
-      this.title = title;
-      requestAnimationFrame(() =>
-        this.contentEditableService.setCaret(this.noteTitleEl?.nativeElement, pos?.start),
-      );
-    }
-  }
+  setTitle(): void {
+    // SET
+    this.uiTitle = this.note.title;
+    this.title = this.note.title;
+    this.htmlTitleService.setCustomOrDefault(this.title, 'titles.note');
 
-  ngOnInit(): void {
-    this.htmlTitleService.setCustomOrDefault(this.note.title, 'titles.note');
+    // UPDATE WS
+    this.title$
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((title) => this.updateTitle(title));
 
-    this.title$.pipe(takeUntil(this.destroy)).subscribe((title) => this.updateTitle(title));
-
+    // UPDATE CURRENT
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => {
-        this.store.dispatch(new UpdateNoteTitle(title, this.note.id));
+        const diffs = this.diffCheckerService.getDiffs(this.title, title);
+        this.store.dispatch(new UpdateNoteTitle(diffs, title, this.note.id, true, null, false));
+        this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
+  }
+
+  updateTitle(title: string): void {
+    if (this.title !== title && this.noteTitleEl?.nativeElement) {
+      const el = this.noteTitleEl.nativeElement;
+      const data = this.apiBrowserFunctions.saveRangePositionTextOnly(el);
+
+      this.uiTitle = title;
+      this.title = title;
+
+      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretFirstChild(el, data));
+
+      this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
+    }
+  }
+
+  onTitleInput($event) {
+    this.noteTitleChanged.next($event.target.innerText);
+  }
+
+  handlerTitleEnter($event: KeyboardEvent) {
+    $event.preventDefault();
+    this.contentEditorTextService.appendNewEmptyContentToStart();
+    setTimeout(() => this.elements?.first?.setFocus());
+    this.postAction();
+  }
+
+  ngOnInit(): void {
+    this.setTitle();
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))
@@ -206,17 +259,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFocusHandler(content: ParentInteraction) {
     this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
-  }
-
-  onTitleInput($event) {
-    this.noteTitleChanged.next($event.target.innerText);
-  }
-
-  handlerTitleEnter($event: KeyboardEvent) {
-    $event.preventDefault();
-    this.contentEditorTextService.appendNewEmptyContentToStart();
-    setTimeout(() => this.elements?.first?.setFocus());
-    this.postAction();
   }
 
   pasteCommandHandler(e) {
@@ -345,9 +387,24 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     console.log(event);
   };
 
+  isCanAddNewItem(content: ContentModelBase) {
+    if (!content) return false;
+    if (content.typeId !== ContentTypeENUM.Text) {
+      return true;
+    }
+    const text = content as BaseText;
+    if (text.noteTextTypeId !== NoteTextTypeENUM.Default) {
+      return true;
+    }
+    if (text.contents && text.contents?.length !== 0) {
+      return true;
+    }
+    return false;
+  }
+
   postAction(): void {
-    const native = this.elements?.last?.getEditableNative();
-    if (native?.textContent.length !== 0) {
+    const isCanAppend = this.isCanAddNewItem(this.elements?.last?.getContent());
+    if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
     this.contentEditorContentsService.changeAndSave();
@@ -355,11 +412,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   placeHolderClick($event) {
     $event.preventDefault();
-    if (this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
-      this.contentEditorTextService.appendNewEmptyContentToEnd();
-    }
-    this.contentEditorContentsService.changeAndSave();
-    setTimeout(() => this.elements?.last?.setFocus());
+    this.postAction();
+    requestAnimationFrame(() => this.elements?.last?.setFocus());
   }
 
   mouseEnter($event) {
@@ -384,7 +438,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         AudiosCollection.getNew(),
       );
       this.postAction();
-      await this.contentEditorPhotosService.uploadPhotoToAlbumHandler(
+      await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
@@ -432,9 +486,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
+    let newContentId: string;
     switch (event.typeFile) {
       case TypeUploadFile.photos: {
-        await this.contentEditorPhotosService.transformToPhotosCollection(
+        newContentId = await this.contentEditorPhotosService.transformToPhotosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -442,7 +497,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.audios: {
-        await this.contentEditorAudiosService.transformToAudiosCollection(
+        newContentId = await this.contentEditorAudiosService.transformToAudiosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -450,7 +505,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.documents: {
-        await this.contentEditorDocumentsService.transformToDocumentsCollection(
+        newContentId = await this.contentEditorDocumentsService.transformToDocumentsCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -458,7 +513,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       }
       case TypeUploadFile.videos: {
-        await this.contentEditorVideosService.transformToVideosCollection(
+        newContentId = await this.contentEditorVideosService.transformToVideosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -467,6 +522,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       default: {
         throw new Error('incorrect type');
+      }
+    }
+
+    if (newContentId) {
+      const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);
+      if (el) {
+        el.syncContentWithLayout();
       }
     }
   }
@@ -531,7 +593,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    await this.contentEditorPhotosService.uploadPhotoToAlbumHandler($event, noteId);
+    await this.contentEditorPhotosService.uploadPhotosToCollectionHandler($event, noteId);
     this.postAction();
   };
 }

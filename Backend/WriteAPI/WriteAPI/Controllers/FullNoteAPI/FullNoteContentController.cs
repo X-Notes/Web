@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteSyncContents;
 using Domain.Commands.NoteInner;
 using Domain.Queries.Notes;
 using MediatR;
@@ -34,7 +35,7 @@ namespace WriteAPI.Controllers.FullNoteAPI
         }
 
         [HttpPatch("sync/structure")]
-        public async Task<OperationResult<Unit>> SyncNoteStructure(SyncNoteStructureCommand command)
+        public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
         {
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);

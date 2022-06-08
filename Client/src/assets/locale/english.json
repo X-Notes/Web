@@ -107,6 +107,7 @@
     "countCurrent": "Current: "
   },
   "modal": {
+    "notFound": "Not found",
     "labelModal": {
       "Labels": "Labels",
       "search": "Label name..."
@@ -139,7 +140,10 @@
       "Viewer": "Viewer",
       "send": "Send",
       "sharedMessage": "Anyone on the internet with this link",
-      "noSharedMessage": "Only people added can open with this link"
+      "noSharedMessage": "Only people added can open with this link",
+      "noPeopleNote": "The people who have access to the note will be displayed here",
+      "noPeopleFolder": "The people who have access to the folder will be displayed here",
+      "clearAll": "Clear all"
     },
     "folderManage": {
       "notes": "Add notes to folder"
@@ -184,8 +188,9 @@
     "text": "Text",
     "heading": "Heading",
     "menu": {
-      "addVideo": "Add new video",
-      "add": "Add new audio",
+      "addVideo": "Add new videos",
+      "addAudio": "Add new audios",
+      "addDocument": "Add new documents",
       "review": "Review",
       "download": "Download",
       "copy": "Copy url",
@@ -194,7 +199,7 @@
     "photoMenu": {
       "download": "Download",
       "delete": "Delete",
-      "upload": "Upload new",
+      "upload": "Upload new photos",
       "countRow": "Photo in row",
       "oneRow": "One in row",
       "twoRow": "Two in row",
@@ -308,7 +313,8 @@
     "foldersPermDeleted": "Folders deleted permanently",
     "movedToMany": " moved to ",
     "movedToSingle": " moved to ",
-    "reloadPage": "Unstable connection please refresh the page"
+    "reloadPage": "Unstable connection please refresh the page",
+    "noItemInExport": "Collection is empty"
   },
   "titles": {
     "labels": "Labels",
