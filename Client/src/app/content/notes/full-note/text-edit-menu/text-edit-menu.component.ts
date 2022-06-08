@@ -34,7 +34,8 @@ export class TextEditMenuComponent {
 
   transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
     const item = this.menuSelectionService.currentTextItem;
-    if (item.noteTextTypeIdSG === type && item.headingTypeIdSG === heading) {
+    if (!item) return;
+    if (item.noteTextTypeId === type && item.headingTypeId === heading) {
       this.eventTransform.emit({
         id: item.id,
         textType: NoteTextTypeENUM.Default,
@@ -72,30 +73,67 @@ export class TextEditMenuComponent {
     });
   }
 
-  getIsActiveHeader(type: NoteTextTypeENUM, heading: HeadingTypeENUM): boolean {
+  getIsActiveHeader(heading: HeadingTypeENUM): boolean {
     const item = this.menuSelectionService.currentTextItem;
-    if (!item) {
-      return null;
+    if (
+      item &&
+      item.noteTextTypeId === NoteTextTypeENUM.Heading &&
+      item.headingTypeId === heading
+    ) {
+      return true;
     }
-    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeIdSG === type) {
-      return heading === item.headingTypeIdSG;
-    }
-    return type === item.noteTextTypeIdSG;
+    return false;
   }
 
   getIsActiveType(type: NoteTextTypeENUM): boolean {
     const item = this.menuSelectionService.currentTextItem;
-    if (!item) {
-      return null;
-    }
-    return type === item.noteTextTypeIdSG;
+    if (!item) return false;
+    return type === item.noteTextTypeId;
   }
 
   getIsBold = (): boolean => {
-    return this.menuSelectionService.currentHtmlItem?.includes('<strong>');
+    return this.isSelectionTags(['strong', 'b']);
   };
 
   getIsItalic = (): boolean => {
-    return this.menuSelectionService.currentHtmlItem?.includes('<em>');
+    return this.isSelectionTags(['em']);
+  };
+
+  isSelectionTags(selTags: string[]): boolean {
+    const sel = this.menuSelectionService.currentSelection;
+    if (!sel) return false;
+    const tempDiv = this.getSelectedHTML();
+    if (tempDiv.innerHTML === '') return false;
+
+    const tagsSet = new Set<string>();
+    for (const node of tempDiv.childNodes as any) {
+      let tags = [node.nodeName.toLowerCase()];
+      tagsSet.add(node.nodeName.toLowerCase());
+
+      // This covers selection that are inside bolded characters
+      while (tags.includes('#text')) {
+        const startTag = sel.anchorNode.parentNode.nodeName.toLowerCase();
+        const endTag = sel.focusNode.parentNode.nodeName.toLowerCase();
+        const startTagParent = sel.anchorNode.parentNode.parentElement.nodeName.toLowerCase();
+        const endTagParent = sel.focusNode.parentNode.parentElement.nodeName.toLowerCase();
+        tags = [startTag, endTag];
+        tagsSet.add(startTag);
+        tagsSet.add(endTag);
+        tagsSet.add(startTagParent);
+        tagsSet.add(endTagParent);
+      }
+    }
+
+    return selTags.some((x) => tagsSet.has(x));
+  }
+
+  getSelectedHTML = (): HTMLDivElement => {
+    const selection = this.menuSelectionService.currentSelection;
+    if (!selection) return;
+    const container = document.createElement('div');
+    for (let i = 0, len = selection.rangeCount; i < len; ++i) {
+      container.appendChild(selection.getRangeAt(i).cloneContents());
+    }
+    return container;
   };
 }
