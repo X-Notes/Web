@@ -44,12 +44,6 @@ export class HtmlDotListComponent
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;

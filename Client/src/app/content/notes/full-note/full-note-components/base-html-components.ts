@@ -1,10 +1,19 @@
-import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BaseEditorElementComponent {
+  @Input()
+  isStartSelecting = false;
+
+  @Input()
+  isReadOnlyMode = false;
+
+  @Input()
+  isSelected = false;
+
   @Output()
   someChangesEvent = new EventEmitter();
 

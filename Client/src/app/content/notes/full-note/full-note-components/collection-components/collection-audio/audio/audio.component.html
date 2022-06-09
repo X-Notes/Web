@@ -2,8 +2,9 @@
   class="audio-container"
   (click)="clickEvent.emit(audio.fileId)"
   [ngClass]="{'is-selected' : isClicked}"
+  appTheme
 >
-  <div class="preview" appTheme>
+  <div class="preview">
     <img *ngIf="audio.pathToImage" [src]="audio.pathToImage" />
     <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
     <div class="controls">
@@ -26,7 +27,7 @@
       ></app-button-collection>
     </div>
   </div>
-  <div class="audio-body" appTheme>
+  <div class="audio-body">
     <div class="audio-info">
       <div class="audio-name">
         <p>{{ audio.name | fileName }}</p>

@@ -44,12 +44,6 @@ export class HtmlCheckListComponent
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;

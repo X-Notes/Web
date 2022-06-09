@@ -46,12 +46,6 @@ export class HtmlHeadingsComponent
   onFocus = new EventEmitter<HtmlHeadingsComponent>();
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;

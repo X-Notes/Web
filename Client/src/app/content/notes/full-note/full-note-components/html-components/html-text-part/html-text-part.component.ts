@@ -63,12 +63,6 @@ export class HtmlTextPartComponent
   @ViewChild('uploadFile') uploadFile: ElementRef;
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;

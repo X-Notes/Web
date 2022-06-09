@@ -57,12 +57,6 @@ export class HtmlNumberListComponent
   prevType: ContentTypeENUM;
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;

@@ -1,14 +1,15 @@
-<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="audio-content">
+<div
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseLeave($event)"
+  class="audio-content"
+  [ngStyle]="{
+    backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+  }"
+>
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
   ></app-drag-drop-handler-container>
-  <div
-    [appDrop]="'drop-active'"
-    (fileDropped)="uploadAudios($event)"
-    class="playlist"
-    appTheme
-    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
-  >
+  <div [appDrop]="'drop-active'" (fileDropped)="uploadAudios($event)" class="playlist" appTheme>
     <app-title-collection
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
@@ -19,7 +20,7 @@
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-audio
-        *ngFor="let item of content.orderedItems;"
+        *ngFor="let item of content.orderedItems"
         [audio]="item"
         [noteId]="noteId"
         [isReadOnlyMode]="isReadOnlyMode"
