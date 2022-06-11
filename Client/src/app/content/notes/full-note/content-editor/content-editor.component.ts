@@ -7,7 +7,6 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -30,7 +29,6 @@ import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
@@ -101,7 +99,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   constructor(
     public selectionService: SelectionService,
-    @Optional() public sliderService: FullNoteSliderService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,

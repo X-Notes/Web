@@ -12,6 +12,7 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
 import { Store } from '@ngxs/store';
 import { UpdatePositionsRelatedNotes } from '../../state/notes-actions';
+import { RelatedNotesService } from './related-notes.service';
 
 @Injectable()
 export class SidebarNotesService extends MurriEntityService<RelatedNote> implements OnDestroy {
@@ -28,6 +29,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
     public dialogsManageService: DialogsManageService,
     private signalR: SignalRService,
     private store: Store,
+    private relatedNotesService: RelatedNotesService,
   ) {
     super(murriService);
 
@@ -71,8 +73,8 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
   async initializeEntities(noteId: string, isCanEdit: boolean) {
     this.noteId = noteId;
     this.isCanEdit = isCanEdit;
-    const notes = await this.apiRelated.getRelatedNotes(noteId).toPromise();
-    this.entities = notes.sort((a, b) => a.order - b.order);
+    await this.relatedNotesService.loadRelatedNotes(noteId);
+    this.entities = this.relatedNotesService.notes;
     super.initState();
   }
 
@@ -86,11 +88,10 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
     });
   }
 
-  async deleteSmallNote(item: string, id: string) {
-    const ids = this.entities.filter((x) => x.id !== item).map((x) => x.id);
-    const resp = await this.apiRelated.updateRelatedNotes(id, ids).toPromise();
-    if (resp.success) {
-      this.handleUpdates(resp.data);
+  async deleteSmallNote(relatedNoteId: string, noteId: string) {
+    const result = await this.relatedNotesService.deleteRelatedNote(relatedNoteId, noteId);
+    if (result.success) {
+      this.handleUpdates(result.data);
     }
   }
 
@@ -111,6 +112,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
   }
 
   async changeState(note: RelatedNote) {
-    await this.apiRelated.updateState(note.id, note.reletionId, note.isOpened).toPromise();
+    await this.relatedNotesService.changeOpenCloseState(note);
+    requestAnimationFrame(() => this.murriService.grid.refreshItems().layout());
   }
 }

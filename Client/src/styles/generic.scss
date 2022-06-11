@@ -1,5 +1,11 @@
 @import 'variables';
 
+.no-border {
+  mat-dialog-container{
+    border-radius: 0 !important;
+  }
+}
+
 .custom-dialog-class-dark {
   mat-dialog-container {
     padding: 0;

@@ -4,21 +4,14 @@
   class="content-generic-project full-content"
   [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
-  <div
-    *ngIf="(note$ | async) && loaded"
-    class="wrapper-note"
-    #fullWrap
-    (panstart)="sliderService.panStart()"
-    (panmove)="panMove($event)"
-    (panend)="panEnd($event)"
-  >
+  <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
       [note]="note$ | async"
       [isReadOnlyMode]="(canEdit$ | async) === false"
       [title$]="noteTitle$"
       [contents]="contents"
     ></app-content-editor>
-    <app-right-section-content [note]="note$ | async" [wrap]="wrap"></app-right-section-content>
+    <app-right-section-content [note]="note$ | async"></app-right-section-content>
   </div>
   <div *ngIf="(note$ | async) === null && loaded" class="wrapper">
     <app-no-results-illustration

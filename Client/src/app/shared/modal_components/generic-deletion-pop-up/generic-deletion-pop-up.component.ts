@@ -8,7 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class GenericDeletionPopUpComponent implements OnInit {
   constructor(
-    private dialogRef: MatDialogRef<GenericDeletionPopUpComponent>,
+    public dialogRef: MatDialogRef<GenericDeletionPopUpComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { message: string; additionalMessage: string },
   ) {}
 

@@ -1,5 +1,6 @@
 <app-dialog-generic-header
   [message]="'modal.reviewModal.review' | translate"
+  (clickEvent)="dialogRef.close()"
 ></app-dialog-generic-header>
 <ngx-doc-viewer
   class="viewer"

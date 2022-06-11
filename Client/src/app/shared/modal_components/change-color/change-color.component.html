@@ -1,5 +1,6 @@
 <app-dialog-generic-header
   [message]="'modal.ColorModal.Colors' | translate"
+  (clickEvent)="dialogRef.close()"
 ></app-dialog-generic-header>
 <div class="preview-container">
   <div

@@ -22,7 +22,7 @@ export class ContactUsComponent {
 
   constructor(
     private readonly snackService: SnackbarService,
-    private readonly dialogRef: MatDialogRef<ContactUsComponent>,
+    public readonly dialogRef: MatDialogRef<ContactUsComponent>,
     private readonly contactUsService: ApiContactUsService,
     private readonly translateService: TranslateService,
   ) {}

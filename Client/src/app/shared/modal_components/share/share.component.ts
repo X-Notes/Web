@@ -37,7 +37,7 @@ import {
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
 
@@ -121,6 +121,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       currentWindowType: EntityPopupType;
       ents: SmallFolder[] | SmallNote[];
     },
+    public dialogRef: MatDialogRef<ShareComponent>,
   ) {}
 
   get folderDropdownActive(): boolean {

@@ -6,7 +6,6 @@
   [appCopy]="refElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
-  [ngStyle]="{ width: sliderService ? sliderService?.mainWidth : '' }"
   class="main-content"
 >
   <div class="top-section">
@@ -217,7 +216,9 @@
   </div>
 </div>
 <app-mobile-transform-menu
-  *ngIf="(pS.isTranformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus"
+  *ngIf="
+    (pS.isTranformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus
+  "
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
