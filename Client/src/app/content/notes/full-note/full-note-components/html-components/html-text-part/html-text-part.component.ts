@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -16,13 +17,11 @@ import {
   HeadingTypeENUM,
   NoteTextTypeENUM,
 } from 'src/app/content/notes/models/editor-models/base-text';
-import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
-import { TextService } from '../html-business-logic/text.service';
 import { BaseTextElementComponent } from '../html-base.component';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -33,7 +32,6 @@ import { ClickableContentService } from '../../../content-editor-services/clicka
   selector: 'app-html-text-part',
   templateUrl: './html-text-part.component.html',
   styleUrls: ['./html-text-part.component.scss'],
-  providers: [TextService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent
@@ -45,15 +43,6 @@ export class HtmlTextPartComponent
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
-
-  @Output()
-  enterEvent = new EventEmitter<EnterEvent>();
-
-  @Output()
-  deleteThis = new EventEmitter<string>();
-
-  @Output()
-  concatThisWithPrev = new EventEmitter<string>();
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
@@ -78,15 +67,15 @@ export class HtmlTextPartComponent
   isMulptiply = false;
 
   constructor(
-    public textService: TextService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
     public pS: PersonalizationService,
     selectionService: SelectionService,
     clickableService: ClickableContentService,
+    renderer: Renderer2,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
   }
 
   get isLink() {
@@ -107,13 +96,7 @@ export class HtmlTextPartComponent
   deleteDown() {}
 
   ngAfterViewInit(): void {
-    this.textService.setHandlers(
-      this.content,
-      this.contentHtml,
-      this.enterEvent,
-      this.concatThisWithPrev,
-      this.deleteThis,
-    );
+    this.setHandlers();
   }
 
   getHost() {
@@ -121,7 +104,7 @@ export class HtmlTextPartComponent
   }
 
   ngOnDestroy(): void {
-    this.textService.destroysListeners();
+    this.destroysListeners();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -172,5 +155,12 @@ export class HtmlTextPartComponent
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
     const files = event.target.files as File[];
     this.transformToFile.emit({ contentId: this.content.id, typeFile: type, files: [...files] });
+  }
+
+  enter($event: any) {
+    $event.preventDefault();
+    const breakModel = this.apiBrowserTextService.pressEnterHandler(this.getEditableNative());
+    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, this.content.id);
+    this.enterEvent.emit(event);
   }
 }
