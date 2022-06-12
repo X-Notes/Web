@@ -67,6 +67,11 @@ export class InteractionInnerNoteComponent {
     this.dialogsManageService.openRelatedNotes(noteId, isCanEdit);
   }
 
+  openHistoriesPopup() {
+    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+    this.dialogsManageService.openNoteHistoriesMobile(noteId);
+  }
+
   disableTooltpUser(): boolean {
     if (this.pService.checkWidth()) {
       return true;

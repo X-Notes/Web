@@ -81,6 +81,7 @@ import { EmptySearchPlaceholderComponent } from './modal_components/general-comp
 import { RelatedNotesPopUpComponent } from './modal_components/related-notes-pop-up/related-notes-pop-up.component';
 import { RelatedNoteComponent } from '../content/notes/full-note/related-note/related-note.component';
 import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-up/note-history-pop-up.component';
+import { HistoryRecordComponent } from '../content/notes/full-note/full-note-components/history-record/history-record.component';
 
 @NgModule({
   declarations: [
@@ -145,6 +146,7 @@ import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-u
     RelatedNotesPopUpComponent,
     RelatedNoteComponent,
     NoteHistoryPopUpComponent,
+    HistoryRecordComponent,
   ],
   imports: [
     CommonModule,
@@ -230,6 +232,7 @@ import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-u
     FileNamePipe,
     GenericDeleteEntityMessageComponent,
     RelatedNoteComponent,
+    HistoryRecordComponent,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

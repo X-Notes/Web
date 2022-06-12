@@ -415,7 +415,10 @@ export class MenuButtonsService {
   getHistoryItem(): MenuItem {
     return {
       icon: 'history',
-      operation: () => this.dialogsService.openNoteHistoriesMobile(),
+      operation: () => {
+        const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+        this.dialogsService.openNoteHistoriesMobile(noteId);
+      },
       isVisible: this.pService.isMobileHistoryActive$,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,

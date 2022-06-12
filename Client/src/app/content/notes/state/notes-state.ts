@@ -48,6 +48,7 @@ import {
   PatchUpdatesUINotes,
   UpdatePositionsRelatedNotes,
   SetFolderNotes,
+  LoadNoteHistories,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -68,6 +69,7 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
+import { NoteHistory } from '../full-note/models/history/note-history.model';
 
 interface FullNoteState {
   note: FullNote;
@@ -78,6 +80,7 @@ interface FullNoteState {
 interface NoteState {
   notes: Notes[];
   fullNoteState: FullNoteState;
+  fullNoteHistories: NoteHistory[];
   snapshotState: NoteSnapshotState;
   selectedIds: string[];
   updateNoteEvent: UpdateNoteUI[];
@@ -95,6 +98,7 @@ interface NoteState {
   defaults: {
     notes: [],
     fullNoteState: null,
+    fullNoteHistories: null,
     snapshotState: null,
     selectedIds: [],
     updateNoteEvent: [],
@@ -268,6 +272,11 @@ export class NoteStore {
   @Selector()
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
+  }
+
+  @Selector()
+  static histories(state: NoteState): NoteHistory[] {
+    return state.fullNoteHistories;
   }
 
   @Selector()
@@ -978,6 +987,19 @@ export class NoteStore {
         (x) => x.isLocked && !x.isLockedNow && x.unlockedTime,
       );
       notesToUpdate.forEach((note) => this.updaterEntitiesService.lockNoteAfter(note.id));
+    }
+  }
+
+  @Action(LoadNoteHistories)
+  async loadNoteHistories(
+    { patchState }: StateContext<NoteState>,
+    { noteId }: LoadNoteHistories,
+  ) {
+    if (!noteId) return;
+    patchState({ fullNoteHistories: [] });
+    const resp = await this.historyApi.getHistory(noteId).toPromise();
+    if (resp.success) {
+      patchState({ fullNoteHistories: resp.data });
     }
   }
 

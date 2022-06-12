@@ -171,8 +171,6 @@ export class PersonalizationService {
 
   users = true;
 
-  toggleHistory = false;
-
   isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
@@ -289,10 +287,6 @@ export class PersonalizationService {
 
   cancelSideBar() {
     this.stateSidebar = false;
-  }
-
-  async toggleHistoryMethod() {
-    this.toggleHistory = !this.toggleHistory;
   }
 
   isMobile(): boolean {

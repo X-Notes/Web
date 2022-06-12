@@ -47,6 +47,22 @@ export class DialogsManageService {
     return this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
 
+  openNoteHistoriesMobile(noteId: string) {
+    const isMobile = this.pS.isMobile();
+    const panelClass = isMobile
+      ? [this.getDefaultPanelClass(), 'no-border']
+      : this.getDefaultPanelClass();
+    const config: MatDialogConfig = {
+      height: isMobile ? '100vh' : '670px',
+      width: isMobile ? '100vw' : '750px',
+      maxWidth: '100vw',
+      autoFocus: false,
+      panelClass,
+      data: { noteId },
+    };
+    return this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
+  }
+
   openAddNotesToFolder() {
     const config: MatDialogConfig = {
       maxHeight: '90vh',
@@ -67,16 +83,6 @@ export class DialogsManageService {
       data: { canEdit, noteId },
     };
     return this.dialogService.openDialog(RelatedNotesPopUpComponent, config);
-  }
-
-  openNoteHistoriesMobile() {
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass: this.getDefaultPanelClass(),
-    };
-    return this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
   }
 
   openChangeLabels() {

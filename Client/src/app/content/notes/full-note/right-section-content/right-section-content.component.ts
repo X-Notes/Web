@@ -18,8 +18,6 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../../models/small-note.model';
 import { NoteStore } from '../../state/notes-state';
-import { NoteHistory } from '../models/history/note-history.model';
-import { ApiNoteHistoryService } from '../services/api-note-history.service';
 import { SidebarNotesService } from '../services/sidebar-notes.service';
 
 @Component({
@@ -41,14 +39,11 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   @ViewChildren('relatedItem', { read: ElementRef }) refSideBarElements: QueryList<ElementRef>;
 
-  histories: NoteHistory[];
-
   destroy = new Subject<void>();
 
   constructor(
     public pService: PersonalizationService,
     public sideBarService: SidebarNotesService,
-    private apiHistory: ApiNoteHistoryService,
     private store: Store,
   ) {}
 
@@ -75,10 +70,6 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
   async loadData(noteId: string): Promise<void> {
     const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
     await this.sideBarService.initializeEntities(noteId, isCanEdit);
-    const result = await this.apiHistory.getHistory(noteId).toPromise();
-    if (result.success) {
-      this.histories = result.data;
-    }
   }
 
   ngAfterViewInit(): void {
