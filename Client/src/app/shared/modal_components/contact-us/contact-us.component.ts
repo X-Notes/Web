@@ -46,7 +46,7 @@ export class ContactUsComponent {
         this.dialogRef.close();
         this.successSnackbar();
       } catch (e) {
-        const close = this.translateService.instant('modal.contactUs.close');
+        const close = this.translateService.instant('modal.close');
         this.snackService.openSnackBar(e, close);
       }
       this.loading = false;
@@ -57,13 +57,13 @@ export class ContactUsComponent {
 
   private successSnackbar() {
     const message = this.translateService.instant('modal.contactUs.success');
-    const close = this.translateService.instant('modal.contactUs.close');
+    const close = this.translateService.instant('modal.close');
     this.snackService.openSnackBar(message, close);
   }
 
   private incorrectSnackbar() {
     const message = this.translateService.instant('modal.contactUs.incorrect');
-    const close = this.translateService.instant('modal.contactUs.close');
+    const close = this.translateService.instant('modal.close');
     this.snackService.openSnackBar(message, close);
   }
 }

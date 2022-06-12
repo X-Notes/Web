@@ -415,9 +415,7 @@ export class MenuButtonsService {
   getHistoryItem(): MenuItem {
     return {
       icon: 'history',
-      operation: () => {
-        throw new Error('Not implimented');
-      },
+      operation: () => this.dialogsService.openNoteHistoriesMobile(),
       isVisible: this.pService.isMobileHistoryActive$,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
