@@ -30,6 +30,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
 
+  @Select(NoteStore.canView)
+  public canView$: Observable<boolean>;
+
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
 
@@ -118,7 +121,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
     await this.store.dispatch(actions).toPromise();
     const note = this.store.selectSnapshot(NoteStore.oneFull);
-    await this.setSideBarNotes(note.noteTypeId);
+    if (note?.noteTypeId) {
+      await this.setSideBarNotes(note.noteTypeId);
+    }
   }
 
   setSideBarNotes(noteType: NoteTypeENUM) {

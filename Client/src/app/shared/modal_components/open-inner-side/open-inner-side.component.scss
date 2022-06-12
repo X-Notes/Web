@@ -3,12 +3,13 @@
 :host {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  width: 750px;
+  height: 100%;
 
   .dialog-content {
     display: flex;
@@ -21,7 +22,7 @@
     .tab-content {
       display: flex;
       flex-direction: column;
-      height: 550px;
+      height: 100%;
       width: 100%;
 
       .fixed-filters {
@@ -84,18 +85,6 @@
 .dark {
   .fixed-filters {
     background-color: rgba(38, 40, 45, 0.5);
-  }
-}
-
-@media (max-width: 860px) {
-  .wrapper {
-    width: 90vw;
-
-    .dialog-content {
-      .tab-content {
-        height: 60vh;
-      }
-    }
   }
 }
 

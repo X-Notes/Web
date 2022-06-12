@@ -17,6 +17,10 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     return this.entities.length > 0;
   }
 
+  get getFirstInitedMurri(): boolean {
+    return this.firstInitedMurri;
+  }
+
   noExistIsState(id: string): boolean {
     return !this.state[id];
   }

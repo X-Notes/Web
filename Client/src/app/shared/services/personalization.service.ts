@@ -295,6 +295,10 @@ export class PersonalizationService {
     this.toggleHistory = !this.toggleHistory;
   }
 
+  isMobile(): boolean {
+    return window.innerWidth < this.startMobileWidth;
+  }
+
   widthMoreThan1024 = () => {
     return window.innerWidth > 1024;
   };

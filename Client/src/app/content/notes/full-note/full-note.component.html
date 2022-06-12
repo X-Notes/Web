@@ -11,9 +11,12 @@
       [title$]="noteTitle$"
       [contents]="contents"
     ></app-content-editor>
-    <app-right-section-content [note]="note$ | async"></app-right-section-content>
+    <app-right-section-content
+      [note$]="note$"
+      [noteId]="(note$ | async).id"
+    ></app-right-section-content>
   </div>
-  <div *ngIf="(note$ | async) === null && loaded" class="wrapper">
+  <div *ngIf="(canView$ | async) === false && loaded" class="wrapper">
     <app-no-results-illustration
       [isShow]="true"
       [message]="'noResult.noAccessViewNote' | translate"

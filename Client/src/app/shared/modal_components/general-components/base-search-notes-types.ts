@@ -10,6 +10,8 @@ export class BaseSearchNotesTypes {
 
   searchStr = '';
 
+  loaded = false;
+
   notes: SmallNote[] = [];
 
   viewNotes: SmallNote[] = [];
@@ -25,7 +27,7 @@ export class BaseSearchNotesTypes {
   }
 
   get isNotFound(): boolean {
-    if (this.selectValue !== this.selectTypes[0] && this.viewNotes.length === 0) return true;
+    if (this.loaded && this.viewNotes.length === 0) return true;
     return this.isSearchActive && this.notes?.length === 0;
   }
 

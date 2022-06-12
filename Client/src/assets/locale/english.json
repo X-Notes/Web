@@ -108,6 +108,7 @@
   },
   "modal": {
     "notFound": "Not found",
+    "close": "Close",
     "labelModal": {
       "Labels": "Labels",
       "search": "Label name..."
@@ -125,8 +126,7 @@
       "required": "Field is required",
       "emailValidation": "Email is invalid",
       "success": "Your message has been successfully sent",
-      "incorrect": "Incorrect input",
-      "close": "Close"
+      "incorrect": "Incorrect input"
     },
     "shareModal": {
       "Share": "Share",
@@ -144,6 +144,10 @@
       "noPeopleNote": "The people who have access to the note will be displayed here",
       "noPeopleFolder": "The people who have access to the folder will be displayed here",
       "clearAll": "Clear all"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Related notes",
+      "new": "Add new"
     },
     "folderManage": {
       "notes": "Add notes to folder"
@@ -167,8 +171,7 @@
       "revokeMessage": "All users who can view or edit this note will lose access to it"
     },
     "reviewModal": {
-      "review": "Review document",
-      "close": "Close"
+      "review": "Review document"
     },
     "deletionModal": {
       "title": "Deletion",

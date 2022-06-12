@@ -39,8 +39,6 @@ export class AddNotesInFolderComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  loaded = false;
-
   destroy = new Subject<void>();
 
   fontSize = FontSizeENUM;

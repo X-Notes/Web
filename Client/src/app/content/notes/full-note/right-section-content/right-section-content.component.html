@@ -1,5 +1,5 @@
 <div appTheme class="secondary-content">
-  <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(note.id)">
+  <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(noteId)">
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
@@ -11,7 +11,7 @@
       <div class="content-inner-history">
         <app-history-record
           *ngFor="let item of histories"
-          [noteId]="note.id"
+          [noteId]="noteId"
           [history]="item"
         ></app-history-record></div
     ></ng-scrollbar>
@@ -23,7 +23,7 @@
       typeClass="type-notification"
     ></app-no-results-illustration>
   </div>
-  <ng-container *ngIf="sideBarService.entities?.length > 0">
+  <ng-container>
     <ng-scrollbar class="scroll-helper small-notes" visibility="hover" appearance="compact">
       <div class="content-inner-small">
         <div
@@ -40,7 +40,7 @@
             <app-related-note
               [note]="item"
               [isCanEdit]="canEdit$ | async"
-              (deleteNote)="sideBarService.deleteSmallNote($event, note.id)"
+              (deleteNote)="sideBarService.deleteSmallNote($event, noteId)"
               (changeState)="sideBarService.changeState($event)"
             ></app-related-note>
           </div>

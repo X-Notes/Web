@@ -9,7 +9,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   deleteSmallNote,
   PersonalizationService,
@@ -29,7 +30,9 @@ import { SidebarNotesService } from '../services/sidebar-notes.service';
   providers: [SidebarNotesService],
 })
 export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() note: SmallNote;
+  @Input() note$: Observable<SmallNote>;
+
+  @Input() noteId: string;
 
   @Input() wrap: ElementRef;
 
@@ -40,6 +43,8 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   histories: NoteHistory[];
 
+  destroy = new Subject<void>();
+
   constructor(
     public pService: PersonalizationService,
     public sideBarService: SidebarNotesService,
@@ -47,18 +52,36 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     private store: Store,
   ) {}
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   async ngOnInit() {
+    this.note$.pipe(takeUntil(this.destroy)).subscribe(async (note) => {
+      if (note) {
+        if (this.sideBarService.getFirstInitedMurri) {
+          await this.sideBarService.murriService.destroyGridAsync();
+          await this.loadData(note.id);
+          await this.sideBarService.murriService.initSidebarNotesAsync(note.id);
+          await this.sideBarService.setInitMurriFlagShowLayout();
+        } else {
+          await this.loadData(note.id);
+        }
+      }
+    });
+  }
+
+  async loadData(noteId: string): Promise<void> {
     const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
-    await this.sideBarService.initializeEntities(this.note.id, isCanEdit);
-    const result = await this.apiHistory.getHistory(this.note.id).toPromise();
+    await this.sideBarService.initializeEntities(noteId, isCanEdit);
+    const result = await this.apiHistory.getHistory(noteId).toPromise();
     if (result.success) {
       this.histories = result.data;
     }
   }
 
   ngAfterViewInit(): void {
-    this.sideBarService.murriInitialise(this.refSideBarElements, this.note.id);
+    this.sideBarService.murriInitialise(this.refSideBarElements, this.noteId);
   }
 }
