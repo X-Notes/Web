@@ -260,6 +260,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   pasteCommandHandler(e) {
     this.apiBrowserFunctions.pasteCommandHandler(e);
+    this.noteTitleChanged.next(this.noteTitleEl.nativeElement.innerText);
   }
 
   getElementById(id: string): ParentInteraction {

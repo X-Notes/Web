@@ -10,6 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { BaseText, NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
@@ -17,17 +18,14 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { SelectionService } from '../../../content-editor-services/selection.service';
-import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
 import { BaseTextElementComponent } from '../html-base.component';
-import { NumberListService } from '../html-business-logic/numberList.service';
 
 @Component({
   selector: 'app-html-number-list',
   templateUrl: './html-number-list.component.html',
   styleUrls: ['./html-number-list.component.scss'],
-  providers: [NumberListService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlNumberListComponent
@@ -36,15 +34,6 @@ export class HtmlNumberListComponent
 {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
-
-  @Output()
-  enterEvent = new EventEmitter<EnterEvent>();
-
-  @Output()
-  deleteThis = new EventEmitter<string>();
-
-  @Output()
-  concatThisWithPrev = new EventEmitter<string>();
 
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -62,14 +51,14 @@ export class HtmlNumberListComponent
   themeE = ThemeENUM;
 
   constructor(
-    public numberService: NumberListService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
     selectionService: SelectionService,
     clickableService: ClickableContentService,
+    renderer: Renderer2,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
   }
 
   getHost() {
@@ -81,24 +70,17 @@ export class HtmlNumberListComponent
   }
 
   ngAfterViewInit(): void {
-    this.numberService.setHandlers(
-      this.content,
-      this.contentHtml,
-      this.enterEvent,
-      this.concatThisWithPrev,
-      this.deleteThis,
-    );
+    this.setHandlers();
   }
 
   ngOnDestroy(): void {
-    this.numberService.destroysListeners();
+    this.destroysListeners();
     this.destroy.next();
     this.destroy.complete();
   }
 
   ngOnInit(): void {
     this.initBaseHTML();
-    this.numberService.transformTo = this.transformTo;
   }
 
   setNumber() {
@@ -119,4 +101,23 @@ export class HtmlNumberListComponent
 
   // eslint-disable-next-line class-methods-use-this
   deleteDown() {}
+
+  enter($event: any) {
+    $event.preventDefault();
+    if (this.isContentEmpty()) {
+      this.transformTo.emit({
+        id: this.content.id,
+        textType: NoteTextTypeENUM.Default,
+        setFocusToEnd: true,
+      });
+    } else {
+      const breakModel = this.apiBrowserTextService.pressEnterHandler(this.getEditableNative());
+      const event = super.eventEventFactory(
+        breakModel,
+        NoteTextTypeENUM.Numberlist,
+        this.content.id,
+      );
+      this.enterEvent.emit(event);
+    }
+  }
 }

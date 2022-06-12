@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BaseEditorElementComponent {
+export abstract class BaseEditorElementComponent {
   @Input()
   isStartSelecting = false;
 
