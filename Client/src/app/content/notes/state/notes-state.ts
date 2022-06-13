@@ -3,7 +3,7 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action } from '@ngxs/store';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
@@ -121,6 +121,7 @@ export class NoteStore {
     private router: Router,
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
+    private zone: NgZone
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -405,7 +406,7 @@ export class NoteStore {
     const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
     const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
     await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-    this.router.navigate([`notes/${note.id}`]);
+    this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
   }
 
   @Action(AddNotes)
