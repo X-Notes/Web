@@ -6,7 +6,8 @@
     <div class="middle-section"></div>
     <div class="right-section">
       <div class="sign-up-button" (click)="login(authType.Google)">
-        <span>Log in with google</span>
+        <span *ngIf="!authService.isLoading">Log in with google</span>
+        <app-spinner [size]="'15'" *ngIf="isLoaded && authService.isLoading"></app-spinner>
       </div>
     </div>
   </header>
@@ -21,7 +22,8 @@
           </div>
           <div class="button-container">
             <div class="get-started-button" (click)="login(authType.Google)">
-              <span>Get started</span>
+              <span *ngIf="!authService.isLoading">Get started</span>
+              <app-spinner [size]="'15'" *ngIf="isLoaded && authService.isLoading"></app-spinner>
             </div>
           </div>
         </div>

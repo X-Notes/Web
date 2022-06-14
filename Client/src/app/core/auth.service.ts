@@ -9,6 +9,8 @@ import { UserAPIService } from './user-api.service';
 
 @Injectable()
 export class AuthService {
+  isLoading = false;
+
   constructor(
     private readonly afAuth: AngularFireAuth,
     private readonly router: Router,
@@ -59,8 +61,15 @@ export class AuthService {
   }
 
   async redirectOnSuccessAuth() {
-    const result = await this.afAuth.getRedirectResult();
-    this.handlerAuth(result.user);
+    try {
+      this.isLoading = true;
+      const result = await this.afAuth.getRedirectResult();
+      await this.handlerAuth(result.user);
+    } catch (e) {
+      console.log('e: ', e);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   async handlerAuth(user: firebase.User) {

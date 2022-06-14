@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { TypeAuthEnum } from '../models/type.auth.enum';
@@ -10,16 +10,23 @@ import { UserStore } from '../../core/stateUser/user-state';
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent implements OnInit, AfterViewInit {
   authType = TypeAuthEnum;
 
-  constructor(private authService: AuthService, private router: Router, private store: Store) {}
+  isLoaded = false;
+
+  constructor(public authService: AuthService, private router: Router, private store: Store) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => (this.isLoaded = true), 150);
+  }
 
   ngOnInit(): void {
     this.authService.redirectOnSuccessAuth(); // after auth redirection need call this method in order to login to app
   }
 
   async login(typeAuth: TypeAuthEnum) {
+    if (this.authService.isLoading) return;
     const user = this.store.selectSnapshot(UserStore.getUser);
     if (!Object.keys(user).length) {
       // don`t user !user because object user always exist like object.
