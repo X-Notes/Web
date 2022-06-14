@@ -28,6 +28,8 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
 
   userName: string;
 
+  spinnerActive = false;
+
   constructor(
     private store: Store,
     private snackbarTranslateHelper: SnackBarTranlateHelperService,
@@ -57,8 +59,8 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
     this.nameChanged.next(text);
   }
 
-  uploadImageUserPhoto(event) {
-    const file = event.target.files[0] as File;
+  async uploadImageUserPhoto(event, files: File[]) {
+    const file = files[0];
     if (file) {
       if (file.size > maxProfilePhotoSize) {
         const language = this.store.selectSnapshot(UserStore.getUserLanguage);
@@ -70,11 +72,15 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
       } else {
         const formDate = new FormData();
         formDate.append('photo', file);
-        this.store.dispatch(new UpdateUserPhoto(formDate));
+        this.spinnerActive = true;
+        await this.store.dispatch(new UpdateUserPhoto(formDate)).toPromise();
+        this.spinnerActive = false;
       }
     }
     // eslint-disable-next-line no-param-reassign
-    event.target.value = null;
+    if (event?.target) {
+      event.target.value = null;
+    }
   }
 
   changeSource() {
