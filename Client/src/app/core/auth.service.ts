@@ -20,11 +20,20 @@ export class AuthService {
     });
   }
 
+  private get isMozzila(): boolean {
+    return navigator?.userAgent?.includes('Firefox');
+  }
+
   async authGoogle() {
     try {
-      await this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      if (this.isMozzila) {
+        const result = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        this.handlerAuth(result.user);
+      } else {
+        this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      }
     } catch (e) {
-      window.alert(e);
+      console.log('e: ', e);
     }
   }
 
@@ -50,7 +59,11 @@ export class AuthService {
   }
 
   async redirectOnSuccessAuth() {
-    const { user } = await this.afAuth.getRedirectResult();
+    const result = await this.afAuth.getRedirectResult();
+    this.handlerAuth(result.user);
+  }
+
+  async handlerAuth(user: firebase.User) {
     if (user) {
       const token = await this.getToken();
       const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
