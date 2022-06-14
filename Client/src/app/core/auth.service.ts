@@ -22,15 +22,17 @@ export class AuthService {
     });
   }
 
-  private get isMozzila(): boolean {
+  private get isFirefox(): boolean {
     return navigator?.userAgent?.includes('Firefox');
   }
 
   async authGoogle() {
     try {
-      if (this.isMozzila) {
+      if (this.isFirefox) {
+        this.isLoading = true;
         const result = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
         this.handlerAuth(result.user);
+        this.isLoading = false;
       } else {
         this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       }
