@@ -8,6 +8,7 @@ using Common.DTO.Notifications;
 using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
+using BI.Mapping;
 
 namespace WriteAPI.Controllers.UserContollers
 {
@@ -17,12 +18,13 @@ namespace WriteAPI.Controllers.UserContollers
     public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
     {
         private readonly NotificationRepository notificationRepository;
-        private readonly UserRepository userRepository;
+        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
+
         public NotificationController(NotificationRepository notificationRepository,
-                                      UserRepository userRepository)
+                                      NoteFolderLabelMapper noteFolderLabelMapper)
         {
             this.notificationRepository = notificationRepository;
-            this.userRepository = userRepository;
+            this.noteFolderLabelMapper = noteFolderLabelMapper;
         }
 
 
@@ -30,7 +32,7 @@ namespace WriteAPI.Controllers.UserContollers
         public async Task<IEnumerable<NotificationDTO>> GetNotifications()
         {
             var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
-            return notifs.Select(t => new NotificationDTO(t));
+            return notifs.Select(t => new NotificationDTO(t, noteFolderLabelMapper.BuildFilePath));
         }
 
         [HttpGet("read/all")]

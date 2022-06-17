@@ -22,7 +22,8 @@ namespace WriteAPI.ConstraintsUploadFiles
         public static List<string> Audios { get; set; } = new List<string>() {
             "audio/mpeg",  // .mp3
             "audio/wav",   // .wav
-            "audio/ogg"    // .ogg
+            "audio/ogg",   // .ogg
+            "video/ogg"    // .ogg firefox
         };
 
 

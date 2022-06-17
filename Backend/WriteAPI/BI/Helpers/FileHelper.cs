@@ -18,6 +18,7 @@ namespace BI.Helpers
             "audio/mpeg" => ".mp3",
             "audio/wav" => ".wav",
             "audio/ogg" => ".ogg",
+            "video/ogg" => ".ogg",
             "application/pdf" => ".pdf",
             "application/msword" => ".doc",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document" => ".docx",
