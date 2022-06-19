@@ -9,6 +9,8 @@ import { UserAPIService } from './user-api.service';
 
 @Injectable()
 export class AuthService {
+  isLoading = false;
+
   constructor(
     private readonly afAuth: AngularFireAuth,
     private readonly router: Router,
@@ -20,11 +22,22 @@ export class AuthService {
     });
   }
 
+  private get isFirefox(): boolean {
+    return navigator?.userAgent?.includes('Firefox');
+  }
+
   async authGoogle() {
     try {
-      await this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      if (this.isFirefox) {
+        this.isLoading = true;
+        const result = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        this.handlerAuth(result.user);
+        this.isLoading = false;
+      } else {
+        this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      }
     } catch (e) {
-      window.alert(e);
+      console.log('e: ', e);
     }
   }
 
@@ -50,7 +63,18 @@ export class AuthService {
   }
 
   async redirectOnSuccessAuth() {
-    const { user } = await this.afAuth.getRedirectResult();
+    try {
+      this.isLoading = true;
+      const result = await this.afAuth.getRedirectResult();
+      await this.handlerAuth(result.user);
+    } catch (e) {
+      console.log('e: ', e);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async handlerAuth(user: firebase.User) {
     if (user) {
       const token = await this.getToken();
       const isValidToken = await this.apiAuth.verifyToken(token).toPromise();

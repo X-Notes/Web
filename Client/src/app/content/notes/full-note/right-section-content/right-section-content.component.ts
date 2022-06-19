@@ -2,16 +2,15 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
   QueryList,
-  Renderer2,
   ViewChildren,
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   deleteSmallNote,
   PersonalizationService,
@@ -19,9 +18,6 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../../models/small-note.model';
 import { NoteStore } from '../../state/notes-state';
-import { NoteHistory } from '../models/history/note-history.model';
-import { ApiNoteHistoryService } from '../services/api-note-history.service';
-import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { SidebarNotesService } from '../services/sidebar-notes.service';
 
 @Component({
@@ -32,7 +28,9 @@ import { SidebarNotesService } from '../services/sidebar-notes.service';
   providers: [SidebarNotesService],
 })
 export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() note: SmallNote;
+  @Input() note$: Observable<SmallNote>;
+
+  @Input() noteId: string;
 
   @Input() wrap: ElementRef;
 
@@ -41,45 +39,40 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   @ViewChildren('relatedItem', { read: ElementRef }) refSideBarElements: QueryList<ElementRef>;
 
-  histories: NoteHistory[];
+  destroy = new Subject<void>();
 
   constructor(
-    public sliderService: FullNoteSliderService,
     public pService: PersonalizationService,
     public sideBarService: SidebarNotesService,
-    private apiHistory: ApiNoteHistoryService,
     private store: Store,
-    private rend: Renderer2,
   ) {}
 
-  @HostListener('window:resize', ['$event'])
-  sizeChange() {
-    if (!this.pService.widthMoreThan1024()) {
-      this.sliderService.getSize();
-    } else {
-      this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap?.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
-      this.sliderService.active = 0;
-    }
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 
-  ngOnDestroy(): void {}
-
   async ngOnInit() {
-    this.sliderService.rend = this.rend;
-    this.sliderService.initWidthSlide();
+    this.note$.pipe(takeUntil(this.destroy)).subscribe(async (note) => {
+      if (note) {
+        if (this.sideBarService.getFirstInitedMurri) {
+          await this.sideBarService.murriService.destroyGridAsync();
+          await this.loadData(note.id);
+          await this.sideBarService.murriService.initSidebarNotesAsync(note.id);
+          await this.sideBarService.setInitMurriFlagShowLayout();
+        } else {
+          await this.loadData(note.id);
+        }
+      }
+    });
+  }
 
+  async loadData(noteId: string): Promise<void> {
     const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
-    await this.sideBarService.initializeEntities(this.note.id, isCanEdit);
-    const result = await this.apiHistory.getHistory(this.note.id).toPromise();
-    if (result.success) {
-      this.histories = result.data;
-    }
+    await this.sideBarService.initializeEntities(noteId, isCanEdit);
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => console.log('WRAp: ', this.wrap), 2000); // TODO CHANGE THIS
-    setTimeout(() => this.sliderService.goTo(this.sliderService.active, this.wrap), 2000);
-    this.sideBarService.murriInitialise(this.refSideBarElements, this.note.id);
+    this.sideBarService.murriInitialise(this.refSideBarElements, this.noteId);
   }
 }

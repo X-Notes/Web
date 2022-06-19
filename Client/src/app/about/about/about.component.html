@@ -1,3 +1,65 @@
-<p>about works!</p>
-<button (click)="login(authType.Google)">LOGIN GOOGLE</button>
-<button (click)="logout()">LogOut</button>
+<div class="landing-content">
+  <header>
+    <div class="left-section">
+      <img src="assets/landing/logo.svg" />
+    </div>
+    <div class="middle-section"></div>
+    <div class="right-section">
+      <div class="sign-up-button" (click)="login(authType.Google)">
+        <span *ngIf="!authService.isLoading">Log in with google</span>
+        <app-spinner [size]="'15'" *ngIf="isLoaded && authService.isLoading"></app-spinner>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="f-block block-generic">
+      <div class="left-section">
+        <div class="container">
+          <div class="text-container">
+            <h1>Simple</h1>
+            <h1>Intuitive</h1>
+            <h1>Note-taking app</h1>
+          </div>
+          <div class="button-container">
+            <div class="get-started-button" (click)="login(authType.Google)">
+              <span *ngIf="!authService.isLoading">Get started</span>
+              <app-spinner [size]="'15'" *ngIf="isLoaded && authService.isLoading"></app-spinner>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="right-section">
+        <div class="container">
+          <div class="first-column column">
+            <div class="photo">
+              <img src="assets/landing/f-f-note.svg" />
+            </div>
+            <div class="photo">
+              <img src="assets/landing/f-s-note.svg" />
+            </div>
+          </div>
+          <div class="second-column column">
+            <div class="photo">
+              <img src="assets/landing/s-f-note.svg" />
+            </div>
+            <div class="photo">
+              <img src="assets/landing/s-s-note.svg" />
+            </div>
+          </div>
+          <div class="third-column column">
+            <div class="photo">
+              <img src="assets/landing/t-f-note.svg" />
+            </div>
+            <div class="photo">
+              <img src="assets/landing/t-s-note.svg" />
+            </div>
+            <div class="photo">
+              <img src="assets/landing/t-t-note.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer></footer>
+</div>

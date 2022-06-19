@@ -78,6 +78,10 @@ import { GenericDeleteEntityMessageComponent } from './generic-delete-entity-mes
 import { AddNotesInFolderComponent } from './modal_components/manage-notes-in-folder/add-notes-in-folder.component';
 import { MailInvitationsComponent } from './modal_components/share/mail-invitations/mail-invitations.component';
 import { EmptySearchPlaceholderComponent } from './modal_components/general-components/empty-search-placeholder/empty-search-placeholder.component';
+import { RelatedNotesPopUpComponent } from './modal_components/related-notes-pop-up/related-notes-pop-up.component';
+import { RelatedNoteComponent } from '../content/notes/full-note/related-note/related-note.component';
+import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-up/note-history-pop-up.component';
+import { HistoryRecordComponent } from '../content/notes/full-note/full-note-components/history-record/history-record.component';
 
 @NgModule({
   declarations: [
@@ -139,6 +143,10 @@ import { EmptySearchPlaceholderComponent } from './modal_components/general-comp
     GenericDeleteEntityMessageComponent,
     MailInvitationsComponent,
     EmptySearchPlaceholderComponent,
+    RelatedNotesPopUpComponent,
+    RelatedNoteComponent,
+    NoteHistoryPopUpComponent,
+    HistoryRecordComponent,
   ],
   imports: [
     CommonModule,
@@ -223,6 +231,8 @@ import { EmptySearchPlaceholderComponent } from './modal_components/general-comp
     NotePreviewAudiosComponent,
     FileNamePipe,
     GenericDeleteEntityMessageComponent,
+    RelatedNoteComponent,
+    HistoryRecordComponent,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

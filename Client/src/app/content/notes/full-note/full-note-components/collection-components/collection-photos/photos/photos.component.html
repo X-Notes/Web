@@ -1,6 +1,11 @@
-<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="photo-content">
+<div
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseLeave($event)"
+  class="photo-content"
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+>
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="photo-container"
@@ -8,10 +13,7 @@
     [appDrop]="'drop-active'"
     (fileDropped)="uploadImages($event)"
   >
-    <div
-      class="content-photos"
-      [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
-    >
+    <div class="content-photos">
       <app-title-collection
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
@@ -20,11 +22,11 @@
         [menu]="menu"
         [isShowButton]="isMouseOver"
       ></app-title-collection>
-      <div #album [ngStyle]="{'display': isEmpty ? 'none' : 'block' }" class="blocks-container">
+      <div #album [ngStyle]="{ display: isEmpty ? 'none' : 'block' }" class="blocks-container">
         <div
-          *ngFor="let block of mainBlocks;let i = index"
+          *ngFor="let block of mainBlocks; let i = index"
           class="blocks"
-          [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+          [ngStyle]="{ height: 'calc(100% / ' + totalRows + ')' }"
         >
           <div class="block" [ngClass]="getStyle(content.countInRow)">
             <app-photo
@@ -40,7 +42,7 @@
         <div
           class="blocks"
           *ngIf="lastBlock.length > 0"
-          [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+          [ngStyle]="{ height: 'calc(100% / ' + totalRows + ')' }"
         >
           <div class="block" [ngClass]="getStyle(countLastItems)">
             <app-photo
@@ -59,14 +61,14 @@
           (mouseClick)="saveWidth()"
           (changeWeight)="changeWidth($event)"
           class="slider-right"
-          [ngClass]="{'slider': !isReadOnlyMode}"
+          [ngClass]="{ slider: !isReadOnlyMode }"
         ></div>
         <div
           appChangeSizeAlbumHeight
           (mouseClick)="saveHeight($event)"
           (changeHeight)="changeHeight($event)"
           class="slider-bottom"
-          [ngClass]="{'slider': !isReadOnlyMode}"
+          [ngClass]="{ slider: !isReadOnlyMode }"
         ></div>
       </div>
       <app-empty-collection-items-placeholder

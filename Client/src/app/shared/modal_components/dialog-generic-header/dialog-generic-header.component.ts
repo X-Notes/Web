@@ -16,9 +16,6 @@ export class DialogGenericHeaderComponent {
   icon: string;
 
   @Input()
-  autoClose = true;
-
-  @Input()
   message: string;
 
   get basicStyles() {

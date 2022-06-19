@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -8,7 +8,6 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
-import { FullNoteSliderService } from '../../notes/full-note/services/full-note-slider.service';
 import { ContentModelBase } from '../../notes/models/editor-models/content-model-base';
 import { FullNote } from '../../notes/models/full-note.model';
 import { SmallNote } from '../../notes/models/small-note.model';
@@ -20,7 +19,6 @@ import { ApiFullFolderService } from '../full-folder/services/api-full-folder.se
   selector: 'app-full-folder-note',
   templateUrl: './full-folder-note.component.html',
   styleUrls: ['./full-folder-note.component.scss'],
-  providers: [FullNoteSliderService],
 })
 export class FullFolderNoteComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserBackground)
@@ -29,13 +27,14 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
 
+  @Select(NoteStore.canView)
+  public canView$: Observable<boolean>;
+
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
   @Select(NoteStore.fullNoteTitle)
   noteTitle$: Observable<string>;
-
-  @ViewChild('fullWrap') wrap: ElementRef;
 
   destroy = new Subject<void>();
 
@@ -55,7 +54,6 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     private apiFullFolder: ApiFullFolderService,
-    public sliderService: FullNoteSliderService,
     private api: ApiServiceNotes,
     public pService: PersonalizationService,
   ) {
@@ -101,13 +99,5 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new UpdateRoute(EntityType.FolderInnerNote));
-  }
-
-  panMove(e) {
-    this.sliderService.panMove(e, this.wrap);
-  }
-
-  panEnd(e) {
-    this.sliderService.panEnd(e, this.wrap);
   }
 }

@@ -110,12 +110,18 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
   ) {}
 
-  setTitle(): void {
+  initTitle() {
     const folder = this.store.selectSnapshot(FolderStore.full);
     // SET
-    this.uiTitle = folder.title;
-    this.title = folder.title;
-    this.htmlTitleService.setCustomOrDefault(this.title, 'titles.folder');
+    if (folder) {
+      this.uiTitle = folder.title;
+      this.title = folder.title;
+      this.htmlTitleService.setCustomOrDefault(this.title, 'titles.folder');
+    }
+  }
+
+  setTitle(): void {
+    this.initTitle();
 
     // UPDATE WS
     this.store
@@ -308,9 +314,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
-    const folderType = this.store.selectSnapshot(FolderStore.full).folderTypeId;
-    if (folderType) {
-      await this.setSideBarNotes(folderType);
+    const folder = this.store.selectSnapshot(FolderStore.full);
+    if (folder) {
+      await this.setSideBarNotes(folder.folderTypeId);
     }
   }
 

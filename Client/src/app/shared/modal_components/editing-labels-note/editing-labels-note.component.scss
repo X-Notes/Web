@@ -103,27 +103,6 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .outer {
-    .header {
-      padding: 0.625rem 1.5rem 0 1.5rem;
-    }
-
-    .search {
-      padding: 0 2.5rem;
-    }
-
-    .content-container {
-      .label-container {
-        .content-inner {
-          padding: 0 0.625rem;
-          margin: 0 1.875rem;
-        }
-      }
-    }
-  }
-}
-
 @media (max-width: 600px) {
   :host {
     width: 90vw;

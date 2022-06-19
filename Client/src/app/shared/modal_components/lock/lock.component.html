@@ -1,4 +1,7 @@
-<app-dialog-generic-header [message]="header | translate"></app-dialog-generic-header>
+<app-dialog-generic-header
+  [message]="header | translate"
+  (clickEvent)="dialogRef.close()"
+></app-dialog-generic-header>
 <!-- TODO move input to component -->
 <form [formGroup]="form" class="container" *ngIf="form">
   <div class="field">

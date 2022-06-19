@@ -1,6 +1,7 @@
 <div appTheme class="outer">
   <app-dialog-generic-header
     [message]="'modal.labelModal.Labels' | translate"
+    (clickEvent)="dialogRef.close()"
   ></app-dialog-generic-header>
   <div class="search">
     <div class="search-content">

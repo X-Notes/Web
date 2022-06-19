@@ -12,7 +12,6 @@ import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { FullNoteSliderService } from './services/full-note-slider.service';
 import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
@@ -24,15 +23,15 @@ import { take } from 'rxjs/operators';
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
-  providers: [FullNoteSliderService],
 })
 export class FullNoteComponent implements OnInit, OnDestroy {
-  @ViewChild('fullWrap') wrap: ElementRef;
-
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
+
+  @Select(NoteStore.canView)
+  public canView$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
@@ -62,7 +61,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
-    public sliderService: FullNoteSliderService,
     private dialogsManageService: DialogsManageService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
@@ -123,15 +121,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
     await this.store.dispatch(actions).toPromise();
     const note = this.store.selectSnapshot(NoteStore.oneFull);
-    await this.setSideBarNotes(note.noteTypeId);
-  }
-
-  panMove(e) {
-    this.sliderService.panMove(e, this.wrap);
-  }
-
-  panEnd(e) {
-    this.sliderService.panEnd(e, this.wrap);
+    if (note?.noteTypeId) {
+      await this.setSideBarNotes(note.noteTypeId);
+    }
   }
 
   setSideBarNotes(noteType: NoteTypeENUM) {

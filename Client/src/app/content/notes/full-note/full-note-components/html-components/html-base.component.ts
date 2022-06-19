@@ -5,16 +5,19 @@ import {
   EventEmitter,
   Input,
   Output,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
-import { BaseText, TextBlock } from '../../../models/editor-models/base-text';
+import { BaseText, NoteTextTypeENUM, TextBlock } from '../../../models/editor-models/base-text';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
+import { EnterEvent } from '../../models/enter-event.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
 
@@ -22,9 +25,18 @@ import { InputHtmlEvent } from './models/input-html-event';
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BaseTextElementComponent extends BaseEditorElementComponent {
+export abstract class BaseTextElementComponent extends BaseEditorElementComponent {
   @Input()
   content: BaseText;
+
+  @Output()
+  enterEvent = new EventEmitter<EnterEvent>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
+  @Output()
+  deleteThis = new EventEmitter<string>();
 
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -43,11 +55,14 @@ export class BaseTextElementComponent extends BaseEditorElementComponent {
 
   viewHtml: string;
 
+  listeners = [];
+
   constructor(
     cdr: ChangeDetectorRef,
     protected apiBrowserTextService: ApiBrowserTextService,
     protected selectionService: SelectionService,
     protected clickableService: ClickableContentService,
+    private renderer: Renderer2,
   ) {
     super(cdr);
 
@@ -151,7 +166,99 @@ export class BaseTextElementComponent extends BaseEditorElementComponent {
     this.clickableService.setSontent(this.content.id, null, ClickableSelectableEntities.Text, this);
   }
 
+  // LISTENERS
+
+  pasteCommandHandler(e) {
+    this.apiBrowserTextService.pasteCommandHandler(e);
+    this.textChanged.next();
+  }
+
+  checkForDeleteOrConcatWithPrev($event) {
+    if (this.selectionService.isAnySelect()) {
+      return;
+    }
+
+    const selection = this.apiBrowserTextService.getSelection().toString();
+    if (
+      this.apiBrowserTextService.isStart(this.getEditableNative()) &&
+      !this.isContentEmpty() &&
+      selection === ''
+    ) {
+      $event.preventDefault();
+      this.concatThisWithPrev.emit(this.content.id);
+    }
+
+    if (this.isContentEmpty()) {
+      $event.preventDefault();
+      this.deleteThis.emit(this.content.id);
+    }
+  }
+
+  setHandlers() {
+    const el = this.getEditableNative();
+    const blur = this.renderer.listen(el, 'blur', (e) => {
+      this.onBlur(e);
+    });
+    const paste = this.renderer.listen(el, 'paste', (e) => {
+      this.pasteCommandHandler(e);
+    });
+    const selectStart = this.renderer.listen(el, 'selectstart', (e) => {
+      this.onSelectStart(e);
+    });
+    const keydownEnter = this.renderer.listen(el, 'keydown.enter', (e) => {
+      this.enter(e);
+    });
+    const keydownBackspace = this.renderer.listen(el, 'keydown.backspace', (e) => {
+      this.checkForDeleteOrConcatWithPrev(e);
+    });
+    const keyupBackspace = this.renderer.listen(el, 'keyup.backspace', (e) => {
+      this.backUp(e);
+    });
+    const keydownDelete = this.renderer.listen(el, 'keydown.delete', (e) => {
+      this.checkForDeleteOrConcatWithPrev(e);
+    });
+    this.listeners.push(
+      blur,
+      paste,
+      selectStart,
+      keydownBackspace,
+      keydownEnter,
+      keyupBackspace,
+      keydownDelete,
+    );
+  }
+
+  destroysListeners() {
+    for (const destroyFunc of this.listeners) {
+      destroyFunc();
+    }
+  }
+
+  eventEventFactory(
+    breakModel: BreakEnterModel,
+    nextItemType: NoteTextTypeENUM,
+    contentId: string,
+  ): EnterEvent {
+    const eventModel: EnterEvent = {
+      breakModel,
+      nextItemType,
+      contentId,
+    };
+    return eventModel;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  backUp(e) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onBlur(e) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onSelectStart(e) {}
+
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
   }
+
+  abstract enter(e);
 }

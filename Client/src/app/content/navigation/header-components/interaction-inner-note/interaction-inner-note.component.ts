@@ -1,6 +1,6 @@
 import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/full-note.model';
 import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
@@ -40,6 +40,7 @@ export class InteractionInnerNoteComponent {
     public buttonService: MenuButtonsService,
     public dialogsManageService: DialogsManageService,
     public pB: PermissionsButtonsService,
+    private store: Store,
   ) {}
 
   closeMenu(): void {
@@ -58,6 +59,17 @@ export class InteractionInnerNoteComponent {
 
   showUsers() {
     this.pService.users = !this.pService.users;
+  }
+
+  openRelatedNotesPopup() {
+    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+    const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
+    this.dialogsManageService.openRelatedNotes(noteId, isCanEdit);
+  }
+
+  openHistoriesPopup() {
+    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+    this.dialogsManageService.openNoteHistoriesMobile(noteId);
   }
 
   disableTooltpUser(): boolean {

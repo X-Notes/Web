@@ -10,10 +10,13 @@ import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/edit
 import { GenericDeletionPopUpComponent } from 'src/app/shared/modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
 import { LockComponent, LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { AddNotesInFolderComponent } from 'src/app/shared/modal_components/manage-notes-in-folder/add-notes-in-folder.component';
+import { NoteHistoryPopUpComponent } from 'src/app/shared/modal_components/note-history-pop-up/note-history-pop-up.component';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
+import { RelatedNotesPopUpComponent } from 'src/app/shared/modal_components/related-notes-pop-up/related-notes-pop-up.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { ViewDocComponent } from 'src/app/shared/modal_components/view-doc/view-doc.component';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallFolder } from '../../folders/models/folder.model';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { NoteStore } from '../../notes/state/notes-state';
@@ -22,19 +25,42 @@ import { NoteStore } from '../../notes/state/notes-state';
   providedIn: 'root',
 })
 export class DialogsManageService {
-  constructor(private dialogService: DialogService, private store: Store) {}
+  constructor(
+    private dialogService: DialogService,
+    private store: Store,
+    private pS: PersonalizationService,
+  ) {}
 
-  openRelatedNotesModal() {
+  openAddRemoveRelatedNotesModal() {
+    const isMobile = this.pS.isMobile();
+    const panelClass = isMobile
+      ? [this.getDefaultPanelClass(), 'no-border']
+      : this.getDefaultPanelClass();
     const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
+      maxHeight: isMobile ? '100vh' : '90vh',
+      maxWidth: isMobile ? '100vw' : '90vw',
+      height: isMobile ? '100vh' : '670px',
+      width: isMobile ? '100vw' : '750px',
       autoFocus: false,
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass,
     };
     return this.dialogService.openDialog(OpenInnerSideComponent, config);
+  }
+
+  openNoteHistoriesMobile(noteId: string) {
+    const isMobile = this.pS.isMobile();
+    const panelClass = isMobile
+      ? [this.getDefaultPanelClass(), 'no-border']
+      : this.getDefaultPanelClass();
+    const config: MatDialogConfig = {
+      height: isMobile ? '100vh' : '670px',
+      width: isMobile ? '100vw' : '750px',
+      maxWidth: '100vw',
+      autoFocus: false,
+      panelClass,
+      data: { noteId },
+    };
+    return this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
   }
 
   openAddNotesToFolder() {
@@ -42,12 +68,21 @@ export class DialogsManageService {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
     };
     return this.dialogService.openDialog(AddNotesInFolderComponent, config);
+  }
+
+  openRelatedNotes(noteId: string, canEdit: boolean) {
+    const config: MatDialogConfig = {
+      height: '100vh',
+      width: '100vw',
+      maxWidth: '100vw',
+      autoFocus: false,
+      panelClass: [this.getDefaultPanelClass(), 'no-border'],
+      data: { canEdit, noteId },
+    };
+    return this.dialogService.openDialog(RelatedNotesPopUpComponent, config);
   }
 
   openChangeLabels() {
@@ -61,10 +96,7 @@ export class DialogsManageService {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
       data: { labelIds: new Set(labelIds) },
     };
     return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
@@ -75,10 +107,7 @@ export class DialogsManageService {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
       data: { currentWindowType, ids },
     };
     return this.dialogService.openDialog(ChangeColorComponent, config);
@@ -88,10 +117,7 @@ export class DialogsManageService {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
       data: { message, additionalMessage },
     };
     return this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
@@ -101,10 +127,7 @@ export class DialogsManageService {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
       data: { id, state, callback },
     };
     return this.dialogService.openDialog(LockComponent, config);
@@ -114,10 +137,7 @@ export class DialogsManageService {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
+      panelClass: this.getDefaultPanelClass(),
       data: id,
     };
     return this.dialogService.openDialog(ViewDocComponent, config);
@@ -136,6 +156,12 @@ export class DialogsManageService {
       data: { currentWindowType, ents },
     };
     return this.dialogService.openDialog(ShareComponent, config);
+  }
+
+  getDefaultPanelClass(): string {
+    return this.getTheme() === ThemeENUM.Light
+      ? 'custom-dialog-class-light'
+      : 'custom-dialog-class-dark';
   }
 
   getTheme(): ThemeENUM {

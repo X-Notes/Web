@@ -1,5 +1,8 @@
 <div class="wrapper" appTheme>
-  <app-dialog-generic-header [message]="'notes.name' | translate"></app-dialog-generic-header>
+  <app-dialog-generic-header
+    [message]="'notes.name' | translate"
+    (clickEvent)="dialogRef.close()"
+  ></app-dialog-generic-header>
   <div class="dialog-content" mat-dialog-content>
     <div class="tab-content">
       <div class="filter-row">

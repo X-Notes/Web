@@ -42,28 +42,6 @@
     }
   }
 
-  .history-section {
-    position: relative;
-    display: flex;
-    width: calc(100% - 4vw);
-    height: 400px;
-    margin: 0.5em 2vw;
-    border-radius: 5px;
-    background-color: $light-inner-color;
-
-    .history-records {
-      width: 100%;
-      height: 100%;
-
-      .content-inner-history {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
   .small-notes {
     display: flex;
     flex: 1;
@@ -88,10 +66,6 @@
   .open {
     background-color: $light-color;
     color: $text-color;
-  }
-
-  .history-section {
-    background-color: $light-color;
   }
 }
 
@@ -124,11 +98,6 @@
       .content-inner-small {
         padding: 0 4vw;
       }
-    }
-
-    .history-section {
-      width: calc(100% - 8vw);
-      margin: 0 4vw;
     }
   }
 }

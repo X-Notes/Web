@@ -1,4 +1,4 @@
-<div *ngIf="(note$ | async)" appTheme class="interactions">
+<div *ngIf="note$ | async" appTheme class="interactions">
   <div
     [CustomTooltip]="'header.countUsers' | translate"
     position="Bottom"
@@ -6,7 +6,7 @@
     (click)="showUsers()"
     #userCircle
   >
-    <p>{{(onlineUsers$ | async).length}}</p>
+    <p>{{ (onlineUsers$ | async).length }}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
   </div>
   <div
@@ -20,29 +20,41 @@
       <div
         class="person"
         *ngFor="let item of onlineUsers$ | async"
-        CustomTooltip="{{item.name}}"
+        CustomTooltip="{{ item.name }}"
         position="Bottom"
         [flagDisable]="disableTooltpUser()"
       >
         <div class="inner-person">
           <img [src]="item.photoPath" alt="contributor" />
         </div>
-        <p>{{item.name}}</p>
+        <p>{{ item.name }}</p>
       </div>
     </div>
   </div>
 
   <app-menu
-    [items]="buttonService.getNoteMenuByNoteType(noteType$ | async) | manageMenuButtons: pB.IsCanEditFullNote: pB.IsOwnerFullNote: pB.isFullNoteNoShared"
+    [items]="
+      buttonService.getNoteMenuByNoteType(noteType$ | async)
+        | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
+    "
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
     [@.disabled]="!pService.widthMoreThan1024()"
   ></app-menu>
 
   <app-general-header-button
-    (clickEvent)="pService.toggleHistoryMethod()"
-    [message]="('menu.history' | translate)"
+    (clickEvent)="openHistoriesPopup()"
+    [message]="'menu.history' | translate"
     [styleClasses]="'generic-2 history'"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
+    (clickEvent)="openRelatedNotesPopup()"
+    [tooltipMessage]="'modal.relatedNotesPopup.relatedNotes' | translate"
+    tooltipPosition="Bottom"
+    [styleClasses]="'generic-2'"
+    iconClass="notes"
   ></app-general-header-button>
 
   <app-general-header-button

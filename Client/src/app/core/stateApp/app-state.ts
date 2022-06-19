@@ -79,6 +79,15 @@ export class AppStore {
   }
 
   @Selector()
+  static isDeletedFoldersNotesLabels(state: AppState): boolean {
+    return (
+      state.routing === EntityType.LabelDeleted ||
+      state.routing === EntityType.NoteDeleted ||
+      state.routing === EntityType.FolderDeleted
+    );
+  }
+
+  @Selector()
   static isFolder(state: AppState): boolean {
     return (
       state.routing === EntityType.FolderShared ||

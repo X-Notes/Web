@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-return-assign */
 import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
 import {
@@ -70,7 +70,7 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private router: Router) {}
+  constructor(private api: ApiFoldersService, private router: Router, private ngZone: NgZone) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -495,7 +495,7 @@ export class FolderStore {
     const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
     const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
     dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
-    this.router.navigate([`folders/${newF.id}`]);
+    this.ngZone.run(() => this.router.navigate([`folders/${newF.id}`]));
   }
 
   @Action(AddFolders)

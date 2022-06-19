@@ -10,6 +10,12 @@ import { FullNote } from '../models/full-note.model';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { Diff } from 'diff-match-patch';
 
+export class LoadNoteHistories {
+  static type = '[Notes] Load note histories';
+
+  constructor(public noteId: string) {}
+}
+
 export class ResetNotes {
   static type = '[Notes] Reset notes';
 }

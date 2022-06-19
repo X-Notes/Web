@@ -1,9 +1,8 @@
 <div class="header" [ngClass]="basicStyles">
-  <span *ngIf="isMessage">{{message}}</span>
-  <div *ngIf="autoClose" class="icon" mat-dialog-close style="transform: rotate(45deg)">
-    <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-  </div>
-  <div *ngIf="!autoClose" class="icon" (click)="clickHandler()" style="transform: rotate(45deg)">
-    <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+  <span *ngIf="isMessage">{{ message }}</span>
+  <div class="button-container" (click)="clickHandler()">
+    <div class="icon" style="transform: rotate(45deg)">
+      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+    </div>
   </div>
 </div>

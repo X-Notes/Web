@@ -416,7 +416,8 @@ export class MenuButtonsService {
     return {
       icon: 'history',
       operation: () => {
-        throw new Error('Not implimented');
+        const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+        this.dialogsService.openNoteHistoriesMobile(noteId);
       },
       isVisible: this.pService.isMobileHistoryActive$,
       isOnlyForAuthor: false,

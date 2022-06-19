@@ -1,5 +1,6 @@
 <app-dialog-generic-header
   [message]="'header.questionItems.contact' | translate"
+  (clickEvent)="dialogRef.close()"
 ></app-dialog-generic-header>
 <form [formGroup]="form" class="container">
   <div class="field">

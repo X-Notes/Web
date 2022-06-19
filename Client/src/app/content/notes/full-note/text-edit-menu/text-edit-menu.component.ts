@@ -49,8 +49,7 @@ export class TextEditMenuComponent {
         setFocusToEnd: true,
       });
     }
-    const selection = this.apiBrowserService.getSelection();
-    selection.removeAllRanges();
+    this.menuSelectionService.clearItemAndSelection();
   }
 
   setBoldStyle($event) {
@@ -61,6 +60,7 @@ export class TextEditMenuComponent {
       textStyle: 'bold',
       updateMode: this.getIsBold() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
     });
+    this.menuSelectionService.clearItemAndSelection();
   }
 
   setItalicStyle($event) {
@@ -71,6 +71,7 @@ export class TextEditMenuComponent {
       textStyle: 'italic',
       updateMode: this.getIsItalic() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
     });
+    this.menuSelectionService.clearItemAndSelection();
   }
 
   getIsActiveHeader(heading: HeadingTypeENUM): boolean {
@@ -100,7 +101,7 @@ export class TextEditMenuComponent {
   };
 
   isSelectionTags(selTags: string[]): boolean {
-    const sel = this.menuSelectionService.currentSelection;
+    const sel = this.apiBrowserService.getSelection();
     if (!sel) return false;
     const tempDiv = this.getSelectedHTML();
     if (tempDiv.innerHTML === '') return false;
@@ -128,7 +129,7 @@ export class TextEditMenuComponent {
   }
 
   getSelectedHTML = (): HTMLDivElement => {
-    const selection = this.menuSelectionService.currentSelection;
+    const selection = this.apiBrowserService.getSelection();
     if (!selection) return;
     const container = document.createElement('div');
     for (let i = 0, len = selection.rangeCount; i < len; ++i) {

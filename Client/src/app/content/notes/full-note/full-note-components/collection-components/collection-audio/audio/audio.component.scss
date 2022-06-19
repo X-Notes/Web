@@ -98,12 +98,16 @@
 }
 
 .dark {
+  background-color: $dark-color;
   .controls {
     background-color: rgba(0, 0, 0, 0.2);
   }
 }
 
 .light {
+  background-color: #fafafa;
+  color: $text-color;
+  border: 0.8px solid #bababa;
   .controls {
     background-color: rgba(0, 0, 0, 0.4);
   }

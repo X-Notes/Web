@@ -40,8 +40,6 @@ export class OpenInnerSideComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  loaded = false;
-
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();

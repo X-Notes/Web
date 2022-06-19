@@ -1,5 +1,6 @@
 <app-dialog-generic-header
   [message]="'modal.deletionModal.title' | translate"
+  (clickEvent)="dialogRef.close()"
 ></app-dialog-generic-header>
 <div class="preview-container">
   <p *ngIf="data.message">{{ data.message | translate }}</p>

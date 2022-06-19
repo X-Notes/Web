@@ -2,25 +2,11 @@
 
 :host {
   display: flex;
-  border-radius: 5px;
 }
 
 .video-content {
   display: flex;
   width: 100%;
-
-  &:hover {
-    .playlist {
-      .video-playlist {
-        .video-playlist-wrapper {
-          .thumb-video-wrapper {
-            .thumb-video {
-            }
-          }
-        }
-      }
-    }
-  }
 
   .playlist {
     display: flex;

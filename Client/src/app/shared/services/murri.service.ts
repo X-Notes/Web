@@ -87,6 +87,7 @@ export class MurriService {
   }
 
   sortByHtml(attribute: string = 'order') {
+    if (!this.grid) return;
     this.grid.sort((itemA, itemB) => {
       const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
       const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);

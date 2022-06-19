@@ -1,6 +1,7 @@
 <div class="wrapper" appTheme>
   <app-dialog-generic-header
     [message]="'modal.folderManage.notes' | translate"
+    (clickEvent)="dialogRef.close()"
   ></app-dialog-generic-header>
   <div class="dialog-content">
     <div class="filter-row">

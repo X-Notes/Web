@@ -2,10 +2,10 @@
 
 :host {
   position: fixed;
-  z-index: 500;
+  z-index: 100;
   bottom: 0;
   right: 0;
-  width: 100%;
+  width: calc(100% - 270px);
 }
 
 .delete-message-container {
@@ -29,4 +29,18 @@
 .light {
   background-color: $light-billing-field;
   color: $text-color;
+}
+
+@media (max-width: 1024px) {
+  :host {
+    width: calc(100%);
+    bottom: 80px;
+  }
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: calc(100%);
+    bottom: 70px;
+  }
 }

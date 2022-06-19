@@ -35,12 +35,6 @@ export class CollectionBaseComponent<
   @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   content: T;
 
   @Input()

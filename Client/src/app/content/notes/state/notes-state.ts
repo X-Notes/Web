@@ -3,7 +3,7 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action } from '@ngxs/store';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
@@ -48,6 +48,7 @@ import {
   PatchUpdatesUINotes,
   UpdatePositionsRelatedNotes,
   SetFolderNotes,
+  LoadNoteHistories,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -68,15 +69,18 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
+import { NoteHistory } from '../full-note/models/history/note-history.model';
 
 interface FullNoteState {
   note: FullNote;
   isLocked: boolean;
+  isCanView: boolean;
 }
 
 interface NoteState {
   notes: Notes[];
   fullNoteState: FullNoteState;
+  fullNoteHistories: NoteHistory[];
   snapshotState: NoteSnapshotState;
   selectedIds: string[];
   updateNoteEvent: UpdateNoteUI[];
@@ -94,6 +98,7 @@ interface NoteState {
   defaults: {
     notes: [],
     fullNoteState: null,
+    fullNoteHistories: null,
     snapshotState: null,
     selectedIds: [],
     updateNoteEvent: [],
@@ -103,7 +108,7 @@ interface NoteState {
     isCanceled: false,
     InvitedUsersToNote: [],
     onlineUsers: [],
-    folderNotes: []
+    folderNotes: [],
   },
 })
 @Injectable()
@@ -116,6 +121,7 @@ export class NoteStore {
     private router: Router,
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
+    private zone: NgZone
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -242,7 +248,7 @@ export class NoteStore {
 
   @Selector()
   static labelsIds(state: NoteState): string[] {
-    const notes = [...this.getSelectedNotes(state), ... this.getSelectedFolderNotes(state)];
+    const notes = [...this.getSelectedNotes(state), ...this.getSelectedFolderNotes(state)];
     const labelIds = notes
       .map((x) => x.labels)
       .flat()
@@ -270,6 +276,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static histories(state: NoteState): NoteHistory[] {
+    return state.fullNoteHistories;
+  }
+
+  @Selector()
   static fullNoteTitle(state: NoteState): string {
     return state.fullNoteState?.note?.title;
   }
@@ -282,6 +293,11 @@ export class NoteStore {
   @Selector()
   static canEdit(state: NoteState): boolean {
     return state.fullNoteState?.note?.isCanEdit;
+  }
+
+  @Selector()
+  static canView(state: NoteState): boolean {
+    return state.fullNoteState?.isCanView;
   }
 
   @Selector()
@@ -390,7 +406,7 @@ export class NoteStore {
     const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
     const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
     await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-    this.router.navigate([`notes/${note.id}`]);
+    this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
   }
 
   @Action(AddNotes)
@@ -480,8 +496,8 @@ export class NoteStore {
     await dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo)).toPromise();
 
     // UPDATE FULL NOTE
-    const idToUpdate = selectedIds.find(id => id === getState().fullNoteState?.note?.id);
-    if(idToUpdate){
+    const idToUpdate = selectedIds.find((id) => id === getState().fullNoteState?.note?.id);
+    if (idToUpdate) {
       dispatch(new UpdateFullNote({ noteTypeId: typeTo, refTypeId }, idToUpdate));
     }
 
@@ -594,11 +610,13 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
-        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({...note, color})));
+        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({ ...note, color })));
       }
 
-      // UPDATE UI 
-      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, color, null, null, null, null));
+      // UPDATE UI
+      const updatesUI = selectedIds.map((id) =>
+        this.toUpdateNoteUI(id, color, null, null, null, null),
+      );
       patchState({ updateNoteEvent: updatesUI });
       dispatch([UnSelectAllNote]);
     }
@@ -668,8 +686,10 @@ export class NoteStore {
       notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
       dispatch([new UpdateLabelCount(label.id)]);
 
-      // UPDATE UI 
-      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, null, null, [label], null, null));
+      // UPDATE UI
+      const updatesUI = selectedIds.map((id) =>
+        this.toUpdateNoteUI(id, null, null, [label], null, null),
+      );
       patchState({ updateNoteEvent: updatesUI });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
@@ -696,11 +716,15 @@ export class NoteStore {
 
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote({labels: x.labels.filter((z) => z.id !== labelId)})));
+      notesForUpdate.forEach((x) =>
+        dispatch(new UpdateOneNote({ labels: x.labels.filter((z) => z.id !== labelId) })),
+      );
       dispatch([new UpdateLabelCount(labelId)]);
 
-      // UPDATE UI 
-      const updatesUI = selectedIds.map((id) => this.toUpdateNoteUI(id, null, [labelId], null, null, null));
+      // UPDATE UI
+      const updatesUI = selectedIds.map((id) =>
+        this.toUpdateNoteUI(id, null, [labelId], null, null, null),
+      );
       patchState({ updateNoteEvent: updatesUI });
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
@@ -787,8 +811,13 @@ export class NoteStore {
   }
 
   @Action(UpdatePositionsRelatedNotes)
-  async updateRelationNotePositions({ }: StateContext<NoteState>,{ positions, noteId }: UpdatePositionsRelatedNotes){
-    await this.apiRelated.updateOrder(noteId, positions).toPromise();
+  async updateRelationNotePositions(
+    {}: StateContext<NoteState>,
+    { positions, noteId }: UpdatePositionsRelatedNotes,
+  ) {
+    if (noteId && positions && positions.length > 0) {
+      await this.apiRelated.updateOrder(noteId, positions).toPromise();
+    }
   }
 
   @Action(UpdateOneNote)
@@ -817,14 +846,23 @@ export class NoteStore {
         fullNoteState: {
           note: request.data,
           isLocked: false,
+          isCanView: true,
         },
       });
-    }
-    if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
+    } else if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
       patchState({
         fullNoteState: {
           note: null,
           isLocked: true,
+          isCanView: false,
+        },
+      });
+    } else {
+      patchState({
+        fullNoteState: {
+          note: null,
+          isLocked: false,
+          isCanView: false,
         },
       });
     }
@@ -865,7 +903,14 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    {  diffs, newTitle, isCallApi, noteId, errorPermissionMessage, isUpdateFullNote}: UpdateNoteTitle,
+    {
+      diffs,
+      newTitle,
+      isCallApi,
+      noteId,
+      errorPermissionMessage,
+      isUpdateFullNote,
+    }: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -873,7 +918,7 @@ export class NoteStore {
     }
     if (resp.success) {
       // UPDATE FULL NOTE
-      if(isUpdateFullNote){
+      if (isUpdateFullNote) {
         const fullNote = getState().fullNoteState?.note;
         if (fullNote && fullNote.id === noteId) {
           patchState({
@@ -884,7 +929,7 @@ export class NoteStore {
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
-        dispatch(new UpdateOneNote({...noteUpdate, title: newTitle}));
+        dispatch(new UpdateOneNote({ ...noteUpdate, title: newTitle }));
       }
 
       // UPDATE UI
@@ -908,7 +953,6 @@ export class NoteStore {
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }
-
 
   @Action(GetInvitedUsersToNote)
   async getInvitedUsersToNote(
@@ -940,8 +984,23 @@ export class NoteStore {
         notes: [...getState().notes, notesAPI],
       });
       // process unlocked;
-      const notesToUpdate = notesAPI.notes.filter(x => x.isLocked && !x.isLockedNow && x.unlockedTime);
+      const notesToUpdate = notesAPI.notes.filter(
+        (x) => x.isLocked && !x.isLockedNow && x.unlockedTime,
+      );
       notesToUpdate.forEach((note) => this.updaterEntitiesService.lockNoteAfter(note.id));
+    }
+  }
+
+  @Action(LoadNoteHistories)
+  async loadNoteHistories(
+    { patchState }: StateContext<NoteState>,
+    { noteId }: LoadNoteHistories,
+  ) {
+    if (!noteId) return;
+    patchState({ fullNoteHistories: [] });
+    const resp = await this.historyApi.getHistory(noteId).toPromise();
+    if (resp.success) {
+      patchState({ fullNoteHistories: resp.data });
     }
   }
 

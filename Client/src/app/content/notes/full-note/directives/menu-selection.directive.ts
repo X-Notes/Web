@@ -31,11 +31,13 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    const mouseupListener = this.renderer.listen(document, 'mouseup', () => this.mouseUp());
+    const mouseupListener = this.renderer.listen(document, 'selectionchange', () =>
+      this.onSelectionchange(),
+    );
     this.listeners.push(mouseupListener);
   }
 
-  mouseUp() {
+  onSelectionchange() {
     const selection = this.apiBrowserService.getSelection();
     if (selection.toString() !== '') {
       const range = selection.getRangeAt(0);
@@ -46,14 +48,12 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const top = coords.top - 100;
 
       this.menuSelectionService.currentTextItem = this.getCurrentItem().getContent() as BaseText;
-      this.menuSelectionService.currentSelection = selection;
 
       this.menuSelectionService.left = left;
       this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
     } else {
       this.menuSelectionService.currentTextItem = null;
-      this.menuSelectionService.currentSelection = null;
     }
   }
 

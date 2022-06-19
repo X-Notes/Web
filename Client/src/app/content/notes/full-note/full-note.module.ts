@@ -16,9 +16,7 @@ import { CopyDirective } from './directives/copy.directive';
 import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
-import { RelatedNoteComponent } from './related-note/related-note.component';
 import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
-import { HistoryRecordComponent } from './full-note-components/history-record/history-record.component';
 import { AudioNoteComponent } from './full-note-components/collection-components/collection-audio/audio-note/audio-note.component';
 import { VideoNoteComponent } from './full-note-components/collection-components/collection-video/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/collection-components/collection-document/document-note/document-note.component';
@@ -60,14 +58,12 @@ import { MobileTransformMenuComponent } from './full-note-components/mobile-tran
     HtmlHeadingsComponent,
     HtmlCheckListComponent,
     HtmlLinkComponent,
-    RelatedNoteComponent,
     MenuSelectionDirective,
     SelectionDirective,
     CopyDirective,
     TextEditMenuDirective,
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
-    HistoryRecordComponent,
     AudioNoteComponent,
     VideoNoteComponent,
     DocumentNoteComponent,

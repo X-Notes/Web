@@ -1,29 +1,12 @@
-<div appTheme class="secondary-content" [style.width.px]="sliderService.mainWidth">
-  <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(note.id)">
+<div appTheme class="secondary-content">
+  <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(noteId)">
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
     <p>{{ 'innerNote.openNoteOrFile' | translate }}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
   </div>
-  <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
-    <ng-scrollbar class="history-records" visibility="hover" appearance="compact">
-      <div class="content-inner-history">
-        <app-history-record
-          *ngFor="let item of histories"
-          [noteId]="note.id"
-          [history]="item"
-        ></app-history-record></div
-    ></ng-scrollbar>
-    <app-no-results-illustration
-      *ngIf="!histories?.length"
-      [isShow]="true"
-      [message]="'noResult.history' | translate"
-      [illustration]="pService.icon.historyIllustration"
-      typeClass="type-notification"
-    ></app-no-results-illustration>
-  </div>
-  <ng-container *ngIf="sideBarService.entities?.length > 0">
+  <ng-container>
     <ng-scrollbar class="scroll-helper small-notes" visibility="hover" appearance="compact">
       <div class="content-inner-small">
         <div
@@ -40,7 +23,7 @@
             <app-related-note
               [note]="item"
               [isCanEdit]="canEdit$ | async"
-              (deleteNote)="sideBarService.deleteSmallNote($event, note.id)"
+              (deleteNote)="sideBarService.deleteSmallNote($event, noteId)"
               (changeState)="sideBarService.changeState($event)"
             ></app-related-note>
           </div>

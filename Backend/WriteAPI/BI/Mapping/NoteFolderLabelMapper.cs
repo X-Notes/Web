@@ -421,7 +421,7 @@ namespace BI.Mapping
                 Email = user.Email,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto?.AppFile.GetFromSmallPath ?? user.DefaultPhotoUrl
+                PhotoPath = BuildFilePath(user.Id, user.UserProfilePhoto?.AppFile.GetFromSmallPath) ?? user.DefaultPhotoUrl
             };
         }
 
