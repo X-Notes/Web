@@ -86,5 +86,13 @@ export class CollectionBaseComponent<
     this.someChangesEvent.emit();
   }
 
+  getContentId(): string {
+    return this.content.id;
+  }
+
+  getContent(): T {
+    return this.content;
+  }
+
   updateIternal() {}
 }

@@ -35,23 +35,17 @@ export class PhotosComponent
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
-  startWidth;
-
   startHeight;
 
   mainBlocks: Photo[][] = [];
 
   lastBlock: Photo[] = [];
 
-  mainContainer;
-
   destroy = new Subject<void>();
-
-  changeWidthSubject = new Subject<string>();
 
   changeHeightSubject = new Subject<string>();
 
-  changeSizeAlbumHalder = combineLatest([this.changeWidthSubject, this.changeHeightSubject]);
+  changeSizeAlbumHalder = combineLatest([this.changeHeightSubject]);
 
   constructor(
     private renderer: Renderer2,
@@ -85,9 +79,7 @@ export class PhotosComponent
     return false;
   }
 
-  ngOnChanges(): void {
-    this.updateHeightByNativeOffset();
-  }
+  ngOnChanges(): void {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -95,8 +87,7 @@ export class PhotosComponent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer =
-      this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
+    this.setHeight(`${this.content.height}`); // init collection size first
   }
 
   uploadHandler = () => {
@@ -118,40 +109,18 @@ export class PhotosComponent
     );
   }
 
-  changeWidth(diffrence: number) {
-    const paddingMainContainer = 100; // main-content padding left, right
-    const mainContainerWidth = this.mainContainer.offsetWidth - paddingMainContainer;
-    const newWidth = this.startWidth + diffrence;
-    const procent = ((newWidth / mainContainerWidth) * 100).toFixed(3);
-    if (newWidth > 200 && newWidth < mainContainerWidth) {
-      this.renderer.setStyle(this.albumChild.nativeElement, 'width', `${procent}%`);
-      this.changeWidthSubject.next(`${procent}%`);
-    }
-    if (newWidth >= mainContainerWidth) {
-      this.renderer.setStyle(this.albumChild.nativeElement, 'width', '100%');
-      this.changeWidthSubject.next('100%');
-    }
-  }
-
   changeHeight(difference: number) {
     const newHeight = this.startHeight + difference;
     if (newHeight > 200) {
-      this.renderer.setStyle(this.albumChild.nativeElement, 'height', `${newHeight}px`);
+      this.setHeight(`${newHeight}px`);
     }
-    this.changeHeightSubject.next(`${newHeight}px`);
   }
 
-  updateHeightByNativeOffset() {
-    setTimeout(() => {
-      const height = `${this.albumChild?.nativeElement.offsetHeight}px`;
-      if (this.content.height !== height) {
-        this.changeHeightSubject.next(height);
-      }
-    }, 50);
-  }
-
-  saveWidth() {
-    this.startWidth = this.albumChild.nativeElement.offsetWidth;
+  syncHeight(): void {
+    const height = `${this.albumChild?.nativeElement.offsetHeight}px`;
+    if (this.content.height !== height) {
+      this.setHeight(`${this.content.height}`);
+    }
   }
 
   saveHeight(isResizingPhoto: boolean) {
@@ -164,49 +133,41 @@ export class PhotosComponent
       photo.loaded = false;
     }
     this.changeSizeAlbumHalder
-      .pipe(takeUntil(this.destroy), debounceTime(500)) // TODO export const
+      .pipe(takeUntil(this.destroy), debounceTime(300)) // TODO export const
       .subscribe((values) => {
-        const [width, height] = values;
-        this.content.width = width;
-        this.content.height = height;
-        if (width && height && (this.content.height !== height || this.content.width !== width)) {
-          this.content.width = width;
+        const [height] = values;
+        if (height && (this.content.height !== height)) {
           this.content.height = height;
           this.someChangesEvent.emit();
         }
       });
 
     this.changeHeightSubject.next(this.content.height);
-    this.changeWidthSubject.next(this.content.width);
     this.initPhotos();
   }
 
-  setPhotosInRowWrapper(count: number) {
-    this.someChangesEvent.emit();
+  setPhotosInRowWrapper(count: number): void  {
     this.setPhotosInRow(count);
+    this.someChangesEvent.emit();
   }
 
-  async setPhotosInRow(count: number, isForse = false) {
-    if (this.content.countInRow === count && !isForse) return;
-
+  setPhotosInRow(count: number): void {
+    if (this.content.countInRow === count) return;
     this.content.countInRow = count;
-
     this.setFalseLoadedForAllPhotos();
-    this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
-    this.changeHeightSubject.next(`height`);
+    this.setHeight('auto');
     this.initPhotos();
-    this.updateHeightByNativeOffset();
   }
 
   setFalseLoadedForAllPhotos() {
     for (const mainBlock of this.mainBlocks) {
-      mainBlock.forEach((z) => {
-        const item = { ...z };
+      mainBlock.forEach((photo) => {
+        const item = { ...photo };
         item.loaded = false;
       });
     }
-    this.lastBlock.forEach((z) => {
-      const item = { ...z };
+    this.lastBlock.forEach((photo) => {
+      const item = { ...photo };
       item.loaded = false;
     });
   }
@@ -220,7 +181,8 @@ export class PhotosComponent
   }
 
   updateIternal() {
-    this.setPhotosInRow(this.content.countInRow, true);
+    this.setPhotosInRow(this.content.countInRow);
+    this.syncHeight();
   }
 
   initPhotos() {
@@ -327,14 +289,6 @@ export class PhotosComponent
     return null;
   };
 
-  getContent(): PhotosCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   getHost() {
     return this.host;
   }
@@ -358,5 +312,10 @@ export class PhotosComponent
 
   deleteDown() {
     this.checkForDelete();
+  }
+
+  private setHeight(value: string): void {
+    this.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
+    this.changeHeightSubject.next(value);
   }
 }

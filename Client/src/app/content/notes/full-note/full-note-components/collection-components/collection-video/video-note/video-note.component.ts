@@ -299,14 +299,6 @@ export class VideoNoteComponent
     return this.host;
   }
 
-  getContent(): VideosCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   async exportVideos(videos: VideosCollection) {
     await this.exportService.exportVideos(videos);
   }

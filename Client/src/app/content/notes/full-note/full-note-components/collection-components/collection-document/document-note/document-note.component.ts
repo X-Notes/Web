@@ -144,14 +144,6 @@ export class DocumentNoteComponent
     return this.host;
   }
 
-  getContent(): DocumentsCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   async exportDocument(document: DocumentModel) {
     await this.exportService.exportDocument(document);
   }

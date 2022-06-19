@@ -177,14 +177,6 @@ export class AudioNoteComponent
     return null;
   };
 
-  getContent(): AudiosCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {
     this.isMouseOver = true;
