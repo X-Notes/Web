@@ -1065,16 +1065,22 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ConnectionId")
-                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("ConnectedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("UserId", "ConnectionId");
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserIdentifierConnectionId", "ws");
                 });
@@ -1606,9 +1612,7 @@ namespace WriteContext.Migrations
                 {
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
                         .WithMany("UserIdentifierConnectionIds")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

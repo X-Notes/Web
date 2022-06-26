@@ -1,4 +1,6 @@
-﻿using Common;
+﻿using BI.SignalR.Models;
+using Common;
+using Common.DatabaseModels.Models.WS;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,23 +9,10 @@ using System.Linq;
 
 namespace BI.SignalR
 {
-    public class WsEntityInfo
-    {
-        public Guid? UserId { set; get; }
-
-        public string ConnectionId { set; get; }
-    }
-
-    public class WsEntitiesState
-    {
-        public ConcurrentDictionary<string, WsEntityInfo> Users { get; set; } = new();
-
-        public DateTimeOffset UpdateTime { set; get; }
-    }
 
     public class WebsocketsBaseEntities
     {
-        protected static ConcurrentDictionary<Guid, WsEntitiesState> entityId_users = new();
+        protected ConcurrentDictionary<Guid, WsEntitiesState> entityId_users = new();
 
         public int CountActiveEntities => entityId_users.Count;
 
@@ -31,13 +20,13 @@ namespace BI.SignalR
 
         public bool IsContainsConnectionId(Guid entityId, string connectionId) => IsContainsId(entityId) && entityId_users[entityId].Users.ContainsKey(connectionId);
 
-        public List<WsEntityInfo> GetEntitiesId(Guid entityId)
+        public List<UserIdentifierConnectionId> GetEntitiesId(Guid entityId)
         {
             if (entityId_users.TryGetValue(entityId, out var value))
             {
                 return value.Users.Values.ToList();
             }
-            return new List<WsEntityInfo>();
+            return new List<UserIdentifierConnectionId>();
         }
 
         public List<string> GetConnectiondsById(Guid entityId, Guid exceptUserId)
@@ -49,14 +38,13 @@ namespace BI.SignalR
             return new List<string>();
         }
 
-        public bool Add(Guid entityId, string connectionId, Guid? userId)
+        public bool Add(Guid entityId, UserIdentifierConnectionId userIdentity)
         {
             if (entityId_users.TryGetValue(entityId, out var state))
             {
-                if (!state.Users.ContainsKey(connectionId))
+                if (!state.Users.ContainsKey(userIdentity.ConnectionId))
                 {
-                    var ent = new WsEntityInfo { ConnectionId = connectionId, UserId = userId };
-                    if (state.Users.TryAdd(connectionId, ent))
+                    if (state.Users.TryAdd(userIdentity.ConnectionId, userIdentity))
                     {
                         state.UpdateTime = DateTimeProvider.Time;
                         return true;
@@ -66,20 +54,18 @@ namespace BI.SignalR
             else
             {
                 var newState = new WsEntitiesState { UpdateTime = DateTimeProvider.Time };
-                var ent = new WsEntityInfo { ConnectionId = connectionId, UserId = userId };
-                newState.Users.TryAdd(connectionId, ent);
-
+                newState.Users.TryAdd(userIdentity.ConnectionId, userIdentity);
                 return entityId_users.TryAdd(entityId, newState);
             }
 
             return false;
         }
 
-        public bool Remove(Guid entityId, string connectionId)
+        public (bool isRemoved, UserIdentifierConnectionId user) Remove(Guid entityId, string connectionId)
         {
             if (!entityId_users.TryGetValue(entityId, out var state))
             {
-                return true;
+                return (true, null);
             }
             else
             {
@@ -88,12 +74,23 @@ namespace BI.SignalR
                     if (state.Users.TryRemove(connectionId, out var value))
                     {
                         state.UpdateTime = DateTimeProvider.Time;
-                        return true;
+                        return (true, value);
                     }
                 }
             }
 
-            return false;
+            return (false, null);
+        }
+
+        public void RemoveUserFromEntities(string connectionId)
+        {
+            foreach(var ent in entityId_users)
+            {
+                if (ent.Value.Users.ContainsKey(connectionId))
+                {
+                    Remove(ent.Key, connectionId);
+                }
+            }
         }
 
         public void ClearEmptyAfterDelay(DateTimeOffset earliestTimestamp)
@@ -118,10 +115,6 @@ namespace BI.SignalR
                     } catch (Exception ex)
                     {
                         Console.WriteLine(ex);
-                    }
-                    finally
-                    {
-                        Console.WriteLine("Delete next values: ", string.Join(",", idsThatWasDeleted));
                     }
                 } 
             }

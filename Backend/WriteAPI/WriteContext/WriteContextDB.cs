@@ -132,7 +132,7 @@ namespace WriteContext
                 .HasKey(x => x.UserId);
 
             // WS
-            modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.UserId, x.ConnectionId });
+            modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.Id });
 
             // PersonalizationSetting
 

@@ -4,7 +4,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.WS
 {
-    public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierConnectionId, int>
+    public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierConnectionId, Guid>
     {
         public UserIdentifierConnectionIdRepository(WriteContextDB contextDB) : base(contextDB)
         {

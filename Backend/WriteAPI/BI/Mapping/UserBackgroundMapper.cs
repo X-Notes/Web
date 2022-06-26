@@ -3,6 +3,7 @@ using Common.Azure;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.WS;
 using Common.DTO.Backgrounds;
 using Common.DTO.Search;
 using Common.DTO.Users;
@@ -34,13 +35,22 @@ namespace BI.Mapping
             };
         }
 
-        public OnlineUserOnNote MapToOnlineUserOnNote(User user)
+        public OnlineUserOnNote MapToOnlineUserOnNote(User user, Guid userIdentifier)
         {
             return new OnlineUserOnNote {
-                Id = user.Id,
+                UserIdentifier = userIdentifier,
+                UserId = user.Id,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+            };
+        }
+
+        public OnlineUserOnNote MapToOnlineUserOnNote(UserIdentifierConnectionId user)
+        {
+            return new OnlineUserOnNote
+            {
+                UserIdentifier = user.Id,
             };
         }
 

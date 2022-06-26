@@ -69,13 +69,13 @@ namespace Common.DTO.Permissions
             return this;
         }
 
-        public UserPermissionsForFolder GetUserNotFounded()
+        public UserPermissionsForFolder SetUserNotFounded()
         {
             UserNotFound = true;
             return this;
         }
 
-        public UserPermissionsForFolder GetFolderNotFounded()
+        public UserPermissionsForFolder SetFolderNotFounded()
         {
             FolderNotFound = true;
             return this;

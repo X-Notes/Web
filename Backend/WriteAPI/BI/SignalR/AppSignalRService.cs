@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using BI.SignalR.Models;
 using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
@@ -30,7 +31,7 @@ namespace BI.SignalR
 
         public async Task<IEnumerable<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId != exceptUserId && userIds.Contains(x.UserId));
+            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId != null && x.UserId != exceptUserId && userIds.Contains(x.UserId.Value));
             return connections.Select(x => x.ConnectionId);
         }
 
@@ -42,7 +43,7 @@ namespace BI.SignalR
 
         public async Task SendNewNotification(Guid userId, bool flag)
         {         
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("newNotification", flag);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, flag);
         }
 
         public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
@@ -50,7 +51,7 @@ namespace BI.SignalR
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
             if (list.Any())
             {
-                await signalRContext.Clients.Clients(list).SendAsync("updateNoteGeneral", updates);
+                await signalRContext.Clients.Clients(list).SendAsync(ClientMethods.updateNoteGeneral, updates);
             }
         }
 
@@ -59,7 +60,7 @@ namespace BI.SignalR
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
             if (list.Any())
             {
-                await signalRContext.Clients.Clients(list).SendAsync("updateFolderGeneral", updates);
+                await signalRContext.Clients.Clients(list).SendAsync(ClientMethods.updateFolderGeneral, updates);
             }
         }
 
@@ -68,58 +69,58 @@ namespace BI.SignalR
         public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateRelatedNotes", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateRelatedNotes, updates);
         }
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateTextContent", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateTextContent, updates);
         }
 
         public async Task UpdateNoteStructure(Guid noteId, Guid userId, UpdateNoteStructureWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateNoteStructure", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateNoteStructure, updates);
         }
 
         // FILE CONTENT
         public async Task UpdateDocumentsCollection(Guid noteId, Guid userId, UpdateDocumentsCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateDocumentsCollection", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateDocumentsCollection, updates);
         }
 
         public async Task UpdatePhotosCollection(Guid noteId, Guid userId, UpdatePhotosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updatePhotosCollection", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updatePhotosCollection, updates);
         }
 
         public async Task UpdateVideosCollection(Guid noteId, Guid userId, UpdateVideosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateVideosCollection", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateVideosCollection, updates);
         }
 
         public async Task UpdateAudiosCollection(Guid noteId, Guid userId, UpdateAudiosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync("updateAudiosCollection", updates);
+            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateAudiosCollection, updates);
         }
 
         // Note permissions
 
         public async Task UpdatePermissionUserNote(UpdatePermissionNoteWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserNote", updates);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.updatePermissionUserNote, updates);
         }
 
         // Folder permissions
 
         public async Task UpdatePermissionUserFolder(UpdatePermissionFolderWS updates, Guid userId)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync("updatePermissionUserFolder", updates);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.updatePermissionUserFolder, updates);
         }
     }
 }
