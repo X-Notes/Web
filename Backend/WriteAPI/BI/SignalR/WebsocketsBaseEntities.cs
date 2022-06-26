@@ -82,15 +82,21 @@ namespace BI.SignalR
             return (false, null);
         }
 
-        public void RemoveUserFromEntities(string connectionId)
+        public List<(Guid entityId, Guid userId)> RemoveUserFromEntities(string connectionId)
         {
+            var result = new List<(Guid, Guid)>();
             foreach(var ent in entityId_users)
             {
                 if (ent.Value.Users.ContainsKey(connectionId))
                 {
-                    Remove(ent.Key, connectionId);
+                    var removeResult = Remove(ent.Key, connectionId);
+                    if (removeResult.isRemoved)
+                    {
+                        result.Add((ent.Key, removeResult.user.Id));
+                    }
                 }
             }
+            return result;
         }
 
         public void ClearEmptyAfterDelay(DateTimeOffset earliestTimestamp)

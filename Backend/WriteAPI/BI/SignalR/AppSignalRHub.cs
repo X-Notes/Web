@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BI.SignalR.Models;
 using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
@@ -34,18 +35,6 @@ namespace BI.SignalR
             await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
         }
 
-        // NOTES
-        public async Task JoinNote(Guid noteId)
-        {
-            if (wsNotesService.IsContainsConnectionId(noteId, Context.ConnectionId) || wsNotesService.Add(noteId, Context.ConnectionId, GetUserId()))
-            {
-                var groupId = GetNoteGroupName(noteId);
-                await Clients.Caller.SendAsync("setJoinedToNote", noteId);
-                await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
-                await Clients.Group(groupId).SendAsync("updateOnlineUsersNote", noteId); // TODO change on userId that can be added to ui list
-            }
-        }
-
         private Guid? GetUserId()
         {
             var isParsed = Guid.TryParse(Context.UserIdentifier, out var parsedId);
@@ -53,17 +42,46 @@ namespace BI.SignalR
             return userId;
         }
 
-        public async Task LeaveNote(Guid noteId)
+        // NOTES
+        public async Task JoinNote(Guid noteId)
         {
-            var isSuccess = wsNotesService.Remove(noteId, Context.ConnectionId);
-            if (!isSuccess)
+            if(wsNotesService.IsContainsConnectionId(noteId, Context.ConnectionId))
             {
-                Console.WriteLine("User did`nt deleted from online on note, UserId: " + GetUserId());
+                return;
             }
 
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if(ent == null)
+            {
+                return;
+            }
+
+            if (wsNotesService.Add(noteId, ent))
+            {
+                var groupId = GetNoteGroupName(noteId);
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
+                await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
+                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId); // TODO change on userId that can be added to ui list
+            }
+        }
+
+        public async Task LeaveNote(Guid noteId)
+        {
+            var result = wsNotesService.Remove(noteId, Context.ConnectionId);
+            if (!result.isRemoved)
+            {
+                Console.WriteLine("User did`nt deleted from online on note, UserId: " + GetUserId());
+                return;
+            }
+
+            await RemoveOnlineUsersNoteAsync(noteId, result.user.Id);
+        }
+
+        private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier)
+        {
             var groupId = GetNoteGroupName(noteId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Group(groupId).SendAsync("updateOnlineUsersNote", noteId);
+            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity { EntityId = noteId, UserIdentifier = userIdentifier });
         }
 
         public static string GetNoteGroupName(Guid id) => "N-" + id.ToString();
@@ -71,61 +89,114 @@ namespace BI.SignalR
         // FOLDERS
         public async Task JoinFolder(Guid folderId)
         {
-            if (wsFoldersService.IsContainsConnectionId(folderId, Context.ConnectionId) || wsFoldersService.Add(folderId, Context.ConnectionId, GetUserId()))
+            if (wsFoldersService.IsContainsConnectionId(folderId, Context.ConnectionId))
+            {
+                return;
+            }
+
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if (ent == null)
+            {
+                return;
+            }
+
+            if (wsFoldersService.Add(folderId, ent))
             {
                 var groupId = GetFolderGroupName(folderId);
-                await Clients.Caller.SendAsync("setJoinedToFolder", folderId);
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, folderId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
-                await Clients.Group(groupId).SendAsync("updateOnlineUsersFolder", folderId); // TODO change on userId that can be added to ui list
+                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId); // TODO change on userId that can be added to ui list
             }
         }
 
+
         public async Task LeaveFolder(Guid folderId)
         {
-            var isSuccess = wsFoldersService.Remove(folderId, Context.ConnectionId);
-
-            if (!isSuccess)
+            var result = wsFoldersService.Remove(folderId, Context.ConnectionId);
+            if (!result.isRemoved)
             {
                 Console.WriteLine("User did`nt deleted from online on folder, UserId: " + GetUserId());
+                return;
             }
 
+            await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+        }
+
+        private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier)
+        {
             var groupId = GetFolderGroupName(folderId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Group(groupId).SendAsync("updateOnlineUsersFolder", folderId);
+            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity { EntityId = folderId, UserIdentifier = userIdentifier });
         }
 
         public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
+        // OVERIDE
         public override async Task OnConnectedAsync()
         {
+            await AddConnectionAsync();
+
+            await base.OnConnectedAsync();
+        }
+
+        private async Task AddConnectionAsync()
+        {
             var userId = GetUserId();
+            UserIdentifierConnectionId entity = null;
             if (userId.HasValue)
             {
-                var entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
+                entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
                 if (entity == null)
                 {
-                    var newEnt = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
-                    await userIdentifierConnectionIdRepository.AddAsync(newEnt);
+                    entity = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
                 }
             }
-            await base.OnConnectedAsync();
+            else
+            {
+                entity = new UserIdentifierConnectionId { ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
+            }
+
+            if (entity != null)
+            {
+                await userIdentifierConnectionIdRepository.AddAsync(entity);
+            }
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var userId = GetUserId();
-            if (userId.HasValue)
+            await RemoveConnectionAsync();
+
+            var folderEnts = wsFoldersService.RemoveUserFromEntities(Context.ConnectionId);
+            foreach(var ent in folderEnts)
             {
-                var entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
-                if(entity != null)
-                {
-                    await userIdentifierConnectionIdRepository.RemoveAsync(entity);
-                }
+                await RemoveOnlineUsersFolderAsync(ent.entityId, ent.userId);
             }
 
-            // TODO MAYBE THERE ARE NEED DISCONNECT FROM FOLDER AND NOTE
-            // If need use channels or background jobs
+            var noteEnts = wsNotesService.RemoveUserFromEntities(Context.ConnectionId);
+            foreach (var ent in noteEnts)
+            {
+                await RemoveOnlineUsersNoteAsync(ent.entityId, ent.userId);
+            }
+
             await base.OnDisconnectedAsync(exception);
+        }
+
+        private async Task RemoveConnectionAsync()
+        {
+            var userId = GetUserId();
+            UserIdentifierConnectionId entity = null;
+            if (userId.HasValue) // USE DAPPER
+            {
+                entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
+            }
+            else
+            {
+                entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            }
+            if (entity != null)
+            {
+                await userIdentifierConnectionIdRepository.RemoveAsync(entity);
+            }
         }
     }
 }

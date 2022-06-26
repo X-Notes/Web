@@ -4,7 +4,9 @@ namespace Common.DTO.Users
 {
     public class OnlineUserOnNote
     {
-        public Guid Id { set; get; }
+        public Guid UserIdentifier { set; get; }
+
+        public Guid UserId { set; get; }
 
         public string Name { set; get; }
 

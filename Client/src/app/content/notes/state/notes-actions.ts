@@ -180,6 +180,13 @@ export class LoadOnlineUsersOnNote {
   constructor(public noteId: string) {}
 }
 
+export class RemoveOnlineUsersOnNote {
+  static type = '[Notes] Remove Online Users On Note';
+
+  constructor(public entityId: string, public userIdentifier: string) {}
+}
+
+
 // SELECTION
 export class SelectIdNote {
   static type = '[Notes] Select note';
@@ -234,7 +241,7 @@ export class LoadSnapshotNote {
   constructor(public snapshotId: string, public noteId: string) {}
 }
 
-export class DeleteCurrentNote {
+export class DeleteCurrentNoteData {
   static type = '[Notes] delete full note';
 }
 

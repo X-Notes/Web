@@ -7,7 +7,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { DeleteCurrentNote, LoadFullNote, LoadNotes } from '../state/notes-actions';
+import { DeleteCurrentNoteData, LoadFullNote, LoadNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
@@ -156,7 +156,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     this.updateNoteService.addNoteToUpdate(this.id);
     this.destroy.next();
     this.destroy.complete();
-    this.store.dispatch(new DeleteCurrentNote());
+    this.store.dispatch(new DeleteCurrentNoteData());
     this.routeSubscription.unsubscribe();
   }
 }
