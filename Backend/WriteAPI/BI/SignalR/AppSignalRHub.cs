@@ -131,7 +131,7 @@ namespace BI.SignalR
 
         public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
-        // OVERIDE
+        // override
         public override async Task OnConnectedAsync()
         {
             await AddConnectionAsync();

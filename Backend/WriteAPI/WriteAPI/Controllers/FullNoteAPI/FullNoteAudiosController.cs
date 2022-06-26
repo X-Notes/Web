@@ -29,7 +29,7 @@ namespace WriteAPI.Controllers.FullNoteAPI
         {
         }
 
-        [HttpPost("transform")]
+        [HttpPost("transform")] // TODO TO WS
         public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
         {
             command.UserId = this.GetUserId();

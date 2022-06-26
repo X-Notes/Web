@@ -28,7 +28,7 @@ namespace WriteAPI.Controllers.FullNoteAPI
         {
         }
 
-        [HttpPost("transform")]
+        [HttpPost("transform")] // TODO TO WS
         public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
         {
             command.UserId = this.GetUserId();

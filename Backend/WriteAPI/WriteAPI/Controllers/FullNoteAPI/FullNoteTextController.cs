@@ -20,14 +20,14 @@ namespace WriteAPI.Controllers.FullNoteAPI
             this._mediator = _mediator;
         }
 
-        [HttpPatch("title")]
+        [HttpPatch("title")] // TODO TO WS
         public async Task<OperationResult<Unit>> UpdateTitle([FromBody]UpdateTitleNoteCommand command)
         {          
             command.UserId = this.GetUserId();
             return await this._mediator.Send(command);
         }
 
-        [HttpPatch("sync")]
+        [HttpPatch("sync")] // TODO TO WS
         public async Task<OperationResult<Unit>> SyncTextContents(UpdateTextContentsCommand command)
         {
             command.UserId = this.GetUserId();

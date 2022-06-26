@@ -34,7 +34,7 @@ namespace WriteAPI.Controllers.FullNoteAPI
             return await this._mediator.Send(command);
         }
 
-        [HttpPatch("sync/structure")]
+        [HttpPatch("sync/structure")] // TODO TO WS
         public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
         {
             command.UserId = this.GetUserId();
