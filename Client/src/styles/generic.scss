@@ -6,6 +6,13 @@
   }
 }
 
+.nope-select {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .custom-dialog-class-dark {
   mat-dialog-container {
     padding: 0;

@@ -343,7 +343,7 @@ namespace BI.Services.Notes
 
                 var newNote = new Note()
                 {
-                    Title = noteForCopy.Title,
+                    Title = noteForCopy.Title + " (1)",
                     Color = noteForCopy.Color,
                     CreatedAt = DateTimeProvider.Time,
                     UpdatedAt = DateTimeProvider.Time,

@@ -47,11 +47,13 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const left = (coords.left + coords.right - deltaSide - deltaMenuWidth) / 2;
       const top = coords.top - 100;
 
-      this.menuSelectionService.currentTextItem = this.getCurrentItem().getContent() as BaseText;
-
-      this.menuSelectionService.left = left;
-      this.menuSelectionService.startTop = top;
-      this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
+      const currentItem = this.getCurrentItem();
+      if(currentItem) {
+        this.menuSelectionService.currentTextItem = currentItem.getContent() as BaseText;
+        this.menuSelectionService.left = left;
+        this.menuSelectionService.startTop = top;
+        this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
+      }
     } else {
       this.menuSelectionService.currentTextItem = null;
     }
@@ -67,6 +69,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
         return item;
       }
     }
+    return null;
   }
 
   ngOnDestroy(): void {

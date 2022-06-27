@@ -62,11 +62,6 @@ html {
   height: 100%;
 }
 
-[contenteditable] {
-  -webkit-user-select: text;
-  user-select: text;
-}
-
 [hidden] {
   display: none !important;
 }
@@ -91,5 +86,5 @@ textarea {
   opacity: 0;
   display: block;
   position: absolute;
-  background-color: rgba(255, 183, 100, 0.5);
+  background-color: rgba(41, 151, 255, 0.5);
 }
