@@ -138,7 +138,7 @@ export class PhotosComponent
       .pipe(takeUntil(this.destroy), debounceTime(300)) // TODO export const
       .subscribe((values) => {
         const [height] = values;
-        if (height && (this.content.height !== height)) {
+        if (height && this.content.height !== height) {
           this.content.height = height;
           this.someChangesEvent.emit();
         }
@@ -150,11 +150,10 @@ export class PhotosComponent
     this.initBlocks();
   }
 
-  setPhotosInRowWrapper(count: number): void  {
+  setPhotosInRowWrapper(count: number): void {
     this.setPhotosInRow(count);
     this.someChangesEvent.emit();
   }
-
 
   setFalseLoadedForAllPhotos() {
     for (const mainBlock of this.mainBlocks) {
@@ -196,7 +195,7 @@ export class PhotosComponent
   syncPhotos(): void {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
-    if(photosCount !== currentLength) {
+    if (photosCount !== currentLength) {
       this.initPhotos();
     }
   }
@@ -212,7 +211,7 @@ export class PhotosComponent
     this.uiCountInRow = this.content.countInRow;
   }
 
-  initBlocks(): void  {
+  initBlocks(): void {
     this.mainBlocks = [];
     this.lastBlock = [];
     const photoLength = this.content.items.length;

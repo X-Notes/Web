@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
-import { ExportService } from '../../../../../export.service';
 import { GenericFileExtenstionService } from '../../../../../generic-file-extenstion.service';
 import { DocumentModel } from '../../../../../models/editor-models/documents-collection';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';

@@ -186,7 +186,6 @@ export class RemoveOnlineUsersOnNote {
   constructor(public entityId: string, public userIdentifier: string) {}
 }
 
-
 // SELECTION
 export class SelectIdNote {
   static type = '[Notes] Select note';

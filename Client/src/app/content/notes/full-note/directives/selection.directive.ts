@@ -12,8 +12,6 @@ import { ScrollEvent } from 'muuri';
 import { fromEvent, Subscription } from 'rxjs';
 import { bufferTime } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { buffer } from 'stream/consumers';
-import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 
@@ -46,11 +44,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   startTop: number;
 
-  private div: HTMLElement;
-
   mainContent: Element;
 
   moveEventSub: Subscription;
+
+  private div: HTMLElement;
 
   constructor(
     private elementRef: ElementRef,
@@ -69,10 +67,10 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   get isDivActive(): boolean {
-    if(!this.div) return false;
+    if (!this.div) return false;
     const size = this.div.getBoundingClientRect();
-    return (size.width > 5 && size.height > 5) && this.div.style.opacity === '1';
-  } 
+    return size.width > 5 && size.height > 5 && this.div.style.opacity === '1';
+  }
 
   @HostListener('mousedown', ['$event'])
   onClick() {
@@ -115,13 +113,14 @@ export class SelectionDirective implements OnDestroy, OnInit {
       this.mouseUp(e),
     );
 
-    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {  });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {});
     this.listeners.push(mouseMoveListener);
 
     this.moveEventSub = fromEvent(document, 'mousemove')
       .pipe(bufferTime(20))
       .subscribe((events: MouseEvent[]) => {
-        if(!events || events.length === 0) return;
+        if (!events || events.length === 0) return;
         const last = events[events.length - 1];
         this.mouseMoveDelay(last);
       });
@@ -147,8 +146,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
     if (
       (evt.target as HTMLElement).classList.contains('icon') ||
       (evt.target as HTMLElement).tagName === 'svg' ||
-      (evt.target as HTMLElement).tagName === 'path' || 
-      this.pS.isMobile() 
+      (evt.target as HTMLElement).tagName === 'path' ||
+      this.pS.isMobile()
     ) {
       return;
     }

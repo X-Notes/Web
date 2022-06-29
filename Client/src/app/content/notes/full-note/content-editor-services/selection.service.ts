@@ -37,6 +37,7 @@ export class SelectionService {
       contentToSelect.forEach((content) => this.selectedItemsSet.add(content.id));
     }
   }
+
   isAnySelect(): boolean {
     return this.selectedItemsSet.size > 0;
   }

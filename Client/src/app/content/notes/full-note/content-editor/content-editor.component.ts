@@ -272,7 +272,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   selectionHandler(secondRect: DOMRect) {
-    this.selectionService.selectionHandler(secondRect, this.elements, this.selectionDirective.isDivTransparent);
+    this.selectionService.selectionHandler(
+      secondRect,
+      this.elements,
+      this.selectionDirective.isDivTransparent,
+    );
   }
 
   selectionStartHandler($event: DOMRect) {
@@ -285,7 +289,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   selectionEndHandler($event: DOMRect): void {
-    if(!this.isSelectModeActive) return;
+    if (!this.isSelectModeActive) return;
     const isSelectionInZone = this.selectionService.isSelectionInZone(
       $event,
       this.elements,
@@ -375,8 +379,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       styles.updateMode === UpdateStyleMode.Add,
     );
     if (el) {
-      const html = DeltaConverter.convertToTextBlocks(resultDelta);
-      el.updateHTML(html);
+      el.updateHTML(DeltaConverter.convertToTextBlocks(resultDelta));
     }
   };
 
@@ -612,7 +615,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   syncPhotoItems(contentId: string): void {
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
-    if(curEl){
+    if (curEl) {
       curEl.syncContentItems();
     }
   }
