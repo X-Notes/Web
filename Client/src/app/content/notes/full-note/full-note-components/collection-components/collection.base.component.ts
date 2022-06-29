@@ -95,4 +95,6 @@ export class CollectionBaseComponent<
   }
 
   updateIternal() {}
+
+  syncContentItems() {}
 }

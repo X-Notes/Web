@@ -37,6 +37,8 @@ export class PhotosComponent
 
   startHeight;
 
+  uiCountInRow: number;
+
   mainBlocks: Photo[][] = [];
 
   lastBlock: Photo[] = [];
@@ -61,11 +63,11 @@ export class PhotosComponent
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.items.length / this.content.countInRow);
+    return Math.floor(this.content.items.length / this.uiCountInRow);
   }
 
   get countLastItems() {
-    return this.content.items.length % this.content.countInRow;
+    return this.content.items.length % this.uiCountInRow;
   }
 
   get totalRows() {
@@ -143,7 +145,9 @@ export class PhotosComponent
       });
 
     this.changeHeightSubject.next(this.content.height);
-    this.initPhotos();
+
+    this.initCountInRow(this.content.countInRow);
+    this.initBlocks();
   }
 
   setPhotosInRowWrapper(count: number): void  {
@@ -151,13 +155,6 @@ export class PhotosComponent
     this.someChangesEvent.emit();
   }
 
-  setPhotosInRow(count: number): void {
-    if (this.content.countInRow === count) return;
-    this.content.countInRow = count;
-    this.setFalseLoadedForAllPhotos();
-    this.setHeight('auto');
-    this.initPhotos();
-  }
 
   setFalseLoadedForAllPhotos() {
     for (const mainBlock of this.mainBlocks) {
@@ -180,20 +177,49 @@ export class PhotosComponent
     await this.exportService.exportPhoto(photo);
   }
 
+  // UPDATING
+  syncContentItems() {
+    this.syncPhotos();
+  }
+
   updateIternal() {
     this.setPhotosInRow(this.content.countInRow);
     this.syncHeight();
   }
 
-  initPhotos() {
-    this.content.countInRow = this.content.countInRow === 0 ? 2 : this.content.countInRow;
+  setPhotosInRow(count: number): void {
+    if (this.uiCountInRow === count) return;
+    this.initCountInRow(count);
+    this.initPhotos();
+  }
+
+  syncPhotos(): void {
+    const photosCount = this.content.items.length;
+    const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
+    if(photosCount !== currentLength) {
+      this.initPhotos();
+    }
+  }
+
+  initPhotos(): void {
+    this.setFalseLoadedForAllPhotos();
+    this.setHeight('auto');
+    this.initBlocks();
+  }
+
+  initCountInRow(countInRow: number): void {
+    this.content.countInRow = countInRow === 0 ? 2 : countInRow;
+    this.uiCountInRow = this.content.countInRow;
+  }
+
+  initBlocks(): void  {
     this.mainBlocks = [];
     this.lastBlock = [];
     const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.items.slice(j, j + this.content.countInRow));
-      j += this.content.countInRow;
+      this.mainBlocks.push(this.content.items.slice(j, j + this.uiCountInRow));
+      j += this.uiCountInRow;
     }
     if (this.countLastItems > 0) {
       this.lastBlock = this.content.items.slice(photoLength - this.countLastItems, photoLength);

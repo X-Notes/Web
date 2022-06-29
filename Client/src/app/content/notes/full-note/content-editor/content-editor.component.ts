@@ -539,6 +539,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);
       if (el) {
         el.syncContentWithLayout();
+        el.syncContentItems();
       }
     }
   }
@@ -599,11 +600,20 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deletePhotoHandler(photoId: string, collection: PhotosCollection) {
     this.contentEditorPhotosService.deletePhotoHandler(photoId, collection);
+    this.syncPhotoItems(collection.id);
     this.postAction();
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorPhotosService.uploadPhotosToCollectionHandler($event, noteId);
+    this.syncPhotoItems($event.contentId);
     this.postAction();
   };
+
+  syncPhotoItems(contentId: string): void {
+    const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
+    if(curEl){
+      curEl.syncContentItems();
+    }
+  }
 }

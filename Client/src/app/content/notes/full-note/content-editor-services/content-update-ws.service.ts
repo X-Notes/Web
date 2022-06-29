@@ -96,6 +96,7 @@ export class ContentUpdateWsService implements OnDestroy {
     const el = this.elements.toArray().find((x) => x.getContentId() === contentId);
     if (el) {
       el.syncContentWithLayout();
+      el.syncContentItems();
     }
   }
 

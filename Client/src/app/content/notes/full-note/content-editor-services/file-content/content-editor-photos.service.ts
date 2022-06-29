@@ -109,7 +109,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
 
     const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
     collection.addItemsToCollection(photosMapped);
-
+    
     this.afterUploadFilesToCollection(photosResult);
   };
 

@@ -127,6 +127,7 @@ export class ApiBrowserTextService {
     if (!el) return;
     const range = document.createRange();
     const containerStart = el.childNodes[0];
+    if(!containerStart) return;
     pos = pos > el.textContent.length ? el.textContent.length : pos;
     range.setStart(containerStart, pos);
     range.collapse(true);

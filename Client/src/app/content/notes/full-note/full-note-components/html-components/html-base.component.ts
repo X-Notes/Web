@@ -256,6 +256,8 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart(e) {}
 
+  syncContentItems() {}
+
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
   }
