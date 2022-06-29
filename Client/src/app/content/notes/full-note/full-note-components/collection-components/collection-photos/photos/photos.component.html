@@ -5,7 +5,7 @@
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="photo-container"
@@ -15,6 +15,7 @@
   >
     <div class="content-photos">
       <app-title-collection
+        [isSelectionStart]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
         (changeTitleEvent)="onTitleChangeInput($event)"
@@ -32,6 +33,7 @@
             <app-photo
               *ngFor="let item of block"
               [photo]="item"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
@@ -48,6 +50,7 @@
             <app-photo
               *ngFor="let item of lastBlock"
               [photo]="item"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"

@@ -39,6 +39,7 @@
       </div>
     </div>
     <app-button-collection
+      *ngIf="!isSelectModeActive"
       [matMenuTriggerFor]="menu"
       [button]="'more_vert'"
     ></app-button-collection>

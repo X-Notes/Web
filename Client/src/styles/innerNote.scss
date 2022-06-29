@@ -11,6 +11,8 @@
 }
 
 .block-generic {
+  min-height: 22px;
+  overflow-wrap: anywhere;
   outline: none;
   width: 100%;
   z-index: 2;

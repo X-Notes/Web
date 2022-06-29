@@ -5,10 +5,11 @@
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadVideos($event)">
     <app-title-collection
+      [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
@@ -32,7 +33,7 @@
         (ended)="isPlaying = false"
         [src]="getMainVideo?.videoPath"
       ></video>
-      <div class="controls">
+      <div *ngIf="!isSelectModeActive" class="controls">
         <div class="progress slider-controls">
           <mat-slider
             class="slider"
@@ -119,7 +120,7 @@
               [src]="item?.videoPath"
             ></video>
             <app-button-collection
-              *ngIf="!isReadOnlyMode"
+              *ngIf="!isReadOnlyMode && !isSelectModeActive"
               class="more-thumb-button"
               [matMenuTriggerFor]="menu"
               [button]="'more_vert'"

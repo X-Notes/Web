@@ -11,6 +11,7 @@
   />
   <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>
   <app-button-collection
+    *ngIf="!isSelectModeActive"
     class="more-thumb-button"
     [matMenuTriggerFor]="menu"
     [button]="'more_vert'"

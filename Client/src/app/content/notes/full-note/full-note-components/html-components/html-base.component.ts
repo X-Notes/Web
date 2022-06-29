@@ -60,7 +60,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   constructor(
     cdr: ChangeDetectorRef,
     protected apiBrowserTextService: ApiBrowserTextService,
-    protected selectionService: SelectionService,
+    public selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
   ) {
@@ -139,7 +139,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter($event) {
     $event.preventDefault();
-    this.preFocus = !this.selectionService.ismousedown;
+    this.preFocus = !this.isSelectModeActive;
     this.isMouseOver = true;
   }
 

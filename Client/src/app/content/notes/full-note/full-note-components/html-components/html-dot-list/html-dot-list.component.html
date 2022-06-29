@@ -7,7 +7,7 @@
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div class="dot-list">
     <div class="dot-container">
@@ -17,7 +17,7 @@
       <p
         class="block-generic default-text-size default-text-id"
         #contentHtml
-        [attr.contenteditable]="!isReadOnlyMode"
+        [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
         [innerHTML]="viewHtml"
         (input)="onInput()"
       ></p>

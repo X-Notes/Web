@@ -119,6 +119,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public clickableContentService: ClickableContentService,
   ) {}
 
+  get isSelectModeActive(): boolean {
+    return this.selectionService.isAnySelect() || this.selectionDirective?.isDivActive;
+  }
+
   get contents() {
     return this.contentEditorContentsService.getContents;
   }
@@ -268,7 +272,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   selectionHandler(secondRect: DOMRect) {
-    this.selectionService.selectionHandler(secondRect, this.elements);
+    this.selectionService.selectionHandler(secondRect, this.elements, this.selectionDirective.isDivTransparent);
   }
 
   selectionStartHandler($event: DOMRect) {
@@ -277,12 +281,18 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.elements,
       this.noteTitleEl,
     );
+    this.selectionDirective.setIsShowDiv(!isSelectionInZone);
+  }
+
+  selectionEndHandler($event: DOMRect): void {
+    if(!this.isSelectModeActive) return;
+    const isSelectionInZone = this.selectionService.isSelectionInZone(
+      $event,
+      this.elements,
+      this.noteTitleEl,
+    );
     if (isSelectionInZone) {
-      this.selectionService.isSelectionInside = true;
-      this.selectionDirective.div.style.opacity = '0';
-    } else {
-      this.selectionService.isSelectionInside = false;
-      this.selectionDirective.div.style.opacity = '1';
+      this.apiBrowserFunctions.removeAllRanges();
     }
   }
 
@@ -344,7 +354,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent) {
     const delta = DeltaConverter.convertHTMLToDelta(model.html);
-    model.content.contents = DeltaConverter.convertToTextBlocks(delta);
+    const contents = DeltaConverter.convertToTextBlocks(delta);
+    model.content.contents = contents;
     this.postAction();
   }
 
@@ -364,7 +375,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       styles.updateMode === UpdateStyleMode.Add,
     );
     if (el) {
-      el.updateHTML(DeltaConverter.convertToTextBlocks(resultDelta));
+      const html = DeltaConverter.convertToTextBlocks(resultDelta);
+      el.updateHTML(html);
     }
   };
 

@@ -50,7 +50,7 @@ export class PhotosComponent
   constructor(
     private renderer: Renderer2,
     private elRef: ElementRef,
-    private selectionService: SelectionService,
+    public selectionService: SelectionService,
     private exportService: ExportService,
     clickableContentService: ClickableContentService,
     private host: ElementRef,

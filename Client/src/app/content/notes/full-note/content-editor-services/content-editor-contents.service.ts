@@ -340,6 +340,7 @@ export class ContentEditorContentsSynchronizeService {
       this.getContents,
       ContentTypeENUM.Text,
     );
+    console.log('textDiffs: ', textDiffs);
     if (textDiffs.length > 0) {
       await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
       for (const text of textDiffs) {

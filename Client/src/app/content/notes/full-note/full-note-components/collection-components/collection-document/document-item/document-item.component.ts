@@ -4,6 +4,7 @@ import { ExportService } from '../../../../../export.service';
 import { GenericFileExtenstionService } from '../../../../../generic-file-extenstion.service';
 import { DocumentModel } from '../../../../../models/editor-models/documents-collection';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-document-item',
@@ -22,6 +23,8 @@ export class DocumentItemComponent {
 
   @Input() document: DocumentModel;
 
+  @Input() isSelectModeActive = false;
+
   @Input()
   isReadOnlyMode = false;
 
@@ -31,8 +34,8 @@ export class DocumentItemComponent {
   constructor(
     private readonly clickableService: ClickableContentService,
     private readonly dialogsManageService: DialogsManageService,
-    private readonly exportService: ExportService,
     public readonly genericFileExtenstionService: GenericFileExtenstionService,
+    public selectionService: SelectionService,
   ) {}
 
   get isClicked() {

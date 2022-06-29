@@ -7,11 +7,12 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
 
   <div [appDrop]="'drop-active'" (fileDropped)="uploadDocuments($event)" class="playlist" appTheme>
     <app-title-collection
+      [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
@@ -23,6 +24,7 @@
       <app-document-item
         *ngFor="let item of content.orderedItems"
         [document]="item"
+        [isSelectModeActive]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         (deleteDocument)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportDocument($event)"

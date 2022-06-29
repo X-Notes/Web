@@ -35,6 +35,9 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   isReadOnlyMode = false;
 
   @Input()
+  isSelectionStart = false;
+
+  @Input()
   isShowButton = false;
 
   @Input()
@@ -46,6 +49,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
+  }
+
+  get isButtonActive(): boolean {
+    return this.isShowButton && !this.isSelectionStart;
   }
 
   ngOnInit(): void {

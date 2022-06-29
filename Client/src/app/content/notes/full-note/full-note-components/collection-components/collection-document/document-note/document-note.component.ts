@@ -18,6 +18,7 @@ import {
   DocumentsCollection,
 } from '../../../../../models/editor-models/documents-collection';
 import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-document-note',
@@ -40,6 +41,7 @@ export class DocumentNoteComponent
     cdr: ChangeDetectorRef,
     clickableContentService: ClickableContentService,
     apiBrowserTextService: ApiBrowserTextService,
+    public selectionService: SelectionService,
   ) {
     super(cdr, clickableContentService, apiBrowserTextService);
   }

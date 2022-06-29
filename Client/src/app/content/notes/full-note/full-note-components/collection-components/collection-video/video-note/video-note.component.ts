@@ -22,6 +22,7 @@ import {
   VideoModel,
   VideosCollection,
 } from 'src/app/content/notes/models/editor-models/videos-collection';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-video-note',
@@ -67,6 +68,7 @@ export class VideoNoteComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
+    public selectionService: SelectionService,
   ) {
     super(cdr, clickableContentService, apiBrowserTextService);
   }

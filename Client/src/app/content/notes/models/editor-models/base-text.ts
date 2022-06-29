@@ -129,8 +129,20 @@ export class TextBlock {
     return (
       this.text === block.text &&
       this.highlightColor === block.highlightColor &&
-      this.textColor === block.textColor
+      this.textColor === block.textColor &&
+      this.isEqualTextTypes(block.textTypes)
     );
+  }
+
+  isEqualTextTypes(textTypes: TextType[]): boolean {
+    if (this.textTypes === textTypes) return true;
+    if (this.textTypes == null || textTypes == null) return false;
+    if (this.textTypes.length !== textTypes.length) return false;
+
+    for (let i = 0; i < this.textTypes.length; i += 1) {
+      if (this.textTypes[i] !== textTypes[i]) return false;
+    }
+    return true;
   }
 }
 

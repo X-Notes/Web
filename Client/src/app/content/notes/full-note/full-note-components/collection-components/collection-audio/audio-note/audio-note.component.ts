@@ -18,6 +18,7 @@ import {
   AudioModel,
   AudiosCollection,
 } from 'src/app/content/notes/models/editor-models/audios-collection';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -40,6 +41,7 @@ export class AudioNoteComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
+    public selectionService: SelectionService,
   ) {
     super(cdr, clickableContentService, apiBrowserTextService);
   }
