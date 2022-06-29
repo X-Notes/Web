@@ -16,7 +16,6 @@
       [date]="item.deletedAt | date: 'medium'"
       [tooltipDateMessage]="'entity-bottom-tooltip.deleted'"
       (highlightNote)="noteService.highlightNote($event)"
-      [ngStyle]="{'backgroundColor': item.color }"
       (clickOnNote)="noteService.toNote($event)"
       class="note"
     ></app-note>

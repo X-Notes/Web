@@ -15,7 +15,6 @@
       [userId]="(user$ | async).id"
       (highlightNote)="noteService.highlightNote($event)"
       (clickOnNote)="noteService.toNote($event)"
-      [ngStyle]="{'backgroundColor': item.color }"
       class="note"
     ></app-note>
   </div>

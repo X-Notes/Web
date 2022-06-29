@@ -15,7 +15,6 @@
       [userId]="(user$ | async).id"
       [isShowWrightRead]="true"
       (highlightNote)="noteService.highlightNote($event)"
-      [ngStyle]="{'backgroundColor': item.color }"
       (clickOnNote)="noteService.toNote($event)"
       class="note"
     ></app-note>
