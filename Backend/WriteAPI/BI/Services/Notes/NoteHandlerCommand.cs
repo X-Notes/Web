@@ -254,7 +254,7 @@ namespace BI.Services.Notes
         public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, Guid authorId, Guid callerId)
         {
             var isOwner = authorId == callerId;
-
+            // VIDEO OTHER
             var contents = new List<BaseNoteContent>();
 
             foreach (var contentForCopy in noteContents)
@@ -281,6 +281,7 @@ namespace BI.Services.Notes
                                 var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId, callerId, file, MapToContentTypesFile(collection.FileTypeId)));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
+                                copies.ForEach(x => x.AppFileUploadInfo.SetLinked());
                                 contents.Add(new CollectionNote(collection, copies, noteId, collection.FileTypeId));
                             }
                             continue;

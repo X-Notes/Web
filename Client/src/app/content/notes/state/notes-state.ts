@@ -71,6 +71,7 @@ import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { NoteHistory } from '../full-note/models/history/note-history.model';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 interface FullNoteState {
   note: FullNote;
@@ -654,7 +655,7 @@ export class NoteStore {
       const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
       dispatch(new AddToDomNotes(obj));
     }
-    dispatch([UnSelectAllNote]);
+    dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
   }
 
   @Action(AddLabelOnNote)

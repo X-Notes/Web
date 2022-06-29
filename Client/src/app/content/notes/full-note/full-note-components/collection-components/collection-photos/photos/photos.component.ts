@@ -137,9 +137,9 @@ export class PhotosComponent
     this.changeSizeAlbumHalder
       .pipe(takeUntil(this.destroy), debounceTime(300)) // TODO export const
       .subscribe((values) => {
-        const [height] = values;
-        if (height && this.content.height !== height) {
-          this.content.height = height;
+        let [height] = values;
+        height = height ?? 'auto';
+        if (this.content.height !== height) {
           this.someChangesEvent.emit();
         }
       });
@@ -340,6 +340,7 @@ export class PhotosComponent
   }
 
   private setHeight(value: string): void {
+    value = value ?? 'auto';
     this.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
     this.changeHeightSubject.next(value);
   }

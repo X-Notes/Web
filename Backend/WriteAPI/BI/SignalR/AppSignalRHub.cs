@@ -74,7 +74,10 @@ namespace BI.SignalR
                 return;
             }
 
-            await RemoveOnlineUsersNoteAsync(noteId, result.user.Id);
+            if(result.user != null)
+            {
+                await RemoveOnlineUsersNoteAsync(noteId, result.user.Id);
+            }
         }
 
         private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier)
