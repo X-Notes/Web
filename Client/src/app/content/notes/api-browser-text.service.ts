@@ -192,8 +192,14 @@ export class ApiBrowserTextService {
     }
 
     const sel = this.getSelection();
-    sel.removeAllRanges();
+    this.removeAllRanges(sel);
+    
     sel.addRange(range);
+  }
+
+  removeAllRanges(sel: Selection = null): void {
+    sel = sel ?? this.getSelection();
+    sel.removeAllRanges();
   }
 
   private updateRange(range: Range): void {
