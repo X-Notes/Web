@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
@@ -70,6 +78,10 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.syncContent();
+  }
+
+  syncContent(): void {
     let num = 1;
     this.contents = this.note.contents.map((item, index, array) => {
       const prev = array[index - 1];
