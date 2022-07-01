@@ -43,7 +43,12 @@ export class DocumentNoteComponent
     apiBrowserTextService: ApiBrowserTextService,
     public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Document);
+    super(
+      cdr,
+      clickableContentService,
+      apiBrowserTextService,
+      ClickableSelectableEntities.Document,
+    );
   }
 
   get isClicked() {

@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';

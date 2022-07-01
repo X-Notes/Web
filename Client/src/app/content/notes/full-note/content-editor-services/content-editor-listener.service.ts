@@ -20,56 +20,78 @@ export class ContentEditorListenerService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  setHandlers(elements: QueryList<ParentInteraction>, noteTitleEl: ElementRef, contentSection: ElementRef<HTMLElement>) {
+  setHandlers(
+    elements: QueryList<ParentInteraction>,
+    noteTitleEl: ElementRef,
+    contentSection: ElementRef<HTMLElement>,
+  ) {
     // KEY UP NAVIGATION
 
-    const keydownArrowUp = this.renderer.listen(document, 'keydown.ArrowUp', (event: KeyboardEvent) => {
-      if (document.activeElement === noteTitleEl.nativeElement) {
-        return;
-      }
-
-      const arr = elements.toArray();
-      const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
-      if (el) {
-        const index = arr.indexOf(el);
-        const { currentItemId: itemId } = this.clickableService;
-        const isFocusToNext = el.isFocusToNext({ contentSection, event, itemId, status: FocusDirection.Up });
-        const upEl = isFocusToNext ? arr[index - 1] : el;
-        if (index === 0 && isFocusToNext) {
-          noteTitleEl.nativeElement?.focus();
+    const keydownArrowUp = this.renderer.listen(
+      document,
+      'keydown.ArrowUp',
+      (event: KeyboardEvent) => {
+        if (document.activeElement === noteTitleEl.nativeElement) {
           return;
         }
-        if (upEl) {
-          upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Up });
-        }
-      }
-    });
 
-    const keydownArrowDown = this.renderer.listen(document, 'keydown.ArrowDown', (event: KeyboardEvent) => {
-      const arr = elements.toArray();
-
-      if (document.activeElement === noteTitleEl.nativeElement) {
-        arr[0]?.setFocus({ contentSection, event, itemId: null, status: FocusDirection.Down });
-        return;
-      }
-
-      const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
-      if (el) {
-        const index = arr.indexOf(el);
-
-        const upDown = arr[index + 1];
-        if (upDown) {
+        const arr = elements.toArray();
+        const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
+        if (el) {
+          const index = arr.indexOf(el);
           const { currentItemId: itemId } = this.clickableService;
-          const upEl = el.isFocusToNext({ contentSection, event, itemId, status: FocusDirection.Down })
-            ? arr[index + 1]
-            : el;
-          console.log('upEl: ', upEl);
+          const isFocusToNext = el.isFocusToNext({
+            contentSection,
+            event,
+            itemId,
+            status: FocusDirection.Up,
+          });
+          const upEl = isFocusToNext ? arr[index - 1] : el;
+          if (index === 0 && isFocusToNext) {
+            noteTitleEl.nativeElement?.focus();
+            return;
+          }
           if (upEl) {
-            upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Down });
+            upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Up });
           }
         }
-      }
-    });
+      },
+    );
+
+    const keydownArrowDown = this.renderer.listen(
+      document,
+      'keydown.ArrowDown',
+      (event: KeyboardEvent) => {
+        const arr = elements.toArray();
+
+        if (document.activeElement === noteTitleEl.nativeElement) {
+          arr[0]?.setFocus({ contentSection, event, itemId: null, status: FocusDirection.Down });
+          return;
+        }
+
+        const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
+        if (el) {
+          const index = arr.indexOf(el);
+
+          const upDown = arr[index + 1];
+          if (upDown) {
+            const { currentItemId: itemId } = this.clickableService;
+            const upEl = el.isFocusToNext({
+              contentSection,
+              event,
+              itemId,
+              status: FocusDirection.Down,
+            })
+              ? arr[index + 1]
+              : el;
+            console.log('upEl: ', upEl);
+            if (upEl) {
+              upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Down });
+            }
+          }
+        }
+      },
+    );
 
     const keydownEnter = this.renderer.listen(document, 'keydown.enter', (e: KeyboardEvent) => {
       e.preventDefault();

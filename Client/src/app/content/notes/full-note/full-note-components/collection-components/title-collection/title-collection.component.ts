@@ -77,7 +77,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
     this.titleHtml.nativeElement.focus();
   }
 
-  scrollToTitle(behavior:ScrollBehavior = 'smooth', block: ScrollLogicalPosition = 'center') {
+  scrollToTitle(behavior: ScrollBehavior = 'smooth', block: ScrollLogicalPosition = 'center') {
     this.titleHtml.nativeElement.scrollIntoView({ behavior, block });
   }
 

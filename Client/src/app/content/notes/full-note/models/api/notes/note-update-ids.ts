@@ -1,4 +1,4 @@
 export interface NoteUpdateIds {
-    prevId: string;
-    id: string;
-} 
+  prevId: string;
+  id: string;
+}

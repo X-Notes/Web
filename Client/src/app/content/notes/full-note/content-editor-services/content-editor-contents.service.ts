@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
@@ -172,16 +172,16 @@ export class ContentEditorContentsSynchronizeService {
   }
 
   private updateIds(updateIds: NoteUpdateIds[]): void {
-    if(!updateIds || updateIds.length === 0) return;
+    if (!updateIds || updateIds.length === 0) return;
 
-    for(const update of updateIds){
-      const syncContent = this.contentsSync.find(x => x.id === update.prevId);
-      if(syncContent) {
+    for (const update of updateIds) {
+      const syncContent = this.contentsSync.find((x) => x.id === update.prevId);
+      if (syncContent) {
         syncContent.prevId = syncContent.id;
         syncContent.id = update.id;
       }
-      const content = this.contents.find(x => x.id === update.prevId);
-      if(content) {
+      const content = this.contents.find((x) => x.id === update.prevId);
+      if (content) {
         content.prevId = content.id;
         content.id = update.id;
       }
@@ -618,6 +618,7 @@ export class ContentEditorContentsSynchronizeService {
   }
 
   getContentByPrevId<T extends ContentModelBase>(contentId: string): T {
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < this.contents.length; i += 1) {
       if (this.contents[i].prevId === contentId) {
         return this.contents[i] as T;

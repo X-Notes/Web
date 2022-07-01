@@ -51,7 +51,7 @@ export class CollectionBaseComponent<
     cdr: ChangeDetectorRef,
     protected clickableContentService: ClickableContentService,
     protected apiBrowserTextService: ApiBrowserTextService,
-    public selectType: ClickableSelectableEntities
+    public selectType: ClickableSelectableEntities,
   ) {
     super(cdr);
   }

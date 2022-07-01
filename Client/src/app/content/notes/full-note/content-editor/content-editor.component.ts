@@ -56,7 +56,6 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
-import { single } from 'rxjs/operators';
 
 @Component({
   selector: 'app-content-editor',
@@ -160,7 +159,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elements, this.contentSection);
+    this.contentEditorElementsListenersService.setHandlers(this.elements);
     this.contentEditorListenerService.setHandlers(
       this.elements,
       this.noteTitleEl,
@@ -671,7 +670,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   syncPhotoItems(contentId: string): void {
-    if(!contentId) return;
+    if (!contentId) return;
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
     if (curEl) {
       curEl.syncContentItems();

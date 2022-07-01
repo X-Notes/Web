@@ -114,7 +114,7 @@ export class AudioNoteComponent
 
   setFocus = (entity?: SetFocus) => {
     entity.event.preventDefault();
-    
+
     const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
