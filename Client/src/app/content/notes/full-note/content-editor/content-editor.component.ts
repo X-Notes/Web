@@ -70,6 +70,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
+  @ViewChild('contentSection', { read: ElementRef }) contentSection: ElementRef<HTMLElement>;
+
   @Input()
   isReadOnlyMode = true;
 
@@ -157,8 +159,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elements);
-    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
+    this.contentEditorElementsListenersService.setHandlers(this.elements, this.contentSection);
+    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl, this.contentSection);
     this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
   }
 

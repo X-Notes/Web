@@ -15,7 +15,7 @@
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
-      (clickInputEvent)="clickAudioHandler(null)"
+      (clickInputEvent)="clickItemHandler(null)"
       [menu]="menu"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
@@ -30,7 +30,7 @@
         (pauseEvent)="pause()"
         (deleteAudio)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportAudio($event)"
-        (clickEvent)="clickAudioHandler($event)"
+        (clickEvent)="clickItemHandler($event)"
       ></app-audio>
     </ng-container>
     <app-empty-collection-items-placeholder

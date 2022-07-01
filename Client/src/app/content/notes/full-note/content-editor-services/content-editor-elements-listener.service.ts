@@ -1,4 +1,4 @@
-import { Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
+import { ElementRef, Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
@@ -24,7 +24,7 @@ export class ContentEditorElementsListenerService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  setHandlers(elements: QueryList<ParentInteraction>) {
+  setHandlers(elements: QueryList<ParentInteraction>, contentSection: ElementRef<HTMLElement>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
       this.onPressDeleteOrBackSpaceSubject.next();
@@ -53,6 +53,11 @@ export class ContentEditorElementsListenerService {
       const htmlEl = e.target as HTMLElement;
       const classes = [...(htmlEl.classList as any)];
       if (e.ctrlKey && e.code === 'KeyA') {
+        if(!htmlEl.textContent || htmlEl.textContent === ''){
+          e.preventDefault();
+          this.onPressCtrlASubject.next();
+          return false;
+        }
         if (this.ctrlAExceptValuesIds.some((q) => q === htmlEl.id)) {
           return true;
         }

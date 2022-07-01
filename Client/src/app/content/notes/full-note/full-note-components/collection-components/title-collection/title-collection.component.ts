@@ -20,7 +20,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TitleCollectionComponent implements OnInit, OnDestroy {
-  @ViewChild('titleHtml') titleHtml: ElementRef;
+  @ViewChild('titleHtml') titleHtml: ElementRef<HTMLElement>;
 
   @Output()
   changeTitleEvent = new EventEmitter<string>();
@@ -75,6 +75,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   focusOnTitle() {
     this.titleHtml.nativeElement.focus();
+  }
+
+  scrollToTitle(behavior:ScrollBehavior = 'smooth', block: ScrollLogicalPosition = 'center') {
+    this.titleHtml.nativeElement.scrollIntoView({ behavior, block });
   }
 
   preventEnter = ($event: KeyboardEvent): void => {

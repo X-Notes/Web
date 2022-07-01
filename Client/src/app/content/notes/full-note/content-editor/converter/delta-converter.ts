@@ -15,6 +15,7 @@ export class DeltaConverter {
   static initQuill() {
     const id = 'hidden-text-editor';
     const quillDIV = document.createElement('div');
+    quillDIV.style.display = 'none';
     quillDIV.id = id;
     document.body.appendChild(quillDIV);
     DeltaConverter.quillInstance = new Quill(`#${id}`);

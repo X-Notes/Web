@@ -43,7 +43,7 @@ export class AudioNoteComponent
     apiBrowserTextService: ApiBrowserTextService,
     public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Audio);
   }
 
   get isEmpty(): boolean {
@@ -55,15 +55,6 @@ export class AudioNoteComponent
 
   getHost() {
     return this.host;
-  }
-
-  clickAudioHandler(audioId: string) {
-    this.clickableContentService.setSontent(
-      this.content.id,
-      audioId,
-      ClickableSelectableEntities.Audio,
-      null,
-    );
   }
 
   playStream(url, id) {
@@ -122,15 +113,15 @@ export class AudioNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
+    entity.event.preventDefault();
+    
     const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
-
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickAudioHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickAudioHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -138,22 +129,21 @@ export class AudioNoteComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickAudioHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickAudioHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickAudioHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -162,11 +152,10 @@ export class AudioNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickAudioHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickAudioHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;

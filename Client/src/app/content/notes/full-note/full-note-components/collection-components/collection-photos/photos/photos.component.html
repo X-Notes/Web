@@ -19,7 +19,7 @@
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
         (changeTitleEvent)="onTitleChangeInput($event)"
-        (clickInputEvent)="clickPhotoHandler(null)"
+        (clickInputEvent)="clickItemHandler(null)"
         [menu]="menu"
         [isShowButton]="isMouseOver"
       ></app-title-collection>
@@ -37,7 +37,7 @@
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
-              (clickEvent)="clickPhotoHandler($event)"
+              (clickEvent)="clickItemHandler($event)"
             ></app-photo>
           </div>
         </div>
@@ -54,7 +54,7 @@
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
-              (clickEvent)="clickPhotoHandler($event)"
+              (clickEvent)="clickItemHandler($event)"
             >
             </app-photo>
           </div>

@@ -43,7 +43,7 @@ export class DocumentNoteComponent
     apiBrowserTextService: ApiBrowserTextService,
     public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Document);
   }
 
   get isClicked() {
@@ -64,15 +64,6 @@ export class DocumentNoteComponent
     return false;
   }
 
-  clickDocumentHandler(documentId: string) {
-    this.clickableService.setSontent(
-      this.content.id,
-      documentId,
-      ClickableSelectableEntities.Document,
-      null,
-    );
-  }
-
   isFocusToNext(entity: SetFocus) {
     if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
@@ -85,15 +76,15 @@ export class DocumentNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
+    entity.event.preventDefault();
 
+    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickDocumentHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickDocumentHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -101,22 +92,21 @@ export class DocumentNoteComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickDocumentHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickDocumentHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickDocumentHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -125,11 +115,10 @@ export class DocumentNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickDocumentHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickDocumentHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;

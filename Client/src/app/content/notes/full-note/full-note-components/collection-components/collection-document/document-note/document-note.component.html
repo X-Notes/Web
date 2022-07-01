@@ -16,7 +16,7 @@
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
-      (clickInputEvent)="clickDocumentHandler(null)"
+      (clickInputEvent)="clickItemHandler(null)"
       [menu]="menu"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
@@ -28,7 +28,7 @@
         [isReadOnlyMode]="isReadOnlyMode"
         (deleteDocument)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportDocument($event)"
-        (clickEvent)="clickDocumentHandler($event)"
+        (clickEvent)="clickItemHandler($event)"
       ></app-document-item>
     </ng-container>
     <app-empty-collection-items-placeholder

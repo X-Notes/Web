@@ -13,7 +13,7 @@
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
-      (clickInputEvent)="clickVideoHandler(null)"
+      (clickInputEvent)="clickItemHandler(null)"
       [menu]="menu"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
@@ -25,7 +25,8 @@
       [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo?.fileId) }"
     >
       <video
-        (click)="clickVideoHandler(getMainVideo?.fileId)"
+        [id]="getMainVideo?.fileId"
+        (click)="clickItemHandler(getMainVideo?.fileId)"
         #videoplayer
         oncontextmenu="return false"
         preload="metadata"
@@ -109,6 +110,7 @@
         [ngStyle]="{'transform': 'translateX(' + translate + 'px)'}"
       >
         <div
+          [id]="item.fileId"
           class="thumb-video-wrapper"
           *ngFor="let item of content.orderedItems; let i = index"
           (click)="openThumbVideo(i)"

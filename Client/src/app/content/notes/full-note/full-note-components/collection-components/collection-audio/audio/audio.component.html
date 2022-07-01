@@ -1,4 +1,5 @@
 <div
+  [id]="audio.fileId"
   class="audio-container"
   (click)="clickEvent.emit(audio.fileId)"
   [ngClass]="{'is-selected' : isClicked}"

@@ -59,7 +59,7 @@ export class PhotosComponent
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Photo);
   }
 
   get countOfBlocks() {
@@ -100,15 +100,6 @@ export class PhotosComponent
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
-  }
-
-  clickPhotoHandler(photoId: string) {
-    this.clickableContentService.setSontent(
-      this.content.id,
-      photoId,
-      ClickableSelectableEntities.Photo,
-      null,
-    );
   }
 
   changeHeight(difference: number) {
@@ -257,15 +248,15 @@ export class PhotosComponent
   }
 
   setFocus = (entity?: SetFocus): void => {
-    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
+    entity.event.preventDefault();
 
+    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickPhotoHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickPhotoHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -273,22 +264,21 @@ export class PhotosComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickPhotoHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickPhotoHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickPhotoHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -297,11 +287,10 @@ export class PhotosComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickPhotoHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickPhotoHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;

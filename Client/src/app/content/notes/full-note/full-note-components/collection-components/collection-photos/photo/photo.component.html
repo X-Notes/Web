@@ -1,4 +1,5 @@
 <div
+  [id]="photo.fileId"
   (click)="clickEvent.emit(photo.fileId)"
   [ngClass]="{'is-selected' : isClicked}"
   class="photo"

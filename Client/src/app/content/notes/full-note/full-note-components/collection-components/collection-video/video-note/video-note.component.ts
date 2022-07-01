@@ -70,7 +70,7 @@ export class VideoNoteComponent
     apiBrowserTextService: ApiBrowserTextService,
     public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Video);
   }
 
   get fullWidth() {
@@ -140,6 +140,7 @@ export class VideoNoteComponent
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;
     this.video = nativeElement;
+    console.log('content: ', this.content);
   }
 
   ngOnDestroy = async () => {
@@ -217,15 +218,6 @@ export class VideoNoteComponent
     }
   }
 
-  clickVideoHandler(videoId: string) {
-    this.clickableContentService.setSontent(
-      this.content.id,
-      videoId,
-      ClickableSelectableEntities.Video,
-      null,
-    );
-  }
-
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
 
   isFocusToNext(entity: SetFocus) {
@@ -240,15 +232,15 @@ export class VideoNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.items.some((x) => x.fileId === entity?.itemId);
+    entity.event.preventDefault();
 
+    const isExist = this.content.items.some((x) => x.fileId === entity?.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickVideoHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickVideoHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -256,22 +248,21 @@ export class VideoNoteComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickVideoHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickVideoHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickVideoHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -280,11 +271,10 @@ export class VideoNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickVideoHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickVideoHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;
