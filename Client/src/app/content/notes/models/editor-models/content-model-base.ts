@@ -9,6 +9,10 @@ export abstract class ContentModelBase {
 
   order: number;
 
+  // UI FIELDS
+
+  prevId?: string;
+
   constructor(type: ContentTypeENUM, id: string, order: number, updatedAt: Date) {
     this.typeId = type;
     this.id = id;

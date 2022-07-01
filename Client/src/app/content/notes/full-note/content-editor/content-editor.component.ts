@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -56,6 +56,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
+import { single } from 'rxjs/operators';
 
 @Component({
   selector: 'app-content-editor',
@@ -160,7 +161,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elements, this.contentSection);
-    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl, this.contentSection);
+    this.contentEditorListenerService.setHandlers(
+      this.elements,
+      this.noteTitleEl,
+      this.contentSection,
+    );
     this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
   }
 
@@ -446,55 +451,105 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const audiosFormats = TypeUploadFormats.audios.split(',');
     const videosFormats = TypeUploadFormats.videos.split(',');
     const documentsFormats = TypeUploadFormats.documents.split(',');
-    if (formats.every((z) => photosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorPhotosService.insertNewCollection(
-        contentId,
-        false,
-        AudiosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+
+    if (formats.every((q) => photosFormats.some((x) => x === q))) {
+      await this.handleRandomPhotosUpload(contentId, files);
     }
-    if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorAudiosService.insertNewCollection(
-        contentId,
-        false,
-        AudiosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => audiosFormats.some((x) => x === q))) {
+      await this.handleRandomAudiosUpload(contentId, files);
     }
-    if (formats.every((z) => videosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorVideosService.insertNewCollection(
-        contentId,
-        false,
-        VideosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorVideosService.uploadVideosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => videosFormats.some((x) => x === q))) {
+      await this.handleRandomVideosUpload(contentId, files);
     }
-    if (formats.every((z) => documentsFormats.some((x) => x === z))) {
-      const cont = this.contentEditorDocumentsService.insertNewCollection(
-        contentId,
-        false,
-        DocumentsCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => documentsFormats.some((x) => x === q))) {
+      await this.handleRandomDocumentsUpload(contentId, files);
     }
     this.postAction();
+  }
+
+  async handleRandomPhotosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorPhotosService.insertNewCollection(
+      contentId,
+      false,
+      PhotosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorContentsService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.syncPhotoItems(cont.content.id);
+        this.postAction();
+      });
+  }
+
+  async handleRandomAudiosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorAudiosService.insertNewCollection(
+      contentId,
+      false,
+      AudiosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorContentsService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.postAction();
+      });
+  }
+
+  async handleRandomVideosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorVideosService.insertNewCollection(
+      contentId,
+      false,
+      VideosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorContentsService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorVideosService.uploadVideosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.postAction();
+      });
+  }
+
+  async handleRandomDocumentsUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorDocumentsService.insertNewCollection(
+      contentId,
+      false,
+      DocumentsCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorContentsService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.postAction();
+      });
   }
 
   // FILE CONTENTS
@@ -616,6 +671,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   syncPhotoItems(contentId: string): void {
+    if(!contentId) return;
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
     if (curEl) {
       curEl.syncContentItems();

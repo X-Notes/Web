@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
@@ -25,6 +25,8 @@ import { VideoModel, VideosCollection } from '../../models/editor-models/videos-
 import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
+import { NoteStructureResult } from '../models/api/notes/note-structure-result';
+import { NoteUpdateIds } from '../models/api/notes/note-update-ids';
 import { UpdatePhotosCollectionInfoCommand } from '../models/api/photos/update-photos-collection-info-command';
 import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
@@ -51,6 +53,8 @@ export class ContentEditorContentsSynchronizeService {
   private updateSubject: BehaviorSubject<boolean>;
 
   private updateImmediatelySubject: BehaviorSubject<boolean>;
+
+  public onStructureSync$: BehaviorSubject<NoteStructureResult>;
 
   private saveSubject: BehaviorSubject<boolean>;
 
@@ -110,6 +114,9 @@ export class ContentEditorContentsSynchronizeService {
     //
     this.updateImmediatelySubject?.complete();
     this.updateImmediatelySubject = new BehaviorSubject<boolean>(false);
+    //
+    this.onStructureSync$?.complete();
+    this.onStructureSync$ = new BehaviorSubject<NoteStructureResult>(null);
   }
 
   initOnlyRead(contents: ContentModelBase[], noteId: string) {
@@ -151,15 +158,34 @@ export class ContentEditorContentsSynchronizeService {
         .toPromise();
 
       if (resp.success) {
+        this.updateIds(resp.data.updateIds);
         this.contentsSync = this.patchStructuralChanges(
           this.contentsSync,
           structureDiffs,
           resp.data.removedIds,
         );
+        this.onStructureSync$.next(resp.data);
       }
     }
     this.processTextsChanges();
     this.processFileEntities();
+  }
+
+  private updateIds(updateIds: NoteUpdateIds[]): void {
+    if(!updateIds || updateIds.length === 0) return;
+
+    for(const update of updateIds){
+      const syncContent = this.contentsSync.find(x => x.id === update.prevId);
+      if(syncContent) {
+        syncContent.prevId = syncContent.id;
+        syncContent.id = update.id;
+      }
+      const content = this.contents.find(x => x.id === update.prevId);
+      if(content) {
+        content.prevId = content.id;
+        content.id = update.id;
+      }
+    }
   }
 
   private processFileEntities() {
@@ -340,7 +366,6 @@ export class ContentEditorContentsSynchronizeService {
       this.getContents,
       ContentTypeENUM.Text,
     );
-    console.log('textDiffs: ', textDiffs);
     if (textDiffs.length > 0) {
       await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
       for (const text of textDiffs) {
@@ -587,6 +612,15 @@ export class ContentEditorContentsSynchronizeService {
       if (this.contents[i].id === contentId) {
         const obj: ContentAndIndex<T> = { index: i, content: this.contents[i] as T };
         return obj;
+      }
+    }
+    return null;
+  }
+
+  getContentByPrevId<T extends ContentModelBase>(contentId: string): T {
+    for (let i = 0; i < this.contents.length; i += 1) {
+      if (this.contents[i].prevId === contentId) {
+        return this.contents[i] as T;
       }
     }
     return null;

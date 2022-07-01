@@ -107,8 +107,10 @@ namespace BI.Services.Notes
 
                     if (textItemsThatNeedAdd.Any())
                     {
-                        var items = textItemsThatNeedAdd.Select(content => GetTextContent(content, note.Id));
+                        var items = textItemsThatNeedAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
                         await textNotesRepository.AddRangeAsync(items);
+
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds {  PrevId = x.PrevId, Id = x.Id}));
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -129,8 +131,10 @@ namespace BI.Services.Notes
                             var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
                             cont.SetMetaDataPhotos("100%", "auto", 2);
                             return cont;
-                        });
+                        }).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
+
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -144,8 +148,10 @@ namespace BI.Services.Notes
 
                     if (audiosItemsThatNeedAdd.Any())
                     {
-                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio));
+                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
+
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -159,8 +165,10 @@ namespace BI.Services.Notes
 
                     if (videosItemsThatNeedAdd.Any())
                     {
-                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video));
+                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
+
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -174,8 +182,10 @@ namespace BI.Services.Notes
 
                     if (documentsItemsThatNeedAdd.Any())
                     {
-                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document));
+                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
+
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -225,12 +235,12 @@ namespace BI.Services.Notes
             return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
-        private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)
+        private TextNote GetNewTextContent(TextNoteDTO textDto, Guid noteId)
         {
             var textDb = new TextNote();
 
             // UPDATE BASE
-            textDb.Id = textDto.Id;
+            textDb.PrevId = textDto.Id;
             textDb.Order = textDto.Order;
             textDb.UpdatedAt = textDto.UpdatedAt;
 
@@ -251,7 +261,7 @@ namespace BI.Services.Notes
             var content = new CollectionNote(fileTypeEnum);
 
             // UPDATE BASE
-            content.Id = baseContent.Id;
+            content.PrevId = baseContent.Id;
             content.Order = baseContent.Order;
             content.UpdatedAt = baseContent.UpdatedAt;
 
