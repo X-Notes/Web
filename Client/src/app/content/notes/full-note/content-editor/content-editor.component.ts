@@ -166,6 +166,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.contentSection,
     );
     this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
+    this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
   }
 
   ngOnDestroy(): void {
@@ -296,14 +297,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   selectionEndHandler($event: DOMRect): void {
     if (!this.isSelectModeActive) return;
-    const isSelectionInZone = this.selectionService.isSelectionInZone(
-      $event,
-      this.elements,
-      this.noteTitleEl,
-    );
-    if (isSelectionInZone) {
-      this.apiBrowserFunctions.removeAllRanges();
-    }
+    this.apiBrowserFunctions.removeAllRanges();
   }
 
   enterHandler(value: EnterEvent) {

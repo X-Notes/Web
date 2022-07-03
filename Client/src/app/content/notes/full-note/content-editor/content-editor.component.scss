@@ -67,14 +67,17 @@
   .content-section {
     height: 100%;
     display: flex;
+    position: relative;
     flex-direction: column;
     padding: 0 15px 0 15px;
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: thin;
-    .empty {
-      min-height: 150px;
-      height: 100%;
+    .content-section-inner {
+      position: relative;
+      .empty {
+        height: 150px;
+      }
     }
   }
 }

@@ -34,32 +34,30 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   y;
 
-  finX;
-
-  finY;
-
-  isFullNote = false;
-
   isMouseDown = false;
 
   startTop: number;
 
-  mainContent: Element;
+  startLeft: number;
+
+  mainContent: HTMLElement;
 
   moveEventSub: Subscription;
 
+  scrollSection: HTMLElement;
+
   private div: HTMLElement;
 
+  private prevMouseEvent: MouseEvent;
+
   constructor(
-    private elementRef: ElementRef,
+    elementRef: ElementRef,
     private renderer: Renderer2,
     private selectionService: SelectionService,
     private clickableService: ClickableContentService,
     private pS: PersonalizationService,
-  ) {}
-
-  get subtractionScrollTopAndScrollStart() {
-    return Math.abs(this.mainContent.scrollTop - this.startTop);
+  ) {
+    this.mainContent = elementRef.nativeElement;
   }
 
   get isDivTransparent(): boolean {
@@ -72,13 +70,16 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return size.width > 5 && size.height > 5 && this.div.style.opacity === '1';
   }
 
-  @HostListener('mousedown', ['$event'])
-  onClick() {
-    this.isFullNote = true;
+  processY(y: number): number {
+    return y + this.scrollSection.scrollTop - this.scrollSection.offsetTop - this.selectionService.menuHeight;
+  }
+
+  processX(x: number): number {
+    return x - this.selectionService.sidebarWidth - 13;
   }
 
   ngOnInit(): void {
-    this.init();
+    this.initMouseHandlers();
   }
 
   ngOnDestroy(): void {
@@ -89,30 +90,17 @@ export class SelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  init() {
-    this.div = this.renderer.createElement('div');
-    this.div.classList.add('full-note-selection');
-
-    this.mainContent = this.elementRef.nativeElement;
-    this.mainContent.appendChild(this.div);
-
-    const scrollEventListener = this.renderer.listen(this.mainContent, 'scroll', (e) =>
-      this.scrollEvent(e),
-    );
-    this.listeners.push(scrollEventListener);
-
-    const mousewheelEventListener = this.renderer.listen(this.mainContent, 'wheel', (e) =>
-      this.mousewheelHandler(e),
-    );
-    this.listeners.push(mousewheelEventListener);
-
+  initMouseHandlers(): void {
     const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) =>
-      this.mouseDown(e),
+      {
+        return this.mouseDown(e);
+      }
     );
     const mouseUpListener = this.renderer.listen(document, 'mouseup', (e: MouseEvent) =>
-      this.mouseUp(e),
+      {
+        return this.mouseUp(e)
+      }
     );
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {});
     this.listeners.push(mouseMoveListener);
@@ -126,6 +114,21 @@ export class SelectionDirective implements OnDestroy, OnInit {
       });
 
     this.listeners.push(mouseDownListener, mouseUpListener);
+  }
+
+  initSelectionDrawer(scrollSection: HTMLElement): void {
+    this.scrollSection = scrollSection;
+    this.div = document.getElementById('note-selector');
+    
+    const scrollEventListener = this.renderer.listen(scrollSection, 'scroll', (e) =>
+      this.scrollEvent(e, scrollSection),
+    );
+    this.listeners.push(scrollEventListener);
+
+    const mousewheelEventListener = this.renderer.listen(scrollSection, 'wheel', (e) =>
+      this.mousewheelHandler(e),
+    );
+    this.listeners.push(mousewheelEventListener);
   }
 
   mousewheelHandler(e: WheelEvent): boolean | void {
@@ -160,13 +163,15 @@ export class SelectionDirective implements OnDestroy, OnInit {
     }
 
     this.isMouseDown = true;
-
+    
     this.x = evt.pageX;
     this.y = evt.pageY;
-    this.startTop = this.mainContent.scrollTop;
+    
+    this.startTop = this.processY(this.y);
+    this.startLeft = this.processX(this.x);
 
-    this.setTop(this.y - this.selectionService.menuHeight + this.startTop);
-    this.setLeft(this.x - this.selectionService.sidebarWidth);
+    this.setTop(this.startTop);
+    this.setLeft(this.startLeft);
 
     this.clickableService.reset();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
@@ -174,61 +179,45 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseUp(evt) {
-    this.isFullNote = false;
     this.isMouseDown = false;
-
     this.startTop = 0;
-
     this.setWidth(0);
     this.setHeight(0);
 
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
-  getNewValueY(): number {
-    if (this.startTop !== this.mainContent.scrollTop) {
-      return this.finY - this.y + this.mainContent.scrollTop - this.startTop;
-    }
-    return this.finY - this.y;
-  }
-
   mouseMoveDelay(evt: MouseEvent) {
     if (this.isMouseDown && !this.selectionService.isResizingPhoto) {
-      this.finX = evt.pageX;
-      this.finY = evt.pageY;
+      this.prevMouseEvent = evt;
+      const newX = evt.pageX;
+      const newY = evt.pageY;
 
-      const newValueX = this.finX - this.x;
-      const newValueY = this.getNewValueY();
+      const newWidth = newX - this.x;
+      const newHeight = this.processY(newY) - this.startTop;
 
-      const newValueXabs = Math.abs(newValueX);
-      const newValueYabs = Math.abs(newValueY);
+      const newValueWidth = Math.abs(newWidth);
+      const newValueHeight = Math.abs(newHeight);
 
-      if (newValueY < 0 && newValueX > 0) {
-        const top =
-          evt.pageY -
-          this.selectionService.menuHeight +
-          this.startTop -
-          this.subtractionScrollTopAndScrollStart;
+      if (newHeight < 0 && newWidth > 0) {
+        const top = this.processY(newY)
         this.setTop(top);
-      } else if (newValueY > 0 && newValueX < 0) {
-        const left = evt.pageX - this.selectionService.sidebarWidth;
+      } else if (newHeight > 0 && newWidth < 0) {
+        this.setTop(this.startTop);
+        const left = this.processX(newX);
         this.setLeft(left);
-      } else if (newValueY < 0 && newValueX < 0) {
-        const top =
-          evt.pageY -
-          this.selectionService.menuHeight +
-          this.startTop -
-          this.subtractionScrollTopAndScrollStart;
+      } else if (newHeight < 0 && newWidth < 0) {
+        const top = this.processY(newY)
         this.setTop(top);
-        const left = evt.pageX - this.selectionService.sidebarWidth;
+        const left = this.processX(newX);
         this.setLeft(left);
       } else {
-        this.setTop(this.y - this.selectionService.menuHeight + this.startTop);
-        this.setLeft(this.x - this.selectionService.sidebarWidth);
+        this.setTop(this.startTop);
+        this.setLeft(this.startLeft);
       }
 
-      this.setWidth(newValueXabs);
-      this.setHeight(newValueYabs);
+      this.setWidth(newValueWidth);
+      this.setHeight(newValueHeight);
 
       this.selectionEvent.emit(this.div.getBoundingClientRect());
     }
@@ -251,25 +240,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scrollEvent(e: ScrollEvent) {
-    if (this.isFullNote) {
-      let newValueY = 0;
-      if (this.startTop !== this.mainContent.scrollTop) {
-        newValueY = this.finY - this.y + this.mainContent.scrollTop - this.startTop;
-      } else {
-        newValueY = this.finY - this.y;
-      }
-      if (newValueY > 0) {
-        this.setHeight(newValueY);
-      } else {
-        this.setTop(
-          this.finY -
-            this.selectionService.menuHeight +
-            this.startTop -
-            this.subtractionScrollTopAndScrollStart,
-        );
-        this.setHeight(Math.abs(newValueY));
-      }
-    }
+  scrollEvent(e: ScrollEvent, scrollSection: HTMLElement) {
+    this.mouseMoveDelay(this.prevMouseEvent);
   }
 }
