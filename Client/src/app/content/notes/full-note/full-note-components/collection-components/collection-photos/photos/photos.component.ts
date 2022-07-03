@@ -170,6 +170,7 @@ export class PhotosComponent
   // UPDATING
   syncContentItems() {
     this.syncPhotos();
+    super.syncContentItems();
   }
 
   updateIternal() {

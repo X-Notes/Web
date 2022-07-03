@@ -98,7 +98,9 @@ export class CollectionBaseComponent<
 
   updateIternal() {}
 
-  syncContentItems() {}
+  syncContentItems() {
+    this.detectChanges();
+  }
 
   scrollAndFocusToTitle(): void {
     this.titleComponent.focusOnTitle();

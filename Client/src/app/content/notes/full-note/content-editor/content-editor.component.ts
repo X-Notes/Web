@@ -595,6 +595,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         el.syncContentItems();
       }
     }
+    this.postAction();
   }
 
   // VIDEOS
