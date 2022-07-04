@@ -105,7 +105,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   removeBackground(id: string) {
     this.store.dispatch(new RemoveBackground(id));
     const user = this.store.selectSnapshot(UserStore.getUser);
-    if (id === user.currentBackground.id) {
+    if (id === user?.currentBackground?.id) {
       this.store.dispatch(new SetDefaultBackground());
     }
   }

@@ -90,12 +90,13 @@ export class BackgroundStore {
 
   @Action(RemoveBackground)
   async removeBackground(
-    { patchState, getState }: StateContext<BackgroundState>,
+    { patchState, getState, dispatch }: StateContext<BackgroundState>,
     { id }: RemoveBackground,
   ) {
     await this.backgroundAPI.removeBackground(id).toPromise();
     patchState({
       backgrounds: getState().backgrounds.filter((x) => x.id !== id),
     });
+    dispatch(LoadUsedDiskSpace);
   }
 }

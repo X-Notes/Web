@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
@@ -36,6 +37,10 @@ import { ApiTextService } from '../services/api-text.service';
 import { ApiVideosService } from '../services/api-videos.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { StructureDiffs, PositionDiff, ItemForRemove } from './models/structure-diffs';
+
+export interface SyncResult {
+  isNeedLoadMemory: boolean;
+}
 
 export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
@@ -151,7 +156,7 @@ export class ContentEditorContentsSynchronizeService {
   }
 
   private async processChanges() {
-    const structureDiffs = this.getStructureDiffs(this.contentsSync, this.getContents);
+    const [structureDiffs, res] = this.getStructureDiffs(this.contentsSync, this.getContents);
     if (structureDiffs.isAnyChanges()) {
       const resp = await this.apiNoteContentService
         .syncContentsStructure(this.noteId, structureDiffs)
@@ -164,6 +169,9 @@ export class ContentEditorContentsSynchronizeService {
           structureDiffs,
           resp.data.removedIds,
         );
+        if (res.isNeedLoadMemory) {
+          this.store.dispatch(LoadUsedDiskSpace);
+        }
         this.onStructureSync$.next(resp.data);
       }
     }
@@ -188,14 +196,20 @@ export class ContentEditorContentsSynchronizeService {
     }
   }
 
-  private processFileEntities() {
-    this.processPhotosChanges();
-    this.processAudiosChanges();
-    this.processDocumentsChanges();
-    this.processVideosChanges();
+  private async processFileEntities() {
+    const res = await Promise.all([
+      this.processPhotosChanges(),
+      this.processAudiosChanges(),
+      this.processDocumentsChanges(),
+      this.processVideosChanges(),
+    ]);
+    if (res.some((x) => x.isNeedLoadMemory)) {
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
   }
 
-  private async processPhotosChanges() {
+  private async processPhotosChanges(): Promise<SyncResult> {
+    const result: SyncResult = { isNeedLoadMemory: false };
     const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<PhotosCollection>(
       this.contentsSync,
       this.getContents,
@@ -227,6 +241,7 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiPhotos.addItemsToCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
         item?.addItemsToCollection(itemsToAdd);
+        result.isNeedLoadMemory = true;
       }
       if (itemsToRemove && itemsToRemove.length > 0) {
         const ids = itemsToRemove.map((x) => x.fileId);
@@ -234,11 +249,14 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiPhotos.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
         item?.removeItemsFromCollection(ids);
+        result.isNeedLoadMemory = true;
       }
     }
+    return result;
   }
 
-  private async processAudiosChanges() {
+  private async processAudiosChanges(): Promise<SyncResult> {
+    const result: SyncResult = { isNeedLoadMemory: false };
     // UPDATE MAIN INFO
     const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<AudiosCollection>(
       this.contentsSync,
@@ -268,6 +286,7 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiAudios.addItemsToCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
         item?.addItemsToCollection(itemsToAdd);
+        result.isNeedLoadMemory = true;
       }
       if (itemsToRemove && itemsToRemove.length > 0) {
         const ids = itemsToRemove.map((x) => x.fileId);
@@ -275,11 +294,14 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiAudios.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
         item?.removeItemsFromCollection(ids);
+        result.isNeedLoadMemory = true;
       }
     }
+    return result;
   }
 
-  private async processDocumentsChanges() {
+  private async processDocumentsChanges(): Promise<SyncResult> {
+    const result: SyncResult = { isNeedLoadMemory: false };
     // UPDATE MAIN INFO
     const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<DocumentsCollection>(
       this.contentsSync,
@@ -309,6 +331,7 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiDocuments.addItemsToCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
         item?.addItemsToCollection(itemsToAdd);
+        result.isNeedLoadMemory = true;
       }
       if (itemsToRemove && itemsToRemove.length > 0) {
         const ids = itemsToRemove.map((x) => x.fileId);
@@ -316,11 +339,14 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiDocuments.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
         item?.removeItemsFromCollection(ids);
+        result.isNeedLoadMemory = true;
       }
     }
+    return result;
   }
 
-  private async processVideosChanges() {
+  private async processVideosChanges(): Promise<SyncResult> {
+    const result: SyncResult = { isNeedLoadMemory: false };
     const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<VideosCollection>(
       this.contentsSync,
       this.getContents,
@@ -349,6 +375,7 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiVideos.addItemsToCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
         item?.addItemsToCollection(itemsToAdd);
+        result.isNeedLoadMemory = true;
       }
       if (itemsToRemove && itemsToRemove.length > 0) {
         const ids = itemsToRemove.map((x) => x.fileId);
@@ -356,8 +383,10 @@ export class ContentEditorContentsSynchronizeService {
         await this.apiVideos.removeItemsFromCollection(command).toPromise();
         const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
         item?.removeItemsFromCollection(ids);
+        result.isNeedLoadMemory = true;
       }
     }
+    return result;
   }
 
   private async processTextsChanges() {
@@ -422,12 +451,15 @@ export class ContentEditorContentsSynchronizeService {
   private getStructureDiffs(
     oldContents: ContentModelBase[],
     newContents: ContentModelBase[],
-  ): StructureDiffs {
+  ): [StructureDiffs, SyncResult] {
     const diffs: StructureDiffs = new StructureDiffs();
-
+    const res: SyncResult = { isNeedLoadMemory: false };
     for (const contentSync of oldContents) {
       if (!newContents.some((x) => x.id === contentSync.id)) {
         diffs.removedItems.push(new ItemForRemove(contentSync.id));
+        if (contentSync.typeId !== ContentTypeENUM.Text) {
+          res.isNeedLoadMemory = true;
+        }
       }
     }
 
@@ -443,7 +475,7 @@ export class ContentEditorContentsSynchronizeService {
       }
     }
 
-    return diffs;
+    return [diffs, res];
   }
 
   // TEXT
@@ -513,7 +545,7 @@ export class ContentEditorContentsSynchronizeService {
       let isNeedChange = false;
 
       // STRUCTURE
-      const structureDiffs = this.getStructureDiffs(this.contents, prev);
+      const [structureDiffs] = this.getStructureDiffs(this.contents, prev);
       if (structureDiffs.isAnyChanges()) {
         const removeIds = structureDiffs.removedItems.map((x) => x.id);
         this.contents = this.patchStructuralChanges(this.contents, structureDiffs, removeIds);

@@ -60,8 +60,6 @@ export class ContentEditorFilesBase {
   }
 
   protected afterUploadFilesToCollection<T>(results: FileProcessTracker<OperationResult<T[]>>[]) {
-    this.store.dispatch(LoadUsedDiskSpace);
-
     const unsuccess = results.map((x) => x.eventBody).filter((x) => !x.success);
     if (unsuccess?.length > 0) {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
