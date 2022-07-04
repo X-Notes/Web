@@ -187,7 +187,7 @@ export class UserStore {
     const mini = this.longTermOperationsHandler.getNewMini(
       operation,
       LongTermsIcons.Image,
-      'photo changing',
+      'uploader.photoChanging',
       true,
       true,
     );

@@ -636,7 +636,7 @@ export class NoteStore {
     const mini = this.longTermOperationsHandler.getNewMini(
       operation,
       LongTermsIcons.Export,
-      'photo changing',
+      'copying',
       true,
       true,
     );

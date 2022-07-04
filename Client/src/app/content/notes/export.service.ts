@@ -82,7 +82,16 @@ export class ExportService {
       );
     });
 
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'uploader.exportShort',
+      false,
+      false,
+      true,
+    );
     await this.zipFiles(tasks);
+    this.longTermOperationsHandler.finalize(operation, mini);
   }
 
   async exportPhoto(photo: Photo) {
@@ -124,7 +133,16 @@ export class ExportService {
       );
     });
 
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'uploader.exportShort',
+      false,
+      false,
+      true
+    );
     await this.zipFiles(tasks);
+    this.longTermOperationsHandler.finalize(operation, mini);
   }
 
   async exportAudio(audio: AudioModel) {
@@ -168,7 +186,16 @@ export class ExportService {
       );
     });
 
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'uploader.exportShort',
+      false,
+      false,
+      true
+    );
     await this.zipFiles(tasks);
+    this.longTermOperationsHandler.finalize(operation, mini);
   }
 
   async exportDocument(document: DocumentModel) {
@@ -212,7 +239,16 @@ export class ExportService {
       );
     });
 
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'uploader.exportShort',
+      false,
+      false,
+      true
+    );
     await this.zipFiles(tasks);
+    this.longTermOperationsHandler.finalize(operation, mini);
   }
 
   async exportVideo(video: VideoModel) {

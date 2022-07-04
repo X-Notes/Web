@@ -31,10 +31,10 @@
 >
   <button mat-menu-item type="button" name="Download" (click)="downloadPhotoEvent.emit(photo)">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button *ngIf="!isReadOnlyMode" mat-menu-item (click)="deletePhoto()" type="button" name="Delete">
     <mat-icon>delete</mat-icon>
-    <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+    <span> {{ 'innerNote.menu.delete' | translate }} </span>
   </button>
 </mat-menu>

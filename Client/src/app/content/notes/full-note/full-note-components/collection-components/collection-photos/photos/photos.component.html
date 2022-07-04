@@ -130,7 +130,7 @@
   </button>
   <button mat-menu-item type="button" name="Download" (click)="exportAlbum()">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"
@@ -140,7 +140,7 @@
     (click)="deleteContentEvent.emit(content.id)"
   >
     <mat-icon>delete</mat-icon>
-    <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+    <span> {{ 'innerNote.menu.delete' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

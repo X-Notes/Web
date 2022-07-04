@@ -282,7 +282,8 @@
     "copyNotes": "Копирование заметок",
     "copyFolders": "Копирование папок",
     "changingProfilePhoto": "Смена фотографии",
-    "changingBackground": "Смена заднего фона"
+    "changingBackground": "Смена заднего фона",
+    "photoChanging": "Изменение фото"
   },
   "placeholder": {
     "folderNote": "Заметка без названия",

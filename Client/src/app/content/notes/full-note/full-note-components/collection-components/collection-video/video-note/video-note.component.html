@@ -2,7 +2,9 @@
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
   class="video-content"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  [ngStyle]="{
+    backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+  }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
     ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
@@ -67,7 +69,10 @@
               <app-button-collection
                 [classes]="'light-static'"
                 [button]="volumeIcon"
-                [tooltip]="(video?.volume === 0 ? 'innerNote.audio.turnOnSound' :  'innerNote.audio.mute') | translate"
+                [tooltip]="
+                  (video?.volume === 0 ? 'innerNote.audio.turnOnSound' : 'innerNote.audio.mute')
+                    | translate
+                "
                 (clickEvent)="mute()"
               ></app-button-collection>
 
@@ -96,7 +101,7 @@
             <app-button-collection
               [classes]="'light-static'"
               [button]="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-              [tooltip]="(isFullscreen ? '': 'innerNote.audio.fullscreen') | translate"
+              [tooltip]="(isFullscreen ? '' : 'innerNote.audio.fullscreen') | translate"
               (clickEvent)="toggleFullscreen()"
             ></app-button-collection>
           </div>
@@ -107,7 +112,7 @@
       <div
         #videoPlaylist
         class="video-playlist-wrapper"
-        [ngStyle]="{'transform': 'translateX(' + translate + 'px)'}"
+        [ngStyle]="{ transform: 'translateX(' + translate + 'px)' }"
       >
         <div
           [id]="item.fileId"
@@ -117,7 +122,10 @@
         >
           <div class="thumb-video">
             <video
-              [ngClass]="{'is-selected': isClicked(item.fileId), 'thumb-active': i === indexVideo}"
+              [ngClass]="{
+                'is-selected': isClicked(item.fileId),
+                'thumb-active': i === indexVideo
+              }"
               disablecontrols
               [src]="item?.videoPath"
             ></video>
@@ -127,7 +135,7 @@
               [matMenuTriggerFor]="menu"
               [button]="'more_vert'"
               [classes]="'light-static'"
-              (clickEvent)="$event.stopPropagation()"
+              (clickEvent)="$event?.stopPropagation()"
             ></app-button-collection>
 
             <mat-menu
@@ -137,6 +145,10 @@
               attributeName="panelClass"
               [element]="menu"
             >
+              <button mat-menu-item type="button" name="Download" (click)="exportVideo(item)">
+                <mat-icon>download</mat-icon>
+                <span> {{ 'innerNote.menu.download' | translate }} </span>
+              </button>
               <button
                 (click)="deleteContentItemEvent.emit(item.fileId)"
                 mat-menu-item
@@ -168,7 +180,10 @@
       </button>
       <button
         class="next-button action-button"
-        *ngIf="(itemsCount !== counterSlider + visibleItemsCount) && content.items.length > visibleItemsCount"
+        *ngIf="
+          itemsCount !== counterSlider + visibleItemsCount &&
+          content.items.length > visibleItemsCount
+        "
         type="button"
         name="To next"
         #toNext
@@ -216,9 +231,9 @@
     <mat-icon>video_library</mat-icon>
     <span>{{ 'innerNote.menu.addVideo' | translate }}</span>
   </button>
-  <button mat-menu-item type="button" name="Download">
+  <button mat-menu-item type="button" name="Download" (click)="exportVideos(content)">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

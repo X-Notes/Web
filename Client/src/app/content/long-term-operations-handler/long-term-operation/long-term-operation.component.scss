@@ -47,7 +47,7 @@
       .left-section {
         display: flex;
         align-items: center;
-        width: calc(100% - 110px);
+        width: 50%;
 
         .nowrap {
           clear: both;
@@ -63,23 +63,30 @@
         }
       }
 
+      .middle-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .procent-info {
+          display: flex;
+          align-items: center;
+          .procent {
+            font-size: 0.875rem;
+            margin-right: 0.25rem;
+          }
+
+          .spinner-container {
+            width: 20px;
+            height: 100%;
+            position: relative;
+          }
+        }
+      }
+
       .right-section {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100px;
-
-        .procent {
-          font-size: 0.875rem;
-          margin-right: 0.25rem;
-        }
-
-        .spinner-container {
-          width: 20px;
-          height: 100%;
-          margin-right: 1.25rem;
-          position: relative;
-        }
 
         .cancel-button {
           cursor: pointer;
@@ -114,13 +121,13 @@
   .message-header {
     background-color: #f2f2f2;
   }
-  .operations-container{
-      .progress-item{
-          .right-section{
-              .cancel-button{
-                background-color: initial;
-              }
-          }
+  .operations-container {
+    .progress-item {
+      .right-section {
+        .cancel-button {
+          background-color: initial;
+        }
       }
+    }
   }
 }

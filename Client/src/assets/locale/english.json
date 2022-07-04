@@ -200,8 +200,6 @@
       "delete": "Delete"
     },
     "photoMenu": {
-      "download": "Download",
-      "delete": "Delete",
       "upload": "Upload new photos",
       "countRow": "Photo in row",
       "oneRow": "One in row",
@@ -282,7 +280,8 @@
     "copyNotes": "Copying notes",
     "copyFolders": "Copying folders",
     "changingProfilePhoto": "Photo is changing",
-    "changingBackground": "Background is changing"
+    "changingBackground": "Background is changing",
+    "photoChanging": "Photo changing"
   },
   "placeholder": {
     "folderNote": "Note without title",
