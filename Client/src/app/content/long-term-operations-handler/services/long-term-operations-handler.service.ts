@@ -11,7 +11,7 @@ export class LongTermOperationsHandlerService {
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
-     // this.test();
+    // this.test();
   }
 
   test() {
@@ -68,7 +68,7 @@ export class LongTermOperationsHandlerService {
     name: string,
     isCancelable: boolean = true,
     isShowProcents: boolean = true,
-    isStatic: boolean = false
+    isStatic: boolean = false,
   ) => {
     const mini: OperationDetailMini = {
       icon,

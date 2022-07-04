@@ -295,6 +295,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.selectionDirective.setIsShowDiv(!isSelectionInZone);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   selectionEndHandler($event: DOMRect): void {
     if (!this.isSelectModeActive) return;
     this.apiBrowserFunctions.removeAllRanges();

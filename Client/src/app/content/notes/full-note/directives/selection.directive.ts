@@ -2,7 +2,6 @@ import {
   Directive,
   ElementRef,
   EventEmitter,
-  HostListener,
   OnDestroy,
   OnInit,
   Output,
@@ -71,7 +70,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   processY(y: number): number {
-    return y + this.scrollSection.scrollTop - this.scrollSection.offsetTop - this.selectionService.menuHeight;
+    return (
+      y +
+      this.scrollSection.scrollTop -
+      this.scrollSection.offsetTop -
+      this.selectionService.menuHeight
+    );
   }
 
   processX(x: number): number {
@@ -91,16 +95,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   initMouseHandlers(): void {
-    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) =>
-      {
-        return this.mouseDown(e);
-      }
-    );
-    const mouseUpListener = this.renderer.listen(document, 'mouseup', (e: MouseEvent) =>
-      {
-        return this.mouseUp(e)
-      }
-    );
+    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) => {
+      return this.mouseDown(e);
+    });
+    const mouseUpListener = this.renderer.listen(document, 'mouseup', (e: MouseEvent) => {
+      return this.mouseUp(e);
+    });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {});
     this.listeners.push(mouseMoveListener);
@@ -119,7 +119,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   initSelectionDrawer(scrollSection: HTMLElement): void {
     this.scrollSection = scrollSection;
     this.div = document.getElementById('note-selector');
-    
+
     const scrollEventListener = this.renderer.listen(scrollSection, 'scroll', (e) =>
       this.scrollEvent(e, scrollSection),
     );
@@ -163,10 +163,10 @@ export class SelectionDirective implements OnDestroy, OnInit {
     }
 
     this.isMouseDown = true;
-    
+
     this.x = evt.pageX;
     this.y = evt.pageY;
-    
+
     this.startTop = this.processY(this.y);
     this.startLeft = this.processX(this.x);
 
@@ -200,14 +200,14 @@ export class SelectionDirective implements OnDestroy, OnInit {
       const newValueHeight = Math.abs(newHeight);
 
       if (newHeight < 0 && newWidth > 0) {
-        const top = this.processY(newY)
+        const top = this.processY(newY);
         this.setTop(top);
       } else if (newHeight > 0 && newWidth < 0) {
         this.setTop(this.startTop);
         const left = this.processX(newX);
         this.setLeft(left);
       } else if (newHeight < 0 && newWidth < 0) {
-        const top = this.processY(newY)
+        const top = this.processY(newY);
         this.setTop(top);
         const left = this.processX(newX);
         this.setLeft(left);

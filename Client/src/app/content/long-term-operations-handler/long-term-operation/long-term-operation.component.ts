@@ -29,7 +29,6 @@ export class LongTermOperationComponent {
     );
   }
 
-
   get title() {
     const width = this.prService.windowWidth$.getValue();
     if (width > 1425) {
