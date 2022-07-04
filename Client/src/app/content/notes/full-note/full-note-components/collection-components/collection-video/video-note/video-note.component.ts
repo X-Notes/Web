@@ -129,7 +129,8 @@ export class VideoNoteComponent
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
-    const nodes = this.videoPlaylist.nativeElement.children;
+    const nodes = this.videoPlaylist?.nativeElement?.children;
+    if(!nodes) return;
     let width = 0;
     for (let i = 0; i < this.counterSlider; i += 1) {
       width -= nodes[i].getBoundingClientRect().width;
@@ -138,9 +139,9 @@ export class VideoNoteComponent
   };
 
   ngAfterViewInit(): void {
-    const { nativeElement } = this.videoElement;
+    const nativeElement = this.videoElement?.nativeElement;
+    if(!nativeElement) return;
     this.video = nativeElement;
-    console.log('content: ', this.content);
   }
 
   ngOnDestroy = async () => {

@@ -17,7 +17,7 @@
     [matMenuTriggerFor]="menu"
     [button]="'more_vert'"
     [classes]="'light-static'"
-    (clickEvent)="$event.stopPropagation()"
+    (clickEvent)="$event?.stopPropagation()"
   ></app-button-collection>
 </div>
 
