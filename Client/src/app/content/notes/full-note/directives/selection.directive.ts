@@ -155,14 +155,17 @@ export class SelectionDirective implements OnDestroy, OnInit {
       return;
     }
 
+    this.prevMouseEvent = evt;
+    this.x = 0;
+    this.y = 0;
+    this.isMouseDown = true;
+
     const rectSize = this.div.getBoundingClientRect();
     if (rectSize.width === 0 || rectSize.height === 0) {
       rectSize.x = 0;
       rectSize.y = 0;
       this.selectionEvent.emit(rectSize);
     }
-
-    this.isMouseDown = true;
 
     this.x = evt.pageX;
     this.y = evt.pageY;
@@ -178,49 +181,60 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseUp(evt) {
+  mouseUp(evt: MouseEvent) {
+    this.prevMouseEvent = evt;
     this.isMouseDown = false;
     this.startTop = 0;
-    this.setWidth(0);
-    this.setHeight(0);
-
+    this.startLeft = 0;
+    this.x = 0;
+    this.y = 0;
+    this.resetDiv();
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
   mouseMoveDelay(evt: MouseEvent) {
-    if (this.isMouseDown && !this.selectionService.isResizingPhoto) {
-      this.prevMouseEvent = evt;
-      const newX = evt.pageX;
-      const newY = evt.pageY;
-
-      const newWidth = newX - this.x;
-      const newHeight = this.processY(newY) - this.startTop;
-
-      const newValueWidth = Math.abs(newWidth);
-      const newValueHeight = Math.abs(newHeight);
-
-      if (newHeight < 0 && newWidth > 0) {
-        const top = this.processY(newY);
-        this.setTop(top);
-      } else if (newHeight > 0 && newWidth < 0) {
-        this.setTop(this.startTop);
-        const left = this.processX(newX);
-        this.setLeft(left);
-      } else if (newHeight < 0 && newWidth < 0) {
-        const top = this.processY(newY);
-        this.setTop(top);
-        const left = this.processX(newX);
-        this.setLeft(left);
-      } else {
-        this.setTop(this.startTop);
-        this.setLeft(this.startLeft);
-      }
-
-      this.setWidth(newValueWidth);
-      this.setHeight(newValueHeight);
-
-      this.selectionEvent.emit(this.div.getBoundingClientRect());
+    if (!this.isMouseDown || this.selectionService.isResizingPhoto) {
+      return;
     }
+
+    this.prevMouseEvent = evt;
+    const newX = evt.pageX;
+    const newY = evt.pageY;
+
+    const newWidth = newX - this.x;
+    const newHeight = this.processY(newY) - this.startTop;
+
+    const newValueWidth = Math.abs(newWidth);
+    const newValueHeight = Math.abs(newHeight);
+
+    if (newHeight < 0 && newWidth > 0) {
+      const top = this.processY(newY);
+      this.setTop(top);
+    } else if (newHeight > 0 && newWidth < 0) {
+      this.setTop(this.startTop);
+      const left = this.processX(newX);
+      this.setLeft(left);
+    } else if (newHeight < 0 && newWidth < 0) {
+      const top = this.processY(newY);
+      this.setTop(top);
+      const left = this.processX(newX);
+      this.setLeft(left);
+    } else {
+      this.setTop(this.startTop);
+      this.setLeft(this.startLeft);
+    }
+
+    this.setWidth(newValueWidth);
+    this.setHeight(newValueHeight);
+
+    this.selectionEvent.emit(this.div.getBoundingClientRect());
+  }
+
+  resetDiv(): void {
+    this.setTop(0);
+    this.setLeft(0);
+    this.setHeight(0);
+    this.setWidth(0);
   }
 
   setTop(top: number): void {

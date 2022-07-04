@@ -64,7 +64,8 @@
           (mouseClick)="saveHeight($event)"
           (changeHeight)="changeHeight($event)"
           class="slider-bottom"
-          [ngClass]="{ slider: !isReadOnlyMode && !isSelectModeActive }"
+          [ngClass]="{ slider: !isReadOnlyMode }"
+          [ngStyle]="{'opacity': isSelectModeActive ? '0' : '1'}"
         ></div>
       </div>
       <app-empty-collection-items-placeholder
