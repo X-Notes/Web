@@ -17,19 +17,9 @@ namespace WriteContext.Repositories.NoteContent
         }
 
 
-        public Task<CollectionNote> GetOneIncludeNoteAppFiles(Guid id)
+        public Task<List<CollectionNote>> GetManyIncludeNoteAppFiles(IEnumerable<Guid> noteIds)
         {
-            return entities.Include(x => x.CollectionNoteAppFiles).FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public Task<CollectionNote> GetOneIncludeFiles(Guid id)
-        {
-            return entities.Include(x => x.Files).FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public Task<List<CollectionNote>> GetManyIncludeNoteAppFiles(List<Guid> ids)
-        {
-            return entities.Include(x => x.CollectionNoteAppFiles).Where(x => ids.Contains(x.Id)).ToListAsync();
+            return entities.Include(x => x.CollectionNoteAppFiles).Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
         }
 
         public Task<List<CollectionNote>> GetManyIncludeFiles(List<Guid> ids)
@@ -37,9 +27,9 @@ namespace WriteContext.Repositories.NoteContent
             return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotes(List<Guid> ids)
+        public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotes(List<Guid> noteIds)
         {
-            var ents = await entities.Where(x => ids.Contains(x.NoteId))
+            var ents = await entities.Where(x => noteIds.Contains(x.NoteId))
                                      .Include(x => x.Files)
                                      .GroupBy(x => x.NoteId)
                                      .Select(x => new { noteId = x.Key, files = x.SelectMany(q => q.Files) })

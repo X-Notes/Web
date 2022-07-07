@@ -85,42 +85,12 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset?>("LinkedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset?>("UnLinkedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("AppFileId");
 
-                    b.HasIndex("StatusId");
-
                     b.ToTable("AppFileUploadInfo", "file");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppFileUploadStatus", "file");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "UnLinked"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Linked"
-                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
@@ -1153,15 +1123,7 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFileUploadStatus", "Status")
-                        .WithMany("AppFileUploadInfos")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AppFile");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
@@ -1666,11 +1628,6 @@ namespace WriteContext.Migrations
                     b.Navigation("SnapshotFileContents");
 
                     b.Navigation("UserProfilePhotos");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
-                {
-                    b.Navigation("AppFileUploadInfos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>

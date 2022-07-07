@@ -72,7 +72,7 @@ namespace BI.Services.Notes.Videos
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
                     var fileIds = collectionItems.Select(x => x.AppFileId);
 
-                    var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
+                    var data = collectionItems.Select(x => new UnlinkMetaData(x.AppFileId));
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
 
                     collection.UpdatedAt = DateTimeProvider.Time;

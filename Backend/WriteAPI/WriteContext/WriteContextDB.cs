@@ -161,10 +161,6 @@ namespace WriteContext
             modelBuilder.Entity<AppFileUploadInfo>()
                 .HasKey(x => x.AppFileId);
 
-            modelBuilder.Entity<AppFileUploadStatus>()
-                .HasMany(x => x.AppFileUploadInfos)
-                .WithOne(x => x.Status)
-                .HasForeignKey(x => x.StatusId);
 
             modelBuilder.Entity<AppFile>()
                 .HasOne(x => x.User)
@@ -379,11 +375,6 @@ namespace WriteContext
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }
-             );
-
-            modelBuilder.Entity<AppFileUploadStatus>().HasData(
-                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.UnLinked, Name = nameof(AppFileUploadStatusEnum.UnLinked) },
-                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.Linked, Name = nameof(AppFileUploadStatusEnum.Linked) }
              );
         }
     }

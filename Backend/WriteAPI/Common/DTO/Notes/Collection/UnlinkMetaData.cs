@@ -10,6 +10,12 @@ namespace Common.DTO.Notes.Collection
 
         public List<Guid> AdditionalIds { set; get; }
 
+        public UnlinkMetaData(Guid id, List<Guid> additionalIds = null)
+        {
+            Id = id;
+            AdditionalIds = additionalIds;
+        }
+
         public List<Guid> GetIds()
         {
             var ids = new List<Guid>() { Id };

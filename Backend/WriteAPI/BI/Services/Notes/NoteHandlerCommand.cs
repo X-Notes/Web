@@ -60,6 +60,8 @@ namespace BI.Services.Notes
         private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly SnapshotFileContentRepository snapshotFileContentRepository;
+        private readonly CollectionNoteRepository collectionNoteRepository;
 
         public NoteHandlerCommand(
             NoteRepository noteRepository,
@@ -74,7 +76,9 @@ namespace BI.Services.Notes
             CollectionLinkedService collectionLinkedService,
             UserNoteEncryptService userNoteEncryptStorage,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            SnapshotFileContentRepository snapshotFileContentRepository,
+            CollectionNoteRepository collectionNoteRepository)
         {
             this.noteRepository = noteRepository;
             this.appCustomMapper = noteCustomMapper;
@@ -89,6 +93,8 @@ namespace BI.Services.Notes
             this.userNoteEncryptStorage = userNoteEncryptStorage;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.snapshotFileContentRepository = snapshotFileContentRepository;
+            this.collectionNoteRepository = collectionNoteRepository;
         }
 
 
@@ -184,20 +190,21 @@ namespace BI.Services.Notes
                 var noteIds = notes.Select(x => x.noteId);
 
                 // HISTORY DELETION
-                var histories = await noteSnapshotRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
-                await noteSnapshotRepository.RemoveRangeAsync(histories);
+                var snapshots = await noteSnapshotRepository.GetSnapshotsWithSnapshotFileContent(noteIds);
+                var snapshotFileIds = snapshots.SelectMany(x => x.SnapshotFileContents.Select(x => x.AppFileId));
+
+                await noteSnapshotRepository.RemoveRangeAsync(snapshots);
 
                 // CONTENT DELETION
-                var contentsToDelete = await baseNoteContentRepository.GetWhereAsync(x => noteIds.Contains(x.NoteId));
-                var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
-                if (fileContents.Any())
-                {
-                    var ids = fileContents.Select(x => x.Id);
-                    await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(ids);
-                }
+                var collectionsToDelete = await collectionNoteRepository.GetManyIncludeNoteAppFiles(noteIds);
+                var collectionFileIds = collectionsToDelete.SelectMany(x => x.CollectionNoteAppFiles.Select(x => x.AppFileId));
+
+                var filesIdsToUnlink = snapshotFileIds.Concat(collectionFileIds).ToHashSet();
 
                 var notesToDelete = notes.Select(x => x.perm.Note);
                 await noteRepository.RemoveRangeAsync(notesToDelete);
+
+                await collectionLinkedService.UnlinkFiles(filesIdsToUnlink);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

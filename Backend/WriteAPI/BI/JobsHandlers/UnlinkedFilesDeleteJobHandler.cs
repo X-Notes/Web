@@ -31,6 +31,7 @@ namespace BI.JobsHandlers
 
         public async Task DeleteUnLinkedFiles()
         {
+            Console.WriteLine("Start DeleteUnLinkedFiles");
             try
             {
                 var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-hostedTimersConfig.DeleteUnlinkedFilesAfterMinutes);
