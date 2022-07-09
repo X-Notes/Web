@@ -1,3 +1,4 @@
 <div appTheme class="empty-block">
-  <p>{{title}}</p>
+  <p *ngIf="!isSpinnerActive">{{title}}</p>
+  <app-spinner *ngIf="isSpinnerActive" [size]="16"></app-spinner>
 </div>

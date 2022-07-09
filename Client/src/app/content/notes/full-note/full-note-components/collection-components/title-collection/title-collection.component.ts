@@ -38,6 +38,9 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   isSelectionStart = false;
 
   @Input()
+  isDisablebutton = false;
+
+  @Input()
   isShowButton = false;
 
   @Input()

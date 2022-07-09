@@ -12,6 +12,7 @@
     <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
   </div>
   <app-button-collection
+    *ngIf="!isDisablebutton"
     [ngStyle]="{ opacity : isButtonActive ? '1' : '0' }"
     [matMenuTriggerFor]="menu"
     [button]="'more_horiz'"
