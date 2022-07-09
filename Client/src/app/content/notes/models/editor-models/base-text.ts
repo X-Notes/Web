@@ -29,7 +29,15 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
-  updateHeadingTypeId(headingTypeId: HeadingTypeENUM) {
+  resetToDefault(): void {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.updateNoteTextTypeId(NoteTextTypeENUM.Default);
+    this.updateChecked(null);
+    this.updateHeadingTypeId(null);
+    this.updateContent([]);
+  }
+
+  updateHeadingTypeId(headingTypeId?: HeadingTypeENUM) {
     this.headingTypeId = headingTypeId;
     this.updateDate();
   }
@@ -39,7 +47,7 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
-  updateChecked(_checked: boolean) {
+  updateChecked(_checked?: boolean) {
     this.checked = _checked;
     this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }

@@ -319,8 +319,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteRowHandler(id: string) {
-    const index = this.contentEditorTextService.deleteContent(id);
-    this.elements?.toArray()[index].setFocusToEnd();
+    const index = this.contentEditorContentsService.deleteContent(id);
+    const elms = this.elements?.toArray();
+    if (elms?.length <= index) {
+      this.elements?.toArray()[index].setFocusToEnd();
+    }
     this.postAction();
   }
 
@@ -402,7 +405,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   isCanAddNewItem(content: ContentModelBase) {
-    if (!content) return false;
+    if (!content) return true;
     if (content.typeId !== ContentTypeENUM.Text) {
       return true;
     }

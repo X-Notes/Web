@@ -10,17 +10,8 @@ export class ContentEditorTextService {
 
   constructor(private contentsService: ContentEditorContentsSynchronizeService) {}
 
-  deleteContent(contentId: string) {
-    const index = this.contentsService.getIndexOrErrorById(contentId);
-    if (index !== 0) {
-      this.contentsService.deleteById(contentId, false);
-      return index - 1;
-    }
-    return 0;
-  }
-
   insertNewContent(contentId: string, nextRowType: NoteTextTypeENUM, isFocusToNext: boolean) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
+    let index = this.contentsService.getIndexByContentId(contentId);
     if (isFocusToNext) {
       index += 1;
     }

@@ -155,6 +155,12 @@ export class ContentEditorContentsSynchronizeService {
     this.updateImmediatelySubject.next(true);
   }
 
+  deleteContent(contentId: string): number {
+    const index = this.getIndexByContentId(contentId);
+    this.deleteById(contentId, false);
+    return index;
+  }
+
   private async processChanges() {
     const [structureDiffs, res] = this.getStructureDiffs(this.contentsSync, this.getContents);
     if (structureDiffs.isAnyChanges()) {
@@ -627,12 +633,12 @@ export class ContentEditorContentsSynchronizeService {
   }
 
   // GET INDDEX
-  getIndexOrErrorById(contentId: string) {
+  getIndexByContentId(contentId: string) {
     const index = this.contents.findIndex((x) => x.id === contentId);
     if (index !== -1) {
       return index;
     }
-    throw new Error('Not found');
+    return 0;
   }
 
   getIndexByContent(content: ContentModelBase) {

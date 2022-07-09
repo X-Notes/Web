@@ -35,7 +35,7 @@ export class ContentEditorFilesBase {
     isFocusToNext: boolean,
     content: BaseCollection<T>,
   ) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
+    let index = this.contentsService.getIndexByContentId(contentId);
     if (isFocusToNext) {
       index += 1;
     }
