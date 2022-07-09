@@ -163,7 +163,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   setFocusedElement() {
-    this.clickableService.setSontent(this.content.id, null, ClickableSelectableEntities.Text, this);
+    this.clickableService.setSontent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 
   // LISTENERS

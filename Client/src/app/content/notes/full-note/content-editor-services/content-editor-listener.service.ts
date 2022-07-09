@@ -96,7 +96,7 @@ export class ContentEditorListenerService {
     const keydownEnter = this.renderer.listen(document, 'keydown.enter', (e: KeyboardEvent) => {
       e.preventDefault();
       if (this.clickableService?.type !== ClickableSelectableEntities.Text) {
-        this.onPressEnterSubject.next(this.clickableService.currentContentId);
+        this.onPressEnterSubject.next(this.clickableService.currentContent.id);
       }
       return false;
     });

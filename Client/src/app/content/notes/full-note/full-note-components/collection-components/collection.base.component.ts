@@ -109,7 +109,7 @@ export class CollectionBaseComponent<
   }
 
   clickItemHandler(itemId: string) {
-    this.clickableContentService.setSontent(this.content.id, itemId, this.selectType, null);
+    this.clickableContentService.setSontent(this.content, itemId, this.selectType, null);
     const item = document.getElementById(itemId);
     item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }

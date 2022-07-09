@@ -75,8 +75,13 @@
     scrollbar-width: thin;
     .content-section-inner {
       position: relative;
+      display: flex;
+      height: 100%;
+      flex-direction: column;
       .empty {
-        height: 150px;
+        display: flex;
+        min-height: 150px;
+        flex-grow: 1;
       }
     }
   }

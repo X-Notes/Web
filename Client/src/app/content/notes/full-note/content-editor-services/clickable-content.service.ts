@@ -8,7 +8,7 @@ import { ClickableSelectableEntities } from './models/clickable-selectable-entit
 export class ClickableContentService {
   setTime: Date;
 
-  currentContentId: string;
+  currentContent: ContentModelBase;
 
   currentItemId: string;
 
@@ -24,7 +24,7 @@ export class ClickableContentService {
   }
 
   isEqual(content: ContentModelBase): boolean {
-    return content.id === this.currentContentId;
+    return content.id === this.currentContent.id;
   }
 
   reset() {
@@ -36,12 +36,12 @@ export class ClickableContentService {
   }
 
   setSontent(
-    contentId: string,
+    content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
     curentTextItem: BaseTextElementComponent,
   ) {
-    this.currentContentId = contentId;
+    this.currentContent = content;
     this.currentItemId = itemId;
     this.type = type;
     this.curentTextItem = curentTextItem;
@@ -49,7 +49,7 @@ export class ClickableContentService {
 
   getTextContentIdOrNull(): string {
     if (this.type === ClickableSelectableEntities.Text) {
-      return this.currentContentId;
+      return this.currentContent.id;
     }
     return null;
   }
