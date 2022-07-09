@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  ViewChild,
+  OnInit,
 } from '@angular/core';
 import { AudioService } from '../../../../../audio.service';
 import { ExportService } from '../../../../../export.service';
@@ -28,10 +28,8 @@ import { SelectionService } from '../../../../content-editor-services/selection.
 })
 export class AudioNoteComponent
   extends CollectionBaseComponent<AudiosCollection>
-  implements ParentInteraction
+  implements ParentInteraction, OnInit
 {
-  @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
-
   formats = TypeUploadFormats.audios;
 
   constructor(
@@ -46,12 +44,7 @@ export class AudioNoteComponent
     super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Audio);
   }
 
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
-  }
+  ngOnInit(): void {}
 
   getHost() {
     return this.host;
@@ -61,16 +54,6 @@ export class AudioNoteComponent
     this.audioService.playStream(url, id).subscribe(() => {
       this.cdr.markForCheck();
     });
-  }
-
-  uploadHandler = () => {
-    this.uploadAudiosRef.nativeElement.click();
-  };
-
-  async uploadAudios(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   openFile(audio: AudioModel) {

@@ -33,8 +33,6 @@ export class PhotosComponent
 {
   @ViewChild('album') albumChild: ElementRef;
 
-  @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
-
   startHeight;
 
   uiCountInRow: number;
@@ -51,7 +49,6 @@ export class PhotosComponent
 
   constructor(
     private renderer: Renderer2,
-    private elRef: ElementRef,
     public selectionService: SelectionService,
     private exportService: ExportService,
     clickableContentService: ClickableContentService,
@@ -74,13 +71,6 @@ export class PhotosComponent
     return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
   }
 
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
   ngOnChanges(): void {}
 
   ngOnDestroy(): void {
@@ -90,16 +80,6 @@ export class PhotosComponent
 
   ngAfterViewInit(): void {
     this.setHeight(`${this.content.height}`); // init collection size first
-  }
-
-  uploadHandler = () => {
-    this.uploadPhoto.nativeElement.click();
-  };
-
-  async uploadImages(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   changeHeight(difference: number) {

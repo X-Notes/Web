@@ -4,7 +4,6 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
@@ -30,8 +29,6 @@ export class DocumentNoteComponent
   extends CollectionBaseComponent<DocumentsCollection>
   implements OnInit, ParentInteraction
 {
-  @ViewChild('uploadRef') uploadRef: ElementRef;
-
   formats = TypeUploadFormats.documents;
 
   constructor(
@@ -60,13 +57,6 @@ export class DocumentNoteComponent
       return this.content.items[0];
     }
     return null;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   isFocusToNext(entity: SetFocus) {
@@ -144,18 +134,8 @@ export class DocumentNoteComponent
     await this.exportService.exportDocument(document);
   }
 
-  uploadHandler = () => {
-    this.uploadRef.nativeElement.click();
-  };
-
   async exportDocuments(documents: DocumentsCollection) {
     await this.exportService.exportDocuments(documents);
-  }
-
-  async uploadDocuments(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -168,7 +148,7 @@ export class DocumentNoteComponent
     this.isMouseOver = false;
   };
 
-  ngOnInit = () => {};
+  ngOnInit() {}
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

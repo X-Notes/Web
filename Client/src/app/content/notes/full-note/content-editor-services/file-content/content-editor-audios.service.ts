@@ -86,6 +86,9 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       );
     });
 
+    let collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const audios = results
       .map((x) => x.eventBody)
@@ -107,15 +110,11 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new AudiosCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...audiosMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    collection.addItemsToCollection(audiosMapped);
     this.afterUploadFilesToCollection(results);
+
+    collection.isLoading = false;
   };
 
   deleteAudioHandler(audioId: string, content: AudiosCollection) {

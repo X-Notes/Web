@@ -7,9 +7,9 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
+    ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
-  <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadVideos($event)">
+  <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadFiles($event)">
     <app-title-collection
       [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
@@ -17,6 +17,7 @@
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="clickItemHandler(null)"
       [menu]="menu"
+      [isDisablebutton]="this.content.isLoading"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <div
@@ -197,6 +198,7 @@
     </div>
     <app-empty-collection-items-placeholder
       *ngIf="isEmpty"
+      [isSpinnerActive]="content.isLoading"
       [title]="'innerNote.video.plsUpload' | translate"
     ></app-empty-collection-items-placeholder>
   </div>
@@ -205,12 +207,12 @@
 <!-- Additional -->
 
 <input
-  #uploadVideosRef
+  #uploadRef
   type="file"
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadVideos($event.target.files)"
+  (change)="uploadFiles($event.target.files)"
 />
 
 <!-- Collection menu -->

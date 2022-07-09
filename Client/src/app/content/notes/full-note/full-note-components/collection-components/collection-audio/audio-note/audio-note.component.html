@@ -7,9 +7,9 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
+    ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
-  <div [appDrop]="'drop-active'" (fileDropped)="uploadAudios($event)" class="playlist" appTheme>
+  <div [appDrop]="'drop-active'" (fileDropped)="uploadFiles($event)" class="playlist" appTheme>
     <app-title-collection
       [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
@@ -17,6 +17,7 @@
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="clickItemHandler(null)"
       [menu]="menu"
+      [isDisablebutton]="this.content.isLoading"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
@@ -36,21 +37,19 @@
     <app-empty-collection-items-placeholder
       *ngIf="isEmpty"
       [title]="'innerNote.audio.plsUpload' | translate"
+      [isSpinnerActive]="content.isLoading"
     ></app-empty-collection-items-placeholder>
-    <div *ngIf="content.isLoading" class="spinner-container">
-      <app-spinner [size]="16"></app-spinner>
-    </div>
   </div>
 </div>
 
 <!-- Additional -->
 <input
-  #uploadAudiosRef
+  #uploadRef
   type="file"
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadAudios($event.target.files)"
+  (change)="uploadFiles($event.target.files)"
 />
 <mat-menu
   #menu="matMenu"

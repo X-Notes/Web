@@ -80,6 +80,9 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       );
     });
 
+    let collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const videos = results
       .map((x) => x.eventBody)
@@ -101,15 +104,10 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new VideosCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...videosMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
+    collection.addItemsToCollection(videosMapped);
     this.afterUploadFilesToCollection(results);
+    collection.isLoading = false;
   };
 
   deleteVideoHandler(videoId: string, content: VideosCollection) {

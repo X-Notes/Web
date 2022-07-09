@@ -15,24 +15,8 @@
         flex-direction: column;
         width: calc(100% - 30px);
         border-radius: 5px;
-    
-        .spinner-container {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 38px;
-        }
     }
     
-    .spinner-container{
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 38px;
-    }
-
     .drop-active{
         outline: 1px solid white;
     }

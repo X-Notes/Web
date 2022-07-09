@@ -83,6 +83,9 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
       );
     });
 
+    let collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
+    collection.isLoading = true;
+
     const photosResult = await forkJoin(uploadsRequests).toPromise();
     const photos = photosResult
       .map((x) => x.eventBody)
@@ -107,9 +110,10 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
         }),
     );
 
-    const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
+    collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
     collection.addItemsToCollection(photosMapped);
     this.afterUploadFilesToCollection(photosResult);
+    collection.isLoading = false;
   };
 
   deletePhotoHandler(photoId: string, content: PhotosCollection) {

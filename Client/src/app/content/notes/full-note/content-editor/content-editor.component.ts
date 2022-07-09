@@ -481,7 +481,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           { contentId: cont.content.id, files },
           this.note.id,
         );
-        this.syncPhotoItems(cont.content.id);
+        this.syncCollectionItems(cont.content.id);
         this.postAction();
       });
   }
@@ -503,6 +503,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           { contentId: cont.content.id, files },
           this.note.id,
         );
+        this.syncCollectionItems(cont.content.id);
         this.postAction();
       });
   }
@@ -524,6 +525,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           { contentId: cont.content.id, files },
           this.note.id,
         );
+        this.syncCollectionItems(cont.content.id);
         this.postAction();
       });
   }
@@ -545,6 +547,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           { contentId: cont.content.id, files },
           this.note.id,
         );
+        this.syncCollectionItems(cont.content.id);
         this.postAction();
       });
   }
@@ -610,11 +613,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteVideoHandler(videoId: string, collection: VideosCollection) {
     this.contentEditorVideosService.deleteVideoHandler(videoId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorVideosService.uploadVideosToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -626,11 +631,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteDocumentHandler(documentId: string, collection: DocumentsCollection) {
     this.contentEditorDocumentsService.deleteDocumentHandler(documentId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -642,11 +649,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteAudioHandler(audioId: string, collection: AudiosCollection) {
     this.contentEditorAudiosService.deleteAudioHandler(audioId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorAudiosService.uploadAudiosToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -658,17 +667,17 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deletePhotoHandler(photoId: string, collection: PhotosCollection) {
     this.contentEditorPhotosService.deletePhotoHandler(photoId, collection);
-    this.syncPhotoItems(collection.id);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorPhotosService.uploadPhotosToCollectionHandler($event, noteId);
-    this.syncPhotoItems($event.contentId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
-  syncPhotoItems(contentId: string): void {
+  syncCollectionItems(contentId: string): void {
     if (!contentId) return;
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
     if (curEl) {

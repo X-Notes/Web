@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -35,6 +36,8 @@ export class CollectionBaseComponent<
 
   @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
+  @ViewChild('uploadRef') uploadRef: ElementRef<HTMLInputElement>;
+
   @Input()
   content: T;
 
@@ -55,6 +58,22 @@ export class CollectionBaseComponent<
   ) {
     super(cdr);
   }
+
+  get isDragActive(): boolean {
+    return !this.isReadOnlyMode && !this.isSelectModeActive && !this.content.isLoading;
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.items || this.content.items.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  uploadHandler = () => {
+    this.uploadRef.nativeElement.value = null;
+    this.uploadRef.nativeElement.click();
+  };
 
   syncHtmlWithLayout = () => {
     // TODO
@@ -80,6 +99,12 @@ export class CollectionBaseComponent<
     const item = this.content.items.find((x) => this.clickableContentService.isClicked(x.fileId));
     if (item) {
       this.deleteContentItemEvent.emit(item.fileId);
+    }
+  }
+
+  uploadFiles(files: File[]) {
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
   }
 

@@ -86,6 +86,9 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       );
     });
 
+    let collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const documents = results
       .map((x) => x.eventBody)
@@ -107,17 +110,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<DocumentsCollection>(
-      $event.contentId,
-    );
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new DocumentsCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...documentsMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
+    collection.addItemsToCollection(documentsMapped);
     this.afterUploadFilesToCollection(results);
+    collection.isLoading = false;
   };
 
   deleteDocumentHandler(documentId: string, content: DocumentsCollection) {

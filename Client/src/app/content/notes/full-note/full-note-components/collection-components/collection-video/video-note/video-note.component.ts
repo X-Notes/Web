@@ -38,8 +38,6 @@ export class VideoNoteComponent
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
 
-  @ViewChild('uploadVideosRef') uploadVideosRef: ElementRef;
-
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
 
   video: HTMLVideoElement;
@@ -85,13 +83,6 @@ export class VideoNoteComponent
 
   get playlistWidth() {
     return this.videoPlaylist.nativeElement.clientWidth;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   get getMainVideo() {
@@ -300,10 +291,6 @@ export class VideoNoteComponent
     await this.exportService.exportVideo(video);
   }
 
-  uploadHandler = () => {
-    this.uploadVideosRef.nativeElement.click();
-  };
-
   // may is need in further
 
   // isInViewport(element) {
@@ -345,12 +332,6 @@ export class VideoNoteComponent
       this.togglePlay();
     }
     this.indexVideo = index;
-  }
-
-  async uploadVideos(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
