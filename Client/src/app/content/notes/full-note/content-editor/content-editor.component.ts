@@ -122,7 +122,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   ) {}
 
   get isSelectModeActive(): boolean {
-    return this.selectionService.isAnySelect() || this.selectionDirective?.isDivActive;
+    const isAnySelect = this.selectionService.isAnySelect();
+    const divActive = this.selectionDirective?.isDivActive;
+    return isAnySelect || divActive;
   }
 
   get contents() {
@@ -560,6 +562,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
+    this.selectionService.resetSelectionItems();
     let newContentId: string;
     switch (event.typeFile) {
       case TypeUploadFile.photos: {

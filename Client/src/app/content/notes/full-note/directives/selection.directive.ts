@@ -146,10 +146,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseDown(evt: MouseEvent) {
+    this.selectionService.resetSelectionItems();
     if (
       (evt.target as HTMLElement).classList.contains('icon') ||
       (evt.target as HTMLElement).tagName === 'svg' ||
       (evt.target as HTMLElement).tagName === 'path' ||
+      (evt.target as HTMLElement).localName === 'mat-icon' ||
       this.pS.isMobile()
     ) {
       return;

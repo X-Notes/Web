@@ -58,6 +58,10 @@ export class SelectionService {
     this.selectedItemsSet.delete(id);
   }
 
+  resetSelectionItems(): void {
+    this.selectedItemsSet.clear();
+  }
+
   isSelectionInZone(
     secondRect: DOMRect,
     elements: QueryList<ParentInteraction>,
