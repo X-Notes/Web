@@ -281,7 +281,7 @@ namespace BI.Services.Notes
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
-                                contents.Add(new CollectionNote(collection, dbFiles, noteId, collection.FileTypeId));
+                                contents.Add(new CollectionNote(collection, dbFiles, noteId));
                             }
                             else
                             {
@@ -289,7 +289,7 @@ namespace BI.Services.Notes
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 copies.ForEach(x => x.AppFileUploadInfo.SetLinked());
-                                contents.Add(new CollectionNote(collection, copies, noteId, collection.FileTypeId));
+                                contents.Add(new CollectionNote(collection, copies, noteId));
                             }
                             continue;
                         }
