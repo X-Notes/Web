@@ -169,6 +169,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
   }
 
+  runDetectChangesOnChildren(): void {
+    this.elements.toArray().forEach((x) => x.detectChanges());
+  }
+
   ngOnDestroy(): void {
     this.webSocketsUpdaterService.leaveNote(this.note.id);
     this.destroy.next();

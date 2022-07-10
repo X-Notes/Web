@@ -24,7 +24,7 @@ export class ClickableContentService {
   }
 
   isEqual(content: ContentModelBase): boolean {
-    return content.id === this.currentContent.id;
+    return content.id === this.currentContent?.id;
   }
 
   reset() {

@@ -131,11 +131,13 @@ export class CollectionBaseComponent<
     this.titleComponent.focusOnTitle();
     this.titleComponent.scrollToTitle();
     this.clickItemHandler(null);
+    this.runDetectChangesChildren.emit();
   }
 
   clickItemHandler(itemId: string) {
     this.clickableContentService.setSontent(this.content, itemId, this.selectType, null);
     const item = document.getElementById(itemId);
     item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.runDetectChangesChildren.emit();
   }
 }

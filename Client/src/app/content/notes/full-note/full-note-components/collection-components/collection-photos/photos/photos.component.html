@@ -21,7 +21,7 @@
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
         (changeTitleEvent)="onTitleChangeInput($event)"
-        (clickInputEvent)="clickItemHandler(null)"
+        (clickInputEvent)="scrollAndFocusToTitle()"
         [menu]="menu"
         [isDisablebutton]="this.content.isLoading"
         [isShowButton]="isMouseOver"

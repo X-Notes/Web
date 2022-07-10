@@ -17,6 +17,9 @@ export abstract class BaseEditorElementComponent {
   @Output()
   someChangesEvent = new EventEmitter();
 
+  @Output()
+  runDetectChangesChildren = new EventEmitter();
+
   public isMouseOver = false;
 
   protected cdr: ChangeDetectorRef;
