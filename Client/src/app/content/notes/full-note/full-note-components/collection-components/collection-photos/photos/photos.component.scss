@@ -29,7 +29,7 @@
         .blocks {
           height: 100%;
           min-height: 200px;
-          padding: 0.13rem;
+          padding: 0.13rem; // necessary for select
 
           .block {
             display: flex;

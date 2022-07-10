@@ -13,8 +13,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
   constructor(collection: Partial<PhotosCollection>, items: Photo[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.countInRow = collection.countInRow;
-    this.height = collection.height;
-    this.width = collection.width;
+    this.setHeightWidth(collection.height, collection.width);
     this.name = collection.name;
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.items = items && items.length > 0 ? items.map((q) => new Photo(q)) : [];
@@ -34,8 +33,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
 
-    this.height = entity.height;
-    this.width = entity.width;
+    this.setHeightWidth(entity.height, entity.width);
     this.countInRow = entity.countInRow;
   }
 
@@ -67,6 +65,11 @@ export class PhotosCollection extends BaseCollection<Photo> {
     this.height = content.height;
     this.width = content.width;
     this.countInRow = content.countInRow;
+  }
+
+  private setHeightWidth(height: string, width: string): void {
+    this.height = height ?? 'auto';
+    this.width = width ?? '100%';
   }
 }
 

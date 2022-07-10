@@ -109,10 +109,10 @@ export class PhotosComponent
       .pipe(takeUntil(this.destroy), debounceTime(300)) // TODO export const
       .subscribe((values) => {
         let [height] = values;
+        if (!height) return;
         height = height ?? 'auto';
-        if (this.content.height !== height) {
-          this.someChangesEvent.emit();
-        }
+        this.content.height = height;
+        this.someChangesEvent.emit();
       });
 
     this.changeHeightSubject.next(this.content.height);
@@ -161,18 +161,18 @@ export class PhotosComponent
   setPhotosInRow(count: number): void {
     if (this.uiCountInRow === count) return;
     this.initCountInRow(count);
-    this.initPhotos();
+    this.reinitPhotosToDefault();
   }
 
   syncPhotos(): void {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
     if (photosCount !== currentLength) {
-      this.initPhotos();
+      this.reinitPhotosToDefault();
     }
   }
 
-  initPhotos(): void {
+  reinitPhotosToDefault(): void {
     this.setFalseLoadedForAllPhotos();
     this.setHeight('auto');
     this.initBlocks();

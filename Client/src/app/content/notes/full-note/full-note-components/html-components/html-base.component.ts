@@ -76,7 +76,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   get isActiveState() {
-    return this.getIsActive();
+    return this.getIsActive() && !this.isReadOnlyMode;
   }
 
   onInput() {
