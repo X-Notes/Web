@@ -322,11 +322,9 @@ namespace WriteAPI.ConfigureAPP
         }
 
 
-        public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
+        public static void DataBase(this IServiceCollection services, string dbConnection)
         {
-            string writeConnection = Configuration.GetSection("WriteDB").Value;
-
-            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
+            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(dbConnection));
 
             // NOTIFICATIONS 
             services.AddScoped<NotificationRepository>();
@@ -384,14 +382,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
 
-        public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
+        public static void AzureConfig(this IServiceCollection services, AzureConfig config)
         {
-            var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
-            services.AddSingleton(x => configService);
-
+            services.AddSingleton(x => config);
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
+                builder.AddBlobServiceClient(config.StorageConnectionEmulator);
             });
         }
 

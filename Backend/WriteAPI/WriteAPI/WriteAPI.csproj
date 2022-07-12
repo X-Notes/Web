@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+	  <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -9,6 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Hangfire" Version="6.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.Network" Version="6.0.3" />
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="6.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.SignalR" Version="6.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.System" Version="6.0.5" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.4" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.4" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.4" />
     <PackageReference Include="Hangfire" Version="1.7.28" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.9.7" />
     <PackageReference Include="MediatR" Version="9.0.0" />

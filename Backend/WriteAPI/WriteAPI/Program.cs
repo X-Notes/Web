@@ -1,9 +1,12 @@
 using BI.Mapping;
 using BI.SignalR;
+using Common.Azure;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
+using WriteAPI.HealthCheckers;
 using WriteAPI.Hosted;
 using WriteAPI.Middlewares;
 
@@ -51,7 +55,21 @@ FirebaseApp.Create(new AppOptions
     Credential = GoogleCredential.FromFile("noots-storm-firebase.json")
 });
 
-builder.Services.AzureConfig(builder.Configuration);
+
+var dbConn = builder.Configuration.GetSection("WriteDB").Value;
+var storageConn = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
+var signalRConn = builder.Configuration.GetSection("SignalRUrl").Value;
+
+builder.Services.AddHealthChecks()
+                .AddHangfire(null)
+                .AddNpgSql(dbConn)
+                .AddSignalRHub($"{signalRConn}/hub")
+                .AddCheck<AzureBlobStorageHealthChecker>("AzureBlobStorageChecker");
+
+builder.Services.AddHealthChecksUI()
+                .AddInMemoryStorage();
+
+builder.Services.AzureConfig(storageConn);
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JWT(builder.Configuration);
 
@@ -72,7 +90,7 @@ builder.Services.AddSingleton<IUserIdProvider, IdProvider>();
 builder.Services.Mediatr();
 
 builder.Services.HangFireConfig(builder.Configuration);
-builder.Services.DataBase(builder.Configuration);
+builder.Services.DataBase(dbConn);
 
 builder.Services.BI();
 builder.Services.FileStorage();
@@ -109,6 +127,15 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHangfireDashboard();
 app.MapHub<AppSignalRHub>("/hub");
+
+// HEALTH CHECK
+// /healthchecks-ui
+app.MapHealthChecksUI();
+app.MapHealthChecks("/app-health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 
 
 await app.RunAsync();

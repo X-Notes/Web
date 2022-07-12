@@ -2,9 +2,11 @@
 using Azure.Storage.Blobs.Models;
 using BI.SignalR;
 using Common;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,6 +44,41 @@ namespace WriteAPI.Hosted
             );
 
             await blobServiceClient.SetPropertiesAsync(props);
+
+            await TryToCreateMock();
+        }
+
+        private async Task TryToCreateMock()
+        {
+            try
+            {
+                var containerHealthCheckName = "health-check";
+                var container = blobServiceClient.GetBlobContainerClient(containerHealthCheckName);
+                await container.CreateIfNotExistsAsync();
+
+                var blobHealthCheckName = "health.txt";
+                var blobClient = container.GetBlobClient(blobHealthCheckName);
+                var isExist = await blobClient.ExistsAsync();
+                if (!isExist)
+                {
+                    var file = GetEmptyFile();
+                    using var ms = new MemoryStream(file);
+                    await blobClient.UploadAsync(ms, new BlobHttpHeaders { ContentType = "text/plain" });
+                }
+            } catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private byte[] GetEmptyFile()
+        {
+            using var ms = new MemoryStream();
+            using TextWriter tw = new StreamWriter(ms);    
+            tw.Write("HI");
+            tw.Flush();
+            ms.Position = 0;
+            return ms.ToArray();             
         }
     }
 }
