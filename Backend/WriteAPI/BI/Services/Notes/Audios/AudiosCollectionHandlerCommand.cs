@@ -15,6 +15,7 @@ using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
@@ -41,6 +42,8 @@ namespace BI.Services.Notes.Audios
 
         private readonly CollectionLinkedService collectionLinkedService;
 
+        private readonly ILogger<AudiosCollectionHandlerCommand> logger;
+
         public AudiosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
@@ -48,7 +51,8 @@ namespace BI.Services.Notes.Audios
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            ILogger<AudiosCollectionHandlerCommand> logger)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -57,6 +61,7 @@ namespace BI.Services.Notes.Audios
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
+            this.logger = logger;
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -187,7 +192,7 @@ namespace BI.Services.Notes.Audios
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                 }
             }
 

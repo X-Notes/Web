@@ -2,6 +2,7 @@
 using Common.Timers;
 using Domain.Commands.Files;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,17 +14,18 @@ namespace BI.JobsHandlers
     public class UnlinkedFilesDeleteJobHandler
     {
         private readonly AppFileUploadInfoRepository appFileUploadInfoRepository;
-
         private readonly IMediator _mediator;
-
         private readonly HostedTimersConfig hostedTimersConfig;
+        private readonly ILogger<UnlinkedFilesDeleteJobHandler> logger;
 
         public UnlinkedFilesDeleteJobHandler(
             AppFileUploadInfoRepository appFileUploadInfoRepository,
             IMediator _mediator,
-            HostedTimersConfig hostedTimersConfig)
+            HostedTimersConfig hostedTimersConfig,
+            ILogger<UnlinkedFilesDeleteJobHandler> logger)
         {
             this.hostedTimersConfig = hostedTimersConfig;
+            this.logger = logger;
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
             this._mediator = _mediator;
             this.hostedTimersConfig = hostedTimersConfig;
@@ -31,7 +33,7 @@ namespace BI.JobsHandlers
 
         public async Task DeleteUnLinkedFiles()
         {
-            Console.WriteLine("Start DeleteUnLinkedFiles");
+            logger.LogInformation("Start DeleteUnLinkedFiles");
             try
             {
                 var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-hostedTimersConfig.DeleteUnlinkedFilesAfterMinutes);
@@ -40,7 +42,7 @@ namespace BI.JobsHandlers
 
                 if (infos.Any())
                 {
-                    Console.WriteLine($"{infos.Count()} files will be deleted");
+                    logger.LogInformation($"{infos.Count()} files will be deleted");
 
                     var groups = infos.GroupBy(x => x.AppFile.UserId);
                     foreach(var group in groups)
@@ -53,7 +55,7 @@ namespace BI.JobsHandlers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
             }
         }
     }

@@ -8,6 +8,7 @@ using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using WriteContext.Repositories.Users;
 using WriteContext.Repositories.WS;
 
@@ -18,15 +19,18 @@ namespace BI.SignalR
         private readonly WebsocketsNotesServiceStorage wsNotesService;
         private readonly WebsocketsFoldersServiceStorage wsFoldersService;
         private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
+        private readonly ILogger<AppSignalRHub> logger;
 
         public AppSignalRHub(
             WebsocketsNotesServiceStorage websocketsNotesService,
             WebsocketsFoldersServiceStorage websocketsFoldersService,
-            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository)
+            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
+            ILogger<AppSignalRHub> logger)
         {
             this.wsNotesService = websocketsNotesService;
             this.wsFoldersService = websocketsFoldersService;
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
+            this.logger = logger;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -70,7 +74,7 @@ namespace BI.SignalR
             var result = wsNotesService.Remove(noteId, Context.ConnectionId);
             if (!result.isRemoved)
             {
-                Console.WriteLine("User did`nt deleted from online on note, UserId: " + GetUserId());
+                logger.LogError("User did`nt deleted from online on note, UserId: " + GetUserId());
                 return;
             }
 
@@ -118,7 +122,7 @@ namespace BI.SignalR
             var result = wsFoldersService.Remove(folderId, Context.ConnectionId);
             if (!result.isRemoved)
             {
-                Console.WriteLine("User did`nt deleted from online on folder, UserId: " + GetUserId());
+                logger.LogError("User did`nt deleted from online on folder, UserId: " + GetUserId());
                 return;
             }
 

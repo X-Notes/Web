@@ -17,6 +17,7 @@ using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
@@ -43,6 +44,8 @@ namespace BI.Services.Notes.Photos
 
         private readonly CollectionLinkedService collectionLinkedService;
 
+        private readonly ILogger<PhotosCollectionHandlerCommand> logger;
+
         public PhotosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
@@ -50,7 +53,8 @@ namespace BI.Services.Notes.Photos
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            ILogger<PhotosCollectionHandlerCommand> logger)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -59,6 +63,7 @@ namespace BI.Services.Notes.Photos
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
+            this.logger = logger;
         }
 
         public async Task<OperationResult<Unit>> Handle(RemovePhotosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -197,7 +202,7 @@ namespace BI.Services.Notes.Photos
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                 }
             }
 

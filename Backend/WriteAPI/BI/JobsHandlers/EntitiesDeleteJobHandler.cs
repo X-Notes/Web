@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Timers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,25 +24,29 @@ namespace BI.JobsHandlers
 
         private readonly NoteSnapshotRepository noteSnapshotRepository;
 
+        private readonly ILogger<EntitiesDeleteJobHandler> logger;
+
         public EntitiesDeleteJobHandler(
             LabelRepository labelRepostory,
             NoteRepository noteRepository,
             FolderRepository folderRepository,
             TimersConfig timersConfig,
-            NoteSnapshotRepository noteSnapshotRepository)
+            NoteSnapshotRepository noteSnapshotRepository,
+            ILogger<EntitiesDeleteJobHandler> logger)
         {
             this.labelRepostory = labelRepostory;
             this.noteRepository = noteRepository;
             this.folderRepository = folderRepository;
             this.timersConfig = timersConfig;
             this.noteSnapshotRepository = noteSnapshotRepository;
+            this.logger = logger;
         }
 
         public async Task DeleteLabelsHandler()
         {
             try
             {
-                Console.WriteLine("Start labels deleting");
+                logger.LogInformation("Start labels deleting");
 
                 var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteLabelsNDays);
 
@@ -49,13 +54,13 @@ namespace BI.JobsHandlers
 
                 if (labels.Any())
                 {
-                    Console.WriteLine($"{labels.Count()} labels will be deleted");
+                    logger.LogInformation($"{labels.Count()} labels will be deleted");
                     await labelRepostory.RemoveRangeAsync(labels);
-                    Console.WriteLine("Labels was deleted");
+                    logger.LogInformation("Labels was deleted");
                 }
-            }catch(Exception ex)
+            } catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
             }
         }
 
@@ -63,20 +68,21 @@ namespace BI.JobsHandlers
         {
             try
             {
-                Console.WriteLine("Start notes deleting");
+                logger.LogInformation("Start notes deleting");
 
                 var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteNotesNDays);
                 var notes = await noteRepository.GetNotesThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (notes.Any())
                 {
-                    Console.WriteLine($"{notes.Count()} notes will be deleted");
+                    logger.LogInformation($"{notes.Count()} notes will be deleted");
                     await noteRepository.RemoveRangeAsync(notes);
-                    Console.WriteLine("Notes was deleted");
+                    logger.LogInformation("Notes was deleted");
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
             }
         }
 
@@ -84,20 +90,21 @@ namespace BI.JobsHandlers
         {
             try
             {
-                Console.WriteLine("Start folders deleting");
+                logger.LogInformation("Start folders deleting");
 
                 var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteFoldersNDays);
                 var folders = await folderRepository.GetFoldersThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (folders.Any())
                 {
-                    Console.WriteLine($"{folders.Count()} folders will be deleted");
+                    logger.LogInformation($"{folders.Count()} folders will be deleted");
                     await folderRepository.RemoveRangeAsync(folders);
-                    Console.WriteLine("Folders was deleted");
+                    logger.LogInformation("Folders was deleted");
                 }
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
             }
         }
 
@@ -105,20 +112,21 @@ namespace BI.JobsHandlers
         {
             try
             {
-                Console.WriteLine("Start snapshots deleting");
+                logger.LogInformation("Start snapshots deleting");
 
                 var earliestTimestamp = DateTimeProvider.Time.AddDays(-timersConfig.DeleteHistoriesNDays);
                 var snapshots = await noteSnapshotRepository.GetSnapshotsThatNeedDeleteAfterTime(earliestTimestamp);
 
                 if (snapshots.Any())
                 {
-                    Console.WriteLine($"{snapshots.Count()} snapshots will be deleted");
+                    logger.LogInformation($"{snapshots.Count()} snapshots will be deleted");
                     await noteSnapshotRepository.RemoveRangeAsync(snapshots);
-                    Console.WriteLine("Folders was deleted");
+                    logger.LogInformation("Folders was deleted");
                 }
-            }catch(Exception ex) 
-            {  
-                Console.WriteLine(ex.ToString());
+            }
+            catch(Exception ex) 
+            {
+                logger.LogError(ex.ToString());
             }
         }
     }

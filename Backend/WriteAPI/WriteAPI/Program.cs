@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using System;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
@@ -32,6 +34,8 @@ var configBuilder = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
     .AddEnvironmentVariables();
+
+builder.Host.UseSerilog();
 
 builder.Configuration.AddConfiguration(configBuilder.Build());
 
@@ -59,8 +63,14 @@ FirebaseApp.Create(new AppOptions
 var dbConn = builder.Configuration.GetSection("WriteDB").Value;
 var storageConn = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var signalRConn = builder.Configuration.GetSection("SignalRUrl").Value;
+var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").Value;
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+builder.Services.SetupLogger(builder.Configuration, environment);
 
 builder.Services.AddHealthChecks()
+                .AddElasticsearch(elasticConn)
                 .AddHangfire(null)
                 .AddNpgSql(dbConn)
                 .AddSignalRHub($"{signalRConn}/hub")

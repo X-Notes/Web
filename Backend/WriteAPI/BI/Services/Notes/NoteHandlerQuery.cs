@@ -165,12 +165,13 @@ namespace BI.Services.Notes
             {
                 var ents = websocketsNotesService.GetEntitiesId(request.Id);
                 var unrecognizedUsers = ents.Where(x => !x.UserId.HasValue).Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x));
+                var recognizedUsers = ents.Where(x => x.UserId.HasValue).ToList();
 
-                var dict = ents.ToDictionary(x => x.UserId);
-
-                var ids = ents.Where(x => x.UserId.HasValue).Select(x => x.UserId.Value).ToList();
+                var dict = recognizedUsers.ToDictionary(x => x.UserId);
+                var ids = recognizedUsers.Select(x => x.UserId.Value).ToList();
                 var users = await userRepository.GetUsersWithPhotos(ids);
                 var dbUsers = users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x, dict[x.Id].Id));
+
                 return dbUsers.Concat(unrecognizedUsers).ToList();
             }
 

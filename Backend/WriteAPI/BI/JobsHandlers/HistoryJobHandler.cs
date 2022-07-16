@@ -5,8 +5,10 @@ using BI.Services.History;
 using Common;
 using Common.Timers;
 using Domain.Commands.Notes;
+using Google.Apis.Logging;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BI.JobsHandlers
 {
@@ -15,22 +17,25 @@ namespace BI.JobsHandlers
         private HistoryCacheService historyCacheService;
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly TimersConfig timersConfig;
+        private readonly ILogger<HistoryJobHandler> logger;
 
         public HistoryJobHandler(
             HistoryCacheService historyCacheServicу,
             IServiceScopeFactory serviceScopeFactory,
-            TimersConfig timersConfig)
+            TimersConfig timersConfig,
+            ILogger<HistoryJobHandler> logger)
         {
             historyCacheService = historyCacheServicу;
             this.serviceScopeFactory = serviceScopeFactory;
             this.timersConfig = timersConfig;
+            this.logger = logger;
         }
 
         public async Task MakeHistoryHandler()
         {    
             try
             {
-                Console.WriteLine("Start make history");
+                logger.LogInformation("Start make history");
 
                 var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-timersConfig.MakeSnapshotAfterNMinutes);
                 var histories = await historyCacheService.GetCacheHistoriesForSnapshotingByTime(earliestTimestamp);
@@ -47,8 +52,8 @@ namespace BI.JobsHandlers
                         }
                     }
                     catch (Exception e)
-                    {
-                        Console.WriteLine(e);
+{
+                        logger.LogError(e.ToString());
                     }
                     finally
                     {
@@ -56,12 +61,12 @@ namespace BI.JobsHandlers
                     }
                 }
 
-                Console.WriteLine("End make history");
+                logger.LogInformation("End make history");
 
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e.ToString());
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using BI.SignalR.Models;
 using Common;
 using Common.DatabaseModels.Models.WS;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,9 +13,16 @@ namespace BI.SignalR
 
     public class WebsocketsBaseEntities
     {
+
         protected ConcurrentDictionary<Guid, WsEntitiesState> entityId_users = new();
+        private readonly ILogger logger;
 
         public int CountActiveEntities => entityId_users.Count;
+
+        public WebsocketsBaseEntities(ILogger logger)
+        {
+            this.logger = logger;
+        }
 
         public bool IsContainsId(Guid entityId) => entityId_users.ContainsKey(entityId);
 
@@ -108,7 +116,10 @@ namespace BI.SignalR
                 if (idsToDelete.Any())
                 {
                     var idsThatWasDeleted = new List<Guid>();
-                    Console.WriteLine("Try to delete next values: ", string.Join(",", idsToDelete));
+
+                    var message = "Try to delete next values: " + string.Join(",", idsToDelete);
+                    logger.LogInformation(message);
+
                     try
                     {
                         foreach (var id in idsToDelete)
@@ -120,7 +131,7 @@ namespace BI.SignalR
                         }
                     } catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        logger.LogError(ex.ToString());
                     }
                 } 
             }

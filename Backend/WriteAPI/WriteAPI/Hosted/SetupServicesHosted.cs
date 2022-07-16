@@ -4,6 +4,7 @@ using BI.SignalR;
 using Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -15,10 +16,12 @@ namespace WriteAPI.Hosted
     public class SetupServicesHosted : BackgroundService
     {
         private readonly BlobServiceClient blobServiceClient;
+        private readonly ILogger<SetupServicesHosted> logger;
 
-        public SetupServicesHosted(BlobServiceClient blobServiceClient)
+        public SetupServicesHosted(BlobServiceClient blobServiceClient, ILogger<SetupServicesHosted> logger)
         {
             this.blobServiceClient = blobServiceClient;
+            this.logger = logger;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,7 +57,12 @@ namespace WriteAPI.Hosted
             {
                 var containerHealthCheckName = "health-check";
                 var container = blobServiceClient.GetBlobContainerClient(containerHealthCheckName);
-                await container.CreateIfNotExistsAsync();
+                var containerExist = await container.ExistsAsync();
+
+                if (!containerExist)
+                {
+                    await container.CreateIfNotExistsAsync();
+                }
 
                 var blobHealthCheckName = "health.txt";
                 var blobClient = container.GetBlobClient(blobHealthCheckName);
@@ -67,7 +75,7 @@ namespace WriteAPI.Hosted
                 }
             } catch(Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e.ToString());
             }
         }
 

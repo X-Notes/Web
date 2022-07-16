@@ -15,6 +15,7 @@ using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,7 @@ namespace BI.Services.Notes
         private readonly IMediator _mediator;
 
         private readonly CollectionLinkedService collectionLinkedService;
+        private readonly ILogger<FullNoteContentHandlerCommand> logger;
 
         public FullNoteContentHandlerCommand(
             BaseNoteContentRepository baseNoteContentRepository,
@@ -48,7 +50,8 @@ namespace BI.Services.Notes
             TextNotesRepository textNotesRepository,
             CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            ILogger<FullNoteContentHandlerCommand> logger)
         {
 
             this.historyCacheService = historyCacheService;
@@ -58,6 +61,7 @@ namespace BI.Services.Notes
             this.baseNoteContentRepository = baseNoteContentRepository;
             this._mediator = _mediator;
             this.collectionLinkedService = collectionLinkedService;
+            this.logger = logger;
         }
 
 
@@ -114,7 +118,7 @@ namespace BI.Services.Notes
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
-                        Console.WriteLine("ITEMS TEXTS EXIST");
+                        logger.LogError("ITEMS TEXTS EXIST");
                     }
                 }
 
@@ -138,7 +142,7 @@ namespace BI.Services.Notes
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
-                        Console.WriteLine("ITEMS PHOTOS EXIST");
+                        logger.LogError("ITEMS PHOTOS EXIST");
                     }
                 }
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
@@ -155,7 +159,7 @@ namespace BI.Services.Notes
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
-                        Console.WriteLine("ITEMS AUDIOS EXIST");
+                        logger.LogError("ITEMS AUDIOS EXIST");
                     }
                 }
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
@@ -172,7 +176,7 @@ namespace BI.Services.Notes
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
-                        Console.WriteLine("ITEMS VIDEOS EXIST");
+                        logger.LogError("ITEMS VIDEOS EXIST");
                     }
                 }
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
@@ -189,7 +193,7 @@ namespace BI.Services.Notes
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
-                        Console.WriteLine("ITEMS DOCUMENTS EXIST");
+                        logger.LogError("ITEMS DOCUMENTS EXIST");
                     }
                 }
 
