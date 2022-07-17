@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using BI.Mapping;
 using BI.SignalR;
 using Common.Azure;
@@ -107,10 +108,21 @@ builder.Services.FileStorage();
 
 builder.Services.AddMemoryCache();
 
+// RATE LIMITER
+//load general configuration from appsettings.json
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+//load ip rules from appsettings.json
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+// inject counter and rules stores
+builder.Services.AddInMemoryRateLimiting();
+
 builder.Services.AddHostedService<JobRegisterHosted>();
 builder.Services.AddHostedService<ManageUsersOnEntitiesHosted>();
 builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<StartDBCleanerHosted>();
+
+
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 builder.Services.AddHttpClient();
 
@@ -124,6 +136,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseIpRateLimiting();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
