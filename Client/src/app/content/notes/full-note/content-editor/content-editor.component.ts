@@ -402,13 +402,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-  dragStarted = (event: CdkDragStart) => {
-    console.log(event);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  dragStarted = (event: CdkDragStart) => {};
 
-  dragEnded = (event: CdkDragEnd) => {
-    console.log(event);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  dragEnded = (event: CdkDragEnd) => {};
 
   isCanAddNewItem(content: ContentModelBase) {
     if (!content) return true;

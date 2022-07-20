@@ -19,7 +19,6 @@ export class DeltaConverter {
     quillDIV.id = id;
     document.body.appendChild(quillDIV);
     DeltaConverter.quillInstance = new Quill(`#${id}`);
-    console.log('quill: ', DeltaConverter.quillInstance);
   }
 
   static convertToTextBlocks(delta: DeltaStatic): TextBlock[] {

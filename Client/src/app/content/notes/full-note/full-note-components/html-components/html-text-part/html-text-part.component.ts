@@ -137,9 +137,7 @@ export class HtmlTextPartComponent
 
   isFocusToNext = () => true;
 
-  changeDetectionChecker = (): void => {
-    console.log('Check text');
-  };
+  changeDetectionChecker = (): void => {};
 
   validURL = (str) => {
     let url;

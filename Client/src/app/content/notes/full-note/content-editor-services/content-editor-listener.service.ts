@@ -84,7 +84,6 @@ export class ContentEditorListenerService {
             })
               ? arr[index + 1]
               : el;
-            console.log('upEl: ', upEl);
             if (upEl) {
               upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Down });
             }
