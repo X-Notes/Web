@@ -8,5 +8,6 @@ export const environment = {
     storageBucket: 'noots-storm.appspot.com',
     messagingSenderId: '69998033878',
   },
-  writeAPI: 'http://noots.westeurope.cloudapp.azure.com:5000',
+  writeAPI: '',
+  adminAPI: '',
 };

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 using Serilog;
 using System;
 using WriteAPI.ConfigureAPP;
@@ -36,6 +37,7 @@ var configBuilder = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
     .AddEnvironmentVariables();
 
+
 builder.Host.UseSerilog();
 
 builder.Configuration.AddConfiguration(configBuilder.Build());
@@ -47,13 +49,6 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = FileSizeConstraints.MaxRequestFileSize;
 });
 
-builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-{
-    builder.AllowAnyMethod()
-           .AllowAnyHeader()
-           .AllowCredentials()
-           .WithOrigins("http://localhost:4200", "http://localhost:8080", "http://localhost", "http://noots.westeurope.cloudapp.azure.com");
-}));
 
 FirebaseApp.Create(new AppOptions
 {
@@ -128,6 +123,8 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddSwaggerGen();
 
+// APP
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -137,18 +134,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
+// Use the prometheus middleware
+app.UseMetricServer();
+app.UseHttpMetrics();
+
 app.UseIpRateLimiting();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseCors("MyPolicy");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapMetrics();
 app.MapHangfireDashboard();
 app.MapHub<AppSignalRHub>("/hub");
 
