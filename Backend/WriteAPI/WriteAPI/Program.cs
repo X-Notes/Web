@@ -9,14 +9,17 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
 using Serilog;
 using System;
+using System.IO;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
@@ -30,6 +33,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 {
     options.Limits.MaxRequestBodySize = FileSizeConstraints.MaxRequestFileSize; // TODO MAYBE MOVE
 });
+
 
 var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
@@ -62,6 +66,9 @@ var signalRConn = builder.Configuration.GetSection("SignalRUrl").Value;
 var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").Value;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+// ANGULAR
+
 
 builder.Services.SetupLogger(builder.Configuration, environment);
 
@@ -134,7 +141,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+var isHostASP = true;
+var path = Path.Combine(builder.Environment.WebRootPath);
+if (isHostASP)
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        ServeUnknownFileTypes = true,
+        FileProvider = new PhysicalFileProvider(path)
+    });
+}
+
 app.UseRouting();
+
+if (isHostASP)
+{
+    app.MapFallbackToFile("index.html", new StaticFileOptions()
+    {
+        ServeUnknownFileTypes = true,
+        FileProvider = new PhysicalFileProvider(path),
+    });
+}
 
 // Use the prometheus middleware
 app.UseMetricServer();
@@ -154,6 +181,7 @@ app.MapMetrics();
 app.MapHangfireDashboard();
 app.MapHub<AppSignalRHub>("/hub");
 
+
 // HEALTH CHECK
 // /healthchecks-ui
 app.MapHealthChecksUI();
@@ -161,7 +189,6 @@ app.MapHealthChecks("/app-health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
-
 
 
 await app.RunAsync();
