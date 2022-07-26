@@ -1,3 +1,4 @@
+import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
 export abstract class ContentModelBase {
@@ -23,6 +24,9 @@ export abstract class ContentModelBase {
   transform(typeId: ContentTypeENUM): void {
     this.typeId = typeId;
   }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  abstract get getItems(): BaseFile[];
 
   abstract copy(): ContentModelBase;
 

@@ -1,22 +1,17 @@
-import {
-  Directive,
-  ElementRef,
-  Input,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  Renderer2,
-} from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
+import { Photo } from '../../models/editor-models/photos-collection';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
+import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Directive({
   selector: '[appCopy]',
 })
 export class CopyDirective implements OnDestroy, OnInit {
-  @Input() appCopy: QueryList<ElementRef>;
+  @Input() appCopy: QueryList<ParentInteraction>;
 
   copyListener;
 
@@ -25,6 +20,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     private apiBrowserFunctions: ApiBrowserTextService,
     private selectionService: SelectionService,
     private contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    private clickableContentService: ClickableContentService,
   ) {}
 
   ngOnInit(): void {
@@ -32,8 +28,23 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  customCopy(e) {
+  customCopy(e): void {
+    const isTextCopied = this.copySelectedItemsText();
+    if (!isTextCopied) {
+      if (this.clickableContentService.isPhoto) {
+        const contendId = this.clickableContentService.currentContent.id;
+        const itemId = this.clickableContentService.currentItemId;
+        const photo = this.contentEditorContentsService.getItem<Photo>(contendId, itemId);
+        if (photo) {
+          this.apiBrowserFunctions.fetchAndCopyImage(photo.photoFromBig);
+        }
+      }
+    }
+  }
+
+  copySelectedItemsText(): boolean {
     const selectedItemsIds = this.selectionService.getSelectedItems();
+    if (!selectedItemsIds || selectedItemsIds.length === 0) return false;
     const items = this.contentEditorContentsService.getContents
       .filter(
         (x) =>
@@ -45,8 +56,10 @@ export class CopyDirective implements OnDestroy, OnInit {
     const texts = items.map((item) => item.getConcatedText());
     if (texts.length > 0) {
       const resultText = texts.reduce((pv, cv) => `${pv}\n${cv}`);
-      this.apiBrowserFunctions.copyTest(resultText);
+      this.apiBrowserFunctions.copyText(resultText);
+      return true;
     }
+    return false;
   }
 
   ngOnDestroy(): void {

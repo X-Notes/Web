@@ -1,6 +1,7 @@
 import * as uuid from 'uuid';
 import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
+import { BaseFile } from './base-file';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
@@ -22,6 +23,10 @@ export class BaseText extends ContentModelBase {
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
     this.listId = text.listId;
+  }
+
+  get getItems(): BaseFile[] {
+    return null;
   }
 
   updateContent(contents: TextBlock[]) {

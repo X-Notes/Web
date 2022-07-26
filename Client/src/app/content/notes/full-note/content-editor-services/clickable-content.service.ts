@@ -23,6 +23,10 @@ export class ClickableContentService {
     return false;
   }
 
+  get isPhoto(): boolean {
+    return this.type === ClickableSelectableEntities.Photo && !!this.currentItemId;
+  }
+
   isEqual(content: ContentModelBase): boolean {
     return content.id === this.currentContent?.id;
   }

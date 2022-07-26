@@ -22,18 +22,49 @@ export class ApiBrowserTextService {
 
   copyInputLink(input: HTMLInputElement) {
     const text = input.value;
-    this.copyTest(text);
+    this.copyText(text);
   }
 
-  copyTest = (text) => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        /* clipboard successfully set */
-      },
-      () => {
-        /* clipboard write failed */
-      },
-    );
+  copyText = async (text) => {
+    await navigator.clipboard.writeText(text);
+  };
+
+  fetchAndCopyImage = async (imageUrl: string): Promise<void> => {
+    const resp = await fetch(imageUrl);
+    const blob = await resp.blob();
+    if (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg')) {
+      await this.copyJpg(blob);
+      return;
+    }
+    await this.copyImage(blob);
+  };
+
+  async copyImage(blob: Blob): Promise<void> {
+    const data = [new ClipboardItem({ [blob.type]: blob })];
+    await navigator.clipboard.write(data);
+  }
+
+  copyJpg = (imgBlob: Blob) => {
+    const imageUrl = window.URL.createObjectURL(imgBlob);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const imageEl = this.createImage({ src: imageUrl });
+    imageEl.onload = (e: any) => {
+      console.log('e: ', e);
+      canvas.width = e.target.width;
+      canvas.height = e.target.height;
+      ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height);
+      canvas.toBlob(this.copyImage, 'image/png', 1);
+    };
+  };
+
+  createImage = (options): HTMLImageElement => {
+    options = options || {};
+    const img = Image ? new Image() : document.createElement('img');
+    if (options.src) {
+      img.src = options.src;
+    }
+    return img;
   };
 
   getSelection = () => {

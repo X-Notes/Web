@@ -8,6 +8,10 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
 
   isLoading = false;
 
+  get getItems(): T[] {
+    return this.items;
+  }
+
   get orderedItems(): T[] {
     return this.items.sort((a, b) => a.uploadAt.getTime() - b.uploadAt.getTime());
   }

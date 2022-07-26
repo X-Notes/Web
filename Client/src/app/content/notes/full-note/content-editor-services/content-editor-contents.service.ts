@@ -641,6 +641,14 @@ export class ContentEditorContentsSynchronizeService {
     return 0;
   }
 
+  getItem<T extends BaseFile>(contentId: string, itemId: string): T {
+    const content = this.contents.find((x) => x.id === contentId);
+    if (content) {
+      return content.getItems.find((x) => x.fileId === itemId) as T;
+    }
+    return null;
+  }
+
   getIndexByContent(content: ContentModelBase) {
     return this.contents.indexOf(content);
   }
