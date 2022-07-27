@@ -1,0 +1,348 @@
+{
+  "notes": {
+    "name": "筆記"
+  },
+  "folders": {
+    "name": "フォルダー"
+  },
+  "labels": {
+    "name": "ラベル"
+  },
+  "people": {
+    "name": "人"
+  },
+  "new": {
+    "note": "新しいメモ",
+    "folder": "新しいフォルダ",
+    "background": "新しい背景",
+    "label": "新しいラベル",
+    "inner-folder": "新しいメモ"
+  },
+  "subMenu": {
+    "all": "すべての",
+    "personal": "個人的",
+    "shared": "シェアード",
+    "archive": "アーカイブ",
+    "bin": "午前",
+    "cancel": "キャンセル"
+  },
+  "languages": {
+    "english": "英語",
+    "russian": "ロシア語",
+    "ukraine": "ウクライナ語"
+  },
+  "header": {
+    "selected": "入選",
+    "new": "新しいメモ",
+    "select": "すべて選択",
+    "filter": "フィルター",
+    "theme": "テーマ",
+    "search": "捜索。。。",
+    "questions": "質問",
+    "notification": "通知",
+    "orientation": "モード",
+    "back": "戻ってください",
+    "video": "ビデオ",
+    "countUsers": "ユーザー数",
+    "menu": "メニュー",
+    "defaultColor": "既定の色",
+    "emptyTrash": "ゴミ箱を空にする",
+    "manage": "メモを追加する",
+    "questionItems": {
+      "faq": "よくある質問",
+      "contact": "お問い合わせ"
+    },
+    "filterMenu": {
+      "dateAsc": "古いものから新しいものへ",
+      "dateDesc": "新しいものから古いものへ",
+      "order": "カスタムドラッグ可能な順序"
+    }
+  },
+  "menu": {
+    "label": "ラベル",
+    "share": "共有",
+    "copy": "写し",
+    "color": "色",
+    "download": "ダウンロード",
+    "lock": "錠",
+    "unlock": "ロックを解除する",
+    "forceLock": "強制ロック",
+    "archive": "アーカイブ",
+    "delete": "削除",
+    "history": "歴史",
+    "private": "個人的",
+    "privateFolder": "個人的",
+    "removeFromFolder": "フォルダからメモを削除する",
+    "restore": "戻す"
+  },
+  "profile": {
+    "sectionProfile": "プロフィール",
+    "sectionGeneral": "全般",
+    "sectionAccount": "アカウント",
+    "sectionPersonalization": "パーソナル 化",
+    "nameUser": "名前",
+    "email": "電子メール",
+    "descriptionEmail": "あなたのメールアドレスはNootsのあなたのアイデンティティであり、ログインするために使用されます",
+    "logOut": "ログアウトする",
+    "update": "更新",
+    "language": "言語",
+    "personalKey": "個人キー",
+    "changeKey": "変える",
+    "resetKey": "リセット",
+    "theme": "テーマ",
+    "themeLight": "光",
+    "themeDark": "暗い",
+    "genericTooltip": "メモがどのように見えるかを参照してください。",
+    "genericPreview": "プレビュー",
+    "noteSize": "ノートサイズ",
+    "noteDefault": "デフォルト",
+    "noteBig": "大きい",
+    "isViewAudioOnNote": "オーディオを表示",
+    "isViewDocumentOnNote": "ドキュメントの表示",
+    "isViewPhotosOnNote": "写真を表示",
+    "isViewTextOnNote": "テキストを表示",
+    "isViewVideoOnNote": "ビデオを表示",
+    "contentInNoteCount": "ノートで可視コンテンツをカウントする",
+    "notesInFolderCount": "フォルダ上の可視メモをカウントする",
+    "countCurrent": "現在の："
+  },
+  "modal": {
+    "notFound": "見つかりません",
+    "close": "閉める",
+    "labelModal": {
+      "Labels": "ラベル",
+      "search": "ラベル名..."
+    },
+    "ColorModal": {
+      "Colors": "色",
+      "save": "セーブ"
+    },
+    "contactUs": {
+      "send": "送信",
+      "emailField": "電子メール",
+      "emailHolder": "あなたのEメールの住所",
+      "text": "メッセージを入力してください",
+      "textHolder": "メッセージ。。。",
+      "required": "フィールドは必須です",
+      "emailValidation": "電子メールが無効です",
+      "success": "メッセージは正常に送信されました",
+      "incorrect": "誤った入力"
+    },
+    "shareModal": {
+      "Share": "共有",
+      "access": "アクセス",
+      "personal": "個人的",
+      "shared": "シェアード",
+      "selectedNotes": "選択したメモ",
+      "search": "捜索。。。",
+      "alert": "アラートの送信",
+      "Editor": "編集者",
+      "Viewer": "視聴者",
+      "send": "送信",
+      "sharedMessage": "このリンクを持つインターネット上のすべての人",
+      "noSharedMessage": "追加されたユーザーのみがこのリンクで開くことができます",
+      "noPeopleNote": "メモにアクセスできるユーザーがここに表示されます。",
+      "noPeopleFolder": "フォルダへのアクセス権を持つユーザーがここに表示されます",
+      "clearAll": "すべてクリア"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "関連メモ",
+      "new": "新規追加"
+    },
+    "folderManage": {
+      "notes": "フォルダにメモを追加する"
+    },
+    "lockModal": {
+      "lock": "ロックノート",
+      "unLock": "メモのロック解除",
+      "unDecrypt": "ロックを解除する",
+      "remove": "取り去る",
+      "сomeIn": "アンロック",
+      "save": "セーブ",
+      "password": "パスワード",
+      "confirm": "パスワードの確認",
+      "placeholderPass": "パスワードを入力",
+      "placeholderConfirm": "確認する",
+      "passMatchError": "パスワードが一致しません",
+      "required": "必須フィールド",
+      "minLength": "パスワードは 6 文字以上でなければなりません。",
+      "incorrect": "パスワードが正しくない",
+      "timeMessage": "ロック解除後、メモは5分間利用可能になります",
+      "revokeMessage": "このメモを表示または編集できるすべてのユーザーは、このメモにアクセスできなくなります。"
+    },
+    "reviewModal": {
+      "review": "レビュー文書"
+    },
+    "deletionModal": {
+      "title": "削除",
+      "sureDeleteNotes": "メモを削除してもよろしいですか?",
+      "sureDeleteFolders": "フォルダを削除してもよろしいですか?",
+      "sureDeleteLabels": "ラベルを削除してもよろしいですか?",
+      "additionalMessage": "一度削除したら、それらを取り戻す方法はありません。"
+    },
+    "genericButtons": {
+      "cancel": "キャンセル",
+      "delete": "削除"
+    }
+  },
+  "innerNote": {
+    "title": "タイトル",
+    "openNoteOrFile": "筆記",
+    "text": "テキスト",
+    "heading": "見出し",
+    "menu": {
+      "addVideo": "新しい動画を追加する",
+      "addAudio": "新しいオーディオを追加する",
+      "addDocument": "新しいドキュメントを追加する",
+      "review": "復習",
+      "download": "ダウンロード",
+      "copy": "URLをコピーする",
+      "delete": "削除"
+    },
+    "photoMenu": {
+      "upload": "新しい写真をアップロードする",
+      "countRow": "行の写真",
+      "oneRow": "1 列に並ぶ",
+      "twoRow": "2 列に並ぶ",
+      "threeRow": "3列",
+      "fourRow": "4列"
+    },
+    "audio": {
+      "previos": "先の",
+      "next": "次に",
+      "play": "遊ぶ",
+      "pause": "休止",
+      "loop": "ループ",
+      "playlist": "プレイリスト",
+      "close": "閉める",
+      "mute": "唖",
+      "turnOnSound": "サウンドをオンにする",
+      "wideScreen": "ワイドスクリーン",
+      "defaultPlayer": "デフォルトプレーヤー",
+      "fullscreen": "フルスクリーン",
+      "miniPlayer": "ミニプレイヤー",
+      "plsUpload": "オーディオのアップロード",
+      "playing": "奏法"
+    },
+    "video": {
+      "plsUpload": "動画のアップロード"
+    },
+    "document": {
+      "plsUpload": "ドキュメントのアップロード"
+    },
+    "photo": {
+      "plsUpload": "写真のアップロード"
+    }
+  },
+  "noResult": {
+    "privateNotes": "個人的なメモがここに表示されます",
+    "sharedNotes": "共有メモがここに表示されます",
+    "archiveNotes": "アーカイブされたメモがここに表示されます",
+    "deletedNotes": "削除されたメモがここに表示されます",
+    "allLabels": "ラベルがここに表示されます",
+    "deletedLabels": "削除されたラベルがここに表示されます",
+    "privateFolders": "個人用フォルダがここに表示されます",
+    "sharedFolders": "共有フォルダがここに表示されます",
+    "archiveFolders": "アーカイブされたフォルダがここに表示されます",
+    "deletedFolders": "削除されたフォルダがここに表示されます",
+    "folderNotes": "メモがここに表示されます",
+    "notification": "未読通知なし",
+    "notificationAll": "通知がない",
+    "history": "メモにはまだ履歴がありません",
+    "noAccessViewNote": "メモを表示する権限がありません",
+    "noAccessViewFolder": "フォルダを表示する権限がありません"
+  },
+  "notification": {
+    "title": "通知",
+    "readAll": "すべての通知を読む",
+    "seeAll": "すべての通知を見る",
+    "goToNew": "新しい通知に移動する",
+    "newMessage": "新機能",
+    "readMessage": "メッセージを読む",
+    "ChangeUserPermissionNote": "ユーザー権限の変更に関するメモ"
+  },
+  "uploader": {
+    "uploading": "アップロード",
+    "uploadingDocumentsNoteLong": "メモへのドキュメントのアップロード",
+    "uploadingDocumentsNote": "ドキュメントのアップロード",
+    "uploadingVideosNoteLong": "ノートへの動画のアップロード",
+    "uploadingVideosNote": "動画のアップロード",
+    "uploadingAudiosNoteLong": "ノートへのオーディオのアップロード",
+    "uploadingAudiosNote": "オーディオのアップロード",
+    "uploadingPhotosNoteLong": "メモへの写真のアップロード",
+    "uploadingPhotosNote": "写真のアップロード",
+    "exportShort": "輸出",
+    "exportVideos": "ビデオのエクスポート",
+    "exportAudios": "オーディオの書き出し",
+    "exportDocuments": "ドキュメントのエクスポート",
+    "exportPhotos": "写真をエクスポートする",
+    "copyShort": "模倣",
+    "copyNotes": "メモのコピー",
+    "copyFolders": "フォルダのコピー",
+    "changingProfilePhoto": "写真は変化しています",
+    "changingBackground": "背景が変わりつつある",
+    "photoChanging": "写真の変更"
+  },
+  "placeholder": {
+    "folderNote": "タイトルなしのメモ",
+    "folderSmall": "フォルダのタイトル",
+    "noteSmall": "ノートのタイトル",
+    "playlist": "プレイリストに名前を付ける",
+    "labelPage": "ラベル名",
+    "unnamedNote": "名前のないメモ",
+    "unnamedFolder": "名前のないフォルダ",
+    "unnamedLabel": "名前のないラベル"
+  },
+  "snackBar": {
+    "saved": "保存",
+    "onlyAuthorCanMoveIt": "メモを移動できるのはメモの作成者だけです",
+    "noPermissionsForEdit": "編集権限なし",
+    "archive": "アーカイブ",
+    "toBin": "午前",
+    "toShared": "シェアード",
+    "toPrivate": "プライベート",
+    "undo": "外す",
+    "all": "すべての",
+    "notes": "筆記",
+    "note": "手記",
+    "folders": "フォルダー",
+    "folder": "フォルダ",
+    "labels": "ラベル",
+    "label": "ラベル",
+    "notePermDeleted": "完全に削除されたメモ",
+    "notesPermDeleted": "完全に削除されたメモ",
+    "folderPermDeleted": "フォルダは完全に削除されました",
+    "foldersPermDeleted": "完全に削除されたフォルダ",
+    "movedToMany": "移動先",
+    "movedToSingle": "移動先",
+    "reloadPage": "不安定な接続は、ページを更新してください",
+    "noItemInExport": "コレクションが空です"
+  },
+  "titles": {
+    "labels": "ラベル",
+    "notes": "筆記",
+    "folders": "フォルダー",
+    "profile": "プロフィール",
+    "history": "歴史",
+    "note": "手記",
+    "folder": "フォルダ"
+  },
+  "delete-message": {
+    "folders": "フォルダは{{days}}日後に自動的に削除されます",
+    "notes": "ノートは{{days}}日後に自動的に削除されます",
+    "labels": "ラベルは{{days}}日後に自動的に削除されます"
+  },
+  "entity-bottom-tooltip": {
+    "updated": "最終変更日",
+    "deleted": "削除日",
+    "hasUsersNote": "メモは複数のユーザーが表示または編集できます",
+    "hasUsersFolder": "フォルダは複数のユーザーが表示または編集できます",
+    "unlockTime": "ノートは{{time}}でロックされます",
+    "owner": "あなたはメモの所有者です",
+    "ownerFolder": "あなたはフォルダの所有者です",
+    "editNote": "メモを編集できます",
+    "editFolder": "フォルダを編集できます",
+    "readNote": "メモを読むことしかできません",
+    "readFolder": "フォルダの読み取りのみ可能"
+  }
+}

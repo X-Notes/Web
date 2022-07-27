@@ -761,6 +761,46 @@ namespace WriteContext.Migrations
                         {
                             Id = 3,
                             Name = "Russian"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Spanish"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "French"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Italian"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "German"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Swedish"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Polish"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Chinese"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Japan"
                         });
                 });
 

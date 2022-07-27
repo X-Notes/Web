@@ -318,7 +318,16 @@ namespace WriteContext
             modelBuilder.Entity<Language>().HasData(
                 new Language { Id = LanguageENUM.English, Name = nameof(LanguageENUM.English) },
                 new Language { Id = LanguageENUM.Ukraine, Name = nameof(LanguageENUM.Ukraine) },
-                new Language { Id = LanguageENUM.Russian, Name = nameof(LanguageENUM.Russian) });
+                new Language { Id = LanguageENUM.Russian, Name = nameof(LanguageENUM.Russian) },
+                new Language { Id = LanguageENUM.Spanish, Name = nameof(LanguageENUM.Spanish) },
+                new Language { Id = LanguageENUM.French, Name = nameof(LanguageENUM.French) },
+                new Language { Id = LanguageENUM.Italian, Name = nameof(LanguageENUM.Italian) },
+                new Language { Id = LanguageENUM.German, Name = nameof(LanguageENUM.German) },
+                new Language { Id = LanguageENUM.Swedish, Name = nameof(LanguageENUM.Swedish) },
+                new Language { Id = LanguageENUM.Polish, Name = nameof(LanguageENUM.Polish) },
+                new Language { Id = LanguageENUM.Chinese, Name = nameof(LanguageENUM.Chinese) },
+                new Language { Id = LanguageENUM.Japan, Name = nameof(LanguageENUM.Japan) }
+                );
 
             modelBuilder.Entity<Theme>().HasData(
                 new Theme { Id = ThemeENUM.Dark, Name = nameof(ThemeENUM.Dark) },

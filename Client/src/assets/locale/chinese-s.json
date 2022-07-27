@@ -1,0 +1,348 @@
+{
+  "notes": {
+    "name": "笔记"
+  },
+  "folders": {
+    "name": "文件夹"
+  },
+  "labels": {
+    "name": "标签"
+  },
+  "people": {
+    "name": "人"
+  },
+  "new": {
+    "note": "新建注释",
+    "folder": "新建文件夹",
+    "background": "新背景",
+    "label": "新建标签",
+    "inner-folder": "新建注释"
+  },
+  "subMenu": {
+    "all": "都",
+    "personal": "个人",
+    "shared": "共享",
+    "archive": "档案",
+    "bin": "是",
+    "cancel": "取消"
+  },
+  "languages": {
+    "english": "英语",
+    "russian": "俄语",
+    "ukraine": "乌克兰语"
+  },
+  "header": {
+    "selected": "选择",
+    "new": "新建注释",
+    "select": "全选",
+    "filter": "滤波器",
+    "theme": "主题",
+    "search": "搜索。。。",
+    "questions": "问题",
+    "notification": "通知",
+    "orientation": "模式",
+    "back": "回去",
+    "video": "视频",
+    "countUsers": "用户数量",
+    "menu": "菜单",
+    "defaultColor": "默认颜色",
+    "emptyTrash": "清空废纸",
+    "manage": "添加备注",
+    "questionItems": {
+      "faq": "常见问题",
+      "contact": "联系我们"
+    },
+    "filterMenu": {
+      "dateAsc": "从旧到新",
+      "dateDesc": "从新到旧",
+      "order": "自定义可拖动顺序"
+    }
+  },
+  "menu": {
+    "label": "标签",
+    "share": "共享",
+    "copy": "复制",
+    "color": "颜色",
+    "download": "下载",
+    "lock": "锁",
+    "unlock": "删除锁定",
+    "forceLock": "强制锁定",
+    "archive": "档案",
+    "delete": "删除",
+    "history": "历史",
+    "private": "个人",
+    "privateFolder": "个人",
+    "removeFromFolder": "从文件夹中删除笔记",
+    "restore": "恢复"
+  },
+  "profile": {
+    "sectionProfile": "轮廓",
+    "sectionGeneral": "常规",
+    "sectionAccount": "帐户",
+    "sectionPersonalization": "个性化",
+    "nameUser": "名字",
+    "email": "电子邮件",
+    "descriptionEmail": "您的电子邮件地址是您在Noots上的身份，用于登录",
+    "logOut": "登出",
+    "update": "更新",
+    "language": "语言",
+    "personalKey": "个人密钥",
+    "changeKey": "改变",
+    "resetKey": "重置",
+    "theme": "主题",
+    "themeLight": "光",
+    "themeDark": "黑暗",
+    "genericTooltip": "查看笔记在",
+    "genericPreview": "预览",
+    "noteSize": "笔记大小",
+    "noteDefault": "违约",
+    "noteBig": "大",
+    "isViewAudioOnNote": "显示音频",
+    "isViewDocumentOnNote": "显示文档",
+    "isViewPhotosOnNote": "显示照片",
+    "isViewTextOnNote": "显示文本",
+    "isViewVideoOnNote": "显示视频",
+    "contentInNoteCount": "计算笔记上的可见内容",
+    "notesInFolderCount": "对文件夹上的可见笔记进行计数",
+    "countCurrent": "当前："
+  },
+  "modal": {
+    "notFound": "未找到",
+    "close": "关闭",
+    "labelModal": {
+      "Labels": "标签",
+      "search": "标签名称..."
+    },
+    "ColorModal": {
+      "Colors": "颜色",
+      "save": "救"
+    },
+    "contactUs": {
+      "send": "发送",
+      "emailField": "电子邮件",
+      "emailHolder": "您的电子邮件地址",
+      "text": "输入您的留言",
+      "textHolder": "消息。。。",
+      "required": "字段为必填项",
+      "emailValidation": "电子邮件无效",
+      "success": "您的信息已成功发送",
+      "incorrect": "输入不正确"
+    },
+    "shareModal": {
+      "Share": "共享",
+      "access": "访问",
+      "personal": "个人",
+      "shared": "共享",
+      "selectedNotes": "选定的注释",
+      "search": "搜索。。。",
+      "alert": "发送警报",
+      "Editor": "编辑 器",
+      "Viewer": "观众",
+      "send": "发送",
+      "sharedMessage": "互联网上任何有此链接的人",
+      "noSharedMessage": "只有添加的用户才能使用此链接打开",
+      "noPeopleNote": "有权访问该笔记的人员将显示在此处",
+      "noPeopleFolder": "有权访问该文件夹的人员将显示在此处",
+      "clearAll": "全部清除"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "相关说明",
+      "new": "添加新的"
+    },
+    "folderManage": {
+      "notes": "向文件夹添加备注"
+    },
+    "lockModal": {
+      "lock": "锁定备注",
+      "unLock": "解锁笔记",
+      "unDecrypt": "删除锁定",
+      "remove": "删除",
+      "сomeIn": "开锁",
+      "save": "救",
+      "password": "密码",
+      "confirm": "确认密码",
+      "placeholderPass": "键入密码",
+      "placeholderConfirm": "确认",
+      "passMatchError": "密码不匹配",
+      "required": "必填字段",
+      "minLength": "密码必须至少为 6 个字符",
+      "incorrect": "密码不正确",
+      "timeMessage": "解锁后，笔记将可用5分钟",
+      "revokeMessage": "所有可以查看或编辑此备注的用户都将失去对它的访问权限"
+    },
+    "reviewModal": {
+      "review": "审阅文档"
+    },
+    "deletionModal": {
+      "title": "删除",
+      "sureDeleteNotes": "是否确实要删除笔记？",
+      "sureDeleteFolders": "是否确实要删除文件夹？",
+      "sureDeleteLabels": "是否确实要删除标签？",
+      "additionalMessage": "删除它们后，无法将其取回。"
+    },
+    "genericButtons": {
+      "cancel": "取消",
+      "delete": "删除"
+    }
+  },
+  "innerNote": {
+    "title": "标题",
+    "openNoteOrFile": "笔记",
+    "text": "发短信",
+    "heading": "标题",
+    "menu": {
+      "addVideo": "添加新视频",
+      "addAudio": "添加新音频",
+      "addDocument": "添加新文档",
+      "review": "回顾",
+      "download": "下载",
+      "copy": "复制网址",
+      "delete": "删除"
+    },
+    "photoMenu": {
+      "upload": "上传新照片",
+      "countRow": "照片排成一排",
+      "oneRow": "一排",
+      "twoRow": "连续两排",
+      "threeRow": "三排",
+      "fourRow": "连续四排"
+    },
+    "audio": {
+      "previos": "以前",
+      "next": "下一个",
+      "play": "玩",
+      "pause": "暂停",
+      "loop": "圈",
+      "playlist": "播放列表",
+      "close": "关闭",
+      "mute": "静音",
+      "turnOnSound": "打开声音",
+      "wideScreen": "宽屏",
+      "defaultPlayer": "默认播放器",
+      "fullscreen": "全屏",
+      "miniPlayer": "迷你播放器",
+      "plsUpload": "上传音频",
+      "playing": "玩"
+    },
+    "video": {
+      "plsUpload": "Upload 视频"
+    },
+    "document": {
+      "plsUpload": "上传文档"
+    },
+    "photo": {
+      "plsUpload": "上传照片"
+    }
+  },
+  "noResult": {
+    "privateNotes": "个人笔记将显示在此处",
+    "sharedNotes": "共享笔记将显示在此处",
+    "archiveNotes": "存档的笔记将显示在此处",
+    "deletedNotes": "已删除的笔记将显示在此处",
+    "allLabels": "标签将显示在此处",
+    "deletedLabels": "已删除的标签将显示在此处",
+    "privateFolders": "个人文件夹将显示在此处",
+    "sharedFolders": "共享文件夹将显示在此处",
+    "archiveFolders": "存档的文件夹将显示在此处",
+    "deletedFolders": "已删除的文件夹将显示在此处",
+    "folderNotes": "注释将显示在此处",
+    "notification": "无未读通知",
+    "notificationAll": "您没有通知",
+    "history": "注释中尚无历史记录",
+    "noAccessViewNote": "您没有查看注释的权限",
+    "noAccessViewFolder": "您没有查看文件夹的权限"
+  },
+  "notification": {
+    "title": "通知",
+    "readAll": "阅读所有通知",
+    "seeAll": "查看所有通知",
+    "goToNew": "转到新通知",
+    "newMessage": "新增功能",
+    "readMessage": "阅读留言",
+    "ChangeUserPermissionNote": "更改用户权限说明"
+  },
+  "uploader": {
+    "uploading": "上传",
+    "uploadingDocumentsNoteLong": "将文档上载到备忘录",
+    "uploadingDocumentsNote": "上传文档",
+    "uploadingVideosNoteLong": "将视频上传到笔记",
+    "uploadingVideosNote": "上传视频",
+    "uploadingAudiosNoteLong": "将音频上传到笔记",
+    "uploadingAudiosNote": "上传音频",
+    "uploadingPhotosNoteLong": "将照片上传到备忘录",
+    "uploadingPhotosNote": "上传照片",
+    "exportShort": "出口",
+    "exportVideos": "导出视频",
+    "exportAudios": "导出音频",
+    "exportDocuments": "出口单证",
+    "exportPhotos": "导出照片",
+    "copyShort": "复制",
+    "copyNotes": "复制笔记",
+    "copyFolders": "复制文件夹",
+    "changingProfilePhoto": "照片正在更改",
+    "changingBackground": "背景正在更改",
+    "photoChanging": "照片更改"
+  },
+  "placeholder": {
+    "folderNote": "不带标题的注释",
+    "folderSmall": "文件夹标题",
+    "noteSmall": "注释标题",
+    "playlist": "为播放列表命名",
+    "labelPage": "标签名称",
+    "unnamedNote": "未命名的笔记",
+    "unnamedFolder": "未命名文件夹",
+    "unnamedLabel": "未命名标签"
+  },
+  "snackBar": {
+    "saved": "保存",
+    "onlyAuthorCanMoveIt": "只有笔记的创建者才能移动它",
+    "noPermissionsForEdit": "没有编辑权限",
+    "archive": "档案",
+    "toBin": "是",
+    "toShared": "共享",
+    "toPrivate": "私人",
+    "undo": "撤消",
+    "all": "都",
+    "notes": "笔记",
+    "note": "注意",
+    "folders": "文件夹",
+    "folder": "文件夹",
+    "labels": "标签",
+    "label": "标签",
+    "notePermDeleted": "永久删除的笔记",
+    "notesPermDeleted": "永久删除的笔记",
+    "folderPermDeleted": "永久删除的文件夹",
+    "foldersPermDeleted": "永久删除的文件夹",
+    "movedToMany": "移至",
+    "movedToSingle": "移至",
+    "reloadPage": "连接不稳定请刷新页面",
+    "noItemInExport": "集合为空"
+  },
+  "titles": {
+    "labels": "标签",
+    "notes": "笔记",
+    "folders": "文件夹",
+    "profile": "轮廓",
+    "history": "历史",
+    "note": "注意",
+    "folder": "文件夹"
+  },
+  "delete-message": {
+    "folders": "文件夹将在 {{days}} 天后自动删除",
+    "notes": "笔记将在 {{days}} 天后自动删除",
+    "labels": "标签将在 {{days}} 天后自动删除"
+  },
+  "entity-bottom-tooltip": {
+    "updated": "上次更改日期",
+    "deleted": "删除日期",
+    "hasUsersNote": "多个用户可以查看或编辑笔记",
+    "hasUsersFolder": "多个用户可以查看或编辑文件夹",
+    "unlockTime": "注释将在 {{time}} 被锁定",
+    "owner": "您是该便笺的所有者",
+    "ownerFolder": "您是文件夹的所有者",
+    "editNote": "您可以编辑笔记",
+    "editFolder": "您可以编辑文件夹",
+    "readNote": "您只能阅读笔记",
+    "readFolder": "您只能读取文件夹"
+  }
+}
