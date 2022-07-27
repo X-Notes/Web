@@ -14,6 +14,7 @@
       #contentHtml
       class="block-generic default-text-size default-text-id"
       (input)="onInput()"
+      (click)="textClick($event)"
       [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
       [innerHTML]="viewHtml"
     ></p>
@@ -68,6 +69,6 @@
 />
 <app-html-link
   [isReadOnlyMode]="isReadOnlyMode"
-  *ngIf="isLink"
+  *ngIf="false"
   [link]="currentTextCotent"
 ></app-html-link>

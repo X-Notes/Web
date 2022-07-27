@@ -52,6 +52,14 @@ em {
   margin-right: 0.0625rem;
 }
 
+a:link, a:visited { // ONLY FOR INNER NOTE
+  text-decoration: none;
+  color: #4a8af4;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 body,
 html {
   font-family: 'Roboto', sans-serif;

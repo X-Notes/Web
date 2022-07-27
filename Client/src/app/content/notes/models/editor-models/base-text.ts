@@ -136,6 +136,8 @@ export class TextBlock {
 
   textColor: string;
 
+  link: string;
+
   textTypes: TextType[];
 
   isEqual(block: TextBlock): boolean {
@@ -143,6 +145,7 @@ export class TextBlock {
       this.text === block.text &&
       this.highlightColor === block.highlightColor &&
       this.textColor === block.textColor &&
+      this.link === block.link &&
       this.isEqualTextTypes(block.textTypes)
     );
   }

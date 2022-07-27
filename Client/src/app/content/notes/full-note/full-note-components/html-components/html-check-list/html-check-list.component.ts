@@ -97,7 +97,7 @@ export class HtmlCheckListComponent
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.apiBrowserTextService.pressEnterHandler(this.getEditableNative());
+      const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
       const event = super.eventEventFactory(
         breakModel,
         NoteTextTypeENUM.Checklist,

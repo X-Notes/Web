@@ -20,7 +20,6 @@ export class NotePreviewTextComponent implements OnInit {
   viewHtml: string;
 
   ngOnInit(): void {
-    const delta = DeltaConverter.convertToDelta(this.content.contents);
-    this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
+    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
   }
 }

@@ -157,7 +157,7 @@ export class HtmlTextPartComponent
 
   enter($event: any) {
     $event.preventDefault();
-    const breakModel = this.apiBrowserTextService.pressEnterHandler(this.getEditableNative());
+    const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, this.content.id);
     this.enterEvent.emit(event);
   }

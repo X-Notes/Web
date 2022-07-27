@@ -378,8 +378,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!el) {
       return;
     }
-    const textBlocks = DeltaConverter.convertToDelta(styles.content.contents);
-    const html = DeltaConverter.convertDeltaToHtml(textBlocks);
+    const html = DeltaConverter.convertContentToHTML(styles.content.contents);
     const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
     const resultDelta = DeltaConverter.setStyles(
       html,
