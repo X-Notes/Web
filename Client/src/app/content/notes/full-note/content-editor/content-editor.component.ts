@@ -42,7 +42,7 @@ import { ContentEditorListenerService } from '../content-editor-services/content
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
-import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { BaseText } from '../../models/editor-models/base-text';
 import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
 import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
@@ -56,6 +56,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 
 @Component({
   selector: 'app-content-editor',

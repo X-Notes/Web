@@ -12,10 +12,8 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
-import {
-  HeadingTypeENUM,
-  NoteTextTypeENUM,
-} from 'src/app/content/notes/models/editor-models/base-text';
+import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
+import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { SelectionService } from '../../../content-editor-services/selection.service';

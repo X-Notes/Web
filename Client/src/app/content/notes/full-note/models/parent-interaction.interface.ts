@@ -1,7 +1,7 @@
 import { ElementRef } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { TextBlock } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { TextBlock } from '../../models/editor-models/text-models/text-block';
 import { SetFocus } from './set-focus';
 
 export interface ParentInteraction {

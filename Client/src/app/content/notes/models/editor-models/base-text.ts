@@ -2,6 +2,9 @@ import * as uuid from 'uuid';
 import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
 import { BaseFile } from './base-file';
+import { TextBlock } from './text-models/text-block';
+import { NoteTextTypeENUM } from './text-models/note-text-type.enum';
+import { HeadingTypeENUM } from './text-models/heading-type.enum';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
@@ -18,7 +21,7 @@ export class BaseText extends ContentModelBase {
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt);
-    this.contents = text.contents;
+    this.contents = text.contents?.map((x) => new TextBlock(x));
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
@@ -68,7 +71,9 @@ export class BaseText extends ContentModelBase {
   }
 
   copy(): BaseText {
-    return new BaseText(this);
+    const obj = new BaseText(this);
+    obj.contents = this.contents?.map((x) => x.copy());
+    return obj;
   }
 
   copyBase(): BaseText {
@@ -127,56 +132,4 @@ export class BaseText extends ContentModelBase {
   private updateDate() {
     this.updatedAt = new Date();
   }
-}
-
-export class TextBlock {
-  text: string;
-
-  highlightColor: string;
-
-  textColor: string;
-
-  link: string;
-
-  textTypes: TextType[];
-
-  isEqual(block: TextBlock): boolean {
-    return (
-      this.text === block.text &&
-      this.highlightColor === block.highlightColor &&
-      this.textColor === block.textColor &&
-      this.link === block.link &&
-      this.isEqualTextTypes(block.textTypes)
-    );
-  }
-
-  isEqualTextTypes(textTypes: TextType[]): boolean {
-    if (this.textTypes === textTypes) return true;
-    if (this.textTypes == null || textTypes == null) return false;
-    if (this.textTypes.length !== textTypes.length) return false;
-
-    for (let i = 0; i < this.textTypes.length; i += 1) {
-      if (this.textTypes[i] !== textTypes[i]) return false;
-    }
-    return true;
-  }
-}
-
-export enum TextType {
-  Bold,
-  Italic,
-}
-
-export enum HeadingTypeENUM {
-  H1 = 1,
-  H2 = 2,
-  H3 = 3,
-}
-
-export enum NoteTextTypeENUM {
-  Default = 1,
-  Heading = 2,
-  Dotlist = 3,
-  Numberlist = 4,
-  Checklist = 5,
 }

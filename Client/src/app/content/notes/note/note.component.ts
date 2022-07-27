@@ -3,10 +3,11 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
 import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
-import { BaseText, NoteTextTypeENUM } from '../models/editor-models/base-text';
+import { BaseText } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
 import * as moment from 'moment';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { NoteTextTypeENUM } from '../models/editor-models/text-models/note-text-type.enum';
 
 @Component({
   selector: 'app-note',

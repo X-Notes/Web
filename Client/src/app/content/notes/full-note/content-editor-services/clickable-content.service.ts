@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { NoteTextTypeENUM } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { BaseTextElementComponent } from '../full-note-components/html-components/html-base.component';
 import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
 

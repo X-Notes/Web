@@ -1,5 +1,6 @@
 import Quill, { DeltaOperation, DeltaStatic } from 'quill';
-import { TextBlock, TextType } from '../../../models/editor-models/base-text';
+import { TextBlock } from '../../../models/editor-models/text-models/text-block';
+import { TextType } from '../../../models/editor-models/text-models/text-type';
 
 export interface StringAny {
   [key: string]: any;
@@ -27,7 +28,7 @@ export class DeltaConverter {
     }
     const result: TextBlock[] = [];
     delta.ops.forEach((item) => {
-      const block = new TextBlock();
+      const block = new TextBlock({});
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
         block.text = clearStr;

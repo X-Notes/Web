@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { HeadingTypeENUM } from '../../../models/editor-models/base-text';
+import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
 
 @Component({
   selector: 'app-note-preview-text-heading',

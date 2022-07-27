@@ -11,7 +11,9 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
-import { BaseText, NoteTextTypeENUM, TextBlock } from '../../../models/editor-models/base-text';
+import { BaseText } from '../../../models/editor-models/base-text';
+import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
+import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';

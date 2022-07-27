@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../models/editor-models/base-text';
+import { BaseText } from '../../../models/editor-models/base-text';
+import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { TransformContent } from '../../models/transform-content.model';
 import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
 

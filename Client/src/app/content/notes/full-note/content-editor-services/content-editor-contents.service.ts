@@ -132,6 +132,7 @@ export class ContentEditorContentsSynchronizeService {
   private initContent(contents: ContentModelBase[]) {
     this.contents = contents;
     this.contentsSync = [];
+    console.log('contents: ', contents);
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
