@@ -23,6 +23,7 @@
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
         (input)="onInput()"
+        (click)="textClick($event)"
         [innerHTML]="viewHtml"
         [ngClass]="{
           'checked-item': content.checked
