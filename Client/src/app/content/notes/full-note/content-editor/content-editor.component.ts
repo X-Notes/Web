@@ -31,7 +31,7 @@ import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-services/core/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';

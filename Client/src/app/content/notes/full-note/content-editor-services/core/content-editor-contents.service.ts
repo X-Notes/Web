@@ -6,37 +6,37 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { updateNoteContentDelay, createSnapshotDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
-import { BaseCollection } from '../../models/editor-models/base-collection';
-import { BaseFile } from '../../models/editor-models/base-file';
-import { BaseText } from '../../models/editor-models/base-text';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
-import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
+import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
+import { BaseCollection } from '../../../models/editor-models/base-collection';
+import { BaseFile } from '../../../models/editor-models/base-file';
+import { BaseText } from '../../../models/editor-models/base-text';
+import { ContentModelBase } from '../../../models/editor-models/content-model-base';
+import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
 import {
   DocumentModel,
   DocumentsCollection,
-} from '../../models/editor-models/documents-collection';
-import { Photo, PhotosCollection } from '../../models/editor-models/photos-collection';
-import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
-import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-collection-items-command';
-import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
-import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
-import { NoteStructureResult } from '../models/api/notes/note-structure-result';
-import { NoteUpdateIds } from '../models/api/notes/note-update-ids';
-import { UpdatePhotosCollectionInfoCommand } from '../models/api/photos/update-photos-collection-info-command';
-import { ApiAudiosService } from '../services/api-audios.service';
-import { ApiDocumentsService } from '../services/api-documents.service';
-import { ApiNoteContentService } from '../services/api-note-content.service';
-import { ApiPhotosService } from '../services/api-photos.service';
-import { ApiTextService } from '../services/api-text.service';
-import { ApiVideosService } from '../services/api-videos.service';
+} from '../../../models/editor-models/documents-collection';
+import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
+import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
+import { BaseAddToCollectionItemsCommand } from '../../models/api/base-add-to-collection-items-command';
+import { BaseRemoveFromCollectionItemsCommand } from '../../models/api/base-remove-from-collection-items-command';
+import { BaseUpdateCollectionInfoCommand } from '../../models/api/base-update-collection-info-command';
+import { NoteStructureResult } from '../../models/api/notes/note-structure-result';
+import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
+import { UpdatePhotosCollectionInfoCommand } from '../../models/api/photos/update-photos-collection-info-command';
+import { ApiAudiosService } from '../../services/api-audios.service';
+import { ApiDocumentsService } from '../../services/api-documents.service';
+import { ApiNoteContentService } from '../../services/api-note-content.service';
+import { ApiPhotosService } from '../../services/api-photos.service';
+import { ApiTextService } from '../../services/api-text.service';
+import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
-import { StructureDiffs, PositionDiff, ItemForRemove } from './models/structure-diffs';
+import { StructureDiffs, PositionDiff, ItemForRemove } from '../models/structure-diffs';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -84,6 +84,8 @@ export class ContentEditorContentsSynchronizeService {
   init(contents: ContentModelBase[], noteId: string) {
     this.noteId = noteId;
     this.initContent(contents);
+
+    this.contentEditorMomentoStateService.clear();
     this.contentEditorMomentoStateService.saveToStack(this.getContents);
 
     this.destroyAndInitSubject();
@@ -105,9 +107,11 @@ export class ContentEditorContentsSynchronizeService {
     this.saveSubject
       .pipe(
         filter((x) => x === true),
-        debounceTime(updateNoteContentDelay),
+        debounceTime(createSnapshotDelay),
       )
-      .subscribe(() => this.contentEditorMomentoStateService.saveToStack(this.getContents));
+      .subscribe(() => {
+        this.contentEditorMomentoStateService.saveToStack(this.getContents);
+      });
   }
 
   destroyAndInitSubject() {
@@ -132,7 +136,6 @@ export class ContentEditorContentsSynchronizeService {
   private initContent(contents: ContentModelBase[]) {
     this.contents = contents;
     this.contentsSync = [];
-    console.log('contents: ', contents);
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
@@ -547,7 +550,13 @@ export class ContentEditorContentsSynchronizeService {
     if (this.contentEditorMomentoStateService.isEmpty()) {
       return;
     }
+
+    console.log(
+      'this.contentEditorMomentoStateService.size(): ',
+      this.contentEditorMomentoStateService.size(),
+    );
     const prev = this.contentEditorMomentoStateService.getPrev();
+    console.log('prev: ', { ...prev });
     if (!this.isContentsEquals(prev, this.contents)) {
       let isNeedChange = false;
 

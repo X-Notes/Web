@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../core/content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';

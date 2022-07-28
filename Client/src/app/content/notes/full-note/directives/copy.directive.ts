@@ -3,7 +3,7 @@ import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
 import { Photo } from '../../models/editor-models/photos-collection';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from '../content-editor-services/core/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 

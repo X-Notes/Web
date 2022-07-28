@@ -29,14 +29,14 @@ import { MenuSelectionService } from './content-editor-services/menu-selection.s
 import { SelectionService } from './content-editor-services/selection.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
-import { ContentEditorContentsSynchronizeService } from './content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from './content-editor-services/core/content-editor-contents.service';
 import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorDocumentsCollectionService } from './content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorVideosCollectionService } from './content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
-import { ContentEditorMomentoStateService } from './content-editor-services/content-editor-momento-state.service';
+import { ContentEditorMomentoStateService } from './content-editor-services/core/content-editor-momento-state.service';
 import { DragDropHandlerComponent } from './ui-components/drag-drop-handler/drag-drop-handler.component';
 import { TitleCollectionComponent } from './full-note-components/collection-components/title-collection/title-collection.component';
 import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-handler-container/drag-drop-handler-container.component';
@@ -44,6 +44,8 @@ import { DocumentItemComponent } from './full-note-components/collection-compone
 import { EmptyCollectionItemsPlaceholderComponent } from './full-note-components/collection-components/empty-collection-items-placeholder/empty-collection-items-placeholder.component';
 import { ContentUpdateWsService } from './content-editor-services/content-update-ws.service';
 import { MobileTransformMenuComponent } from './full-note-components/mobile-transform-menu/mobile-transform-menu.component';
+import { ContentEditorRestoreService } from './content-editor-services/core/content-editor-restore.service';
+import { ContentEditorSyncService } from './content-editor-services/core/content-editor-sync.service';
 
 @NgModule({
   declarations: [
@@ -96,6 +98,8 @@ import { MobileTransformMenuComponent } from './full-note-components/mobile-tran
     ContentEditorTextService,
     ContentEditorMomentoStateService,
     ContentUpdateWsService,
+    ContentEditorRestoreService,
+    ContentEditorSyncService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

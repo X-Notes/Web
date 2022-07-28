@@ -16,7 +16,7 @@ import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiPhotosService } from '../services/api-photos.service';
 import { ApiVideosService } from '../services/api-videos.service';
-import { ContentEditorContentsSynchronizeService } from './content-editor-contents.service';
+import { ContentEditorContentsSynchronizeService } from './core/content-editor-contents.service';
 import {
   DocumentModel,
   DocumentsCollection,
