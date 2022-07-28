@@ -9,5 +9,5 @@ export enum LanguagesENUM {
   Swedish = 8,
   Polish = 9,
   Chinese = 10,
-  Japan = 11,
+  Japanese = 11,
 }

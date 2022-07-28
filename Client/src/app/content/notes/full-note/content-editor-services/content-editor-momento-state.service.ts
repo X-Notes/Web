@@ -33,6 +33,11 @@ export class ContentEditorMomentoStateService {
     return this.size() === 0;
   }
 
+  clear(): void {
+    this.prev = null;
+    this.state.clear();
+  }
+
   print(): void {
     this.state.print();
   }

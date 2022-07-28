@@ -25,6 +25,10 @@ export class Stack<T> implements IStack<T> {
     return this.storage[this.size() - 1];
   }
 
+  clear(): void {
+    this.storage = [];
+  }
+
   size(): number {
     return this.storage.length;
   }

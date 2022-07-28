@@ -3,7 +3,7 @@
     "name": "Notizen"
   },
   "folders": {
-    "name": "Faltprospekte"
+    "name": "Ordner"
   },
   "labels": {
     "name": "Etiketten"
@@ -29,7 +29,15 @@
   "languages": {
     "english": "Englisch",
     "russian": "Russisch",
-    "ukraine": "Ukrainisch"
+    "ukraine": "Ukrainisch",
+    "swedish": "Schwedisch",
+    "polish": "Polnisch",
+    "spanish": "Spanisch",
+    "italian": "Italienisch",
+    "japanese": "Japanisch",
+    "chinese": "Chinesisch",
+    "german": "Deutsch",
+    "french": "Französisch"
   },
   "header": {
     "selected": "Ausgewählt",
@@ -305,7 +313,7 @@
     "all": "alle",
     "notes": "Notizen",
     "note": "Anmerkung",
-    "folders": "Faltprospekte",
+    "folders": "Ordner",
     "folder": "Ordner",
     "labels": "Etiketten",
     "label": "Etikett",
@@ -321,7 +329,7 @@
   "titles": {
     "labels": "Etiketten",
     "notes": "Notizen",
-    "folders": "Faltprospekte",
+    "folders": "Ordner",
     "profile": "Profil",
     "history": "Geschichte",
     "note": "Anmerkung",

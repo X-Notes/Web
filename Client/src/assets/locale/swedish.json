@@ -1,6 +1,6 @@
 {
   "notes": {
-    "name": "Anteckningar"
+    "name": "Notera"
   },
   "folders": {
     "name": "Mappar"
@@ -29,7 +29,15 @@
   "languages": {
     "english": "Engelska",
     "russian": "Ryska",
-    "ukraine": "Ukrainska"
+    "ukraine": "Ukrainska",
+    "swedish": "Svenska",
+    "polish": "Polsk",
+    "spanish": "Spanska",
+    "italian": "Italienska",
+    "japanese": "Japanska",
+    "chinese": "Kinesiska",
+    "german": "Tyska",
+    "french": "Franska"
   },
   "header": {
     "selected": "Vald",

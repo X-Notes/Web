@@ -29,7 +29,15 @@
   "languages": {
     "english": "Anglais",
     "russian": "Russe",
-    "ukraine": "Ukrainien"
+    "ukraine": "Ukrainien",
+    "swedish": "Suédois",
+    "polish": "Polonais",
+    "spanish": "Espagnol",
+    "italian": "Italien",
+    "japanese": "Japonais",
+    "chinese": "Chinois",
+    "german": "Allemand",
+    "french": "Français"
   },
   "header": {
     "selected": "Sélectionné",

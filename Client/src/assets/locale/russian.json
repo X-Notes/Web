@@ -29,7 +29,15 @@
   "languages": {
     "english": "Английский",
     "russian": "Русский",
-    "ukraine": "Украинский"
+    "ukraine": "Украинский",
+    "swedish": "Шведский",
+    "polish": "Польский",
+    "spanish": "Испанский",
+    "italian": "Итальянский",
+    "japanese": "Японский",
+    "chinese": "Китайский",
+    "german": "Немецкий",
+    "french": "Французский"
   },
   "header": {
     "selected": "Выбрано",
