@@ -32,8 +32,6 @@ export abstract class ContentModelBase {
 
   abstract copyBase(): ContentModelBase;
 
-  abstract isTextOrCollectionInfoEqual(content: ContentModelBase): boolean;
-
   abstract isEqual(content: ContentModelBase): boolean;
 
   abstract patch(content: ContentModelBase);

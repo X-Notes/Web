@@ -36,7 +36,7 @@ export class VideosCollection extends BaseCollection<VideoModel> {
     this.items = content.items;
   }
 
-  isTextOrCollectionInfoEqual(content: VideosCollection): boolean {
+  isEqualCollectionInfo(content: VideosCollection): boolean {
     return this.name === content.name;
   }
 }

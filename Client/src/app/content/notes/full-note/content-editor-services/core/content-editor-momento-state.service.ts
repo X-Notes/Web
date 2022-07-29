@@ -14,6 +14,7 @@ export class ContentEditorMomentoStateService {
       this.state.push(this.prev);
     }
     this.prev = nState.map((a) => a.copy());
+    console.log('prev: ', this.prev);
   }
 
   getPrev(): ContentModelBase[] {

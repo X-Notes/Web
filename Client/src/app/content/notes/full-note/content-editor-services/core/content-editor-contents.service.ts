@@ -49,12 +49,36 @@ export class ContentEditorContentsService {
     }
   }
 
+  // UI CONTENTS
   get getContents(): ContentModelBase[] {
     return this.contents;
   }
 
+  get getTextContents(): BaseText[] {
+    return this.contents.filter((x) => x.typeId === ContentTypeENUM.Text).map((x) => x as BaseText);
+  }
+
+  get getCollectionContents(): BaseCollection<BaseFile>[] {
+    return this.contents
+      .filter((x) => x.typeId !== ContentTypeENUM.Text)
+      .map((x) => x as BaseCollection<BaseFile>);
+  }
+
+  // SYNC CONTENTS
   get getSyncContents(): ContentModelBase[] {
     return this.contentsSync;
+  }
+
+  get getTextSyncContents(): BaseText[] {
+    return this.contentsSync
+      .filter((x) => x.typeId === ContentTypeENUM.Text)
+      .map((x) => x as BaseText);
+  }
+
+  get getCollectionSyncContents(): BaseCollection<BaseFile>[] {
+    return this.contentsSync
+      .filter((x) => x.typeId !== ContentTypeENUM.Text)
+      .map((x) => x as BaseCollection<BaseFile>);
   }
 
   updateContent(contents: ContentModelBase[]) {

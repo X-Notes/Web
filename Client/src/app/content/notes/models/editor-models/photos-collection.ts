@@ -37,7 +37,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
     this.countInRow = entity.countInRow;
   }
 
-  isTextOrCollectionInfoEqual(content: PhotosCollection): boolean {
+  isEqualCollectionInfo(content: PhotosCollection): boolean {
     return (
       this.name === content.name &&
       this.height === content.height &&

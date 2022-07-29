@@ -17,9 +17,7 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
   }
 
   isEqual(content: BaseCollection<T>): boolean {
-    return (
-      this.isTextOrCollectionInfoEqual(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0]
-    );
+    return this.isEqualCollectionInfo(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0];
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -66,4 +64,6 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     if (!fileIds || fileIds.length === 0) return;
     this.items = this.items.filter((x) => !fileIds.some((z) => z === x.fileId));
   }
+
+  abstract isEqualCollectionInfo(content: BaseCollection<T>): boolean;
 }
