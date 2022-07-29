@@ -31,7 +31,7 @@ import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-services/core/content-editor-contents.service';
+import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
@@ -57,6 +57,8 @@ import { ContentUpdateWsService } from '../content-editor-services/content-updat
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { ContentEditorSyncService } from '../content-editor-services/core/content-editor-sync.service';
+import { ContentEditorRestoreService } from '../content-editor-services/core/content-editor-restore.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -105,7 +107,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    public contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    public contentEditorContentsService: ContentEditorContentsService,
     public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
@@ -120,6 +122,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private contentUpdateWsService: ContentUpdateWsService,
     public pS: PersonalizationService,
     public clickableContentService: ClickableContentService,
+    private contentEditorSyncService: ContentEditorSyncService,
+    private contentEditorRestoreService: ContentEditorRestoreService,
   ) {}
 
   get isSelectModeActive(): boolean {
@@ -134,9 +138,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
-      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
+      this.contentEditorContentsService.initOnlyRead(contents);
     } else {
-      this.contentEditorContentsService.init(contents, this.note.id);
+      this.contentEditorContentsService.init(contents);
+      this.contentEditorRestoreService.init();
+      this.contentEditorSyncService.init(this.note.id);
     }
 
     if (contents.length === 0) {
@@ -252,11 +258,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.contentEditorContentsService.restorePrev());
+      .subscribe(() => this.contentEditorRestoreService.restorePrev());
 
     this.contentEditorElementsListenersService.onPressCtrlSSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.contentEditorContentsService.changeImmediately());
+      .subscribe(() => this.contentEditorSyncService.changeImmediately());
 
     this.contentEditorListenerService.onPressEnterSubject
       .pipe(takeUntil(this.destroy))
@@ -428,7 +434,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
-    this.contentEditorContentsService.changeAndSave();
+    this.contentEditorSyncService.change();
+    this.contentEditorRestoreService.save();
   }
 
   placeHolderClick($event) {
@@ -475,7 +482,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       PhotosCollection.getNew(),
     );
     const prevId = cont.content.id;
-    this.contentEditorContentsService.onStructureSync$
+    this.contentEditorSyncService.onStructureSync$
       .pipe(
         filter(() => cont.content.prevId === prevId),
         take(1),
@@ -497,7 +504,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       AudiosCollection.getNew(),
     );
     const prevId = cont.content.id;
-    this.contentEditorContentsService.onStructureSync$
+    this.contentEditorSyncService.onStructureSync$
       .pipe(
         filter(() => cont.content.prevId === prevId),
         take(1),
@@ -519,7 +526,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       VideosCollection.getNew(),
     );
     const prevId = cont.content.id;
-    this.contentEditorContentsService.onStructureSync$
+    this.contentEditorSyncService.onStructureSync$
       .pipe(
         filter(() => cont.content.prevId === prevId),
         take(1),
@@ -541,7 +548,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       DocumentsCollection.getNew(),
     );
     const prevId = cont.content.id;
-    this.contentEditorContentsService.onStructureSync$
+    this.contentEditorSyncService.onStructureSync$
       .pipe(
         filter(() => cont.content.prevId === prevId),
         take(1),

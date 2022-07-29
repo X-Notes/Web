@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { BaseText } from '../../../models/editor-models/base-text';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { TransformContent } from '../../models/transform-content.model';
-import { ContentEditorContentsSynchronizeService } from '../core/content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 
 @Injectable()
 export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(private contentsService: ContentEditorContentsSynchronizeService) {}
+  constructor(private contentsService: ContentEditorContentsService) {}
 
   insertNewContent(contentId: string, nextRowType: NoteTextTypeENUM, isFocusToNext: boolean) {
     let index = this.contentsService.getIndexByContentId(contentId);

@@ -2,45 +2,16 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
-import { debounceTime, filter } from 'rxjs/operators';
-import { updateNoteContentDelay, createSnapshotDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
-import {
-  DocumentModel,
-  DocumentsCollection,
-} from '../../../models/editor-models/documents-collection';
-import { Photo, PhotosCollection } from '../../../models/editor-models/photos-collection';
-import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
-import { BaseAddToCollectionItemsCommand } from '../../models/api/base-add-to-collection-items-command';
-import { BaseRemoveFromCollectionItemsCommand } from '../../models/api/base-remove-from-collection-items-command';
-import { BaseUpdateCollectionInfoCommand } from '../../models/api/base-update-collection-info-command';
-import { NoteStructureResult } from '../../models/api/notes/note-structure-result';
-import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
-import { UpdatePhotosCollectionInfoCommand } from '../../models/api/photos/update-photos-collection-info-command';
-import { ApiAudiosService } from '../../services/api-audios.service';
-import { ApiDocumentsService } from '../../services/api-documents.service';
-import { ApiNoteContentService } from '../../services/api-note-content.service';
-import { ApiPhotosService } from '../../services/api-photos.service';
-import { ApiTextService } from '../../services/api-text.service';
-import { ApiVideosService } from '../../services/api-videos.service';
-import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { StructureDiffs, PositionDiff, ItemForRemove } from '../models/structure-diffs';
-
-export interface SyncResult {
-  isNeedLoadMemory: boolean;
-}
+import { SyncResult } from './content-editor-sync.service';
 
 export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
@@ -48,88 +19,25 @@ export interface ContentAndIndex<T extends ContentModelBase> {
 }
 
 @Injectable()
-export class ContentEditorContentsSynchronizeService {
+export class ContentEditorContentsService {
   private contentsSync: ContentModelBase[] = [];
 
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
-  private noteId: string;
-
-  private updateSubject: BehaviorSubject<boolean>;
-
-  private updateImmediatelySubject: BehaviorSubject<boolean>;
-
-  public onStructureSync$: BehaviorSubject<NoteStructureResult>;
-
-  private saveSubject: BehaviorSubject<boolean>;
-
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
-    private snackService: SnackBarWrapperService,
-    private apiNoteContentService: ApiNoteContentService,
-    private contentEditorMomentoStateService: ContentEditorMomentoStateService,
-    private apiTexts: ApiTextService,
-    private apiAudios: ApiAudiosService,
-    private apiVideos: ApiVideosService,
-    private apiDocuments: ApiDocumentsService,
-    private apiPhotos: ApiPhotosService,
-    private translateService: TranslateService,
   ) {}
 
   // TODO 1. Worker
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  init(contents: ContentModelBase[], noteId: string) {
-    this.noteId = noteId;
+  init(contents: ContentModelBase[]) {
     this.initContent(contents);
-
-    this.contentEditorMomentoStateService.clear();
-    this.contentEditorMomentoStateService.saveToStack(this.getContents);
-
-    this.destroyAndInitSubject();
-
-    this.updateSubject
-      .pipe(
-        filter((x) => x === true),
-        debounceTime(updateNoteContentDelay),
-      )
-      .subscribe(() => {
-        this.processChanges();
-      });
-    //
-    this.updateImmediatelySubject.pipe(filter((x) => x === true)).subscribe(() => {
-      this.processChanges();
-      this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
-    });
-    //
-    this.saveSubject
-      .pipe(
-        filter((x) => x === true),
-        debounceTime(createSnapshotDelay),
-      )
-      .subscribe(() => {
-        this.contentEditorMomentoStateService.saveToStack(this.getContents);
-      });
   }
 
-  destroyAndInitSubject() {
-    this.updateSubject?.complete();
-    this.updateSubject = new BehaviorSubject<boolean>(false);
-    //
-    this.saveSubject?.complete();
-    this.saveSubject = new BehaviorSubject<boolean>(false);
-    //
-    this.updateImmediatelySubject?.complete();
-    this.updateImmediatelySubject = new BehaviorSubject<boolean>(false);
-    //
-    this.onStructureSync$?.complete();
-    this.onStructureSync$ = new BehaviorSubject<NoteStructureResult>(null);
-  }
-
-  initOnlyRead(contents: ContentModelBase[], noteId: string) {
-    this.noteId = noteId;
+  initOnlyRead(contents: ContentModelBase[]) {
     this.contents = contents;
   }
 
@@ -141,22 +49,20 @@ export class ContentEditorContentsSynchronizeService {
     }
   }
 
-  get getContents() {
+  get getContents(): ContentModelBase[] {
     return this.contents;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  changeAndSave() {
-    this.updateSubject.next(true);
-    this.saveSubject.next(true);
+  get getSyncContents(): ContentModelBase[] {
+    return this.contentsSync;
   }
 
-  change() {
-    this.updateSubject.next(true);
+  updateContent(contents: ContentModelBase[]) {
+    this.contents = contents;
   }
 
-  changeImmediately() {
-    this.updateImmediatelySubject.next(true);
+  updateSyncContent(contents: ContentModelBase[]) {
+    this.contentsSync = contents;
   }
 
   deleteContent(contentId: string): number {
@@ -165,296 +71,63 @@ export class ContentEditorContentsSynchronizeService {
     return index;
   }
 
-  private async processChanges() {
-    const [structureDiffs, res] = this.getStructureDiffs(this.contentsSync, this.getContents);
-    if (structureDiffs.isAnyChanges()) {
-      const resp = await this.apiNoteContentService
-        .syncContentsStructure(this.noteId, structureDiffs)
-        .toPromise();
-
-      if (resp.success) {
-        this.updateIds(resp.data.updateIds);
-        this.contentsSync = this.patchStructuralChanges(
-          this.contentsSync,
-          structureDiffs,
-          resp.data.removedIds,
-        );
-        if (res.isNeedLoadMemory) {
-          this.store.dispatch(LoadUsedDiskSpace);
-        }
-        this.onStructureSync$.next(resp.data);
-      }
-    }
-    this.processTextsChanges();
-    this.processFileEntities();
+  getStructureDiffsNew(): [StructureDiffs, SyncResult] {
+    return this.getStructureDiffs(this.contentsSync, this.getContents);
   }
 
-  private updateIds(updateIds: NoteUpdateIds[]): void {
-    if (!updateIds || updateIds.length === 0) return;
-
-    for (const update of updateIds) {
-      const syncContent = this.contentsSync.find((x) => x.id === update.prevId);
-      if (syncContent) {
-        syncContent.prevId = syncContent.id;
-        syncContent.id = update.id;
-      }
-      const content = this.contents.find((x) => x.id === update.prevId);
-      if (content) {
-        content.prevId = content.id;
-        content.id = update.id;
-      }
-    }
+  getStructureDiffsPrev(prev: ContentModelBase[]): [StructureDiffs, SyncResult] {
+    return this.getStructureDiffs(this.contents, prev);
   }
 
-  private async processFileEntities() {
-    const res = await Promise.all([
-      this.processPhotosChanges(),
-      this.processAudiosChanges(),
-      this.processDocumentsChanges(),
-      this.processVideosChanges(),
-    ]);
-    if (res.some((x) => x.isNeedLoadMemory)) {
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
+  patchStructuralChangesNew(diffs: StructureDiffs, removedIds: string[]): void {
+    const contentToUpdate = this.patchStructuralChanges(this.getSyncContents, diffs, removedIds);
+    this.updateSyncContent(contentToUpdate);
   }
 
-  private async processPhotosChanges(): Promise<SyncResult> {
-    const result: SyncResult = { isNeedLoadMemory: false };
-    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<PhotosCollection>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Photos,
-    );
-    for (const collection of collectionsToUpdate) {
-      const command = new UpdatePhotosCollectionInfoCommand(
-        this.noteId,
-        collection.id,
-        collection.name,
-        collection.countInRow,
-        collection.width,
-        collection.height,
-      );
-      await this.apiPhotos.updateInfo(command).toPromise();
-      const item = this.contentsSync.find((x) => x.id === collection.id) as PhotosCollection;
-      item?.updateInfo(collection);
-    }
-    // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs<Photo>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Photos,
-    );
-    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
-      if (itemsToAdd && itemsToAdd.length > 0) {
-        const ids = itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiPhotos.addItemsToCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
-        item?.addItemsToCollection(itemsToAdd);
-        result.isNeedLoadMemory = true;
-      }
-      if (itemsToRemove && itemsToRemove.length > 0) {
-        const ids = itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiPhotos.removeItemsFromCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as PhotosCollection;
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
-      }
-    }
-    return result;
+  patchStructuralChangesPrev(diffs: StructureDiffs, removedIds: string[]): void {
+    const contentToUpdate = this.patchStructuralChanges(this.contents, diffs, removedIds);
+    this.updateContent(contentToUpdate);
   }
 
-  private async processAudiosChanges(): Promise<SyncResult> {
-    const result: SyncResult = { isNeedLoadMemory: false };
-    // UPDATE MAIN INFO
-    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<AudiosCollection>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Audios,
-    );
-    for (const collection of collectionsToUpdate) {
-      const command = new BaseUpdateCollectionInfoCommand(
-        this.noteId,
-        collection.id,
-        collection.name,
-      );
-      await this.apiAudios.updateInfo(command).toPromise();
-      const item = this.contentsSync.find((x) => x.id === collection.id) as AudiosCollection;
-      item?.updateInfo(collection);
-    }
-    // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs<AudioModel>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Audios,
-    );
-    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
-      if (itemsToAdd && itemsToAdd.length > 0) {
-        const ids = itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiAudios.addItemsToCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
-        item?.addItemsToCollection(itemsToAdd);
-        result.isNeedLoadMemory = true;
-      }
-      if (itemsToRemove && itemsToRemove.length > 0) {
-        const ids = itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiAudios.removeItemsFromCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as AudiosCollection;
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
-      }
-    }
-    return result;
-  }
-
-  private async processDocumentsChanges(): Promise<SyncResult> {
-    const result: SyncResult = { isNeedLoadMemory: false };
-    // UPDATE MAIN INFO
-    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<DocumentsCollection>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Documents,
-    );
-    for (const collection of collectionsToUpdate) {
-      const command = new BaseUpdateCollectionInfoCommand(
-        this.noteId,
-        collection.id,
-        collection.name,
-      );
-      await this.apiDocuments.updateInfo(command).toPromise();
-      const item = this.contentsSync.find((x) => x.id === collection.id) as DocumentsCollection;
-      item?.updateInfo(collection);
-    }
-    // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs<DocumentModel>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Documents,
-    );
-    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
-      if (itemsToAdd && itemsToAdd.length > 0) {
-        const ids = itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiDocuments.addItemsToCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
-        item?.addItemsToCollection(itemsToAdd);
-        result.isNeedLoadMemory = true;
-      }
-      if (itemsToRemove && itemsToRemove.length > 0) {
-        const ids = itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiDocuments.removeItemsFromCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as DocumentsCollection;
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
-      }
-    }
-    return result;
-  }
-
-  private async processVideosChanges(): Promise<SyncResult> {
-    const result: SyncResult = { isNeedLoadMemory: false };
-    const collectionsToUpdate = this.getContentTextOrMainInfoDiffs<VideosCollection>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Videos,
-    );
-    for (const collection of collectionsToUpdate) {
-      const command = new BaseUpdateCollectionInfoCommand(
-        this.noteId,
-        collection.id,
-        collection.name,
-      );
-      await this.apiVideos.updateInfo(command).toPromise();
-      const item = this.contentsSync.find((x) => x.id === collection.id) as VideosCollection;
-      item?.updateInfo(collection);
-    }
-    // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs<VideoModel>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Videos,
-    );
-    for (const [contentId, itemsToAdd, itemsToRemove] of diffs) {
-      if (itemsToAdd && itemsToAdd.length > 0) {
-        const ids = itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiVideos.addItemsToCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
-        item?.addItemsToCollection(itemsToAdd);
-        result.isNeedLoadMemory = true;
-      }
-      if (itemsToRemove && itemsToRemove.length > 0) {
-        const ids = itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, contentId, ids);
-        await this.apiVideos.removeItemsFromCollection(command).toPromise();
-        const item = this.contentsSync.find((x) => x.id === contentId) as VideosCollection;
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
-      }
-    }
-    return result;
-  }
-
-  private async processTextsChanges() {
-    const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(
-      this.contentsSync,
-      this.getContents,
-      ContentTypeENUM.Text,
-    );
-    if (textDiffs.length > 0) {
-      await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
-      for (const text of textDiffs) {
-        const item = this.contentsSync.find((x) => x.id === text.id) as BaseText;
-        item.patch(text);
-      }
-    }
-  }
-
-  // STRUCTURE
-  // eslint-disable-next-line class-methods-use-this
   private patchStructuralChanges(
-    itemsForPatch: ContentModelBase[],
+    content: ContentModelBase[],
     diffs: StructureDiffs,
     removedIds: string[],
   ): ContentModelBase[] {
     if (removedIds && removedIds.length > 0) {
-      itemsForPatch = itemsForPatch.filter((x) => !removedIds.some((id) => id === x.id));
+      content = content.filter((x) => !removedIds.some((id) => id === x.id));
     }
     if (diffs.newTextItems.length > 0) {
       for (const item of diffs.newTextItems) {
-        itemsForPatch.push(item.copy());
+        content.push(item.copy());
       }
     }
     if (diffs.photosCollectionItems.length > 0) {
       for (const item of diffs.photosCollectionItems) {
-        itemsForPatch.push(item.copy());
+        content.push(item.copy());
       }
     }
     if (diffs.audiosCollectionItems.length > 0) {
       for (const item of diffs.audiosCollectionItems) {
-        itemsForPatch.push(item.copy());
+        content.push(item.copy());
       }
     }
     if (diffs.videosCollectionItems.length > 0) {
       for (const item of diffs.videosCollectionItems) {
-        itemsForPatch.push(item.copy());
+        content.push(item.copy());
       }
     }
     if (diffs.documentsCollectionItems.length > 0) {
       for (const item of diffs.documentsCollectionItems) {
-        itemsForPatch.push(item.copy());
+        content.push(item.copy());
       }
     }
     if (diffs.positions.length > 0) {
       for (const pos of diffs.positions) {
-        itemsForPatch.find((x) => x.id === pos.id).order = pos.order;
+        content.find((x) => x.id === pos.id).order = pos.order;
       }
     }
-    return itemsForPatch;
+    return content;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -488,144 +161,6 @@ export class ContentEditorContentsSynchronizeService {
     return [diffs, res];
   }
 
-  // TEXT
-  private patchTextDiffs(texts: BaseText[]) {
-    texts.forEach((item) => this.setSafe(item, item.id));
-  }
-
-  // FILES
-  private patchFileContentDiffs(contents: ContentModelBase[]) {
-    contents.forEach((item) => this.setSafe(item, item.id));
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private getContentTextOrMainInfoDiffs<T extends ContentModelBase>(
-    oldContents: ContentModelBase[],
-    newContents: ContentModelBase[],
-    type: ContentTypeENUM,
-  ): T[] {
-    const contents: T[] = [];
-    for (const content of newContents.filter((x) => x.typeId === type)) {
-      const isNeedUpdate = oldContents.some(
-        (x) => x.typeId === type && x.id === content.id && !content.isTextOrCollectionInfoEqual(x),
-      );
-      if (isNeedUpdate) {
-        contents.push(content as T);
-      }
-    }
-    return contents;
-  }
-
-  private getCollectionItemsDiffs<T extends BaseFile>(
-    oldContents: ContentModelBase[],
-    newContents: ContentModelBase[],
-    type: ContentTypeENUM,
-  ): [string, T[], T[]][] {
-    const oldContentsMapped = oldContents
-      .filter((x) => x.typeId === type)
-      .map((x) => x as BaseCollection<T>);
-    const newContentsMapped = newContents
-      .filter((x) => x.typeId === type)
-      .map((x) => x as BaseCollection<T>);
-
-    const result: [string, T[], T[]][] = [];
-
-    for (const content of newContentsMapped) {
-      const contentForCompare = oldContentsMapped.find((x) => x.id === content.id);
-      if (contentForCompare) {
-        const [IsEqual, itemsToAdd, itemsToRemove] =
-          content.getIsEqualIdsToAddIdsToRemove(contentForCompare);
-        if (!IsEqual) {
-          result.push([content.id, itemsToAdd, itemsToRemove]);
-        }
-      }
-    }
-
-    return result;
-  }
-
-  // Restore Prev
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  restorePrev() {
-    if (this.contentEditorMomentoStateService.isEmpty()) {
-      return;
-    }
-
-    console.log(
-      'this.contentEditorMomentoStateService.size(): ',
-      this.contentEditorMomentoStateService.size(),
-    );
-    const prev = this.contentEditorMomentoStateService.getPrev();
-    console.log('prev: ', { ...prev });
-    if (!this.isContentsEquals(prev, this.contents)) {
-      let isNeedChange = false;
-
-      // STRUCTURE
-      const [structureDiffs] = this.getStructureDiffs(this.contents, prev);
-      if (structureDiffs.isAnyChanges()) {
-        const removeIds = structureDiffs.removedItems.map((x) => x.id);
-        this.contents = this.patchStructuralChanges(this.contents, structureDiffs, removeIds);
-        isNeedChange = true;
-      }
-
-      // TEXTS
-      const textDiffs = this.getContentTextOrMainInfoDiffs<BaseText>(
-        this.contents,
-        prev,
-        ContentTypeENUM.Text,
-      );
-      if (textDiffs && textDiffs.length > 0) {
-        this.patchTextDiffs(textDiffs);
-        isNeedChange = true;
-      }
-
-      // FILES
-      const audiosDiffs = this.getContentTextOrMainInfoDiffs<AudiosCollection>(
-        this.contents,
-        prev,
-        ContentTypeENUM.Audios,
-      );
-      if (audiosDiffs && audiosDiffs.length > 0) {
-        this.patchFileContentDiffs(audiosDiffs);
-        isNeedChange = true;
-      }
-
-      const photosDiffs = this.getContentTextOrMainInfoDiffs<PhotosCollection>(
-        this.contents,
-        prev,
-        ContentTypeENUM.Photos,
-      );
-      if (photosDiffs && photosDiffs.length > 0) {
-        this.patchFileContentDiffs(photosDiffs);
-        isNeedChange = true;
-      }
-
-      const documentsDiffs = this.getContentTextOrMainInfoDiffs<DocumentsCollection>(
-        this.contents,
-        prev,
-        ContentTypeENUM.Documents,
-      );
-      if (documentsDiffs && documentsDiffs.length > 0) {
-        this.patchFileContentDiffs(documentsDiffs);
-        isNeedChange = true;
-      }
-
-      const videosDiffs = this.getContentTextOrMainInfoDiffs<VideosCollection>(
-        this.contentsSync,
-        this.getContents,
-        ContentTypeENUM.Videos,
-      );
-      if (videosDiffs && videosDiffs.length > 0) {
-        this.patchFileContentDiffs(videosDiffs);
-        isNeedChange = true;
-      }
-
-      if (isNeedChange) {
-        this.change();
-      }
-    }
-  }
-
   isContentsEquals(f: ContentModelBase[], s: ContentModelBase[]) {
     for (const content of f) {
       const itemForCompare = s.find((x) => x.id === content.id);
@@ -642,7 +177,7 @@ export class ContentEditorContentsSynchronizeService {
     return true;
   }
 
-  // GET INDDEX
+  // GET
   getIndexByContentId(contentId: string) {
     const index = this.contents.findIndex((x) => x.id === contentId);
     if (index !== -1) {

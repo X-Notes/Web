@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiDocumentsService } from '../../services/api-documents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsSynchronizeService } from '../core/content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import {
@@ -27,7 +27,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    contentEditorContentsService: ContentEditorContentsService,
     private apiDocuments: ApiDocumentsService,
     private apiFiles: ApiNoteFilesService,
   ) {

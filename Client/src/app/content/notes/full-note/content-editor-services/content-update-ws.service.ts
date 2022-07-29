@@ -16,7 +16,7 @@ import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiPhotosService } from '../services/api-photos.service';
 import { ApiVideosService } from '../services/api-videos.service';
-import { ContentEditorContentsSynchronizeService } from './core/content-editor-contents.service';
+import { ContentEditorContentsService } from './core/content-editor-contents.service';
 import {
   DocumentModel,
   DocumentsCollection,
@@ -34,7 +34,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   constructor(
     private signalRService: SignalRService,
-    public contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    public contentEditorContentsService: ContentEditorContentsService,
     private apiVideos: ApiVideosService,
     private apiAudios: ApiAudiosService,
     private apiDocuments: ApiDocumentsService,
