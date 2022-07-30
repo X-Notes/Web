@@ -174,7 +174,7 @@ export class ContentEditorContentsService {
       const content = newContents[i];
       if (!oldContents.some((x) => x.id === content.id)) {
         content.order = i;
-        diffs.push(content);
+        diffs.push(content.copy());
       }
       const oldContent = oldContents.find((x) => x.id === content.id);
       if (oldContent && oldContent.order !== i) {

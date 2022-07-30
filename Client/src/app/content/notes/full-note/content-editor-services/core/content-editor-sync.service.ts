@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, interval } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import {
+  updateNoteContentAutoTimerDelay,
+  updateNoteContentDelay,
+} from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { AudiosCollection } from '../../../models/editor-models/audios-collection';
@@ -26,6 +29,7 @@ import { ApiNoteContentService } from '../../services/api-note-content.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ApiTextService } from '../../services/api-text.service';
 import { ApiVideosService } from '../../services/api-videos.service';
+import { StructureDiffs } from '../models/structure-diffs';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 
 export interface SyncResult {
@@ -42,6 +46,8 @@ export class ItemsDiffs {
 
 @Injectable()
 export class ContentEditorSyncService {
+  intervalSyncer = interval(updateNoteContentAutoTimerDelay);
+
   private noteId: string;
 
   private updateSubject: BehaviorSubject<boolean>;
@@ -50,6 +56,8 @@ export class ContentEditorSyncService {
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public onStructureSync$: BehaviorSubject<NoteStructureResult>;
+
+  private isSync = false;
 
   constructor(
     private contentService: ContentEditorContentsService,
@@ -62,7 +70,13 @@ export class ContentEditorSyncService {
     private apiPhotos: ApiPhotosService,
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
-  ) {}
+  ) {
+    this.initTimer();
+  }
+
+  initTimer(): void {
+    this.intervalSyncer.subscribe(() => this.change());
+  }
 
   init(noteId: string): void {
     this.noteId = noteId;
@@ -71,18 +85,22 @@ export class ContentEditorSyncService {
 
     this.updateSubject
       .pipe(
-        filter((x) => x === true),
+        filter((x) => x === true && !this.isSync),
         debounceTime(updateNoteContentDelay),
       )
       .subscribe(() => {
         this.processChanges();
       });
     //
-    this.updateImmediatelySubject.pipe(filter((x) => x === true)).subscribe(() => {
-      this.processChanges();
-      this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
-    });
+    this.updateImmediatelySubject
+      .pipe(filter((x) => x === true && !this.isSync))
+      .subscribe(async () => {
+        await this.processChanges();
+        this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
+      });
   }
+
+  initProcessChangesAutoTimer(): void {}
 
   change() {
     this.updateSubject.next(true);
@@ -104,9 +122,10 @@ export class ContentEditorSyncService {
   }
 
   private async processChanges() {
+    this.isSync = true;
     await this.processStructureChanges();
-    this.processTextsChanges();
-    this.processFileEntities();
+    await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
+    this.isSync = false;
   }
 
   private async processStructureChanges(): Promise<void> {
@@ -117,7 +136,7 @@ export class ContentEditorSyncService {
         .toPromise();
 
       if (resp.success) {
-        this.updateIds(resp.data.updateIds);
+        this.updateIds(structureDiffs, resp.data.updateIds);
         this.contentService.patchStructuralChangesNew(structureDiffs, resp.data.removedIds);
         if (res.isNeedLoadMemory) {
           this.store.dispatch(LoadUsedDiskSpace);
@@ -127,8 +146,10 @@ export class ContentEditorSyncService {
     }
   }
 
-  private updateIds(updateIds: NoteUpdateIds[]): void {
+  private updateIds(structureDiffs: StructureDiffs, updateIds: NoteUpdateIds[]): void {
     if (!updateIds || updateIds.length === 0) return;
+
+    structureDiffs.updateIdForAll(updateIds);
 
     for (const update of updateIds) {
       const syncContent = this.contentService.getSyncContentById(update.prevId);
@@ -332,7 +353,7 @@ export class ContentEditorSyncService {
     for (const content of newContents) {
       const isNeedUpdate = oldContents.some((x) => x.id === content.id && !content.isEqual(x));
       if (isNeedUpdate) {
-        contents.push(content);
+        contents.push(content.copy());
       }
     }
     return contents;
