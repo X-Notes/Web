@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Users;
 using WriteContext.GenericRepositories;
+using Microsoft.Extensions.Logging;
 
 namespace WriteContext.Repositories.Users
 {
     // TODO OPTIMIZATION SQL QUERY
     public class UserRepository : Repository<User, Guid>
     {
+        private readonly ILogger<UserRepository> logger;
 
-        public UserRepository(WriteContextDB contextDB)
+        public UserRepository(WriteContextDB contextDB, ILogger<UserRepository> logger)
             : base(contextDB)
         {
+            this.logger = logger;
         }
 
         public Task<User> GetUserByIdIncludeBilling(Guid id)
@@ -81,7 +84,7 @@ namespace WriteContext.Repositories.Users
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                     await transaction.RollbackAsync();
                     success = false;
                 }

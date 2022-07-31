@@ -29,7 +29,15 @@
   "languages": {
     "english": "Английский",
     "russian": "Русский",
-    "ukraine": "Украинский"
+    "ukraine": "Украинский",
+    "swedish": "Шведский",
+    "polish": "Польский",
+    "spanish": "Испанский",
+    "italian": "Итальянский",
+    "japanese": "Японский",
+    "chinese": "Китайский",
+    "german": "Немецкий",
+    "french": "Французский"
   },
   "header": {
     "selected": "Выбрано",
@@ -223,7 +231,7 @@
       "defaultPlayer": "Обычный экран",
       "fullscreen": "Во весь экран",
       "miniPlayer": "Мини-проигрыватель",
-      "plsUpload": "Загрузите аудиодорожку",
+      "plsUpload": "Загрузите аудио",
       "playing": "играет"
     },
     "video": {
@@ -282,7 +290,8 @@
     "copyNotes": "Копирование заметок",
     "copyFolders": "Копирование папок",
     "changingProfilePhoto": "Смена фотографии",
-    "changingBackground": "Смена заднего фона"
+    "changingBackground": "Смена заднего фона",
+    "photoChanging": "Изменение фото"
   },
   "placeholder": {
     "folderNote": "Заметка без названия",
@@ -316,7 +325,7 @@
     "foldersPermDeleted": "Папки удалены безвозвратно",
     "movedToMany": " перенесены в ",
     "movedToSingle": " перенесена в ",
-    "reloadPage": "Нестабильное соедение пожалуйста обновите страницу",
+    "reloadPage": "Нестабильное соедение, попробуйте обновить страницу",
     "noItemInExport": "Колекция пустая"
   },
   "titles": {

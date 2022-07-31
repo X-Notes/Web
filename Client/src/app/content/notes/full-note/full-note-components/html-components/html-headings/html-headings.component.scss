@@ -3,25 +3,49 @@
 .h1 {
   font-size: 2rem;
   line-height: 2.2rem;
+  .text-content {
+    .heading-block{
+      min-height: 37px;
+    }
+    .no-content {
+      bottom: 5px;
+    }
+  }
 }
 
 .h2 {
   font-size: 1.5rem;
   line-height: 1.7rem;
+  .text-content {
+    .heading-block{
+      min-height: 28px;
+    }
+    .no-content {
+      bottom: 1px;
+    }
+  }
+  
 }
 .h3 {
   font-size: 1.3rem;
   line-height: 1.5rem;
+  .text-content {
+    .heading-block{
+      min-height: 25px;
+    }
+    .no-content {
+      bottom: -1px;
+    }
+  }
 }
 
 .text-content {
   position: relative;
-  width: calc(100% - 30px);
+  width: 100%;
   .no-content {
     margin-left: 4px;
     width: 100%;
     position: absolute;
-    bottom: 0;
     color: #6b6b6b;
     font-weight: 300;
     line-height: 25px;

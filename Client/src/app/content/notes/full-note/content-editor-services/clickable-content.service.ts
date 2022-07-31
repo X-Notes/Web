@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { NoteTextTypeENUM } from '../../models/editor-models/base-text';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { BaseTextElementComponent } from '../full-note-components/html-components/html-base.component';
 import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
 
@@ -8,7 +8,7 @@ import { ClickableSelectableEntities } from './models/clickable-selectable-entit
 export class ClickableContentService {
   setTime: Date;
 
-  currentContentId: string;
+  currentContent: ContentModelBase;
 
   currentItemId: string;
 
@@ -23,8 +23,12 @@ export class ClickableContentService {
     return false;
   }
 
+  get isPhoto(): boolean {
+    return this.type === ClickableSelectableEntities.Photo && !!this.currentItemId;
+  }
+
   isEqual(content: ContentModelBase): boolean {
-    return content.id === this.currentContentId;
+    return content.id === this.currentContent?.id;
   }
 
   reset() {
@@ -36,12 +40,12 @@ export class ClickableContentService {
   }
 
   setSontent(
-    contentId: string,
+    content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
     curentTextItem: BaseTextElementComponent,
   ) {
-    this.currentContentId = contentId;
+    this.currentContent = content;
     this.currentItemId = itemId;
     this.type = type;
     this.curentTextItem = curentTextItem;
@@ -49,7 +53,7 @@ export class ClickableContentService {
 
   getTextContentIdOrNull(): string {
     if (this.type === ClickableSelectableEntities.Text) {
-      return this.currentContentId;
+      return this.currentContent.id;
     }
     return null;
   }

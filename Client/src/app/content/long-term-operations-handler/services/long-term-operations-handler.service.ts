@@ -20,7 +20,7 @@ export class LongTermOperationsHandlerService {
       'uploader.uploading',
       'uploader.uploadingPhotosNote',
     );
-    this.getNewMini(op, LongTermsIcons.Audio, 'Audio');
+    this.getNewMini(op, LongTermsIcons.Audio, 'Audio', false, false);
     this.getNewMini(op, LongTermsIcons.Video, 'Video');
     this.getNewMini(op, LongTermsIcons.Document, 'Document');
     this.getNewMini(op, LongTermsIcons.Image, 'Image');
@@ -67,13 +67,15 @@ export class LongTermOperationsHandlerService {
     icon: LongTermsIcons,
     name: string,
     isCancelable: boolean = true,
-    isShowProcess: boolean = true,
+    isShowProcents: boolean = true,
+    isStatic: boolean = false,
   ) => {
     const mini: OperationDetailMini = {
       icon,
       name,
       isCancelable,
-      isShowProcess,
+      isShowProcents,
+      isStatic,
       procent: 0,
       obs: new Subject<any>(),
     };

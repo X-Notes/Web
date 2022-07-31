@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiDocumentsService } from '../../services/api-documents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import {
@@ -27,7 +27,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    contentEditorContentsService: ContentEditorContentsService,
     private apiDocuments: ApiDocumentsService,
     private apiFiles: ApiNoteFilesService,
   ) {
@@ -86,6 +86,9 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       );
     });
 
+    let collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const documents = results
       .map((x) => x.eventBody)
@@ -107,17 +110,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<DocumentsCollection>(
-      $event.contentId,
-    );
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new DocumentsCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...documentsMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
+    collection.addItemsToCollection(documentsMapped);
     this.afterUploadFilesToCollection(results);
+    collection.isLoading = false;
   };
 
   deleteDocumentHandler(documentId: string, content: DocumentsCollection) {

@@ -7,21 +7,14 @@
 .audio-content {
   display: flex;
   width: 100%;
-  
+
   .playlist {
     display: flex;
     flex-direction: column;
-    width: calc(100% - 30px);
-
-    .spinner-container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 38px;
-    }
+    width: calc(100% - 40px); // 40px drag handler
   }
-  .drop-active{
+
+  .drop-active {
     outline: 1px solid white;
   }
 }

@@ -132,7 +132,7 @@ namespace WriteContext
                 .HasKey(x => x.UserId);
 
             // WS
-            modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.UserId, x.ConnectionId });
+            modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.Id });
 
             // PersonalizationSetting
 
@@ -161,10 +161,6 @@ namespace WriteContext
             modelBuilder.Entity<AppFileUploadInfo>()
                 .HasKey(x => x.AppFileId);
 
-            modelBuilder.Entity<AppFileUploadStatus>()
-                .HasMany(x => x.AppFileUploadInfos)
-                .WithOne(x => x.Status)
-                .HasForeignKey(x => x.StatusId);
 
             modelBuilder.Entity<AppFile>()
                 .HasOne(x => x.User)
@@ -322,7 +318,16 @@ namespace WriteContext
             modelBuilder.Entity<Language>().HasData(
                 new Language { Id = LanguageENUM.English, Name = nameof(LanguageENUM.English) },
                 new Language { Id = LanguageENUM.Ukraine, Name = nameof(LanguageENUM.Ukraine) },
-                new Language { Id = LanguageENUM.Russian, Name = nameof(LanguageENUM.Russian) });
+                new Language { Id = LanguageENUM.Russian, Name = nameof(LanguageENUM.Russian) },
+                new Language { Id = LanguageENUM.Spanish, Name = nameof(LanguageENUM.Spanish) },
+                new Language { Id = LanguageENUM.French, Name = nameof(LanguageENUM.French) },
+                new Language { Id = LanguageENUM.Italian, Name = nameof(LanguageENUM.Italian) },
+                new Language { Id = LanguageENUM.German, Name = nameof(LanguageENUM.German) },
+                new Language { Id = LanguageENUM.Swedish, Name = nameof(LanguageENUM.Swedish) },
+                new Language { Id = LanguageENUM.Polish, Name = nameof(LanguageENUM.Polish) },
+                new Language { Id = LanguageENUM.Chinese, Name = nameof(LanguageENUM.Chinese) },
+                new Language { Id = LanguageENUM.Japan, Name = nameof(LanguageENUM.Japan) }
+                );
 
             modelBuilder.Entity<Theme>().HasData(
                 new Theme { Id = ThemeENUM.Dark, Name = nameof(ThemeENUM.Dark) },
@@ -379,11 +384,6 @@ namespace WriteContext
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }
-             );
-
-            modelBuilder.Entity<AppFileUploadStatus>().HasData(
-                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.UnLinked, Name = nameof(AppFileUploadStatusEnum.UnLinked) },
-                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.Linked, Name = nameof(AppFileUploadStatusEnum.Linked) }
              );
         }
     }

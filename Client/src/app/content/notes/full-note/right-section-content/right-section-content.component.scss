@@ -64,6 +64,7 @@
 
 .light {
   .open {
+    outline: 1px solid $light-separator;
     background-color: $light-color;
     color: $text-color;
   }

@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -31,7 +31,7 @@ import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
@@ -42,7 +42,7 @@ import { ContentEditorListenerService } from '../content-editor-services/content
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
-import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { BaseText } from '../../models/editor-models/base-text';
 import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
 import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
@@ -56,6 +56,9 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { ContentEditorSyncService } from '../content-editor-services/core/content-editor-sync.service';
+import { ContentEditorRestoreService } from '../content-editor-services/core/content-editor-restore.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -69,6 +72,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
+
+  @ViewChild('contentSection', { read: ElementRef }) contentSection: ElementRef<HTMLElement>;
 
   @Input()
   isReadOnlyMode = true;
@@ -102,7 +107,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    public contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    public contentEditorContentsService: ContentEditorContentsService,
     public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
@@ -117,7 +122,15 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private contentUpdateWsService: ContentUpdateWsService,
     public pS: PersonalizationService,
     public clickableContentService: ClickableContentService,
+    private contentEditorSyncService: ContentEditorSyncService,
+    private contentEditorRestoreService: ContentEditorRestoreService,
   ) {}
+
+  get isSelectModeActive(): boolean {
+    const isAnySelect = this.selectionService.isAnySelect();
+    const divActive = this.selectionDirective?.isDivActive;
+    return isAnySelect || divActive;
+  }
 
   get contents() {
     return this.contentEditorContentsService.getContents;
@@ -125,9 +138,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
-      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
+      this.contentEditorContentsService.initOnlyRead(contents);
     } else {
-      this.contentEditorContentsService.init(contents, this.note.id);
+      this.contentEditorContentsService.init(contents);
+      this.contentEditorRestoreService.init();
+      this.contentEditorSyncService.init(this.note.id);
     }
 
     if (contents.length === 0) {
@@ -154,8 +169,17 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elements);
-    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
+    this.contentEditorListenerService.setHandlers(
+      this.elements,
+      this.noteTitleEl,
+      this.contentSection,
+    );
     this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
+    this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
+  }
+
+  runDetectChangesOnChildren(): void {
+    this.elements.toArray().forEach((x) => x.detectChanges());
   }
 
   ngOnDestroy(): void {
@@ -234,11 +258,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.contentEditorContentsService.restorePrev());
+      .subscribe(() => this.contentEditorRestoreService.restorePrev());
 
     this.contentEditorElementsListenersService.onPressCtrlSSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.contentEditorContentsService.changeImmediately());
+      .subscribe(() => this.contentEditorSyncService.changeImmediately());
 
     this.contentEditorListenerService.onPressEnterSubject
       .pipe(takeUntil(this.destroy))
@@ -268,7 +292,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   selectionHandler(secondRect: DOMRect) {
-    this.selectionService.selectionHandler(secondRect, this.elements);
+    this.selectionService.selectionHandler(
+      secondRect,
+      this.elements,
+      this.selectionDirective.isDivTransparent,
+    );
   }
 
   selectionStartHandler($event: DOMRect) {
@@ -277,13 +305,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.elements,
       this.noteTitleEl,
     );
-    if (isSelectionInZone) {
-      this.selectionService.isSelectionInside = true;
-      this.selectionDirective.div.style.opacity = '0';
-    } else {
-      this.selectionService.isSelectionInside = false;
-      this.selectionDirective.div.style.opacity = '1';
-    }
+    this.selectionDirective.setIsShowDiv(!isSelectionInZone);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  selectionEndHandler($event: DOMRect): void {
+    if (!this.isSelectModeActive) return;
+    this.apiBrowserFunctions.removeAllRanges();
   }
 
   enterHandler(value: EnterEvent) {
@@ -304,8 +332,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteRowHandler(id: string) {
-    const index = this.contentEditorTextService.deleteContent(id);
-    this.elements?.toArray()[index].setFocusToEnd();
+    const index = this.contentEditorContentsService.deleteContent(id);
+    const elms = this.elements?.toArray();
+    if (elms?.length <= index) {
+      this.elements?.toArray()[index].setFocusToEnd();
+    }
     this.postAction();
   }
 
@@ -344,7 +375,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent) {
     const delta = DeltaConverter.convertHTMLToDelta(model.html);
-    model.content.contents = DeltaConverter.convertToTextBlocks(delta);
+    const contents = DeltaConverter.convertToTextBlocks(delta);
+    model.content.contents = contents;
     this.postAction();
   }
 
@@ -353,8 +385,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!el) {
       return;
     }
-    const textBlocks = DeltaConverter.convertToDelta(styles.content.contents);
-    const html = DeltaConverter.convertDeltaToHtml(textBlocks);
+    const html = DeltaConverter.convertContentToHTML(styles.content.contents);
     const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
     const resultDelta = DeltaConverter.setStyles(
       html,
@@ -377,16 +408,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-  dragStarted = (event: CdkDragStart) => {
-    console.log(event);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  dragStarted = (event: CdkDragStart) => {};
 
-  dragEnded = (event: CdkDragEnd) => {
-    console.log(event);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  dragEnded = (event: CdkDragEnd) => {};
 
   isCanAddNewItem(content: ContentModelBase) {
-    if (!content) return false;
+    if (!content) return true;
     if (content.typeId !== ContentTypeENUM.Text) {
       return true;
     }
@@ -405,7 +434,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
-    this.contentEditorContentsService.changeAndSave();
+    this.contentEditorSyncService.change();
+    this.contentEditorRestoreService.save();
   }
 
   placeHolderClick($event) {
@@ -429,61 +459,115 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const audiosFormats = TypeUploadFormats.audios.split(',');
     const videosFormats = TypeUploadFormats.videos.split(',');
     const documentsFormats = TypeUploadFormats.documents.split(',');
-    if (formats.every((z) => photosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorPhotosService.insertNewCollection(
-        contentId,
-        false,
-        AudiosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+
+    if (formats.every((q) => photosFormats.some((x) => x === q))) {
+      await this.handleRandomPhotosUpload(contentId, files);
     }
-    if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorAudiosService.insertNewCollection(
-        contentId,
-        false,
-        AudiosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => audiosFormats.some((x) => x === q))) {
+      await this.handleRandomAudiosUpload(contentId, files);
     }
-    if (formats.every((z) => videosFormats.some((x) => x === z))) {
-      const cont = this.contentEditorVideosService.insertNewCollection(
-        contentId,
-        false,
-        VideosCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorVideosService.uploadVideosToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => videosFormats.some((x) => x === q))) {
+      await this.handleRandomVideosUpload(contentId, files);
     }
-    if (formats.every((z) => documentsFormats.some((x) => x === z))) {
-      const cont = this.contentEditorDocumentsService.insertNewCollection(
-        contentId,
-        false,
-        DocumentsCollection.getNew(),
-      );
-      this.postAction();
-      await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
-        { contentId: cont.content.id, files },
-        this.note.id,
-      );
+    if (formats.every((q) => documentsFormats.some((x) => x === q))) {
+      await this.handleRandomDocumentsUpload(contentId, files);
     }
     this.postAction();
+  }
+
+  async handleRandomPhotosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorPhotosService.insertNewCollection(
+      contentId,
+      false,
+      PhotosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorSyncService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorPhotosService.uploadPhotosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.syncCollectionItems(cont.content.id);
+        this.postAction();
+      });
+  }
+
+  async handleRandomAudiosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorAudiosService.insertNewCollection(
+      contentId,
+      false,
+      AudiosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorSyncService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorAudiosService.uploadAudiosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.syncCollectionItems(cont.content.id);
+        this.postAction();
+      });
+  }
+
+  async handleRandomVideosUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorVideosService.insertNewCollection(
+      contentId,
+      false,
+      VideosCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorSyncService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorVideosService.uploadVideosToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.syncCollectionItems(cont.content.id);
+        this.postAction();
+      });
+  }
+
+  async handleRandomDocumentsUpload(contentId: string, files: File[]): Promise<void> {
+    const cont = this.contentEditorDocumentsService.insertNewCollection(
+      contentId,
+      false,
+      DocumentsCollection.getNew(),
+    );
+    const prevId = cont.content.id;
+    this.contentEditorSyncService.onStructureSync$
+      .pipe(
+        filter(() => cont.content.prevId === prevId),
+        take(1),
+      )
+      .subscribe(async () => {
+        await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
+          { contentId: cont.content.id, files },
+          this.note.id,
+        );
+        this.syncCollectionItems(cont.content.id);
+        this.postAction();
+      });
   }
 
   // FILE CONTENTS
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
+    this.selectionService.resetSelectionItems();
     let newContentId: string;
     switch (event.typeFile) {
       case TypeUploadFile.photos: {
@@ -527,8 +611,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);
       if (el) {
         el.syncContentWithLayout();
+        el.syncContentItems();
       }
     }
+    this.postAction();
   }
 
   // VIDEOS
@@ -539,11 +625,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteVideoHandler(videoId: string, collection: VideosCollection) {
     this.contentEditorVideosService.deleteVideoHandler(videoId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorVideosService.uploadVideosToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -555,11 +643,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteDocumentHandler(documentId: string, collection: DocumentsCollection) {
     this.contentEditorDocumentsService.deleteDocumentHandler(documentId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -571,11 +661,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteAudioHandler(audioId: string, collection: AudiosCollection) {
     this.contentEditorAudiosService.deleteAudioHandler(audioId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorAudiosService.uploadAudiosToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
 
@@ -587,11 +679,21 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deletePhotoHandler(photoId: string, collection: PhotosCollection) {
     this.contentEditorPhotosService.deletePhotoHandler(photoId, collection);
+    this.syncCollectionItems(collection.id);
     this.postAction();
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorPhotosService.uploadPhotosToCollectionHandler($event, noteId);
+    this.syncCollectionItems($event.contentId);
     this.postAction();
   };
+
+  syncCollectionItems(contentId: string): void {
+    if (!contentId) return;
+    const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
+    if (curEl) {
+      curEl.syncContentItems();
+    }
+  }
 }

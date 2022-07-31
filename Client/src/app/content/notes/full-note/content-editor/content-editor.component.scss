@@ -13,7 +13,7 @@
   .top-section {
     display: flex;
     flex-direction: column;
-    padding: 0 30px;
+    padding: 0 40px;
     margin-bottom: 1rem;
     .note-color {
       width: 40px;
@@ -27,7 +27,6 @@
     .title-section {
       position: relative;
       display: flex;
-      margin-left: 0.5rem;
       font-size: 2.5rem;
       font-weight: 700;
       min-height: 50px;
@@ -67,14 +66,22 @@
   .content-section {
     height: 100%;
     display: flex;
+    position: relative;
     flex-direction: column;
-    padding: 0 15px 0 15px;
+    padding: 0 12px 0 0;
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: thin;
-    .empty {
-      min-height: 150px;
+    .content-section-inner {
+      position: relative;
+      display: flex;
       height: 100%;
+      flex-direction: column;
+      .empty {
+        display: flex;
+        min-height: 150px;
+        flex-grow: 1;
+      }
     }
   }
 }
@@ -124,6 +131,7 @@ app-text-edit-menu {
 
 
 .light {
+  border-right: 1px solid $light-separator;
   background-color: rgb(250, 250, 250, 0.9);
 
   .title-section {

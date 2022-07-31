@@ -31,6 +31,10 @@ namespace WriteContext.Repositories.Histories
             return entities.Where(x => x.SnapshotTime < earliestTimestamp).ToListAsync();
         }
 
+        public Task<List<NoteSnapshot>> GetSnapshotsWithSnapshotFileContent(IEnumerable<Guid> noteIds)
+        {
+            return entities.Include(x => x.SnapshotFileContents).Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
+        }
 
         public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotesSnapshots(List<Guid> ids)
         {

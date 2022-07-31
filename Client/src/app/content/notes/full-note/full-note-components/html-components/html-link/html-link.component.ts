@@ -37,24 +37,9 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
     private store: Store,
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    const obj = await this.api.getMetaLink(this.link).toPromise();
-    const parser = new DOMParser();
-    const parsedHtml = parser.parseFromString(obj.content, 'text/html');
-    const allMetas = parsedHtml.querySelectorAll('meta');
-    allMetas.forEach((x) => {
-      if (x.getAttribute('name') === 'title') {
-        this.data.title = x.getAttribute('content');
-      }
-      if (
-        x.getAttribute('property')?.includes('image') ||
-        x.getAttribute('name')?.includes('image')
-      ) {
-        this.data.image = x.getAttribute('content');
-      }
-    });
-    this.data.title = this.data.title || parsedHtml.title;
-    this.data.image = this.data.image || parsedHtml.images[0].src;
+  ngOnInit() {
+    this.data.title = '';
+    this.data.image = '';
     if (!this.data.image) {
       this.isLoaded = true;
     }
@@ -66,7 +51,7 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
 
   copyToBuffer = () => {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    this.apiBrowserService.copyTest(this.link);
+    this.apiBrowserService.copyText(this.link);
     switch (language) {
       case LanguagesENUM.English:
         this.snackService.buildNotification(`Link copied`, null);

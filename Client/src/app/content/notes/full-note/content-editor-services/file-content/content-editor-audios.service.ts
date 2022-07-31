@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAudiosService } from '../../services/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { AudioModel, AudiosCollection } from '../../../models/editor-models/audios-collection';
@@ -25,7 +25,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiAudiosCollection: ApiAudiosService,
-    contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    contentEditorContentsService: ContentEditorContentsService,
     private apiFiles: ApiNoteFilesService,
   ) {
     super(
@@ -86,6 +86,9 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       );
     });
 
+    let collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const audios = results
       .map((x) => x.eventBody)
@@ -107,15 +110,11 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new AudiosCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...audiosMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    collection.addItemsToCollection(audiosMapped);
     this.afterUploadFilesToCollection(results);
+
+    collection.isLoading = false;
   };
 
   deleteAudioHandler(audioId: string, content: AudiosCollection) {

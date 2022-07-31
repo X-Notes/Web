@@ -1,5 +1,6 @@
 import Quill, { DeltaOperation, DeltaStatic } from 'quill';
-import { TextBlock, TextType } from '../../../models/editor-models/base-text';
+import { TextBlock } from '../../../models/editor-models/text-models/text-block';
+import { TextType } from '../../../models/editor-models/text-models/text-type';
 
 export interface StringAny {
   [key: string]: any;
@@ -15,10 +16,10 @@ export class DeltaConverter {
   static initQuill() {
     const id = 'hidden-text-editor';
     const quillDIV = document.createElement('div');
+    quillDIV.style.display = 'none';
     quillDIV.id = id;
     document.body.appendChild(quillDIV);
     DeltaConverter.quillInstance = new Quill(`#${id}`);
-    console.log('quill: ', DeltaConverter.quillInstance);
   }
 
   static convertToTextBlocks(delta: DeltaStatic): TextBlock[] {
@@ -27,12 +28,13 @@ export class DeltaConverter {
     }
     const result: TextBlock[] = [];
     delta.ops.forEach((item) => {
-      const block = new TextBlock();
+      const block = new TextBlock({});
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
         block.text = clearStr;
         block.textTypes = this.getTextTypes(item.attributes);
         block.textColor = this.getTextColor(item.attributes);
+        block.link = this.getLink(item.attributes);
         block.highlightColor = this.getHighlightColorColor(item.attributes);
         result.push(block);
       }
@@ -40,13 +42,18 @@ export class DeltaConverter {
     return result;
   }
 
-  static convertToDelta(contents: TextBlock[]): DeltaOperation[] {
+  static convertContentToDelta(contents: TextBlock[]): DeltaOperation[] {
     if (!contents || contents.length === 0) {
       return [];
     }
     return contents.map((item) => {
       return { insert: item.text, attributes: this.convertToAttibutes(item) };
     });
+  }
+
+  static convertContentToHTML(contents: TextBlock[]): string {
+    const textBlocks = this.convertContentToDelta(contents);
+    return this.convertDeltaToHtml(textBlocks);
   }
 
   static convertDeltaToHtml = (delta: DeltaOperation[] | any): string => {
@@ -66,11 +73,27 @@ export class DeltaConverter {
     format: string,
     value: boolean,
   ): DeltaStatic {
-    const delta = this.convertHTMLToDelta(html);
-    DeltaConverter.quillInstance.setContents(delta);
+    this.setHTMLToEditor(html);
     DeltaConverter.quillInstance.formatText(index, length, format, value);
     const formatted = { ...DeltaConverter.getFormated };
+    this.clearEditor();
+    return formatted;
+  }
+
+  static setHTMLToEditor(html: string): void {
+    const delta = this.convertHTMLToDelta(html);
+    DeltaConverter.quillInstance.setContents(delta);
+  }
+
+  static clearEditor(): void {
     DeltaConverter.quillInstance.setContents(null);
+  }
+
+  static insertLink(html: string, posIndex: number, title: string, url: string): DeltaStatic {
+    this.setHTMLToEditor(html);
+    DeltaConverter.quillInstance.insertText(posIndex, title, 'link', url);
+    const formatted = { ...DeltaConverter.getFormated };
+    this.clearEditor();
     return formatted;
   }
 
@@ -98,6 +121,9 @@ export class DeltaConverter {
     if (block.textColor) {
       obj.color = block.textColor;
     }
+    if (block.link) {
+      obj.link = block.link;
+    }
     if (block.highlightColor) {
       obj.background = block.highlightColor;
     }
@@ -110,6 +136,16 @@ export class DeltaConverter {
     }
     if (map.background) {
       return map.background;
+    }
+    return null;
+  }
+
+  private static getLink(map: StringAny): string {
+    if (!map) {
+      return null;
+    }
+    if (map.link) {
+      return map.link;
     }
     return null;
   }

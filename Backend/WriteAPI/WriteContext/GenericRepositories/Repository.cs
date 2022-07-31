@@ -78,5 +78,11 @@ namespace WriteContext.GenericRepositories
             await entities.AddRangeAsync(ents);
             await context.SaveChangesAsync();
         }
+
+        public async Task AddRangeAsync(List<T> ents)
+        {
+            await entities.AddRangeAsync(ents);
+            await context.SaveChangesAsync();
+        }
     }
 }

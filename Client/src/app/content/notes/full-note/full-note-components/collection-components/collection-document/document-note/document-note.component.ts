@@ -4,7 +4,6 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
@@ -18,6 +17,7 @@ import {
   DocumentsCollection,
 } from '../../../../../models/editor-models/documents-collection';
 import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-document-note',
@@ -29,8 +29,6 @@ export class DocumentNoteComponent
   extends CollectionBaseComponent<DocumentsCollection>
   implements OnInit, ParentInteraction
 {
-  @ViewChild('uploadRef') uploadRef: ElementRef;
-
   formats = TypeUploadFormats.documents;
 
   constructor(
@@ -40,8 +38,14 @@ export class DocumentNoteComponent
     cdr: ChangeDetectorRef,
     clickableContentService: ClickableContentService,
     apiBrowserTextService: ApiBrowserTextService,
+    public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(
+      cdr,
+      clickableContentService,
+      apiBrowserTextService,
+      ClickableSelectableEntities.Document,
+    );
   }
 
   get isClicked() {
@@ -53,22 +57,6 @@ export class DocumentNoteComponent
       return this.content.items[0];
     }
     return null;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
-  }
-
-  clickDocumentHandler(documentId: string) {
-    this.clickableService.setSontent(
-      this.content.id,
-      documentId,
-      ClickableSelectableEntities.Document,
-      null,
-    );
   }
 
   isFocusToNext(entity: SetFocus) {
@@ -83,15 +71,15 @@ export class DocumentNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
+    entity.event.preventDefault();
 
+    const isExist = this.content.items.some((x) => x.fileId === entity.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickDocumentHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickDocumentHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -99,22 +87,21 @@ export class DocumentNoteComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickDocumentHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickDocumentHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickDocumentHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -123,11 +110,10 @@ export class DocumentNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickDocumentHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickDocumentHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;
@@ -144,30 +130,12 @@ export class DocumentNoteComponent
     return this.host;
   }
 
-  getContent(): DocumentsCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   async exportDocument(document: DocumentModel) {
     await this.exportService.exportDocument(document);
   }
 
-  uploadHandler = () => {
-    this.uploadRef.nativeElement.click();
-  };
-
   async exportDocuments(documents: DocumentsCollection) {
     await this.exportService.exportDocuments(documents);
-  }
-
-  async uploadDocuments(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -180,7 +148,7 @@ export class DocumentNoteComponent
     this.isMouseOver = false;
   };
 
-  ngOnInit = () => {};
+  ngOnInit() {}
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

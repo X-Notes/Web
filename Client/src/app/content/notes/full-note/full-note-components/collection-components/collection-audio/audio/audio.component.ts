@@ -25,6 +25,8 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   @Input() audio: AudioModel;
 
+  @Input() isSelectModeActive = false;
+
   @Input()
   isReadOnlyMode = false;
 

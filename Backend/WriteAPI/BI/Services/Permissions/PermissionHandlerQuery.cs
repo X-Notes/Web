@@ -61,6 +61,11 @@ namespace BI.Services.Permissions
                 return new UserPermissionsForNote().SetFullAccess(caller, note);
             }
 
+            if (caller == null)
+            {
+                return new UserPermissionsForNote().SetUserNotFounded();
+            }
+
             var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == caller.Id);
             if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
             {
@@ -105,12 +110,17 @@ namespace BI.Services.Permissions
         {
             if (folder == null)
             {
-                return new UserPermissionsForFolder().GetFolderNotFounded();
+                return new UserPermissionsForFolder().SetFolderNotFounded();
             }
 
             if (folder.UserId == caller?.Id)
             {
                 return new UserPermissionsForFolder().GetFullAccess(caller, folder);
+            }
+
+            if (caller == null)
+            {
+                return new UserPermissionsForFolder().SetUserNotFounded();
             }
 
             var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == caller.Id);
@@ -177,7 +187,7 @@ namespace BI.Services.Permissions
                     }
                     else
 {
-                        result.Add((id, new UserPermissionsForFolder().GetFolderNotFounded()));
+                        result.Add((id, new UserPermissionsForFolder().SetFolderNotFounded()));
                     }
                 }
                 return result;

@@ -27,6 +27,7 @@ import {
   LoadOnlineUsersOnNote,
   PatchUpdatesUINotes,
   RemoveLabelFromNote,
+  RemoveOnlineUsersOnNote,
   UpdateFullNote,
   UpdateNoteTitle,
   UpdateOneNote,
@@ -127,6 +128,22 @@ export class SignalRService {
     this.hubConnection.on('updateOnlineUsersFolder', (folderId: string) => {
       // TODO
     });
+
+    // REMOVE ONLINE
+    this.hubConnection.on(
+      'removeOnlineUsersNote',
+      (obj: { entityId: string; userIdentifier: string }) => {
+        this.store.dispatch(new RemoveOnlineUsersOnNote(obj.entityId, obj.userIdentifier));
+      },
+    );
+
+    this.hubConnection.on(
+      'removeOnlineUsersFolder',
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (obj: { entityId: string; userIdentifier: string }) => {
+        // TODO
+      },
+    );
 
     this.hubConnection.on('updateNoteGeneral', (updates: UpdateNoteWS) => {
       if (updates.color) {

@@ -1,4 +1,5 @@
 ﻿using FirebaseAdmin.Auth;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace BI.Services.Auth
         private FirebaseAuth firebaseAuth = FirebaseAuth.DefaultInstance;
 
         private readonly UserRepository userRepository;
+        private readonly ILogger<FirebaseAuthService> logger;
 
-        public FirebaseAuthService(UserRepository userRepository)
+        public FirebaseAuthService(UserRepository userRepository, ILogger<FirebaseAuthService> logger)
         {
             this.userRepository = userRepository;
+            this.logger = logger;
         }
 
         public async Task<bool> TrySetCustomClaims(string email, string uid)
@@ -40,7 +43,7 @@ namespace BI.Services.Auth
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
             }
 
             return false;

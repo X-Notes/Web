@@ -52,6 +52,13 @@ em {
   margin-right: 0.0625rem;
 }
 
+a:link, a:visited { // ONLY FOR INNER NOTE
+  text-decoration: none;
+  color: #4a8af4;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 body,
 html {
   font-family: 'Roboto', sans-serif;
@@ -60,11 +67,6 @@ html {
   padding: 0;
   overflow: hidden;
   height: 100%;
-}
-
-[contenteditable] {
-  -webkit-user-select: text;
-  user-select: text;
 }
 
 [hidden] {
@@ -91,5 +93,5 @@ textarea {
   opacity: 0;
   display: block;
   position: absolute;
-  background-color: rgba(255, 183, 100, 0.5);
+  background-color: rgba(41, 151, 255, 0.5);
 }

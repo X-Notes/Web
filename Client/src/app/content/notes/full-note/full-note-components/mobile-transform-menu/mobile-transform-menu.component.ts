@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { HeadingTypeENUM, NoteTextTypeENUM } from '../../../models/editor-models/base-text';
+import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
+import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { TypeUploadFile } from '../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';

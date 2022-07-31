@@ -1,6 +1,10 @@
 import * as uuid from 'uuid';
 import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
+import { BaseFile } from './base-file';
+import { TextBlock } from './text-models/text-block';
+import { NoteTextTypeENUM } from './text-models/note-text-type.enum';
+import { HeadingTypeENUM } from './text-models/heading-type.enum';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
@@ -17,11 +21,15 @@ export class BaseText extends ContentModelBase {
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt);
-    this.contents = text.contents;
+    this.contents = text.contents?.map((x) => new TextBlock(x));
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
     this.listId = text.listId;
+  }
+
+  get getItems(): BaseFile[] {
+    return null;
   }
 
   updateContent(contents: TextBlock[]) {
@@ -29,7 +37,15 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
-  updateHeadingTypeId(headingTypeId: HeadingTypeENUM) {
+  resetToDefault(): void {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.updateNoteTextTypeId(NoteTextTypeENUM.Default);
+    this.updateChecked(null);
+    this.updateHeadingTypeId(null);
+    this.updateContent([]);
+  }
+
+  updateHeadingTypeId(headingTypeId?: HeadingTypeENUM) {
     this.headingTypeId = headingTypeId;
     this.updateDate();
   }
@@ -39,7 +55,7 @@ export class BaseText extends ContentModelBase {
     this.updateDate();
   }
 
-  updateChecked(_checked: boolean) {
+  updateChecked(_checked?: boolean) {
     this.checked = _checked;
     this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
@@ -55,7 +71,9 @@ export class BaseText extends ContentModelBase {
   }
 
   copy(): BaseText {
-    return new BaseText(this);
+    const obj = new BaseText(this);
+    obj.contents = this.contents?.map((x) => x.copy());
+    return obj;
   }
 
   copyBase(): BaseText {
@@ -68,10 +86,6 @@ export class BaseText extends ContentModelBase {
   }
 
   isEqual(content: BaseText): boolean {
-    return this.isTextOrCollectionInfoEqual(content);
-  }
-
-  isTextOrCollectionInfoEqual(content: BaseText): boolean {
     const isEqualText = this.isEqualText(this.contents, content.contents);
     return (
       isEqualText &&
@@ -114,41 +128,4 @@ export class BaseText extends ContentModelBase {
   private updateDate() {
     this.updatedAt = new Date();
   }
-}
-
-export class TextBlock {
-  text: string;
-
-  highlightColor: string;
-
-  textColor: string;
-
-  textTypes: TextType[];
-
-  isEqual(block: TextBlock): boolean {
-    return (
-      this.text === block.text &&
-      this.highlightColor === block.highlightColor &&
-      this.textColor === block.textColor
-    );
-  }
-}
-
-export enum TextType {
-  Bold,
-  Italic,
-}
-
-export enum HeadingTypeENUM {
-  H1 = 1,
-  H2 = 2,
-  H3 = 3,
-}
-
-export enum NoteTextTypeENUM {
-  Default = 1,
-  Heading = 2,
-  Dotlist = 3,
-  Numberlist = 4,
-  Checklist = 5,
 }

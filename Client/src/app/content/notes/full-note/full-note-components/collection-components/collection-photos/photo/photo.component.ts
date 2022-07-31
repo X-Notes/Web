@@ -23,6 +23,8 @@ export class PhotoComponent {
   @Input()
   photo: Photo;
 
+  @Input() isSelectModeActive = false;
+
   @Input()
   isReadOnlyMode = false;
 

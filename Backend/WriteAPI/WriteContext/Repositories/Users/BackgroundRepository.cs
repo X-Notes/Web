@@ -2,15 +2,19 @@
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Users;
+using Microsoft.Extensions.Logging;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
     public class BackgroundRepository : Repository<Background, Guid>
     {
-        public BackgroundRepository(WriteContextDB contextDB)
+        private readonly ILogger<BackgroundRepository> logger;
+
+        public BackgroundRepository(WriteContextDB contextDB, ILogger<BackgroundRepository> logger)
             : base(contextDB)
         {
+            this.logger = logger;
         }
 
         public async Task<bool> AddBackground(Background background, AppFile file)
@@ -33,7 +37,7 @@ namespace WriteContext.Repositories.Users
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                     // TODO ADD LOGGING
                     await transaction.RollbackAsync();
                     success = false;

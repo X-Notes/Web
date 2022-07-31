@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DeltaConverter } from '../../full-note/content-editor/converter/delta-converter';
-import { BaseText, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { BaseText } from '../../models/editor-models/base-text';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -20,7 +21,6 @@ export class NotePreviewTextComponent implements OnInit {
   viewHtml: string;
 
   ngOnInit(): void {
-    const delta = DeltaConverter.convertToDelta(this.content.contents);
-    this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
+    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
   }
 }

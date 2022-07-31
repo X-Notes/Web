@@ -11,7 +11,7 @@
   .playlist {
     display: flex;
     flex-direction: column;
-    width: calc(100% - 30px);
+    width: calc(100% - 40px); // 40px drag handler
     border-radius: 5px;
 
     .video-wrapper {
@@ -248,6 +248,11 @@
   }
 }
 
+.light {
+  .video-playlist {
+    color: black;
+  }
+}
 
 .spinner-container {
   position: relative;

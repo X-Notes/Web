@@ -34,7 +34,7 @@ import {
   UpdateOneNote,
   UpdatePositionsNotes,
   LoadFullNote,
-  DeleteCurrentNote,
+  DeleteCurrentNoteData,
   UpdateNoteTitle,
   GetInvitedUsersToNote,
   TransformTypeNotes,
@@ -49,6 +49,7 @@ import {
   UpdatePositionsRelatedNotes,
   SetFolderNotes,
   LoadNoteHistories,
+  RemoveOnlineUsersOnNote,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -70,6 +71,7 @@ import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { NoteHistory } from '../full-note/models/history/note-history.model';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 interface FullNoteState {
   note: FullNote;
@@ -121,7 +123,7 @@ export class NoteStore {
     private router: Router,
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
-    private zone: NgZone
+    private zone: NgZone,
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -634,7 +636,7 @@ export class NoteStore {
     const mini = this.longTermOperationsHandler.getNewMini(
       operation,
       LongTermsIcons.Export,
-      'photo changing',
+      'copying',
       true,
       true,
     );
@@ -653,7 +655,7 @@ export class NoteStore {
       const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
       dispatch(new AddToDomNotes(obj));
     }
-    dispatch([UnSelectAllNote]);
+    dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
   }
 
   @Action(AddLabelOnNote)
@@ -894,10 +896,10 @@ export class NoteStore {
     }
   }
 
-  @Action(DeleteCurrentNote)
+  @Action(DeleteCurrentNoteData)
   // eslint-disable-next-line class-methods-use-this
   deleteCurrentNote({ patchState }: StateContext<NoteState>) {
-    patchState({ fullNoteState: null });
+    patchState({ fullNoteState: null, onlineUsers: [] });
   }
 
   @Action(UpdateNoteTitle)
@@ -974,6 +976,18 @@ export class NoteStore {
     const onlineUsers = await this.api.getOnlineUsersOnNote(noteId).toPromise();
     patchState({ onlineUsers });
   }
+
+  @Action(RemoveOnlineUsersOnNote)
+  async removeOnlineUsersOnNote(
+    { patchState, getState }: StateContext<NoteState>,
+    { entityId, userIdentifier }: RemoveOnlineUsersOnNote,
+  ) {
+    if (getState().fullNoteState?.note?.id === entityId) {
+      patchState({
+        onlineUsers: getState().onlineUsers.filter((x) => x.userIdentifier !== userIdentifier),
+      });
+    }
+  }
   // LOADING SMALL
 
   @Action(LoadNotes)
@@ -992,10 +1006,7 @@ export class NoteStore {
   }
 
   @Action(LoadNoteHistories)
-  async loadNoteHistories(
-    { patchState }: StateContext<NoteState>,
-    { noteId }: LoadNoteHistories,
-  ) {
+  async loadNoteHistories({ patchState }: StateContext<NoteState>, { noteId }: LoadNoteHistories) {
     if (!noteId) return;
     patchState({ fullNoteHistories: [] });
     const resp = await this.historyApi.getHistory(noteId).toPromise();

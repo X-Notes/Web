@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/editor-models/base-text';
+import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { TransformContent } from '../models/transform-content.model';

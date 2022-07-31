@@ -2,7 +2,6 @@ import { Store } from '@ngxs/store';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import {
@@ -14,7 +13,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 
 export class ContentEditorFilesBase {
   constructor(
@@ -23,7 +22,7 @@ export class ContentEditorFilesBase {
     protected uploadFilesService: UploadFilesService,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
     protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    protected contentsService: ContentEditorContentsSynchronizeService,
+    protected contentsService: ContentEditorContentsService,
   ) {}
 
   deleteContentHandler = (contentId: string) => {
@@ -35,7 +34,7 @@ export class ContentEditorFilesBase {
     isFocusToNext: boolean,
     content: BaseCollection<T>,
   ) {
-    let index = this.contentsService.getIndexOrErrorById(contentId);
+    let index = this.contentsService.getIndexByContentId(contentId);
     if (isFocusToNext) {
       index += 1;
     }
@@ -60,8 +59,6 @@ export class ContentEditorFilesBase {
   }
 
   protected afterUploadFilesToCollection<T>(results: FileProcessTracker<OperationResult<T[]>>[]) {
-    this.store.dispatch(LoadUsedDiskSpace);
-
     const unsuccess = results.map((x) => x.eventBody).filter((x) => !x.success);
     if (unsuccess?.length > 0) {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);

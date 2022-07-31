@@ -20,7 +20,7 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
     return new DocumentsCollection(obj, obj.items);
   }
 
-  isTextOrCollectionInfoEqual(content: DocumentsCollection): boolean {
+  isEqualCollectionInfo(content: DocumentsCollection): boolean {
     return this.name === content.name;
   }
 

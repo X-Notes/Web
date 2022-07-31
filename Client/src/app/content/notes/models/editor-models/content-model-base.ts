@@ -1,3 +1,4 @@
+import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
 export abstract class ContentModelBase {
@@ -8,6 +9,10 @@ export abstract class ContentModelBase {
   updatedAt: Date;
 
   order: number;
+
+  // UI FIELDS
+
+  prevId?: string;
 
   constructor(type: ContentTypeENUM, id: string, order: number, updatedAt: Date) {
     this.typeId = type;
@@ -20,11 +25,12 @@ export abstract class ContentModelBase {
     this.typeId = typeId;
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  abstract get getItems(): BaseFile[];
+
   abstract copy(): ContentModelBase;
 
   abstract copyBase(): ContentModelBase;
-
-  abstract isTextOrCollectionInfoEqual(content: ContentModelBase): boolean;
 
   abstract isEqual(content: ContentModelBase): boolean;
 

@@ -13,26 +13,10 @@
     .playlist {
         display: flex;
         flex-direction: column;
-        width: calc(100% - 30px);
+        width: calc(100% - 40px); // 40px drag handler
         border-radius: 5px;
-    
-        .spinner-container {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 38px;
-        }
     }
     
-    .spinner-container{
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 38px;
-    }
-
     .drop-active{
         outline: 1px solid white;
     }

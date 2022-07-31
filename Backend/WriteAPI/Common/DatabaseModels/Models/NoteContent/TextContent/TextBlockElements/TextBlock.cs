@@ -14,6 +14,8 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements
 
         public string TextColor { set; get; }
 
+        public string Link { set; get; }
+
         public List<TextType> TextTypes { set; get; }      
     }
 }

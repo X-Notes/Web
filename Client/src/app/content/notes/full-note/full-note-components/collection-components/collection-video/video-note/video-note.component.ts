@@ -22,6 +22,7 @@ import {
   VideoModel,
   VideosCollection,
 } from 'src/app/content/notes/models/editor-models/videos-collection';
+import { SelectionService } from '../../../../content-editor-services/selection.service';
 
 @Component({
   selector: 'app-video-note',
@@ -36,8 +37,6 @@ export class VideoNoteComponent
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
-
-  @ViewChild('uploadVideosRef') uploadVideosRef: ElementRef;
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
 
@@ -67,8 +66,9 @@ export class VideoNoteComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
+    public selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService);
+    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Video);
   }
 
   get fullWidth() {
@@ -83,13 +83,6 @@ export class VideoNoteComponent
 
   get playlistWidth() {
     return this.videoPlaylist.nativeElement.clientWidth;
-  }
-
-  get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
   }
 
   get getMainVideo() {
@@ -127,7 +120,8 @@ export class VideoNoteComponent
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
-    const nodes = this.videoPlaylist.nativeElement.children;
+    const nodes = this.videoPlaylist?.nativeElement?.children;
+    if (!nodes) return;
     let width = 0;
     for (let i = 0; i < this.counterSlider; i += 1) {
       width -= nodes[i].getBoundingClientRect().width;
@@ -136,7 +130,8 @@ export class VideoNoteComponent
   };
 
   ngAfterViewInit(): void {
-    const { nativeElement } = this.videoElement;
+    const nativeElement = this.videoElement?.nativeElement;
+    if (!nativeElement) return;
     this.video = nativeElement;
   }
 
@@ -215,15 +210,6 @@ export class VideoNoteComponent
     }
   }
 
-  clickVideoHandler(videoId: string) {
-    this.clickableContentService.setSontent(
-      this.content.id,
-      videoId,
-      ClickableSelectableEntities.Video,
-      null,
-    );
-  }
-
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
 
   isFocusToNext(entity: SetFocus) {
@@ -238,15 +224,15 @@ export class VideoNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.items.some((x) => x.fileId === entity?.itemId);
+    entity.event.preventDefault();
 
+    const isExist = this.content.items.some((x) => x.fileId === entity?.itemId);
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleComponent.focusOnTitle();
-        this.clickVideoHandler(null);
+        this.scrollAndFocusToTitle();
       } else {
-        this.clickVideoHandler(this.content.items[index - 1].fileId);
+        this.clickItemHandler(this.content.items[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       this.cdr.detectChanges();
@@ -254,22 +240,21 @@ export class VideoNoteComponent
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length > 0) {
-      this.clickVideoHandler(this.content.items[this.content.items.length - 1].fileId);
+      this.clickItemHandler(this.content.items[this.content.items.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Up && this.content.items.length === 0) {
-      this.titleComponent.focusOnTitle();
-      this.clickVideoHandler(null);
+      this.scrollAndFocusToTitle();
       this.cdr.detectChanges();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickVideoHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;
@@ -278,11 +263,10 @@ export class VideoNoteComponent
     if (entity.status === FocusDirection.Down) {
       if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickVideoHandler(this.content.items[0].fileId);
+        this.clickItemHandler(this.content.items[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleComponent.focusOnTitle();
-        this.clickVideoHandler(null);
+        this.scrollAndFocusToTitle();
       }
       this.cdr.detectChanges();
       return;
@@ -299,14 +283,6 @@ export class VideoNoteComponent
     return this.host;
   }
 
-  getContent(): VideosCollection {
-    return this.content;
-  }
-
-  getContentId(): string {
-    return this.content.id;
-  }
-
   async exportVideos(videos: VideosCollection) {
     await this.exportService.exportVideos(videos);
   }
@@ -314,10 +290,6 @@ export class VideoNoteComponent
   async exportVideo(video: VideoModel) {
     await this.exportService.exportVideo(video);
   }
-
-  uploadHandler = () => {
-    this.uploadVideosRef.nativeElement.click();
-  };
 
   // may is need in further
 
@@ -360,12 +332,6 @@ export class VideoNoteComponent
       this.togglePlay();
     }
     this.indexVideo = index;
-  }
-
-  async uploadVideos(files: File[]) {
-    if (files?.length > 0) {
-      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -100,6 +100,10 @@ using Domain.Queries.NoteInner;
 using BI.Services.Notes.Photos;
 using BI.Services.Notes.Documents;
 using BI.Services.Notes.Videos;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+using System.Reflection;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -321,12 +325,32 @@ namespace WriteAPI.ConfigureAPP
             services.AddHangfireServer();
         }
 
-
-        public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
+        public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)
         {
-            string writeConnection = Configuration.GetSection("WriteDB").Value;
+            var elasticConnString = configuration["ElasticConfiguration:Uri"];
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .WriteTo.Debug()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(ConfigureElasticSink(elasticConnString, environment))
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
 
-            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
+        private static ElasticsearchSinkOptions ConfigureElasticSink(string elasticConnString, string environment)
+        {
+            return new ElasticsearchSinkOptions(new Uri(elasticConnString))
+            {
+                AutoRegisterTemplate = true,
+                IndexFormat = $"NOOTS-API-{environment?.ToUpper().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM-dd}"
+            };
+        }
+
+        public static void DataBase(this IServiceCollection services, string dbConnection)
+        {
+            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(dbConnection));
 
             // NOTIFICATIONS 
             services.AddScoped<NotificationRepository>();
@@ -384,14 +408,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
 
-        public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
+        public static void AzureConfig(this IServiceCollection services, AzureConfig config)
         {
-            var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
-            services.AddSingleton(x => configService);
-
+            services.AddSingleton(x => config);
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(configService.StorageConnectionEmulator);
+                builder.AddBlobServiceClient(config.StorageConnectionEmulator);
             });
         }
 

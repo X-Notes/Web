@@ -6,7 +6,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export abstract class BaseEditorElementComponent {
   @Input()
-  isStartSelecting = false;
+  isSelectModeActive = false;
 
   @Input()
   isReadOnlyMode = false;
@@ -16,6 +16,9 @@ export abstract class BaseEditorElementComponent {
 
   @Output()
   someChangesEvent = new EventEmitter();
+
+  @Output()
+  runDetectChangesChildren = new EventEmitter();
 
   public isMouseOver = false;
 

@@ -11,7 +11,7 @@ import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/mod
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
-import { ContentEditorContentsSynchronizeService } from '../content-editor-contents.service';
+import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 import { FileNoteTypes } from '../../models/file-note-types.enum';
 import { ApiNoteFilesService } from '../../services/api-note-files.service';
 import { VideoModel, VideosCollection } from '../../../models/editor-models/videos-collection';
@@ -24,7 +24,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    contentEditorContentsService: ContentEditorContentsSynchronizeService,
+    contentEditorContentsService: ContentEditorContentsService,
     private apiVideos: ApiVideosService,
     private apiFiles: ApiNoteFilesService,
   ) {
@@ -80,6 +80,9 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       );
     });
 
+    let collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
+    collection.isLoading = true;
+
     const results = await forkJoin(uploadsRequests).toPromise();
     const videos = results
       .map((x) => x.eventBody)
@@ -101,15 +104,10 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
         }),
     );
 
-    const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
-    const prev = prevCollection.items ?? [];
-
-    const newCollection = new VideosCollection(prevCollection, prevCollection.items);
-    newCollection.items = [...prev, ...videosMapped];
-
-    this.contentsService.setSafe(newCollection, $event.contentId);
-
+    collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
+    collection.addItemsToCollection(videosMapped);
     this.afterUploadFilesToCollection(results);
+    collection.isLoading = false;
   };
 
   deleteVideoHandler(videoId: string, content: VideosCollection) {

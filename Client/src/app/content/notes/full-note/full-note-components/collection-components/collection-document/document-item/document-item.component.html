@@ -1,4 +1,5 @@
 <div
+  [id]="document.fileId"
   class="card"
   appTheme
   (click)="clickEvent.emit(document.fileId)"
@@ -21,7 +22,7 @@
         </ng-container>
       </div>
     </div>
-    <div class="card-action">
+    <div *ngIf="!isSelectModeActive" class="card-action">
       <app-button-collection
         [matMenuTriggerFor]="menu"
         [button]="'more_vert'"

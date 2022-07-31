@@ -29,7 +29,15 @@
   "languages": {
     "english": "Англійська",
     "russian": "Російська",
-    "ukraine": "Українська"
+    "ukraine": "Українська",
+    "swedish": "Шведська",
+    "polish": "Польський",
+    "spanish": "Іспанська",
+    "italian": "Італійський",
+    "japanese": "Японський",
+    "chinese": "Китайський",
+    "german": "Німецька",
+    "french": "Французький"
   },
   "header": {
     "selected": "Вибрано",
@@ -282,7 +290,8 @@
     "copyNotes": "Копіювання нотаток",
     "copyFolders": "Копіювання папок",
     "changingProfilePhoto": "Зміна фотографії",
-    "changingBackground": "Зміна заднього фона"
+    "changingBackground": "Зміна заднього фона",
+    "photoChanging": "Зміна фото"
   },
   "placeholder": {
     "folderNote": "Нотаток без назви",
@@ -316,7 +325,7 @@
     "foldersPermDeleted": "Папки видалені безповоротно",
     "movedToMany": " переміщені в ",
     "movedToSingle": " переміщений в ",
-    "reloadPage": "Нестабільне з'єднання, будь ласка, оновіть сторінку",
+    "reloadPage": "Нестабільне з'єднання, спробуйте оновити сторінку",
     "noItemInExport": "Колекція пуста"
   },
   "titles": {

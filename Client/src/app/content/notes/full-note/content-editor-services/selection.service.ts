@@ -1,4 +1,5 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
@@ -7,29 +8,33 @@ export class SelectionService {
 
   sidebarWidth = 270;
 
-  ismousedown = false;
-
   isResizingPhoto = false;
-
-  isSelectionInside;
 
   private selectedItemsSet = new Set<string>();
 
-  selectionHandler(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
-    const idsToAdd = [];
+  selectionHandler(
+    secondRect: DOMRect,
+    elements: QueryList<ParentInteraction>,
+    isIternalSelect: boolean,
+  ) {
+    const contentToSelect: ContentModelBase[] = [];
     for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       const content = item.getContent();
       if (this.isRectToRect(firstRect, secondRect)) {
-        idsToAdd.push(content.id);
+        contentToSelect.push(content);
       } else {
         this.selectedItemsSet.delete(content.id);
       }
     }
 
-    if (idsToAdd.length !== 1) {
-      idsToAdd.forEach((id) => this.selectedItemsSet.add(id));
+    if (isIternalSelect) {
+      if (contentToSelect.length !== 1) {
+        contentToSelect.forEach((content) => this.selectedItemsSet.add(content.id));
+      }
+    } else {
+      contentToSelect.forEach((content) => this.selectedItemsSet.add(content.id));
     }
   }
 
@@ -51,6 +56,10 @@ export class SelectionService {
 
   removeFromSelectedItems(id: string) {
     this.selectedItemsSet.delete(id);
+  }
+
+  resetSelectionItems(): void {
+    this.selectedItemsSet.clear();
   }
 
   isSelectionInZone(

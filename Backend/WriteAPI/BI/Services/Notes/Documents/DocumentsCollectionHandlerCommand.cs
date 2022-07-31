@@ -18,6 +18,7 @@ using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
@@ -44,6 +45,8 @@ namespace BI.Services.Notes.Documents
 
         private readonly CollectionLinkedService collectionLinkedService;
 
+        private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
+
         public DocumentsCollectionHandlerCommand(
                                         IMediator _mediator,
                                         BaseNoteContentRepository baseNoteContentRepository,
@@ -52,7 +55,8 @@ namespace BI.Services.Notes.Documents
                                         CollectionAppFileRepository documentNoteAppFileRepository,
                                         HistoryCacheService historyCacheService,
                                         AppSignalRService appSignalRService,
-                                        CollectionLinkedService collectionLinkedService)
+                                        CollectionLinkedService collectionLinkedService,
+                                        ILogger<DocumentsCollectionHandlerCommand> logger)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -61,6 +65,7 @@ namespace BI.Services.Notes.Documents
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
+            this.logger = logger;
         }
 
 
@@ -78,7 +83,7 @@ namespace BI.Services.Notes.Documents
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
                     var fileIds = collectionItems.Select(x => x.AppFileId);
 
-                    var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
+                    var data = collectionItems.Select(x => new UnlinkMetaData(x.AppFileId));
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
@@ -190,7 +195,7 @@ namespace BI.Services.Notes.Documents
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                 }
             }
 

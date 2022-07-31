@@ -164,9 +164,15 @@ namespace BI.Services.Notes
             if (permissions.CanRead)
             {
                 var ents = websocketsNotesService.GetEntitiesId(request.Id);
-                var ids = ents.Where(x => x.UserId.HasValue).Select(x => x.UserId.Value).ToList();
+                var unrecognizedUsers = ents.Where(x => !x.UserId.HasValue).Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x));
+                var recognizedUsers = ents.Where(x => x.UserId.HasValue).ToList();
+
+                var dict = recognizedUsers.ToDictionary(x => x.UserId);
+                var ids = recognizedUsers.Select(x => x.UserId.Value).ToList();
                 var users = await userRepository.GetUsersWithPhotos(ids);
-                return users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x)).ToList();
+                var dbUsers = users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x, dict[x.Id].Id));
+
+                return dbUsers.Concat(unrecognizedUsers).ToList();
             }
 
             return new List<OnlineUserOnNote>();

@@ -20,7 +20,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TitleCollectionComponent implements OnInit, OnDestroy {
-  @ViewChild('titleHtml') titleHtml: ElementRef;
+  @ViewChild('titleHtml') titleHtml: ElementRef<HTMLElement>;
 
   @Output()
   changeTitleEvent = new EventEmitter<string>();
@@ -35,6 +35,12 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   isReadOnlyMode = false;
 
   @Input()
+  isSelectionStart = false;
+
+  @Input()
+  isDisablebutton = false;
+
+  @Input()
   isShowButton = false;
 
   @Input()
@@ -46,6 +52,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
+  }
+
+  get isButtonActive(): boolean {
+    return this.isShowButton && !this.isSelectionStart;
   }
 
   ngOnInit(): void {
@@ -68,6 +78,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   focusOnTitle() {
     this.titleHtml.nativeElement.focus();
+  }
+
+  scrollToTitle(behavior: ScrollBehavior = 'smooth', block: ScrollLogicalPosition = 'center') {
+    this.titleHtml.nativeElement.scrollIntoView({ behavior, block });
   }
 
   preventEnter = ($event: KeyboardEvent): void => {

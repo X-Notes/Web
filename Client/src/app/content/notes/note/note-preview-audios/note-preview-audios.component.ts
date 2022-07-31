@@ -11,9 +11,7 @@ export class NotePreviewAudiosComponent implements OnInit {
   @Input()
   content: BaseCollection<AudioModel>;
 
-  ngOnInit(): void {
-    console.log(this.content);
-  }
+  ngOnInit(): void {}
 
   padTo2Digits(val) {
     return val.toString().padStart(2, '0');

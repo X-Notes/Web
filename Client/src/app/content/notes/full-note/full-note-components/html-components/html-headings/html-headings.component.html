@@ -12,15 +12,16 @@
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div class="text-content">
     <p
       #contentHtml
-      class="block-generic default-text-id"
-      [attr.contenteditable]="!isReadOnlyMode"
+      class="block-generic default-text-id heading-block"
+      [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
       [innerHTML]="viewHtml"
       (input)="onInput()"
+      (click)="textClick($event)"
     ></p>
     <p class="no-content" *ngIf="isActiveState">{{'innerNote.heading' | translate}}</p>
   </div>

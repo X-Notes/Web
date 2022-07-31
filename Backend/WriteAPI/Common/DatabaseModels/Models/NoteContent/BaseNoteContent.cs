@@ -21,6 +21,9 @@ namespace Common.DatabaseModels.Models.NoteContent
 
         public DateTimeOffset UpdatedAt { set; get; }
 
+        [NotMapped]
+        public Guid PrevId { set; get; }
+
         public virtual IEnumerable<Guid> GetInternalFilesIds()
         {
             return new List<Guid>();

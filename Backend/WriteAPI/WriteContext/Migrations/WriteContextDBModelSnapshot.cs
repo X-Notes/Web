@@ -85,42 +85,12 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset?>("LinkedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset?>("UnLinkedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("AppFileId");
 
-                    b.HasIndex("StatusId");
-
                     b.ToTable("AppFileUploadInfo", "file");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppFileUploadStatus", "file");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "UnLinked"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Linked"
-                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
@@ -791,6 +761,46 @@ namespace WriteContext.Migrations
                         {
                             Id = 3,
                             Name = "Russian"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Spanish"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "French"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Italian"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "German"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Swedish"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Polish"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Chinese"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Japan"
                         });
                 });
 
@@ -1065,16 +1075,22 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ConnectionId")
-                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("ConnectedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("UserId", "ConnectionId");
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserIdentifierConnectionId", "ws");
                 });
@@ -1147,15 +1163,7 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFileUploadStatus", "Status")
-                        .WithMany("AppFileUploadInfos")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AppFile");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
@@ -1606,9 +1614,7 @@ namespace WriteContext.Migrations
                 {
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
                         .WithMany("UserIdentifierConnectionIds")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -1662,11 +1668,6 @@ namespace WriteContext.Migrations
                     b.Navigation("SnapshotFileContents");
 
                     b.Navigation("UserProfilePhotos");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
-                {
-                    b.Navigation("AppFileUploadInfos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>

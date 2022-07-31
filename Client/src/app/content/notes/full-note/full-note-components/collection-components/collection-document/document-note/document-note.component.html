@@ -7,35 +7,36 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
 
-  <div [appDrop]="'drop-active'" (fileDropped)="uploadDocuments($event)" class="playlist" appTheme>
+  <div [appDrop]="'drop-active'" (fileDropped)="uploadFiles($event)" class="playlist" appTheme>
     <app-title-collection
+      [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
-      (clickInputEvent)="clickDocumentHandler(null)"
+      (clickInputEvent)="scrollAndFocusToTitle()"
       [menu]="menu"
+      [isDisablebutton]="this.content.isLoading"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-document-item
         *ngFor="let item of content.orderedItems"
         [document]="item"
+        [isSelectModeActive]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         (deleteDocument)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportDocument($event)"
-        (clickEvent)="clickDocumentHandler($event)"
+        (clickEvent)="clickItemHandler($event)"
       ></app-document-item>
     </ng-container>
     <app-empty-collection-items-placeholder
       *ngIf="isEmpty"
       [title]="'innerNote.document.plsUpload' | translate"
+      [isSpinnerActive]="content.isLoading"
     ></app-empty-collection-items-placeholder>
-    <div *ngIf="content.isLoading" class="spinner-container">
-      <app-spinner [size]="16"></app-spinner>
-    </div>
   </div>
 </div>
 
@@ -46,7 +47,7 @@
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadDocuments($event.target.files)"
+  (change)="uploadFiles($event.target.files)"
 />
 
 <mat-menu
@@ -68,7 +69,7 @@
   </button>
   <button mat-menu-item type="button" name="Download" (click)="exportDocuments(content)">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

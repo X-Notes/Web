@@ -28,7 +28,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             FileTypeId = fileTypeId;
         }
 
-        public CollectionNote(CollectionNote entity, List<CollectionNoteAppFile> collectionNoteAppFiles, Guid noteId, FileTypeEnum fileTypeId)
+        public CollectionNote(CollectionNote entity, List<CollectionNoteAppFile> collectionNoteAppFiles, Guid noteId)
         {
             NoteId = noteId;
 
@@ -37,13 +37,13 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
             Name = entity.Name;
             Order = entity.Order;
+            FileTypeId = entity.FileTypeId;
+            MetaData = entity.MetaData;
 
             CollectionNoteAppFiles = collectionNoteAppFiles;
-
-            FileTypeId = fileTypeId;
         }
 
-        public CollectionNote(CollectionNote entity, List<AppFile> files, Guid noteId, FileTypeEnum fileTypeId)
+        public CollectionNote(CollectionNote entity, List<AppFile> files, Guid noteId)
         {
             NoteId = noteId;
 
@@ -52,9 +52,10 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
             Name = entity.Name;
             Order = entity.Order;
+            FileTypeId = entity.FileTypeId;
+            MetaData = entity.MetaData;
 
             Files = files;
-            FileTypeId = fileTypeId;
         }
 
         public override IEnumerable<Guid> GetInternalFilesIds()

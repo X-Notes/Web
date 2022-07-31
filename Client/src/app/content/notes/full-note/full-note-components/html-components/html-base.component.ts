@@ -11,7 +11,9 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
-import { BaseText, NoteTextTypeENUM, TextBlock } from '../../../models/editor-models/base-text';
+import { BaseText } from '../../../models/editor-models/base-text';
+import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
+import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
@@ -59,8 +61,8 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   constructor(
     cdr: ChangeDetectorRef,
-    protected apiBrowserTextService: ApiBrowserTextService,
-    protected selectionService: SelectionService,
+    protected apiBrowser: ApiBrowserTextService,
+    public selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
   ) {
@@ -76,7 +78,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   get isActiveState() {
-    return this.getIsActive();
+    return this.getIsActive() && !this.isReadOnlyMode;
   }
 
   onInput() {
@@ -88,23 +90,21 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   initBaseHTML(): void {
-    const delta = DeltaConverter.convertToDelta(this.content.contents);
-    this.viewHtml = DeltaConverter.convertDeltaToHtml(delta);
+    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
     this.syncHtmlWithLayout();
   }
 
   updateHTML(contents: TextBlock[]) {
-    const delta = DeltaConverter.convertToDelta(contents);
-    const html = DeltaConverter.convertDeltaToHtml(delta);
+    const html = DeltaConverter.convertContentToHTML(contents);
     this.updateNativeHTML(html);
     this.syncHtmlWithLayout();
   }
 
   syncContentWithLayout() {
     const el = this.contentHtml.nativeElement;
-    const savedSel = this.apiBrowserTextService.saveSelection(el);
+    const savedSel = this.apiBrowser.saveSelection(el);
     this.updateHTML(this.content.contents);
-    this.apiBrowserTextService.restoreSelection(el, savedSel);
+    this.apiBrowser.restoreSelection(el, savedSel);
   }
 
   getContent(): BaseText {
@@ -139,7 +139,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter($event) {
     $event.preventDefault();
-    this.preFocus = !this.selectionService.ismousedown;
+    this.preFocus = !this.isSelectModeActive;
     this.isMouseOver = true;
   }
 
@@ -157,19 +157,42 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   setFocusToEnd() {
-    this.apiBrowserTextService.setCursor(this.contentHtml.nativeElement, false);
+    this.apiBrowser.setCursor(this.contentHtml.nativeElement, false);
     this.setFocusedElement();
     this.onFocus.emit(this);
   }
 
   setFocusedElement() {
-    this.clickableService.setSontent(this.content.id, null, ClickableSelectableEntities.Text, this);
+    this.clickableService.setSontent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 
   // LISTENERS
 
-  pasteCommandHandler(e) {
-    this.apiBrowserTextService.pasteCommandHandler(e);
+  isPasteLink(data: DataTransferItemList): boolean {
+    for (const item of data as any) {
+      if ((item as DataTransferItem).type === 'text/link-preview') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  pasteCommandHandler(e: ClipboardEvent) {
+    const isLink = this.isPasteLink(e.clipboardData.items);
+    if (isLink) {
+      e.preventDefault();
+      const json = e.clipboardData.getData('text/link-preview') as any;
+      const data = JSON.parse(json);
+      const title = data.title;
+      const url = data.url;
+      const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
+      const html = DeltaConverter.convertContentToHTML(this.content.contents);
+      const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
+      const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
+      this.updateHTML(resTextBlocks);
+    } else {
+      this.apiBrowser.pasteCommandHandler(e);
+    }
     this.textChanged.next();
   }
 
@@ -178,9 +201,9 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
       return;
     }
 
-    const selection = this.apiBrowserTextService.getSelection().toString();
+    const selection = this.apiBrowser.getSelection().toString();
     if (
-      this.apiBrowserTextService.isStart(this.getEditableNative()) &&
+      this.apiBrowser.isStart(this.getEditableNative()) &&
       !this.isContentEmpty() &&
       selection === ''
     ) {
@@ -253,8 +276,18 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur(e) {}
 
+  textClick(e: PointerEvent): void {
+    const target = e.target as HTMLAnchorElement;
+    if (target.localName === 'a' && target.href) {
+      e.preventDefault();
+      window.open(target.href, '_blank');
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart(e) {}
+
+  syncContentItems() {}
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;

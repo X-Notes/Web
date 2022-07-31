@@ -1,5 +1,6 @@
 ﻿using BI.Helpers;
 using DiffMatchPatch;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,11 @@ namespace BI.Services.DiffsMatchPatch
     {
         private readonly diff_match_patch dmp = new diff_match_patch();
 
-        public DiffsMatchPatchService()
-        {
+        private readonly ILogger<DiffsMatchPatchService> logger;
 
+        public DiffsMatchPatchService(ILogger<DiffsMatchPatchService> logger)
+        {
+            this.logger = logger;
         }
 
         public string PatchToStr(List<List<object>> valuesDiffs, string str)
@@ -40,13 +43,13 @@ namespace BI.Services.DiffsMatchPatch
                     return Update(diffs);
                 } catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    logger.LogError(ex.ToString());
                     return str;
                 }
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex.ToString());
                 return str;
             }
 

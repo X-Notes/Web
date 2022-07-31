@@ -7,15 +7,17 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
-  <div [appDrop]="'drop-active'" (fileDropped)="uploadAudios($event)" class="playlist" appTheme>
+  <div [appDrop]="'drop-active'" (fileDropped)="uploadFiles($event)" class="playlist" appTheme>
     <app-title-collection
+      [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
-      (clickInputEvent)="clickAudioHandler(null)"
+      (clickInputEvent)="scrollAndFocusToTitle()"
       [menu]="menu"
+      [isDisablebutton]="this.content.isLoading"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
@@ -23,32 +25,31 @@
         *ngFor="let item of content.orderedItems"
         [audio]="item"
         [noteId]="noteId"
+        [isSelectModeActive]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         (playEvent)="play($event)"
         (pauseEvent)="pause()"
         (deleteAudio)="deleteContentItemEvent.emit($event)"
         (exportAudio)="exportAudio($event)"
-        (clickEvent)="clickAudioHandler($event)"
+        (clickEvent)="clickItemHandler($event)"
       ></app-audio>
     </ng-container>
     <app-empty-collection-items-placeholder
       *ngIf="isEmpty"
       [title]="'innerNote.audio.plsUpload' | translate"
+      [isSpinnerActive]="content.isLoading"
     ></app-empty-collection-items-placeholder>
-    <div *ngIf="content.isLoading" class="spinner-container">
-      <app-spinner [size]="16"></app-spinner>
-    </div>
   </div>
 </div>
 
 <!-- Additional -->
 <input
-  #uploadAudiosRef
+  #uploadRef
   type="file"
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadAudios($event.target.files)"
+  (change)="uploadFiles($event.target.files)"
 />
 <mat-menu
   #menu="matMenu"
@@ -69,7 +70,7 @@
   </button>
   <button mat-menu-item type="button" name="Download" (click)="exportPlaylist(content)">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

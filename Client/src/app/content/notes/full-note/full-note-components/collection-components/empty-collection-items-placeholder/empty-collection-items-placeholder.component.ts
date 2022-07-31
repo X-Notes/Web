@@ -7,4 +7,6 @@ import { Component, Input } from '@angular/core';
 })
 export class EmptyCollectionItemsPlaceholderComponent {
   @Input() title: string;
+
+  @Input() isSpinnerActive: boolean;
 }

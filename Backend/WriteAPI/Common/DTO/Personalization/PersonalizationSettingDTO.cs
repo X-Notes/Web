@@ -26,10 +26,13 @@ namespace Common.DTO.Personalization
         {
             NotesInFolderCount = 10;
             ContentInNoteCount = 10;
+
             IsViewVideoOnNote = true;
             IsViewAudioOnNote = true;
             IsViewDocumentOnNote = true;    
-            IsViewPhotosOnNote = true; 
+            IsViewPhotosOnNote = true;
+            IsViewTextOnNote = true;
+
             return this;
         }
     }

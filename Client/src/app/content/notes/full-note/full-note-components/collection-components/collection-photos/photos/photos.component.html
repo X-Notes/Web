@@ -2,24 +2,28 @@
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
   class="photo-content"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  [ngStyle]="{
+    backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+  }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode && !isStartSelecting"></ng-content
+    ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="photo-container"
     appTheme
     [appDrop]="'drop-active'"
-    (fileDropped)="uploadImages($event)"
+    (fileDropped)="uploadFiles($event)"
   >
     <div class="content-photos">
       <app-title-collection
+        [isSelectionStart]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
         (changeTitleEvent)="onTitleChangeInput($event)"
-        (clickInputEvent)="clickPhotoHandler(null)"
+        (clickInputEvent)="scrollAndFocusToTitle()"
         [menu]="menu"
+        [isDisablebutton]="this.content.isLoading"
         [isShowButton]="isMouseOver"
       ></app-title-collection>
       <div #album [ngStyle]="{ display: isEmpty ? 'none' : 'block' }" class="blocks-container">
@@ -32,10 +36,11 @@
             <app-photo
               *ngFor="let item of block"
               [photo]="item"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
-              (clickEvent)="clickPhotoHandler($event)"
+              (clickEvent)="clickItemHandler($event)"
             ></app-photo>
           </div>
         </div>
@@ -48,48 +53,41 @@
             <app-photo
               *ngFor="let item of lastBlock"
               [photo]="item"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
-              (clickEvent)="clickPhotoHandler($event)"
+              (clickEvent)="clickItemHandler($event)"
             >
             </app-photo>
           </div>
         </div>
-        <div
-          appChangeSizeAlbumWidth
-          (mouseClick)="saveWidth()"
-          (changeWeight)="changeWidth($event)"
-          class="slider-right"
-          [ngClass]="{ slider: !isReadOnlyMode }"
-        ></div>
         <div
           appChangeSizeAlbumHeight
           (mouseClick)="saveHeight($event)"
           (changeHeight)="changeHeight($event)"
           class="slider-bottom"
           [ngClass]="{ slider: !isReadOnlyMode }"
+          [ngStyle]="{ opacity: isSelectModeActive ? '0' : '1' }"
         ></div>
       </div>
       <app-empty-collection-items-placeholder
         *ngIf="isEmpty"
         [title]="'innerNote.photo.plsUpload' | translate"
+        [isSpinnerActive]="content.isLoading"
       ></app-empty-collection-items-placeholder>
-    </div>
-    <div *ngIf="content.isLoading" class="spinner-container">
-      <app-spinner [size]="16"></app-spinner>
     </div>
   </div>
 </div>
 
 <!-- ADDITIONAL -->
 <input
-  #uploadPhotos
+  #uploadRef
   type="file"
   multiple
   accept="image/jpeg,image/png"
   hidden="true"
-  (change)="uploadImages($event.target.files)"
+  (change)="uploadFiles($event.target.files)"
 />
 
 <!-- PHOTO MENU -->
@@ -134,7 +132,7 @@
   </button>
   <button mat-menu-item type="button" name="Download" (click)="exportAlbum()">
     <mat-icon>download</mat-icon>
-    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"
@@ -144,7 +142,7 @@
     (click)="deleteContentEvent.emit(content.id)"
   >
     <mat-icon>delete</mat-icon>
-    <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+    <span> {{ 'innerNote.menu.delete' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

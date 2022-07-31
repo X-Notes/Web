@@ -13,9 +13,6 @@ namespace Common.DatabaseModels.Models.Files
         public Guid AppFileId { set; get; }
         public AppFile AppFile { set; get; }
 
-        public AppFileUploadStatusEnum StatusId { set; get; }
-        public AppFileUploadStatus Status { set; get; }
-
         public DateTimeOffset? LinkedDate { set; get; }
         public DateTimeOffset? UnLinkedDate { set; get; }
 
@@ -25,7 +22,6 @@ namespace Common.DatabaseModels.Models.Files
 
         public AppFileUploadInfo SetLinked()
         {
-            StatusId = AppFileUploadStatusEnum.Linked;
             LinkedDate = DateTimeProvider.Time;
             UnLinkedDate = null;
             return this;
@@ -33,7 +29,6 @@ namespace Common.DatabaseModels.Models.Files
 
         public AppFileUploadInfo SetUnLinked()
         {
-            StatusId = AppFileUploadStatusEnum.UnLinked;
             LinkedDate = null;
             UnLinkedDate = DateTimeProvider.Time;
             return this;

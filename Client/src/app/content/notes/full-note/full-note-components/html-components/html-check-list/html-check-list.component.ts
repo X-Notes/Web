@@ -12,7 +12,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
-import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/base-text';
+import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { SelectionService } from '../../../content-editor-services/selection.service';
@@ -97,7 +97,7 @@ export class HtmlCheckListComponent
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.apiBrowserTextService.pressEnterHandler(this.getEditableNative());
+      const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
       const event = super.eventEventFactory(
         breakModel,
         NoteTextTypeENUM.Checklist,

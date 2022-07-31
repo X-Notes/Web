@@ -8,19 +8,20 @@ using Storage.Models;
 using Azure.Storage.Blobs.Specialized;
 using Azure;
 using Azure.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace Storage
 {
     public class AzureFileStorage : IFilesStorage
     {
         private readonly BlobServiceClient blobServiceClient;
-
+        private readonly ILogger<AzureFileStorage> logger;
         private Dictionary<ContentTypesFile, string> folders;
 
-        public AzureFileStorage(BlobServiceClient blobServiceClient)
+        public AzureFileStorage(BlobServiceClient blobServiceClient, ILogger<AzureFileStorage> logger)
         {
             this.blobServiceClient = blobServiceClient;
-
+            this.logger = logger;
             folders = new Dictionary<ContentTypesFile, string>()
             {
                 {  ContentTypesFile.Photos, "Images" },
@@ -131,7 +132,6 @@ namespace Storage
 
                     // Get the source blob's properties and display the lease state.
                     BlobProperties sourceProperties = await sourceBlob.GetPropertiesAsync();
-                    Console.WriteLine($"Lease state: {sourceProperties.LeaseState}");
 
                     // Get a BlobClient representing the destination blob with a unique name.
                     BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(contentFolder, fileTypeEnd));
@@ -141,11 +141,6 @@ namespace Storage
 
                     // Get the destination blob's properties and display the copy status.
                     BlobProperties destProperties = await destBlob.GetPropertiesAsync();
-
-                    Console.WriteLine($"Copy status: {destProperties.CopyStatus}");
-                    Console.WriteLine($"Copy progress: {destProperties.CopyProgress}");
-                    Console.WriteLine($"Completion time: {destProperties.CopyCompletedOn}");
-                    Console.WriteLine($"Total bytes: {destProperties.ContentLength}");
 
                     // Update the source blob's properties.
                     sourceProperties = await sourceBlob.GetPropertiesAsync();
@@ -157,7 +152,6 @@ namespace Storage
 
                         // Update the source blob's properties to check the lease state.
                         sourceProperties = await sourceBlob.GetPropertiesAsync();
-                        Console.WriteLine($"Lease state: {sourceProperties.LeaseState}");
                     }
 
                     return destBlob.Name;
@@ -167,8 +161,7 @@ namespace Storage
             }
             catch (RequestFailedException ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.ReadLine();
+                logger.LogDebug(ex.ToString());
                 throw;
             }
         }

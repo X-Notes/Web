@@ -17,7 +17,8 @@ export interface OperationDetailMini {
   icon: string;
   name: string;
   isCancelable: boolean;
-  isShowProcess: boolean;
+  isShowProcents: boolean;
+  isStatic: boolean;
   procent: number;
   obs: Subject<any>;
   status?: HttpEventType;

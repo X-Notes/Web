@@ -15,6 +15,7 @@ using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes.Videos
@@ -40,6 +41,8 @@ namespace BI.Services.Notes.Videos
 
         private readonly CollectionLinkedService collectionLinkedService;
 
+        private readonly ILogger<VideosCollectionHandlerCommand> logger;
+
         public VideosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
@@ -47,7 +50,8 @@ namespace BI.Services.Notes.Videos
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
-            CollectionLinkedService collectionLinkedService)
+            CollectionLinkedService collectionLinkedService,
+            ILogger<VideosCollectionHandlerCommand> logger)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -56,6 +60,7 @@ namespace BI.Services.Notes.Videos
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.collectionLinkedService = collectionLinkedService;
+            this.logger = logger;
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveVideosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -72,7 +77,7 @@ namespace BI.Services.Notes.Videos
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
                     var fileIds = collectionItems.Select(x => x.AppFileId);
 
-                    var data = collectionItems.Select(x => new UnlinkMetaData { Id = x.AppFileId });
+                    var data = collectionItems.Select(x => new UnlinkMetaData(x.AppFileId));
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
@@ -148,7 +153,7 @@ namespace BI.Services.Notes.Videos
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
-                    Console.WriteLine(e);
+                    logger.LogError(e.ToString());
                 }
             }
 

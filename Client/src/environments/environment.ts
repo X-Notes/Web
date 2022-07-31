@@ -12,7 +12,7 @@ export const environment = {
     storageBucket: 'noots-storm.appspot.com',
     messagingSenderId: '69998033878',
   },
-  writeAPI: 'http://localhost:5000',
+  writeAPI: '', // proxy
   adminAPI: 'http://localhost:3333',
 };
 

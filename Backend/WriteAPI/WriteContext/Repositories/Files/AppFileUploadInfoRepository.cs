@@ -16,9 +16,7 @@ namespace WriteContext.Repositories.Files
 
         public Task<List<AppFileUploadInfo>> GetFilesInfoThatNeedDelete(DateTimeOffset earliestTimestamp)
         {
-            return entities
-                .Include(x => x.AppFile)
-                .Where(x => x.StatusId == AppFileUploadStatusEnum.UnLinked && x.UnLinkedDate.HasValue && x.UnLinkedDate.Value < earliestTimestamp).ToListAsync();
+            return entities.Include(x => x.AppFile).Where(x => x.UnLinkedDate.HasValue && x.UnLinkedDate.Value < earliestTimestamp).ToListAsync();
         }
     }
 }
