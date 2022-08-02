@@ -5,12 +5,18 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
+import { DocumentsCollection } from '../../../models/editor-models/documents-collection';
+import { PhotosCollection } from '../../../models/editor-models/photos-collection';
+import { VideosCollection } from '../../../models/editor-models/videos-collection';
+import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
 import { StructureDiffs, PositionDiff, ItemForRemove } from '../models/structure-diffs';
+import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { SyncResult } from './content-editor-sync.service';
 
 export interface ContentAndIndex<T extends ContentModelBase> {
@@ -27,14 +33,36 @@ export class ContentEditorContentsService {
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
+    private contentEditorMomentoStateService: ContentEditorMomentoStateService,
   ) {}
 
   // TODO 1. Worker
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  init(contents: ContentModelBase[]) {
+  init(contents: ContentModelBase[]): void {
     this.initContent(contents);
+    this.contentEditorMomentoStateService.clear();
+    this.contentEditorMomentoStateService.saveToStack(contents);
+  }
+
+  saveToStack(): void {
+    const isContentEqual = this.isContentsEquals();
+    if (!isContentEqual) {
+      this.contentEditorMomentoStateService.saveToStack(this.contents);
+    }
+  }
+
+  isSaveStackEmpty(): boolean {
+    return this.contentEditorMomentoStateService.isEmpty();
+  }
+
+  getPrevFromStack(): ContentModelBase[] {
+    return this.contentEditorMomentoStateService.getPrev();
+  }
+
+  cleaPrevInStack(): void {
+    this.contentEditorMomentoStateService.clearPrev();
   }
 
   initOnlyRead(contents: ContentModelBase[]) {
@@ -81,6 +109,26 @@ export class ContentEditorContentsService {
       .map((x) => x as BaseCollection<BaseFile>);
   }
 
+  updateIds(updateIds: NoteUpdateIds[]): void {
+    if (!updateIds || updateIds.length === 0) return;
+
+    for (const update of updateIds) {
+      const syncContent = this.getSyncContentById(update.prevId);
+      if (syncContent) {
+        syncContent.prevId = syncContent.id;
+        syncContent.id = update.id;
+      }
+      const content = this.getContentById(update.prevId);
+      if (content) {
+        content.prevId = content.id;
+        content.id = update.id;
+      }
+    }
+
+    // UPDATE IN STACK
+    this.contentEditorMomentoStateService.updateIds(updateIds);
+  }
+
   updateContent(contents: ContentModelBase[]) {
     this.contents = contents;
   }
@@ -109,7 +157,7 @@ export class ContentEditorContentsService {
   }
 
   patchStructuralChangesPrev(diffs: StructureDiffs, removedIds: string[]): void {
-    const contentToUpdate = this.patchStructuralChanges(this.contents, diffs, removedIds);
+    const contentToUpdate = this.patchStructuralChanges(this.contents, diffs, removedIds, true);
     this.updateContent(contentToUpdate);
   }
 
@@ -117,6 +165,7 @@ export class ContentEditorContentsService {
     content: ContentModelBase[],
     diffs: StructureDiffs,
     removedIds: string[],
+    isReloadOrder = false,
   ): ContentModelBase[] {
     if (removedIds && removedIds.length > 0) {
       content = content.filter((x) => !removedIds.some((id) => id === x.id));
@@ -128,27 +177,38 @@ export class ContentEditorContentsService {
     }
     if (diffs.photosCollectionItems.length > 0) {
       for (const item of diffs.photosCollectionItems) {
-        content.push(item.copy());
+        const newItem = item.copy() as PhotosCollection;
+        newItem.items = [];
+        content.push(newItem);
       }
     }
     if (diffs.audiosCollectionItems.length > 0) {
       for (const item of diffs.audiosCollectionItems) {
-        content.push(item.copy());
+        const newItem = item.copy() as AudiosCollection;
+        newItem.items = [];
+        content.push(newItem);
       }
     }
     if (diffs.videosCollectionItems.length > 0) {
       for (const item of diffs.videosCollectionItems) {
-        content.push(item.copy());
+        const newItem = item.copy() as VideosCollection;
+        newItem.items = [];
+        content.push(newItem);
       }
     }
     if (diffs.documentsCollectionItems.length > 0) {
       for (const item of diffs.documentsCollectionItems) {
-        content.push(item.copy());
+        const newItem = item.copy() as DocumentsCollection;
+        newItem.items = [];
+        content.push(newItem);
       }
     }
     if (diffs.positions.length > 0) {
       for (const pos of diffs.positions) {
         content.find((x) => x.id === pos.id).order = pos.order;
+      }
+      if (isReloadOrder) {
+        this.contents = this.contents.sort((a, b) => a.order - b.order);
       }
     }
     return content;
@@ -185,7 +245,9 @@ export class ContentEditorContentsService {
     return [diffs, res];
   }
 
-  isContentsEquals(f: ContentModelBase[], s: ContentModelBase[]) {
+  isContentsEquals() {
+    const f = this.getContents;
+    const s = this.getSyncContents;
     for (const content of f) {
       const itemForCompare = s.find((x) => x.id === content.id);
       if (!itemForCompare || !content.isEqual(itemForCompare)) {

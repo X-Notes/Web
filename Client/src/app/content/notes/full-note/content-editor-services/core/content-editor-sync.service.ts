@@ -148,21 +148,8 @@ export class ContentEditorSyncService {
 
   private updateIds(structureDiffs: StructureDiffs, updateIds: NoteUpdateIds[]): void {
     if (!updateIds || updateIds.length === 0) return;
-
     structureDiffs.updateIdForAll(updateIds);
-
-    for (const update of updateIds) {
-      const syncContent = this.contentService.getSyncContentById(update.prevId);
-      if (syncContent) {
-        syncContent.prevId = syncContent.id;
-        syncContent.id = update.id;
-      }
-      const content = this.contentService.getContentById(update.prevId);
-      if (content) {
-        content.prevId = content.id;
-        content.id = update.id;
-      }
-    }
+    this.contentService.updateIds(updateIds);
   }
 
   private async processFileEntities() {
@@ -179,9 +166,8 @@ export class ContentEditorSyncService {
 
   private async processPhotosChanges(): Promise<SyncResult> {
     const result: SyncResult = { isNeedLoadMemory: false };
-    const collectionsToUpdate = this.getCollectionsInfoDiffs<PhotosCollection>(
-      ContentTypeENUM.Photos,
-    );
+    const type = ContentTypeENUM.Photos;
+    const collectionsToUpdate = this.getCollectionsInfoDiffs<PhotosCollection>(type);
     for (const collection of collectionsToUpdate) {
       const command = new UpdatePhotosCollectionInfoCommand(
         this.noteId,
@@ -196,7 +182,7 @@ export class ContentEditorSyncService {
       item?.updateInfo(collection);
     }
     // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs();
+    const diffs = this.getCollectionItemsDiffs(type);
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -219,10 +205,9 @@ export class ContentEditorSyncService {
 
   private async processAudiosChanges(): Promise<SyncResult> {
     const result: SyncResult = { isNeedLoadMemory: false };
+    const type = ContentTypeENUM.Audios;
     // UPDATE MAIN INFO
-    const collectionsToUpdate = this.getCollectionsInfoDiffs<AudiosCollection>(
-      ContentTypeENUM.Audios,
-    );
+    const collectionsToUpdate = this.getCollectionsInfoDiffs<AudiosCollection>(type);
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -234,7 +219,7 @@ export class ContentEditorSyncService {
       item?.updateInfo(collection);
     }
     // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs();
+    const diffs = this.getCollectionItemsDiffs(type);
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -257,10 +242,9 @@ export class ContentEditorSyncService {
 
   private async processDocumentsChanges(): Promise<SyncResult> {
     const result: SyncResult = { isNeedLoadMemory: false };
+    const type = ContentTypeENUM.Documents;
     // UPDATE MAIN INFO
-    const collectionsToUpdate = this.getCollectionsInfoDiffs<DocumentsCollection>(
-      ContentTypeENUM.Documents,
-    );
+    const collectionsToUpdate = this.getCollectionsInfoDiffs<DocumentsCollection>(type);
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -272,7 +256,7 @@ export class ContentEditorSyncService {
       item?.updateInfo(collection);
     }
     // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs();
+    const diffs = this.getCollectionItemsDiffs(type);
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -295,9 +279,8 @@ export class ContentEditorSyncService {
 
   private async processVideosChanges(): Promise<SyncResult> {
     const result: SyncResult = { isNeedLoadMemory: false };
-    const collectionsToUpdate = this.getCollectionsInfoDiffs<VideosCollection>(
-      ContentTypeENUM.Videos,
-    );
+    const type = ContentTypeENUM.Videos;
+    const collectionsToUpdate = this.getCollectionsInfoDiffs<VideosCollection>(type);
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -309,7 +292,7 @@ export class ContentEditorSyncService {
       item?.updateInfo(collection);
     }
     // UPDATES ITEMS
-    const diffs = this.getCollectionItemsDiffs();
+    const diffs = this.getCollectionItemsDiffs(type);
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -374,12 +357,14 @@ export class ContentEditorSyncService {
     return contents;
   }
 
-  private getCollectionItemsDiffs(): ItemsDiffs[] {
+  private getCollectionItemsDiffs(contentType: ContentTypeENUM): ItemsDiffs[] {
     const oldContents = this.contentService.getCollectionSyncContents;
     const newContents = this.contentService.getCollectionContents;
     const result: ItemsDiffs[] = [];
     for (const content of newContents) {
-      const contentForCompare = oldContents.find((x) => x.id === content.id);
+      const contentForCompare = oldContents.find(
+        (x) => x.id === content.id && x.typeId === contentType,
+      );
       if (contentForCompare) {
         const [IsEqual, itemsToAdd, itemsToRemove] =
           content.getIsEqualIdsToAddIdsToRemove(contentForCompare);

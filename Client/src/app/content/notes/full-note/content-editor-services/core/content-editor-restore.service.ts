@@ -8,7 +8,6 @@ import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
 import { ContentEditorContentsService } from './content-editor-contents.service';
-import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { ContentEditorSyncService } from './content-editor-sync.service';
 
 export interface IsNeedUpdate {
@@ -19,7 +18,6 @@ export class ContentEditorRestoreService {
   private saveSubject: BehaviorSubject<boolean>;
 
   constructor(
-    private contentEditorMomentoStateService: ContentEditorMomentoStateService,
     private contentEditorContentsService: ContentEditorContentsService,
     private contentEditorSyncService: ContentEditorSyncService,
   ) {}
@@ -28,10 +26,11 @@ export class ContentEditorRestoreService {
     return this.contentEditorContentsService.getContents;
   }
 
-  init() {
-    this.contentEditorMomentoStateService.clear();
-    this.contentEditorMomentoStateService.saveToStack(this.contents);
+  get contentsSync() {
+    return this.contentEditorContentsService.getSyncContents;
+  }
 
+  init() {
     this.destroyAndInitSubject();
     //
     this.saveSubject
@@ -39,9 +38,7 @@ export class ContentEditorRestoreService {
         filter((x) => x === true),
         debounceTime(createSnapshotDelay),
       )
-      .subscribe(() => {
-        this.contentEditorMomentoStateService.saveToStack(this.contents);
-      });
+      .subscribe(() => this.contentEditorContentsService.saveToStack());
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -57,57 +54,58 @@ export class ContentEditorRestoreService {
   // Restore Prev
   // eslint-disable-next-line @typescript-eslint/member-ordering
   restorePrev() {
-    if (this.contentEditorMomentoStateService.isEmpty()) {
+    if (this.contentEditorContentsService.isSaveStackEmpty()) {
       return;
     }
 
+    /*
     console.log(
       'this.contentEditorMomentoStateService.size(): ',
       this.contentEditorMomentoStateService.size(),
     );
-    const prev = this.contentEditorMomentoStateService.getPrev();
-    console.log('prev: ', { ...prev });
-    if (!this.contentEditorContentsService.isContentsEquals(prev, this.contents)) {
-      const result: IsNeedUpdate = { isNeedUpdate: false };
+    */
+    const prev = this.contentEditorContentsService.getPrevFromStack();
+    // console.log('prev: ', { ...prev });
+    const result: IsNeedUpdate = { isNeedUpdate: false };
 
-      // STRUCTURE
-      const [structureDiffs] = this.contentEditorContentsService.getStructureDiffsPrev(prev);
-      if (structureDiffs.isAnyChanges()) {
-        const removeIds = structureDiffs.removedItems.map((x) => x.id);
-        this.contentEditorContentsService.patchStructuralChangesPrev(structureDiffs, removeIds);
-        result.isNeedUpdate = true;
-      }
+    // STRUCTURE
+    const [structureDiffs] = this.contentEditorContentsService.getStructureDiffsPrev(prev);
+    if (structureDiffs.isAnyChanges()) {
+      const removeIds = structureDiffs.removedItems.map((x) => x.id);
+      this.contentEditorContentsService.patchStructuralChangesPrev(structureDiffs, removeIds);
+      result.isNeedUpdate = true;
+    }
 
-      // TEXTS
-      const textItems = prev
-        .filter((x) => x.typeId === ContentTypeENUM.Text)
-        .map((x) => x as BaseText);
-      const textDiffs = this.getTextDiffs(textItems);
-      if (textDiffs && textDiffs.length > 0) {
-        this.patchTextDiffs(textDiffs);
-        result.isNeedUpdate = true;
-      }
+    // TEXTS
+    const textItems = prev
+      .filter((x) => x.typeId === ContentTypeENUM.Text)
+      .map((x) => x as BaseText);
+    const textDiffs = this.getTextDiffs(textItems);
+    if (textDiffs && textDiffs.length > 0) {
+      this.patchTextDiffs(textDiffs);
+      result.isNeedUpdate = true;
+    }
 
-      // FILES
-      const collectionItems = prev
-        .filter((x) => x.typeId !== ContentTypeENUM.Text)
-        .map((x) => x as BaseCollection<BaseFile>);
+    // FILES
+    const collectionItems = prev
+      .filter((x) => x.typeId !== ContentTypeENUM.Text)
+      .map((x) => x as BaseCollection<BaseFile>);
 
-      this.processCollectionInfos(ContentTypeENUM.Audios, collectionItems, result);
-      this.processCollectionItemsDiffs(ContentTypeENUM.Audios, collectionItems, result);
+    this.processCollectionInfos(ContentTypeENUM.Audios, collectionItems, result);
+    this.processCollectionItemsDiffs(ContentTypeENUM.Audios, collectionItems, result);
 
-      this.processCollectionInfos(ContentTypeENUM.Photos, collectionItems, result);
-      this.processCollectionItemsDiffs(ContentTypeENUM.Photos, collectionItems, result);
+    this.processCollectionInfos(ContentTypeENUM.Photos, collectionItems, result);
+    this.processCollectionItemsDiffs(ContentTypeENUM.Photos, collectionItems, result);
 
-      this.processCollectionInfos(ContentTypeENUM.Documents, collectionItems, result);
-      this.processCollectionItemsDiffs(ContentTypeENUM.Documents, collectionItems, result);
+    this.processCollectionInfos(ContentTypeENUM.Documents, collectionItems, result);
+    this.processCollectionItemsDiffs(ContentTypeENUM.Documents, collectionItems, result);
 
-      this.processCollectionInfos(ContentTypeENUM.Videos, collectionItems, result);
-      this.processCollectionItemsDiffs(ContentTypeENUM.Videos, collectionItems, result);
+    this.processCollectionInfos(ContentTypeENUM.Videos, collectionItems, result);
+    this.processCollectionItemsDiffs(ContentTypeENUM.Videos, collectionItems, result);
 
-      if (result.isNeedUpdate) {
-        this.contentEditorSyncService.change();
-      }
+    if (result.isNeedUpdate) {
+      this.contentEditorContentsService.cleaPrevInStack();
+      this.contentEditorSyncService.change();
     }
   }
 
