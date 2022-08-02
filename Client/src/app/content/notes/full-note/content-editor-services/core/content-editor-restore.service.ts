@@ -17,6 +17,8 @@ export interface IsNeedUpdate {
 export class ContentEditorRestoreService {
   private saveSubject: BehaviorSubject<boolean>;
 
+  private isEdit = false;
+
   constructor(
     private contentEditorContentsService: ContentEditorContentsService,
     private contentEditorSyncService: ContentEditorSyncService,
@@ -30,7 +32,8 @@ export class ContentEditorRestoreService {
     return this.contentEditorContentsService.getSyncContents;
   }
 
-  init() {
+  initEdit() {
+    this.isEdit = true;
     this.destroyAndInitSubject();
     //
     this.saveSubject
@@ -43,6 +46,7 @@ export class ContentEditorRestoreService {
 
   // eslint-disable-next-line class-methods-use-this
   save() {
+    if (!this.isEdit) return;
     this.saveSubject.next(true);
   }
 

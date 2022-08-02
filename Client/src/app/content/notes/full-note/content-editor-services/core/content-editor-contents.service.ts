@@ -28,6 +28,8 @@ export interface ContentAndIndex<T extends ContentModelBase> {
 export class ContentEditorContentsService {
   private contentsSync: ContentModelBase[] = [];
 
+  private isEdit = false;
+
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
   constructor(
@@ -40,7 +42,8 @@ export class ContentEditorContentsService {
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  init(contents: ContentModelBase[]): void {
+  initEdit(contents: ContentModelBase[]): void {
+    this.isEdit = true;
     this.initContent(contents);
     this.contentEditorMomentoStateService.clear();
     this.contentEditorMomentoStateService.saveToStack(contents);

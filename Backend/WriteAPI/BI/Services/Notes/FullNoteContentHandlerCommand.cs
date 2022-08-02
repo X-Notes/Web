@@ -115,6 +115,7 @@ namespace BI.Services.Notes
                         await textNotesRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds {  PrevId = x.PrevId, Id = x.Id}));
+                        SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -243,7 +244,8 @@ namespace BI.Services.Notes
             return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
-        private void SetNewIds(List<UpdateIds> updateIds, List<BaseNoteContentDTO> contents)
+
+        private void SetNewIds<T>(List<UpdateIds> updateIds, List<T> contents) where T : BaseNoteContentDTO
         {
             foreach(var item in updateIds)
             {
@@ -254,6 +256,7 @@ namespace BI.Services.Notes
                 }
             }
         }
+
 
         private TextNote GetNewTextContent(TextNoteDTO textDto, Guid noteId)
         {

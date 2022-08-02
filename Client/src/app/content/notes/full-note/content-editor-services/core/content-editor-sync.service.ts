@@ -50,6 +50,8 @@ export class ContentEditorSyncService {
 
   private noteId: string;
 
+  private isEdit = false;
+
   private updateSubject: BehaviorSubject<boolean>;
 
   private updateImmediatelySubject: BehaviorSubject<boolean>;
@@ -78,7 +80,8 @@ export class ContentEditorSyncService {
     this.intervalSyncer.subscribe(() => this.change());
   }
 
-  init(noteId: string): void {
+  initEdit(noteId: string): void {
+    this.isEdit = true;
     this.noteId = noteId;
 
     this.destroyAndInitSubject();
@@ -103,6 +106,7 @@ export class ContentEditorSyncService {
   initProcessChangesAutoTimer(): void {}
 
   change() {
+    if (!this.isEdit) return;
     this.updateSubject.next(true);
   }
 
