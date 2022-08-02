@@ -34,5 +34,7 @@ export abstract class ContentModelBase {
 
   abstract isEqual(content: ContentModelBase): boolean;
 
+  // abstract isEqualLite(content: ContentModelBase): boolean; Compare only by date;
+
   abstract patch(content: ContentModelBase);
 }

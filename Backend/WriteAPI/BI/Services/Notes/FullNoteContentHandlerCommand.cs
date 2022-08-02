@@ -139,6 +139,7 @@ namespace BI.Services.Notes
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        SetNewIds(result.UpdateIds, photosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -156,6 +157,7 @@ namespace BI.Services.Notes
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        SetNewIds(result.UpdateIds, audiosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -173,6 +175,7 @@ namespace BI.Services.Notes
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        SetNewIds(result.UpdateIds, videosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -190,6 +193,7 @@ namespace BI.Services.Notes
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        SetNewIds(result.UpdateIds, documentsItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
                     {
@@ -237,6 +241,18 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<NoteStructureResult>().SetNoPermissions();
+        }
+
+        private void SetNewIds(List<UpdateIds> updateIds, List<BaseNoteContentDTO> contents)
+        {
+            foreach(var item in updateIds)
+            {
+                var content = contents.FirstOrDefault(x => x.Id == item.PrevId);
+                if(content != null)
+                {
+                    content.Id = item.Id;
+                }
+            }
         }
 
         private TextNote GetNewTextContent(TextNoteDTO textDto, Guid noteId)
