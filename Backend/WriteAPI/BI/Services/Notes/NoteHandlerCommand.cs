@@ -288,7 +288,6 @@ namespace BI.Services.Notes
                                 var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId, callerId, file, MapToContentTypesFile(collection.FileTypeId)));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
-                                copies.ForEach(x => x.AppFileUploadInfo.SetLinked());
                                 contents.Add(new CollectionNote(collection, copies, noteId));
                             }
                             continue;
@@ -372,8 +371,13 @@ namespace BI.Services.Notes
                     await labelsNotesRepository.AddRangeAsync(labels);
                 }
 
+                // COPY CONTENTS
                 var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, noteForCopy.UserId, request.UserId);
                 await baseNoteContentRepository.AddRangeAsync(contents);
+
+                // LINK FILES
+                var fileIdsToLink = contents.SelectMany(x => x.GetInternalFilesIds()).ToHashSet();
+                await collectionLinkedService.TryLink(fileIdsToLink);
 
                 resultIds.Add(dbNote.Entity.Id);
             }

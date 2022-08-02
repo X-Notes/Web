@@ -227,7 +227,7 @@ namespace BI.Services.Notes.Photos
                     await collectionNoteAppFileRepository.AddRangeAsync(collectionItems);
 
                     var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryLink(idsToLink.ToArray());
+                    await collectionLinkedService.TryLink(idsToLink);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
                     await collectionNoteRepository.UpdateAsync(collection);

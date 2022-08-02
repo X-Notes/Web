@@ -297,7 +297,8 @@ namespace BI.Services.Files
 
                 if (file.MetaData.ImageFileId.HasValue)
                 {
-                    await collectionLinkedService.TryLink(file.MetaData.ImageFileId.Value);
+                    var list = new List<Guid> { file.MetaData.ImageFileId.Value };
+                    await collectionLinkedService.TryLink(list);
                 }
 
                 var respResult = new FileDTO(file.Id, file.PathPhotoSmall, file.PathPhotoMedium, file.PathPhotoBig, file.PathNonPhotoContent, file.Name, file.UserId, file.MetaData, file.CreatedAt);

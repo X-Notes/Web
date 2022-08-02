@@ -60,7 +60,7 @@ namespace BI.Services.Notes
             return ids.Except(dbIds).Except(histIds).ToList();
         }
 
-        public async Task<bool> TryLink(params Guid[] ids)
+        public async Task<bool> TryLink(IEnumerable<Guid> ids)
         {
             var infos = await appFileUploadInfoRepository.GetWhereAsync(x => ids.Contains(x.AppFileId) && x.UnLinkedDate.HasValue);
             if (infos.Any())
