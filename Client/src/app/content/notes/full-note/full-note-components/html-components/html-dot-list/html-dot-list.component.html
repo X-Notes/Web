@@ -4,12 +4,14 @@
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
-  <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  <app-drag-drop-handler-container [isShow]="isMouseOver" *ngIf="!isReadOnlyMode"
+    ><ng-content></ng-content
   ></app-drag-drop-handler-container>
-  <div class="dot-list">
+  <div
+    class="main-item"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
     <div class="dot-container">
       <div class="dot"></div>
     </div>

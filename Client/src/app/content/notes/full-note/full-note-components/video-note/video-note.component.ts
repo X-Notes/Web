@@ -7,6 +7,7 @@ import {
   HostListener,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  Input,
 } from '@angular/core';
 
 import { Subject } from 'rxjs';
@@ -38,13 +39,14 @@ export class VideoNoteComponent
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
 
+  @Input()
+  isSelected = false;
+
   video: HTMLVideoElement;
 
   isPlaying = false;
 
   isFullscreen = false;
-
-  isWideScreen = false;
 
   counterSlider = 0;
 
@@ -83,10 +85,7 @@ export class VideoNoteComponent
   }
 
   get isEmpty(): boolean {
-    if (!this.content.items || this.content.items.length === 0) {
-      return true;
-    }
-    return false;
+    return !this.content.items || this.content.items.length === 0;
   }
 
   get getMainVideo() {
@@ -122,6 +121,11 @@ export class VideoNoteComponent
     return nodes.length;
   }
 
+  get currentTime() {
+    console.log(this.video?.currentTime);
+    return this.video?.currentTime;
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize = () => {
     const nodes = this.videoPlaylist.nativeElement.children;
@@ -153,10 +157,6 @@ export class VideoNoteComponent
     this.video[action]();
   }
 
-  toggleWideScreen() {
-    this.isWideScreen = !this.isWideScreen;
-  }
-
   async toggleFullscreen() {
     this.isFullscreen = !this.isFullscreen;
     if (this.isFullscreen) {
@@ -167,25 +167,18 @@ export class VideoNoteComponent
   }
 
   async togglePictureInPicture() {
-    // @ts-ignore
-    if (document.pictureInPictureEnabled) {
-      // @ts-ignore
-      if (document.pictureInPictureElement) {
-        // @ts-ignore
-        await document.exitPictureInPicture();
-      } else {
-        // @ts-ignore
-        await this.video?.requestPictureInPicture();
-      }
+    if (!document.pictureInPictureEnabled) {
+      return;
+    }
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture();
+    } else {
+      await this.video?.requestPictureInPicture();
     }
   }
 
   onFullscreenChange() {
-    if (document.fullscreenElement) {
-      this.isFullscreen = true;
-    } else {
-      this.isFullscreen = false;
-    }
+    this.isFullscreen = !!document.fullscreenElement;
   }
 
   onSliderChangeEnd(evt) {

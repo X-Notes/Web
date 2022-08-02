@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'innerNote';
 
 :host {
   display: flex;
@@ -23,10 +24,8 @@
   }
 
   .playlist {
-    display: flex;
     flex-direction: column;
-    width: calc(100% - 30px);
-    border-radius: 5px;
+    overflow: hidden;
 
     .video-wrapper {
       position: relative;

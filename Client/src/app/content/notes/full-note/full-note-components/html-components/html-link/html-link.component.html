@@ -1,6 +1,12 @@
 <div class="card" appTheme>
   <div class="preview">
-    <img *ngIf="data.image" [src]="data.image" (load)="isLoaded = true" [hidden]="!isLoaded" />
+    <img
+      *ngIf="data.image"
+      [src]="data.image"
+      (load)="isLoaded = true"
+      alt="Link image"
+      [hidden]="!isLoaded"
+    />
     <div *ngIf="isLoaded && !data.image" class="photo-error">
       <mat-icon [inline]="true">error_outline</mat-icon>
     </div>

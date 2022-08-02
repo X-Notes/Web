@@ -120,9 +120,7 @@ export class AudioService {
           .updateFileMetaData(audio.fileId, Math.floor(duration), fileId)
           .toPromise();
         if (resp.success && resp?.data?.metaData) {
-          // eslint-disable-next-line no-param-reassign
           audio.secondsDuration = resp.data.metaData?.secondsDuration;
-          // eslint-disable-next-line no-param-reassign
           audio.pathToImage = resp.data.metaData?.imagePath;
         }
       } catch (e) {

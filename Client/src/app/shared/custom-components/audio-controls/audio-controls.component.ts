@@ -2,9 +2,9 @@ import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AudioService } from 'src/app/content/notes/audio.service';
-import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
-import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
+import { AudioService } from '../../../content/notes/audio.service';
+import { AudioModel } from '../../../content/notes/models/editor-models/audios-collection';
+import { StreamAudioState } from '../../../content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 
 @Component({

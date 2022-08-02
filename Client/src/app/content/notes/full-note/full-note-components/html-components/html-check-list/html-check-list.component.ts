@@ -123,8 +123,8 @@ export class HtmlCheckListComponent
   }
 
   async changeCheckBox() {
-    this.content.checkedSG = !this.content.checkedSG;
-    // this.textChanged.next(this.content.contentSG); TODO
+    this.content.checkedSG = !this.content.checked;
+    this.onInput();
   }
 
   // eslint-disable-next-line class-methods-use-this

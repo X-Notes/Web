@@ -1,8 +1,14 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
-  <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  <app-drag-drop-handler-container [isShow]="isMouseOver" classes="mt-20" *ngIf="!isReadOnlyMode"
+    ><ng-content></ng-content
   ></app-drag-drop-handler-container>
-  <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadVideos($event)">
+  <div
+    class="playlist main-item"
+    appTheme
+    appDrop="drop-active"
+    (fileDropped)="uploadVideos($event)"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
     <app-title-collection
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
@@ -14,9 +20,9 @@
     <div
       *ngIf="!isEmpty"
       #videowrapper
+      (dblclick)="onFullscreenChange()"
       (fullscreenchange)="onFullscreenChange()"
       class="video-wrapper"
-      [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo?.fileId) }"
     >
       <video
         (click)="clickVideoHandler(getMainVideo?.fileId)"
@@ -33,8 +39,8 @@
             class="slider"
             min="0"
             [max]="video?.duration"
-            step="1"
-            [value]="video?.currentTime"
+            step="0.01"
+            [value]="currentTime"
             (input)="onSliderChangeEnd($event)"
           ></mat-slider>
         </div>

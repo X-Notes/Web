@@ -1,12 +1,12 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="document-content">
-  <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
+  <app-drag-drop-handler-container [isShow]="isMouseOver" classes="mt-20" *ngIf="!isReadOnlyMode"
+    ><ng-content></ng-content
   ></app-drag-drop-handler-container>
 
   <div
-    [appDrop]="'drop-active'"
+    appDrop="drop-active"
     (fileDropped)="uploadDocuments($event)"
-    class="playlist"
+    class="playlist main-item"
     appTheme
     [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
   >

@@ -1,31 +1,26 @@
 @import 'innerNote';
 
-.check-list {
-  width: 100%;
+.checkbox-container {
   display: flex;
+}
+.text-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-left: 0.5rem;
 
-  .checkbox-container {
-    display: flex;
+  p {
+    transition: 0.2s ease;
   }
-  .text-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    margin-left: 0.5rem;
 
-    p {
-      transition: 0.2s ease;
-    }
+  .checked-item {
+    text-decoration: line-through;
+    color: #8e8e8e;
+  }
 
-    .checked-item {
-      text-decoration: line-through;
-      color: #8e8e8e;
-    }
-
-    .no-content-list{
-      font-size: 1.125rem;
-      margin-left: 0.25rem;
-    }
+  .no-content-list{
+    font-size: 1.125rem;
+    margin-left: 0.25rem;
   }
 }

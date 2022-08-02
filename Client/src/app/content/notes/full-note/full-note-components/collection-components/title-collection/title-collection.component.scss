@@ -5,15 +5,15 @@
   align-items: center;
   justify-content: space-between;
   flex: 1;
-  padding: 0.25rem 0.5rem 0.15rem 0.5rem;
+  padding: 0.25rem 0 0.15rem 0;
 
   .title {
     position: relative;
     display: flex;
-    width: calc(100% - 40px);
+    flex: 1;
     font-size: 0.875rem;
     height: 100%;
-    
+
     p {
       outline: none;
       width: 100%;

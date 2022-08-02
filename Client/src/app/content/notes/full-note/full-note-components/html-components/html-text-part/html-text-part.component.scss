@@ -1,61 +1,60 @@
 @import 'innerNote';
 
 
-.text-content {
-  position: relative;
-  width: calc(100% - 30px);
-  .no-content {
-    width: 100%;
-    position: absolute;
+.no-content {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 300;
+  font-size: 1.125rem;
+  padding: 0.25rem 0.375rem;
+
+  p {
+    margin-left: 0.125rem;
+  }
+
+  .buttons {
+    z-index: 3;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-weight: 300;
-    top: -2px;
-    p {
-      font-size: 1.125rem;
-      margin-left: 0.25rem;
-    }
 
-    .buttons {
-      z-index: 3;
+    .icon {
       display: flex;
-      align-items: center;
+      width: 16px;
+      height: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      margin: 0.13rem;
+      border-radius: 2px;
+      box-sizing: content-box;
+      transition: 0.2s ease;
 
-      .icon {
+      .mat-icon {
         display: flex;
-        width: 16px;
-        height: 16px;
-        font-size: 1rem;
-        cursor: pointer;
-        padding: 0.25rem;
-        margin: 0.13rem;
-        border-radius: 2px;
-        box-sizing: content-box;
-        transition: 0.2s ease;
-
-        .mat-icon {
-          display: flex;
-        }
       }
     }
   }
 }
 
 .dark {
-  .text-content {
-    .no-content {
-      color: #6b6b6b;
+  .no-content {
+    color: #6b6b6b;
 
-      .buttons {
-        .icon {
-          background-color: #31343c;
-          color: #e6e6e6;
+    .buttons {
+      .icon {
+        background-color: #31343c;
+        color: #e6e6e6;
 
-          &:hover {
-            background-color: #393c48;
-            color: white;
-          }
+        &:hover {
+          background-color: #393c48;
+          color: white;
         }
       }
     }
@@ -63,19 +62,17 @@
 }
 
 .light {
-  .text-content {
-    .no-content {
-      color: #6b6b6b;
+  .no-content {
+    color: #6b6b6b;
 
-      .buttons {
-        .icon {
-          background-color: #f5f5f5;
-          color: #909090;
+    .buttons {
+      .icon {
+        background-color: #f5f5f5;
+        color: #909090;
 
-          &:hover {
-            background-color: #eaeaea;
-            color: $text-color;
-          }
+        &:hover {
+          background-color: #eaeaea;
+          color: $text-color;
         }
       }
     }

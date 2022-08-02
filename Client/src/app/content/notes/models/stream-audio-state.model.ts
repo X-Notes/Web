@@ -1,9 +1,9 @@
 export interface StreamAudioState {
   id: string;
   playing: boolean;
-  readableCurrentTime: string | undefined;
-  currentTime: number | undefined;
-  currentVolume: number | undefined;
+  readableCurrentTime?: string;
+  currentTime?: number;
+  currentVolume?: number;
   loop: boolean;
   canplay: boolean;
   error: boolean;
