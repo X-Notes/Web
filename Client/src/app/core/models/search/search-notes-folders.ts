@@ -1,5 +1,5 @@
-import { SearchFolders } from './SearchFolders';
-import { SearchNotes } from './SearchNotes';
+import { SearchFolders } from './search-folders';
+import { SearchNotes } from './search-notes';
 
 export interface SearchNotesFolders {
   noteSearchs: SearchNotes[];
