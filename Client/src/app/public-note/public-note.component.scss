@@ -21,3 +21,11 @@
     max-width: 1024px;
   }
 }
+
+.player-container {
+  position: fixed;
+  z-index: 500;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}

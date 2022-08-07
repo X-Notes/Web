@@ -55,18 +55,12 @@ export class PublicNoteContentComponent implements OnDestroy {
   async loadMain(id: string) {
     await this.store.dispatch(new LoadFullNote(id)).toPromise();
     const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
-    console.log(isLocked);
-    if (isLocked) {
-      throw new Error('Need implementation');
-    } else {
+    if (!isLocked) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      console.log(note);
-      if (!note) return;
-      this.contents = await this.api.getContents(id).toPromise();
-      this.loaded = true;
-      this.note$.subscribe((nt) => {
-        console.log(nt);
-      });
+      if (note) {
+        this.contents = await this.api.getContents(id).toPromise();
+      }
     }
+    this.loaded = true;
   }
 }

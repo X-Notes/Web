@@ -121,15 +121,8 @@
           *ngFor="let item of content.orderedItems; let i = index"
           (click)="openThumbVideo(i)"
         >
-          <div class="thumb-video">
-            <video
-              [ngClass]="{
-                'is-selected': isClicked(item.fileId),
-                'thumb-active': i === indexVideo
-              }"
-              disablecontrols
-              [src]="item?.videoPath"
-            ></video>
+          <div class="thumb-video" [ngClass]="{ 'thumb-active': i === indexVideo }">
+            <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
               *ngIf="!isReadOnlyMode && !isSelectModeActive"
               class="more-thumb-button"

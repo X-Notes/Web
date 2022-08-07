@@ -103,7 +103,7 @@ export class ContentEditorSyncService {
   initProcessChangesAutoTimer(): void {}
 
   change() {
-    this.updateSubject.next(true);
+    this.updateSubject?.next(true);
   }
 
   changeImmediately() {

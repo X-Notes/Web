@@ -6,7 +6,7 @@
       [title$]="noteTitle$"
       [contents]="contents"
     >
-      <!-- <app-note-owner></app-note-owner> -->
+      <app-note-owner></app-note-owner>
     </app-content-editor>
   </div>
   <div *ngIf="(canView$ | async) === false && loaded" class="wrapper">

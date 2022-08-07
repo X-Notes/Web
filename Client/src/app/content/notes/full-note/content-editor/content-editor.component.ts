@@ -430,6 +430,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   postAction(): void {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     const isCanAppend = this.isCanAddNewItem(this.elements?.last?.getContent());
     if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
@@ -439,6 +442,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   placeHolderClick($event) {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     $event.preventDefault();
     this.postAction();
     requestAnimationFrame(() => this.elements?.last?.setFocus());

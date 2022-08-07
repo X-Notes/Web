@@ -20,6 +20,8 @@ import { BaseText } from '../../models/editor-models/base-text';
 export class MenuSelectionDirective implements OnDestroy, OnInit {
   @Input() appMenuSelection: QueryList<ParentInteraction>;
 
+  @Input() isReadonly: boolean;
+
   listeners = [];
 
   constructor(
@@ -31,10 +33,12 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    const mouseupListener = this.renderer.listen(document, 'selectionchange', () =>
-      this.onSelectionchange(),
-    );
-    this.listeners.push(mouseupListener);
+    if (!this.isReadonly) {
+      const mouseupListener = this.renderer.listen(document, 'selectionchange', () =>
+        this.onSelectionchange(),
+      );
+      this.listeners.push(mouseupListener);
+    }
   }
 
   onSelectionchange() {

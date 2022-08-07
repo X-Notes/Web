@@ -2,6 +2,7 @@ import {
   Directive,
   ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -26,6 +27,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   @Output()
   selectionEndEvent = new EventEmitter<DOMRect>();
+
+  @Input() isReadonly: boolean;
 
   listeners = [];
 
@@ -83,7 +86,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    this.initMouseHandlers();
+    if (!this.isReadonly) {
+      this.initMouseHandlers();
+    }
   }
 
   ngOnDestroy(): void {
