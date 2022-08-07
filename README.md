@@ -5,6 +5,14 @@
 * docker build -t davydq/noots-write_api . -f writeAPI.dockerfile
 * docker build -t davydq/noots-web . -f webClient.dockerfile
 
+### HOST ASP
+
+angular.json 
+
+"outputPath": "../Backend/WriteAPI/WriteAPI/wwwroot"
+
+program.cs - line 144
+isHostASP set to true;
 ### Worker commands
 ```
 ng build --prod
