@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  nginx-proxy:
+    container_name: noots_nginx-proxy_host
+    image: noots-static-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - "backend"
+  backend:
+    container_name: noots-api
+    image: noots-api

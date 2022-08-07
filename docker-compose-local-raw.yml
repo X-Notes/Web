@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  nginx-proxy:
+    container_name: noots_nginx-proxy_host
+    build:
+      context: .
+      dockerfile: nginx-static-proxy.dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - "backend"
+  backend:
+    container_name: noots-api
+    build:
+      context: .
+      dockerfile: noots-api.dockerfile

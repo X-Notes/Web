@@ -3,6 +3,7 @@ FROM node:16 AS builder
 WORKDIR /app
 
 COPY Client .
+COPY Docker/nginx.conf .
 
 RUN yarn && \
     yarn prod
