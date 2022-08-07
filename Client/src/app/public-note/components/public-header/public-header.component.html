@@ -1,0 +1,26 @@
+<header>
+  <div class="logo">
+    <img src="../../../../assets/icons/svg/logo.svg" alt="Noots logo" />
+  </div>
+  <div class="active-users">
+    <div class="users">
+      <div
+        class="user"
+        *ngFor="let item of [1, 2, 3, 6]"
+        [CustomTooltip]="'item.name'"
+        position="Bottom"
+      >
+        <img
+          [src]="'https://lh3.googleusercontent.com/a-/AOh14GgRTLJseZ_uJUoSrZgPP16Mb_dLlqXVBMQQvcTj=s96-c'"
+          alt="active user"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <button type="button" routerLink="/about" #trigger>
+      <div class="text">Sign in</div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
+    </button>
+  </div>
+</header>

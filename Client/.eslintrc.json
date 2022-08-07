@@ -13,7 +13,11 @@
           "tsconfig.json",
           "e2e/tsconfig.json"
         ],
+        "ecmaVersion": "latest",
         "createDefaultProgram": true
+      },
+      "env": {
+        "es6": true
       },
       "extends": [
         "plugin:@angular-eslint/ng-cli-compat",
