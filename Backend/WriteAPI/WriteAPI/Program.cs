@@ -20,6 +20,7 @@ using Prometheus;
 using Serilog;
 using System;
 using System.IO;
+using System.Net;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
@@ -34,6 +35,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
     options.Limits.MaxRequestBodySize = FileSizeConstraints.MaxRequestFileSize; // TODO MAYBE MOVE
 });
 
+Console.WriteLine("builder.Environment.EnvironmentName: " + builder.Environment.EnvironmentName);
 
 var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
@@ -67,6 +69,7 @@ var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").V
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
+Console.WriteLine("DB CONN: " + dbConn);
 // ANGULAR
 
 
@@ -135,13 +138,15 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+Console.WriteLine("is DockerDev: " + app.Environment.IsEnvironment("DockerDev"));
+
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DockerDev"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-var isHostASP = true;
+var isHostASP = false;
 var path = Path.Combine(builder.Environment.WebRootPath);
 if (isHostASP)
 {
@@ -183,7 +188,7 @@ app.MapHub<AppSignalRHub>("/hub");
 
 
 // HEALTH CHECK
-// /healthchecks-ui
+// API URL /healthchecks-ui
 app.MapHealthChecksUI();
 app.MapHealthChecks("/app-health", new HealthCheckOptions
 {

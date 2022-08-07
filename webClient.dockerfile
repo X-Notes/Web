@@ -1,11 +1,11 @@
-FROM node:alpine AS builder
+FROM node:16 AS builder
 
 WORKDIR /app
 
 COPY Client .
 
-RUN npm install && \
-    npm run prod
+RUN yarn && \
+    yarn prod
 
 FROM nginx:alpine
 

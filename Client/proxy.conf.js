@@ -4,7 +4,7 @@ const PROXY_CONFIG = [
           "/api",
           "/hub",
       ],
-      target: "https://localhost:7051",
+      target: "http://localhost:5000",
       secure: false,
       ws: true
   }
