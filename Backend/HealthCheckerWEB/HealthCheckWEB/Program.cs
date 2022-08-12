@@ -39,7 +39,8 @@ var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>()
 builder.Services.AddHealthChecks()
                 .AddElasticsearch(elasticConn)
                 .AddHangfire(null)
-                .AddNpgSql(nootsDbConn)
+                .AddNpgSql(nootsDbConn, name: "Noots Database")
+                .AddNpgSql(appDb, name: "Health check Database")
                 .AddSignalRHub($"{nootsAPI}/hub")
                 .AddUrlGroup(
                     new Uri($"{nootsAPI}/health"), name: "NOOTS API",
