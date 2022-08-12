@@ -1,4 +1,5 @@
 using DatabaseContext;
+using DatabaseContext.Models;
 using HealthChecks.UI.Client;
 using HealthCheckWEB.HealthCheckers;
 using HealthCheckWEB.Models.Azure;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,9 +22,9 @@ builder.Configuration.AddConfiguration(configBuilder.Build());
 
 // INIT IDENTITY DB
 var appDb = builder.Configuration.GetSection("IdentityDB").Value;
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(appDb));
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationContext>();
+builder.Services.AddDbContext<ApplicationDatabaseContext>(options => options.UseNpgsql(appDb));
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<ApplicationDatabaseContext>();
 //
 
 // Add services to the container.
