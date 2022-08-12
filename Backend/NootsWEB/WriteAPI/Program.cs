@@ -5,26 +5,21 @@ using Common.Azure;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Prometheus;
 using Serilog;
 using System;
 using System.IO;
-using System.Net;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
-using WriteAPI.HealthCheckers;
 using WriteAPI.Hosted;
 using WriteAPI.Middlewares;
 
@@ -63,29 +58,13 @@ FirebaseApp.Create(new AppOptions
 
 
 var dbConn = builder.Configuration.GetSection("WriteDB").Value;
-var storageConn = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
-var signalRConn = builder.Configuration.GetSection("SignalRUrl").Value;
-var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").Value;
+var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-Console.WriteLine("DB CONN: " + dbConn);
-// ANGULAR
-
-
 builder.Services.SetupLogger(builder.Configuration, environment);
 
-builder.Services.AddHealthChecks()
-                .AddElasticsearch(elasticConn)
-                .AddHangfire(null)
-                .AddNpgSql(dbConn)
-                .AddSignalRHub($"{signalRConn}/hub")
-                .AddCheck<AzureBlobStorageHealthChecker>("AzureBlobStorageChecker");
-
-builder.Services.AddHealthChecksUI()
-                .AddInMemoryStorage();
-
-builder.Services.AzureConfig(storageConn);
+builder.Services.AzureConfig(storageConfig);
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JWT(builder.Configuration);
 
@@ -96,6 +75,8 @@ builder.Services.AddScoped<UserBackgroundMapper>();
 
 builder.Services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();
+
+builder.Services.AddHealthChecks();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer(); // check
@@ -169,9 +150,6 @@ if (isHostASP && !string.IsNullOrEmpty(builder.Environment.WebRootPath))
     });
 }
 
-// Use the prometheus middleware
-app.UseMetricServer();
-app.UseHttpMetrics();
 
 app.UseIpRateLimiting();
 
@@ -183,18 +161,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapMetrics();
 app.MapHangfireDashboard();
 app.MapHub<AppSignalRHub>("/hub");
 
-
-// HEALTH CHECK
-// API URL /healthchecks-ui
-app.MapHealthChecksUI();
-app.MapHealthChecks("/app-health", new HealthCheckOptions
-{
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-
+app.MapHealthChecks("/health");
 
 await app.RunAsync();

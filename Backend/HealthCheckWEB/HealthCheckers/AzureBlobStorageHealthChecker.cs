@@ -1,10 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace WriteAPI.HealthCheckers
+namespace HealthCheckWEB.HealthCheckers
 {
     public class AzureBlobStorageHealthChecker : IHealthCheck
     {
@@ -35,7 +32,8 @@ namespace WriteAPI.HealthCheckers
 
                 return HealthCheckResult.Healthy("Blob storage healthy");
 
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return HealthCheckResult.Unhealthy("Azure Storage does not work");
             }
