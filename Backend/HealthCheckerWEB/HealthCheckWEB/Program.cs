@@ -1,7 +1,10 @@
+using DatabaseContext;
 using HealthChecks.UI.Client;
 using HealthCheckWEB.HealthCheckers;
 using HealthCheckWEB.Models.Azure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -15,10 +18,17 @@ var configBuilder = new ConfigurationBuilder()
 
 builder.Configuration.AddConfiguration(configBuilder.Build());
 
+// INIT IDENTITY DB
+var appDb = builder.Configuration.GetSection("IdentityDB").Value;
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(appDb));
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationContext>();
+//
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var dbConn = builder.Configuration.GetSection("WriteDB").Value;
+var nootsDbConn = builder.Configuration.GetSection("NootsDB").Value;
 var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").Value;
 var nootsAPI = builder.Configuration.GetSection("NootsAPI").Value;
 var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
@@ -27,7 +37,7 @@ var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>()
 builder.Services.AddHealthChecks()
                 .AddElasticsearch(elasticConn)
                 .AddHangfire(null)
-                .AddNpgSql(dbConn)
+                .AddNpgSql(nootsDbConn)
                 .AddSignalRHub($"{nootsAPI}/hub")
                 .AddUrlGroup(
                     new Uri($"{nootsAPI}/health"), name: "NOOTS API",
@@ -62,11 +72,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // HEALTH CHECK
 // API URL /healthchecks-ui
-app.MapHealthChecksUI();
+app.MapHealthChecksUI().RequireAuthorization();
 app.MapHealthChecks("/app-health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
