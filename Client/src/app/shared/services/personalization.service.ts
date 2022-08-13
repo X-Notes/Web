@@ -167,8 +167,6 @@ export class PersonalizationService {
 
   hideInnerMenu = false;
 
-  AnimationInnerUsers = true;
-
   users = true;
 
   isCollapseShared = false;
@@ -268,16 +266,6 @@ export class PersonalizationService {
       }
     } else if (this.isCollapseShared) {
       this.isCollapseShared = false;
-    }
-
-    if (this.checkWidth()) {
-      if (this.users) {
-        this.users = false;
-        this.AnimationInnerUsers = false;
-      }
-    } else if (!this.users) {
-      this.users = true;
-      this.AnimationInnerUsers = true;
     }
   }
 
