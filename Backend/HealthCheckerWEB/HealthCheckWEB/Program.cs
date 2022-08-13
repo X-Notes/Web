@@ -19,7 +19,7 @@ var configBuilder = new ConfigurationBuilder()
 builder.Configuration.AddConfiguration(configBuilder.Build());
 
 // INIT IDENTITY DB
-var appDb = builder.Configuration.GetSection("IdentityDB").Value;
+var appDb = builder.Configuration.GetSection("HealthCheckerDatabaseConn").Value;
 builder.Services.AddDbContext<ApplicationDatabaseContext>(options => options.UseNpgsql(appDb));
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<ApplicationDatabaseContext>();
@@ -33,15 +33,24 @@ var elasticConn = builder.Configuration.GetSection("ElasticConfiguration:Uri").V
 var nootsAPI = builder.Configuration.GetSection("NootsAPI").Value;
 var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 
+var nootsWorkersAPI = builder.Configuration.GetSection("NootsWorkersAPI").Value;
+var nootsWorkersDbConn = builder.Configuration.GetSection("NootsWorkersDB").Value;
+
 // HEALTH CHECKER
 builder.Services.AddHealthChecks()
                 .AddElasticsearch(elasticConn)
                 .AddHangfire(null)
                 .AddNpgSql(nootsDbConn, name: "Noots Database")
                 .AddNpgSql(appDb, name: "Health check Database")
+                .AddNpgSql(nootsWorkersDbConn, name: "Noots workers Database")
                 .AddSignalRHub($"{nootsAPI}/hub")
                 .AddUrlGroup(
                     new Uri($"{nootsAPI}/health"), name: "NOOTS API",
+                    failureStatus: HealthStatus.Unhealthy,
+                    timeout: TimeSpan.FromSeconds(3),
+                    tags: new string[] { "services" })
+                .AddUrlGroup(
+                    new Uri($"{nootsWorkersAPI}/health"), name: "Noots workers API",
                     failureStatus: HealthStatus.Unhealthy,
                     timeout: TimeSpan.FromSeconds(3),
                     tags: new string[] { "services" })

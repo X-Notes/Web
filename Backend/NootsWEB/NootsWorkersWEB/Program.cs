@@ -19,6 +19,9 @@ builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<ApplicationDatabaseContext>();
 //
 
+builder.Services.AddHealthChecks();
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -43,5 +46,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHealthChecks("/health");
 
 app.Run();
