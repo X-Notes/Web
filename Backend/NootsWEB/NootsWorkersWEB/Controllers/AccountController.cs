@@ -1,9 +1,9 @@
-﻿using DatabaseContext.Models;
-using HealthCheckWEB.Models.DTO;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NootsWorkersWEB.Database.Models;
+using NootsWorkersWEB.Models.DTO;
 
-namespace HealthCheckWEB.Controllers
+namespace NootsWorkersWEB.Controllers
 {
     public class AccountController : Controller
     {

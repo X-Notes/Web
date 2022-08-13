@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HealthCheckWEB.Models.DTO
+namespace NootsWorkersWEB.Models.DTO
 {
     public class LoginViewModel
     {

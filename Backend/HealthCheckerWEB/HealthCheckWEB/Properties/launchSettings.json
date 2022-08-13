@@ -7,7 +7,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5555" // for ssl add https://localhost:7164;
+      "applicationUrl": "http://localhost:5900" // for ssl add https://localhost:7164;
     },
     "IIS Express": {
       "commandName": "IISExpress",
