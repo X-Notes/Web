@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.App;
 using WriteContext.Repositories;
-using BI.JobsHandlers;
-using BI.Mapping;
 using System.Linq;
-using Common.Timers;
+using WriteAPI.Models;
+using Noots.Mapper.Mapping;
 
 namespace WriteAPI.Controllers
 {

@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
-using BI.Mapping;
-using BI.Services.Encryption;
-using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
@@ -21,11 +16,14 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.WebSockets;
-using Domain.Commands.Files;
 using Domain.Commands.Notes;
-using Domain.Queries.Permissions;
 using MediatR;
-using Storage;
+using Noots.Encryption.Impl;
+using Noots.History.Impl;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
+using Noots.Storage;
+using Noots.Storage.Commands;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.Labels;
@@ -41,7 +39,6 @@ namespace BI.Services.Notes
         IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>,
         IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>,
         IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>,
-        IRequestHandler<MakeNoteHistoryCommand, Unit>,
         IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>,
         IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>,
         IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>
@@ -52,7 +49,6 @@ namespace BI.Services.Notes
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
-        private readonly HistoryCacheService historyCacheService;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
         private readonly LabelRepository labelRepository;
         private readonly NoteWSUpdateService noteWSUpdateService;
@@ -62,6 +58,7 @@ namespace BI.Services.Notes
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly SnapshotFileContentRepository snapshotFileContentRepository;
         private readonly CollectionNoteRepository collectionNoteRepository;
+        private readonly HistoryCacheService historyCacheService;
 
         public NoteHandlerCommand(
             NoteRepository noteRepository,
@@ -69,7 +66,6 @@ namespace BI.Services.Notes
             IMediator _mediator, 
             LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository,
-            HistoryCacheService historyCacheService, 
             NoteSnapshotRepository noteSnapshotRepository,
             LabelRepository labelRepository, 
             NoteWSUpdateService noteWSUpdateService,
@@ -78,14 +74,14 @@ namespace BI.Services.Notes
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             FoldersNotesRepository foldersNotesRepository,
             SnapshotFileContentRepository snapshotFileContentRepository,
-            CollectionNoteRepository collectionNoteRepository)
+            CollectionNoteRepository collectionNoteRepository,
+            HistoryCacheService historyCacheService)
         {
             this.noteRepository = noteRepository;
             this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.labelsNotesRepository = labelsNotesRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.historyCacheService = historyCacheService;
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.labelRepository = labelRepository;
             this.noteWSUpdateService = noteWSUpdateService;
@@ -95,6 +91,7 @@ namespace BI.Services.Notes
             this.foldersNotesRepository = foldersNotesRepository;
             this.snapshotFileContentRepository = snapshotFileContentRepository;
             this.collectionNoteRepository = collectionNoteRepository;
+            this.historyCacheService = historyCacheService;
         }
 
 
@@ -463,59 +460,6 @@ namespace BI.Services.Notes
                 return new OperationResult<Unit>(true, Unit.Value);
             }
             return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
-        {
-            var noteForCopy = await noteRepository.GetNoteWithContent(request.Id);
-            var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(z => new SnapshotNoteLabel { Name = z.Name, Color = z.Color }).ToList();
-   
-            var snapshot = new NoteSnapshot()
-            {
-                NoteTypeId = noteForCopy.NoteTypeId,
-                RefTypeId = noteForCopy.RefTypeId,
-                Title = noteForCopy.Title,
-                Color = noteForCopy.Color,
-                SnapshotTime = DateTimeProvider.Time,
-                NoteId = noteForCopy.Id,
-                Labels = labels,
-                UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),
-                SnapshotFileContents = noteForCopy.Contents.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
-                Contents = Convert(noteForCopy.Contents)
-            };
-
-            var dbSnapshot = await noteSnapshotRepository.AddAsync(snapshot);
-            return Unit.Value;
-        }
-
-        private ContentSnapshot Convert(List<BaseNoteContent> contents)
-        {
-            var result = new ContentSnapshot();
-
-            foreach (var content in contents)
-            {
-                switch (content)
-                {
-                    case TextNote tN:
-                        {
-                            var tNDTO = new TextNoteSnapshot(tN.Contents, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
-                            result.TextNoteSnapshots.Add(tNDTO);
-                            break;
-                        }
-                    case CollectionNote aN:
-                        {
-                            var fileIds = aN.Files.Select(item => item.Id).ToList();
-                            var collectionDTO = new CollectionNoteSnapshot(aN.Name, fileIds, aN.MetaData, aN.FileTypeId, aN.Order, aN.ContentTypeId, aN.UpdatedAt);
-                            result.CollectionNoteSnapshots.Add(collectionDTO);
-                            break;
-                        }
-                    default:
-                        {
-                            throw new Exception("Incorrect type");
-                        }
-                }
-            }
-            return result;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdatePositionsNotesCommand request, CancellationToken cancellationToken)

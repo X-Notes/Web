@@ -1,4 +1,5 @@
-﻿using Common.DTO.Labels;
+﻿using Common.CQRS;
+using Common.DTO.Labels;
 using MediatR;
 using System;
 using System.Collections.Generic;

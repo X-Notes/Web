@@ -13,8 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="4.0.2" />
-    <PackageReference Include="Hangfire" Version="1.7.28" />
-    <PackageReference Include="Hangfire.PostgreSql" Version="1.9.7" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
@@ -24,7 +22,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.3.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" />
     <PackageReference Include="Npgsql" Version="6.0.3" />
@@ -39,10 +36,13 @@
   <ItemGroup>
     <ProjectReference Include="..\BI\BI.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\ContentProcessing\ContentProcessing.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />
-    <ProjectReference Include="..\Storage\Storage.csproj" />
+    <ProjectReference Include="..\Noots.Encryption\Noots.Encryption.csproj" />
+    <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
+    <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
+    <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
     <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 

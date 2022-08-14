@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Storage\Storage.csproj" />
+    <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
   </ItemGroup>
 
 </Project>

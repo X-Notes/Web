@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Services.DiffsMatchPatch;
-using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
-using DiffMatchPatch;
 using Domain.Commands.NoteInner.FileContent.Texts;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.History.Impl;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 

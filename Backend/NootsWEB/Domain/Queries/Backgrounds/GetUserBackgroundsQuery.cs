@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.CQRS;
 using Common.DTO.Backgrounds;
 using MediatR;
 

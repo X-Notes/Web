@@ -1,25 +1,17 @@
-﻿using Common.Azure;
-using ContentProcessing;
+﻿using ContentProcessing;
 using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Storage;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BI.Services.Backgrounds;
-using BI.Services.Encryption;
-using BI.Services.Files;
 using BI.Services.Folders;
-using BI.Services.History;
 using BI.Services.Labels;
 using BI.Services.Notes;
-using BI.Services.Permissions;
 using BI.Services.Personalizations;
 using BI.Services.RelatedNotes;
 using BI.Services.Search;
@@ -27,19 +19,14 @@ using BI.Services.Sharing;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
-using Common.DTO.Files;
 using Common.DTO.Folders;
-using Common.DTO.History;
 using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Permissions;
 using Common.DTO.Personalization;
 using Common.DTO.Search;
 using Common.DTO.Users;
 using Domain.Commands.Backgrounds;
-using Domain.Commands.Encryption;
-using Domain.Commands.Files;
 using Domain.Commands.FolderInner;
 using Domain.Commands.Folders;
 using Domain.Commands.Labels;
@@ -53,44 +40,24 @@ using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
 using Domain.Commands.Users;
 using Domain.Queries.Backgrounds;
-using Domain.Queries.Encryption;
-using Domain.Queries.Files;
 using Domain.Queries.Folders;
-using Domain.Queries.History;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Labels;
 using Domain.Queries.Notes;
-using Domain.Queries.Permissions;
 using Domain.Queries.Personalization;
 using Domain.Queries.RelatedNotes;
 using Domain.Queries.Search;
 using Domain.Queries.Sharing;
 using Domain.Queries.Users;
-using WriteContext;
-using WriteContext.GenericRepositories;
-using WriteContext.Repositories;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Histories;
-using WriteContext.Repositories.Labels;
-using WriteContext.Repositories.NoteContent;
-using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Notifications;
-using WriteContext.Repositories.Users;
 using Common.DTO.Notes.AdditionalContent;
 using BI.Services.UserHandlers;
-using Hangfire;
-using Hangfire.PostgreSql;
-using BI.JobsHandlers;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
-using WriteContext.Repositories.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
-using Common.Timers;
-using WriteContext.Repositories.WS;
 using Common.DTO.WebSockets.ReletedNotes;
 using BI.Services.DiffsMatchPatch;
 using Common.DTO.Notes.FullNoteSyncContents;
@@ -100,10 +67,15 @@ using Domain.Queries.NoteInner;
 using BI.Services.Notes.Photos;
 using BI.Services.Notes.Documents;
 using BI.Services.Notes.Videos;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
-using System.Reflection;
+using WriteAPI.Models;
+using Noots.Encryption.Entities;
+using Noots.Permissions;
+using Noots.Storage;
+using Noots.Storage.Queries;
+using Noots.History;
+using Noots.Encryption;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -154,7 +126,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakeNoteHistoryCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
@@ -266,63 +237,24 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveAllUsersFromFolderCommand, OperationResult<Unit>>, SharingHandlerCommand>();
 
             //LOCK
-            services.AddScoped<IRequestHandler<DecriptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
-            services.AddScoped<IRequestHandler<EncryptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
-            services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
+            services.ApplyEncryptionDI();
 
             // HISTORY
-            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, HistoryHandlerQuery>();
+            services.ApplyHistorysDI();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
             services.AddScoped<IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>, SeachQueryHandler>();
 
-
             //Files
-            services.AddScoped<IRequestHandler<GetFileByPathQuery, FilesBytes>, FilesHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserStorageMemoryQuery, GetUserMemoryResponse>, FilesHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, List<AppFile>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveBackgroundCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveUserPhotoCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveFilesFromStorageCommand, Unit>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<CreateUserContainerCommand, Unit>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateFileMetaDataCommand, OperationResult<FileDTO>>, FileHandlerCommand>();
+            services.ApplyStorageDI();
 
             // Permissions
-            services.AddScoped<IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>, PermissionHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserPermissionsForNotesManyQuery, List<(Guid, UserPermissionsForNote)>>, PermissionHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>, PermissionHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>, PermissionHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<GetPermissionUploadFileQuery, PermissionUploadFileEnum>, PermissionHandlerQuery>();
+            services.ApplyPermissionsDI();
 
             // Personalizations
             services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
             services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>, PersonalizationHandlerCommand>();
-        }
-
-        public static void HangFireConfig(this IServiceCollection services, IConfiguration Configuration)
-        {
-            string connectionString = Configuration.GetSection("WriteDB").Value;
-
-            // Add Hangfire services.
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(connectionString));
-
-            // Add the processing server as IHostedService
-            services.AddHangfireServer();
         }
 
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)
@@ -348,82 +280,14 @@ namespace WriteAPI.ConfigureAPP
             };
         }
 
-        public static void DataBase(this IServiceCollection services, string dbConnection)
-        {
-            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(dbConnection));
-
-            // NOTIFICATIONS 
-            services.AddScoped<NotificationRepository>();
-
-            // USERS
-            services.AddScoped<UserRepository>();
-            services.AddScoped<BackgroundRepository>();
-            services.AddScoped<UserProfilePhotoRepository>();
-            services.AddScoped<BillingPlanRepository>();
-
-            // FILES
-            services.AddScoped<FileRepository>();
-            services.AddScoped<AppFileUploadInfoRepository>();
-
-
-            // APP
-            services.AddScoped<AppRepository>();
-
-
-            // NOTES
-            services.AddScoped<NoteRepository>();
-            services.AddScoped<ReletatedNoteToInnerNoteRepository>();
-            services.AddScoped<RelatedNoteUserStateRepository>();
-            services.AddScoped<UsersOnPrivateNotesRepository>();
-
-            //LABELS
-            services.AddScoped<LabelRepository>();
-            services.AddScoped<LabelsNotesRepository>();
-
-            // FOLDERS
-            services.AddScoped<FolderRepository>();
-            services.AddScoped<UsersOnPrivateFoldersRepository>();
-            services.AddScoped<FoldersNotesRepository>();
-
-            // Note Content 
-            services.AddScoped<CollectionNoteRepository>();
-            services.AddScoped<CollectionAppFileRepository>();
-
-            services.AddScoped<TextNotesRepository>();
-            services.AddScoped<BaseNoteContentRepository>();
-            services.AddScoped<SearchRepository>();
-
-            // History
-            services.AddScoped<NoteSnapshotRepository>();
-            services.AddScoped<UserNoteHistoryManyToManyRepository>();
-            services.AddScoped<SnapshotFileContentRepository>();
-            services.AddScoped<CacheNoteHistoryRepository>();
-
-            // Personalization
-            services.AddScoped<PersonalizationSettingRepository>();
-
-            // WS
-            services.AddScoped<UserIdentifierConnectionIdRepository>();
-
-            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-        }
-
-        public static void AzureConfig(this IServiceCollection services, AzureConfig config)
-        {
-            services.AddSingleton(x => config);
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(config.StorageConnectionEmulator);
-            });
-        }
 
         public static void TimersConfig(this IServiceCollection services, IConfiguration Configuration)
         {
             var configService = Configuration.GetSection("Timers").Get<TimersConfig>();
             services.AddSingleton(x => configService);
 
-            var hostedConfigService = Configuration.GetSection("HostedTimers").Get<HostedTimersConfig>();
-            services.AddSingleton(x => hostedConfigService);
+            var unlockConfig = Configuration.GetSection("UnlockConfig").Get<UnlockConfig>();
+            services.AddSingleton(x => unlockConfig);
         }
 
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -476,24 +340,6 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddSingleton<WebsocketsNotesServiceStorage>();
             services.AddSingleton<WebsocketsFoldersServiceStorage>();
-            services.AddScoped<UserNoteEncryptService>();
-
-            services.AddSingleton<AppEncryptor>();
-
-            services.AddScoped<IImageProcessor, ImageProcessor>();
-
-            // BACKGROUND JOBS
-            services.AddScoped<EntitiesDeleteJobHandler>();
-
-            services.AddScoped<HistoryCacheService>();
-            services.AddScoped<HistoryJobHandler>();
-
-            services.AddScoped<UnlinkedFilesDeleteJobHandler>();
-        }
-
-        public static void FileStorage(this IServiceCollection services)
-        {
-            services.AddScoped<IFilesStorage, AzureFileStorage>();
         }
     }
 }

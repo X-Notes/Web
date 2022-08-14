@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
-using Common.DTO.Notes.AdditionalContent;
 using Domain.Queries.Folders;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Users;
 

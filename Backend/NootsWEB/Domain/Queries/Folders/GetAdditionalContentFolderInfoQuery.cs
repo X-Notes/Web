@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Common.Attributes;
 using Common.DTO.Folders.AdditionalContent;
+using Common.CQRS;
 
 namespace Domain.Queries.Folders
 {

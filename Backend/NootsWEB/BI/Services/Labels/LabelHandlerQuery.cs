@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Common.DTO.Labels;
 using Domain.Queries.Labels;
 using MediatR;
+using Noots.Mapper.Mapping;
 using WriteContext.Repositories.Labels;
 
 namespace BI.Services.Labels
@@ -15,7 +14,9 @@ namespace BI.Services.Labels
         IRequestHandler<GetCountNotesByLabelQuery, int>
     {
         private readonly LabelRepository labelRepository;
+
         private NoteFolderLabelMapper appCustomMapper;
+
         public LabelHandlerQuery(LabelRepository labelRepository, NoteFolderLabelMapper appCustomMapper)
         {
             this.labelRepository = labelRepository;

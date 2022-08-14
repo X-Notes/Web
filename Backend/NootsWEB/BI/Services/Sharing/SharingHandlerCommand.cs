@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.SignalR;
@@ -12,8 +10,8 @@ using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;

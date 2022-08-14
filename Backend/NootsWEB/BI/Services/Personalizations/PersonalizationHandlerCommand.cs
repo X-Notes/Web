@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Domain.Commands.Personalizations;
 using MediatR;
 using WriteContext.Repositories.Users;
@@ -12,20 +10,11 @@ namespace BI.Services.Personalizations
         : IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>
     {
 
-        private readonly UserRepository userRepository;
-
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
 
-        private readonly NoteFolderLabelMapper appCustomMapper;
-
-        public PersonalizationHandlerCommand(
-            UserRepository userRepository,
-            PersonalizationSettingRepository personalizationSettingRepository,
-            NoteFolderLabelMapper appCustomMapper)
+        public PersonalizationHandlerCommand(PersonalizationSettingRepository personalizationSettingRepository)
         {
-            this.userRepository = userRepository;
             this.personalizationSettingRepository = personalizationSettingRepository;
-            this.appCustomMapper = appCustomMapper;
         }
 
         public async Task<Unit> Handle(UpdatePersonalizationSettingsCommand request, CancellationToken cancellationToken)

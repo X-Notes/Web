@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Users;
 using Domain.Commands.Users;
-using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Storage.Queries;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 

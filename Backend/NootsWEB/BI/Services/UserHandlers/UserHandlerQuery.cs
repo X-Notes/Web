@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Common.DTO;
 using Common.DTO.Users;
-using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Storage.Queries;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Users;
 

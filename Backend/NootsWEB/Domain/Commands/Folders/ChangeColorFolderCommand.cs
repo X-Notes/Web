@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using MediatR;
 using Common.Attributes;
 using Common.DTO;
+using Common.CQRS;
 
 namespace Domain.Commands.Folders
 {

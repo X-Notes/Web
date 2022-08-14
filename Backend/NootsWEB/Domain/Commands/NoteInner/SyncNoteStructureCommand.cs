@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using MediatR;

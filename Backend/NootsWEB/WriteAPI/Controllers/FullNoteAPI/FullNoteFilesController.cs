@@ -1,13 +1,12 @@
-﻿using Common.DatabaseModels.Models.Files;
+﻿using BI.Services.Notes;
+using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
-using Domain.Commands.Files;
-using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Files;
-using Domain.Commands.NoteInner.FileContent.Photos;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Storage.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +23,12 @@ namespace WriteAPI.Controllers.FullNoteAPI
     {
 
         private readonly IMediator _mediator;
+        private readonly CollectionLinkedService collectionLinkedService;
 
-        public FullNoteFilesController(IMediator _mediator)
+        public FullNoteFilesController(IMediator _mediator, CollectionLinkedService collectionLinkedService)
         {
             this._mediator = _mediator;
+            this.collectionLinkedService = collectionLinkedService;
         }
 
         [HttpPost("upload/{noteId}/{fileType}")]
@@ -93,7 +94,13 @@ namespace WriteAPI.Controllers.FullNoteAPI
         public async Task<OperationResult<FileDTO>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
         {
             command.UserId = this.GetUserId();
-            return await _mediator.Send(command);
+            var rs =  await _mediator.Send(command);
+            if (rs.Success && rs.Data.MetaData.ImageFileId.HasValue)
+            {
+                var list = new List<Guid> { rs.Data.MetaData.ImageFileId.Value };
+                await collectionLinkedService.TryLink(list);
+            }
+            return rs;
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
-using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Files;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
+using Noots.Storage.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Search;
 using Domain.Queries.Search;
 using MediatR;
+using Noots.Mapper.Mapping;
 using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 

@@ -1,4 +1,5 @@
-﻿using Common.DTO.Personalization;
+﻿using Common.CQRS;
+using Common.DTO.Personalization;
 using MediatR;
 
 namespace Domain.Commands.Personalizations

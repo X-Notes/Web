@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Backgrounds;
 using Common.DTO.Users;
-using Domain.Commands.Files;
 using Domain.Commands.Users;
-using Domain.Queries.Permissions;
 using MediatR;
-using Storage;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
+using Noots.Storage.Commands;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers
@@ -34,6 +31,7 @@ namespace BI.Services.UserHandlers
         private readonly IMediator _mediator;
 
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
+
         private readonly UserBackgroundMapper userBackgroundMapper;
 
         public UserHandlerСommand(

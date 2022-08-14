@@ -1,13 +1,11 @@
-﻿using BI.Mapping;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DTO.Notes.FullNoteContent.Files;
+﻿using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Queries.NoteInner;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories.NoteContent;
@@ -18,7 +16,9 @@ namespace BI.Services.Notes.Audios
         IRequestHandler<GetNoteFilesByIdsQuery<AudioNoteDTO>, List<AudioNoteDTO>>
     {
         private readonly IMediator mediator;
+
         private readonly CollectionAppFileRepository collectionAppFileRepository;
+
         private readonly NoteFolderLabelMapper mapper;
 
         public AudiosCollectionHandlerQuery(IMediator _mediator, CollectionAppFileRepository collectionAppFileRepository, NoteFolderLabelMapper mapper)

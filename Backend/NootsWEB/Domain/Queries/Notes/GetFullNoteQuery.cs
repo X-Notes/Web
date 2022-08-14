@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;

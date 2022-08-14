@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Attributes;
+using Common.CQRS;
 using MediatR;
 
 namespace Domain.Commands.Labels
@@ -8,6 +9,7 @@ namespace Domain.Commands.Labels
     {
         [ValidationGuid]
         public Guid Id { set; get; }
+
         public SetDeletedLabelCommand(Guid userId, Guid id)
             : base(userId)
         {

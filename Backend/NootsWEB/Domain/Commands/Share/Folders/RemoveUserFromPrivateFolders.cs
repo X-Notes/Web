@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Attributes;
+using Common.CQRS;
 using Common.DTO;
 using MediatR;
 

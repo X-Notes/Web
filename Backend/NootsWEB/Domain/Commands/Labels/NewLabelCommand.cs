@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.CQRS;
 using MediatR;
 
 namespace Domain.Commands.Labels

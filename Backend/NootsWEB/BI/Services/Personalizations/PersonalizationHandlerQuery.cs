@@ -1,29 +1,23 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Common.DTO.Personalization;
 using Domain.Queries.Personalization;
 using MediatR;
+using Noots.Mapper.Mapping;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Personalizations
 {
-    public class PersonalizationHandlerQuery
-        : IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>
+    public class PersonalizationHandlerQuery : IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>
     {
-
-        private readonly UserRepository userRepository;
-
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
 
         private readonly NoteFolderLabelMapper appCustomMapper;
 
         public PersonalizationHandlerQuery(
-            UserRepository userRepository,
             PersonalizationSettingRepository personalizationSettingRepository,
             NoteFolderLabelMapper appCustomMapper)
         {
-            this.userRepository = userRepository;
             this.personalizationSettingRepository = personalizationSettingRepository;
             this.appCustomMapper = appCustomMapper;
         }

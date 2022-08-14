@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Common.DTO.Users;
 using Domain.Queries.Sharing;
 using MediatR;
+using Noots.Mapper.Mapping;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 

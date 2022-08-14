@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.DTO.History;
-using Domain.Queries.History;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO;
+using Noots.History.Entities;
+using Noots.History.Queries;
 
 namespace WriteAPI.Controllers.Note
 {

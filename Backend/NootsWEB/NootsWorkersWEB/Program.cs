@@ -1,6 +1,16 @@
 using NootsWorkersWEB.Database.Models;
 using NootsWorkersWEB.Database;
 using Microsoft.EntityFrameworkCore;
+using NootsWorkersWEB.ConfigureAPP;
+using WriteAPI.Hosted;
+using Hangfire;
+using WriteContext;
+using Noots.Storage;
+using Common.Azure;
+using Noots.Mapper;
+using Noots.History;
+using MediatR;
+using Noots.Encryption;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +24,31 @@ builder.Configuration.AddConfiguration(configBuilder.Build());
 
 // INIT IDENTITY DB
 var appDb = builder.Configuration.GetSection("DatabaseConnection").Value;
+var dbConn = builder.Configuration.GetSection("NootsDatabaseConnection").Value;
+var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
+
 builder.Services.AddDbContext<ApplicationDatabaseContext>(options => options.UseNpgsql(appDb));
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<ApplicationDatabaseContext>();
 //
+
+builder.Services.ApplyMapperDI();
+
+// AZURE & STORAGE
+builder.Services.ApplyAzureConfig(storageConfig);
+builder.Services.ApplyFileRemoving();
+
+builder.Services.ApplyDataBaseDI(dbConn);
+
+// MAYBE ADD DI LOCK
+
+builder.Services.AddMediatR(typeof(Program));
+
+builder.Services.ApplyMakeHistoryDI();
+builder.Services.TimersConfig(builder.Configuration);
+builder.Services.JOBS();
+
+builder.Services.HangFireConfig(appDb);
 
 builder.Services.AddHealthChecks();
 
@@ -47,6 +78,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHangfireDashboard().RequireAuthorization();
 app.MapHealthChecks("/health");
 
 app.Run();

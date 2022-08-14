@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.CQRS;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
 using Common.DTO.Personalization;

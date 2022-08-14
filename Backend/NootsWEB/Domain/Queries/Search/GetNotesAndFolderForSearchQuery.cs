@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Common.CQRS;
 using Common.DTO.Search;
 using MediatR;
 

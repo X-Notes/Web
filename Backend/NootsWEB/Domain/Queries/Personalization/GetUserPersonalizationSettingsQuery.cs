@@ -1,5 +1,5 @@
-﻿using Common.DTO.Personalization;
-using Domain.Commands;
+﻿using Common.CQRS;
+using Common.DTO.Personalization;
 using MediatR;
 using System;
 

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
-using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Files;
@@ -13,12 +11,11 @@ using Common.DTO;
 using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
-using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
-using Domain.Queries.Permissions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using WriteContext.Repositories.Files;
+using Noots.History.Impl;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes.Photos

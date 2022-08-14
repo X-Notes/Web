@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using Common.CQRS;
 using Common.DTO;
 using MediatR;
 

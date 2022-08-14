@@ -6,8 +6,8 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
 using Domain.Commands.RelatedNotes;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Notes;
 
 namespace BI.Services.RelatedNotes
@@ -18,9 +18,13 @@ namespace BI.Services.RelatedNotes
           IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>
     {
         private readonly IMediator _mediator;
+
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+
         private readonly AppSignalRService appSignalRService;
+
         private readonly RelatedNoteUserStateRepository relatedNoteUserStateRepository;
+
 
         public RelatedNotesHandlerCommand(
             ReletatedNoteToInnerNoteRepository relatedRepository,

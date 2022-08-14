@@ -1,12 +1,11 @@
-﻿using BI.Mapping;
-using Common.DTO.Notes.FullNoteContent.Files;
+﻿using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Queries.NoteInner;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories.NoteContent;

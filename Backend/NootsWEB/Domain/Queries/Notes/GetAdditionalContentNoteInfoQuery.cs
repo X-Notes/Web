@@ -3,6 +3,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using Common.Attributes;
+using Common.CQRS;
 
 namespace Domain.Queries.Notes
 {

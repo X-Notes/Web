@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
-using BI.Mapping;
-using BI.Services.Encryption;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Labels;
@@ -17,8 +14,11 @@ using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Personalization;
 using Common.DTO.Users;
 using Domain.Queries.Notes;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Encryption.Impl;
+using Noots.Mapper.Mapping;
+using Noots.MapperLocked;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.NoteContent;
@@ -49,6 +49,7 @@ namespace BI.Services.Notes
         private readonly UserNoteEncryptService userNoteEncryptStorage;
         private readonly CollectionNoteRepository collectionNoteRepository;
         private readonly NoteSnapshotRepository noteSnapshotRepository;
+        private readonly MapperLockedEntities mapperLockedEntities;
 
         public NoteHandlerQuery(
             NoteRepository noteRepository,
@@ -62,7 +63,8 @@ namespace BI.Services.Notes
             UserBackgroundMapper userBackgroundMapper,
             UserNoteEncryptService userNoteEncryptStorage,
             CollectionNoteRepository collectionNoteRepository,
-            NoteSnapshotRepository noteSnapshotRepository)
+            NoteSnapshotRepository noteSnapshotRepository,
+            MapperLockedEntities mapperLockedEntities)
         {
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
@@ -76,6 +78,7 @@ namespace BI.Services.Notes
             this.userNoteEncryptStorage = userNoteEncryptStorage;
             this.collectionNoteRepository = collectionNoteRepository;
             this.noteSnapshotRepository = noteSnapshotRepository;
+            this.mapperLockedEntities = mapperLockedEntities;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -91,7 +94,7 @@ namespace BI.Services.Notes
 
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+            return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
 
@@ -135,7 +138,7 @@ namespace BI.Services.Notes
                 }
 
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                var ent = appCustomMapper.MapNoteToFullNote(note, permissions.CanWrite);
+                var ent = mapperLockedEntities.MapNoteToFullNote(note, permissions.CanWrite);
                 return new OperationResult<FullNote>(true, ent);
             }
 
@@ -212,7 +215,7 @@ namespace BI.Services.Notes
             notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
             notes = notes.OrderBy(x => x.Order).ToList();
 
-            return appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+            return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
         }
 
         public async Task<OperationResult<List<SmallNote>>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
@@ -232,7 +235,7 @@ namespace BI.Services.Notes
                     }
                 });
 
-                var result = appCustomMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+                var result = mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
                 return new OperationResult<List<SmallNote>>(true, result);
             }
 

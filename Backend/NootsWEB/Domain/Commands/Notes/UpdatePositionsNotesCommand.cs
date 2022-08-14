@@ -1,5 +1,5 @@
 ﻿using Common.Attributes;
-using Common.DatabaseModels.Models.Notes;
+using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;

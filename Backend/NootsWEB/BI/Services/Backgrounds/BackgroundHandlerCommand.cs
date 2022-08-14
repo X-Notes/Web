@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
 using Common.DTO;
 using Common.DTO.Backgrounds;
 using Domain.Commands.Backgrounds;
-using Domain.Commands.Files;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.Permissions.Queries;
+using Noots.Storage.Commands;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Backgrounds

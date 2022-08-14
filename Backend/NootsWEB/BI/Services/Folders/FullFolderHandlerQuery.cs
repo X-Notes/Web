@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
-using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
-using Common.DTO.Personalization;
 using Domain.Queries.InnerFolder;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.MapperLocked;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 
@@ -24,21 +21,24 @@ namespace BI.Services.Folders
     {
 
         private readonly FoldersNotesRepository foldersNotesRepository;
+
         private readonly NoteRepository noteRepository;
+
         private readonly IMediator _mediator;
-        private readonly NoteFolderLabelMapper noteMapper;
+
+        private readonly MapperLockedEntities mapperLockedEntities;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
-            NoteFolderLabelMapper noteMapper,
-            NoteRepository noteRepository
+            NoteRepository noteRepository,
+            MapperLockedEntities mapperLockedEntities
             )
         {
             this.foldersNotesRepository = foldersNotesRepository;
             this._mediator = _mediator;
-            this.noteMapper = noteMapper;
             this.noteRepository = noteRepository;
+            this.mapperLockedEntities = mapperLockedEntities;
         }
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
@@ -61,7 +61,7 @@ namespace BI.Services.Folders
 
                 var notesIds = foldersNotes.Select(x => x.NoteId);
                 var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
-                return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+                return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
             }
 
             return new List<SmallNote>();
@@ -79,7 +79,7 @@ namespace BI.Services.Folders
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     var notes = await noteRepository.GetNotesByUserIdNoLocked(permissions.Caller.Id, folderNoteIds, request.Settings);
-                    return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+                    return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace BI.Services.Folders
                     if (noteIds.Any())
                     {
                         notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteIds, request.Settings);
-                        return noteMapper.MapNotesToSmallNotesDTO(notes, request.UserId);
+                        return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
                     }
                 }
             }

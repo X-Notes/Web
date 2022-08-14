@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
 using Common.DTO;
+using Common.CQRS;
 
 namespace Domain.Queries.Notes
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using Common.CQRS;
 using Common.DTO;
 using MediatR;
 

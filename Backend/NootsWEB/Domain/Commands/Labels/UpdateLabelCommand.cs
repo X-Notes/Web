@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using Common.CQRS;
 using MediatR;
 
 namespace Domain.Commands.Labels

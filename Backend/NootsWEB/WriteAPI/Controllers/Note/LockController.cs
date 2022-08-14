@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Domain.Commands.Encryption;
-using Domain.Queries.Encryption;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO;
-using BI.Services.Encryption;
 using System;
+using Noots.Encryption.Queries;
+using Noots.Encryption.Impl;
+using Noots.Encryption.Commands;
 
 namespace WriteAPI.Controllers.Note
 {
@@ -17,6 +17,7 @@ namespace WriteAPI.Controllers.Note
     public class LockController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         private readonly UserNoteEncryptService userNoteEncryptStorage;
 
         public LockController(IMediator _mediator, UserNoteEncryptService userNoteEncryptStorage)

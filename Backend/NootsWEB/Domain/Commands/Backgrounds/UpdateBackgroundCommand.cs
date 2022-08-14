@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Attributes;
+using Common.CQRS;
 using MediatR;
 
 namespace Domain.Commands.Backgrounds
@@ -8,6 +9,7 @@ namespace Domain.Commands.Backgrounds
     {
         [ValidationGuid]
         public Guid Id { set; get; }
+
         public UpdateBackgroundCommand(Guid userId, Guid id)
             :base(userId)
         {

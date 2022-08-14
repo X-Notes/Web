@@ -1,12 +1,9 @@
 using AspNetCoreRateLimit;
-using BI.Mapping;
 using BI.SignalR;
 using Common.Azure;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
-using Hangfire;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
@@ -14,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Noots.Mapper;
+using Noots.Mapper.Mapping;
+using Noots.MapperLocked;
+using Noots.Storage;
 using Serilog;
 using System;
 using System.IO;
@@ -22,6 +23,7 @@ using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
 using WriteAPI.Hosted;
 using WriteAPI.Middlewares;
+using WriteContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,14 +66,13 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 builder.Services.SetupLogger(builder.Configuration, environment);
 
-builder.Services.AzureConfig(storageConfig);
+builder.Services.ApplyAzureConfig(storageConfig);
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JWT(builder.Configuration);
 
 
-builder.Services.AddScoped<NoteFolderLabelMapper>();
-builder.Services.AddScoped<AppTypesMapper>();
-builder.Services.AddScoped<UserBackgroundMapper>();
+builder.Services.ApplyMapperDI();
+builder.Services.ApplyMapperLockedDI();
 
 builder.Services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();
@@ -86,11 +87,9 @@ builder.Services.AddSingleton<IUserIdProvider, IdProvider>();
 
 builder.Services.Mediatr();
 
-builder.Services.HangFireConfig(builder.Configuration);
-builder.Services.DataBase(dbConn);
+builder.Services.ApplyDataBaseDI(dbConn);
 
 builder.Services.BI();
-builder.Services.FileStorage();
 
 builder.Services.AddMemoryCache();
 
@@ -102,11 +101,9 @@ builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection
 // inject counter and rules stores
 builder.Services.AddInMemoryRateLimiting();
 
-builder.Services.AddHostedService<JobRegisterHosted>();
 builder.Services.AddHostedService<ManageUsersOnEntitiesHosted>();
 builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<StartDBCleanerHosted>();
-
 
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
@@ -161,7 +158,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHangfireDashboard();
 app.MapHub<AppSignalRHub>("/hub");
 
 app.MapHealthChecks("/health");

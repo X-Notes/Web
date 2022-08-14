@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Attributes;
+using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;

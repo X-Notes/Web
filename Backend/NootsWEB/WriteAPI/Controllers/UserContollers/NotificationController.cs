@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 using Common.DTO.Notifications;
 using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Notifications;
-using WriteContext.Repositories.Users;
-using BI.Mapping;
+using Noots.Mapper.Mapping;
 
 namespace WriteAPI.Controllers.UserContollers
 {
@@ -18,6 +17,7 @@ namespace WriteAPI.Controllers.UserContollers
     public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
     {
         private readonly NotificationRepository notificationRepository;
+
         private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         public NotificationController(NotificationRepository notificationRepository,

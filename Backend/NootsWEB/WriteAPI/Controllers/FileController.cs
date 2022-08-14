@@ -1,7 +1,7 @@
 ﻿using Common.DTO;
-using Domain.Queries.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Permissions.Queries;
 using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;

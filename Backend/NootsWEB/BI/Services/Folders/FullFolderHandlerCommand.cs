@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
 using BI.Services.DiffsMatchPatch;
 using BI.SignalR;
 using Common;
@@ -12,8 +10,8 @@ using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.WebSockets;
 using Domain.Commands.FolderInner;
-using Domain.Queries.Permissions;
 using MediatR;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 

@@ -1,33 +1,34 @@
 ﻿using BI.SignalR;
 using Common;
-using Common.Timers;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using WriteAPI.Models;
 
 namespace WriteAPI.Hosted
 {
     public class ManageUsersOnEntitiesHosted : BackgroundService
     {
         private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
+
         private readonly WebsocketsNotesServiceStorage websocketsNotesService;
-        private readonly HostedTimersConfig hostedTimersConfig;
+
+        private readonly TimersConfig timersConfig;
 
         public ManageUsersOnEntitiesHosted(
             WebsocketsFoldersServiceStorage websocketsFoldersService, 
             WebsocketsNotesServiceStorage websocketsNotesService,
-            HostedTimersConfig hostedTimersConfig)
+            TimersConfig timersConfig)
         {
             this.websocketsFoldersService = websocketsFoldersService;
             this.websocketsNotesService = websocketsNotesService;
-            this.hostedTimersConfig = hostedTimersConfig;
+            this.timersConfig = timersConfig;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var earliestTimestamp = DateTimeProvider.Time.AddHours(-hostedTimersConfig.ManageUsersOnEntitiesDeleteAfterHourse);
+            var earliestTimestamp = DateTimeProvider.Time.AddHours(-timersConfig.ManageUsersOnEntitiesDeleteAfterHourse);
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -36,7 +37,7 @@ namespace WriteAPI.Hosted
                 websocketsFoldersService.ClearEmptyAfterDelay(earliestTimestamp);
                 websocketsNotesService.ClearEmptyAfterDelay(earliestTimestamp);
 
-                await Task.Delay(hostedTimersConfig.ManageUsersOnEntitiesCallClearSeconds * 1000, stoppingToken);
+                await Task.Delay(timersConfig.ManageUsersOnEntitiesCallClearSeconds * 1000, stoppingToken);
             }
         }
     }

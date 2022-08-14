@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Mapping;
 using Common.DTO.Backgrounds;
 using Domain.Queries.Backgrounds;
 using MediatR;
+using Noots.Mapper.Mapping;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Backgrounds
@@ -14,6 +14,7 @@ namespace BI.Services.Backgrounds
         IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>
     {
         private readonly UserRepository userRepository;
+
         private readonly UserBackgroundMapper userBackgroundMapper;
 
         public BackgroundHandlerQuery(UserRepository userRepository, UserBackgroundMapper userBackgroundMapper)

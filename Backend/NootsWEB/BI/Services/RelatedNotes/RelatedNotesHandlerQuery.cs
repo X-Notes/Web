@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using BI.Mapping;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
-using Domain.Queries.Permissions;
 using Domain.Queries.RelatedNotes;
 using MediatR;
+using Noots.Mapper.Mapping;
+using Noots.MapperLocked;
+using Noots.Permissions.Queries;
 using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.RelatedNotes
 {
@@ -19,19 +21,22 @@ namespace BI.Services.RelatedNotes
           IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+
         private readonly NoteRepository noteRepository;
-        private readonly NoteFolderLabelMapper noteMapper;
+
+        private readonly MapperLockedEntities mapperLockedEntities;
+
         private readonly IMediator _mediator;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
-            NoteFolderLabelMapper noteMapper,
+            MapperLockedEntities mapperLockedEntities,
             IMediator _mediator)
         {
             this.relatedRepository = relatedRepository;
             this.noteRepository = noteRepository;
-            this.noteMapper = noteMapper;
+            this.mapperLockedEntities = mapperLockedEntities;
             this._mediator = _mediator;
         }
 
@@ -42,8 +47,9 @@ namespace BI.Services.RelatedNotes
             var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, null);
             var lookUp = notes.ToDictionary(x => x.Id);
             relatedNotes.ForEach(x => x.RelatedNote = lookUp.ContainsKey(x.RelatedNoteId) ? lookUp[x.RelatedNoteId] : null);
-            return noteMapper.MapNotesToRelatedNotes(relatedNotes, request.UserId);
+            return mapperLockedEntities.MapNotesToRelatedNotes(relatedNotes, request.UserId);
         }
+
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
         {
@@ -61,7 +67,7 @@ namespace BI.Services.RelatedNotes
 
                 if (string.IsNullOrEmpty(request.Search))
                 {
-                    return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
+                    return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
                 }
                 else
                 {
@@ -70,7 +76,7 @@ namespace BI.Services.RelatedNotes
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
                     || relatedNotesIds.Contains(x.Id)
                     ).ToList();
-                    return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
+                    return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
                 }
             }
             return new List<PreviewNoteForSelection>();
