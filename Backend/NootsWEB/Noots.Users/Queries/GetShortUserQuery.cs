@@ -1,7 +1,7 @@
 ﻿using Common.CQRS;
 using Common.DTO;
-using Common.DTO.Users;
 using MediatR;
+using Noots.Users.Entities;
 using System;
 
 namespace Domain.Queries.Users

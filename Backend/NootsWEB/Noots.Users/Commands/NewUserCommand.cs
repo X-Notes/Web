@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.CQRS;
 using MediatR;
 
-namespace Domain.Commands.Users
+namespace Noots.Users.Commands
 {
     public class NewUserCommand : BaseCommandEntity, IRequest<Guid>
     {

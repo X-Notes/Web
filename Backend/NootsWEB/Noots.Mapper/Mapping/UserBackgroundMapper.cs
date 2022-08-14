@@ -15,23 +15,6 @@ namespace Noots.Mapper.Mapping
         {
         }
 
-        public ShortUser MapToShortUser(User user)
-        {
-            return new ShortUser
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
-                CurrentBackground = user.CurrentBackground != null ? MapToBackgroundDTO(user.CurrentBackground) : null,
-                LanguageId = user.LanguageId,
-                ThemeId = user.ThemeId,
-                FontSizeId = user.FontSizeId,
-                BillingPlanId = user.BillingPlanId
-            };
-        }
-
         public OnlineUserOnNote MapToOnlineUserOnNote(User user, Guid userIdentifier)
         {
             return new OnlineUserOnNote

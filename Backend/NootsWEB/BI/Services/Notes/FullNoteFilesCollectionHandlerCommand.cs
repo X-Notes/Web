@@ -1,4 +1,4 @@
-﻿using BI.Helpers;
+﻿using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;

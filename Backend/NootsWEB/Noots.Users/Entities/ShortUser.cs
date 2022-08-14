@@ -1,9 +1,8 @@
-﻿using System;
-using Common.DatabaseModels.Models.Plan;
+﻿using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Backgrounds;
 
-namespace Common.DTO.Users
+namespace Noots.Users.Entities
 {
     public class ShortUser
     {

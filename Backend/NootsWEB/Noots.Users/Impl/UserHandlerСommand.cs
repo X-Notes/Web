@@ -1,17 +1,14 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using BI.Helpers;
+﻿using Common;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Users;
-using Domain.Commands.Users;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
+using Noots.Users.Commands;
+using Noots.Users.Entities;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers

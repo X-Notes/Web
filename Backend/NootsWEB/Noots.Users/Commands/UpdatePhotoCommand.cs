@@ -1,20 +1,19 @@
 ﻿using Common.CQRS;
 using Common.DTO;
-using Common.DTO.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
+using Noots.Users.Entities;
 
-namespace Domain.Commands.Users
+namespace Noots.Users.Commands
 {
     public class UpdatePhotoCommand : BaseCommandEntity, IRequest<OperationResult<AnswerChangeUserPhoto>>
     {
         public IFormFile File { set; get; }
 
         public UpdatePhotoCommand(IFormFile file, Guid userId)
-            :base(userId)
+            : base(userId)
         {
-            this.File = file;
+            File = file;
         }
     }
 }

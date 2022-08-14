@@ -45,6 +45,7 @@
     <ProjectReference Include="..\Noots.Personalization\Noots.Personalization.csproj" />
     <ProjectReference Include="..\Noots.Search\Noots.Search.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
+    <ProjectReference Include="..\Noots.Users\Noots.Users.csproj" />
     <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 

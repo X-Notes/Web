@@ -1,11 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Users;
 using Domain.Queries.Users;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Storage.Queries;
+using Noots.Users.Entities;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Users;
 
@@ -35,10 +34,27 @@ namespace BI.Services.UserHandlers
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.UserId);
             if (user != null)
             {
-                var userDto = userBackgroundMapper.MapToShortUser(user);
+                var userDto = MapToShortUser(user);
                 return new OperationResult<ShortUser>(true , userDto);
             }
             return new OperationResult<ShortUser>().SetNotFound();
+        }
+
+        private ShortUser MapToShortUser(User user)
+        {
+            return new ShortUser
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                PhotoId = user.UserProfilePhoto?.AppFileId,
+                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                CurrentBackground = user.CurrentBackground != null ? userBackgroundMapper.MapToBackgroundDTO(user.CurrentBackground) : null,
+                LanguageId = user.LanguageId,
+                ThemeId = user.ThemeId,
+                FontSizeId = user.FontSizeId,
+                BillingPlanId = user.BillingPlanId
+            };
         }
 
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)

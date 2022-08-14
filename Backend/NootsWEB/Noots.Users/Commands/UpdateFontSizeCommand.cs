@@ -2,9 +2,8 @@
 using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Users
+namespace Noots.Users.Commands
 {
     public class UpdateFontSizeCommand : BaseCommandEntity, IRequest<Unit>
     {

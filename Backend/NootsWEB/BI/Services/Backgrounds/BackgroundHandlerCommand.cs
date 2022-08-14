@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
+using Common;
 using Common.DTO;
 using Common.DTO.Backgrounds;
 using Domain.Commands.Backgrounds;

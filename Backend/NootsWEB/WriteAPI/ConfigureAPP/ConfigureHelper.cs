@@ -32,7 +32,6 @@ using Domain.Commands.Notes;
 using Domain.Commands.RelatedNotes;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
-using Domain.Commands.Users;
 using Domain.Queries.Backgrounds;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
@@ -40,9 +39,7 @@ using Domain.Queries.Labels;
 using Domain.Queries.Notes;
 using Domain.Queries.RelatedNotes;
 using Domain.Queries.Sharing;
-using Domain.Queries.Users;
 using Common.DTO.Notes.AdditionalContent;
-using BI.Services.UserHandlers;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
@@ -65,11 +62,11 @@ using WriteAPI.Models;
 using Noots.Encryption.Entities;
 using Noots.Permissions;
 using Noots.Storage;
-using Noots.Storage.Queries;
 using Noots.History;
 using Noots.Encryption;
 using Noots.Search;
 using Noots.Personalization;
+using Noots.Users;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -81,16 +78,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddMediatR(typeof(Program));
 
             // USER
-            services.AddScoped<IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<NewUserCommand, Guid>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
-
+            services.ApplyUsersDI();
 
             // Backgrounds
             services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();

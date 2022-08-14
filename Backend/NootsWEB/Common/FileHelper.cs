@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Files;
 using Microsoft.AspNetCore.Http;
 
-namespace BI.Helpers
+namespace Common
 {
     public static class FileHelper
     {
@@ -20,7 +19,7 @@ namespace BI.Helpers
 
         public static async Task<List<FilesBytes>> GetFilesBytesAsync(this List<IFormFile> formFiles)
         {
-            var tasks = formFiles.Select(x => GetFilesBytesAsync(x));
+            var tasks = formFiles.Select(x => x.GetFilesBytesAsync());
             var result = await Task.WhenAll(tasks);
             return result.ToList();
         }
