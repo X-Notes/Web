@@ -5,12 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
-using Common.DTO.Personalization;
 using WriteContext.GenericRepositories;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Files;
+using Common.DTO.Personalization;
 
 namespace WriteContext.Repositories.Notes
 {

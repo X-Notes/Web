@@ -7,14 +7,12 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using Common.DatabaseModels.Models.Users;
 using Common.DTO.App;
 using Common.DTO.Folders;
 using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
-using Common.DTO.Personalization;
 
 namespace Noots.Mapper.Mapping
 {
@@ -331,30 +329,6 @@ namespace Noots.Mapper.Mapping
                 RefTypeId = folder.RefTypeId
             };
         }
-
-
-        // PERSONALIZATION
-        public PersonalizationSettingDTO MapPersonalizationSettingToPersonalizationSettingDTO(PersonalizationSetting pr)
-        {
-            if(pr == null)
-            {
-                return null;
-            }
-
-            return new PersonalizationSettingDTO()
-            {
-                IsViewAudioOnNote = pr.IsViewAudioOnNote,
-                IsViewDocumentOnNote = pr.IsViewDocumentOnNote,
-                IsViewPhotosOnNote = pr.IsViewPhotosOnNote,
-                IsViewTextOnNote = pr.IsViewTextOnNote,
-                IsViewVideoOnNote = pr.IsViewVideoOnNote,
-                NotesInFolderCount = pr.NotesInFolderCount,
-                ContentInNoteCount = pr.ContentInNoteCount,
-                SortedNoteByTypeId = pr.SortedNoteByTypeId,
-                SortedFolderByTypeId = pr.SortedFolderByTypeId
-            };
-        }
-
     }
 
 }

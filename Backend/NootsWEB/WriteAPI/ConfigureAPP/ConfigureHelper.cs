@@ -11,7 +11,6 @@ using BI.Services.Backgrounds;
 using BI.Services.Folders;
 using BI.Services.Labels;
 using BI.Services.Notes;
-using BI.Services.Personalizations;
 using BI.Services.RelatedNotes;
 using BI.Services.Sharing;
 using BI.SignalR;
@@ -21,7 +20,6 @@ using Common.DTO.Folders;
 using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Personalization;
 using Common.DTO.Users;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.FolderInner;
@@ -31,7 +29,6 @@ using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
-using Domain.Commands.Personalizations;
 using Domain.Commands.RelatedNotes;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
@@ -41,7 +38,6 @@ using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Labels;
 using Domain.Queries.Notes;
-using Domain.Queries.Personalization;
 using Domain.Queries.RelatedNotes;
 using Domain.Queries.Sharing;
 using Domain.Queries.Users;
@@ -73,6 +69,7 @@ using Noots.Storage.Queries;
 using Noots.History;
 using Noots.Encryption;
 using Noots.Search;
+using Noots.Personalization;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -247,8 +244,7 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyPermissionsDI();
 
             // Personalizations
-            services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
-            services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>, PersonalizationHandlerCommand>();
+            services.ApplyPersonalizationDI();
         }
 
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)

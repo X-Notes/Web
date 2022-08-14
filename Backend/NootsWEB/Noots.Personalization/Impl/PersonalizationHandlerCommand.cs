@@ -1,10 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Domain.Commands.Personalizations;
-using MediatR;
+﻿using MediatR;
+using Noots.Personalization.Commands;
 using WriteContext.Repositories.Users;
 
-namespace BI.Services.Personalizations
+namespace Noots.Personalization.Impl
 {
     public class PersonalizationHandlerCommand
         : IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>

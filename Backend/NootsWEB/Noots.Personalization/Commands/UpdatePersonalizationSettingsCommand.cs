@@ -2,7 +2,7 @@
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Domain.Commands.Personalizations
+namespace Noots.Personalization.Commands
 {
     public class UpdatePersonalizationSettingsCommand : BaseCommandEntity, IRequest<Unit>
     {

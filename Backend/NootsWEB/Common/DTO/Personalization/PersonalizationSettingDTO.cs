@@ -29,7 +29,7 @@ namespace Common.DTO.Personalization
 
             IsViewVideoOnNote = true;
             IsViewAudioOnNote = true;
-            IsViewDocumentOnNote = true;    
+            IsViewDocumentOnNote = true;
             IsViewPhotosOnNote = true;
             IsViewTextOnNote = true;
 

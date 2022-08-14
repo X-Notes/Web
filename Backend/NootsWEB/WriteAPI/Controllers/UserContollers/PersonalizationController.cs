@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Common.DTO.Personalization;
-using Domain.Commands.Personalizations;
-using Domain.Queries.Personalization;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
+using Noots.Personalization.Commands;
+using Noots.Personalization.Queries;
 
 namespace WriteAPI.Controllers.UserContollers
 {

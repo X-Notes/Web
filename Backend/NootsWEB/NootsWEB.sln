@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.MapperLocked", "Noots
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Search", "Noots.Search\Noots.Search.csproj", "{CF064099-4616-4A91-8998-7F45D3058189}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Personalization", "Noots.Personalization\Noots.Personalization.csproj", "{24426311-E6E3-4F31-93C1-C8153180966C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{CF064099-4616-4A91-8998-7F45D3058189}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF064099-4616-4A91-8998-7F45D3058189}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF064099-4616-4A91-8998-7F45D3058189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24426311-E6E3-4F31-93C1-C8153180966C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24426311-E6E3-4F31-93C1-C8153180966C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24426311-E6E3-4F31-93C1-C8153180966C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24426311-E6E3-4F31-93C1-C8153180966C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

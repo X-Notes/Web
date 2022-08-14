@@ -1,9 +1,8 @@
 ﻿using Common.CQRS;
 using Common.DTO.Personalization;
 using MediatR;
-using System;
 
-namespace Domain.Queries.Personalization
+namespace Noots.Personalization.Queries
 {
     public class GetUserPersonalizationSettingsQuery : BaseCommandEntity, IRequest<PersonalizationSettingDTO>
     {
