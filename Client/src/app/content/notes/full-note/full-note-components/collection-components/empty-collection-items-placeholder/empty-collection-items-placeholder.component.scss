@@ -1,10 +1,13 @@
 .empty-block {
-  background-color: #26282d;
-  height: 50px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  height: 50px;
+  background-color: #26282d;
+  border-radius: 5px;
+  margin: 0.15rem 0;
+
   p {
     font-size: 0.875rem;
     color: #7b7b7b;

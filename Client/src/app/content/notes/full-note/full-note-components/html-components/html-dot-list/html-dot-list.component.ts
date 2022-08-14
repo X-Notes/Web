@@ -23,7 +23,7 @@ import { BaseTextElementComponent } from '../html-base.component';
 @Component({
   selector: 'app-html-dot-list',
   templateUrl: './html-dot-list.component.html',
-  styleUrls: ['./html-dot-list.component.scss'],
+  styleUrls: ['./html-dot-list.component.scss', '../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlDotListComponent

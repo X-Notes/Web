@@ -9,24 +9,21 @@
   }
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1320px) {
   .interactions {
-    ng-scrollbar {
-      max-height: 410px;
-    }
-  }
-}
+    justify-content: flex-start;
 
-@media (min-width: 1024px) and (max-width: 1440px) {
-  .visible-people {
-    $header-wrapper-people: 50;
-    .user-circle,
-    .wrapper-people {
-      z-index: $header-wrapper-people;
+    .app-menu {
+      order: 1;
     }
 
-    .overlay {
-      display: block;
+    .app-active-users {
+      order: 2;
+      margin-left: 1.5rem;
+    }
+
+    .app-history {
+      order: 3;
     }
   }
 }
@@ -35,5 +32,10 @@
   .interactions {
     width: 100%;
     justify-content: flex-end;
+
+    .app-active-users {
+      order: initial;
+      margin-left: 0;
+    }
   }
 }

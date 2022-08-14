@@ -1,19 +1,19 @@
-.example-handle {
+:host {
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  .icon {
+.icon {
+  display: flex;
+  width: 14px;
+  height: 14px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  box-sizing: content-box;
+  transition: 0.2s ease;
+
+  .mat-icon {
     display: flex;
-    width: 14px;
-    height: 14px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    box-sizing: content-box;
-    transition: 0.2s ease;
-
-    .mat-icon {
-      display: flex;
-    }
   }
 }

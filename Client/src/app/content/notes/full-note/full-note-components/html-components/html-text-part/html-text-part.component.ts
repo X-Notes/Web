@@ -29,7 +29,7 @@ import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text
 @Component({
   selector: 'app-html-text-part',
   templateUrl: './html-text-part.component.html',
-  styleUrls: ['./html-text-part.component.scss'],
+  styleUrls: ['./html-text-part.component.scss', '../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent

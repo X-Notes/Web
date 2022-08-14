@@ -1,32 +1,20 @@
-@import 'innerNote';
+@import 'variables.scss';
 
-.number-list {
-  width: 100%;
+.number-container {
   display: flex;
+  justify-content: center;
+  font-size: 1.125rem;
+  margin-right: 0.5rem;
+}
 
-  .number-container {
-    display: flex;
-    justify-content: center;
-    font-size: 1.125rem;
-    margin-right: 0.5rem;
-  }
-
-  .text-container {
-    position: relative;
-    display: flex;
-    flex-grow: 1;
-
-    .no-content-list{
-      font-size: 1.125rem;
-      margin-left: 0.25rem;
-    }
-  }
+.text-container {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
 }
 
 .light {
-  .number-list {
-    .number-container {
-      color: $text-color;
-    }
+  .number-container {
+    color: $text-color;
   }
 }

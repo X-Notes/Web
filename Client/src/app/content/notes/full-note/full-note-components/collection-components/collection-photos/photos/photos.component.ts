@@ -24,7 +24,7 @@ import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
-  styleUrls: ['./photos.component.scss'],
+  styleUrls: ['./photos.component.scss', '../../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotosComponent

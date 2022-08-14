@@ -9,6 +9,7 @@
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
     [src]="photo.photoFromBig"
     (load)="onLoadImage()"
+    alt="User album image"
   />
   <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>
   <app-button-collection
