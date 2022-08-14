@@ -10,6 +10,7 @@ using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
+using Noots.Search.Queries;
 
 namespace WriteAPI.Controllers.Note
 {

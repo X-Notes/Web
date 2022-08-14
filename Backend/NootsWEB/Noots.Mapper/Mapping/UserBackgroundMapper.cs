@@ -4,7 +4,6 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Backgrounds;
-using Common.DTO.Search;
 using Common.DTO.Users;
 
 namespace Noots.Mapper.Mapping
@@ -53,17 +52,6 @@ namespace Noots.Mapper.Mapping
             };
         }
 
-        public ShortUserForShareModal MapToShortUserForShareModal(User user)
-        {
-            return new ShortUserForShareModal
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
-            };
-        }
 
         public InvitedUsersToFoldersOrNote MapToInvitedUsersToFoldersOrNote(UserOnPrivateNotes user)
         {

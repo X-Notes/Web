@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Common.CQRS;
-using Common.DTO.Search;
 using MediatR;
+using Noots.Search.Entities;
 
-namespace Domain.Queries.Search
+namespace Noots.Search.Queries
 {
     public class GetNotesAndFolderForSearchQuery : BaseQueryEntity, IRequest<SearchNoteFolderResult>
     {

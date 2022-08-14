@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
 using Common.CQRS;
 using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Domain.Queries.RelatedNotes
+namespace Noots.Search.Queries
 {
     public class GetNotesForPreviewWindowQuery : BaseQueryEntity, IRequest<List<PreviewNoteForSelection>>
     {

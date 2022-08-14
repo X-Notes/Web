@@ -1,9 +1,6 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 
-namespace BI.Helpers
+namespace Noots.Search
 {
     public static class SearchHelper
     {
@@ -19,7 +16,7 @@ namespace BI.Helpers
 
         public static bool IsMatchContent(List<TextBlock> contents, string search)
         {
-            if(contents == null || contents.Count == 0)
+            if (contents == null || contents.Count == 0)
             {
                 return false;
             }

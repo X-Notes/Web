@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Common.DTO.Search
+﻿namespace Noots.Search.Entities
 {
     public class ShortUserForShareModal
     {

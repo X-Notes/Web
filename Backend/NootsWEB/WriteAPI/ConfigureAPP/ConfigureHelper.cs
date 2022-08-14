@@ -1,5 +1,4 @@
-﻿using ContentProcessing;
-using FakeData;
+﻿using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,6 @@ using BI.Services.Labels;
 using BI.Services.Notes;
 using BI.Services.Personalizations;
 using BI.Services.RelatedNotes;
-using BI.Services.Search;
 using BI.Services.Sharing;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
@@ -24,7 +22,6 @@ using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Personalization;
-using Common.DTO.Search;
 using Common.DTO.Users;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.FolderInner;
@@ -46,7 +43,6 @@ using Domain.Queries.Labels;
 using Domain.Queries.Notes;
 using Domain.Queries.Personalization;
 using Domain.Queries.RelatedNotes;
-using Domain.Queries.Search;
 using Domain.Queries.Sharing;
 using Domain.Queries.Users;
 using Common.DTO.Notes.AdditionalContent;
@@ -76,6 +72,7 @@ using Noots.Storage;
 using Noots.Storage.Queries;
 using Noots.History;
 using Noots.Encryption;
+using Noots.Search;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -142,8 +139,7 @@ namespace WriteAPI.ConfigureAPP
             // RELATED NOTES
             services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
+            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();         
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE TEXT
@@ -216,7 +212,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateNotesPositionsInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<SmallNote>>, FullFolderHandlerQuery>();
 
             //SHARE
             services.AddScoped<IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
@@ -243,8 +238,7 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyHistorysDI();
 
             // SEARCH
-            services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
-            services.AddScoped<IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>, SeachQueryHandler>();
+            services.ApplySearchDI();
 
             //Files
             services.ApplyStorageDI();

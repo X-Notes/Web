@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.DTO.Search;
-using Domain.Queries.Search;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Search.Entities;
+using Noots.Search.Queries;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
