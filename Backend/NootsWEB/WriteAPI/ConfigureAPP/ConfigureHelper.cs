@@ -12,7 +12,6 @@ using BI.Services.Folders;
 using BI.Services.Labels;
 using BI.Services.Notes;
 using BI.Services.RelatedNotes;
-using BI.Services.Sharing;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
@@ -30,15 +29,12 @@ using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
 using Domain.Commands.RelatedNotes;
-using Domain.Commands.Share.Folders;
-using Domain.Commands.Share.Notes;
 using Domain.Queries.Backgrounds;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Labels;
 using Domain.Queries.Notes;
 using Domain.Queries.RelatedNotes;
-using Domain.Queries.Sharing;
 using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -67,6 +63,7 @@ using Noots.Encryption;
 using Noots.Search;
 using Noots.Personalization;
 using Noots.Users;
+using Noots.Sharing;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -199,22 +196,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
 
             //SHARE
-            services.AddScoped<IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUsersOnPrivateFolderQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-
-            services.AddScoped<IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>, SharingHandlerCommand>();
-
-            services.AddScoped<IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
-
-            services.AddScoped<IRequestHandler<RemoveAllUsersFromNoteCommand, OperationResult<Unit>>, SharingHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveAllUsersFromFolderCommand, OperationResult<Unit>>, SharingHandlerCommand>();
+            services.ApplySharingDI();
 
             //LOCK
             services.ApplyEncryptionDI();

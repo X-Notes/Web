@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.CQRS;
+﻿using Common.CQRS;
 using Common.DTO.Users;
 using MediatR;
 
-namespace Domain.Queries.Sharing
+namespace Noots.Sharing.Queries
 {
     public class GetUsersOnPrivateFolderQuery : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
     {

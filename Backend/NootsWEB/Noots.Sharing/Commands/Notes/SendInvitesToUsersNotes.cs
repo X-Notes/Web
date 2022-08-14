@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
 using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
+using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Share.Folders
+namespace Noots.Sharing.Commands.Notes
 {
-    public class SendInvitesToUsersFolders : BaseCommandEntity, IRequest<Unit>
+    public class SendInvitesToUsersNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> UserIds { set; get; }
 
         [ValidationGuid]
-        public Guid FolderId { set; get; }
+        public Guid NoteId { set; get; }
 
         [RequiredEnumField(ErrorMessage = "Ref type id is required.")]
         public RefTypeENUM RefTypeId { set; get; }

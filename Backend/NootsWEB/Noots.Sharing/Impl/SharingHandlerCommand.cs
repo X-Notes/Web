@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using BI.SignalR;
+﻿using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
@@ -9,14 +6,15 @@ using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using Domain.Commands.Share.Folders;
-using Domain.Commands.Share.Notes;
 using MediatR;
 using Noots.Permissions.Queries;
+using Noots.Sharing.Commands.Folders;
+using Noots.Sharing.Commands.Notes;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
 
-namespace BI.Services.Sharing
+namespace Noots.Sharing.Impl
 {
     public class SharingHandlerCommand :
         IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>,
@@ -31,13 +29,19 @@ namespace BI.Services.Sharing
         IRequestHandler<RemoveAllUsersFromNoteCommand, OperationResult<Unit>>
     {
         private readonly FolderRepository folderRepository;
+
         private readonly NoteRepository noteRepository;
+
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+
         private readonly IMediator _mediator;
 
         AppSignalRService appSignalRHub;
+
         private readonly NotificationRepository notificationRepository;
+
         public SharingHandlerCommand(
             FolderRepository folderRepository,
             NoteRepository noteRepository,
@@ -64,7 +68,8 @@ namespace BI.Services.Sharing
             var permissions = await _mediator.Send(command);
             var isCanEdit = permissions.All(x => x.perm.IsOwner);
 
-            if (isCanEdit) {
+            if (isCanEdit)
+            {
                 foreach (var perm in permissions)
                 {
                     var folder = perm.perm.Folder;
@@ -350,7 +355,7 @@ namespace BI.Services.Sharing
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
-            { 
+            {
                 var ents = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 await usersOnPrivateFoldersRepository.RemoveRangeAsync(ents);
 
@@ -377,7 +382,7 @@ namespace BI.Services.Sharing
                 var ents = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
                 await usersOnPrivateNotesRepository.RemoveRangeAsync(ents);
 
-                foreach(var en in ents)
+                foreach (var en in ents)
                 {
                     var updateCommand = new UpdatePermissionNoteWS();
                     updateCommand.RevokeIds.Add(request.NoteId);

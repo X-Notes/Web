@@ -1,16 +1,15 @@
-﻿using System;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Share.Folders
+namespace Noots.Sharing.Commands.Notes
 {
-    public class PermissionUserOnPrivateFolders : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class PermissionUserOnPrivateNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
-        public Guid FolderId { set; get; }
+        public Guid NoteId { set; get; }
 
         [ValidationGuid]
         public Guid PermissionUserId { set; get; }

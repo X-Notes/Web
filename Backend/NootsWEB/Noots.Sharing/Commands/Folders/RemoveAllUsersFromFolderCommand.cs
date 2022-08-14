@@ -2,9 +2,8 @@
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Share.Folders
+namespace Noots.Sharing.Commands.Folders
 {
     public class RemoveAllUsersFromFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

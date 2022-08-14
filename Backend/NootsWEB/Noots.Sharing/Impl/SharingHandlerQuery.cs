@@ -1,15 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common.DTO.Users;
-using Domain.Queries.Sharing;
+﻿using Common.DTO.Users;
 using MediatR;
 using Noots.Mapper.Mapping;
+using Noots.Sharing.Queries;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 
-namespace BI.Services.Sharing
+namespace Noots.Sharing.Impl
 {
     public class SharingHandlerQuery :
         IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>,

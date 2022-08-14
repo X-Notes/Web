@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Share.Notes
+namespace Noots.Sharing.Commands.Notes
 {
     public class RemoveUserFromPrivateNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

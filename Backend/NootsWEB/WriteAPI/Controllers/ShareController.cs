@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Users;
 using Domain.Commands.Share.Folders;
-using Domain.Commands.Share.Notes;
-using Domain.Queries.Sharing;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 using Common.DTO;
+using Noots.Sharing.Commands.Notes;
+using Noots.Sharing.Queries;
+using Noots.Sharing.Commands.Folders;
 
 namespace WriteAPI.Controllers
 {

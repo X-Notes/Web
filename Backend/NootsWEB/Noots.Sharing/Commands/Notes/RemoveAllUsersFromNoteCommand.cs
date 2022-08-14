@@ -2,9 +2,8 @@
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Share.Notes
+namespace Noots.Sharing.Commands.Notes
 {
     public class RemoveAllUsersFromNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
