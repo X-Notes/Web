@@ -1,6 +1,6 @@
-﻿using BI.SignalR;
-using Common;
+﻿using Common;
 using Microsoft.Extensions.Hosting;
+using Noots.SignalrUpdater.Impl;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;

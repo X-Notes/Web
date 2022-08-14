@@ -1,14 +1,11 @@
-﻿using BI.SignalR.Models;
-using Common;
+﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Microsoft.Extensions.Logging;
-using System;
+using Noots.SignalrUpdater.Models;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
 
     public class WebsocketsBaseEntities
@@ -93,7 +90,7 @@ namespace BI.SignalR
         public List<(Guid entityId, Guid userId)> RemoveUserFromEntities(string connectionId)
         {
             var result = new List<(Guid, Guid)>();
-            foreach(var ent in entityId_users)
+            foreach (var ent in entityId_users)
             {
                 if (ent.Value.Users.ContainsKey(connectionId))
                 {
@@ -129,11 +126,12 @@ namespace BI.SignalR
                                 idsThatWasDeleted.Add(id);
                             }
                         }
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         logger.LogError(ex.ToString());
                     }
-                } 
+                }
             }
         }
     }

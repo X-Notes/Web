@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Users", "Noots.Users\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Sharing", "Noots.Sharing\Noots.Sharing.csproj", "{16AD0F22-59F5-4DB3-8245-A49405310EF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.SignalrUpdater", "Noots.SignalrUpdater\Noots.SignalrUpdater.csproj", "{D28813C7-7D32-4403-8988-940119239E56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{16AD0F22-59F5-4DB3-8245-A49405310EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16AD0F22-59F5-4DB3-8245-A49405310EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16AD0F22-59F5-4DB3-8245-A49405310EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D28813C7-7D32-4403-8988-940119239E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D28813C7-7D32-4403-8988-940119239E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D28813C7-7D32-4403-8988-940119239E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D28813C7-7D32-4403-8988-940119239E56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

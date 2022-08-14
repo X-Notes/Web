@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
@@ -16,6 +15,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 

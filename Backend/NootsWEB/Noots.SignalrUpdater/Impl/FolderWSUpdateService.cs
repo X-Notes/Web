@@ -1,12 +1,11 @@
-﻿
-using Common.DTO.WebSockets;
+﻿using Common.DTO.WebSockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Users;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class FolderWSUpdateService
     {
@@ -14,7 +13,7 @@ namespace BI.SignalR
         private readonly AppSignalRService appSignalRService;
 
         public FolderWSUpdateService(
-            WebsocketsFoldersServiceStorage websocketsFoldersService, 
+            WebsocketsFoldersServiceStorage websocketsFoldersService,
             AppSignalRService appSignalRService)
         {
             this.websocketsFoldersService = websocketsFoldersService;

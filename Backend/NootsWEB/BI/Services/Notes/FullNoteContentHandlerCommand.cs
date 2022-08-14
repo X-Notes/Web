@@ -1,5 +1,4 @@
-﻿using BI.SignalR;
-using Common.DatabaseModels.Models.Files;
+﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
@@ -12,6 +11,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using System;
 using System.Collections.Generic;
 using System.Linq;

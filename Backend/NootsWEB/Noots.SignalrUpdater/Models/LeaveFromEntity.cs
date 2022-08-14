@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BI.SignalR.Models
+﻿namespace Noots.SignalrUpdater.Models
 {
     public class LeaveFromEntity
     {

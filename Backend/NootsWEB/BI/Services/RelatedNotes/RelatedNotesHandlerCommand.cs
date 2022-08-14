@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.SignalR;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
 using Domain.Commands.RelatedNotes;
 using MediatR;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.Notes;
 
 namespace BI.Services.RelatedNotes

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Helpers;
 using BI.Services.DiffsMatchPatch;
-using BI.SignalR;
 using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -13,6 +11,7 @@ using Domain.Commands.NoteInner.FileContent.Texts;
 using MediatR;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 

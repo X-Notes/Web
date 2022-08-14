@@ -21,6 +21,6 @@ namespace Noots.Sharing.Commands.Notes
         [Required]
         public bool SendMessage { set; get; }
 
-        public string Message { set; get; }
+        public string? Message { set; get; }
     }
 }

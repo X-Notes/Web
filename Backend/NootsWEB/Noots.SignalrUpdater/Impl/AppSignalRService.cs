@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using BI.SignalR.Models;
 using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
 using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
+using Noots.SignalrUpdater.Models;
 using WriteContext.Repositories.WS;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class AppSignalRService
     {
@@ -24,7 +24,7 @@ namespace BI.SignalR
             IHubContext<AppSignalRHub> context,
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository)
         {
-            this.signalRContext = context;
+            signalRContext = context;
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         }
 
@@ -42,7 +42,7 @@ namespace BI.SignalR
         }
 
         public async Task SendNewNotification(Guid userId, bool flag)
-        {         
+        {
             await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, flag);
         }
 

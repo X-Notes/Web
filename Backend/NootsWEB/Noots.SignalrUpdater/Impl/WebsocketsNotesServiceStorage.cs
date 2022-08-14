@@ -1,8 +1,6 @@
-﻿
+﻿using Microsoft.Extensions.Logging;
 
-using Microsoft.Extensions.Logging;
-
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class WebsocketsNotesServiceStorage : WebsocketsBaseEntities
     {

@@ -1,5 +1,4 @@
-﻿using BI.SignalR;
-using Common;
+﻿using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
@@ -10,6 +9,7 @@ using MediatR;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.Sharing.Commands.Notes;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;

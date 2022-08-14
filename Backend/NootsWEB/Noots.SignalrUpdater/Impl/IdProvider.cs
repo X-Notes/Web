@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class IdProvider : IUserIdProvider
     {

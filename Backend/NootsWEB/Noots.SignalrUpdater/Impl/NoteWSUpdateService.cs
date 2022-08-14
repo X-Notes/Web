@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Users;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class NoteWSUpdateService
     {
@@ -29,7 +29,7 @@ namespace BI.SignalR
 
         public async Task UpdateNotes(IEnumerable<(UpdateNoteWS value, List<Guid> userIds)> updates, Guid exceptUserId)
         {
-            foreach(var update in updates)
+            foreach (var update in updates)
             {
                 await UpdateNote(update.value, update.userIds, exceptUserId);
             }
@@ -39,7 +39,7 @@ namespace BI.SignalR
         {
             var connections = websocketsNotesService.GetConnectiondsById(update.NoteId, exceptUserId);
 
-            if(userIds != null && userIds.Any())
+            if (userIds != null && userIds.Any())
             {
                 var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
                 connections.AddRange(additionalConnections);

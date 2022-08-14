@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BI.SignalR.Models;
-using Common;
+﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using WriteContext.Repositories.Users;
+using Noots.SignalrUpdater.Models;
 using WriteContext.Repositories.WS;
 
-namespace BI.SignalR
+namespace Noots.SignalrUpdater.Impl
 {
     public class AppSignalRHub : Hub
     {
@@ -27,8 +21,8 @@ namespace BI.SignalR
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
             ILogger<AppSignalRHub> logger)
         {
-            this.wsNotesService = websocketsNotesService;
-            this.wsFoldersService = websocketsFoldersService;
+            wsNotesService = websocketsNotesService;
+            wsFoldersService = websocketsFoldersService;
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
             this.logger = logger;
         }
@@ -49,13 +43,13 @@ namespace BI.SignalR
         // NOTES
         public async Task JoinNote(Guid noteId)
         {
-            if(wsNotesService.IsContainsConnectionId(noteId, Context.ConnectionId))
+            if (wsNotesService.IsContainsConnectionId(noteId, Context.ConnectionId))
             {
                 return;
             }
 
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
-            if(ent == null)
+            if (ent == null)
             {
                 return;
             }
@@ -78,7 +72,7 @@ namespace BI.SignalR
                 return;
             }
 
-            if(result.user != null)
+            if (result.user != null)
             {
                 await RemoveOnlineUsersNoteAsync(noteId, result.user.Id);
             }
@@ -174,7 +168,7 @@ namespace BI.SignalR
             await RemoveConnectionAsync();
 
             var folderEnts = wsFoldersService.RemoveUserFromEntities(Context.ConnectionId);
-            foreach(var ent in folderEnts)
+            foreach (var ent in folderEnts)
             {
                 await RemoveOnlineUsersFolderAsync(ent.entityId, ent.userId);
             }

@@ -20,6 +20,6 @@ namespace Noots.Sharing.Commands.Folders
         [Required]
         public bool SendMessage { set; get; }
 
-        public string Message { set; get; }
+        public string? Message { set; get; }
     }
 }

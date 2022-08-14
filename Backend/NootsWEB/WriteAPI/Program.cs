@@ -1,5 +1,4 @@
 using AspNetCoreRateLimit;
-using BI.SignalR;
 using Common.Azure;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -12,8 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Noots.Mapper;
-using Noots.Mapper.Mapping;
 using Noots.MapperLocked;
+using Noots.SignalrUpdater;
+using Noots.SignalrUpdater.Impl;
 using Noots.Storage;
 using Serilog;
 using System;
@@ -90,6 +90,7 @@ builder.Services.Mediatr();
 builder.Services.ApplyDataBaseDI(dbConn);
 
 builder.Services.BI();
+builder.Services.ApplySignalRDI();
 
 builder.Services.AddMemoryCache();
 

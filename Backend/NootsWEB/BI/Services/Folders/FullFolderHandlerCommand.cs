@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Services.DiffsMatchPatch;
-using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
@@ -12,6 +11,7 @@ using Common.DTO.WebSockets;
 using Domain.Commands.FolderInner;
 using MediatR;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 

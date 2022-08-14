@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
@@ -14,6 +13,7 @@ using Domain.Commands.Folders;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
+using Noots.SignalrUpdater.Impl;
 using WriteContext.Repositories.Folders;
 
 namespace BI.Services.Folders

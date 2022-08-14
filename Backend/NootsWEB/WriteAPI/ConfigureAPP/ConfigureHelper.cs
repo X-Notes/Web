@@ -12,7 +12,6 @@ using BI.Services.Folders;
 using BI.Services.Labels;
 using BI.Services.Notes;
 using BI.Services.RelatedNotes;
-using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
 using Common.DTO.Folders;
@@ -287,19 +286,10 @@ namespace WriteAPI.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<FirebaseAuthService>();
-
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
-
-            services.AddScoped<AppSignalRService>();
-            services.AddScoped<FolderWSUpdateService>();
-            services.AddScoped<NoteWSUpdateService>();
             services.AddScoped<DiffsMatchPatchService>();
-
             services.AddScoped<CollectionLinkedService>();
-
-            services.AddSingleton<WebsocketsNotesServiceStorage>();
-            services.AddSingleton<WebsocketsFoldersServiceStorage>();
         }
     }
 }

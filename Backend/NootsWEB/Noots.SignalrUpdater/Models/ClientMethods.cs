@@ -1,4 +1,4 @@
-﻿namespace BI.SignalR.Models
+﻿namespace Noots.SignalrUpdater.Models
 {
     internal class ClientMethods
     {
