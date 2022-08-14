@@ -32,6 +32,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
     options.Limits.MaxRequestBodySize = FileSizeConstraints.MaxRequestFileSize; // TODO MAYBE MOVE
 });
 
+
 Console.WriteLine("builder.Environment.EnvironmentName: " + builder.Environment.EnvironmentName);
 
 var configBuilder = new ConfigurationBuilder()
