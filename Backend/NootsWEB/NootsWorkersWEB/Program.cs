@@ -11,6 +11,7 @@ using Noots.Mapper;
 using Noots.History;
 using MediatR;
 using Noots.Encryption;
+using NootsWorkersWEB.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,11 +75,16 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
+});
+
+app.MapHealthChecks("/health");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHangfireDashboard().RequireAuthorization();
-app.MapHealthChecks("/health");
 
 app.Run();

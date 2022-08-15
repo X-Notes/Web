@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +40,6 @@ var nootsWorkersDbConn = builder.Configuration.GetSection("NootsWorkersDB").Valu
 // HEALTH CHECKER
 builder.Services.AddHealthChecks()
                 .AddElasticsearch(elasticConn)
-                .AddHangfire(null)
                 .AddNpgSql(nootsDbConn, name: "Noots Database")
                 .AddNpgSql(appDb, name: "Health check Database")
                 .AddNpgSql(nootsWorkersDbConn, name: "Noots workers Database")
@@ -56,7 +56,12 @@ builder.Services.AddHealthChecks()
                     tags: new string[] { "services" })
                 .AddCheck<AzureBlobStorageHealthChecker>("AzureBlobStorageChecker");
 
-builder.Services.AddHealthChecksUI()
+Console.WriteLine("TEST: " + Dns.GetHostName());
+
+builder.Services.AddHealthChecksUI(setup =>
+                {
+                    setup.AddHealthCheckEndpoint("TEST", $"http://{Dns.GetHostName():5600}/health");
+                })
                 .AddInMemoryStorage();
 
 // AZURE STORAGE
@@ -91,7 +96,7 @@ app.MapHealthChecksUI().RequireAuthorization();
 app.MapHealthChecks("/app-health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
+}).RequireAuthorization();
 
 app.MapControllerRoute(
     name: "default",

@@ -1,17 +1,31 @@
 version: "3"
 
 services:
-  nginx-proxy:
-    container_name: noots_nginx-proxy_host
+  noots-static-proxy:
+    container_name: noots-static-proxy
     build:
       context: .
-      dockerfile: nginx-static-proxy.dockerfile
+      dockerfile: noots-static-proxy.dockerfile
     ports:
       - "80:80"
     depends_on:
-      - "backend"
-  backend:
+      - "noots-api"
+  noots-api:
     container_name: noots-api
     build:
       context: .
       dockerfile: noots-api.dockerfile
+  noots-worker-api:
+    container_name: noots-worker-api
+    build:
+      context: .
+      dockerfile: noots-worker-api.dockerfile
+    ports:
+      - "5600:5600"
+  noots-health-check-api:
+    container_name: noots-health-check-api
+    build:
+      context: .
+      dockerfile: noots-health-check-api.dockerfile
+    ports:
+      - "5900:5900"
