@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  noots-static-proxy:
+    container_name: noots-static-proxy
+    image: noots-static-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - "noots-api"
+  noots-api:
+    container_name: noots-api
+    image: noots-api
+  noots-worker-api:
+    container_name: noots-worker-api
+    image: noots-worker-api
+    ports:
+      - "5600:5600"
+  noots-health-check-api:
+    container_name: noots-health-check-api
+    image: noots-health-check-api
+    ports:
+      - "5900:5900"

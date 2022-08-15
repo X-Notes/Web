@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiffMatchPatch" Version="1.0.3" />
+    <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="Npgsql" Version="6.0.3" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\ContentProcessing\ContentProcessing.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
+    <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
+    <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
+    <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
+    <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
+    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
+  </ItemGroup>
+
+</Project>

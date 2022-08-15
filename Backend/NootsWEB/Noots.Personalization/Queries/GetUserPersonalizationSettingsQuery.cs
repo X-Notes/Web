@@ -1,0 +1,14 @@
+﻿using Common.CQRS;
+using Common.DTO.Personalization;
+using MediatR;
+
+namespace Noots.Personalization.Queries
+{
+    public class GetUserPersonalizationSettingsQuery : BaseCommandEntity, IRequest<PersonalizationSettingDTO>
+    {
+        public GetUserPersonalizationSettingsQuery(Guid userId) : base(userId)
+        {
+
+        }
+    }
+}
