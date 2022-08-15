@@ -4,7 +4,6 @@ import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
 import { finalize, map, takeUntil } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
-import * as moment from 'moment';
 import {
   FileProcessTracker,
   SnackBarFileProcessHandlerService,
@@ -21,6 +20,7 @@ import { DocumentsCollection, DocumentModel } from './models/editor-models/docum
 import { VideosCollection, VideoModel } from './models/editor-models/videos-collection';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import dayjs from 'dayjs';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +39,7 @@ export class ExportService {
     const zip = new JSZip();
     resp.forEach((x) => zip.file(x.name, x.blob.eventBody));
     const zipFile = await zip.generateAsync({ type: 'blob' });
-    saveAs(zipFile, `noots-export ${moment().format('MM-DD, h-mm-ss a')}`);
+    saveAs(zipFile, `noots-export ${dayjs().format('LLL')}`);
   };
 
   getBlobFile(url: string, mini: OperationDetailMini, operation: LongTermOperation) {

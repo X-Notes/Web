@@ -27,17 +27,17 @@
     "cancel": "Annullera"
   },
   "languages": {
-    "english": "Engelska",
-    "russian": "Ryska",
-    "ukraine": "Ukrainska",
-    "swedish": "Svenska",
-    "polish": "Polsk",
-    "spanish": "Spanska",
-    "italian": "Italienska",
-    "japanese": "Japanska",
-    "chinese": "Kinesiska",
-    "german": "Tyska",
-    "french": "Franska"
+    "en": "Engelska",
+    "ru": "Ryska",
+    "uk": "Ukrainska",
+    "sv": "Svenska",
+    "pl":"Polsk",
+    "es": "Spanska",
+    "it": "Italienska",
+    "ja": "Japanska",
+    "zh": "Kinesiska",
+    "de":"Tyska",
+    "fr":"Franska"
   },
   "header": {
     "selected": "Vald",
@@ -341,7 +341,6 @@
     "labels": "Etiketter tas bort automatiskt efter {{days}} dagar"
   },
   "entity-bottom-tooltip": {
-    "updated": "datum för senaste ändringar",
     "deleted": "datum för radering",
     "hasUsersNote": "Anteckning kan visas eller redigeras av flera användare",
     "hasUsersFolder": "Mappen kan visas eller redigeras av flera användare",

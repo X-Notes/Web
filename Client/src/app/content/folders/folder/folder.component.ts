@@ -10,7 +10,6 @@ import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/fo
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import * as moment from 'moment';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 
@@ -56,10 +55,6 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   get isAuthor(): boolean {
     return this.userId === this.folder.userId;
-  }
-
-  get updateTime() {
-    return moment(this.date ?? this.folder.updatedAt).format('DD.MM hh:mm');
   }
 
   setTitle(): void {

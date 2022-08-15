@@ -27,17 +27,17 @@
     "cancel": "Annuler"
   },
   "languages": {
-    "english": "Anglais",
-    "russian": "Russe",
-    "ukraine": "Ukrainien",
-    "swedish": "Suédois",
-    "polish": "Polonais",
-    "spanish": "Espagnol",
-    "italian": "Italien",
-    "japanese": "Japonais",
-    "chinese": "Chinois",
-    "german": "Allemand",
-    "french": "Français"
+    "en": "Anglais",
+    "ru": "Russe",
+    "uk": "Ukrainien",
+    "sv": "Suédois",
+    "pl":"Polonais",
+    "es": "Espagnol",
+    "it": "Italien",
+    "ja": "Japonais",
+    "zh": "Chinois",
+    "de":"Allemand",
+    "fr":"Français"
   },
   "header": {
     "selected": "Sélectionné",
@@ -341,7 +341,6 @@
     "labels": "Les étiquettes seront automatiquement supprimées après {{days}} jours"
   },
   "entity-bottom-tooltip": {
-    "updated": "date des dernières modifications",
     "deleted": "date de suppression",
     "hasUsersNote": "La note peut être consultée ou modifiée par plusieurs utilisateurs",
     "hasUsersFolder": "Le dossier peut être affiché ou modifié par plusieurs utilisateurs",

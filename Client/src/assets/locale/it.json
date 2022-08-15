@@ -27,17 +27,17 @@
     "cancel": "Annulla"
   },
   "languages": {
-    "english": "Inglese",
-    "russian": "Russo",
-    "ukraine": "Ucraino",
-    "swedish": "Svedese",
-    "polish": "Polacco",
-    "spanish": "Spagnolo",
-    "italian": "Italiano",
-    "japanese": "Giapponese",
-    "chinese": "Cinese",
-    "german": "Tedesco",
-    "french": "Francese"
+    "en": "Inglese",
+    "ru": "Russo",
+    "uk": "Ucraino",
+    "sv": "Svedese",
+    "pl":"Polacco",
+    "es": "Spagnolo",
+    "it": "Italiano",
+    "ja": "Giapponese",
+    "zh": "Cinese",
+    "de":"Tedesco",
+    "fr":"Francese"
   },
   "header": {
     "selected": "Selezionato",
@@ -341,7 +341,6 @@
     "labels": "Le etichette verranno automaticamente eliminate dopo i giorni {{days}}"
   },
   "entity-bottom-tooltip": {
-    "updated": "data delle ultime modifiche",
     "deleted": "data di cancellazione",
     "hasUsersNote": "La nota può essere visualizzata o modificata da più utenti",
     "hasUsersFolder": "La cartella può essere visualizzata o modificata da più utenti",

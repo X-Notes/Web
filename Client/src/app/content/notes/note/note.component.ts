@@ -5,7 +5,7 @@ import { SmallNote } from '../models/small-note.model';
 import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
 import { BaseText } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { NoteTextTypeENUM } from '../models/editor-models/text-models/note-text-type.enum';
 
@@ -51,10 +51,6 @@ export class NoteComponent implements OnInit {
     return this.userId === this.note.userId;
   }
 
-  get updateTime() {
-    return moment(this.date ?? this.note.updatedAt).format('DD.MM hh:mm');
-  }
-
   get size() {
     if (this.note.additionalInfo) {
       const size = this.note.additionalInfo.totalSize;
@@ -67,7 +63,7 @@ export class NoteComponent implements OnInit {
   }
 
   get unlockedTime() {
-    return moment(this.note.unlockedTime).add(5, 'minutes').format('LT');
+    return dayjs(this.note.unlockedTime).add(5, 'minutes').format('LT');
   }
 
   ngOnInit(): void {

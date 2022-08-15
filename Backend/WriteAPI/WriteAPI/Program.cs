@@ -141,10 +141,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var isHostASP = true;
-var path = Path.Combine(builder.Environment.WebRootPath);
+var isHostASP = false;
 if (isHostASP)
 {
+    var path = Path.Combine(builder.Environment.WebRootPath);
     app.UseStaticFiles(new StaticFileOptions
     {
         ServeUnknownFileTypes = true,
@@ -156,6 +156,7 @@ app.UseRouting();
 
 if (isHostASP)
 {
+    var path = Path.Combine(builder.Environment.WebRootPath);
     app.MapFallbackToFile("index.html", new StaticFileOptions()
     {
         ServeUnknownFileTypes = true,

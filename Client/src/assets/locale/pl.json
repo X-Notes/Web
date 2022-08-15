@@ -27,17 +27,17 @@
     "cancel": "Anuluj"
   },
   "languages": {
-    "english": "Angielski",
-    "russian": "Rosyjski",
-    "ukraine": "Ukraiński",
-    "swedish": "Szwedzki",
-    "polish": "Polski",
-    "spanish": "Hiszpański",
-    "italian": "Włoski",
-    "japanese": "Japoński",
-    "chinese": "Chiński",
-    "german": "Niemiecki",
-    "french": "Francuski"
+    "en": "Angielski",
+    "ru": "Rosyjski",
+    "uk": "Ukraiński",
+    "sv": "Szwedzki",
+    "pl":"Polski",
+    "es": "Hiszpański",
+    "it": "Włoski",
+    "ja": "Japoński",
+    "zh": "Chiński",
+    "de":"Niemiecki",
+    "fr":"Francuski"
   },
   "header": {
     "selected": "Wybrany",
@@ -341,7 +341,6 @@
     "labels": "Etykiety zostaną automatycznie usunięte po {{days}} dniach"
   },
   "entity-bottom-tooltip": {
-    "updated": "data ostatnich zmian",
     "deleted": "data usunięcia",
     "hasUsersNote": "Notatka może być wyświetlana lub edytowana przez wielu użytkowników",
     "hasUsersFolder": "Folder może być wyświetlany lub edytowany przez wielu użytkowników",

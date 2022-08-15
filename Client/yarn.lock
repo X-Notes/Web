@@ -5233,6 +5233,7 @@ __metadata:
     autoprefixer: ^10.4.2
     buffer: ^6.0.3
     codelyzer: ^6.0.2
+    dayjs: ^1.11.5
     diff-match-patch: ^1.0.5
     eslint: ^8.9.0
     eslint-config-airbnb-typescript: ^16.1.0
@@ -5252,7 +5253,6 @@ __metadata:
     karma-coverage-istanbul-reporter: ~3.0.3
     karma-jasmine: ~4.0.1
     karma-jasmine-html-reporter: ^1.7.0
-    moment: ^2.29.1
     music-metadata-browser: ^2.5.4
     muuri: ^0.9.5
     ngx-doc-viewer: 2.1.2
@@ -5956,6 +5956,13 @@ __metadata:
   version: 3.0.3
   resolution: "dateformat@npm:3.0.3"
   checksum: ca4911148abb09887bd9bdcd632c399b06f3ecad709a18eb594d289a1031982f441e08e281db77ffebcb2cbcbfa1ac578a7cbfbf8743f41009aa5adc1846ed34
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.5":
+  version: 1.11.5
+  resolution: "dayjs@npm:1.11.5"
+  checksum: e3bbaa7b4883b31be4bf75a181f1447fbb19800c29b332852125aab96baeff3ac232dcba8b88c4ea17d3b636c99dac5fb9d1af4bb6ae26615698bbc4a852dffb
   languageName: node
   linkType: hard
 
@@ -10211,13 +10218,6 @@ __metadata:
   version: 1.0.1
   resolution: "modify-values@npm:1.0.1"
   checksum: 8296610c608bc97b03c2cf889c6cdf4517e32fa2d836440096374c2209f6b7b3e256c209493a0b32584b9cb32d528e99d0dd19dcd9a14d2d915a312d391cc7e9
-  languageName: node
-  linkType: hard
-
-"moment@npm:^2.29.1":
-  version: 2.29.1
-  resolution: "moment@npm:2.29.1"
-  checksum: 1e14d5f422a2687996be11dd2d50c8de3bd577c4a4ca79ba5d02c397242a933e5b941655de6c8cb90ac18f01cc4127e55b4a12ae3c527a6c0a274e455979345e
   languageName: node
   linkType: hard
 

@@ -27,17 +27,17 @@
     "cancel": "キャンセル"
   },
   "languages": {
-    "english": "英語",
-    "russian": "ロシア語",
-    "ukraine": "ウクライナ語",
-    "swedish": "スウェーデン語",
-    "polish": "ポリッシュ",
-    "spanish": "スペイン語",
-    "italian": "イタリア語",
-    "japanese": "日本語",
-    "chinese": "中国語",
-    "german": "ドイツ語",
-    "french": "フランス語"
+    "en": "英語",
+    "ru": "ロシア語",
+    "uk": "ウクライナ語",
+    "sv": "スウェーデン語",
+    "pl":"ポリッシュ",
+    "es": "スペイン語",
+    "it": "イタリア語",
+    "ja": "日本語",
+    "zh": "中国語",
+    "de":"ドイツ語",
+    "fr":"フランス語"
   },
   "header": {
     "selected": "入選",
@@ -341,7 +341,6 @@
     "labels": "ラベルは{{days}}日後に自動的に削除されます"
   },
   "entity-bottom-tooltip": {
-    "updated": "最終変更日",
     "deleted": "削除日",
     "hasUsersNote": "メモは複数のユーザーが表示または編集できます",
     "hasUsersFolder": "フォルダは複数のユーザーが表示または編集できます",
