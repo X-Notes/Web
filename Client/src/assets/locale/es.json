@@ -27,17 +27,17 @@
     "cancel": "Cancelar"
   },
   "languages": {
-    "english": "Inglés",
-    "russian": "Ruso",
-    "ukraine": "Ucraniano",
-    "swedish": "Sueco",
-    "polish": "Polaco",
-    "spanish": "Español",
-    "italian": "Italiano",
-    "japanese": "Japonés",
-    "chinese": "Chino",
-    "german": "Alemán",
-    "french": "Frances"
+    "en": "Inglés",
+    "ru": "Ruso",
+    "uk": "Ucraniano",
+    "sv": "Sueco",
+    "pl": "Polaco",
+    "es": "Español",
+    "it": "Italiano",
+    "ja": "Japonés",
+    "zh": "Chino",
+    "de": "Alemán",
+    "fr": "Frances"
   },
   "header": {
     "selected": "Seleccionado",
@@ -341,7 +341,6 @@
     "labels": "Las etiquetas se eliminarán automáticamente después de {{days}} días"
   },
   "entity-bottom-tooltip": {
-    "updated": "fecha de los últimos cambios",
     "deleted": "fecha de supresión",
     "hasUsersNote": "Nota puede ser vista o editada por varios usuarios",
     "hasUsersFolder": "La carpeta puede ser vista o editada por varios usuarios",

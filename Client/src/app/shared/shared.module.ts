@@ -82,6 +82,7 @@ import { RelatedNotesPopUpComponent } from './modal_components/related-notes-pop
 import { RelatedNoteComponent } from '../content/notes/full-note/related-note/related-note.component';
 import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-up/note-history-pop-up.component';
 import { HistoryRecordComponent } from '../content/notes/full-note/full-note-components/history-record/history-record.component';
+import { DateFromNowPipe } from './pipes/date-from-now.pipe';
 
 @NgModule({
   declarations: [
@@ -147,6 +148,7 @@ import { HistoryRecordComponent } from '../content/notes/full-note/full-note-com
     RelatedNoteComponent,
     NoteHistoryPopUpComponent,
     HistoryRecordComponent,
+    DateFromNowPipe,
   ],
   imports: [
     CommonModule,
@@ -233,6 +235,7 @@ import { HistoryRecordComponent } from '../content/notes/full-note/full-note-com
     GenericDeleteEntityMessageComponent,
     RelatedNoteComponent,
     HistoryRecordComponent,
+    DateFromNowPipe,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

@@ -27,17 +27,17 @@
     "cancel": "Abbrechen"
   },
   "languages": {
-    "english": "Englisch",
-    "russian": "Russisch",
-    "ukraine": "Ukrainisch",
-    "swedish": "Schwedisch",
-    "polish": "Polnisch",
-    "spanish": "Spanisch",
-    "italian": "Italienisch",
-    "japanese": "Japanisch",
-    "chinese": "Chinesisch",
-    "german": "Deutsch",
-    "french": "Französisch"
+    "en": "Englisch",
+    "ru": "Russisch",
+    "uk": "Ukrainisch",
+    "sv": "Schwedisch",
+    "pl": "Polnisch",
+    "es": "Spanisch",
+    "it": "Italienisch",
+    "ja": "Japanisch",
+    "zh": "Chinesisch",
+    "de":"Deutsch",
+    "fr":"Französisch"
   },
   "header": {
     "selected": "Ausgewählt",
@@ -341,7 +341,6 @@
     "labels": "Labels werden nach {{days}} Tagen automatisch gelöscht"
   },
   "entity-bottom-tooltip": {
-    "updated": "Datum der letzten Änderungen",
     "deleted": "Datum der Löschung",
     "hasUsersNote": "Notiz kann von mehreren Benutzern angezeigt oder bearbeitet werden",
     "hasUsersFolder": "Ordner kann von mehreren Benutzern angezeigt oder bearbeitet werden",

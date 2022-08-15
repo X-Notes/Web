@@ -27,17 +27,17 @@
     "cancel": "取消"
   },
   "languages": {
-    "english": "英语",
-    "russian": "俄语",
-    "ukraine": "乌克兰语",
-    "swedish": "瑞典语",
-    "polish": "波兰语",
-    "spanish": "西班牙语",
-    "italian": "意大利语",
-    "japanese": "日语",
-    "chinese": "中文",
-    "german": "德语",
-    "french": "法语"
+    "en": "英语",
+    "ru": "俄语",
+    "uk": "乌克兰语",
+    "sv": "瑞典语",
+    "pl":"波兰语",
+    "es": "西班牙语",
+    "it": "意大利语",
+    "ja": "日语",
+    "zh": "中文",
+    "de":"德语",
+    "fr":"法语"
   },
   "header": {
     "selected": "选择",
@@ -341,7 +341,6 @@
     "labels": "标签将在 {{days}} 天后自动删除"
   },
   "entity-bottom-tooltip": {
-    "updated": "上次更改日期",
     "deleted": "删除日期",
     "hasUsersNote": "多个用户可以查看或编辑笔记",
     "hasUsersFolder": "多个用户可以查看或编辑文件夹",

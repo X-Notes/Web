@@ -56,11 +56,8 @@
       </app-note-preview-audios>
     </ng-container>
     <div class="footer">
-      <div
-        class="date"
-        [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
-      >
-        <p>{{ updateTime }}<span>{{ size }}</span></p>
+      <div class="date">
+        <p>{{ (date ?? note.updatedAt) | dateFromNow }}<span>{{ size }}</span></p>
       </div>
       <div class="help-icons">
         <div *ngIf="note?.isLockedNow" class="icon">

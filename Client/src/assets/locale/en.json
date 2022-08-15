@@ -27,17 +27,17 @@
     "cancel": "Cancel"
   },
   "languages": {
-    "english": "English",
-    "russian": "Russian",
-    "ukraine": "Ukrainian",
-    "swedish": "Swedish",
-    "polish": "Polish",
-    "spanish": "Spanish",
-    "italian": "Italian",
-    "japanese": "Japanese",
-    "chinese": "Chinese",
-    "german": "German",
-    "french": "French"
+    "en": "English",
+    "ru": "Russian",
+    "uk": "Ukrainian",
+    "sv": "Swedish",
+    "pl": "Polish",
+    "es": "Spanish",
+    "it": "Italian",
+    "ja": "Japanese",
+    "zh": "Chinese",
+    "de": "German",
+    "fr": "French"
   },
   "header": {
     "selected": "Selected",
@@ -341,7 +341,6 @@
     "labels": "Labels will be automatically deleted after {{days}} days"
   },
   "entity-bottom-tooltip":{
-    "updated": "date of last changes",
     "deleted": "date of deletion",
     "hasUsersNote": "Note can be viewed or edited by multiple users",
     "hasUsersFolder": "Folder can be viewed or edited by multiple users",

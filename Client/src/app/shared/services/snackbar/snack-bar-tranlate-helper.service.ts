@@ -7,13 +7,13 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 export class SnackBarTranlateHelperService {
   getNoAccessRightsTranslate = (lname: LanguagesENUM): string => {
     switch (lname) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.en: {
         return 'No permission to upload files to note ';
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.ru: {
         return 'Нет разрешения на загрузку файлов для заметок ';
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.uk: {
         return 'Немає дозволу завантажувати файли для замітки ';
       }
       default: {
@@ -25,13 +25,13 @@ export class SnackBarTranlateHelperService {
   getNoEnoughMemoryTranslate = (lname: LanguagesENUM): string => {
     // TODO MOVE TO i18
     switch (lname) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.en: {
         return 'Not enough memory to upload the file';
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.ru: {
         return 'Недостаточно памяти для загрузки файла';
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.uk: {
         return "Недостатньо пам'яті для завантаження файлу";
       }
       default: {
@@ -43,13 +43,13 @@ export class SnackBarTranlateHelperService {
   getFileTooLargeTranslate = (lname: LanguagesENUM, sizeMB: string): string => {
     // TODO MOVE TO i18
     switch (lname) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.en: {
         return `File size must not exceed ${sizeMB} MB `;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.ru: {
         return `Размер файла не должен превышать ${sizeMB} МБ `;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.uk: {
         return `Розмір файлу не повинен перевищувати ${sizeMB} МБ`;
       }
       default: {
@@ -61,13 +61,13 @@ export class SnackBarTranlateHelperService {
   getFileNoSupportExtension = (lname: LanguagesENUM): string => {
     // TODO MOVE TO i18
     switch (lname) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.en: {
         return `File of this format is not supported  `;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.ru: {
         return `Файл этого формата не поддерживается `;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.uk: {
         return `Файл такого формату не підтримується `;
       }
       default: {

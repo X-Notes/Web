@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 
 export class StreamAudioState {
   id: string;
@@ -22,6 +22,6 @@ export class StreamAudioState {
   get readableCurrentTime(): string | undefined {
     const format = 'mm:ss';
     const momentTime = this.currentTime * 1000;
-    return moment.utc(momentTime).format(format);
+    return dayjs(momentTime).format(format);
   }
 }
