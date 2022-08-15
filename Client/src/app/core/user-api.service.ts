@@ -5,7 +5,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { User } from './models/user.model';
 import { ShortUser } from './models/short-user.model';
 import { AnswerChangePhoto } from './models/answer-change-photo.model';
-import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
+import { UserUsedDiskSpace } from './models/search/user-disk-space';
 import { ThemeENUM } from '../shared/enums/theme.enum';
 import { FontSizeENUM } from '../shared/enums/font-size.enum';
 import { LanguagesENUM } from '../shared/enums/languages.enum';
