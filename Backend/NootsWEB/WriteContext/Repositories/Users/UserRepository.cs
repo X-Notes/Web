@@ -37,6 +37,14 @@ namespace WriteContext.Repositories.Users
                 .FirstOrDefaultAsync(x => x.Id == userId);
         }
 
+        public Task<User> GetUserByEmailIncludePhoto(Guid userId)
+        {
+            return context.Users
+                .Include(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
         public Task<User> GetUserWithBackgrounds(Guid userId)
         {
             return context.Users.Include(x => x.Backgrounds).ThenInclude(x => x.File).FirstOrDefaultAsync(x => x.Id == userId);

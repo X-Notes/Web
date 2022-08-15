@@ -11,8 +11,9 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
-        IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>,
-        IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
+        IRequestHandler<GetUserDTOQuery, OperationResult<UserDTO>>,
+        IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>,
+        IRequestHandler<GetUserShortDTOQuery, OperationResult<ShortUser>>
     {
         private readonly UserRepository userRepository;
 
@@ -29,20 +30,20 @@ namespace BI.Services.UserHandlers
             this.userBackgroundMapper = userBackgroundMapper;
         }
 
-        public async Task<OperationResult<ShortUser>> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UserDTO>> Handle(GetUserDTOQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.UserId);
             if (user != null)
             {
-                var userDto = MapToShortUser(user);
-                return new OperationResult<ShortUser>(true , userDto);
+                var userDto = MapToUserDTO(user);
+                return new OperationResult<UserDTO>(true , userDto);
             }
-            return new OperationResult<ShortUser>().SetNotFound();
+            return new OperationResult<UserDTO>().SetNotFound();
         }
 
-        private ShortUser MapToShortUser(User user)
+        private UserDTO MapToUserDTO(User user)
         {
-            return new ShortUser
+            return new UserDTO
             {
                 Id = user.Id,
                 Name = user.Name,
@@ -57,10 +58,33 @@ namespace BI.Services.UserHandlers
             };
         }
 
+        private ShortUser MapToShortDTO(User user)
+        {
+            return new ShortUser
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                PhotoId = user.UserProfilePhoto?.AppFileId,
+                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+            };
+        }
+
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)
         {
             var size = await fileRepository.GetTotalUserMemory(request.UserId);
             return new GetUserMemoryResponse { TotalSize = size };
+        }
+
+        public async Task<OperationResult<ShortUser>> Handle(GetUserShortDTOQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmailIncludePhoto(request.UserId);
+            if (user != null)
+            {
+                var userDto = MapToShortDTO(user);
+                return new OperationResult<ShortUser>(true, userDto);
+            }
+            return new OperationResult<ShortUser>().SetNotFound();
         }
     }
 }

@@ -13,7 +13,8 @@ namespace Noots.Users
     {
         public static void ApplyUsersDI(this IServiceCollection services)
         {
-            services.AddScoped<IRequestHandler<GetShortUserQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserDTOQuery, OperationResult<UserDTO>>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserShortDTOQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewUserCommand, Guid>, UserHandlerСommand>();

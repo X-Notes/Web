@@ -27,24 +27,30 @@ namespace WriteAPI.Controllers.UserContollers
 
 
         [HttpPost]
-        public async Task<OperationResult<ShortUser>> Authorize(NewUserCommand command)
+        public async Task<OperationResult<UserDTO>> Authorize(NewUserCommand command)
         {
             command.Email = this.GetUserEmail();
             var userId = await _mediator.Send(command);
-            return await _mediator.Send(new GetShortUserQuery(userId));
+            return await _mediator.Send(new GetUserDTOQuery(userId));
         }
 
+        [HttpGet("short/{id}")]
+        [AllowAnonymous]
+        public async Task<OperationResult<ShortUser>> GetOne(Guid id)
+        {
+            return await _mediator.Send(new GetUserShortDTOQuery(id));
+        }
 
         [HttpGet("short")]
-        public async Task<OperationResult<ShortUser>> GetShort()
+        public async Task<OperationResult<UserDTO>> GetShort()
         {
             var userId = this.GetUserIdRaw();
 
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedId)) {
-                return new OperationResult<ShortUser>(false, null, OperationResultAdditionalInfo.NotFound);
+                return new OperationResult<UserDTO>(false, null, OperationResultAdditionalInfo.NotFound);
             }
 
-            return await _mediator.Send(new GetShortUserQuery(parsedId));
+            return await _mediator.Send(new GetUserDTOQuery(parsedId));
         }
 
         [HttpGet("memory")]
