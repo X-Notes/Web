@@ -63,6 +63,7 @@ using Noots.Search;
 using Noots.Personalization;
 using Noots.Users;
 using Noots.Sharing;
+using Noots.SignalrUpdater;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -273,7 +274,7 @@ namespace WriteAPI.ConfigureAPP
 
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments("/hub")))
+                                (path.StartsWithSegments(HubSettings.endPoint)))
                             {
                                 context.Token = accessToken;
                             }

@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.SignalrUpdater.Models;
@@ -8,6 +9,7 @@ using WriteContext.Repositories.WS;
 
 namespace Noots.SignalrUpdater.Impl
 {
+    [Authorize]
     public class AppSignalRHub : Hub
     {
         private readonly WebsocketsNotesServiceStorage wsNotesService;

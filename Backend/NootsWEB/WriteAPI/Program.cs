@@ -160,7 +160,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<AppSignalRHub>("/hub");
+app.MapHub<AppSignalRHub>(HubSettings.endPoint);
 
 app.MapHealthChecks("/health");
 
