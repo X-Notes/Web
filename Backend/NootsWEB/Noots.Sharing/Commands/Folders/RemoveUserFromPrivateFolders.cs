@@ -1,10 +1,9 @@
-﻿using System;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Share.Folders
+namespace Noots.Sharing.Commands.Folders
 {
     public class RemoveUserFromPrivateFolders : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

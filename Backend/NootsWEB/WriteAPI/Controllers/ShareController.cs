@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Users;
-using Domain.Commands.Share.Folders;
 using WriteAPI.ControllerConfig;
 using Common.DTO;
 using Noots.Sharing.Commands.Notes;
