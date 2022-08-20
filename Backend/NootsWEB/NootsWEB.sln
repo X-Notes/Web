@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.RelatedNotes", "Noots
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.DatabaseContext", "Noots.DatabaseContext\Noots.DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Auth", "Noots.Auth\Noots.Auth.csproj", "{1D324309-821D-45A0-9562-1FEB869D17EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{C13F957B-4AD8-44F4-871A-6DB22A7755F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C13F957B-4AD8-44F4-871A-6DB22A7755F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C13F957B-4AD8-44F4-871A-6DB22A7755F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D324309-821D-45A0-9562-1FEB869D17EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D324309-821D-45A0-9562-1FEB869D17EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D324309-821D-45A0-9562-1FEB869D17EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D324309-821D-45A0-9562-1FEB869D17EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

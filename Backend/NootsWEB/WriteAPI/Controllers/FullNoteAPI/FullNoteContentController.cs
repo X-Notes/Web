@@ -12,35 +12,33 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner/contents")]
+[ApiController]
+public class FullNoteContentController : ControllerBase
 {
-    [Authorize]
-    [Route("api/note/inner/contents")]
-    [ApiController]
-    public class FullNoteContentController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public FullNoteContentController(IMediator _mediator)
     {
-        private readonly IMediator _mediator;
+        this._mediator = _mediator;
+    }
 
-        public FullNoteContentController(IMediator _mediator)
-        {
-            this._mediator = _mediator;
-        }
+    [HttpGet("{noteId}")]
+    [AllowAnonymous]
+    public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
+    {
+        var command = new GetNoteContentsQuery(this.GetUserIdUnStrict(), noteId);
+        return await this._mediator.Send(command);
+    }
 
-        [HttpGet("{noteId}")]
-        [AllowAnonymous]
-        public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
-        {
-            var command = new GetNoteContentsQuery(this.GetUserIdUnStrict(), noteId);
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPatch("sync/structure")] // TODO TO WS
-        public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
-        {
-            command.UserId = this.GetUserId();
-            return await this._mediator.Send(command);
-        }
-
+    [HttpPatch("sync/structure")] // TODO TO WS
+    public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await this._mediator.Send(command);
     }
 
 }

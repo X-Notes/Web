@@ -47,7 +47,6 @@ namespace BI.Services.Notes.Documents
         public DocumentsCollectionHandlerCommand(
                                         IMediator _mediator,
                                         BaseNoteContentRepository baseNoteContentRepository,
-                                        AppFileUploadInfoRepository appFileUploadInfoRepository,
                                         CollectionNoteRepository documentNoteRepository,
                                         CollectionAppFileRepository documentNoteAppFileRepository,
                                         HistoryCacheService historyCacheService,

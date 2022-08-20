@@ -8,32 +8,29 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Controllers.FullNoteAPI;
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner/videos")]
+[ApiController]
+public class FullNoteVideosController : BaseNoteFileContentController
+<
+    RemoveVideosFromCollectionCommand,
+    AddVideosToCollectionCommand,
+    UpdateVideosCollectionInfoCommand,
+    GetNoteFilesByIdsQuery<VideoNoteDTO>,
+    VideoNoteDTO
+>
 {
-    [Authorize]
-    [Route("api/note/inner/videos")]
-    [ApiController]
-    public class FullNoteVideosController : BaseNoteFileContentController
-        <
-        RemoveVideosFromCollectionCommand,
-        AddVideosToCollectionCommand,
-        UpdateVideosCollectionInfoCommand,
-        GetNoteFilesByIdsQuery<VideoNoteDTO>,
-        VideoNoteDTO
-        >
+    public FullNoteVideosController(IMediator _mediator) : base(_mediator)
     {
-        public FullNoteVideosController(IMediator _mediator) : base(_mediator)
-        {
-        }
-
-        [HttpPost("transform")] // TODO TO WS
-        public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
-        {
-            command.UserId = this.GetUserId();
-            return await _mediator.Send(command);
-        }
     }
 
+    [HttpPost("transform")] // TODO TO WS
+    public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
 }

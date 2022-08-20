@@ -8,33 +8,30 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Controllers.FullNoteAPI;
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner/photos")]
+[ApiController]
+public class FullNotePhotosController : BaseNoteFileContentController
+<
+    RemovePhotosFromCollectionCommand,
+    AddPhotosToCollectionCommand,
+    UpdatePhotosCollectionInfoCommand,
+    GetNoteFilesByIdsQuery<PhotoNoteDTO>,
+    PhotoNoteDTO
+>
 {
-    [Authorize]
-    [Route("api/note/inner/photos")]
-    [ApiController]
-    public class FullNotePhotosController : BaseNoteFileContentController
-        <
-        RemovePhotosFromCollectionCommand,
-        AddPhotosToCollectionCommand,
-        UpdatePhotosCollectionInfoCommand,
-        GetNoteFilesByIdsQuery<PhotoNoteDTO>,
-        PhotoNoteDTO
-        >
+    public FullNotePhotosController(IMediator _mediator) : base(_mediator)
     {
-        public FullNotePhotosController(IMediator _mediator) : base(_mediator)
-        {
-        }
-
-
-        [HttpPost("transform")] // TODO TO WS
-        public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)
-        {
-            command.UserId = this.GetUserId();
-            return await _mediator.Send(command);
-        }
     }
 
+
+    [HttpPost("transform")] // TODO TO WS
+    public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
 }

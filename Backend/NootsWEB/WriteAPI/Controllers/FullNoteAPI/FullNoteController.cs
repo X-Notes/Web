@@ -9,28 +9,26 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner")]
+[ApiController]
+public class FullNoteController : ControllerBase
 {
-    [Authorize]
-    [Route("api/note/inner")]
-    [ApiController]
-    public class FullNoteController : ControllerBase
+    private readonly IMediator _mediator;
+    public FullNoteController(IMediator _mediator)
     {
-        private readonly IMediator _mediator;
-        public FullNoteController(IMediator _mediator)
-        {
-            this._mediator = _mediator;
-        }
+        this._mediator = _mediator;
+    }
 
-        [HttpGet("users/{id}")]
-        [AllowAnonymous]
-        public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
-        {
-            var query = new GetOnlineUsersOnNoteQuery(id);
-            query.UserId = this.GetUserIdUnStrict();
-            return await _mediator.Send(query);
-        }
-
+    [HttpGet("users/{id}")]
+    [AllowAnonymous]
+    public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
+    {
+        var query = new GetOnlineUsersOnNoteQuery(id);
+        query.UserId = this.GetUserIdUnStrict();
+        return await _mediator.Send(query);
     }
 
 }

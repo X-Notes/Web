@@ -15,92 +15,91 @@ using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Route("api/note/inner/files")]
+[ApiController]
+public class FullNoteFilesController : ControllerBase
 {
-    [Route("api/note/inner/files")]
-    [ApiController]
-    public class FullNoteFilesController : ControllerBase
+
+    private readonly IMediator _mediator;
+    private readonly CollectionLinkedService collectionLinkedService;
+
+    public FullNoteFilesController(IMediator _mediator, CollectionLinkedService collectionLinkedService)
     {
+        this._mediator = _mediator;
+        this.collectionLinkedService = collectionLinkedService;
+    }
 
-        private readonly IMediator _mediator;
-        private readonly CollectionLinkedService collectionLinkedService;
-
-        public FullNoteFilesController(IMediator _mediator, CollectionLinkedService collectionLinkedService)
+    [HttpPost("upload/{noteId}/{fileType}")]
+    public async Task<OperationResult<List<FileDTO>>> UploadFiles(List<IFormFile> noteFiles, Guid noteId, FileTypeEnum fileType, CancellationToken cancellationToken)
+    {
+        if (noteFiles.Count == 0) // TODO MOVE TO FILTER
         {
-            this._mediator = _mediator;
-            this.collectionLinkedService = collectionLinkedService;
+            return new OperationResult<List<FileDTO>>().SetNoAnyFile();
         }
 
-        [HttpPost("upload/{noteId}/{fileType}")]
-        public async Task<OperationResult<List<FileDTO>>> UploadFiles(List<IFormFile> noteFiles, Guid noteId, FileTypeEnum fileType, CancellationToken cancellationToken)
+        IEnumerable<OperationResult<List<Guid>>> results = null;
+
+        switch (fileType)
         {
-            if (noteFiles.Count == 0) // TODO MOVE TO FILTER
+            case FileTypeEnum.Photo:
             {
-                return new OperationResult<List<FileDTO>>().SetNoAnyFile();
+                results = noteFiles.Select(photo => this.ValidateFile<List<Guid>>(photo, SupportFileContentTypes.Photos));
+                break;
             }
-
-            IEnumerable<OperationResult<List<Guid>>> results = null;
-
-            switch (fileType)
+            case FileTypeEnum.Video:
             {
-                case FileTypeEnum.Photo:
-                    {
-                        results = noteFiles.Select(photo => this.ValidateFile<List<Guid>>(photo, SupportFileContentTypes.Photos));
-                        break;
-                    }
-                case FileTypeEnum.Video:
-                    {
-                        results = noteFiles.Select(video => this.ValidateFile<List<Guid>>(video, SupportFileContentTypes.Videos));
-                        break;
-                    }
-                case FileTypeEnum.Document:
-                    {
-                        results = noteFiles.Select(document => this.ValidateFile<List<Guid>>(document, SupportFileContentTypes.Documents));
-                        break;
-                    }
-                case FileTypeEnum.Audio:
-                    {
-                        results = noteFiles.Select(audio => this.ValidateFile<List<Guid>>(audio, SupportFileContentTypes.Audios));
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception("Incorrect file type");
-                    }
+                results = noteFiles.Select(video => this.ValidateFile<List<Guid>>(video, SupportFileContentTypes.Videos));
+                break;
             }
-
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
+            case FileTypeEnum.Document:
             {
-                return new OperationResult<List<FileDTO>>().SetNoSupportExtension();
+                results = noteFiles.Select(document => this.ValidateFile<List<Guid>>(document, SupportFileContentTypes.Documents));
+                break;
             }
-
-            var command = new UploadNoteFilesToStorageAndSaveCommand(fileType, noteFiles, noteId);
-            command.UserId = this.GetUserId();
-            var resp = await _mediator.Send(command, cancellationToken);
-
-            if(resp.Success)
+            case FileTypeEnum.Audio:
             {
-                var respResult = resp.Data
-                    .Select(x => new FileDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.PathNonPhotoContent,
+                results = noteFiles.Select(audio => this.ValidateFile<List<Guid>>(audio, SupportFileContentTypes.Audios));
+                break;
+            }
+            default:
+            {
+                throw new Exception("Incorrect file type");
+            }
+        }
+
+        var result = results.FirstOrDefault(x => !x.Success);
+        if (result != null)
+        {
+            return new OperationResult<List<FileDTO>>().SetNoSupportExtension();
+        }
+
+        var command = new UploadNoteFilesToStorageAndSaveCommand(fileType, noteFiles, noteId);
+        command.UserId = this.GetUserId();
+        var resp = await _mediator.Send(command, cancellationToken);
+
+        if(resp.Success)
+        {
+            var respResult = resp.Data
+                .Select(x => new FileDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.PathNonPhotoContent,
                     x.Name, x.UserId, x.MetaData, x.CreatedAt)).ToList();
-                return new OperationResult<List<FileDTO>>(true, respResult);
-            }
-
-            return new OperationResult<List<FileDTO>>(false, null, resp.Status);
+            return new OperationResult<List<FileDTO>>(true, respResult);
         }
 
-        [HttpPatch("metadata")]
-        public async Task<OperationResult<FileDTO>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
+        return new OperationResult<List<FileDTO>>(false, null, resp.Status);
+    }
+
+    [HttpPatch("metadata")]
+    public async Task<OperationResult<FileDTO>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
+    {
+        command.UserId = this.GetUserId();
+        var rs =  await _mediator.Send(command);
+        if (rs.Success && rs.Data.MetaData.ImageFileId.HasValue)
         {
-            command.UserId = this.GetUserId();
-            var rs =  await _mediator.Send(command);
-            if (rs.Success && rs.Data.MetaData.ImageFileId.HasValue)
-            {
-                var list = new List<Guid> { rs.Data.MetaData.ImageFileId.Value };
-                await collectionLinkedService.TryLink(list);
-            }
-            return rs;
+            var list = new List<Guid> { rs.Data.MetaData.ImageFileId.Value };
+            await collectionLinkedService.TryLink(list);
         }
+        return rs;
     }
 }
