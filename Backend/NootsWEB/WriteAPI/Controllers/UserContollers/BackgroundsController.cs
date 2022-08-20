@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Backgrounds;
-using Domain.Commands.Backgrounds;
-using Domain.Queries.Backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Backgrounds.Commands;
+using Noots.Backgrounds.Queries;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 

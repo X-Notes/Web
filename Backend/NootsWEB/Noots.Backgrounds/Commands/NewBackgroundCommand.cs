@@ -1,12 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Domain.Commands.Backgrounds
+namespace Noots.Backgrounds.Commands
 {
     public class NewBackgroundCommand : BaseCommandEntity, IRequest<OperationResult<BackgroundDTO>>
     {

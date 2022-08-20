@@ -7,19 +7,16 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BI.Services.Backgrounds;
 using BI.Services.Folders;
 using BI.Services.Labels;
 using BI.Services.Notes;
 using BI.Services.RelatedNotes;
 using Common.DatabaseModels.Models.Files;
-using Common.DTO.Backgrounds;
 using Common.DTO.Folders;
 using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
-using Domain.Commands.Backgrounds;
 using Domain.Commands.FolderInner;
 using Domain.Commands.Folders;
 using Domain.Commands.Labels;
@@ -28,7 +25,6 @@ using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
 using Domain.Commands.RelatedNotes;
-using Domain.Queries.Backgrounds;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Labels;
@@ -51,6 +47,7 @@ using Domain.Queries.NoteInner;
 using BI.Services.Notes.Photos;
 using BI.Services.Notes.Documents;
 using BI.Services.Notes.Videos;
+using Noots.Backgrounds;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using WriteAPI.Models;
@@ -78,13 +75,8 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyUsersDI();
 
             // Backgrounds
-            services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>, BackgroundHandlerCommand>();
-
-            services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
-
+            services.ApplyBackgroundsDI();
+            
             //Labels
             services.AddScoped<IRequestHandler<GetLabelsQuery, List<LabelDTO>>, LabelHandlerQuery>();
             services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();

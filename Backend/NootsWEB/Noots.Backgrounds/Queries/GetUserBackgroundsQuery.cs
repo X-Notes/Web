@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.CQRS;
+﻿using Common.CQRS;
 using Common.DTO.Backgrounds;
 using MediatR;
 
-namespace Domain.Queries.Backgrounds
+namespace Noots.Backgrounds.Queries
 {
     public class GetUserBackgroundsQuery : BaseQueryEntity, IRequest<List<BackgroundDTO>>
     {

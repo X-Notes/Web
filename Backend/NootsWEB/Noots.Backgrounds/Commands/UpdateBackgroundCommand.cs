@@ -1,9 +1,8 @@
-﻿using System;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using MediatR;
 
-namespace Domain.Commands.Backgrounds
+namespace Noots.Backgrounds.Commands
 {
     public class UpdateBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {

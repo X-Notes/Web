@@ -38,6 +38,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />
+    <ProjectReference Include="..\Noots.Backgrounds\Noots.Backgrounds.csproj" />
     <ProjectReference Include="..\Noots.Encryption\Noots.Encryption.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />

@@ -1,8 +1,7 @@
 ﻿using Common.CQRS;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Backgrounds
+namespace Noots.Backgrounds.Commands
 {
     public class DefaultBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {
