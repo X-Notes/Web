@@ -9,7 +9,12 @@ import { FullNoteModule } from '../content/notes/full-note/full-note.module';
 import { NoteOwnerComponent } from './components/note-owner/note-owner.component';
 
 @NgModule({
-  declarations: [PublicHeaderComponent, PublicNoteComponent, PublicNoteContentComponent, NoteOwnerComponent],
+  declarations: [
+    PublicHeaderComponent,
+    PublicNoteComponent,
+    PublicNoteContentComponent,
+    NoteOwnerComponent,
+  ],
   imports: [CommonModule, SharedModule, PublicNoteRouting, FullNoteModule],
 })
 export class PublicNoteModule {}

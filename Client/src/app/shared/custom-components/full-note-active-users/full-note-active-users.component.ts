@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { OnlineUsersNote } from '../../../content/notes/models/online-users-note.model';
 import { NoteStore } from '../../../content/notes/state/notes-state';
-import { PersonalizationService, showMenuLeftRight } from '../../services/personalization.service';
+import { showMenuLeftRight } from '../../services/personalization.service';
 
 @Component({
   selector: 'app-full-note-active-users',

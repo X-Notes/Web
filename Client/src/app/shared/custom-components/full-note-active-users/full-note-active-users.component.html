@@ -6,10 +6,10 @@
       [CustomTooltip]="item.name ?? ('header.anonymous' | translate)"
       position="Bottom"
     >
-      <div *ngIf="item.photoPath != null" class="inner-person">
+      <div *ngIf="item.photoPath !== null" class="inner-person">
         <img [src]="item.photoPath" alt="contributor" />
       </div>
-      <div *ngIf="item.photoPath == null" class="inner-person anonymous">
+      <div *ngIf="item.photoPath !== null" class="inner-person anonymous">
         <mat-icon svgIcon="people" [inline]="true"></mat-icon>
       </div>
     </div>

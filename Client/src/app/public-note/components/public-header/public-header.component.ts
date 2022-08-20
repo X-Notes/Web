@@ -7,7 +7,7 @@ import { OnlineUsersNote } from '../../../content/notes/models/online-users-note
 @Component({
   selector: 'app-public-header',
   templateUrl: './public-header.component.html',
-  styleUrls: ['./public-header.component.scss']
+  styleUrls: ['./public-header.component.scss'],
 })
 export class PublicHeaderComponent implements OnInit {
   @Select(NoteStore.getOnlineUsersOnNote)
