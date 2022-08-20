@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
 using MediatR;
 
-namespace Domain.Commands.RelatedNotes
+namespace Noots.RelatedNotes.Commands
 {
     public class UpdateRelatedNotesToNoteCommand : BaseCommandEntity, IRequest<OperationResult<UpdateRelatedNotesWS>>
     {

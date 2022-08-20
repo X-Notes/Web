@@ -9,6 +9,7 @@ using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Search.Queries;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers

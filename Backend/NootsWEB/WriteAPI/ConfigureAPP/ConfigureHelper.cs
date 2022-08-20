@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using BI.Services.Folders;
 using BI.Services.Labels;
 using BI.Services.Notes;
-using BI.Services.RelatedNotes;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Folders;
 using Common.DTO.Labels;
@@ -24,12 +23,10 @@ using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
-using Domain.Commands.RelatedNotes;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Labels;
 using Domain.Queries.Notes;
-using Domain.Queries.RelatedNotes;
 using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -38,7 +35,6 @@ using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Common.DTO.Folders.AdditionalContent;
 using BI.Services.Auth;
-using Common.DTO.WebSockets.ReletedNotes;
 using BI.Services.DiffsMatchPatch;
 using Common.DTO.Notes.FullNoteSyncContents;
 using BI.Services.Notes.Audios;
@@ -58,6 +54,7 @@ using Noots.History;
 using Noots.Encryption;
 using Noots.Search;
 using Noots.Personalization;
+using Noots.RelatedNotes;
 using Noots.Users;
 using Noots.Sharing;
 using Noots.SignalrUpdater;
@@ -111,10 +108,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
 
             // RELATED NOTES
-            services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();         
-            services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
+            services.ApplyRelatedNotesDI();
 
             // FULL NOTE TEXT
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();

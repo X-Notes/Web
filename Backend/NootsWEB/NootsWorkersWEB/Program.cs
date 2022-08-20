@@ -2,7 +2,6 @@ using NootsWorkersWEB.Database.Models;
 using NootsWorkersWEB.Database;
 using Microsoft.EntityFrameworkCore;
 using NootsWorkersWEB.ConfigureAPP;
-using WriteAPI.Hosted;
 using Hangfire;
 using WriteContext;
 using Noots.Storage;

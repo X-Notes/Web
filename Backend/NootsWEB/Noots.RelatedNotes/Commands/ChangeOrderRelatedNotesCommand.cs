@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Domain.Commands.RelatedNotes
+namespace Noots.RelatedNotes.Commands
 {
     public class ChangeOrderRelatedNotesCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<EntityPositionDTO> Positions { set; get; }
 
         [ValidationGuid]

@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.SignalrUpdater", "Noo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Backgrounds", "Noots.Backgrounds\Noots.Backgrounds.csproj", "{7762D56E-5553-4710-A3FC-6798B9179DE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.RelatedNotes", "Noots.RelatedNotes\Noots.RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{7762D56E-5553-4710-A3FC-6798B9179DE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7762D56E-5553-4710-A3FC-6798B9179DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7762D56E-5553-4710-A3FC-6798B9179DE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F51B0A18-7767-4B87-A780-F930470B5160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F51B0A18-7767-4B87-A780-F930470B5160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F51B0A18-7767-4B87-A780-F930470B5160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F51B0A18-7767-4B87-A780-F930470B5160}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

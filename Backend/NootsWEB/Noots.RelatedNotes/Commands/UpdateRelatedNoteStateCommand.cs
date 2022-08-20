@@ -1,11 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.RelatedNotes
+namespace Noots.RelatedNotes.Commands
 {
     public class UpdateRelatedNoteStateCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

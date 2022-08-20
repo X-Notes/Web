@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Notes;
-using Domain.Commands.RelatedNotes;
-using Domain.Queries.RelatedNotes;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
+using Noots.RelatedNotes.Commands;
+using Noots.RelatedNotes.Queries;
 using Noots.Search.Queries;
 
 namespace WriteAPI.Controllers.Note

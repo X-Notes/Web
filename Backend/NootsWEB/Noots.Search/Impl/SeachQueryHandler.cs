@@ -1,7 +1,6 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
-using Domain.Queries.InnerFolder;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.MapperLocked;

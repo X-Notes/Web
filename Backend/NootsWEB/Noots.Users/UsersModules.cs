@@ -1,11 +1,11 @@
 ﻿using Common.DTO;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using BI.Services.UserHandlers;
-using Domain.Queries.Users;
 using Noots.Users.Commands;
 using Noots.Storage.Queries;
 using Noots.Users.Entities;
+using Noots.Users.Impl;
+using Noots.Users.Queries;
 
 namespace Noots.Users
 {

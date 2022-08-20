@@ -3,7 +3,7 @@ using Common.DTO;
 using MediatR;
 using Noots.Users.Entities;
 
-namespace Domain.Queries.Users
+namespace Noots.Users.Queries
 {
     public class GetUserShortDTOQuery : BaseQueryEntity, IRequest<OperationResult<ShortUser>>
     {

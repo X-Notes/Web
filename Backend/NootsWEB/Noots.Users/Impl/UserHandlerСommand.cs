@@ -11,7 +11,7 @@ using Noots.Users.Commands;
 using Noots.Users.Entities;
 using WriteContext.Repositories.Users;
 
-namespace BI.Services.UserHandlers
+namespace Noots.Users.Impl
 {
     public class UserHandlerСommand :
         IRequestHandler<NewUserCommand, Guid>,
