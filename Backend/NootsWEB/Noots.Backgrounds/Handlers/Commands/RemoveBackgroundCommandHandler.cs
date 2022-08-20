@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Noots.Backgrounds.Commands;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Storage.Commands;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Backgrounds.Handlers.Commands;
 

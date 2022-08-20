@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using WriteContext.Repositories.Users;
+using Noots.DatabaseContext.Repositories.Users;
 
 namespace FakeData
 {

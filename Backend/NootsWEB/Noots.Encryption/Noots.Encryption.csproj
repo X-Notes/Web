@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
     <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
-    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 
 </Project>

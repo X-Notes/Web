@@ -14,16 +14,16 @@ using Common.DTO.Personalization;
 using Common.DTO.Users;
 using Domain.Queries.Notes;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.Histories;
+using Noots.DatabaseContext.Repositories.NoteContent;
+using Noots.DatabaseContext.Repositories.Notes;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Encryption.Impl;
 using Noots.Mapper.Mapping;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Histories;
-using WriteContext.Repositories.NoteContent;
-using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Notes
 {

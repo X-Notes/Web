@@ -11,10 +11,10 @@ using Common.DTO.Folders;
 using Common.DTO.WebSockets;
 using Domain.Commands.Folders;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.Folders;
 
 namespace BI.Services.Folders
 {

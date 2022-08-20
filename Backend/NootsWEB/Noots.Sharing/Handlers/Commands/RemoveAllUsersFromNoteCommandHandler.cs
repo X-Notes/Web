@@ -1,10 +1,10 @@
 ﻿using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.Notes;
 
 namespace Noots.Sharing.Handlers.Commands;
 

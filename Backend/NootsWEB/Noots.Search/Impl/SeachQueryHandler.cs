@@ -2,15 +2,15 @@
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
 using MediatR;
+using Noots.DatabaseContext.Repositories;
+using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.Notes;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
 using Noots.Search.Entities;
 using Noots.Search.Queries;
-using WriteContext.Repositories;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Search.Impl
 {

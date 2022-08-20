@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Notifications;
+using Noots.DatabaseContext.Repositories.Notifications;
 using WriteAPI.ControllerConfig;
-using WriteContext.Repositories.Notifications;
 using Noots.Mapper.Mapping;
 
 namespace WriteAPI.Controllers.UserContollers

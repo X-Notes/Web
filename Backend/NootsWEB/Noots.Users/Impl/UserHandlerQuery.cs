@@ -1,12 +1,12 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Storage.Queries;
 using Noots.Users.Entities;
 using Noots.Users.Queries;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Users.Impl
 {

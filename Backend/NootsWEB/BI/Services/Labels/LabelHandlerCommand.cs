@@ -7,8 +7,8 @@ using Common.DatabaseModels.Models.Labels;
 using Common.DTO;
 using Domain.Commands.Labels;
 using MediatR;
-using WriteContext.Repositories.Labels;
-using WriteContext.Repositories.Users;
+using Noots.DatabaseContext.Repositories.Labels;
+
 
 namespace BI.Services.Labels
 {

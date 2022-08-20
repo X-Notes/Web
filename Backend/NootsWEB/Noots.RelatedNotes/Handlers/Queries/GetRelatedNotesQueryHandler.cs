@@ -1,8 +1,8 @@
 ﻿using Common.DTO.Notes;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
 using Noots.RelatedNotes.Queries;
-using WriteContext.Repositories.Notes;
 
 namespace Noots.RelatedNotes.Handlers.Queries;
 

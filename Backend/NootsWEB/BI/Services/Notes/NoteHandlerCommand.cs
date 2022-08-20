@@ -16,6 +16,11 @@ using Common.DTO.Notes;
 using Common.DTO.WebSockets;
 using Domain.Commands.Notes;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.Histories;
+using Noots.DatabaseContext.Repositories.Labels;
+using Noots.DatabaseContext.Repositories.NoteContent;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Encryption.Impl;
 using Noots.History.Impl;
 using Noots.Mapper.Mapping;
@@ -23,11 +28,7 @@ using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 using Noots.Storage;
 using Noots.Storage.Commands;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Histories;
-using WriteContext.Repositories.Labels;
-using WriteContext.Repositories.NoteContent;
-using WriteContext.Repositories.Notes;
+
 namespace BI.Services.Notes
 {
     public class NoteHandlerCommand :

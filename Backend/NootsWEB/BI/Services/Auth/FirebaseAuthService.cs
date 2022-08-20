@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using WriteContext.Repositories.Users;
+using Noots.DatabaseContext.Repositories.Users;
 
 namespace BI.Services.Auth
 {

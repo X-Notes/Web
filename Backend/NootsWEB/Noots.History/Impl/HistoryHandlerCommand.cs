@@ -5,10 +5,10 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Histories;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Commands;
 using Noots.Mapper.Mapping;
-using WriteContext.Repositories.Histories;
-using WriteContext.Repositories.Notes;
 
 namespace Noots.History.Impl
 {

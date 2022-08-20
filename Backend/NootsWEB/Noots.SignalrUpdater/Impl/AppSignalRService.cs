@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.DTO.Notes;
+﻿using System.Collections.ObjectModel;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
 using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
+using Noots.DatabaseContext.Repositories.WS;
 using Noots.SignalrUpdater.Models;
-using WriteContext.Repositories.WS;
 
 namespace Noots.SignalrUpdater.Impl
 {

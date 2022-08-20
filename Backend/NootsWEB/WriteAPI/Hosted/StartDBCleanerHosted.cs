@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories.WS;
+using Noots.DatabaseContext.Repositories.WS;
 
 namespace WriteAPI.Hosted
 {

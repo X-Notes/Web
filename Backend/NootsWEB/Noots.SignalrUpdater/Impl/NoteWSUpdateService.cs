@@ -1,10 +1,5 @@
 ﻿using Common.DTO.WebSockets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Users;
+using Noots.DatabaseContext.Repositories.Folders;
 
 namespace Noots.SignalrUpdater.Impl
 {

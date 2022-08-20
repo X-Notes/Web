@@ -3,13 +3,12 @@ using NootsWorkersWEB.Database;
 using Microsoft.EntityFrameworkCore;
 using NootsWorkersWEB.ConfigureAPP;
 using Hangfire;
-using WriteContext;
 using Noots.Storage;
 using Common.Azure;
 using Noots.Mapper;
 using Noots.History;
 using MediatR;
-using Noots.Encryption;
+using Noots.DatabaseContext;
 using NootsWorkersWEB.Filters;
 
 var builder = WebApplication.CreateBuilder(args);

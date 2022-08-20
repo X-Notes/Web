@@ -8,10 +8,10 @@ using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
 using Domain.Queries.Folders;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Users;
 
 namespace BI.Services.Folders
 {

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Common.DTO.Labels;
 using Domain.Queries.Labels;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Labels;
 using Noots.Mapper.Mapping;
-using WriteContext.Repositories.Labels;
 
 namespace BI.Services.Labels
 {

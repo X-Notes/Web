@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
-using WriteContext.Repositories.Folders;
 
 namespace Noots.Sharing.Handlers.Commands;
 
@@ -11,8 +11,7 @@ public class ChangeRefTypeFoldersHandler : IRequestHandler<ChangeRefTypeFolders,
 {
     private readonly IMediator mediator;
     private readonly FolderRepository folderRepository;
-
-
+    
     public ChangeRefTypeFoldersHandler(IMediator _mediator, FolderRepository folderRepository)
     {
         mediator = _mediator;

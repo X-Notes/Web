@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BI.Services.Auth;
 using Common;
 using Common.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.DatabaseContext.Repositories.Users;
 using WriteAPI.ControllerConfig;
-using WriteContext.Repositories.Users;
 
 namespace WriteAPI.Controllers.UserContollers
 {

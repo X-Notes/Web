@@ -7,13 +7,13 @@ using Common.DTO.Labels;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Histories;
 using Noots.Encryption.Impl;
 using Noots.History.Entities;
 using Noots.History.Queries;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Histories;
 
 namespace Noots.History.Impl
 {

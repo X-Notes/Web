@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Personalization.Commands;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Personalization.Impl
 {

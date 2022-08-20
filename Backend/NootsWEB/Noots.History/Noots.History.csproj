@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
-    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 
 </Project>
