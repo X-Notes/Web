@@ -45,11 +45,8 @@
         </div>
       </div>
       <div class="bottom-section">
-        <div
-          class="date"
-          [CustomTooltip]="tooltipDateMessage ?? 'entity-bottom-tooltip.updated' | translate"
-        >
-          <p>{{ updateTime }}</p>
+        <div class="date">
+          <p>{{ (date ?? folder.updatedAt) | dateFromNow }}</p>
         </div>
         <div class="help-icons">
           <div

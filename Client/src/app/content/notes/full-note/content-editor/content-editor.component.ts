@@ -140,9 +140,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents);
     } else {
-      this.contentEditorContentsService.init(contents);
-      this.contentEditorRestoreService.init();
-      this.contentEditorSyncService.init(this.note.id);
+      this.contentEditorContentsService.initEdit(contents);
+      this.contentEditorRestoreService.initEdit();
+      this.contentEditorSyncService.initEdit(this.note.id);
     }
 
     if (contents.length === 0) {

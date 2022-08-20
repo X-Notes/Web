@@ -93,8 +93,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(() => this.newBackground());
   }
 
-  setLanguage(item: string): void {
-    const language = item.charAt(0).toUpperCase() + item.slice(1);
+  setLanguage(language: string): void {
     this.store.dispatch(new ChangeLanguage(LanguagesENUM[language]));
   }
 

@@ -1,0 +1,355 @@
+{
+  "notes": {
+    "name": "Notes"
+  },
+  "folders": {
+    "name": "Dossiers"
+  },
+  "labels": {
+    "name": "Étiquettes"
+  },
+  "people": {
+    "name": "Gens"
+  },
+  "new": {
+    "note": "Nouvelle note",
+    "folder": "Nouveau dossier",
+    "background": "Nouveau contexte",
+    "label": "Nouveau label",
+    "inner-folder": "Nouvelle note"
+  },
+  "subMenu": {
+    "all": "Tout",
+    "personal": "Personnel",
+    "shared": "Partagé",
+    "archive": "Archiver",
+    "bin": "Suis",
+    "cancel": "Annuler"
+  },
+  "languages": {
+    "en": "Anglais",
+    "ru": "Russe",
+    "uk": "Ukrainien",
+    "sv": "Suédois",
+    "pl":"Polonais",
+    "es": "Espagnol",
+    "it": "Italien",
+    "ja": "Japonais",
+    "zh": "Chinois",
+    "de":"Allemand",
+    "fr":"Français"
+  },
+  "header": {
+    "selected": "Sélectionné",
+    "new": "Nouvelle note",
+    "select": "Sélectionner tout",
+    "filter": "Filtre",
+    "theme": "Thème",
+    "search": "Rechercher...",
+    "questions": "Question",
+    "notification": "Notification",
+    "orientation": "Mode",
+    "back": "Retour",
+    "video": "Vidéo",
+    "countUsers": "Nombre d’utilisateurs",
+    "menu": "Menu",
+    "defaultColor": "Couleur par défaut",
+    "emptyTrash": "Vider la corbeille",
+    "manage": "Ajouter des notes",
+    "questionItems": {
+      "faq": "Foire aux questions",
+      "contact": "Contactez-nous"
+    },
+    "filterMenu": {
+      "dateAsc": "De l’ancien au nouveau",
+      "dateDesc": "Du nouveau à l’ancien",
+      "order": "Ordre glissable personnalisé"
+    }
+  },
+  "menu": {
+    "label": "Étiquette",
+    "share": "Partager",
+    "copy": "Copier",
+    "color": "Couleur",
+    "download": "Télécharger",
+    "lock": "Serrure",
+    "unlock": "Supprimer le verrou",
+    "forceLock": "Forcer le verrouillage",
+    "archive": "Archiver",
+    "delete": "Supprimer",
+    "history": "Histoire",
+    "private": "Personnel",
+    "privateFolder": "Personnel",
+    "removeFromFolder": "Supprimer des notes du dossier",
+    "restore": "Restaurer"
+  },
+  "profile": {
+    "sectionProfile": "Profil",
+    "sectionGeneral": "Généralités",
+    "sectionAccount": "Compte",
+    "sectionPersonalization": "Personnalisation",
+    "nameUser": "Nom",
+    "email": "Messagerie électronique",
+    "descriptionEmail": "Votre adresse e-mail est votre identité sur Noots et est utilisée pour vous connecter",
+    "logOut": "Se déconnecter",
+    "update": "Mettre à jour",
+    "language": "Langue",
+    "personalKey": " Clé personnelle",
+    "changeKey": "Changement",
+    "resetKey": "Réinitialisation",
+    "theme": "Thème",
+    "themeLight": "Lumière",
+    "themeDark": "Sombre",
+    "genericTooltip": "Voyez à quoi ressembleront les notes dans le",
+    "genericPreview": "Aperçu",
+    "noteSize": "Taille de la note",
+    "noteDefault": "Faire défaut",
+    "noteBig": "Grand",
+    "isViewAudioOnNote": "Afficher l’audio",
+    "isViewDocumentOnNote": "Afficher les documents",
+    "isViewPhotosOnNote": "Afficher les photos",
+    "isViewTextOnNote": "Afficher le texte",
+    "isViewVideoOnNote": "Afficher les vidéos",
+    "contentInNoteCount": "Compter le contenu visible sur note",
+    "notesInFolderCount": "Compter les notes visibles sur le dossier",
+    "countCurrent": "Courant: "
+  },
+  "modal": {
+    "notFound": "Introuvable",
+    "close": "Fermer",
+    "labelModal": {
+      "Labels": "Étiquettes",
+      "search": "Nom de l’étiquette..."
+    },
+    "ColorModal": {
+      "Colors": "Couleurs",
+      "save": "Sauvegarder"
+    },
+    "contactUs": {
+      "send": "Envoyer",
+      "emailField": "Messagerie électronique",
+      "emailHolder": "Votre adresse e-mail",
+      "text": "Entrez votre message",
+      "textHolder": "Message...",
+      "required": "Le champ est obligatoire",
+      "emailValidation": "L’e-mail n’est pas valide",
+      "success": "Votre message a été envoyé avec succès",
+      "incorrect": "Entrée incorrecte"
+    },
+    "shareModal": {
+      "Share": "Partager",
+      "access": "Accès",
+      "personal": "Personnel",
+      "shared": "Partagé",
+      "selectedNotes": "Notes sélectionnées",
+      "search": "Rechercher...",
+      "alert": "Envoyer une alerte",
+      "Editor": "Éditeur",
+      "Viewer": "Spectateur",
+      "send": "Envoyer",
+      "sharedMessage": "Toute personne sur Internet avec ce lien",
+      "noSharedMessage": "Seules les personnes ajoutées peuvent s’ouvrir avec ce lien",
+      "noPeopleNote": "Les personnes qui ont accès à la note seront affichées ici",
+      "noPeopleFolder": "Les personnes qui ont accès au dossier seront affichées ici",
+      "clearAll": "Effacer tout"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Notes connexes",
+      "new": "Ajouter un nouveau"
+    },
+    "folderManage": {
+      "notes": "Ajouter des notes au dossier"
+    },
+    "lockModal": {
+      "lock": "Note de verrouillage",
+      "unLock": "Déverrouiller la note",
+      "unDecrypt": "Supprimer le verrou",
+      "remove": "Enlever",
+      "сomeIn": "Ouvrir",
+      "save": "Sauvegarder",
+      "password": "Mot de passe",
+      "confirm": "Confirmer le mot de passe",
+      "placeholderPass": "Tapez le mot de passe",
+      "placeholderConfirm": "Confirmer",
+      "passMatchError": "les mots de passe ne correspondent pas",
+      "required": "Champ obligatoire",
+      "minLength": "Le mot de passe doit comporter au moins 6 caractères",
+      "incorrect": "Mot de passe incorrect",
+      "timeMessage": "Après le déverrouillage, la note sera disponible pendant 5 minutes",
+      "revokeMessage": "Tous les utilisateurs qui peuvent afficher ou modifier cette note perdront l’accès à celle-ci"
+    },
+    "reviewModal": {
+      "review": "Document d’examen"
+    },
+    "deletionModal": {
+      "title": "Délétion",
+      "sureDeleteNotes": "Voulez-vous vraiment supprimer des notes ?",
+      "sureDeleteFolders": "Voulez-vous vraiment supprimer des dossiers ?",
+      "sureDeleteLabels": "Voulez-vous vraiment supprimer des étiquettes ?",
+      "additionalMessage": "Une fois supprimés, il n’y a aucun moyen de les récupérer."
+    },
+    "genericButtons": {
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    }
+  },
+  "innerNote": {
+    "title": "Titre",
+    "openNoteOrFile": "Notes",
+    "text": "SMS",
+    "heading": "Rubrique",
+    "menu": {
+      "addVideo": "Ajouter de nouvelles vidéos",
+      "addAudio": "Ajouter de nouveaux audios",
+      "addDocument": "Ajouter de nouveaux documents",
+      "review": "Révision",
+      "download": "Télécharger",
+      "copy": "Copier l’URL",
+      "delete": "Supprimer"
+    },
+    "photoMenu": {
+      "upload": "Télécharger de nouvelles photos",
+      "countRow": "Photo en ligne",
+      "oneRow": "Un d’affilée",
+      "twoRow": "Deux d’affilée",
+      "threeRow": "Trois d’affilée",
+      "fourRow": "Quatre d’affilée"
+    },
+    "audio": {
+      "previos": "Précédent",
+      "next": "Prochain",
+      "play": "Jouer",
+      "pause": "Pause",
+      "loop": "boucle",
+      "playlist": "Playlist",
+      "close": "Fermer",
+      "mute": "Muet",
+      "turnOnSound": "Activer le son",
+      "wideScreen": "Écran large",
+      "defaultPlayer": "Lecteur par défaut",
+      "fullscreen": "Plein écran",
+      "miniPlayer": "Mini lecteur",
+      "plsUpload": "Télécharger l’audio",
+      "playing": "jeu"
+    },
+    "video": {
+      "plsUpload": "Télécharger la vidéo"
+    },
+    "document": {
+      "plsUpload": "Télécharger le document"
+    },
+    "photo": {
+      "plsUpload": "Télécharger la photo"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Les notes personnelles seront affichées ici",
+    "sharedNotes": "Les notes partagées seront affichées ici",
+    "archiveNotes": "Les notes archivées seront affichées ici",
+    "deletedNotes": "Les notes supprimées seront affichées ici",
+    "allLabels": "Les étiquettes seront affichées ici",
+    "deletedLabels": "Les étiquettes supprimées seront affichées ici",
+    "privateFolders": "Les dossiers personnels seront affichés ici",
+    "sharedFolders": "Les dossiers partagés seront affichés ici",
+    "archiveFolders": "Les dossiers archivés seront affichés ici",
+    "deletedFolders": "Les dossiers supprimés seront affichés ici",
+    "folderNotes": "Les notes seront affichées ici",
+    "notification": "Aucune notification non lue",
+    "notificationAll": "Vous n’avez aucune notification",
+    "history": "Il n’y a pas encore d’historique dans la note",
+    "noAccessViewNote": "Vous n’êtes pas autorisé à afficher la note",
+    "noAccessViewFolder": "Vous n’êtes pas autorisé à afficher le dossier"
+  },
+  "notification": {
+    "title": "Notification",
+    "readAll": "Lire toutes les notifications",
+    "seeAll": "Voir toutes les notifications",
+    "goToNew": "Accéder aux nouvelles notifications",
+    "newMessage": "Nouveau",
+    "readMessage": "Lire le message",
+    "ChangeUserPermissionNote": "Modifier la note d’autorisation de l’utilisateur"
+  },
+  "uploader": {
+    "uploading": "Téléchargement",
+    "uploadingDocumentsNoteLong": "Téléchargement de documents dans une note",
+    "uploadingDocumentsNote": "Téléchargement de documents",
+    "uploadingVideosNoteLong": "Téléchargement de vidéos dans une note",
+    "uploadingVideosNote": "Téléchargement de vidéos",
+    "uploadingAudiosNoteLong": "Téléchargement d’audios dans une note",
+    "uploadingAudiosNote": "Téléchargement d’audios",
+    "uploadingPhotosNoteLong": "Téléchargement de photos dans une note",
+    "uploadingPhotosNote": "Téléchargement de photos",
+    "exportShort": "Exportation",
+    "exportVideos": "Exporter des vidéos",
+    "exportAudios": "Exporter des audios",
+    "exportDocuments": "Documents d’exportation",
+    "exportPhotos": "Exporter des photos",
+    "copyShort": "Copie",
+    "copyNotes": "Copie de notes",
+    "copyFolders": "Copie de dossiers",
+    "changingProfilePhoto": "La photo change",
+    "changingBackground": "L’arrière-plan change",
+    "photoChanging": "Changement de photo"
+  },
+  "placeholder": {
+    "folderNote": "Note sans titre",
+    "folderSmall": "Titre du dossier",
+    "noteSmall": "Titre de la note",
+    "playlist": "Nommez votre playlist",
+    "labelPage": "Nom de l’étiquette",
+    "unnamedNote": "Note sans nom",
+    "unnamedFolder": "Dossier sans nom",
+    "unnamedLabel": "Étiquette sans nom"
+  },
+  "snackBar": {
+    "saved": "Sauvé",
+    "onlyAuthorCanMoveIt": "Seul le créateur de la note peut la déplacer",
+    "noPermissionsForEdit": "Aucun droit de modification",
+    "archive": "archiver",
+    "toBin": "suis",
+    "toShared": "partagé",
+    "toPrivate": "privé",
+    "undo": "Défaire",
+    "all": "tout",
+    "notes": "Notes",
+    "note": "Note",
+    "folders": "Dossiers",
+    "folder": "Dossier",
+    "labels": "Étiquettes",
+    "label": "Étiquette",
+    "notePermDeleted": "Note supprimée définitivement",
+    "notesPermDeleted": "Notes supprimées définitivement",
+    "folderPermDeleted": "Dossier supprimé définitivement",
+    "foldersPermDeleted": "Dossiers supprimés définitivement",
+    "movedToMany": " déplacé vers ",
+    "movedToSingle": " déplacé vers ",
+    "reloadPage": "Connexion instable veuillez actualiser la page",
+    "noItemInExport": "La collecte est vide"
+  },
+  "titles": {
+    "labels": "Étiquettes",
+    "notes": "Notes",
+    "folders": "Dossiers",
+    "profile": "Profil",
+    "history": "Histoire",
+    "note": "Note",
+    "folder": "Dossier"
+  },
+  "delete-message": {
+    "folders": "Les dossiers seront automatiquement supprimés après {{days}} jours",
+    "notes": "Les notes seront automatiquement supprimées après {{days}} jours",
+    "labels": "Les étiquettes seront automatiquement supprimées après {{days}} jours"
+  },
+  "entity-bottom-tooltip": {
+    "deleted": "date de suppression",
+    "hasUsersNote": "La note peut être consultée ou modifiée par plusieurs utilisateurs",
+    "hasUsersFolder": "Le dossier peut être affiché ou modifié par plusieurs utilisateurs",
+    "unlockTime": "La note sera verrouillée à {{time}}",
+    "owner": "Vous êtes le propriétaire de la note",
+    "ownerFolder": "Vous êtes le propriétaire du dossier",
+    "editNote": "Vous pouvez modifier la note",
+    "editFolder": "Vous pouvez modifier le dossier",
+    "readNote": "Vous ne pouvez lire que la note",
+    "readFolder": "Vous ne pouvez lire que le dossier"
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "notes": {
+    "name": "Notas"
+  },
+  "folders": {
+    "name": "Carpetas"
+  },
+  "labels": {
+    "name": "Etiquetas"
+  },
+  "people": {
+    "name": "Gente"
+  },
+  "new": {
+    "note": "Nueva nota",
+    "folder": "Nueva carpeta",
+    "background": "Nuevos antecedentes",
+    "label": "Nueva etiqueta",
+    "inner-folder": "Nueva nota"
+  },
+  "subMenu": {
+    "all": "Todo",
+    "personal": "Personal",
+    "shared": "Compartido",
+    "archive": "Archivo",
+    "bin": "AM",
+    "cancel": "Cancelar"
+  },
+  "languages": {
+    "en": "Inglés",
+    "ru": "Ruso",
+    "uk": "Ucraniano",
+    "sv": "Sueco",
+    "pl": "Polaco",
+    "es": "Español",
+    "it": "Italiano",
+    "ja": "Japonés",
+    "zh": "Chino",
+    "de": "Alemán",
+    "fr": "Frances"
+  },
+  "header": {
+    "selected": "Seleccionado",
+    "new": "Nueva nota",
+    "select": "Seleccionar todo",
+    "filter": "Filtro",
+    "theme": "Tema",
+    "search": "Buscar...",
+    "questions": "Pregunta",
+    "notification": "Notificación",
+    "orientation": "Modo",
+    "back": "Volver",
+    "video": "Vídeo",
+    "countUsers": "Número de usuarios",
+    "menu": "Menú",
+    "defaultColor": "Color predeterminado",
+    "emptyTrash": "Vaciar la papelera",
+    "manage": "Añadir notas",
+    "questionItems": {
+      "faq": "Preguntas frecuentes",
+      "contact": "Contacta con nosotros"
+    },
+    "filterMenu": {
+      "dateAsc": "De lo viejo a lo nuevo",
+      "dateDesc": "De lo nuevo a lo viejo",
+      "order": "Orden arrastrable personalizado"
+    }
+  },
+  "menu": {
+    "label": "Etiqueta",
+    "share": "Compartir",
+    "copy": "Copiar",
+    "color": "Color",
+    "download": "Descargar",
+    "lock": "Cerradura",
+    "unlock": "Quitar bloqueo",
+    "forceLock": "Bloqueo forzado",
+    "archive": "Archivo",
+    "delete": "Borrar",
+    "history": "Historia",
+    "private": "Personal",
+    "privateFolder": "Personal",
+    "removeFromFolder": "Quitar notas de la carpeta",
+    "restore": "Restaurar"
+  },
+  "profile": {
+    "sectionProfile": "Perfil",
+    "sectionGeneral": "General",
+    "sectionAccount": "Cuenta",
+    "sectionPersonalization": "Personalización",
+    "nameUser": "Nombre",
+    "email": "Correo electrónico",
+    "descriptionEmail": "Su dirección de correo electrónico es su identidad en Noots y se utiliza para iniciar sesión",
+    "logOut": "Cerrar sesión",
+    "update": "Actualizar",
+    "language": "Idioma",
+    "personalKey": " Clave personal",
+    "changeKey": "Cambio",
+    "resetKey": "Restablecimiento",
+    "theme": "Tema",
+    "themeLight": "Luz",
+    "themeDark": "Oscuro",
+    "genericTooltip": "Vea cómo se verán las notas en el",
+    "genericPreview": "Vista previa",
+    "noteSize": "Tamaño de la nota",
+    "noteDefault": "Predeterminado",
+    "noteBig": "Grande",
+    "isViewAudioOnNote": "Mostrar audio",
+    "isViewDocumentOnNote": "Mostrar documentos",
+    "isViewPhotosOnNote": "Mostrar fotos",
+    "isViewTextOnNote": "Mostrar texto",
+    "isViewVideoOnNote": "Mostrar videos",
+    "contentInNoteCount": "Contar el contenido visible en la nota",
+    "notesInFolderCount": "Contar notas visibles en la carpeta",
+    "countCurrent": "Actual: "
+  },
+  "modal": {
+    "notFound": "No encontrado",
+    "close": "Cerrar",
+    "labelModal": {
+      "Labels": "Etiquetas",
+      "search": "Nombre de la etiqueta..."
+    },
+    "ColorModal": {
+      "Colors": "Colores",
+      "save": "Salvar"
+    },
+    "contactUs": {
+      "send": "Enviar",
+      "emailField": "Correo electrónico",
+      "emailHolder": "Tu dirección de correo electrónico",
+      "text": "Introduce tu mensaje",
+      "textHolder": "Mensaje...",
+      "required": "El campo es obligatorio",
+      "emailValidation": "El correo electrónico no es válido",
+      "success": "Su mensaje se ha enviado correctamente",
+      "incorrect": "Entrada incorrecta"
+    },
+    "shareModal": {
+      "Share": "Compartir",
+      "access": "Acceso",
+      "personal": "Personal",
+      "shared": "Compartido",
+      "selectedNotes": "Notas seleccionadas",
+      "search": "Buscar...",
+      "alert": "Enviar alerta",
+      "Editor": "Editor",
+      "Viewer": "Espectador",
+      "send": "Enviar",
+      "sharedMessage": "Cualquier persona en Internet con este enlace",
+      "noSharedMessage": "Solo las personas agregadas pueden abrir con este enlace",
+      "noPeopleNote": "Las personas que tienen acceso a la nota se mostrarán aquí",
+      "noPeopleFolder": "Las personas que tienen acceso a la carpeta se mostrarán aquí",
+      "clearAll": "Borrar todo"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Notas relacionadas",
+      "new": "Añadir nuevo"
+    },
+    "folderManage": {
+      "notes": "Agregar notas a la carpeta"
+    },
+    "lockModal": {
+      "lock": "Nota de bloqueo",
+      "unLock": "Nota de desbloqueo",
+      "unDecrypt": "Quitar bloqueo",
+      "remove": "Eliminar",
+      "сomeIn": "Abrir",
+      "save": "Salvar",
+      "password": "Contraseña",
+      "confirm": "Confirmar contraseña",
+      "placeholderPass": "Escriba la contraseña",
+      "placeholderConfirm": "Confirmar",
+      "passMatchError": "las contraseñas no coinciden",
+      "required": "Campo obligatorio",
+      "minLength": "La contraseña debe tener al menos 6 caracteres",
+      "incorrect": "Contraseña incorrecta",
+      "timeMessage": "Después de desbloquear la nota estará disponible durante 5 minutos",
+      "revokeMessage": "Todos los usuarios que puedan ver o editar esta nota perderán el acceso a ella"
+    },
+    "reviewModal": {
+      "review": "Documento de revisión"
+    },
+    "deletionModal": {
+      "title": "Deleción",
+      "sureDeleteNotes": "¿Está seguro de que desea eliminar notas?",
+      "sureDeleteFolders": "¿Está seguro de que desea eliminar carpetas?",
+      "sureDeleteLabels": "¿Está seguro de que desea eliminar etiquetas?",
+      "additionalMessage": "Una vez que los elimine, no hay forma de recuperarlos."
+    },
+    "genericButtons": {
+      "cancel": "Cancelar",
+      "delete": "Borrar"
+    }
+  },
+  "innerNote": {
+    "title": "Título",
+    "openNoteOrFile": "Notas",
+    "text": "Mensaje de texto",
+    "heading": "Encabezado",
+    "menu": {
+      "addVideo": "Añadir nuevos vídeos",
+      "addAudio": "Añadir nuevos audios",
+      "addDocument": "Agregar nuevos documentos",
+      "review": "Revisión",
+      "download": "Descargar",
+      "copy": "Copiar url",
+      "delete": "Borrar"
+    },
+    "photoMenu": {
+      "upload": "Subir nuevas fotos",
+      "countRow": "Foto en fila",
+      "oneRow": "Uno seguido",
+      "twoRow": "Dos seguidos",
+      "threeRow": "Tres seguidos",
+      "fourRow": "Cuatro seguidos"
+    },
+    "audio": {
+      "previos": "Previos",
+      "next": "Próximo",
+      "play": "Jugar",
+      "pause": "Pausa",
+      "loop": "bucle",
+      "playlist": "Playlist",
+      "close": "Cerrar",
+      "mute": "Mudo",
+      "turnOnSound": "Activar el sonido",
+      "wideScreen": "Pantalla panorámica",
+      "defaultPlayer": "Reproductor predeterminado",
+      "fullscreen": "Pantalla completa",
+      "miniPlayer": "Mini reproductor",
+      "plsUpload": "Subir audio",
+      "playing": "Jugando"
+    },
+    "video": {
+      "plsUpload": "Subir video"
+    },
+    "document": {
+      "plsUpload": "Cargar documento"
+    },
+    "photo": {
+      "plsUpload": "Subir foto"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Las notas personales se mostrarán aquí",
+    "sharedNotes": "Las notas compartidas se mostrarán aquí",
+    "archiveNotes": "Las notas archivadas se mostrarán aquí",
+    "deletedNotes": "Las notas eliminadas se mostrarán aquí",
+    "allLabels": "Las etiquetas se mostrarán aquí",
+    "deletedLabels": "Las etiquetas eliminadas se mostrarán aquí",
+    "privateFolders": "Las carpetas personales se mostrarán aquí",
+    "sharedFolders": "Las carpetas compartidas se mostrarán aquí",
+    "archiveFolders": "Las carpetas archivadas se mostrarán aquí",
+    "deletedFolders": "Las carpetas eliminadas se mostrarán aquí",
+    "folderNotes": "Las notas se mostrarán aquí",
+    "notification": "Sin notificaciones no leídas",
+    "notificationAll": "No tienes notificaciones",
+    "history": "Todavía no hay historia en la nota",
+    "noAccessViewNote": "No tiene permiso para ver la nota",
+    "noAccessViewFolder": "No tiene permiso para ver la carpeta"
+  },
+  "notification": {
+    "title": "Notificación",
+    "readAll": "Leer todas las notificaciones",
+    "seeAll": "Ver todas las notificaciones",
+    "goToNew": "Ir a nuevas notificaciones",
+    "newMessage": "Nuevo",
+    "readMessage": "Leer mensaje",
+    "ChangeUserPermissionNote": "Cambiar nota de permisos de usuario"
+  },
+  "uploader": {
+    "uploading": "Cargar",
+    "uploadingDocumentsNoteLong": "Cargar documentos en una nota",
+    "uploadingDocumentsNote": "Carga de documentos",
+    "uploadingVideosNoteLong": "Subir vídeos a una nota",
+    "uploadingVideosNote": "Subir vídeos",
+    "uploadingAudiosNoteLong": "Subir audios a una nota",
+    "uploadingAudiosNote": "Subir audios",
+    "uploadingPhotosNoteLong": "Subir fotos a una nota",
+    "uploadingPhotosNote": "Subir fotos",
+    "exportShort": "Exportar",
+    "exportVideos": "Exportar vídeos",
+    "exportAudios": "Exportar audios",
+    "exportDocuments": "Exportar documentos",
+    "exportPhotos": "Exportar fotos",
+    "copyShort": "Copiador",
+    "copyNotes": "Copiar notas",
+    "copyFolders": "Copiar carpetas",
+    "changingProfilePhoto": "La foto está cambiando",
+    "changingBackground": "El fondo está cambiando",
+    "photoChanging": "Cambio de foto"
+  },
+  "placeholder": {
+    "folderNote": "Nota sin título",
+    "folderSmall": "Título de la carpeta",
+    "noteSmall": "Título de la nota",
+    "playlist": "Nombra tu lista de reproducción",
+    "labelPage": "Nombre de la etiqueta",
+    "unnamedNote": "Nota sin nombre",
+    "unnamedFolder": "Carpeta sin nombre",
+    "unnamedLabel": "Etiqueta sin nombre"
+  },
+  "snackBar": {
+    "saved": "Guardado",
+    "onlyAuthorCanMoveIt": "Solo el creador de la nota puede moverla",
+    "noPermissionsForEdit": "Sin derechos de edición",
+    "archive": "archivo",
+    "toBin": "AM",
+    "toShared": "compartido",
+    "toPrivate": "privado",
+    "undo": "Deshacer",
+    "all": "todo",
+    "notes": "Notas",
+    "note": "Nota",
+    "folders": "Carpetas",
+    "folder": "Carpeta",
+    "labels": "Etiquetas",
+    "label": "Etiqueta",
+    "notePermDeleted": "Nota eliminada permanentemente",
+    "notesPermDeleted": "Notas eliminadas permanentemente",
+    "folderPermDeleted": "Carpeta eliminada permanentemente",
+    "foldersPermDeleted": "Carpetas eliminadas permanentemente",
+    "movedToMany": " movido a ",
+    "movedToSingle": " movido a ",
+    "reloadPage": "Conexión inestable, actualice la página",
+    "noItemInExport": "La colección está vacía"
+  },
+  "titles": {
+    "labels": "Etiquetas",
+    "notes": "Notas",
+    "folders": "Carpetas",
+    "profile": "Perfil",
+    "history": "Historia",
+    "note": "Nota",
+    "folder": "Carpeta"
+  },
+  "delete-message": {
+    "folders": "Las carpetas se eliminarán automáticamente después de {{days}} días",
+    "notes": "Las notas se eliminarán automáticamente después de {{days}} días",
+    "labels": "Las etiquetas se eliminarán automáticamente después de {{days}} días"
+  },
+  "entity-bottom-tooltip": {
+    "deleted": "fecha de supresión",
+    "hasUsersNote": "Nota puede ser vista o editada por varios usuarios",
+    "hasUsersFolder": "La carpeta puede ser vista o editada por varios usuarios",
+    "unlockTime": "La nota se bloqueará en {{time}}",
+    "owner": "Usted es el propietario de la nota",
+    "ownerFolder": "Usted es el propietario de la carpeta",
+    "editNote": "Puede editar la nota",
+    "editFolder": "Puede editar la carpeta",
+    "readNote": "Solo se puede leer la nota",
+    "readFolder": "Solo puede leer la carpeta"
+  }
+}
