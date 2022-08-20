@@ -3,13 +3,12 @@ using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
-using System.Collections.Generic;
 
-namespace Domain.Commands.Labels
+namespace Noots.Labels.Commands
 {
     public class UpdatePositionsLabelCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<EntityPositionDTO> Positions { set; get; }
     }
 }

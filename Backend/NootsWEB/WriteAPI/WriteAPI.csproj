@@ -42,6 +42,7 @@
     <ProjectReference Include="..\Noots.Backgrounds\Noots.Backgrounds.csproj" />
     <ProjectReference Include="..\Noots.Encryption\Noots.Encryption.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
+    <ProjectReference Include="..\Noots.Labels\Noots.Labels.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
     <ProjectReference Include="..\Noots.Personalization\Noots.Personalization.csproj" />

@@ -1,9 +1,8 @@
-﻿using System;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using MediatR;
 
-namespace Domain.Commands.Labels
+namespace Noots.Labels.Commands
 {
     public class RestoreLabelCommand : BaseCommandEntity, IRequest<Unit>
     {

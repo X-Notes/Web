@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Labels;
-using Domain.Commands.Labels;
-using Domain.Queries.Labels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Labels.Commands;
+using Noots.Labels.Queries;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers;

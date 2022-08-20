@@ -1,8 +1,7 @@
-﻿using System;
-using Common.CQRS;
+﻿using Common.CQRS;
 using MediatR;
 
-namespace Domain.Commands.Labels
+namespace Noots.Labels.Commands
 {
     public class NewLabelCommand : BaseCommandEntity, IRequest<Guid>
     {

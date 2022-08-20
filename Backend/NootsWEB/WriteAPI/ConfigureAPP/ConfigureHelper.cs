@@ -8,24 +8,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BI.Services.Folders;
-using BI.Services.Labels;
 using BI.Services.Notes;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Folders;
-using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.FolderInner;
 using Domain.Commands.Folders;
-using Domain.Commands.Labels;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Commands.Notes;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
-using Domain.Queries.Labels;
 using Domain.Queries.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
@@ -52,6 +48,7 @@ using Noots.Permissions;
 using Noots.Storage;
 using Noots.History;
 using Noots.Encryption;
+using Noots.Labels;
 using Noots.Search;
 using Noots.Personalization;
 using Noots.RelatedNotes;
@@ -75,16 +72,7 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyBackgroundsDI();
             
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsQuery, List<LabelDTO>>, LabelHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveAllFromBinCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>, LabelHandlerCommand>();
+            services.ApplyLabelsDI();
 
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();

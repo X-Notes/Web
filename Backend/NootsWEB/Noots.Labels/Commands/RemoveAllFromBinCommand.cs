@@ -1,8 +1,7 @@
 ﻿using Common.CQRS;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Labels
+namespace Noots.Labels.Commands
 {
     public class RemoveAllFromBinCommand : BaseCommandEntity, IRequest<Unit>
     {
