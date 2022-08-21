@@ -25,6 +25,7 @@ import { SelectionService } from '../../../content-editor-services/selection.ser
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
+import { isValidURL } from '../../../../../../shared/utils/is-valid-url.util';
 
 @Component({
   selector: 'app-html-text-part',
@@ -77,7 +78,7 @@ export class HtmlTextPartComponent
   }
 
   get isLink() {
-    return this.validURL(this.contentHtml?.nativeElement?.textContent);
+    return isValidURL(this.contentHtml?.nativeElement?.textContent);
   }
 
   get currentTextCotent() {
@@ -136,16 +137,6 @@ export class HtmlTextPartComponent
   isFocusToNext = () => true;
 
   changeDetectionChecker = (): void => {};
-
-  validURL = (str) => {
-    let url;
-    try {
-      url = new URL(str);
-    } catch (_) {
-      return false;
-    }
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  };
 
   uploadFiles(event) {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;

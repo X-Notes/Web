@@ -22,6 +22,7 @@ import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { EnterEvent } from '../../models/enter-event.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
+import { isValidURL } from '../../../../../shared/utils/is-valid-url.util';
 
 @Component({
   template: '',
@@ -178,18 +179,20 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   pasteCommandHandler(e: ClipboardEvent) {
-    const isLink = this.isPasteLink(e.clipboardData.items);
-    if (isLink) {
+    const isValid = isValidURL(e.clipboardData.getData('text/plain'));
+    if (isValid) {
       e.preventDefault();
-      const json = e.clipboardData.getData('text/link-preview') as any;
-      const data = JSON.parse(json);
-      const title = data.title;
-      const url = data.url;
-      const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-      const html = DeltaConverter.convertContentToHTML(this.content.contents);
-      const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-      const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
-      this.updateHTML(resTextBlocks);
+      const isLink = this.isPasteLink(e.clipboardData.items);
+      if (isLink) {
+        const json = e.clipboardData.getData('text/link-preview') as any;
+        const data = JSON.parse(json);
+        const title = data.title;
+        const url = data.url;
+        this.convertTextToLink(title, url);
+      } else {
+        const data = e.clipboardData.getData('text/plain');
+        this.convertTextToLink(data, data);
+      }
     } else {
       this.apiBrowser.pasteCommandHandler(e);
     }
@@ -291,6 +294,14 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
+  }
+
+  private convertTextToLink(title: string, url: string) {
+    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
+    const html = DeltaConverter.convertContentToHTML(this.content.contents);
+    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
+    const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
+    this.updateHTML(resTextBlocks);
   }
 
   abstract enter(e);
