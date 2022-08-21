@@ -356,10 +356,33 @@ namespace Noots.DatabaseContext
                 new RefType { Id = RefTypeENUM.Editor, Name = nameof(RefTypeENUM.Editor) });
 
             modelBuilder.Entity<BillingPlan>().HasData(
-                new BillingPlan { Id = BillingPlanTypeENUM.Free, Name = nameof(BillingPlanTypeENUM.Free), MaxSize = 1048576000 }, // 1000 MB
-                new BillingPlan { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 5242880000 }, // 5000 MB
-                new BillingPlan { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 20971520000 }); // 20000 MB
-
+                new BillingPlan
+                {
+                    Id = BillingPlanTypeENUM.Free, 
+                    Name = nameof(BillingPlanTypeENUM.Free), 
+                    MaxSize = 1048576000, // 1000 MB
+                    MaxLabels = 500,
+                    MaxNotes = 200,
+                    MaxFolders = 200
+                },
+                new BillingPlan
+                {
+                    Id = BillingPlanTypeENUM.Standart, 
+                    Name = nameof(BillingPlanTypeENUM.Standart), 
+                    MaxSize = 5242880000, // 5000 MB
+                    MaxLabels = 1000,
+                    MaxNotes = 5000,
+                    MaxFolders = 5000
+                }, 
+                new BillingPlan
+                {
+                    Id = BillingPlanTypeENUM.Business, 
+                    Name = nameof(BillingPlanTypeENUM.Business), 
+                    MaxSize = 20971520000, // 20000 MB
+                    MaxLabels = 1000,
+                    MaxNotes = 5000,
+                    MaxFolders = 5000
+                });
 
             modelBuilder.Entity<HType>().HasData(
                 new HType { Id = HTypeENUM.H1, Name = nameof(HTypeENUM.H1) },
