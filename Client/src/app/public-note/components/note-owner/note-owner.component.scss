@@ -17,9 +17,18 @@
     overflow: hidden;
     margin-right: 1rem;
 
-    img {
+    .image-wrapper {
+      position: relative;
+      display: flex;
       width: 100%;
-      height: 100%;
+      padding-bottom: 100%;
+
+      img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 
@@ -36,6 +45,7 @@
     .email {
       display: flex;
       font-size: 0.875rem;
+      opacity: 0.6;
     }
   }
 }

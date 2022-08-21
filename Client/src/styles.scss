@@ -52,11 +52,19 @@ em {
   margin-right: 0.0625rem;
 }
 
-.wrapper-note { // ONLY FOR INNER NOTE
+.wrapper-note, .note-preview-text { // ONLY FOR INNER NOTE
   a {
     cursor: pointer;
     text-decoration: underline;
     color: #5192ff;
+  }
+}
+
+.note-preview-text {
+  pointer-events: none;
+
+  a {
+    text-decoration: none;
   }
 }
 

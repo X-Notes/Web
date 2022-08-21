@@ -8,6 +8,9 @@ import { DeleteCurrentNoteData, LoadFullNote } from '../../../content/notes/stat
 import { PersonalizationService } from '../../../shared/services/personalization.service';
 import { ContentModelBase } from '../../../content/notes/models/editor-models/content-model-base';
 import { ApiServiceNotes } from '../../../content/notes/api-notes.service';
+import { PublicUser } from '../../storage/public-action';
+import { PublicStore } from '../../storage/public-state';
+import { ShortUserPublic } from '../../interfaces/short-user-public.model';
 
 @Component({
   selector: 'app-public-note-content',
@@ -17,6 +20,9 @@ import { ApiServiceNotes } from '../../../content/notes/api-notes.service';
 export class PublicNoteContentComponent implements OnDestroy {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
+
+  @Select(PublicStore.owner)
+  owner$: Observable<ShortUserPublic>;
 
   @Select(NoteStore.fullNoteTitle)
   noteTitle$: Observable<string>;
@@ -58,6 +64,8 @@ export class PublicNoteContentComponent implements OnDestroy {
     if (!isLocked) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       if (note) {
+        const ownerId = this.store.selectSnapshot(NoteStore.getOwnerId);
+        await this.store.dispatch(new PublicUser(ownerId)).toPromise();
         this.contents = await this.api.getContents(id).toPromise();
       }
     }

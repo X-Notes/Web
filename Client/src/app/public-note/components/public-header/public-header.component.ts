@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { NoteStore } from '../../../content/notes/state/notes-state';
 import { Observable } from 'rxjs';
@@ -9,13 +9,7 @@ import { OnlineUsersNote } from '../../../content/notes/models/online-users-note
   templateUrl: './public-header.component.html',
   styleUrls: ['./public-header.component.scss'],
 })
-export class PublicHeaderComponent implements OnInit {
+export class PublicHeaderComponent {
   @Select(NoteStore.getOnlineUsersOnNote)
   onlineUsers$: Observable<OnlineUsersNote[]>;
-
-  ngOnInit(): void {
-    this.onlineUsers$.subscribe((user) => {
-      console.log(user);
-    });
-  }
 }
