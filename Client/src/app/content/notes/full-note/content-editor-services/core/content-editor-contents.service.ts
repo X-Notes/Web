@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
@@ -36,6 +37,7 @@ export class ContentEditorContentsService {
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
+    private apiBrowser: ApiBrowserTextService,
   ) {}
 
   // TODO 1. Worker
@@ -171,6 +173,7 @@ export class ContentEditorContentsService {
     isReloadOrder = false,
   ): ContentModelBase[] {
     if (removedIds && removedIds.length > 0) {
+      // HElo
       content = content.filter((x) => !removedIds.some((id) => id === x.id));
     }
     if (diffs.newTextItems.length > 0) {
@@ -369,14 +372,6 @@ export class ContentEditorContentsService {
     }
   }
 
-  setSafeSyncContents(data: ContentModelBase, contentId: string): void {
-    const obj = this.findContentAndIndexById(this.contentsSync, contentId);
-    if (obj) {
-      this.contentsSync[obj.index] = data;
-    }
-    throw new Error('Content not found');
-  }
-
   // INSERT
   insertInto(data: ContentModelBase, index: number, isSync = false) {
     this.contents.splice(index, 0, data);
@@ -443,11 +438,11 @@ export class ContentEditorContentsService {
   }
 
   addItemsToCollections<T extends BaseFile>(files: T[], contentId: string, isSync = false): void {
-    const content = this.getContentById<BaseCollection<BaseFile>>(contentId);
+    const content = this.getContentById<BaseCollection<T>>(contentId);
     if (content) {
       content.addItemsToCollection(files);
     }
-    const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(contentId);
+    const contentSync = this.getSyncContentById<BaseCollection<T>>(contentId);
     if (contentSync && isSync) {
       contentSync.addItemsToCollection(files);
     }

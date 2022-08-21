@@ -333,9 +333,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteRowHandler(id: string) {
     const index = this.contentEditorContentsService.deleteContent(id);
-    const elms = this.elements?.toArray();
-    if (elms?.length <= index) {
-      this.elements?.toArray()[index].setFocusToEnd();
+    if (index !== 0) {
+      this.elements?.toArray()[index - 1].setFocusToEnd();
     }
     this.postAction();
   }
