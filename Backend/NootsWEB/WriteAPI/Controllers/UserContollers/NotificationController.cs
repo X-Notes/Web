@@ -8,6 +8,7 @@ using Common.DTO.Notifications;
 using Noots.DatabaseContext.Repositories.Notifications;
 using WriteAPI.ControllerConfig;
 using Noots.Mapper.Mapping;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.UserContollers;
 
@@ -29,6 +30,7 @@ public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
 
 
     [HttpGet]
+    [ValidationRequireUserIdFilter]
     public async Task<IEnumerable<NotificationDTO>> GetNotifications()
     {
         var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
@@ -36,6 +38,7 @@ public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
     }
 
     [HttpGet("read/all")]
+    [ValidationRequireUserIdFilter]
     public async Task<IActionResult> ReadAllNotifications()
     {
         var notifs = await notificationRepository
@@ -46,6 +49,7 @@ public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
     }
 
     [HttpGet("read/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task<IActionResult> ReadAllNotifications(Guid id)
     {
         var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == this.GetUserId() && x.Id == id);

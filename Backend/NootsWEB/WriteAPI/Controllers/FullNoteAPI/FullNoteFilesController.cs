@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.FullNoteAPI;
 
@@ -32,6 +33,7 @@ public class FullNoteFilesController : ControllerBase
     }
 
     [HttpPost("upload/{noteId}/{fileType}")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<List<FileDTO>>> UploadFiles(List<IFormFile> noteFiles, Guid noteId, FileTypeEnum fileType, CancellationToken cancellationToken)
     {
         if (noteFiles.Count == 0) // TODO MOVE TO FILTER
@@ -91,6 +93,7 @@ public class FullNoteFilesController : ControllerBase
     }
 
     [HttpPatch("metadata")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<FileDTO>> UpdateFileMetaData(UpdateFileMetaDataCommand command)
     {
         command.UserId = this.GetUserId();

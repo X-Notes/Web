@@ -6,6 +6,7 @@ using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Noots.Personalization.Commands;
 using Noots.Personalization.Queries;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.UserContollers;
 
@@ -23,6 +24,7 @@ public class PersonalizationController : ControllerBase
 
 
     [HttpGet]
+    [ValidationRequireUserIdFilter]
     public async Task<PersonalizationSettingDTO> GetUserPersonalizationSettings()
     {
         var query = new GetUserPersonalizationSettingsQuery(this.GetUserId());
@@ -31,6 +33,7 @@ public class PersonalizationController : ControllerBase
 
 
     [HttpPatch]
+    [ValidationRequireUserIdFilter]
     public async Task UpdateUserPersonalizationSettings(UpdatePersonalizationSettingsCommand command)
     {
         command.UserId = this.GetUserId();

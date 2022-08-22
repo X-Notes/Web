@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.FullNoteAPI;
 
@@ -29,6 +30,7 @@ public class FullNotePhotosController : BaseNoteFileContentController
 
 
     [HttpPost("transform")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)
     {
         command.UserId = this.GetUserId();

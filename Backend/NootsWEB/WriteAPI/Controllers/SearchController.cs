@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Noots.Search.Entities;
 using Noots.Search.Queries;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers;
 
@@ -21,6 +22,7 @@ public class SearchController : ControllerBase
     }
 
     [HttpPost("share/modal")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<ShortUserForShareModal>> GetByUsersForShareModal(GetUsersForSharingModalQuery command)
     {
         command.UserId = this.GetUserId();
@@ -28,6 +30,7 @@ public class SearchController : ControllerBase
     }
 
     [HttpPost("search")]
+    [ValidationRequireUserIdFilter]
     public async Task<SearchNoteFolderResult> GetNoteAndFolders(GetNotesAndFolderForSearchQuery command)
     {
         command.UserId = this.GetUserId();

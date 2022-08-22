@@ -11,6 +11,7 @@ using Noots.Users.Entities;
 using Noots.Users.Queries;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.UserContollers;
 
@@ -54,12 +55,14 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("memory")]
+    [ValidationRequireUserIdFilter]
     public async Task<GetUserMemoryResponse> GetUsedDiskSpace()
     {
         return await _mediator.Send(new GetUserMemoryQuery(this.GetUserId()));
     }
 
     [HttpPut("info")]
+    [ValidationRequireUserIdFilter]
     public async Task UpdateMainInformation([FromBody] UpdateMainUserInfoCommand command)
     {
         command.UserId = this.GetUserId();
@@ -67,6 +70,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("photo")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<AnswerChangeUserPhoto>> ChangeProfilePhoto(IFormFile photo)
     {
         var validatioResult = this.ValidateFile<AnswerChangeUserPhoto>(photo, SupportFileContentTypes.Photos, FileSizeConstraints.MaxProfilePhotoSize);
@@ -79,6 +83,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("language")]
+    [ValidationRequireUserIdFilter]
     public async Task ChangeLanguage(UpdateLanguageCommand command)
     {
         command.UserId = this.GetUserId();
@@ -86,6 +91,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("theme")]
+    [ValidationRequireUserIdFilter]
     public async Task ChangeTheme(UpdateThemeCommand command)
     {
         command.UserId = this.GetUserId();
@@ -93,6 +99,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("font")]
+    [ValidationRequireUserIdFilter]
     public async Task ChangeFontSize(UpdateFontSizeCommand command)
     {
         command.UserId = this.GetUserId();

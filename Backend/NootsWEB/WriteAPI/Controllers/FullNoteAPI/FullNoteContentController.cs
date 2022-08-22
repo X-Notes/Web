@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 
 namespace WriteAPI.Controllers.FullNoteAPI;
@@ -35,6 +36,7 @@ public class FullNoteContentController : ControllerBase
     }
 
     [HttpPatch("sync/structure")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
     {
         command.UserId = this.GetUserId();

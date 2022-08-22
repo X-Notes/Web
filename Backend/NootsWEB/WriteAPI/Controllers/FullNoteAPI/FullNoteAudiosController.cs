@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.FullNoteAPI;
 
@@ -29,6 +30,7 @@ public class FullNoteAudiosController : BaseNoteFileContentController
     }
 
     [HttpPost("transform")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
     {
         command.UserId = this.GetUserId();

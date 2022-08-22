@@ -11,6 +11,7 @@ using Noots.Backgrounds.Commands;
 using Noots.Backgrounds.Queries;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.UserContollers;
 
@@ -27,24 +28,28 @@ public class BackgroundsController : ControllerBase
 
 
     [HttpGet("background/default")]
+    [ValidationRequireUserIdFilter]
     public async Task DefaultBackgroundCover()
     {
         await _mediator.Send(new DefaultBackgroundCommand(this.GetUserId()));
     }
 
     [HttpDelete("background/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task DeleteBackground(Guid id)
     {
         await _mediator.Send(new RemoveBackgroundCommand(this.GetUserId(), id));
     }
 
     [HttpGet("background/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task UpdateBackgroundCover(Guid id)
     {
         await _mediator.Send(new UpdateBackgroundCommand(this.GetUserId(), id));
     }
 
     [HttpPost("new")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<BackgroundDTO>> NewBackgroundPhoto(IFormFile photo)
     {
         var validatioResult = this.ValidateFile<BackgroundDTO>(photo, SupportFileContentTypes.Photos, FileSizeConstraints.MaxBackgroundPhotoSize);
@@ -56,6 +61,7 @@ public class BackgroundsController : ControllerBase
     }
 
     [HttpGet]
+    [ValidationRequireUserIdFilter]
     public async Task<List<BackgroundDTO>> GetAll()
     {
         return await _mediator.Send(new GetUserBackgroundsQuery(this.GetUserId()));

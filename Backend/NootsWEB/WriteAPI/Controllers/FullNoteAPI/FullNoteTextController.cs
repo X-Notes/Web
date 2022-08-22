@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 
 namespace WriteAPI.Controllers.FullNoteAPI;
@@ -21,6 +22,7 @@ public class FullNoteTextController : ControllerBase
     }
 
     [HttpPatch("title")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> UpdateTitle([FromBody]UpdateTitleNoteCommand command)
     {          
         command.UserId = this.GetUserId();
@@ -28,6 +30,7 @@ public class FullNoteTextController : ControllerBase
     }
 
     [HttpPatch("sync")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> SyncTextContents(UpdateTextContentsCommand command)
     {
         command.UserId = this.GetUserId();

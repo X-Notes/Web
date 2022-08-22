@@ -12,6 +12,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
+
 
 namespace WriteAPI.Controllers.Note;
 
@@ -28,6 +30,7 @@ public class NoteController : ControllerBase
 
 
     [HttpGet("new")]
+    [ValidationRequireUserIdFilter]
     public async Task<SmallNote> Add()
     {
         var command = new NewPrivateNoteCommand(this.GetUserId());
@@ -37,6 +40,7 @@ public class NoteController : ControllerBase
     // Commands
 
     [HttpPatch("color")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> ChangeColor([FromBody] ChangeColorNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -44,6 +48,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPatch("delete/permanently")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> DeleteNotes([FromBody] DeleteNotesCommand command)
     {
         command.UserId = this.GetUserId();
@@ -51,6 +56,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPatch("copy")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<List<Guid>>> CopyNote([FromBody] CopyNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -59,6 +65,7 @@ public class NoteController : ControllerBase
 
 
     [HttpPatch("archive")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> ArchiveNote([FromBody] ArchiveNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -66,6 +73,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPatch("delete")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<List<Guid>>> SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -73,6 +81,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPatch("ref/private")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -81,6 +90,7 @@ public class NoteController : ControllerBase
 
 
     [HttpPatch("label/add")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> AddLabel([FromBody] AddLabelOnNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -89,6 +99,7 @@ public class NoteController : ControllerBase
 
 
     [HttpPatch("label/remove")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -98,6 +109,7 @@ public class NoteController : ControllerBase
 
     // GET Entities
     [HttpGet("type/{typeId}")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM typeId, [FromQuery] PersonalizationSettingDTO settings)
     {
         var query = new GetNotesByTypeQuery(this.GetUserId(), typeId, settings);
@@ -106,6 +118,7 @@ public class NoteController : ControllerBase
 
 
     [HttpPost("additional")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentNoteInfoQuery query)
     {
         query.UserId = this.GetUserId();
@@ -113,6 +126,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPost("many")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<List<SmallNote>>> GetNoteByIds(GetNotesByNoteIdsQuery query)
     {
         query.UserId = this.GetUserId();
@@ -120,6 +134,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPost("all")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<SmallNote>> GetAllNotes(GetAllNotesQuery query)
     {
         query.UserId = this.GetUserId();
@@ -135,6 +150,7 @@ public class NoteController : ControllerBase
     }
 
     [HttpPatch("order")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsNotesCommand command)
     {
         command.UserId = this.GetUserId();

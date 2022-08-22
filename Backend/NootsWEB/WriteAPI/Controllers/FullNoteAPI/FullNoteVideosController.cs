@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.FullNoteAPI;
 
@@ -28,6 +29,7 @@ public class FullNoteVideosController : BaseNoteFileContentController
     }
 
     [HttpPost("transform")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
     {
         command.UserId = this.GetUserId();

@@ -11,6 +11,7 @@ using Common.DTO.WebSockets.ReletedNotes;
 using Noots.RelatedNotes.Commands;
 using Noots.RelatedNotes.Queries;
 using Noots.Search.Queries;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.Note;
 
@@ -26,6 +27,7 @@ public class RelatedNotesController : ControllerBase
     }
 
     [HttpPost("preview")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<PreviewNoteForSelection>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
     {
         command.UserId = this.GetUserId();
@@ -33,6 +35,7 @@ public class RelatedNotesController : ControllerBase
     }
 
     [HttpGet("{noteId}")]
+    [ValidationRequireUserIdFilter]
     public async Task<List<RelatedNote>> GetRelatedNotes(Guid noteId)
     {
         var command = new GetRelatedNotesQuery(this.GetUserId(), noteId);
@@ -40,6 +43,7 @@ public class RelatedNotesController : ControllerBase
     }
 
     [HttpPost]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<UpdateRelatedNotesWS>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -47,6 +51,7 @@ public class RelatedNotesController : ControllerBase
     }
 
     [HttpPatch("state")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
     {
         command.UserId = this.GetUserId();
@@ -55,6 +60,7 @@ public class RelatedNotesController : ControllerBase
 
 
     [HttpPatch("order")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> UpdateRelatedNoteOrder(ChangeOrderRelatedNotesCommand command)
     {
         command.UserId = this.GetUserId();

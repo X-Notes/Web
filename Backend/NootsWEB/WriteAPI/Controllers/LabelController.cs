@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Noots.Labels.Commands;
 using Noots.Labels.Queries;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers;
 
@@ -24,6 +25,7 @@ public class LabelController : ControllerBase
     }
 
     [HttpPost]
+    [ValidationRequireUserIdFilter]
     public async Task<JsonResult> Add(NewLabelCommand command)
     {
         command.UserId = this.GetUserId();
@@ -31,12 +33,14 @@ public class LabelController : ControllerBase
     }
 
     [HttpGet]
+    [ValidationRequireUserIdFilter]
     public async Task<List<LabelDTO>> GetUserLabels()
     {
         return await _mediator.Send(new GetLabelsQuery(this.GetUserId()));
     }
 
     [HttpGet("count/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task<int> NotesCountByLabel(Guid id)
     {
         var command = new GetCountNotesByLabelQuery { LabelId = id };
@@ -45,6 +49,7 @@ public class LabelController : ControllerBase
     }
 
     [HttpPut]
+    [ValidationRequireUserIdFilter]
     public async Task Update(UpdateLabelCommand command)
     {
         command.UserId = this.GetUserId();
@@ -52,30 +57,35 @@ public class LabelController : ControllerBase
     }
 
     [HttpDelete("perm/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task DeletePerm(Guid id)
     {
         await _mediator.Send(new DeleteLabelCommand(this.GetUserId(), id));
     }
 
     [HttpDelete("{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task Delete(Guid id)
     {
         await _mediator.Send(new SetDeletedLabelCommand(this.GetUserId(), id));
     }
 
     [HttpGet("restore/{id}")]
+    [ValidationRequireUserIdFilter]
     public async Task RestoreLabel(Guid id)
     {
         await _mediator.Send(new RestoreLabelCommand(this.GetUserId(), id));
     }
 
     [HttpDelete]
+    [ValidationRequireUserIdFilter]
     public async Task RemoveAllFromBin()
     {
         await _mediator.Send(new RemoveAllFromBinCommand(this.GetUserId()));
     }
 
     [HttpPatch("order")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsLabelCommand command)
     {
         command.UserId = this.GetUserId();

@@ -8,6 +8,7 @@ using System;
 using Noots.Encryption.Queries;
 using Noots.Encryption.Impl;
 using Noots.Encryption.Commands;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.Note;
 
@@ -28,6 +29,7 @@ public class LockController : ControllerBase
 
 
     [HttpPost("encrypt")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> EncryptNote(EncryptionNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -35,6 +37,7 @@ public class LockController : ControllerBase
     }
 
     [HttpPost("decrypt")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> DecryptNote(DecriptionNoteCommand command)
     {
         command.UserId = this.GetUserId();
@@ -42,6 +45,7 @@ public class LockController : ControllerBase
     }
 
     [HttpPost("unlock")]
+    [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> UnlockNote(UnlockNoteQuery query)
     {
         query.UserId = this.GetUserId();

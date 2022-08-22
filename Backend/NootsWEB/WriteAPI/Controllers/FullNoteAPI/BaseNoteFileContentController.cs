@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers.FullNoteAPI;
 
@@ -24,6 +25,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
     }
 
     [HttpPatch("info")]
+    [ValidationRequireUserIdFilter]
     public virtual async Task<OperationResult<Unit>> UpdateCollectionInfo(I command)
     {
         command.UserId = this.GetUserId();
@@ -31,6 +33,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
     }
 
     [HttpPost("remove")]
+    [ValidationRequireUserIdFilter]
     public virtual async Task<OperationResult<Unit>> RemoveItemsFromCollection(Y command)
     {
         command.UserId = this.GetUserId();
@@ -38,6 +41,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
     }
 
     [HttpPost("add")]
+    [ValidationRequireUserIdFilter]
     public virtual async Task<OperationResult<Unit>> AddItemsToCollection(U command)
     {
         command.UserId = this.GetUserId();
@@ -45,6 +49,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
     }
 
     [HttpPost("get/files")]
+    [ValidationRequireUserIdFilter]
     public virtual async Task<List<FileT>> GetCollectionFiles(O query)
     {
         query.UserId = this.GetUserId();
