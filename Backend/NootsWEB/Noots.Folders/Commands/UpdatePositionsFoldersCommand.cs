@@ -3,13 +3,12 @@ using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
-using System.Collections.Generic;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
     public class UpdatePositionsFoldersCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<EntityPositionDTO> Positions { set; get; }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Common.CQRS;
+using Common.DTO;
 using Common.DTO.Folders;
 using MediatR;
-using System;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
-    public class NewFolderCommand : BaseCommandEntity, IRequest<SmallFolder>
+    public class NewFolderCommand : BaseCommandEntity, IRequest<OperationResult<SmallFolder>>
     {
         public NewFolderCommand(Guid userId) : base(userId)
         {

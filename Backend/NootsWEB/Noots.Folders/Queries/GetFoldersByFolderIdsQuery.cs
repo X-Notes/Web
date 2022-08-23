@@ -1,18 +1,16 @@
-﻿using Common.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.Personalization;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Queries.Folders
+namespace Noots.Folders.Queries
 {
     public class GetFoldersByFolderIdsQuery : BaseQueryEntity, IRequest<OperationResult<List<SmallFolder>>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> FolderIds { set; get; }
 
         [Required]

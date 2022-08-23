@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
     public class SetDeleteFolderCommand : BaseCommandEntity, IRequest<OperationResult<List<Guid>>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
 
 

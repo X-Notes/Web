@@ -10,24 +10,18 @@ using System.Threading.Tasks;
 using BI.Services.Folders;
 using BI.Services.Notes;
 using Common.DatabaseModels.Models.Files;
-using Common.DTO.Folders;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Users;
 using Domain.Commands.FolderInner;
-using Domain.Commands.Folders;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
-using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
-using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
-using Common.DTO.Folders.AdditionalContent;
 using BI.Services.DiffsMatchPatch;
 using Common.DTO.Notes.FullNoteSyncContents;
 using BI.Services.Notes.Audios;
@@ -47,10 +41,9 @@ using Noots.Permissions;
 using Noots.Storage;
 using Noots.History;
 using Noots.Encryption;
+using Noots.Folders;
 using Noots.Labels;
 using Noots.Notes;
-using Noots.Notes.Commands;
-using Noots.Notes.Queries;
 using Noots.Search;
 using Noots.Personalization;
 using Noots.RelatedNotes;
@@ -131,20 +124,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();
 
             //FOLDERS
-            services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-
-
-            services.AddScoped<IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>, FolderHandlerQuery>();
+            services.ApplyFoldersDI();
 
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();

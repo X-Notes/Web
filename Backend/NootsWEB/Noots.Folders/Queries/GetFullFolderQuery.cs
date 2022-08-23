@@ -1,10 +1,9 @@
-﻿using System;
-using Common.CQRS;
+﻿using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Folders;
 using MediatR;
 
-namespace Domain.Queries.Folders
+namespace Noots.Folders.Queries
 {
     public class GetFullFolderQuery : BaseQueryEntity, IRequest<OperationResult<FullFolder>>
     {

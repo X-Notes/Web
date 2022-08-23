@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO.Folders;
 using MediatR;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
     public class CopyFolderCommand : BaseCommandEntity, IRequest<List<SmallFolder>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
 
         public CopyFolderCommand(Guid userId) : base(userId)

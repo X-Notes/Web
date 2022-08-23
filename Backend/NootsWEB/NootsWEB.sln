@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Billing", "Noots.Bill
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Notes", "Noots.Notes\Noots.Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Folders", "Noots.Folders\Noots.Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6267EA65-D7CE-4869-95A2-0051F55F9BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6267EA65-D7CE-4869-95A2-0051F55F9BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6267EA65-D7CE-4869-95A2-0051F55F9BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6267EA65-D7CE-4869-95A2-0051F55F9BC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

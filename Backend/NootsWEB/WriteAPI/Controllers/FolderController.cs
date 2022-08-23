@@ -6,11 +6,11 @@ using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
 using Common.DTO.Personalization;
-using Domain.Commands.Folders;
-using Domain.Queries.Folders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Folders.Commands;
+using Noots.Folders.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 
@@ -30,7 +30,7 @@ public class FolderController : ControllerBase
 
     [HttpGet("new")]
     [ValidationRequireUserIdFilter]
-    public async Task<SmallFolder> Add()
+    public async Task<OperationResult<SmallFolder>> Add()
     {
         var command = new NewFolderCommand(this.GetUserId());
         return await _mediator.Send(command);

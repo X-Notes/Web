@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using MediatR;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DTO;
 using Common.CQRS;
+using Common.DTO;
+using MediatR;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
     public class ChangeColorFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [Required]
         public string Color { set; get; }
 
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
         
         public ChangeColorFolderCommand(List<Guid> ids, Guid userId, string color)

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.Folders
+namespace Noots.Folders.Commands
 {
     public class ArchiveFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [RequiredListNotEmptyAttribute]
+        [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
 
         public ArchiveFolderCommand(Guid userId) : base(userId)

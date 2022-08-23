@@ -31,7 +31,6 @@ public class NewPrivateNoteCommandHandler : IRequestHandler<NewPrivateNoteComman
     public async Task<OperationResult<SmallNote>> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
     {
         var isCanCreate = await billingPermissionService.CanCreateNoteAsync(request.UserId);
-
         if (!isCanCreate)
         {
             return new OperationResult<SmallNote>().SetBillingError();

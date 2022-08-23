@@ -1,12 +1,9 @@
-﻿using Common.DTO.Notes.AdditionalContent;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using Common.Attributes;
-using Common.DTO.Folders.AdditionalContent;
+﻿using Common.Attributes;
 using Common.CQRS;
+using Common.DTO.Folders.AdditionalContent;
+using MediatR;
 
-namespace Domain.Queries.Folders
+namespace Noots.Folders.Queries
 {
     public class GetAdditionalContentFolderInfoQuery : BaseQueryEntity, IRequest<List<BottomFolderContent>>
     {
