@@ -111,8 +111,8 @@ export class ApiFoldersService {
     );
   }
 
-  new() {
-    return this.httpClient.get<SmallFolder>(`${environment.writeAPI}/api/folder/new`);
+  new(): Observable<OperationResult<SmallFolder>> {
+    return this.httpClient.get<OperationResult<SmallFolder>>(`${environment.writeAPI}/api/folder/new`);
   }
 
   archive(ids: string[]) {
