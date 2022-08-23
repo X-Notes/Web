@@ -36,7 +36,7 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
 
         if (permissions.CanWrite)
         {
-            var userPlan = await billingPermissionService.GetUserPlan(request.UserId);
+            var userPlan = await billingPermissionService.GetUserPlanAsync(request.UserId);
             if (request.RelatedNoteIds.Count > userPlan.MaxRelatedNotes)
             {
                 return new OperationResult<UpdateRelatedNotesWS>().SetBillingError();

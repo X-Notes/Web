@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Plan;
+using Noots.Billing.Entities;
 using Noots.DatabaseContext.Repositories.Billing;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;
@@ -100,10 +101,16 @@ public class BillingPermissionService
         return userPlan.MaxRelatedNotes - countNotes;
     }
     
-    public async Task<BillingPlan> GetUserPlan(Guid userId)
+    public async Task<BillingPlan> GetUserPlanAsync(Guid userId)
     {
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
         if (user == null) return null;
         return await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+    }
+    
+    public async Task<List<BillingPlanDTO>> GetPlansAsync()
+    {
+        var ents = await vBillingPlanCacheRepository.GetAllCacheAsync();
+        return ents.Select(x => new BillingPlanDTO(x)).ToList();
     }
 }

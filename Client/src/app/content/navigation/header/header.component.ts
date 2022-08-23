@@ -10,7 +10,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';

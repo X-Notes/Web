@@ -11,7 +11,7 @@ import {
   SetDefaultBackground,
   UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
 import { ShowSnackNotification, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';

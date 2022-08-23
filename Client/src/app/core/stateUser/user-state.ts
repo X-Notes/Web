@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-properties */
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,6 +23,7 @@ import {
   LoadPersonalization,
   UpdatePersonalization,
   Auth,
+  LoadBillingPlans,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
@@ -30,11 +31,14 @@ import { ApiPersonalizationSettingsService } from '../api-personalization-settin
 import { byteToMB } from '../defaults/byte-convert';
 import { maxProfilePhotoSize } from '../defaults/constraints';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { BillingPlan } from '../models/billing/billing-plan';
+import { ApiBillingService } from '../api-billing.service';
 
 interface UserState {
   user: ShortUser;
   memory: number;
   personalizationSettings: PersonalizationSetting;
+  billingPlans: BillingPlan[];
 }
 
 @State<UserState>({
@@ -43,12 +47,14 @@ interface UserState {
     user: {} as ShortUser,
     memory: 0,
     personalizationSettings: null,
+    billingPlans: []
   },
 })
 @Injectable()
 export class UserStore {
   constructor(
-    private api: UserAPIService,
+    private userApi: UserAPIService,
+    private billingApi: ApiBillingService,
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
@@ -108,9 +114,9 @@ export class UserStore {
 
   @Action(Auth)
   async auth({ patchState }: StateContext<UserState>, { user }: Auth) {
-    let userdb = await this.api.getUser().toPromise();
+    let userdb = await this.userApi.getUser().toPromise();
     if (userdb.status === OperationResultAdditionalInfo.NotFound) {
-      userdb = await this.api.newUser(user).toPromise();
+      userdb = await this.userApi.newUser(user).toPromise();
     }
     patchState({ user: userdb.data });
   }
@@ -124,7 +130,7 @@ export class UserStore {
   @Action(ChangeTheme)
   async changeTheme({ patchState, getState }: StateContext<UserState>, { theme }: ChangeTheme) {
     let { user } = getState();
-    await this.api.changeTheme(theme).toPromise();
+    await this.userApi.changeTheme(theme).toPromise();
     user = { ...user, themeId: theme };
     patchState({ user });
   }
@@ -134,7 +140,7 @@ export class UserStore {
     { patchState, getState }: StateContext<UserState>,
     { language }: ChangeLanguage,
   ) {
-    await this.api.changeLanguage(language).toPromise();
+    await this.userApi.changeLanguage(language).toPromise();
     await this.translateService.use(LanguagesENUM[language].toLowerCase()).toPromise();
     patchState({ user: { ...getState().user, languageId: language } });
   }
@@ -145,7 +151,7 @@ export class UserStore {
     { fontSize }: ChangeFontSize,
   ) {
     let { user } = getState();
-    await this.api.changeFontSize(fontSize).toPromise();
+    await this.userApi.changeFontSize(fontSize).toPromise();
     user = { ...user, fontSizeId: fontSize };
     patchState({ user });
   }
@@ -172,7 +178,7 @@ export class UserStore {
     { patchState, getState }: StateContext<UserState>,
     { newName }: UpdateUserInfo,
   ) {
-    await this.api.updateUserInfo(newName).toPromise();
+    await this.userApi.updateUserInfo(newName).toPromise();
     patchState({
       user: { ...getState().user, name: newName },
     });
@@ -191,7 +197,7 @@ export class UserStore {
       true,
       true,
     );
-    const resp = await this.api.updateUserPhoto(photo, mini, operation).toPromise();
+    const resp = await this.userApi.updateUserPhoto(photo, mini, operation).toPromise();
     const result = resp.eventBody;
     const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
       getState().user.languageId,
@@ -211,8 +217,14 @@ export class UserStore {
 
   @Action(LoadUsedDiskSpace)
   async loadUsedDiskSpace({ patchState }: StateContext<UserState>) {
-    const memory = await this.api.getMemory().toPromise();
+    const memory = await this.userApi.getMemory().toPromise();
     patchState({ memory: memory.totalSize });
+  }
+
+  @Action(LoadBillingPlans)
+  async loadBillingPlans({ patchState }: StateContext<UserState>) {
+    const billingPlans = await this.billingApi.getBillingPlans().toPromise();
+    patchState({ billingPlans });
   }
 
   @Action(LoadPersonalization)

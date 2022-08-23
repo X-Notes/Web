@@ -20,7 +20,7 @@ import { UnSelectAllNote } from '../state/notes-actions';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { BaseNotesComponent } from '../base-notes-component';
 
 @Component({

@@ -3,7 +3,7 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../models/background.model';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
-import { User } from '../models/user.model';
+import { User } from '../models/user/user.model';
 
 export class Auth {
   static type = '[User] Auth User';
@@ -57,6 +57,10 @@ export class UpdateUserPhoto {
 
 export class LoadUsedDiskSpace {
   static type = '[User] load used disk space';
+}
+
+export class LoadBillingPlans {
+  static type = '[User] load billing plans';
 }
 
 export class LoadPersonalization {

@@ -15,7 +15,7 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';

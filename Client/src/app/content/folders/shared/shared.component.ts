@@ -20,7 +20,7 @@ import { FolderStore } from '../state/folders-state';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { BaseFoldersComponent } from '../base-folders-component';
 
 @Component({

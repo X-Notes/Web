@@ -5,7 +5,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { UpdateUserInfo, UpdateUserPhoto } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';

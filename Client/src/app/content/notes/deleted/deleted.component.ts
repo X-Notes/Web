@@ -18,7 +18,7 @@ import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { BaseNotesComponent } from '../base-notes-component';
 
 @Component({
