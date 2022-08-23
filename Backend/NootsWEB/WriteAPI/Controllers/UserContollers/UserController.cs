@@ -31,8 +31,14 @@ public class UserController : ControllerBase
     public async Task<OperationResult<UserDTO>> Authorize(NewUserCommand command)
     {
         command.Email = this.GetUserEmail();
-        var userId = await _mediator.Send(command);
-        return await _mediator.Send(new GetUserDTOQuery(userId));
+        var res = await _mediator.Send(command);
+        
+        if (!res.Success)
+        {
+            return new OperationResult<UserDTO>().SetAnotherError();
+;       }
+        
+        return await _mediator.Send(new GetUserDTOQuery(res.Data));
     }
 
     [HttpGet("short/{id}")]

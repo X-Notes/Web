@@ -14,7 +14,7 @@ using Noots.Users.Entities;
 namespace Noots.Users.Impl
 {
     public class UserHandlerСommand :
-        IRequestHandler<NewUserCommand, Guid>,
+        IRequestHandler<NewUserCommand, OperationResult<Guid>>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>,
         IRequestHandler<UpdateLanguageCommand, Unit>,
@@ -45,9 +45,14 @@ namespace Noots.Users.Impl
             this.userBackgroundMapper = userBackgroundMapper;
         }
 
-        public async Task<Guid> Handle(NewUserCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Guid>> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
-
+            var userExist = await userRepository.GetAnyAsync(x => x.Email == request.Email);
+            if (userExist)
+            {
+                return new OperationResult<Guid>().SetAnotherError();
+            }
+            
             var user = new User()
             {
                 Name = request.Name,
@@ -65,7 +70,7 @@ namespace Noots.Users.Impl
 
             await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 
-            return user.Id;
+            return new OperationResult<Guid>(true, user.Id);
         }
 
         public async Task<Unit> Handle(UpdateMainUserInfoCommand request, CancellationToken cancellationToken)

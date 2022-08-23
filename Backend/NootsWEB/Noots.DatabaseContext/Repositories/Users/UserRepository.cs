@@ -59,10 +59,7 @@ namespace Noots.DatabaseContext.Repositories.Users
             }
             return query.ToListAsync();
         }
-
-
-        public Task<List<string>> GetUsersEmail(IEnumerable<Guid> ids) => entities.Where(x => ids.Contains(x.Id)).Select(x => x.Email).ToListAsync();
-
+        
         public Task<List<User>> GetUsersWithPhotos(IEnumerable<Guid> ids) => 
              entities.Where(x => ids.Contains(x.Id))
             .Include(x => x.UserProfilePhoto)
