@@ -60,7 +60,7 @@ namespace Noots.Users.Impl
                 Email = request.Email,
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,
-                BillingPlanId = BillingPlanTypeENUM.Free,
+                BillingPlanId = BillingPlanTypeENUM.Standart,
                 DefaultPhotoUrl = request.PhotoURL
             };
 

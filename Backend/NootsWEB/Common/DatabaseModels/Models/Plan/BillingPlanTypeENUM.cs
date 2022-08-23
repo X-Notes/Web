@@ -4,7 +4,7 @@ namespace Common.DatabaseModels.Models.Plan
 {
     public enum BillingPlanTypeENUM
     {
-        Free = 1,
-        Standart = 2
+        Standart = 1,
+        Premium = 2
     }
 }
