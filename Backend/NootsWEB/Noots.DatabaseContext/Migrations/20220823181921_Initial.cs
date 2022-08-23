@@ -50,6 +50,10 @@ namespace Noots.DatabaseContext.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
                     MaxSize = table.Column<long>(type: "bigint", nullable: false),
+                    MaxNotes = table.Column<int>(type: "integer", nullable: false),
+                    MaxFolders = table.Column<int>(type: "integer", nullable: false),
+                    MaxLabels = table.Column<int>(type: "integer", nullable: false),
+                    MaxRelatedNotes = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -767,7 +771,7 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReletatedNoteToInnerNote",
+                name: "RelatedNoteToInnerNote",
                 schema: "note",
                 columns: table => new
                 {
@@ -779,16 +783,16 @@ namespace Noots.DatabaseContext.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReletatedNoteToInnerNote", x => x.Id);
+                    table.PrimaryKey("PK_RelatedNoteToInnerNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReletatedNoteToInnerNote_Note_NoteId",
+                        name: "FK_RelatedNoteToInnerNote_Note_NoteId",
                         column: x => x.NoteId,
                         principalSchema: "note",
                         principalTable: "Note",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReletatedNoteToInnerNote_Note_RelatedNoteId",
+                        name: "FK_RelatedNoteToInnerNote_Note_RelatedNoteId",
                         column: x => x.RelatedNoteId,
                         principalSchema: "note",
                         principalTable: "Note",
@@ -957,18 +961,18 @@ namespace Noots.DatabaseContext.Migrations
                 {
                     ReletatedNoteInnerNoteId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RelatedNoteInnerNoteId = table.Column<int>(type: "integer", nullable: true),
                     IsOpened = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RelatedNoteUserState", x => new { x.UserId, x.ReletatedNoteInnerNoteId });
                     table.ForeignKey(
-                        name: "FK_RelatedNoteUserState_ReletatedNoteToInnerNote_ReletatedNote~",
-                        column: x => x.ReletatedNoteInnerNoteId,
+                        name: "FK_RelatedNoteUserState_RelatedNoteToInnerNote_RelatedNoteInne~",
+                        column: x => x.RelatedNoteInnerNoteId,
                         principalSchema: "note",
-                        principalTable: "ReletatedNoteToInnerNote",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "RelatedNoteToInnerNote",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RelatedNoteUserState_User_UserId",
                         column: x => x.UserId,
@@ -1008,12 +1012,11 @@ namespace Noots.DatabaseContext.Migrations
             migrationBuilder.InsertData(
                 schema: "user",
                 table: "BillingPlan",
-                columns: new[] { "Id", "MaxSize", "Name" },
+                columns: new[] { "Id", "MaxFolders", "MaxLabels", "MaxNotes", "MaxRelatedNotes", "MaxSize", "Name" },
                 values: new object[,]
                 {
-                    { 1, 1048576000L, "Free" },
-                    { 2, 5242880000L, "Standart" },
-                    { 3, 20971520000L, "Business" }
+                    { 1, 250, 500, 250, 5, 1048576000L, "Free" },
+                    { 2, 10000, 10000, 10000, 30, 5242880000L, "Standart" }
                 });
 
             migrationBuilder.InsertData(
@@ -1305,22 +1308,22 @@ namespace Noots.DatabaseContext.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelatedNoteUserState_ReletatedNoteInnerNoteId",
+                name: "IX_RelatedNoteToInnerNote_NoteId",
                 schema: "note",
-                table: "RelatedNoteUserState",
-                column: "ReletatedNoteInnerNoteId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReletatedNoteToInnerNote_NoteId",
-                schema: "note",
-                table: "ReletatedNoteToInnerNote",
+                table: "RelatedNoteToInnerNote",
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReletatedNoteToInnerNote_RelatedNoteId",
+                name: "IX_RelatedNoteToInnerNote_RelatedNoteId",
                 schema: "note",
-                table: "ReletatedNoteToInnerNote",
+                table: "RelatedNoteToInnerNote",
                 column: "RelatedNoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RelatedNoteUserState_RelatedNoteInnerNoteId",
+                schema: "note",
+                table: "RelatedNoteUserState",
+                column: "RelatedNoteInnerNoteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SnapshotFileContent_AppFileId",
@@ -1535,7 +1538,7 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "user");
 
             migrationBuilder.DropTable(
-                name: "ReletatedNoteToInnerNote",
+                name: "RelatedNoteToInnerNote",
                 schema: "note");
 
             migrationBuilder.DropTable(

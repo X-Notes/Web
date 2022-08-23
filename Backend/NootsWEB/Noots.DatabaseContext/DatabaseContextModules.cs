@@ -43,7 +43,7 @@ namespace Noots.DatabaseContext
 
             // NOTES
             services.AddScoped<NoteRepository>();
-            services.AddScoped<ReletatedNoteToInnerNoteRepository>();
+            services.AddScoped<RelatedNoteToInnerNoteRepository>();
             services.AddScoped<RelatedNoteUserStateRepository>();
             services.AddScoped<UsersOnPrivateNotesRepository>();
 

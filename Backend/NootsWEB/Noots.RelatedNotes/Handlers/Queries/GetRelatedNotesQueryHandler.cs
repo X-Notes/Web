@@ -8,12 +8,12 @@ namespace Noots.RelatedNotes.Handlers.Queries;
 
 public class GetRelatedNotesQueryHandler : IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>
 {
-    private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+    private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     private readonly NoteRepository noteRepository;
     private readonly MapperLockedEntities mapperLockedEntities;
 
     public GetRelatedNotesQueryHandler(
-        ReletatedNoteToInnerNoteRepository relatedRepository,
+        RelatedNoteToInnerNoteRepository relatedRepository,
         NoteRepository noteRepository,
         MapperLockedEntities mapperLockedEntities)
     {

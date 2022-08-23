@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.Notes
 {
-    [Table(nameof(ReletatedNoteToInnerNote), Schema = SchemeConfig.Note)]
-    public class ReletatedNoteToInnerNote : BaseEntity<int>
+    [Table(nameof(RelatedNoteToInnerNote), Schema = SchemeConfig.Note)]
+    public class RelatedNoteToInnerNote : BaseEntity<int>
     {
         public Guid NoteId { get; set; }
         public Note Note { get; set; }

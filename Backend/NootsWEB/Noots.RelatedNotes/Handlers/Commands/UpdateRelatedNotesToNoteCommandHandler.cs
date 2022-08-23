@@ -2,6 +2,7 @@
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
 using MediatR;
+using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
 using Noots.RelatedNotes.Commands;
@@ -11,51 +12,60 @@ namespace Noots.RelatedNotes.Handlers.Commands;
 
 public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>
 {
-    private readonly IMediator _mediator;
-    
-    private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
-    
+    private readonly IMediator mediator;
+    private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     private readonly AppSignalRService appSignalRService;
-    
+    private readonly BillingPermissionService billingPermissionService;
+
     public UpdateRelatedNotesToNoteCommandHandler(
         IMediator mediator, 
-        ReletatedNoteToInnerNoteRepository relatedRepository, 
-        AppSignalRService appSignalRService)
+        RelatedNoteToInnerNoteRepository relatedRepository, 
+        AppSignalRService appSignalRService,
+        BillingPermissionService billingPermissionService)
     {
-        _mediator = mediator;
+        this.mediator = mediator;
         this.relatedRepository = relatedRepository;
         this.appSignalRService = appSignalRService;
+        this.billingPermissionService = billingPermissionService;
     }
     
     public async Task<OperationResult<UpdateRelatedNotesWS>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-        var permissions = await _mediator.Send(command);
+        var permissions = await mediator.Send(command);
 
         if (permissions.CanWrite)
         {
+            var userPlan = await billingPermissionService.GetUserPlan(request.UserId);
+            if (request.RelatedNoteIds.Count > userPlan.MaxRelatedNotes)
+            {
+                return new OperationResult<UpdateRelatedNotesWS>().SetBillingError();
+            }
+            
             var dbValues = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-            var dbRelatedIds = dbValues.Select(x => x.RelatedNoteId).ToHashSet();
-
+            
+            // REMOVE 
             var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId));
-            var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
             if (valuesToRemove.Any())
             {
                 await relatedRepository.RemoveRangeAsync(valuesToRemove);
             }
-
+            
+            // ADD
+            var dbRelatedIds = dbValues.Select(x => x.RelatedNoteId).ToHashSet();
             var idsToAdd = request.RelatedNoteIds.Where(id => !dbRelatedIds.Contains(id)).ToList();
-            var valuesToAdd = idsToAdd.Select(relatedId => new ReletatedNoteToInnerNote()
+            var valuesToAdd = idsToAdd.Select(relatedId => new RelatedNoteToInnerNote()
             {
                 NoteId = request.NoteId,
                 RelatedNoteId = relatedId,
             });
-
             if (valuesToAdd.Any())
             {
                 await relatedRepository.AddRangeAsync(valuesToAdd);
             }
-
+            
+            // WS
+            var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
             var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
             if (permissions.IsMultiplyUpdate)
             {

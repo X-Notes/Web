@@ -18,8 +18,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    [Migration("20220822180444_init_billing")]
-    partial class init_billing
+    [Migration("20220823181921_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -611,25 +611,7 @@ namespace Noots.DatabaseContext.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ReletatedNoteInnerNoteId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsOpened")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("UserId", "ReletatedNoteInnerNoteId");
-
-                    b.HasIndex("ReletatedNoteInnerNoteId");
-
-                    b.ToTable("RelatedNoteUserState", "note");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteToInnerNote", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -652,7 +634,28 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasIndex("RelatedNoteId");
 
-                    b.ToTable("ReletatedNoteToInnerNote", "note");
+                    b.ToTable("RelatedNoteToInnerNote", "note");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ReletatedNoteInnerNoteId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("RelatedNoteInnerNoteId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "ReletatedNoteInnerNoteId");
+
+                    b.HasIndex("RelatedNoteInnerNoteId");
+
+                    b.ToTable("RelatedNoteUserState", "note");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnPrivateNotes", b =>
@@ -706,9 +709,9 @@ namespace Noots.DatabaseContext.Migrations
                         new
                         {
                             Id = 1,
-                            MaxFolders = 150,
+                            MaxFolders = 250,
                             MaxLabels = 500,
-                            MaxNotes = 150,
+                            MaxNotes = 250,
                             MaxRelatedNotes = 5,
                             MaxSize = 1048576000L,
                             Name = "Free"
@@ -1426,26 +1429,7 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", "ReletatedNoteInnerNote")
-                        .WithMany("RelatedNoteUserStates")
-                        .HasForeignKey("ReletatedNoteInnerNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
-                        .WithMany("RelatedNoteUserStates")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ReletatedNoteInnerNote");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteToInnerNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
                         .WithMany("ReletatedNoteToInnerNotesFrom")
@@ -1462,6 +1446,23 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("Note");
 
                     b.Navigation("RelatedNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteUserState", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.RelatedNoteToInnerNote", "RelatedNoteInnerNote")
+                        .WithMany("RelatedNoteUserStates")
+                        .HasForeignKey("RelatedNoteInnerNoteId");
+
+                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
+                        .WithMany("RelatedNoteUserStates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RelatedNoteInnerNote");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.UserOnPrivateNotes", b =>
@@ -1754,7 +1755,7 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.ReletatedNoteToInnerNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Notes.RelatedNoteToInnerNote", b =>
                 {
                     b.Navigation("RelatedNoteUserStates");
                 });

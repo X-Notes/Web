@@ -12,13 +12,13 @@ public class ChangeOrderRelatedNotesCommandHandler : IRequestHandler<ChangeOrder
 {
     private readonly IMediator _mediator;
     
-    private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+    private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     
     private readonly AppSignalRService appSignalRService;
     
     public ChangeOrderRelatedNotesCommandHandler(
         IMediator mediator, 
-        ReletatedNoteToInnerNoteRepository relatedRepository, 
+        RelatedNoteToInnerNoteRepository relatedRepository, 
         AppSignalRService appSignalRService)
     {
         _mediator = mediator;

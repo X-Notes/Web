@@ -28,7 +28,7 @@ namespace Noots.Search.Impl
 
         private readonly IMediator _mediator;
 
-        private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+        private readonly RelatedNoteToInnerNoteRepository relatedRepository;
 
         private readonly NoteRepository noteRepository;
 
@@ -41,7 +41,7 @@ namespace Noots.Search.Impl
             SearchRepository searchRepository,
             UserBackgroundMapper userBackgroundMapper,
             IMediator mediator,
-            ReletatedNoteToInnerNoteRepository relatedRepository,
+            RelatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
             MapperLockedEntities mapperLockedEntities,
             FoldersNotesRepository foldersNotesRepository)

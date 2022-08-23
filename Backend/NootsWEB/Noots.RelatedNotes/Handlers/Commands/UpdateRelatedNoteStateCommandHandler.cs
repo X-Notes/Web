@@ -10,12 +10,12 @@ namespace Noots.RelatedNotes.Handlers.Commands;
 public class UpdateRelatedNoteStateCommandHandler : IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>
 {
     private readonly IMediator _mediator;
-    private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+    private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     private readonly RelatedNoteUserStateRepository relatedNoteUserStateRepository;
     
     public UpdateRelatedNoteStateCommandHandler(
         IMediator mediator, 
-        ReletatedNoteToInnerNoteRepository relatedRepository,
+        RelatedNoteToInnerNoteRepository relatedRepository,
         RelatedNoteUserStateRepository relatedNoteUserStateRepository)
     {
         _mediator = mediator;
