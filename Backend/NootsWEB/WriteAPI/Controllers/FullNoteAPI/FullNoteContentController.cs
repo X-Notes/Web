@@ -5,10 +5,10 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Domain.Commands.NoteInner;
-using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Notes.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 

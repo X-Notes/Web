@@ -19,10 +19,8 @@ using Domain.Commands.Folders;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
-using Domain.Commands.Notes;
 using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
-using Domain.Queries.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -40,6 +38,7 @@ using BI.Services.Notes.Documents;
 using BI.Services.Notes.Videos;
 using Noots.Auth.Impl;
 using Noots.Backgrounds;
+using Noots.Billing;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using WriteAPI.Models;
@@ -49,6 +48,9 @@ using Noots.Storage;
 using Noots.History;
 using Noots.Encryption;
 using Noots.Labels;
+using Noots.Notes;
+using Noots.Notes.Commands;
+using Noots.Notes.Queries;
 using Noots.Search;
 using Noots.Personalization;
 using Noots.RelatedNotes;
@@ -75,26 +77,9 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyLabelsDI();
 
             //Notes
-            services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
+            services.ApplyNotesDI();
 
-            services.AddScoped<IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
-
+            
             // RELATED NOTES
             services.ApplyRelatedNotesDI();
 
@@ -189,6 +174,9 @@ namespace WriteAPI.ConfigureAPP
 
             // Personalizations
             services.ApplyPersonalizationDI();
+            
+            // Billing
+            services.ApplyBillingDI();
         }
 
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)

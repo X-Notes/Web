@@ -9,11 +9,15 @@ namespace Common.DatabaseModels.Models.Plan
     {
         public long MaxSize { set; get; }
         
+        
         public int MaxNotes { set; get; }
         
         public int MaxFolders { set; get; }
         
         public int MaxLabels { set; get; }
+        
+        public int MaxRelatedNotes { set; get; }
+        
         public string Name { set; get; }
         
         public List<User> Users { set; get; }

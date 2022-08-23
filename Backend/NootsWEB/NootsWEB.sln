@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Auth", "Noots.Auth\No
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Labels", "Noots.Labels\Noots.Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Billing", "Noots.Billing\Noots.Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Notes", "Noots.Notes\Noots.Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +151,14 @@ Global
 		{27634643-0924-421E-9E18-491CB4C76841}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27634643-0924-421E-9E18-491CB4C76841}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27634643-0924-421E-9E18-491CB4C76841}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF121C0-DBBA-450B-83DD-85885EE60D7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

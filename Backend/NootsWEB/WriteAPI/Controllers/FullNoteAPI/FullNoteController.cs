@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Users;
-using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Notes.Queries;
 using WriteAPI.ControllerConfig;
 
 

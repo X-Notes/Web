@@ -6,11 +6,11 @@ using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
-using Domain.Commands.Notes;
-using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Notes.Commands;
+using Noots.Notes.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 
@@ -31,7 +31,7 @@ public class NoteController : ControllerBase
 
     [HttpGet("new")]
     [ValidationRequireUserIdFilter]
-    public async Task<SmallNote> Add()
+    public async Task<OperationResult<SmallNote>> Add()
     {
         var command = new NewPrivateNoteCommand(this.GetUserId());
         return await _mediator.Send(command);

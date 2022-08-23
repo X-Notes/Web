@@ -15,7 +15,7 @@ namespace Noots.DatabaseContext.GenericRepositories
             entities = context.Set<T>();
         }
 
-        public Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => entities.FirstOrDefaultAsync(predicate);
+        public virtual Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => entities.FirstOrDefaultAsync(predicate);
 
         public async Task<EntityEntry<T>> AddAsync(T entity)
         {
@@ -36,7 +36,7 @@ namespace Noots.DatabaseContext.GenericRepositories
             await context.SaveChangesAsync();
         }
 
-        public Task<List<T>> GetAllAsync()
+        public virtual Task<List<T>> GetAllAsync()
         {
             return entities.ToListAsync();
         }

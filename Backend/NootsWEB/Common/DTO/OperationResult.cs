@@ -10,7 +10,8 @@
         RequestCancelled,
         NotFound,
         AnotherError,
-        ContentLocked
+        ContentLocked,
+        BillingError
     }
 
     public class OperationResult<T>
@@ -102,6 +103,13 @@
         {
             Success = false;
             Status = OperationResultAdditionalInfo.ContentLocked;
+            return this;
+        }
+        
+        public OperationResult<T> SetBillingError()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.BillingError;
             return this;
         }
     }

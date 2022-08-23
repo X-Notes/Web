@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Noots.DatabaseContext.GenericRepositories;
 using Noots.DatabaseContext.Repositories;
+using Noots.DatabaseContext.Repositories.Billing;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
@@ -27,7 +28,9 @@ namespace Noots.DatabaseContext
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
             services.AddScoped<UserProfilePhotoRepository>();
-            services.AddScoped<BillingPlanRepository>();
+            
+            // BILLING
+            services.AddSingleton<BillingPlanCacheRepository>();
 
             // FILES
             services.AddScoped<FileRepository>();
