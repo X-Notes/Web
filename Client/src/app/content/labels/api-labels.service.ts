@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Label } from './models/label.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiServiceLabels {
@@ -13,8 +14,8 @@ export class ApiServiceLabels {
     return this.httpClient.get<Label[]>(`${environment.writeAPI}/api/label`);
   }
 
-  new() {
-    return this.httpClient.post<string>(`${environment.writeAPI}/api/label`, {});
+  new(): Observable<OperationResult<string>> {
+    return this.httpClient.post<OperationResult<string>>(`${environment.writeAPI}/api/label`, {});
   }
 
   setDeleted(id: string) {

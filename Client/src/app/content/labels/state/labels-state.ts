@@ -19,6 +19,9 @@ import { ApiServiceLabels } from '../api-labels.service';
 import { Label } from '../models/label.model';
 import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 export interface LabelsForFiltersNotes {
   label: Label;
@@ -41,7 +44,11 @@ interface LabelState {
 })
 @Injectable()
 export class LabelStore {
-  constructor(private api: ApiServiceLabels, private store: Store) {}
+  constructor(
+    private api: ApiServiceLabels, 
+    private store: Store,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService) {}
 
   @Selector()
   static countNoDeleted(state: LabelState): number {
@@ -85,17 +92,25 @@ export class LabelStore {
 
   @Action(AddLabel)
   async newLabel({ patchState, dispatch, getState }: StateContext<LabelState>) {
-    const id = await this.api.new().toPromise();
-    const newLabel = new Label({
-      name: '',
-      color: LabelsColor.Red,
-      id,
-      isDeleted: false,
-      countNotes: 0,
-      order: 1,
-    });
-    patchState({ labels: [newLabel, ...getState().labels] });
-    dispatch(new AddToDomLabels([newLabel]));
+    const resp = await this.api.new().toPromise();
+    if(resp.success){
+      const id = resp.data;
+      const newLabel = new Label({
+        name: '',
+        color: LabelsColor.Red,
+        id,
+        isDeleted: false,
+        countNotes: 0,
+        order: 1,
+      });
+      patchState({ labels: [newLabel, ...getState().labels] });
+      dispatch(new AddToDomLabels([newLabel]));
+      return;
+    }
+    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
   }
 
   @Action(AddToDomLabels)

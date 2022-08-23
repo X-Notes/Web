@@ -1,22 +1,33 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Labels;
+using Common.DTO;
+using Common.DTO.Notes;
 using MediatR;
+using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.Labels.Commands;
 
 namespace Noots.Labels.Handlers.Commands;
 
-public class NewLabelCommandHandler : IRequestHandler<NewLabelCommand, Guid>
+public class NewLabelCommandHandler : IRequestHandler<NewLabelCommand, OperationResult<Guid>>
 {
     private readonly LabelRepository labelRepository;
-    
-    public NewLabelCommandHandler(LabelRepository labelRepository)
+    private readonly BillingPermissionService billingPermissionService;
+
+    public NewLabelCommandHandler(LabelRepository labelRepository, BillingPermissionService billingPermissionService)
     {
         this.labelRepository = labelRepository;
+        this.billingPermissionService = billingPermissionService;
     }
     
-    public async Task<Guid> Handle(NewLabelCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<Guid>> Handle(NewLabelCommand request, CancellationToken cancellationToken)
     {
+        var isCanCreate = await billingPermissionService.CanCreateLabelAsync(request.UserId);
+        if (!isCanCreate)
+        {
+            return new OperationResult<Guid>().SetBillingError();
+        }
+        
         var label = new Label();
         label.UserId = request.UserId;
         label.Color = LabelsColorPallete.Red;
@@ -25,6 +36,6 @@ public class NewLabelCommandHandler : IRequestHandler<NewLabelCommand, Guid>
         
         await labelRepository.AddAsync(label);
         
-        return label.Id;
+        return new OperationResult<Guid>(true, label.Id);
     }
 }

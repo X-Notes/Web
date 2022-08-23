@@ -26,10 +26,10 @@ public class LabelController : ControllerBase
 
     [HttpPost]
     [ValidationRequireUserIdFilter]
-    public async Task<JsonResult> Add(NewLabelCommand command)
+    public async Task<OperationResult<Guid>> Add(NewLabelCommand command)
     {
         command.UserId = this.GetUserId();
-        return new JsonResult(await _mediator.Send(command));
+        return await _mediator.Send(command);
     }
 
     [HttpGet]

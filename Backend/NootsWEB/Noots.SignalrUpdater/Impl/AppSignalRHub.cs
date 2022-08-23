@@ -122,7 +122,10 @@ namespace Noots.SignalrUpdater.Impl
                 return;
             }
 
-            await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+            if (result.user != null)
+            {
+                await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+            }
         }
 
         private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier)
