@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using MediatR;
+using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
@@ -29,6 +30,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
     private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly BaseNoteContentRepository baseNoteContentRepository;
     private readonly CollectionLinkedService collectionLinkedService;
+    private readonly BillingPermissionService billingPermissionService;
 
     public CopyNoteCommandHandler(
         IMediator _mediator, 
@@ -37,7 +39,8 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         LabelsNotesRepository labelsNotesRepository,
         UserNoteEncryptService userNoteEncryptStorage,
         BaseNoteContentRepository baseNoteContentRepository,
-        CollectionLinkedService collectionLinkedService)
+        CollectionLinkedService collectionLinkedService,
+        BillingPermissionService billingPermissionService)
     {
         mediator = _mediator;
         this.foldersNotesRepository = foldersNotesRepository;
@@ -46,6 +49,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.baseNoteContentRepository = baseNoteContentRepository;
         this.collectionLinkedService = collectionLinkedService;
+        this.billingPermissionService = billingPermissionService;
     }
     
     public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
@@ -78,6 +82,12 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         if (!idsForCopy.Any())
         {
             return new OperationResult<List<Guid>>().SetNotFound();
+        }
+
+        var availableNotes = await billingPermissionService.GetAvailableCountNotes(request.UserId);
+        if (idsForCopy.Count > availableNotes)
+        {
+            return new OperationResult<List<Guid>>().SetBillingError();
         }
 
         var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);

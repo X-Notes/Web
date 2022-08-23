@@ -43,6 +43,9 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -108,6 +111,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private signalR: SignalRService,
     private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService
   ) {}
 
   initTitle() {
@@ -214,10 +219,18 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async (flag) => {
         if (flag) {
-          const newNote = await this.noteApiService.new().toPromise();
-          await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
-          this.ffnService.addToDom([newNote]);
-          this.updateState();
+          const res = await this.noteApiService.new().toPromise();
+          if(res.success) {
+            const newNote = res.data;
+            await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
+            this.ffnService.addToDom([newNote]);
+            this.updateState();
+            return;
+          }
+          if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+            const message = this.translate.instant('snackBar.subscriptionCreationError');
+            this.snackbarService.openSnackBar(message, null, null, 5000);
+          }
         }
       });
 

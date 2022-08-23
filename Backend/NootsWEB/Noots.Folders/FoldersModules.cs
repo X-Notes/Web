@@ -18,7 +18,7 @@ public static class FoldersModules
         services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, ArchiveFolderCommandHandler>();
         services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, ChangeColorFolderCommandHandler>();
         services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, SetDeleteFolderCommandHandler>();
-        services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, CopyFolderCommandHandler>();
+        services.AddScoped<IRequestHandler<CopyFolderCommand, OperationResult<List<SmallFolder>>>, CopyFolderCommandHandler>();
         services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, DeleteFoldersCommandHandler>();
         services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, MakePrivateFolderCommandHandler>();
         services.AddScoped<IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>, UpdatePositionsFoldersCommandHandler>();

@@ -37,9 +37,18 @@ public class BillingPermissionService
         var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
         
         var userNotesCount = await noteRepository.GetCountAsync(x => x.UserId == user.Id);
-        if (userNotesCount > userPlan.MaxNotes) return false;
+        if (userNotesCount >= userPlan.MaxNotes) return false;
         
         return true;
+    }
+    
+    public async Task<int> GetAvailableCountNotes(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return 0;
+        var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+        var userNotesCount = await noteRepository.GetCountAsync(x => x.UserId == user.Id);
+        return userPlan.MaxNotes - userNotesCount;
     }
     
     public async Task<bool> CanCreateFolderAsync(Guid userId)
@@ -50,9 +59,18 @@ public class BillingPermissionService
         var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
         
         var userFoldersCount = await folderRepository.GetCountAsync(x => x.UserId == user.Id);
-        if (userFoldersCount > userPlan.MaxFolders) return false;
+        if (userFoldersCount >= userPlan.MaxFolders) return false;
         
         return true;
+    }
+    
+    public async Task<int> GetAvailableCountFolders(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return 0;
+        var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+        var userFoldersCount = await folderRepository.GetCountAsync(x => x.UserId == user.Id);
+        return userPlan.MaxFolders - userFoldersCount;
     }
     
     public async Task<bool> CanCreateLabelAsync(Guid userId)
@@ -63,7 +81,7 @@ public class BillingPermissionService
         var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
         
         var userLabelsCount = await labelRepository.GetCountAsync(x => x.UserId == user.Id);
-        if (userLabelsCount > userPlan.MaxLabels) return false;
+        if (userLabelsCount >= userPlan.MaxLabels) return false;
         
         return true;
     }

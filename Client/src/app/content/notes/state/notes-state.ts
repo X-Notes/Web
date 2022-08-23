@@ -72,6 +72,8 @@ import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { NoteHistory } from '../full-note/models/history/note-history.model';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface FullNoteState {
   note: FullNote;
@@ -124,6 +126,8 @@ export class NoteStore {
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
     private zone: NgZone,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -404,11 +408,19 @@ export class NoteStore {
 
   @Action(CreateNote)
   async newNote({ getState, dispatch }: StateContext<NoteState>) {
-    const note = await this.api.new().toPromise();
-    const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
-    const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
-    await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-    this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+    const res = await this.api.new().toPromise();
+    if(res.success) {
+      const note = res.data;
+      const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
+      const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
+      await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
+      this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      return;
+    }
+    if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
   }
 
   @Action(AddNotes)
@@ -654,6 +666,10 @@ export class NoteStore {
       );
       const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
       dispatch(new AddToDomNotes(obj));
+    }
+    if(!resp.eventBody.success && resp.eventBody.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
     }
     dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
   }

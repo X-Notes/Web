@@ -98,7 +98,7 @@ public class FolderController : ControllerBase
 
     [HttpPatch("copy")]
     [ValidationRequireUserIdFilter]
-    public async Task<List<SmallFolder>> CopyFolder([FromBody]CopyFolderCommand command)
+    public async Task<OperationResult<List<SmallFolder>>> CopyFolder([FromBody]CopyFolderCommand command)
     {
         command.UserId = this.GetUserId();
         return await this._mediator.Send(command);

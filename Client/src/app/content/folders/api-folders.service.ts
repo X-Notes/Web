@@ -145,11 +145,11 @@ export class ApiFoldersService {
     );
   }
 
-  copyFolders(ids: string[]) {
+  copyFolders(ids: string[]): Observable<OperationResult<SmallFolder[]>> {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<SmallFolder[]>(`${environment.writeAPI}/api/folder/copy`, obj);
+    return this.httpClient.patch<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/copy`, obj);
   }
 
   changeColor(ids: string[], color: string) {
