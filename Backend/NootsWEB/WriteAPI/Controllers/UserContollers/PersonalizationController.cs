@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Personalization;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
@@ -34,9 +35,9 @@ public class PersonalizationController : ControllerBase
 
     [HttpPatch]
     [ValidationRequireUserIdFilter]
-    public async Task UpdateUserPersonalizationSettings(UpdatePersonalizationSettingsCommand command)
+    public async Task<OperationResult<Unit>> UpdateUserPersonalizationSettings(UpdatePersonalizationSettingsCommand command)
     {
         command.UserId = this.GetUserId();
-        await _mediator.Send(command);
+        return await _mediator.Send(command);
     }
 }

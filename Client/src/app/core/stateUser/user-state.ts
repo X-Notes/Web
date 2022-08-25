@@ -24,6 +24,7 @@ import {
   UpdatePersonalization,
   Auth,
   LoadBillingPlans,
+  UpdateBillingUserPlan,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
@@ -33,6 +34,7 @@ import { maxProfilePhotoSize } from '../defaults/constraints';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 import { BillingPlan } from '../models/billing/billing-plan';
 import { ApiBillingService } from '../api-billing.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 
 interface UserState {
   user: ShortUser;
@@ -60,11 +62,17 @@ export class UserStore {
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
     private snackbarStatusHandler: SnackBarHandlerStatusService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private snackbarService: SnackbarService,
   ) {}
 
   @Selector()
   static getPersonalizationSettings(state: UserState): PersonalizationSetting {
     return state.personalizationSettings;
+  }
+
+  @Selector()
+  static getBillingsPlans(state: UserState): BillingPlan[] {
+    return state.billingPlans;
   }
 
   @Selector()
@@ -184,6 +192,16 @@ export class UserStore {
     });
   }
 
+  @Action(UpdateBillingUserPlan)
+  async updateBillingUserPlan(
+    { patchState, getState }: StateContext<UserState>,
+    { billingPlan }: UpdateBillingUserPlan,
+  ) {
+    patchState({
+      user: { ...getState().user, billingPlanId: billingPlan },
+    });
+  }
+
   @Action(UpdateUserPhoto)
   async updateUserPhoto(
     { patchState, getState, dispatch }: StateContext<UserState>,
@@ -240,9 +258,15 @@ export class UserStore {
     { patchState }: StateContext<UserState>,
     { settings }: UpdatePersonalization,
   ) {
-    await this.apiPersonalizationSettingsService
+    const res = await this.apiPersonalizationSettingsService
       .updateUserPersonalizationSettings(settings)
       .toPromise();
-    patchState({ personalizationSettings: settings });
+    if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translateService.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
+    if(res.success) {
+      patchState({ personalizationSettings: settings });
+    }
   }
 }

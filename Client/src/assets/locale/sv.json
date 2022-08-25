@@ -110,8 +110,8 @@
     "isViewPhotosOnNote": "Visa foton",
     "isViewTextOnNote": "Visa text",
     "isViewVideoOnNote": "Visa videor",
-    "contentInNoteCount": "Räkna synligt innehåll på anteckningen",
-    "notesInFolderCount": "Räkna synliga anteckningar i mappen",
+    "contentInNoteCount": "Mängden synligt innehåll i anteckningen",
+    "notesInFolderCount": "Antal synliga anteckningar i mappen",
     "countCurrent": "Ström: "
   },
   "modal": {
@@ -324,7 +324,8 @@
     "movedToMany": " flyttad till ",
     "movedToSingle": " flyttad till ",
     "reloadPage": "Instabil anslutning uppdatera sidan",
-    "noItemInExport": "Samlingen är tom"
+    "noItemInExport": "Samlingen är tom",
+    "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits."
   },
   "titles": {
     "labels": "Etiketter",
@@ -351,5 +352,17 @@
     "editFolder": "Du kan redigera mapp",
     "readNote": "Du kan bara läsa anteckningen",
     "readFolder": "Du kan bara läsa mappen"
+  },
+  "profile-billing": {
+    "notes": "Anteckningar",
+    "folders": "Mappar",
+    "labels": "Etiketter",
+    "related": "relaterade anteckningar för noter",
+    "memory": "minne",
+    "history-last-15": "Senaste 15 exemplar av anteckningen",
+    "history-all": "All anteckningshistorik",
+    "personalization": "Inställningar för anpassning",
+    "per-month": "per månad",
+    "upgrade": "Uppgradera"
   }
 }

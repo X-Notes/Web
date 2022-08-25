@@ -108,19 +108,6 @@
         }
       }
 
-      .billing-forms {
-        justify-content: space-between;
-
-        .form {
-          display: flex;
-          height: 230px;
-          width: 30%;
-          border-radius: 5px;
-          background-color: $dark-color;
-          box-shadow: 0px 2px 25px rgba(0, 0, 0, 0.1);
-        }
-      }
-
       .personalization-setting {
         justify-content: flex-end;
 
@@ -238,12 +225,6 @@
 
           .icon {
             color: #414141;
-          }
-        }
-
-        .billing-forms {
-          .form {
-            background-color: white;
           }
         }
 

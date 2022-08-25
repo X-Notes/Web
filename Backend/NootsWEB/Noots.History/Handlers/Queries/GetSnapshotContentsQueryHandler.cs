@@ -1,26 +1,18 @@
 ﻿using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
-using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Labels;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Users;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.Encryption.Impl;
-using Noots.History.Entities;
 using Noots.History.Queries;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 
-namespace Noots.History.Impl
+namespace Noots.History.Handlers.Queries
 {
-    public class HistoryHandlerQuery :
-        IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>,
-        IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>,
-        IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
+    public class GetSnapshotContentsQueryHandler : IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {
 
         private readonly IMediator _mediator;
@@ -33,7 +25,7 @@ namespace Noots.History.Impl
 
         private readonly UserNoteEncryptService userNoteEncryptStorage;
 
-        public HistoryHandlerQuery(
+        public GetSnapshotContentsQueryHandler(
             IMediator _mediator,
             NoteSnapshotRepository noteHistoryRepository,
             NoteFolderLabelMapper noteCustomMapper,
@@ -46,55 +38,7 @@ namespace Noots.History.Impl
             this.fileRepository = fileRepository;
             this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
-
-        public async Task<OperationResult<List<NoteHistoryDTO>>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.Note.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-                if (!isUnlocked)
-                {
-                    return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
-                }
-            }
-
-            if (permissions.CanRead)
-            {
-                var histories = await noteHistoryRepository.GetNoteHistories(request.NoteId);
-                var data = MapHistoriesToHistoriesDto(histories);
-                return new OperationResult<List<NoteHistoryDTO>>(true, data);
-            }
-
-            return new OperationResult<List<NoteHistoryDTO>>(false, null).SetNoPermissions();
-        }
-
-        public async Task<OperationResult<NoteHistoryDTOAnswer>> Handle(GetNoteSnapshotQuery request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.Note.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-                if (!isUnlocked)
-                {
-                    return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
-                }
-            }
-
-            if (permissions.CanRead)
-            {
-                var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
-                var data = new NoteHistoryDTOAnswer(true, MapNoteSnapshotToNoteSnapshotDTO(snapshot));
-                return new OperationResult<NoteHistoryDTOAnswer>(true, data);
-            }
-
-            return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetNoPermissions();
-        }
-
+        
         public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
@@ -161,55 +105,7 @@ namespace Noots.History.Impl
             return resultList;
         }
 
-        public UserNoteHistory MapUserToUserNoteHistory(User user)
-        {
-            var path = this.noteCustomMapper.BuildFilePath(user.Id, user.UserProfilePhoto?.AppFile.GetFromSmallPath);
-            return new UserNoteHistory()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
-                PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = path ?? user.DefaultPhotoUrl
-            };
-
-        }
-
-        public List<UserNoteHistory> MapUsersToUsersNoteHistory(IEnumerable<User> users)
-        {
-            return users.Select(x => MapUserToUserNoteHistory(x)).ToList();
-        }
-
-        private NoteHistoryDTO MapHistoryToHistoryDto(NoteSnapshot historyDTO)
-        {
-            return new NoteHistoryDTO()
-            {
-                SnapshotTime = historyDTO.SnapshotTime,
-                Users = MapUsersToUsersNoteHistory(historyDTO.Users),
-                NoteVersionId = historyDTO.Id
-            };
-        }
-
-        private List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteSnapshot> histories)
-        {
-            return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
-        }
-
-        private NoteSnapshotDTO MapNoteSnapshotToNoteSnapshotDTO(NoteSnapshot snapshot)
-        {
-            return new NoteSnapshotDTO()
-            {
-                Id = snapshot.Id,
-                Color = snapshot.Color,
-                SnapshotTime = snapshot.SnapshotTime,
-                Labels = snapshot.Labels.Select(x => new LabelDTO { Name = x.Name, Color = x.Color }).ToList(),
-                NoteId = snapshot.NoteId,
-                NoteTypeId = snapshot.NoteTypeId,
-                RefTypeId = snapshot.RefTypeId,
-                Title = snapshot.Title
-            };
-        }
-
+        
         private PhotosCollectionNoteDTO ConvertPhotosCollection(CollectionNoteSnapshot photos, List<AppFile> files)
         {
             var filePhotos = files.Where(x => photos.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToPhotoDTO(x, x.UserId)).ToList();

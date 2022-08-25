@@ -108,6 +108,14 @@ public class BillingPermissionService
         return await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
     }
     
+    public async Task<bool> IsUserPlanPremiumAsync(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return false;
+        var plan =  await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+        return plan.Name == nameof(BillingPlanTypeENUM.Premium);
+    }
+    
     public async Task<List<BillingPlanDTO>> GetPlansAsync()
     {
         var ents = await vBillingPlanCacheRepository.GetAllCacheAsync();

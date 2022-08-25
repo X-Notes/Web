@@ -37,11 +37,7 @@
         </div>
         <div class="sections">
           <app-profile-header [title]="'profile.sectionGeneral' | translate"></app-profile-header>
-          <div class="billing-forms generic-section">
-            <div class="form"></div>
-            <div class="form"></div>
-            <div class="form"></div>
-          </div>
+          <app-profile-billing [user]="user$ | async"></app-profile-billing>
         </div>
         <div class="sections">
           <app-profile-header [title]="'profile.sectionAccount' | translate"></app-profile-header>
@@ -143,6 +139,7 @@
                       min="1"
                       max="20"
                       thumbLabel
+                      [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                       [ngModel]="(pSettings$ | async).contentInNoteCount"
                       (ngModelChange)="changePersonalizationSettings($event, pSettings.contentInNoteCount)"
                     ></mat-slider>
@@ -171,6 +168,7 @@
                       min="1"
                       max="20"
                       thumbLabel
+                      [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                       [ngModel]="(pSettings$ | async).notesInFolderCount"
                       (ngModelChange)="changePersonalizationSettings($event, pSettings.notesInFolderCount)"
                     ></mat-slider>
@@ -190,6 +188,7 @@
                     <p>{{ 'profile.isViewAudioOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
+                    [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                     [ngModel]="(pSettings$ | async).isViewAudioOnNote"
                     (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewAudioOnNote)"
                   ></mat-checkbox>
@@ -208,6 +207,7 @@
                     <p>{{ 'profile.isViewDocumentOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
+                    [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                     [ngModel]="(pSettings$ | async).isViewDocumentOnNote"
                     (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewDocumentOnNote)"
                   ></mat-checkbox>
@@ -226,6 +226,7 @@
                     <p>{{ 'profile.isViewPhotosOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
+                    [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                     [ngModel]="(pSettings$ | async).isViewPhotosOnNote"
                     (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewPhotosOnNote)"
                   ></mat-checkbox>
@@ -244,6 +245,7 @@
                     <p>{{ 'profile.isViewTextOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
+                    [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                     [ngModel]="(pSettings$ | async).isViewTextOnNote"
                     (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewTextOnNote)"
                   ></mat-checkbox>
@@ -262,6 +264,7 @@
                     <p>{{ 'profile.isViewVideoOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
+                    [disabled]="billingPlanId.Standart === (user$ | async).billingPlanId"
                     [ngModel]="(pSettings$ | async).isViewVideoOnNote"
                     (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewVideoOnNote)"
                   ></mat-checkbox>

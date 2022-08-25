@@ -21,6 +21,16 @@ namespace Noots.DatabaseContext.Repositories.Histories
                 .ThenInclude(x => x.AppFile)
                 .OrderByDescending(x => x.SnapshotTime).ToListAsync();
         }
+        
+        
+        public Task<List<NoteSnapshot>> GetNoteHistories(Guid noteId, int take)
+        {
+            return entities.Where(x => x.NoteId == noteId)
+                .Include(x => x.Users)
+                .ThenInclude(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
+                .OrderByDescending(x => x.SnapshotTime).Take(take).ToListAsync();
+        }
 
         public Task<List<NoteSnapshot>> GetSnapshotsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {

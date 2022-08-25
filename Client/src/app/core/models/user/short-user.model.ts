@@ -1,8 +1,8 @@
-import { BillingENUM } from 'src/app/shared/enums/billing.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../background.model';
+import { BillingPlanId } from '../billing/billing-plan-id.enum';
 
 export interface ShortUser {
   id: string;
@@ -14,5 +14,5 @@ export interface ShortUser {
   languageId: LanguagesENUM;
   themeId: ThemeENUM;
   fontSizeId: FontSizeENUM;
-  billingPlanId: BillingENUM;
+  billingPlanId: BillingPlanId;
 }

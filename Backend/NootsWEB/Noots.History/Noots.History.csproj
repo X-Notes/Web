@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Noots.Billing\Noots.Billing.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
   </ItemGroup>
 

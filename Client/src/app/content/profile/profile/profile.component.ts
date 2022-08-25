@@ -32,6 +32,7 @@ import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
 import { ResetNotes } from '../../notes/state/notes-actions';
 import { ResetFolders } from '../../folders/state/folders-actions';
+import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 
 @Component({
   selector: 'app-profile',
@@ -68,6 +69,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   pSettings = Personalization;
 
   language = LanguagesENUM;
+
+  billingPlanId = BillingPlanId;
 
   languages = Object.values(LanguagesENUM)
     .filter((x) => typeof x === 'string')

@@ -14,4 +14,6 @@ export interface BillingPlan {
     maxRelatedNotes: number;
     
     name: string;
+
+    price: number;
 };

@@ -3,8 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { BillingENUM } from 'src/app/shared/enums/billing.enum';
 
 @Component({
   selector: 'app-side-bar',
@@ -14,20 +14,17 @@ import { BillingENUM } from 'src/app/shared/enums/billing.enum';
 export class SideBarComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
-  billing: BillingENUM;
+  billing: BillingPlanId;
 
   constructor(private store: Store) {}
 
   get userBillingPlan() {
     switch (this.billing) {
-      case BillingENUM.Free: {
-        return 'F';
-      }
-      case BillingENUM.Standart: {
+      case BillingPlanId.Standart: {
         return 'S';
       }
-      case BillingENUM.Business: {
-        return 'B';
+      case BillingPlanId.Premium: {
+        return 'P';
       }
       default: {
         return '';

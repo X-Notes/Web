@@ -110,8 +110,8 @@
     "isViewPhotosOnNote": "显示照片",
     "isViewTextOnNote": "显示文本",
     "isViewVideoOnNote": "显示视频",
-    "contentInNoteCount": "计算笔记上的可见内容",
-    "notesInFolderCount": "对文件夹上的可见笔记进行计数",
+    "contentInNoteCount": "注解的可见内容量",
+    "notesInFolderCount": "文件夹上可见笔记的数量",
     "countCurrent": "当前："
   },
   "modal": {
@@ -324,7 +324,8 @@
     "movedToMany": "移至",
     "movedToSingle": "移至",
     "reloadPage": "连接不稳定请刷新页面",
-    "noItemInExport": "集合为空"
+    "noItemInExport": "集合为空",
+    "subscriptionCreationError": "此订阅的创建限制已经超过了"
   },
   "titles": {
     "labels": "标签",
@@ -351,5 +352,17 @@
     "editFolder": "您可以编辑文件夹",
     "readNote": "您只能阅读笔记",
     "readFolder": "您只能读取文件夹"
+  },
+  "profile-billing": {
+    "notes": "笔记",
+    "folders": "文件夹",
+    "labels": "标签",
+    "related": "相关注意事项",
+    "memory": "记忆",
+    "history-last-15": "最近15份附注副本",
+    "history-all": "所有笔记历史记录",
+    "personalization": "个性化设置",
+    "per-month": "每月",
+    "upgrade": "更新"
   }
 }

@@ -110,8 +110,8 @@
     "isViewPhotosOnNote": "Mostrar fotos",
     "isViewTextOnNote": "Mostrar texto",
     "isViewVideoOnNote": "Mostrar videos",
-    "contentInNoteCount": "Contar el contenido visible en la nota",
-    "notesInFolderCount": "Contar notas visibles en la carpeta",
+    "contentInNoteCount": "La cantidad de contenido visible de la nota",
+    "notesInFolderCount": "Número de notas visibles en la carpeta",
     "countCurrent": "Actual: "
   },
   "modal": {
@@ -324,7 +324,8 @@
     "movedToMany": " movido a ",
     "movedToSingle": " movido a ",
     "reloadPage": "Conexión inestable, actualice la página",
-    "noItemInExport": "La colección está vacía"
+    "noItemInExport": "La colección está vacía",
+    "subscriptionCreationError": "Se ha superado el límite de creación de esta suscripción"
   },
   "titles": {
     "labels": "Etiquetas",
@@ -351,5 +352,17 @@
     "editFolder": "Puede editar la carpeta",
     "readNote": "Solo se puede leer la nota",
     "readFolder": "Solo puede leer la carpeta"
+  },
+  "profile-billing": {
+    "notes": "Notas",
+    "folders": "Carpetas",
+    "labels": "Etiquetas",
+    "related": "notas relacionadas para nota",
+    "memory": "memoria",
+    "history-last-15": "Últimos 15 ejemplares de nota",
+    "history-all": "Todo el historial de notas",
+    "personalization": "Configuración de personalización",
+    "per-month": "por mes",
+    "upgrade": "Actualizar"
   }
 }
