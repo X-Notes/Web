@@ -7,7 +7,11 @@ import { takeUntil } from 'rxjs/operators';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { AudioService } from '../notes/audio.service';
 import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
-import { LoadBillingPlans, LoadPersonalization, LoadUsedDiskSpace } from '../../core/stateUser/user-action';
+import {
+  LoadBillingPlans,
+  LoadPersonalization,
+  LoadUsedDiskSpace,
+} from '../../core/stateUser/user-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 
 @Component({

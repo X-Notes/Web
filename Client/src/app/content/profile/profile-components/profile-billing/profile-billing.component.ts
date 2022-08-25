@@ -12,7 +12,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
   selector: 'app-profile-billing',
   templateUrl: './profile-billing.component.html',
   styleUrls: ['./profile-billing.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileBillingComponent implements OnInit {
   @Input() user: ShortUser;
@@ -23,6 +23,14 @@ export class ProfileBillingComponent implements OnInit {
   billingPlanId = BillingPlanId;
 
   constructor(private store: Store, private translate: TranslateService) {}
+
+  get hasUserPremium(): boolean {
+    return this.user.billingPlanId === BillingPlanId.Premium;
+  }
+
+  get hasUserDefault(): boolean {
+    return this.user.billingPlanId === BillingPlanId.Standart;
+  }
 
   ngOnInit(): void {}
 
@@ -54,24 +62,16 @@ export class ProfileBillingComponent implements OnInit {
     }
   }
 
-  getCount(number: number): string {
-    if(number >= 1000) {
-      return `${(number / 1000)}k`;
+  getCount(count: number): string {
+    if (count >= 1000) {
+      return `${count / 1000}k`;
     }
-    return number.toString();
+    return count.toString();
   }
 
-  getSize = (size: number) => (size / Math.pow(1024, 2));
+  getSize = (size: number) => size / Math.pow(1024, 2);
 
   updateBillingPlan(plan: BillingPlanId): void {
     this.store.dispatch(new UpdateBillingUserPlan(plan));
   }
-
-  get hasUserPremium(): boolean {
-    return this.user.billingPlanId === BillingPlanId.Premium;
-  } 
-
-  get hasUserDefault(): boolean {
-    return this.user.billingPlanId === BillingPlanId.Standart;
-  } 
 }

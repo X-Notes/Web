@@ -2,7 +2,6 @@ import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../models/background.model';
-import { BillingPlan } from '../models/billing/billing-plan';
 import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { User } from '../models/user/user.model';

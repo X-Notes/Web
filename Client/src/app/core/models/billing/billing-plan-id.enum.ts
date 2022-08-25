@@ -1,4 +1,4 @@
 export enum BillingPlanId {
-    Standart = 1,
-    Premium
+  Standart = 1,
+  Premium,
 }

@@ -6,8 +6,7 @@ import { BillingPlan } from './models/billing/billing-plan';
 
 @Injectable()
 export class ApiBillingService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   public getBillingPlans(): Observable<BillingPlan[]> {
     return this.httpClient.get<BillingPlan[]>(`${environment.writeAPI}/api/billing`);

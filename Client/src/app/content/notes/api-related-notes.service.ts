@@ -15,7 +15,10 @@ import { Observable } from 'rxjs';
 export class ApiRelatedNotesService {
   constructor(private httpClient: HttpClient) {}
 
-  updateRelatedNotes(noteId: string, relatedNoteIds: string[]): Observable<OperationResult<UpdateRelatedNotesWS>> {
+  updateRelatedNotes(
+    noteId: string,
+    relatedNoteIds: string[],
+  ): Observable<OperationResult<UpdateRelatedNotesWS>> {
     const obj = {
       noteId,
       relatedNoteIds,

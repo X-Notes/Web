@@ -1,19 +1,19 @@
-import { BillingPlanId } from "./billing-plan-id.enum";
+import { BillingPlanId } from './billing-plan-id.enum';
 
 export interface BillingPlan {
-    id: BillingPlanId;
+  id: BillingPlanId;
 
-    maxSize: number;
+  maxSize: number;
 
-    maxNotes: number;
+  maxNotes: number;
 
-    maxFolders: number;
+  maxFolders: number;
 
-    maxLabels: number;
+  maxLabels: number;
 
-    maxRelatedNotes: number;
-    
-    name: string;
+  maxRelatedNotes: number;
 
-    price: number;
-};
+  name: string;
+
+  price: number;
+}

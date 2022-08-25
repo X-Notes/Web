@@ -45,10 +45,11 @@ interface LabelState {
 @Injectable()
 export class LabelStore {
   constructor(
-    private api: ApiServiceLabels, 
+    private api: ApiServiceLabels,
     private store: Store,
     private snackbarService: SnackbarService,
-    private translate: TranslateService) {}
+    private translate: TranslateService,
+  ) {}
 
   @Selector()
   static countNoDeleted(state: LabelState): number {
@@ -93,7 +94,7 @@ export class LabelStore {
   @Action(AddLabel)
   async newLabel({ patchState, dispatch, getState }: StateContext<LabelState>) {
     const resp = await this.api.new().toPromise();
-    if(resp.success){
+    if (resp.success) {
       const id = resp.data;
       const newLabel = new Label({
         name: '',
@@ -107,7 +108,7 @@ export class LabelStore {
       dispatch(new AddToDomLabels([newLabel]));
       return;
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }

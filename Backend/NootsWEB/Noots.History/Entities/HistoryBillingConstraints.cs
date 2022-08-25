@@ -2,5 +2,5 @@
 
 public static class HistoryBillingConstraints
 {
-    public const short maxSnapshotForNoPremiumUser = 5;
+    public const short maxSnapshotForNoPremiumUser = 15;
 }

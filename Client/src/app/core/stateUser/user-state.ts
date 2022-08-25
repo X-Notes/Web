@@ -49,7 +49,7 @@ interface UserState {
     user: {} as ShortUser,
     memory: 0,
     personalizationSettings: null,
-    billingPlans: []
+    billingPlans: [],
   },
 })
 @Injectable()
@@ -261,11 +261,11 @@ export class UserStore {
     const res = await this.apiPersonalizationSettingsService
       .updateUserPersonalizationSettings(settings)
       .toPromise();
-    if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+    if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translateService.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
-    if(res.success) {
+    if (res.success) {
       patchState({ personalizationSettings: settings });
     }
   }

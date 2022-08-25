@@ -112,7 +112,9 @@ export class ApiFoldersService {
   }
 
   new(): Observable<OperationResult<SmallFolder>> {
-    return this.httpClient.get<OperationResult<SmallFolder>>(`${environment.writeAPI}/api/folder/new`);
+    return this.httpClient.get<OperationResult<SmallFolder>>(
+      `${environment.writeAPI}/api/folder/new`,
+    );
   }
 
   archive(ids: string[]) {
@@ -149,7 +151,10 @@ export class ApiFoldersService {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/copy`, obj);
+    return this.httpClient.patch<OperationResult<SmallFolder[]>>(
+      `${environment.writeAPI}/api/folder/copy`,
+      obj,
+    );
   }
 
   changeColor(ids: string[], color: string) {

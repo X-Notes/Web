@@ -112,7 +112,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private snackbarService: SnackbarService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   initTitle() {
@@ -220,14 +220,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(async (flag) => {
         if (flag) {
           const res = await this.noteApiService.new().toPromise();
-          if(res.success) {
+          if (res.success) {
             const newNote = res.data;
             await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
             this.ffnService.addToDom([newNote]);
             this.updateState();
             return;
           }
-          if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+          if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
             const message = this.translate.instant('snackBar.subscriptionCreationError');
             this.snackbarService.openSnackBar(message, null, null, 5000);
           }

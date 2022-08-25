@@ -15,14 +15,15 @@ export class RelatedNotesService {
   constructor(
     private apiRelated: ApiRelatedNotesService,
     private snackbarService: SnackbarService,
-    private translate: TranslateService) {}
+    private translate: TranslateService,
+  ) {}
 
   async updateRelatedNotes(noteId: string, ids: string[]): Promise<void> {
     const resp = await this.apiRelated.updateRelatedNotes(noteId, ids).toPromise();
     if (resp.success) {
       this.handleUpdates(resp.data, noteId);
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
