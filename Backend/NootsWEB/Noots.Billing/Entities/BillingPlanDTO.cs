@@ -17,6 +17,8 @@ public class BillingPlanDTO
     public int MaxRelatedNotes { set; get; }
         
     public string Name { set; get; }
+    
+    public double Price { set; get; }
 
     public BillingPlanDTO(BillingPlan plan)
     {
@@ -27,5 +29,6 @@ public class BillingPlanDTO
         MaxLabels = plan.MaxLabels;
         MaxRelatedNotes = plan.MaxRelatedNotes;
         Name = plan.Name;
+        Price = plan.Price;
     }
 }

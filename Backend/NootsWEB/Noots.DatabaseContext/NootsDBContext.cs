@@ -46,7 +46,7 @@ namespace Noots.DatabaseContext
         // NOTES
         public DbSet<Note> Notes { set; get; }
 
-        public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
+        public DbSet<RelatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
 
         public DbSet<RelatedNoteUserState> RelatedNoteUserState { set; get; }
 
@@ -231,12 +231,12 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<RelatedNoteUserState>()
                 .HasKey(bc => new { bc.UserId, bc.ReletatedNoteInnerNoteId });
 
-            modelBuilder.Entity<ReletatedNoteToInnerNote>()
+            modelBuilder.Entity<RelatedNoteToInnerNote>()
                 .HasOne(bc => bc.Note)
                 .WithMany(b => b.ReletatedNoteToInnerNotesFrom)
                 .HasForeignKey(bc => bc.NoteId);
 
-            modelBuilder.Entity<ReletatedNoteToInnerNote>()
+            modelBuilder.Entity<RelatedNoteToInnerNote>()
                 .HasOne(bc => bc.RelatedNote)
                 .WithMany(b => b.ReletatedNoteToInnerNotesTo)
                 .HasForeignKey(bc => bc.RelatedNoteId);
@@ -358,30 +358,28 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<BillingPlan>().HasData(
                 new BillingPlan
                 {
-                    Id = BillingPlanTypeENUM.Free, 
-                    Name = nameof(BillingPlanTypeENUM.Free), 
+                    Id = BillingPlanTypeENUM.Standart, 
+                    Name = nameof(BillingPlanTypeENUM.Standart), 
                     MaxSize = 1048576000, // 1000 MB
                     MaxLabels = 500,
-                    MaxNotes = 200,
-                    MaxFolders = 200
+                    MaxNotes = 250,
+                    MaxFolders = 250,
+                    MaxRelatedNotes = 5,
+                    Price = 0
                 },
                 new BillingPlan
                 {
-                    Id = BillingPlanTypeENUM.Standart, 
-                    Name = nameof(BillingPlanTypeENUM.Standart), 
+                    Id = BillingPlanTypeENUM.Premium, 
+                    Name = nameof(BillingPlanTypeENUM.Premium), 
                     MaxSize = 5242880000, // 5000 MB
-                    MaxLabels = 1000,
-                    MaxNotes = 5000,
-                    MaxFolders = 5000
-                }, 
-                new BillingPlan
-                {
-                    Id = BillingPlanTypeENUM.Business, 
-                    Name = nameof(BillingPlanTypeENUM.Business), 
-                    MaxSize = 20971520000, // 20000 MB
-                    MaxLabels = 1000,
-                    MaxNotes = 5000,
-                    MaxFolders = 5000
+                    MaxLabels = 10000,
+                    MaxNotes = 10000,
+                    MaxFolders = 10000,
+                    MaxRelatedNotes = 30,
+                    Price = 1.5
+                    // last snapshots?
+                    // personalization?
+                    // memory
                 });
 
             modelBuilder.Entity<HType>().HasData(

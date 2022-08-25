@@ -20,6 +20,8 @@ namespace Common.DatabaseModels.Models.Plan
         
         public string Name { set; get; }
         
+        public double Price { set; get; }
+        
         public List<User> Users { set; get; }
     }
 }
