@@ -3,14 +3,17 @@
     <ng-scrollbar [visibility]="'hover'" [appearance]="'compact'" [autoHeightDisabled]="true">
       <div
         class="note"
-        *ngFor="let item of notesLink"
-        [ngStyle]="{ backgroundColor: item.color }"
-        (click)="notesService.toNote(item)"
+        *ngFor="let note of notesLink"
+        [ngStyle]="{ backgroundColor: note.color }"
+        (click)="notesService.toNote(note)"
       >
-        <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
-        <p *ngIf="!item.title" class="empty-placeholder">
+        <p *ngIf="note.title && note.title.length > 0">{{ note.title }}</p>
+        <p *ngIf="!note.title" class="empty-placeholder">
           {{ 'placeholder.unnamedNote' | translate }}
         </p>
+        <div class="lock-container" [ngStyle]="{ backgroundColor: note.color }">
+          <mat-icon *ngIf="note.isLockedNow" svgIcon="lock"></mat-icon>
+        </div>
       </div>
     </ng-scrollbar>
   </ng-container>

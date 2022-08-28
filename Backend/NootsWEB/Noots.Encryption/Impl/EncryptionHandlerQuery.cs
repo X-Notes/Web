@@ -24,7 +24,7 @@ namespace Noots.Encryption.Impl
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanRead)
+            if (permissions.IsOwner)
             {
                 if (appEncryptor.Compare(request.Password, permissions.Note.Password))
                 {
