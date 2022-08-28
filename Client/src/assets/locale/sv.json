@@ -325,7 +325,8 @@
     "movedToSingle": " flyttad till ",
     "reloadPage": "Instabil anslutning uppdatera sidan",
     "noItemInExport": "Samlingen är tom",
-    "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits."
+    "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits.",
+    "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration"
   },
   "titles": {
     "labels": "Etiketter",

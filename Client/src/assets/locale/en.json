@@ -325,7 +325,8 @@
     "movedToSingle": " moved to ",
     "reloadPage": "Unstable connection please refresh the page",
     "noItemInExport": "Collection is empty",
-    "subscriptionCreationError": "The creation limit for this subscription has been exceeded"
+    "subscriptionCreationError": "The creation limit for this subscription has been exceeded",
+    "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription"
   },
   "titles": {
     "labels": "Labels",

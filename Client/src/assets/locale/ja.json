@@ -325,7 +325,8 @@
     "movedToSingle": "移動先",
     "reloadPage": "不安定な接続は、ページを更新してください",
     "noItemInExport": "コレクションが空です",
-    "subscriptionCreationError": "このサブスクリプションの作成制限を超えました。"
+    "subscriptionCreationError": "このサブスクリプションの作成制限を超えました。",
+    "subscriptionMaxNotesError": "本契約は最大{{count}}冊まで"
   },
   "titles": {
     "labels": "ラベル",

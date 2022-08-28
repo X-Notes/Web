@@ -327,7 +327,8 @@
     "movedToSingle": " перенесена в ",
     "reloadPage": "Нестабильное соедение, попробуйте обновить страницу",
     "noItemInExport": "Колекция пустая",
-    "subscriptionCreationError": "Превышен лимит создания для этой подписки"
+    "subscriptionCreationError": "Превышен лимит создания для этой подписки",
+    "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки"
   },
   "titles": {
     "labels": "Ярлыки",

@@ -325,7 +325,8 @@
     "movedToSingle": " przeniesiony do ",
     "reloadPage": "Niestabilne połączenie proszę odświeżyć stronę",
     "noItemInExport": "Kolekcja jest pusta",
-    "subscriptionCreationError": "Limit tworzenia dla tej subskrypcji został przekroczony"
+    "subscriptionCreationError": "Limit tworzenia dla tej subskrypcji został przekroczony",
+    "subscriptionMaxNotesError": "maksymalnie {{count}} notatek dla tej subskrypcji"
   },
   "titles": {
     "labels": "Etykiety",

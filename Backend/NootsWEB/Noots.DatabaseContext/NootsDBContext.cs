@@ -366,6 +366,7 @@ namespace Noots.DatabaseContext
                     MaxFolders = 250,
                     MaxRelatedNotes = 5,
                     Price = 0
+                    
                 },
                 new BillingPlan
                 {
@@ -380,6 +381,7 @@ namespace Noots.DatabaseContext
                     // last snapshots?
                     // personalization?
                     // memory
+                    
                 });
 
             modelBuilder.Entity<HType>().HasData(

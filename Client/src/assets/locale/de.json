@@ -325,7 +325,8 @@
     "movedToSingle": " verschoben nach ",
     "reloadPage": "Instabile Verbindung, bitte aktualisieren Sie die Seite",
     "noItemInExport": "Sammlung ist leer",
-    "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten"
+    "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten",
+    "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement"
   },
   "titles": {
     "labels": "Etiketten",

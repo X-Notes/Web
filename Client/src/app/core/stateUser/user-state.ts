@@ -35,6 +35,7 @@ import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-r
 import { BillingPlan } from '../models/billing/billing-plan';
 import { ApiBillingService } from '../api-billing.service';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 
 interface UserState {
   user: ShortUser;
@@ -103,6 +104,11 @@ export class UserStore {
   @Selector()
   static getUserTheme(state: UserState): ThemeENUM {
     return state.user.themeId;
+  }
+
+  @Selector()
+  static getUserBillingPlan(state: UserState): BillingPlanId {
+    return state.user.billingPlanId;
   }
 
   @Selector()

@@ -9,6 +9,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -17,11 +18,13 @@ import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
+import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
+import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
 
 @Component({
@@ -50,8 +53,18 @@ export class OpenInnerSideComponent
     public pService: PersonalizationService,
     public dialogRef: MatDialogRef<OpenInnerSideComponent>,
     private apiRelatedNotes: ApiRelatedNotesService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {
     super(murriService);
+  }
+
+  get maxCountOfNotes(): number {
+    const plan = this.store.selectSnapshot(UserStore.getUserBillingPlan);
+    if (plan === BillingPlanId.Standart) {
+      return 5;
+    }
+    return 30;
   }
 
   get selectedNotesChips() {
@@ -110,7 +123,14 @@ export class OpenInnerSideComponent
   }
 
   // eslint-disable-next-line class-methods-use-this
-  highlightNote(note: PreviewNote) {
+  highlightNote(note: PreviewNote): void {
+    if (this.selectedNotesChips.length >= this.maxCountOfNotes && !note.isSelected) {
+      const message = this.translate.instant('snackBar.subscriptionMaxNotesError', {
+        count: this.maxCountOfNotes,
+      });
+      this.snackbarService.openSnackBar(message);
+      return;
+    }
     note.isSelected = !note.isSelected;
   }
 

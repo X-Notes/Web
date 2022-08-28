@@ -325,7 +325,8 @@
     "movedToSingle": " déplacé vers ",
     "reloadPage": "Connexion instable veuillez actualiser la page",
     "noItemInExport": "La collecte est vide",
-    "subscriptionCreationError": "La limite de création pour cet abonnement a été dépassée"
+    "subscriptionCreationError": "La limite de création pour cet abonnement a été dépassée",
+    "subscriptionMaxNotesError": "maximum de {{count}} notes pour cet abonnement"
   },
   "titles": {
     "labels": "Étiquettes",

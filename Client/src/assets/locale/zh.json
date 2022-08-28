@@ -325,7 +325,8 @@
     "movedToSingle": "移至",
     "reloadPage": "连接不稳定请刷新页面",
     "noItemInExport": "集合为空",
-    "subscriptionCreationError": "此订阅的创建限制已经超过了"
+    "subscriptionCreationError": "此订阅的创建限制已经超过了",
+    "subscriptionMaxNotesError": "本订阅号最多可有{{count}}个注释"
   },
   "titles": {
     "labels": "标签",

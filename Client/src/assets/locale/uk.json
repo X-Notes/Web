@@ -327,7 +327,8 @@
     "movedToSingle": " переміщений в ",
     "reloadPage": "Нестабільне з'єднання, спробуйте оновити сторінку",
     "noItemInExport": "Колекція пуста",
-    "subscriptionCreationError": "Ліміт створення для цієї підписки перевищено"
+    "subscriptionCreationError": "Ліміт створення для цієї підписки перевищено",
+    "subscriptionMaxNotesError": "максимум {{count}} нотаток для цієї підписки"
   },
   "titles": {
     "labels": "Ярлики",

@@ -325,7 +325,8 @@
     "movedToSingle": " movido a ",
     "reloadPage": "Conexión inestable, actualice la página",
     "noItemInExport": "La colección está vacía",
-    "subscriptionCreationError": "Se ha superado el límite de creación de esta suscripción"
+    "subscriptionCreationError": "Se ha superado el límite de creación de esta suscripción",
+    "subscriptionMaxNotesError": "un máximo de {{count}} billetes para este abono"
   },
   "titles": {
     "labels": "Etiquetas",
