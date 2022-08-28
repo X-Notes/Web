@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -115,7 +114,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public contentEditorTextService: ContentEditorTextService,
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
-    private cdr: ChangeDetectorRef,
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
     private diffCheckerService: DiffCheckerService,

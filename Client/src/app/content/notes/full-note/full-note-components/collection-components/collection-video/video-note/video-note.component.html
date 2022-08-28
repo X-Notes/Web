@@ -30,6 +30,7 @@
       <video
         [id]="getMainVideo?.fileId"
         (click)="clickItemHandler(getMainVideo?.fileId)"
+        (timeupdate)="cdr.detectChanges()"
         #videoplayer
         oncontextmenu="return false"
         preload="metadata"
@@ -42,9 +43,9 @@
           <mat-slider
             class="slider"
             min="0"
-            [max]="video?.duration"
+            [max]="videoElement?.nativeElement?.duration"
             step="1"
-            [value]="video?.currentTime"
+            [value]="videoElement?.nativeElement?.currentTime"
             (input)="onSliderChangeEnd($event)"
           ></mat-slider>
         </div>
@@ -71,7 +72,7 @@
                 [classes]="'light-static'"
                 [button]="volumeIcon"
                 [tooltip]="
-                  (video?.volume === 0 ? 'innerNote.audio.turnOnSound' : 'innerNote.audio.mute')
+                  (videoElement?.nativeElement?.volume === 0 ? 'innerNote.audio.turnOnSound' : 'innerNote.audio.mute')
                     | translate
                 "
                 (clickEvent)="mute()"
@@ -84,7 +85,7 @@
                   max="1"
                   step="0.01"
                   (input)="onSliderVolumeChangeEnd($event)"
-                  [value]="video?.volume"
+                  [value]="videoElement?.nativeElement?.volume"
                 ></mat-slider>
               </div>
             </div>

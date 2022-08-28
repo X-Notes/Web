@@ -4,6 +4,7 @@ using Common.DTO.Files;
 using ContentProcessing;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
+using Noots.Mapper.Mapping;
 using Noots.Storage.Commands;
 
 namespace Noots.Storage.Impl
@@ -26,15 +27,19 @@ namespace Noots.Storage.Impl
         private readonly IImageProcessor imageProcessor;
 
         private readonly FileRepository fileRepository;
+        
+        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         public FileHandlerCommand(
             IFilesStorage filesStorage,
             IImageProcessor imageProcessor,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            NoteFolderLabelMapper noteFolderLabelMapper)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
             this.fileRepository = fileRepository;
+            this.noteFolderLabelMapper = noteFolderLabelMapper;
         }
 
         public async Task<AppFile> ProcessNotePhotos(Guid userId, byte[] bytes, string contentType, string fileName)
@@ -273,14 +278,19 @@ namespace Noots.Storage.Impl
                 file.MetaData.SecondsDuration = request.SecondsDuration;
 
                 var imageFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.ImageFileId);
-                if (imageFile is not null)
+                if (imageFile is not null && file.MetaData != null && !file.MetaData.ImageFileId.HasValue)
                 {
-                    file.MetaData.ImageFileId = file.MetaData.ImageFileId ?? imageFile.Id;
-                    file.MetaData.ImagePath = file.MetaData.ImagePath ?? imageFile.GetFromSmallPath;
+                    file.MetaData.ImageFileId = imageFile.Id;
+                    file.MetaData.ImagePath = imageFile.GetFromSmallPath;
                 }
 
                 await fileRepository.UpdateAsync(file);
 
+                if (!string.IsNullOrEmpty(file.MetaData?.ImagePath))
+                {
+                    file.MetaData.ImagePath = noteFolderLabelMapper.BuildFilePath(request.UserId,file.MetaData.ImagePath);
+                };
+                
                 var respResult = new FileDTO(file.Id, file.PathPhotoSmall, file.PathPhotoMedium, file.PathPhotoBig, file.PathNonPhotoContent, file.Name, file.UserId, file.MetaData, file.CreatedAt);
                 return new OperationResult<FileDTO>(true, respResult);
             }
