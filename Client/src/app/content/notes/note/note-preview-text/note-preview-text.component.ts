@@ -3,6 +3,7 @@ import { DeltaConverter } from '../../full-note/content-editor/converter/delta-c
 import { BaseText } from '../../models/editor-models/base-text';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -20,7 +21,12 @@ export class NotePreviewTextComponent implements OnInit {
 
   viewHtml: string;
 
+  constructor(private sanitizer: DomSanitizer) {}
+
   ngOnInit(): void {
-    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
+    if (this.content.contents?.length > 0) {
+      const html = DeltaConverter.convertContentToHTML(this.content.contents);
+      this.viewHtml = this.sanitizer.bypassSecurityTrustHtml(html) as string;
+    }
   }
 }

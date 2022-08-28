@@ -25,6 +25,7 @@ import { SelectionService } from '../../../content-editor-services/selection.ser
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-html-text-part',
@@ -72,8 +73,9 @@ export class HtmlTextPartComponent
     selectionService: SelectionService,
     clickableService: ClickableContentService,
     renderer: Renderer2,
+    sanitizer: DomSanitizer,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
   }
 
   get isLink() {

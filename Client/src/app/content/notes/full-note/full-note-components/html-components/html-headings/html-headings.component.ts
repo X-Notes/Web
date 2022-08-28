@@ -11,6 +11,7 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
@@ -49,8 +50,9 @@ export class HtmlHeadingsComponent
     selectionService: SelectionService,
     clickableService: ClickableContentService,
     renderer: Renderer2,
+    sanitizer: DomSanitizer,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
   }
 
   getHost() {

@@ -4,7 +4,7 @@ import { BreakEnterModel } from './full-note/content-editor-services/models/brea
   providedIn: 'root',
 })
 export class ApiBrowserTextService {
-  pasteCommandHandler = (e) => {
+  pasteOnlyTextHandler = (e) => {
     e.preventDefault();
     let text = (e.originalEvent || e).clipboardData.getData('text/plain');
     text = text.replace(/&nbsp;/g, '');
