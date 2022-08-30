@@ -350,13 +350,5 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     this.contentHtml.nativeElement.innerHTML = html;
   }
 
-  private convertTextToLink(title: string, url: string) {
-    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-    const html = DeltaConverter.convertContentToHTML(this.content.contents);
-    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-    const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
-    this.updateHTML(resTextBlocks);
-  }
-
   abstract enter(e);
 }
