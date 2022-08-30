@@ -64,7 +64,9 @@
       "dateAsc": "Od starego do nowego",
       "dateDesc": "Od nowego do starego",
       "order": "Niestandardowa kolejność przeciągania"
-    }
+    },
+    "anonymous": "Anonimowy",
+    "signIn": "Zaloguj się"
   },
   "menu": {
     "label": "Etykieta",

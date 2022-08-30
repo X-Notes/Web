@@ -64,7 +64,9 @@
       "dateAsc": "Von alt zu neu",
       "dateDesc": "Von neu zu alt",
       "order": "Benutzerdefinierte ziehbare Bestellung"
-    }
+    },
+    "anonymous": "Anonym",
+    "signIn": "Eintragen"
   },
   "menu": {
     "label": "Etikett",
