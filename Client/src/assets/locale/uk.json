@@ -328,7 +328,8 @@
     "reloadPage": "Нестабільне з'єднання, спробуйте оновити сторінку",
     "noItemInExport": "Колекція пуста",
     "subscriptionCreationError": "Ліміт створення для цієї підписки перевищено",
-    "subscriptionMaxNotesError": "максимум {{count}} нотаток для цієї підписки"
+    "subscriptionMaxNotesError": "максимум {{count}} нотаток для цієї підписки",
+    "copied": "Скопійовано"
   },
   "titles": {
     "labels": "Ярлики",

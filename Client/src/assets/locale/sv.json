@@ -328,7 +328,8 @@
     "reloadPage": "Instabil anslutning uppdatera sidan",
     "noItemInExport": "Samlingen är tom",
     "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits.",
-    "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration"
+    "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration",
+    "copied": "Kopierad"
   },
   "titles": {
     "labels": "Etiketter",

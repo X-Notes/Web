@@ -56,7 +56,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     const texts = items.map((item) => item.getConcatedText());
     if (texts.length > 0) {
       const resultText = texts.reduce((pv, cv) => `${pv}\n${cv}`);
-      this.apiBrowserFunctions.copyText(resultText);
+      this.apiBrowserFunctions.copyTextAsync(resultText);
       return true;
     }
     return false;

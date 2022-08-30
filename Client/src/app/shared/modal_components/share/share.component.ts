@@ -40,6 +40,8 @@ import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
+import { SnackbarService } from '../../services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface StartType {
   id: string;
@@ -122,6 +124,8 @@ export class ShareComponent implements OnInit, OnDestroy {
       ents: SmallFolder[] | SmallNote[];
     },
     public dialogRef: MatDialogRef<ShareComponent>,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   get folderDropdownActive(): boolean {
@@ -271,7 +275,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.selectNote(this.notes[0]);
   }
 
-  copyInputLink() {
+  async copyInputLink() {
     let input;
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
@@ -286,7 +290,8 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
-    this.apiBrowserFunctions.copyInputLink(input);
+    await this.apiBrowserFunctions.copyInputLinkAsync(input);
+    this.snackbarService.openSnackBar(this.translate.instant('snackBar.copied'));
   }
 
   async changeNoteType() {

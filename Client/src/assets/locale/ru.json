@@ -330,7 +330,8 @@
     "reloadPage": "Нестабильное соедение, попробуйте обновить страницу",
     "noItemInExport": "Колекция пустая",
     "subscriptionCreationError": "Превышен лимит создания для этой подписки",
-    "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки"
+    "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки",
+    "copied": "Скопировано"
   },
   "titles": {
     "labels": "Ярлыки",

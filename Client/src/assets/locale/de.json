@@ -328,7 +328,8 @@
     "reloadPage": "Instabile Verbindung, bitte aktualisieren Sie die Seite",
     "noItemInExport": "Sammlung ist leer",
     "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten",
-    "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement"
+    "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement",
+    "copied": "Kopiert"
   },
   "titles": {
     "labels": "Etiketten",

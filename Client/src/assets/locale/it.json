@@ -328,7 +328,8 @@
     "reloadPage": "Connessione instabile si prega di aggiornare la pagina",
     "noItemInExport": "La raccolta è vuota",
     "subscriptionCreationError": "Il limite di creazione per questo abbonamento è stato superato.",
-    "subscriptionMaxNotesError": "massimo {{count}} note per questo abbonamento"
+    "subscriptionMaxNotesError": "massimo {{count}} note per questo abbonamento",
+    "copied": "Copiato"
   },
   "titles": {
     "labels": "Etichette",

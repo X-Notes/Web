@@ -20,12 +20,12 @@ export class ApiBrowserTextService {
     selection.addRange(range);
   };
 
-  copyInputLink(input: HTMLInputElement) {
+  async copyInputLinkAsync(input: HTMLInputElement) {
     const text = input.value;
-    this.copyText(text);
+    await this.copyTextAsync(text);
   }
 
-  copyText = async (text) => {
+  copyTextAsync = async (text) => {
     await navigator.clipboard.writeText(text);
   };
 
