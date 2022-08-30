@@ -86,9 +86,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.isReadonly) {
-      this.initMouseHandlers();
-    }
+    this.initMouseHandlers();
   }
 
   ngOnDestroy(): void {

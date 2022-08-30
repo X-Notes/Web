@@ -58,7 +58,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Default"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -79,7 +79,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Numberlist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [prevContent]="getTextContent(i - 1)"
               [prevType]="getTextContent(i - 1)?.noteTextTypeId"
               [content]="item"
@@ -101,7 +101,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Dotlist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -121,7 +121,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Checklist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -141,7 +141,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Heading"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -162,7 +162,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Photos"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -178,7 +178,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Audios"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -194,7 +194,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Videos"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -210,7 +210,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Documents"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"

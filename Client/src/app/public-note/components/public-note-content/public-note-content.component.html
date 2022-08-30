@@ -5,6 +5,7 @@
       [isReadOnlyMode]="true"
       [title$]="noteTitle$"
       [contents]="contents"
+      [editorTheme]="theme.Dark"
     >
       <app-note-owner [owner]="owner$ | async"></app-note-owner>
     </app-content-editor>

@@ -9,7 +9,6 @@ using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
-    [Authorize]
     public class AppSignalRHub : Hub
     {
         private readonly WebsocketsNotesServiceStorage wsNotesService;

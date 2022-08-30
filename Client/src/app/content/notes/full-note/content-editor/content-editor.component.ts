@@ -10,10 +10,9 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
@@ -79,8 +78,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input()
   isReadOnlyMode = true;
 
-  @Select(UserStore.getUserTheme)
-  theme$: Observable<ThemeENUM>;
+  @Input()
+  editorTheme: ThemeENUM;
 
   @Input()
   title$: Observable<string>;
@@ -183,6 +182,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnDestroy(): void {
+    this.menuSelectionService.clearItemAndSelection();
     this.webSocketsUpdaterService.leaveNote(this.note.id);
     this.destroy.next();
     this.destroy.complete();

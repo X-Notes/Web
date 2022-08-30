@@ -19,6 +19,7 @@ import { ContentModelBase } from '../models/editor-models/content-model-base';
 import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -32,6 +33,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
+
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;

@@ -1,7 +1,8 @@
 @import 'variables';
 
 :host {
-  display: none;
+  position: fixed;
+  z-index: 100;
 }
 
 .container {
@@ -66,13 +67,11 @@
 @media (max-width: 1024px) {
   :host {
     display: flex;
-    bottom: 0;
+    bottom: 82px; // mobile menu height
     left: 0 !important;
     top: initial !important;
     width: 100%;
-    position: absolute;
-    z-index: 100;
-  
+
     .container {
       height: 50px;
       box-shadow: none;
@@ -93,6 +92,7 @@
 
 @media (max-width: 640px) {
   :host {
+    bottom: 71px; // mobile menu height
     .container {
       .button {
         padding: 0 5px;

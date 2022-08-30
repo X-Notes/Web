@@ -12,6 +12,7 @@
       [title$]="snapshotNoteTitle$"
       [contents]="contents"
       [isReadOnlyMode]="true"
+      [editorTheme]="theme$ | async"
     ></app-content-editor>
   </div>
   <div *ngIf="!isLoading && !(snapshotState$ | async)?.canView" class="wrapper">

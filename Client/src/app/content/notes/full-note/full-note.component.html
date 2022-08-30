@@ -10,6 +10,7 @@
       [isReadOnlyMode]="(canEdit$ | async) === false"
       [title$]="noteTitle$"
       [contents]="contents"
+      [editorTheme]="theme$ | async"
     ></app-content-editor>
     <app-right-section-content
       [note$]="note$"
