@@ -8,10 +8,12 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseText } from '../../../models/editor-models/base-text';
+import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -19,10 +21,16 @@ import { BreakEnterModel } from '../../content-editor-services/models/break-ente
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
+import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
 import { EnterEvent } from '../../models/enter-event.model';
+import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
 
+export interface PasteEvent {
+  element: BaseTextElementComponent;
+  htmlElementsToInsert: HTMLElement[];
+}
 @Component({
   template: '',
 })
@@ -35,7 +43,13 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
+  transformTo = new EventEmitter<TransformContent>();
+
+  @Output()
   concatThisWithPrev = new EventEmitter<string>();
+
+  @Output()
+  pasteEvent = new EventEmitter<PasteEvent>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -65,6 +79,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     public selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
+    private sanitizer: DomSanitizer,
   ) {
     super(cdr);
 
@@ -90,14 +105,39 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   initBaseHTML(): void {
-    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
-    this.syncHtmlWithLayout();
+    if (this.content.contents?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+      this.sanitizer.bypassSecurityTrustHtml(html);
+      const convertedHTML = this.sanitizer.bypassSecurityTrustHtml(html) ?? '';
+      this.viewHtml = convertedHTML as string;
+      this.syncHtmlWithLayout();
+    }
   }
 
-  updateHTML(contents: TextBlock[]) {
-    const html = DeltaConverter.convertContentToHTML(contents);
+  transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+    $event?.preventDefault();
+    this.transformTo.emit({
+      textType: contentType,
+      headingType: heading,
+      id: this.content.id,
+      setFocusToEnd: true,
+    });
+  }
+
+  updateHTML(contents: TextBlock[]): void {
+    const html = DeltaConverter.convertTextBlocksToHTML(contents);
     this.updateNativeHTML(html);
     this.syncHtmlWithLayout();
+    // TODO TEST IT
+    const listType = contents.find((x) => x.list !== null)?.list;
+    if (listType) {
+      if (listType === DeltaListEnum.bullet) {
+        this.transformContent(null, NoteTextTypeENUM.Dotlist);
+      }
+      if (listType === DeltaListEnum.ordered) {
+        this.transformContent(null, NoteTextTypeENUM.Numberlist);
+      }
+    }
   }
 
   syncContentWithLayout() {
@@ -121,8 +161,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   getTextBlocks(): TextBlock[] {
     const html = this.getEditableNative<HTMLElement>().innerHTML;
-    const delta = DeltaConverter.convertHTMLToDelta(html);
-    return DeltaConverter.convertToTextBlocks(delta);
+    return DeltaConverter.convertHTMLToTextBlocks(html);
   }
 
   isContentEmpty() {
@@ -179,19 +218,36 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   pasteCommandHandler(e: ClipboardEvent) {
     const isLink = this.isPasteLink(e.clipboardData.items);
+    e.preventDefault();
     if (isLink) {
-      e.preventDefault();
       const json = e.clipboardData.getData('text/link-preview') as any;
       const data = JSON.parse(json);
       const title = data.title;
       const url = data.url;
       const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-      const html = DeltaConverter.convertContentToHTML(this.content.contents);
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
       const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-      const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
+      const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
       this.updateHTML(resTextBlocks);
     } else {
-      this.apiBrowser.pasteCommandHandler(e);
+      const html = e.clipboardData.getData('text/html');
+      const htmlElements = DeltaConverter.splitDeltaByDividers(html);
+      if (htmlElements.length === 0) return;
+
+      if (this.isContentEmpty()) {
+        const htmlEl = htmlElements[0];
+        const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(htmlEl.outerHTML);
+        this.updateHTML(resTextBlocks);
+        htmlElements.shift(); // remove first element
+      }
+
+      if (htmlElements.length > 0) {
+        const pasteObject: PasteEvent = {
+          element: this,
+          htmlElementsToInsert: htmlElements,
+        };
+        this.pasteEvent.emit(pasteObject);
+      }
     }
     this.textChanged.next();
   }

@@ -40,9 +40,6 @@ export class HtmlTextPartComponent
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
-  @Output()
-  transformTo = new EventEmitter<TransformContent>();
-
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -111,16 +108,6 @@ export class HtmlTextPartComponent
 
   ngOnInit(): void {
     this.initBaseHTML();
-  }
-
-  transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    $event.preventDefault();
-    this.transformTo.emit({
-      textType: contentType,
-      headingType: heading,
-      id: this.content.id,
-      setFocusToEnd: true,
-    });
   }
 
   transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {

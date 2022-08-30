@@ -1,6 +1,7 @@
-import Quill, { DeltaOperation, DeltaStatic } from 'quill';
+import Quill, { DeltaStatic } from 'quill';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { TextType } from '../../../models/editor-models/text-models/text-type';
+import { DeltaListEnum } from './entities/delta-list.enum';
 
 export interface StringAny {
   [key: string]: any;
@@ -22,13 +23,21 @@ export class DeltaConverter {
     DeltaConverter.quillInstance = new Quill(`#${id}`);
   }
 
-  static convertToTextBlocks(delta: DeltaStatic): TextBlock[] {
+  // CONVERT METHODS
+
+  static convertHTMLToTextBlocks(html: string): TextBlock[] {
+    const delta = this.convertHTMLToDelta(html);
+    return this.convertDeltaToTextBlocks(delta);
+  }
+
+  static convertDeltaToTextBlocks(delta: DeltaStatic): TextBlock[] {
     if (!delta.ops || delta.ops.length === 0) {
       return [];
     }
     const result: TextBlock[] = [];
     delta.ops.forEach((item) => {
       const block = new TextBlock({});
+      if (typeof item.insert !== 'string') return; // Todo there are can be paste image
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
         block.text = clearStr;
@@ -36,31 +45,26 @@ export class DeltaConverter {
         block.textColor = this.getTextColor(item.attributes);
         block.link = this.getLink(item.attributes);
         block.highlightColor = this.getHighlightColorColor(item.attributes);
+        // UI fields
+        block.list = this.getList(item.attributes);
         result.push(block);
       }
     });
     return result;
   }
 
-  static convertContentToDelta(contents: TextBlock[]): DeltaOperation[] {
-    if (!contents || contents.length === 0) {
-      return [];
-    }
-    return contents.map((item) => {
-      return { insert: item.text, attributes: this.convertToAttibutes(item) };
-    });
+  static convertTextBlocksToHTML(contents: TextBlock[]): string {
+    const ops = this.convertTextBlocksToDelta(contents);
+    const html = this.convertDeltaToHtml(ops);
+    return html;
   }
 
-  static convertContentToHTML(contents: TextBlock[]): string {
-    const textBlocks = this.convertContentToDelta(contents);
-    return this.convertDeltaToHtml(textBlocks);
-  }
-
-  static convertDeltaToHtml = (delta: DeltaOperation[] | any): string => {
-    if (!delta || delta.length === 0) {
+  static convertDeltaToHtml = (deltaStatic: DeltaStatic): string => {
+    if (!deltaStatic?.ops || deltaStatic?.ops?.length === 0) {
       return null;
     }
-    DeltaConverter.quillInstance.setContents(delta);
+
+    DeltaConverter.quillInstance.setContents(deltaStatic);
     const result = DeltaConverter.quillInstance.root.innerHTML;
     DeltaConverter.quillInstance.setContents(null);
     return result;
@@ -97,12 +101,57 @@ export class DeltaConverter {
     return formatted;
   }
 
-  static convertHTMLToDelta(html: string): DeltaStatic {
-    return DeltaConverter.quillInstance.clipboard.convert(html);
+  static splitDeltaByDividers(html: string): HTMLElement[] {
+    const delta = this.convertHTMLToDelta(html);
+    if (!delta.ops || delta.ops.length === 0) {
+      return [];
+    }
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = this.convertDeltaToHtml(delta);
+
+    const processList = (node: HTMLElement, tag: 'ul' | 'ol'): HTMLElement[] => {
+      const listElements: HTMLElement[] = [];
+      for (const subListChild of node.childNodes as unknown as HTMLElement[]) {
+        const tempUL = document.createElement(tag);
+        tempUL.appendChild(subListChild.cloneNode(true));
+        listElements.push(tempUL);
+      }
+      return listElements;
+    };
+
+    const elements: HTMLElement[] = [];
+    for (const child of tempDiv.childNodes as any) {
+      const htmlChild = child as HTMLElement;
+      if (htmlChild.tagName === 'UL') {
+        elements.push(...processList(htmlChild, 'ul'));
+      } else if (htmlChild.tagName === 'OL') {
+        elements.push(...processList(htmlChild, 'ol'));
+      } else {
+        elements.push(htmlChild);
+      }
+    }
+    return elements;
   }
 
   static setHtml(html: string): void {
     DeltaConverter.quillInstance.clipboard.dangerouslyPasteHTML(html, 'silent');
+  }
+
+  private static convertHTMLToDelta(html: string): DeltaStatic {
+    return DeltaConverter.quillInstance.clipboard.convert(html);
+  }
+
+  private static convertTextBlocksToDelta(contents: TextBlock[]): DeltaStatic {
+    if (!contents || contents.length === 0) {
+      return null;
+    }
+    const staticDelta = {} as DeltaStatic;
+    const ops = contents.map((item) => {
+      return { insert: item.text, attributes: this.convertToAttibutes(item) };
+    });
+    staticDelta.ops = ops;
+    return staticDelta;
   }
 
   private static convertToAttibutes(block: TextBlock): StringAny {
@@ -136,6 +185,16 @@ export class DeltaConverter {
     }
     if (map.background) {
       return map.background;
+    }
+    return null;
+  }
+
+  private static getList(map: StringAny): DeltaListEnum {
+    if (!map) {
+      return null;
+    }
+    if (map.list) {
+      return map.list;
     }
     return null;
   }

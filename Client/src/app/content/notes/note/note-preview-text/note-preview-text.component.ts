@@ -25,7 +25,7 @@ export class NotePreviewTextComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.content.contents?.length > 0) {
-      const html = DeltaConverter.convertContentToHTML(this.content.contents);
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
       this.viewHtml = this.sanitizer.bypassSecurityTrustHtml(html) as string;
     }
   }

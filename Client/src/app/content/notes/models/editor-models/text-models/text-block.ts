@@ -1,3 +1,4 @@
+import { DeltaListEnum } from '../../../full-note/content-editor/converter/entities/delta-list.enum';
 import { TextType } from './text-type';
 
 export class TextBlock {
@@ -10,6 +11,10 @@ export class TextBlock {
   link: string;
 
   textTypes: TextType[];
+
+  // not mapped UI fields
+
+  list?: DeltaListEnum;
 
   constructor(block: Partial<TextBlock>) {
     this.text = block.text;

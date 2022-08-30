@@ -58,6 +58,8 @@ import { ClickableContentService } from '../content-editor-services/clickable-co
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { ContentEditorSyncService } from '../content-editor-services/core/content-editor-sync.service';
 import { ContentEditorRestoreService } from '../content-editor-services/core/content-editor-restore.service';
+import { PasteEvent } from '../full-note-components/html-components/html-base.component';
+import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -315,16 +317,15 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   enterHandler(value: EnterEvent) {
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
     curEl.syncHtmlWithLayout();
-    const obj = this.contentEditorTextService.insertNewContent(
+    const newTextContent = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
     );
     setTimeout(() => {
-      const el = this.elements?.toArray()[obj.index];
-      const delta = DeltaConverter.convertHTMLToDelta(value.breakModel.nextHtml);
-      const model = DeltaConverter.convertToTextBlocks(delta);
-      el.updateHTML(model);
+      const el = this.elements?.toArray()[newTextContent.index];
+      const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
+      el.updateHTML(contents);
       el.setFocus();
     });
   }
@@ -372,8 +373,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent) {
-    const delta = DeltaConverter.convertHTMLToDelta(model.html);
-    const contents = DeltaConverter.convertToTextBlocks(delta);
+    const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
     model.content.contents = contents;
     this.postAction();
   }
@@ -383,7 +383,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!el) {
       return;
     }
-    const html = DeltaConverter.convertContentToHTML(styles.content.contents);
+    const html = DeltaConverter.convertTextBlocksToHTML(styles.content.contents);
     const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
     const resultDelta = DeltaConverter.setStyles(
       html,
@@ -393,9 +393,46 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       styles.updateMode === UpdateStyleMode.Add,
     );
     if (el) {
-      el.updateHTML(DeltaConverter.convertToTextBlocks(resultDelta));
+      el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
     }
   };
+
+  pasteTextHandler(e: PasteEvent): void {
+    let contentId = e.element.content.id;
+    for (const el of e.htmlElementsToInsert) {
+      let type = NoteTextTypeENUM.Default;
+      let heading: HeadingTypeENUM = null;
+      console.log('el: ', el);
+      if (el.tagName === 'H1' || el.tagName === 'H2') {
+        type = NoteTextTypeENUM.Heading;
+        heading = HeadingTypeENUM.H1;
+      }
+      if (el.tagName === 'H3' || el.tagName === 'H4') {
+        type = NoteTextTypeENUM.Heading;
+        heading = HeadingTypeENUM.H2;
+      }
+      if (el.tagName === 'H5' || el.tagName === 'H6') {
+        type = NoteTextTypeENUM.Heading;
+        heading = HeadingTypeENUM.H3;
+      }
+      if (el.tagName === 'UL') {
+        type = NoteTextTypeENUM.Dotlist;
+      }
+      if (el.tagName === 'OL') {
+        type = NoteTextTypeENUM.Numberlist;
+      }
+
+      const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
+      const newTextContent = this.contentEditorTextService.insertNewContent(
+        contentId,
+        type,
+        true,
+        textBlocks,
+        heading,
+      );
+      contentId = newTextContent.content.id;
+    }
+  }
 
   changeDetectionChecker = () => {
     console.log('Check contents');
