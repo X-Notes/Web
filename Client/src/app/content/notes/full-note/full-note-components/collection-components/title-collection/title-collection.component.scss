@@ -5,12 +5,13 @@
   align-items: center;
   justify-content: space-between;
   flex: 1;
-  min-height: 37px;
+  min-height: 34px;
+  padding: 0.125rem 0;
   
   .title {
     position: relative;
     display: flex;
-    width: calc(100% - 40px);
+    flex: 1;
     font-size: 0.875rem;
     
     p {

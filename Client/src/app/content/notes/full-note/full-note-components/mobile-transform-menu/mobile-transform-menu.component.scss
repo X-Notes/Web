@@ -1,9 +1,10 @@
 @import 'variables';
 
 :host {
-  position: relative;
-  bottom: 50px;
+  position: absolute;
+  bottom: 0;
   z-index: $full-main-menu;
+  width: 100%;
 }
 
 .transform-buttons-container {

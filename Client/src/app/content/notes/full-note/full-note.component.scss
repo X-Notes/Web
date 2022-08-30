@@ -37,15 +37,13 @@
   .full-content {
     flex-direction: column;
     .wrapper-note {
-      width: 200%;
-
       app-content-editor {
         width: 100%;
         overflow: hidden;
       }
 
       app-right-section-content {
-        width: 100%;
+        display: none;
       }
     }
   }

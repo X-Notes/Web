@@ -64,7 +64,9 @@
       "dateAsc": "Från gammalt till nytt",
       "dateDesc": "Från nytt till gammalt",
       "order": "Anpassad dragbar ordning"
-    }
+    },
+    "anonymous": "Anonymt",
+    "signIn": "Logga in"
   },
   "menu": {
     "label": "Etikett",

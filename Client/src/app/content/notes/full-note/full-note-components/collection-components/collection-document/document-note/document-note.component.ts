@@ -22,7 +22,7 @@ import { SelectionService } from '../../../../content-editor-services/selection.
 @Component({
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
-  styleUrls: ['./document-note.component.scss'],
+  styleUrls: ['./document-note.component.scss', '../../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentNoteComponent

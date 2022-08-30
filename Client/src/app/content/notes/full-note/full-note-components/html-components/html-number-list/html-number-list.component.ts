@@ -26,7 +26,7 @@ import { BaseTextElementComponent } from '../html-base.component';
 @Component({
   selector: 'app-html-number-list',
   templateUrl: './html-number-list.component.html',
-  styleUrls: ['./html-number-list.component.scss'],
+  styleUrls: ['./html-number-list.component.scss', '../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlNumberListComponent

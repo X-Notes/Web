@@ -308,6 +308,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static getOwnerId(state: NoteState): string {
+    return state.fullNoteState?.note.userId;
+  }
+
+  @Selector()
   static isCanForceLocked(state: NoteState): boolean {
     return !state.fullNoteState?.note?.isLockedNow && state.fullNoteState?.note?.isLocked;
   }

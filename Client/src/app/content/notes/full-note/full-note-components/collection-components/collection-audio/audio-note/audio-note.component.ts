@@ -23,7 +23,7 @@ import { SelectionService } from '../../../../content-editor-services/selection.
 @Component({
   selector: 'app-audio-note',
   templateUrl: './audio-note.component.html',
-  styleUrls: ['./audio-note.component.scss'],
+  styleUrls: ['./audio-note.component.scss', '../../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioNoteComponent

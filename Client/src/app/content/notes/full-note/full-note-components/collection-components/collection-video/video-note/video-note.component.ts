@@ -27,7 +27,7 @@ import { SelectionService } from '../../../../content-editor-services/selection.
 @Component({
   selector: 'app-video-note',
   templateUrl: './video-note.component.html',
-  styleUrls: ['./video-note.component.scss'],
+  styleUrls: ['./video-note.component.scss', '../../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoNoteComponent

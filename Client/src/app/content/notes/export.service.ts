@@ -28,8 +28,8 @@ import dayjs from 'dayjs';
 export class ExportService {
   constructor(
     private httpClient: HttpClient,
-    protected longTermOperationsHandler: LongTermOperationsHandlerService,
-    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private snackbarService: SnackbarService,
     private translateService: TranslateService,
   ) {}

@@ -1,23 +1,17 @@
-@mixin is-selected {
-    box-shadow: 0 0 0 2px #0887a7;
-  }
-  
 .is-selected {
-    @include is-selected;
+  box-shadow: 0 0 0 2px #0887a7;
 }
-  
+
 .document-content {
-    display: flex;
-    width: 100%;   
-    
-    .playlist {
-        display: flex;
-        flex-direction: column;
-        width: calc(100% - 40px); // 40px drag handler
-        border-radius: 5px;
-    }
-    
-    .drop-active{
-        outline: 1px solid white;
-    }
+  display: flex;
+  width: 100%;
+
+  .playlist {
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .drop-active{
+    outline: 1px solid white;
+  }
 }

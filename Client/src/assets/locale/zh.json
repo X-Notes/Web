@@ -64,7 +64,9 @@
       "dateAsc": "从旧到新",
       "dateDesc": "从新到旧",
       "order": "自定义可拖动顺序"
-    }
+    },
+    "anonymous": "佚名",
+    "signIn": "登录"
   },
   "menu": {
     "label": "标签",

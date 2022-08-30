@@ -9,10 +9,8 @@
   width: 100%;
 
   .playlist {
-    display: flex;
     flex-direction: column;
-    width: calc(100% - 40px); // 40px drag handler
-    border-radius: 5px;
+    overflow: hidden;
 
     .video-wrapper {
       position: relative;
@@ -128,7 +126,6 @@
       display: flex;
       width: 100%;
       overflow: hidden;
-      margin-bottom: 0.5rem;
 
       .video-playlist-wrapper {
         position: relative;
@@ -164,6 +161,7 @@
             margin-bottom: 0.25rem;
             border-radius: 5px;
             padding-bottom: 56.25%;
+            overflow: hidden;
 
             video {
               position: absolute;
@@ -176,13 +174,13 @@
               transition: 0.3s ease;
             }
 
-            .thumb-active {
-              box-shadow: 0 0 0 1px #ffffff;
-            }
-
             app-button-collection {
               opacity: 0;
             }
+          }
+
+          .thumb-active {
+            box-shadow: 0 0 0 1px #ffffff;
           }
 
           .video-title {

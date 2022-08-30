@@ -91,8 +91,8 @@ export class ContentEditorSyncService {
         filter((x) => x === true && !this.isSync),
         debounceTime(updateNoteContentDelay),
       )
-      .subscribe(() => {
-        this.processChanges();
+      .subscribe(async () => {
+        await this.processChanges();
       });
     //
     this.updateImmediatelySubject
@@ -107,7 +107,7 @@ export class ContentEditorSyncService {
 
   change() {
     if (!this.isEdit) return;
-    this.updateSubject.next(true);
+    this.updateSubject?.next(true);
   }
 
   changeImmediately() {

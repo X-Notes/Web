@@ -52,11 +52,20 @@ em {
   margin-right: 0.0625rem;
 }
 
-a:link, a:visited { // ONLY FOR INNER NOTE
-  text-decoration: none;
-  color: #4a8af4;
-  cursor: pointer;
-  text-decoration: underline;
+.wrapper-note, .note-preview-text { // ONLY FOR INNER NOTE
+  a {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #5192ff;
+  }
+}
+
+.note-preview-text {
+  pointer-events: none;
+
+  a {
+    text-decoration: none;
+  }
 }
 
 body,

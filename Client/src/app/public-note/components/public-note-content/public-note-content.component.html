@@ -1,0 +1,21 @@
+<div appTheme class="full-content">
+  <div *ngIf="(canView$ | async) === true && loaded" class="wrapper-note">
+    <app-content-editor
+      [note]="note$ | async"
+      [isReadOnlyMode]="true"
+      [title$]="noteTitle$"
+      [contents]="contents"
+    >
+      <app-note-owner [owner]="owner$ | async"></app-note-owner>
+    </app-content-editor>
+  </div>
+  <div *ngIf="(canView$ | async) === false && loaded" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessViewNote' | translate"
+      [illustration]="pService.icon.noAccessViewNote"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
+  <app-spinner *ngIf="!loaded"></app-spinner>
+</div>
