@@ -1,50 +1,37 @@
-@import 'innerNote';
+@import 'variables.scss';
 
-.dot-list {
-  width: 100%;
+.dot-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0.5rem 0 0.25rem;
 
-  .dot-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0.5rem 0 0.25rem;
-
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: white;
-    }
-  }
-  .text-container {
-    position: relative;
-    display: flex;
-    flex-grow: 1;
-
-    .no-content-list{
-      font-size: 1.125rem;
-      margin-left: 0.25rem;
-    }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
   }
 }
 
+.text-container {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+}
+
 .dark {
-  .dot-list {
-    .dot-container {
-      .dot {
-        background-color: white;
-      }
+  .dot-container {
+    .dot {
+      background-color: white;
     }
   }
 }
 
 .light {
-  .dot-list {
-    .dot-container {
-      .dot {
-        background-color: $text-color;
-      }
+  .dot-container {
+    .dot {
+      background-color: $text-color;
     }
   }
 }

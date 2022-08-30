@@ -1,5 +1,12 @@
 @import 'variables';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
 .main-content {
   position: relative;
   z-index: $full-main-content;
@@ -13,24 +20,25 @@
   .top-section {
     display: flex;
     flex-direction: column;
-    padding: 0 40px;
+    padding: 0 2.25rem;
     margin-bottom: 1rem;
+
     .note-color {
       width: 40px;
       height: 40px;
     }
-  
+
     .labels-section {
       margin-bottom: 1rem;
     }
-  
+
     .title-section {
       position: relative;
       display: flex;
       font-size: 2.5rem;
       font-weight: 700;
       min-height: 50px;
-  
+
       .title {
         width: 100%;
         padding-left: 0.625rem;
@@ -41,16 +49,16 @@
           padding-left: 0;
         }
       }
-  
+
       .title:empty + .placeholder {
         display: block;
       }
-  
+
       .title:empty ~ .left-border {
         width: 0;
         background-color: #7b7b7b;
       }
-  
+
       .placeholder {
         display: none;
         position: absolute;
@@ -64,14 +72,12 @@
   }
 
   .content-section {
-    height: 100%;
     display: flex;
-    position: relative;
+    width: 100%;
+    height: 100%;
     flex-direction: column;
-    padding: 0 12px 0 0;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    scrollbar-width: thin;
+    overflow: hidden scroll;
+
     .content-section-inner {
       position: relative;
       display: flex;
@@ -122,13 +128,6 @@
 .content-section.cdk-drop-list-dragging .item:not(.cdk-drag-placeholder) {
   transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
 }
-
-
-app-text-edit-menu {
-  z-index: 1000;
-  position: fixed;
-}
-
 
 .light {
   border-right: 1px solid $light-separator;

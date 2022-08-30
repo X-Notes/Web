@@ -24,7 +24,7 @@ import { BaseTextElementComponent } from '../html-base.component';
 @Component({
   selector: 'app-html-check-list',
   templateUrl: './html-check-list.component.html',
-  styleUrls: ['./html-check-list.component.scss'],
+  styleUrls: ['./html-check-list.component.scss', '../../../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlCheckListComponent

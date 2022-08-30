@@ -2,6 +2,7 @@
   appTheme
   appTextEditMenu
   appSelection
+  [isReadonly]="isReadOnlyMode"
   [appMenuSelection]="elements"
   [appCopy]="elements"
   (selectionEvent)="selectionHandler($event)"
@@ -21,6 +22,7 @@
         <p>{{ label.name }}</p>
       </div>
     </div>
+    <ng-content></ng-content>
     <div class="title-section">
       <div
         id="title-element"

@@ -1,9 +1,15 @@
 @import 'variables';
 
+:host {
+  display: none;
+}
+
 .container {
   display: flex;
   border-radius: 5px;
   padding: 4px 10px;
+  width: 100%;
+
   .button {
     display: flex;
     justify-content: center;
@@ -59,11 +65,14 @@
 
 @media (max-width: 1024px) {
   :host {
-    bottom: 50px;
+    display: flex;
+    bottom: 0;
     left: 0 !important;
     top: initial !important;
     width: 100%;
-    position: relative !important;
+    position: absolute;
+    z-index: 100;
+  
     .container {
       height: 50px;
       box-shadow: none;

@@ -1,19 +1,15 @@
-<div
-  (mouseover)="mouseEnter($event)"
-  (mouseleave)="mouseLeave($event)"
-  class="photo-content"
-  [ngStyle]="{
-    backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
-  }"
->
+<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="photo-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
     ><ng-content *ngIf="isDragActive"></ng-content
   ></app-drag-drop-handler-container>
   <div
-    class="photo-container"
+    class="main-item"
     appTheme
-    [appDrop]="'drop-active'"
+    appDrop="drop-active"
     (fileDropped)="uploadFiles($event)"
+    [ngStyle]="{
+      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+    }"
   >
     <div class="content-photos">
       <app-title-collection

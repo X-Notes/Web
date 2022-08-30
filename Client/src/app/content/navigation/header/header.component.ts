@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.store
       .select(AppStore.getRouting)
       .pipe(takeUntil(this.destroy))
@@ -100,7 +100,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(async (folder) => this.routeChangeFullFolder(folder));
 
     this.store.dispatch(LoadNotifications);
-    this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
+    await this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
   }
 
   showUsers() {

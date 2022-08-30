@@ -64,7 +64,9 @@
       "dateAsc": "Dal vecchio al nuovo",
       "dateDesc": "Dal nuovo al vecchio",
       "order": "Ordine trascinabile personalizzato"
-    }
+    },
+    "anonymous": "Anonimo",
+    "signIn": "Accedi"
   },
   "menu": {
     "label": "Etichetta",

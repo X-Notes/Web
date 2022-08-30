@@ -1,38 +1,8 @@
 <div *ngIf="note$ | async" appTheme class="interactions">
-  <div
-    [CustomTooltip]="'header.countUsers' | translate"
-    position="Bottom"
-    class="user-circle"
-    (click)="showUsers()"
-    #userCircle
-  >
-    <p>{{ (onlineUsers$ | async).length }}</p>
-    <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
-  </div>
-  <div
-    class="wrapper-people"
-    #scrollbar
-    *ngIf="pService.users"
-    [@showMenuLeftRight]
-    [@.disabled]="pService.AnimationInnerUsers"
-  >
-    <div class="people-editing" #heightPeople>
-      <div
-        class="person"
-        *ngFor="let item of onlineUsers$ | async"
-        CustomTooltip="{{ item.name }}"
-        position="Bottom"
-        [flagDisable]="disableTooltpUser()"
-      >
-        <div class="inner-person">
-          <img [src]="item.photoPath" alt="contributor" />
-        </div>
-        <p>{{ item.name }}</p>
-      </div>
-    </div>
-  </div>
+  <app-full-note-active-users class="app-active-users"></app-full-note-active-users>
 
   <app-menu
+    class="app-menu"
     [items]="
       buttonService.getNoteMenuByNoteType(noteType$ | async)
         | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
@@ -43,9 +13,10 @@
   ></app-menu>
 
   <app-general-header-button
+    class="app-history"
     (clickEvent)="openHistoriesPopup()"
     [message]="'menu.history' | translate"
-    [styleClasses]="'generic-2 history'"
+    styleClasses="generic-2 history"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -53,17 +24,8 @@
     (clickEvent)="openRelatedNotesPopup()"
     [tooltipMessage]="'modal.relatedNotesPopup.relatedNotes' | translate"
     tooltipPosition="Bottom"
-    [styleClasses]="'generic-2'"
+    styleClasses="generic-2"
     iconClass="notes"
-  ></app-general-header-button>
-
-  <app-general-header-button
-    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
-    (clickEvent)="dialogsManageService.openChangeLabels()"
-    [tooltipMessage]="'menu.label' | translate"
-    tooltipPosition="Bottom"
-    [styleClasses]="'generic-2'"
-    iconClass="label"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -71,7 +33,7 @@
     (clickEvent)="buttonService.openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
-    [styleClasses]="'generic-2'"
+    styleClasses="generic-2"
     iconClass="share"
   ></app-general-header-button>
 
@@ -80,7 +42,7 @@
     (clickEvent)="hideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
-    [styleClasses]="'generic-2 more_vert'"
+    styleClasses="generic-2 more_vert"
     iconClass="more_vert"
     [isDefault]="true"
   ></app-general-header-button>

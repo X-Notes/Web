@@ -3,9 +3,16 @@
 .main-container {
   display: flex;
   align-items: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
   width: 100%;
+}
+
+.main-item {
+  position: relative;
+  display: flex;
+  flex: 1;
+  border-radius: 5px;
+  margin: 0.125rem 1rem 0.125rem 0;
+  padding: 0.125rem 0.375rem;
 }
 
 .block-generic {
@@ -15,7 +22,6 @@
   width: 100%;
   z-index: 2;
   position: relative;
-
 }
 
 .bold {
@@ -35,8 +41,9 @@
   width: 100%;
   color: #6b6b6b;
   font-weight: 300;
+  font-size: 1.125rem;
+  margin-left: 0.125rem;
 }
-
 
 .light {
   .block-generic {

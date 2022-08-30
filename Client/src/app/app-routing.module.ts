@@ -39,6 +39,11 @@ const routes: Routes = [
     ],
   },
   {
+    path: 'public',
+    loadChildren: () =>
+      import('./public-note/public-note.module').then(({ PublicNoteModule }) => PublicNoteModule),
+  },
+  {
     path: 'about',
     loadChildren: () => import('./about/about.module').then(({ AboutModule }) => AboutModule),
   },

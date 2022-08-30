@@ -83,6 +83,7 @@ import { RelatedNoteComponent } from '../content/notes/full-note/related-note/re
 import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-up/note-history-pop-up.component';
 import { HistoryRecordComponent } from '../content/notes/full-note/full-note-components/history-record/history-record.component';
 import { DateFromNowPipe } from './pipes/date-from-now.pipe';
+import { FullNoteActiveUsersComponent } from './custom-components/full-note-active-users/full-note-active-users.component';
 
 @NgModule({
   declarations: [
@@ -149,6 +150,7 @@ import { DateFromNowPipe } from './pipes/date-from-now.pipe';
     NoteHistoryPopUpComponent,
     HistoryRecordComponent,
     DateFromNowPipe,
+    FullNoteActiveUsersComponent,
   ],
   imports: [
     CommonModule,
@@ -236,6 +238,7 @@ import { DateFromNowPipe } from './pipes/date-from-now.pipe';
     RelatedNoteComponent,
     HistoryRecordComponent,
     DateFromNowPipe,
+    FullNoteActiveUsersComponent,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

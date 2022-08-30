@@ -9,12 +9,14 @@
     h2: content.headingTypeId === hType.H2,
     h3: content.headingTypeId === hType.H3
   }"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
     ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
-  <div class="text-content">
+  <div
+    class="main-item"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
     <p
       #contentHtml
       class="block-generic default-text-id heading-block"

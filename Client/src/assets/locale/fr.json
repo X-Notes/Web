@@ -64,7 +64,9 @@
       "dateAsc": "De l’ancien au nouveau",
       "dateDesc": "Du nouveau à l’ancien",
       "order": "Ordre glissable personnalisé"
-    }
+    },
+    "anonymous": "Anonyme",
+    "signIn": "Se connecter"
   },
   "menu": {
     "label": "Étiquette",

@@ -332,9 +332,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   deleteRowHandler(id: string) {
     const index = this.contentEditorContentsService.deleteContent(id);
-    const elms = this.elements?.toArray();
-    if (elms?.length <= index) {
-      this.elements?.toArray()[index].setFocusToEnd();
+    if (index !== 0) {
+      this.elements?.toArray()[index - 1].setFocusToEnd();
     }
     this.postAction();
   }
@@ -465,6 +464,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   postAction(): void {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     const isCanAppend = this.isCanAddNewItem(this.elements?.last?.getContent());
     if (isCanAppend) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
@@ -474,6 +476,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   placeHolderClick($event) {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     $event.preventDefault();
     this.postAction();
     requestAnimationFrame(() => this.elements?.last?.setFocus());

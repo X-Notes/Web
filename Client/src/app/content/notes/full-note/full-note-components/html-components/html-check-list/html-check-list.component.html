@@ -4,17 +4,20 @@
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
     ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
-  <div class="check-list">
+  <div
+    class="main-item"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
     <div class="checkbox-container inner-box-list">
       <mat-checkbox
         [(ngModel)]="content.checked"
         (change)="changeCheckBox()"
         (click)="clickHandler($event)"
+        [disabled]="isReadOnlyMode"
       ></mat-checkbox>
     </div>
     <div class="text-container">

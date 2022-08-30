@@ -64,7 +64,9 @@
       "dateAsc": "From old to new",
       "dateDesc": "From new to old",
       "order": "Custom draggable order"
-    }
+    },
+    "anonymous": "Anonymous",
+    "signIn": "Sign in"
   },
   "menu": {
     "label": "Label",
@@ -216,7 +218,7 @@
       "fourRow": "Four in row"
     },
     "audio": {
-      "previos": "Previos",
+      "previos": "Previous",
       "next": "Next",
       "play": "Play",
       "pause": "Pause",

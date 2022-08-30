@@ -26,6 +26,7 @@ import { EnterEvent } from '../../models/enter-event.model';
 import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
+import { isValidURL } from '../../../../../shared/utils/is-valid-url.util';
 
 export interface PasteEvent {
   element: BaseTextElementComponent;
@@ -347,6 +348,14 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
+  }
+
+  private convertTextToLink(title: string, url: string) {
+    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
+    const html = DeltaConverter.convertContentToHTML(this.content.contents);
+    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
+    const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
+    this.updateHTML(resTextBlocks);
   }
 
   abstract enter(e);
