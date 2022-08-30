@@ -72,7 +72,7 @@
     </app-dialog-generic-header>
 
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
-      <mat-tab isActive="true" label="{{ 'modal.shareModal.access' | translate }}">
+      <mat-tab isActive="true" [label]="'modal.shareModal.access' | translate">
         <div class="tab-content">
           <div class="content-access content-padding">
             <div class="link-access-field">
@@ -80,14 +80,14 @@
                 *ngIf="data.currentWindowType === windowType.Note"
                 readonly
                 type="text"
-                value="{{ currentNote?.id | sharingLink: data.currentWindowType }}"
+                [value]="currentNote?.id | sharingLink: data.currentWindowType"
                 id="linkInputNote"
               />
               <input
                 *ngIf="data.currentWindowType === windowType.Folder"
                 readonly
                 type="text"
-                value="{{ currentFolder?.id | sharingLink: data.currentWindowType }}"
+                [value]="currentFolder?.id | sharingLink: data.currentWindowType"
                 id="linkInputFolder"
               />
               <div class="dropdown-wrapper" *ngIf="folderDropdownActive">

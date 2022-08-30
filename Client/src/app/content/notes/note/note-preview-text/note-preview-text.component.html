@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="content.noteTextTypeId">
-  <p *ngSwitchCase="textType.Default" [innerHTML]="viewHtml"></p>
+  <p class="note-preview-text" *ngSwitchCase="textType.Default" [innerHTML]="viewHtml"></p>
   <app-note-preview-text-heading
     *ngSwitchCase="textType.Heading"
     [html]="viewHtml"

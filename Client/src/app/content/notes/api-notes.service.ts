@@ -27,8 +27,8 @@ import { FullNote } from './models/full-note.model';
 export class ApiServiceNotes {
   constructor(
     private httpClient: HttpClient,
-    protected longTermOperationsHandler: LongTermOperationsHandlerService,
-    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
   ) {}
 
   getNotes(type: NoteTypeENUM, settings: PersonalizationSetting) {
