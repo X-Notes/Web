@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { TransformContent } from '../../../models/transform-content.model';
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';

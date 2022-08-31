@@ -34,6 +34,10 @@ export class RelatedNotesService {
     this.orderNotes(notes);
   }
 
+  clearRelatedNotes(): void {
+    this.notes = [];
+  }
+
   orderNotes(notes: RelatedNote[]): void {
     this.notes = notes.sort((a, b) => a.order - b.order);
   }
