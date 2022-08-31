@@ -257,12 +257,12 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
       const htmlElements = DeltaConverter.splitDeltaByDividers(html);
       if (htmlElements.length === 0) return;
 
-      if (this.isContentEmpty()) {
-        const htmlEl = htmlElements[0];
-        const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(htmlEl.outerHTML);
-        this.updateHTML(resTextBlocks);
-        htmlElements.shift(); // remove first element
-      }
+      const htmlEl = htmlElements[0];
+      this.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
+      const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
+      const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
+      this.updateHTML(resTextBlocks);
+      htmlElements.shift(); // remove first element
 
       if (htmlElements.length > 0) {
         const pasteObject: PasteEvent = {

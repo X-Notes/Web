@@ -4,9 +4,9 @@ import { BreakEnterModel } from './full-note/content-editor-services/models/brea
   providedIn: 'root',
 })
 export class ApiBrowserTextService {
-  pasteOnlyTextHandler = (e) => {
+  pasteOnlyTextHandler = (e: ClipboardEvent) => {
     e.preventDefault();
-    let text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    let text = e.clipboardData.getData('text/plain');
     text = text.replace(/&nbsp;/g, '');
 
     const range = this.getSelection().getRangeAt(0);
@@ -14,6 +14,17 @@ export class ApiBrowserTextService {
     const textNode = document.createTextNode(text);
     range.insertNode(textNode);
     range.selectNodeContents(textNode);
+    range.collapse(false);
+    const selection = this.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  pasteHTMLHandler = (node: Node) => {
+    const range = this.getSelection().getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+    range.selectNodeContents(node);
     range.collapse(false);
     const selection = this.getSelection();
     selection.removeAllRanges();
