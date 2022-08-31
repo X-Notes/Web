@@ -187,7 +187,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.searchStrChanged.complete();
 
     const commandsNotes = this.notes
-      .filter((x) => this.startIdsType.some((z) => z.id === x.id && z.type !== x.noteTypeId))
+      .filter((x) => this.startIdsType.some((q) => q.id === x.id && q.type !== x.noteTypeId))
       .map((x) =>
         x.noteTypeId === NoteTypeENUM.Shared
           ? this.factoryForCommandNote(x.id, NoteTypeENUM.Shared)
@@ -195,7 +195,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       );
 
     const commandsFolders = this.folders
-      .filter((x) => this.startIdsType.some((z) => z.id === x.id && z.type !== x.folderTypeId))
+      .filter((x) => this.startIdsType.some((q) => q.id === x.id && q.type !== x.folderTypeId))
       .map((x) =>
         x.folderTypeId === FolderTypeENUM.Shared
           ? this.factoryForCommandFolder(x.id, FolderTypeENUM.Shared)
@@ -249,15 +249,15 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   userFilters(items: SearchUserForShareModal[]) {
-    const users = items.filter((user) => !this.selectedUsers.some((z) => z.id === user.id));
+    const users = items.filter((user) => !this.selectedUsers.some((q) => q.id === user.id));
     switch (this.data.currentWindowType) {
       case EntityPopupType.Note: {
         const noteUsers = this.store.selectSnapshot(NoteStore.getUsersOnPrivateNote);
-        return users.filter((user) => !noteUsers.some((z) => z.id === user.id));
+        return users.filter((user) => !noteUsers.some((q) => q.id === user.id));
       }
       case EntityPopupType.Folder: {
         const fodlerUsers = this.store.selectSnapshot(FolderStore.getUsersOnPrivateFolder);
-        return users.filter((user) => !fodlerUsers.some((z) => z.id === user.id));
+        return users.filter((user) => !fodlerUsers.some((q) => q.id === user.id));
       }
       default: {
         throw new Error('');
@@ -440,11 +440,11 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   addUserToInvite(user: SearchUserForShareModal) {
     this.selectedUsers.push(user);
-    this.searchUsers = this.searchUsers.filter((z) => z.id !== user.id);
+    this.searchUsers = this.searchUsers.filter((q) => q.id !== user.id);
   }
 
   removeUserFromInvites(user: SearchUserForShareModal) {
-    this.selectedUsers = this.selectedUsers.filter((z) => z.id !== user.id);
+    this.selectedUsers = this.selectedUsers.filter((q) => q.id !== user.id);
     this.searchUsers.unshift(user);
   }
 

@@ -174,12 +174,12 @@ export class NoteStore {
   static getSelectedNotes(state: NoteState): SmallNote[] {
     return state.notes
       .flatMap((x) => x.notes)
-      .filter((note) => state.selectedIds.some((z) => z === note.id));
+      .filter((note) => state.selectedIds.some((q) => q === note.id));
   }
 
   @Selector()
   static getSelectedFolderNotes(state: NoteState): SmallNote[] {
-    return state.folderNotes.filter((note) => state.selectedIds.some((z) => z === note.id));
+    return state.folderNotes.filter((note) => state.selectedIds.some((q) => q === note.id));
   }
 
   @Selector()
@@ -702,7 +702,7 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) => {
-        if (!x.labels.some((z) => z.id === label.id)) {
+        if (!x.labels.some((q) => q.id === label.id)) {
           x.labels = [...x.labels, label];
         }
       });
@@ -733,7 +733,7 @@ export class NoteStore {
       // UPDATE FULL NOTE
       let note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
-        note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
+        note = { ...note, labels: note.labels.filter((q) => q.id !== labelId) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
 
@@ -1013,7 +1013,7 @@ export class NoteStore {
 
   @Action(LoadNotes)
   async loadNotes({ getState, patchState }: StateContext<NoteState>, { type, pr }: LoadNotes) {
-    if (!getState().notes.find((z) => z.typeNotes === type)) {
+    if (!getState().notes.find((q) => q.typeNotes === type)) {
       const notesAPI = await this.api.getNotes(type, pr).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],
