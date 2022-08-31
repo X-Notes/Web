@@ -243,36 +243,54 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     const isLink = this.isPasteLink(e.clipboardData.items);
     e.preventDefault();
     if (isLink) {
-      const json = e.clipboardData.getData('text/link-preview') as any;
-      const data = JSON.parse(json);
-      const title = data.title;
-      const url = data.url;
-      const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
-      const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-      const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
-      this.updateHTML(resTextBlocks);
-    } else {
-      const html = e.clipboardData.getData('text/html');
-      const htmlElements = DeltaConverter.splitDeltaByDividers(html);
-      if (htmlElements.length === 0) return;
-
-      const htmlEl = htmlElements[0];
-      this.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
-      const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
-      const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
-      this.updateHTML(resTextBlocks);
-      htmlElements.shift(); // remove first element
-
-      if (htmlElements.length > 0) {
-        const pasteObject: PasteEvent = {
-          element: this,
-          htmlElementsToInsert: htmlElements,
-        };
-        this.pasteEvent.emit(pasteObject);
-      }
+      this.convertTextToLink(e);
+      this.textChanged.next();
+      return;
     }
-    this.textChanged.next();
+    const html = e.clipboardData.getData('text/html');
+    if (html) {
+      this.handleHtmlInserting(html);
+      this.textChanged.next();
+      return;
+    }
+    const text = e.clipboardData.getData('text/plain');
+    if (text) {
+      this.apiBrowser.pasteOnlyTextHandler(e);
+      this.textChanged.next();
+      return;
+    }
+  }
+
+  handleHtmlInserting(html: string): void {
+    const htmlElements = DeltaConverter.splitDeltaByDividers(html);
+    if (htmlElements.length === 0) return;
+
+    const htmlEl = htmlElements[0];
+    this.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
+    const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
+    const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
+    this.updateHTML(resTextBlocks);
+    htmlElements.shift(); // remove first element
+
+    if (htmlElements.length > 0) {
+      const pasteObject: PasteEvent = {
+        element: this,
+        htmlElementsToInsert: htmlElements,
+      };
+      this.pasteEvent.emit(pasteObject);
+    }
+  }
+
+  convertTextToLink(e: ClipboardEvent) {
+    const json = e.clipboardData.getData('text/link-preview') as any;
+    const data = JSON.parse(json);
+    const title = data.title;
+    const url = data.url;
+    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
+    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
+    const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
+    this.updateHTML(resTextBlocks);
   }
 
   checkForDeleteOrConcatWithPrev($event) {
