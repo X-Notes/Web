@@ -118,7 +118,8 @@ namespace Noots.Storage.Impl
             var files = new List<AppFile>();
             foreach (var file in request.FileBytes)
             {
-                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, GetExtensionByMIME(file.ContentType));
+                var fileType = GetExtensionByMIME(file.ContentType, file.FileName);
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, fileType);
                 files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName));
             }
             return files;
@@ -298,7 +299,7 @@ namespace Noots.Storage.Impl
             return new OperationResult<FileDTO>().SetNotFound();
         }
 
-        public static string GetExtensionByMIME(string mime) => mime switch
+        public static string GetExtensionByMIME(string mime, string fileName = null) => mime switch
         {
             "image/png" => ".png",
             "image/jpeg" => ".jpeg",
@@ -321,7 +322,8 @@ namespace Noots.Storage.Impl
             "application/vnd.ms-powerpoint.presentation.macroEnabled.12" => ".pptm",
             "application/vnd.ms-powerpoint.slideshow.macroEnabled.12" => ".ppsm",
             "application/vnd.openxmlformats-officedocument.presentationml.slideshow" => ".ppsx",
-            _ => throw new ArgumentOutOfRangeException(nameof(mime), $"Not expected direction value: {mime}"),
+            "application/octet-stream" => Path.GetExtension(fileName),
+            _ => string.IsNullOrEmpty(fileName) ? throw new ArgumentOutOfRangeException(nameof(mime), $"Not expected direction value: {mime}") : Path.GetExtension(fileName),
         };
     }
 }
