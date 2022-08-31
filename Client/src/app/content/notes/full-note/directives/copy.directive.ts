@@ -53,7 +53,7 @@ export class CopyDirective implements OnDestroy, OnInit {
   copyHTMLContents(selectedItemsIds: string[]): void {
     let elements = this.appCopy.toArray();
     elements = elements.filter((x) => selectedItemsIds.some((q) => q === x.getContentId()));
-    const htmls = elements.map((x) => this.processRawHTML(x));
+    const htmls = elements.map((x) => this.processRawHTML(x)).filter((x) => x);
     if (htmls.length > 0) {
       const resultHTML = htmls.reduce((pv, cv) => `${pv}\n${cv}`);
       this.apiBrowserFunctions.copyHTMLAsync(resultHTML);
