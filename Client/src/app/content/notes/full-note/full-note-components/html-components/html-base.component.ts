@@ -26,7 +26,6 @@ import { EnterEvent } from '../../models/enter-event.model';
 import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
-import { isValidURL } from '../../../../../shared/utils/is-valid-url.util';
 
 export interface PasteEvent {
   element: BaseTextElementComponent;
@@ -126,19 +125,42 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   updateHTML(contents: TextBlock[]): void {
+    // TODO TEST IT
+    this.transformOnUpdate(contents);
     const html = DeltaConverter.convertTextBlocksToHTML(contents);
     this.updateNativeHTML(html);
     this.syncHtmlWithLayout();
-    // TODO TEST IT
-    const listType = contents.find((x) => x.list !== null)?.list;
-    if (listType) {
-      if (listType === DeltaListEnum.bullet) {
-        this.transformContent(null, NoteTextTypeENUM.Dotlist);
+  }
+
+  transformOnUpdate(contents: TextBlock[]): void {
+    const content = contents.find((x) => x.list !== null);
+    if (content?.list) {
+      if (content.list === DeltaListEnum.bullet) {
+        let type = NoteTextTypeENUM.Dotlist;
+        if (content.text?.startsWith('[ ]')) {
+          content.text = content.text.slice(3);
+          type = NoteTextTypeENUM.Checklist;
+        }
+        this.transformContent(null, type);
       }
-      if (listType === DeltaListEnum.ordered) {
+      if (content.list === DeltaListEnum.ordered) {
         this.transformContent(null, NoteTextTypeENUM.Numberlist);
       }
     }
+    const headingType = contents.find((x) => x.header !== null)?.header;
+    if (headingType) {
+      this.transformContent(null, NoteTextTypeENUM.Heading, this.getHeadingNumber(headingType));
+    }
+  }
+
+  getHeadingNumber(heading: number): HeadingTypeENUM {
+    if (heading >= 3 && heading <= 4) {
+      return HeadingTypeENUM.H2;
+    }
+    if (heading >= 5 && heading <= 6) {
+      return HeadingTypeENUM.H3;
+    }
+    return HeadingTypeENUM.H1;
   }
 
   syncContentWithLayout() {

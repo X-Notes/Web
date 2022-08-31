@@ -401,7 +401,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     for (const el of e.htmlElementsToInsert) {
       let type = NoteTextTypeENUM.Default;
       let heading: HeadingTypeENUM = null;
-      console.log('el: ', el);
       if (el.tagName === 'H1' || el.tagName === 'H2') {
         type = NoteTextTypeENUM.Heading;
         heading = HeadingTypeENUM.H1;
@@ -416,6 +415,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       if (el.tagName === 'UL') {
         type = NoteTextTypeENUM.Dotlist;
+        if (el.firstElementChild?.textContent?.trimStart().startsWith('[ ]')) {
+          el.firstElementChild.textContent = el.firstElementChild?.textContent.slice(3);
+          type = NoteTextTypeENUM.Checklist;
+        }
       }
       if (el.tagName === 'OL') {
         type = NoteTextTypeENUM.Numberlist;
