@@ -16,6 +16,8 @@ export class TextBlock {
 
   list?: DeltaListEnum;
 
+  header?: number;
+
   constructor(block: Partial<TextBlock>) {
     this.text = block.text;
     this.highlightColor = block.highlightColor;
