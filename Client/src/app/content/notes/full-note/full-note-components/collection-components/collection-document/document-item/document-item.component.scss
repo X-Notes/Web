@@ -6,21 +6,17 @@
   @include is-selected;
 }
 
-.card{
-  .card-body{
-   .card-action{
+.card {
+  .card-body {
     app-button-collection {
       opacity: 0;
     }
-   } 
   }
   &:hover {
-    .card-body{
-      .card-action{
-       app-button-collection {
-         opacity: 1;
-       }
-      } 
-     }
+    .card-body {
+      app-button-collection {
+        opacity: 1;
+      }
+    }
   }
 }

@@ -424,6 +424,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         type = NoteTextTypeENUM.Numberlist;
       }
 
+      
       const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
       const newTextContent = this.contentEditorTextService.insertNewContent(
         contentId,
