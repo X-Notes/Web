@@ -47,6 +47,7 @@ export class DeltaConverter {
         block.highlightColor = this.getHighlightColorColor(item.attributes);
         // UI fields
         block.list = this.getList(item.attributes);
+        block.header = this.getHeader(item.attributes);
         result.push(block);
       }
     });
@@ -195,6 +196,16 @@ export class DeltaConverter {
     }
     if (map.list) {
       return map.list;
+    }
+    return null;
+  }
+
+  private static getHeader(map: StringAny): number {
+    if (!map) {
+      return null;
+    }
+    if (map.header) {
+      return map.header;
     }
     return null;
   }
