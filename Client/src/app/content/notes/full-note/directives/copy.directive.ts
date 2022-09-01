@@ -31,7 +31,8 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  customCopy(e): void {
+  customCopy(e: ClipboardEvent): void {
+    e.preventDefault();
     if (this.clickableContentService.isPhoto) {
       const contendId = this.clickableContentService.currentContent.id;
       const itemId = this.clickableContentService.currentItemId;
@@ -41,23 +42,21 @@ export class CopyDirective implements OnDestroy, OnInit {
       }
       return;
     }
-    this.copySelectedItemsText();
-  }
-
-  copySelectedItemsText(): void {
     const selectedItemsIds = this.selectionService.getSelectedItems();
-    if (!selectedItemsIds || selectedItemsIds.length === 0) return;
-    this.copyHTMLContents(selectedItemsIds);
+    const html = this.getHTMLContents(selectedItemsIds);
+    const text = this.getTextContents(selectedItemsIds);
+    e.clipboardData.setData('text/plain', text);
+    e.clipboardData.setData('text/html', html);
   }
 
-  copyHTMLContents(selectedItemsIds: string[]): void {
+  getHTMLContents(selectedItemsIds: string[]): string {
     let elements = this.appCopy.toArray();
     elements = elements.filter((x) => selectedItemsIds.some((q) => q === x.getContentId()));
     const htmls = elements.map((x) => this.processRawHTML(x)).filter((x) => x);
     if (htmls.length > 0) {
-      const resultHTML = htmls.reduce((pv, cv) => `${pv}\n${cv}`);
-      this.apiBrowserFunctions.copyHTMLAsync(resultHTML);
+      return htmls.reduce((pv, cv) => `${pv}\n${cv}`);
     }
+    return '';
   }
 
   processRawHTML(content: ParentInteraction): string {
@@ -96,7 +95,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     return 1;
   }
 
-  copyTextContents(selectedItemsIds: string[]): void {
+  getTextContents(selectedItemsIds: string[]): string {
     const items = this.contentEditorContentsService.getContents
       .filter(
         (x) =>
@@ -107,9 +106,9 @@ export class CopyDirective implements OnDestroy, OnInit {
       .map((x) => x as BaseText);
     const texts = items.map((item) => item.getConcatedText());
     if (texts.length > 0) {
-      const resultText = texts.reduce((pv, cv) => `${pv}\n${cv}`);
-      this.apiBrowserFunctions.copyTextAsync(resultText);
+      return texts.reduce((pv, cv) => `${pv}\n${cv}`);
     }
+    return '';
   }
 
   ngOnDestroy(): void {

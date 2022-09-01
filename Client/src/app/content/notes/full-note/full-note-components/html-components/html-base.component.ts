@@ -133,7 +133,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   transformOnUpdate(contents: TextBlock[]): void {
-    const content = contents.find((x) => x.list !== null);
+    const content = contents?.find((x) => x.list !== null);
     if (content?.list) {
       if (content.list === DeltaListEnum.bullet) {
         let type = NoteTextTypeENUM.Dotlist;
@@ -147,7 +147,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
         this.transformContent(null, NoteTextTypeENUM.Numberlist);
       }
     }
-    const headingType = contents.find((x) => x.header !== null)?.header;
+    const headingType = contents?.find((x) => x.header !== null)?.header;
     if (headingType) {
       this.transformContent(null, NoteTextTypeENUM.Heading, this.getHeadingNumber(headingType));
     }
@@ -239,7 +239,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     return false;
   }
 
-  pasteCommandHandler(e: ClipboardEvent) {
+  async pasteCommandHandler(e: ClipboardEvent) {
     const isLink = this.isPasteLink(e.clipboardData.items);
     e.preventDefault();
     if (isLink) {

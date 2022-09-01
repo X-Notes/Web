@@ -41,9 +41,15 @@ export class ApiBrowserTextService {
   };
 
   copyHTMLAsync = async (html) => {
-    const blob = new Blob([html], { type: 'text/html' });
-    const richTextInput = new ClipboardItem({ 'text/html': blob });
+    const blobHTML = new Blob([html], { type: 'text/html' });
+    const richTextInput = new ClipboardItem({ 'text/html': blobHTML });
     await navigator.clipboard.write([richTextInput]);
+  };
+
+  copyTextV2Async = async (inputText) => {
+    const blobTEXT = new Blob([inputText], { type: 'text/plain' });
+    const text = new ClipboardItem({ 'text/plain': blobTEXT });
+    await navigator.clipboard.write([text]);
   };
 
   fetchAndCopyImage = async (imageUrl: string): Promise<void> => {
