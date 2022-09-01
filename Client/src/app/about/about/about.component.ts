@@ -3,7 +3,6 @@ import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { TypeAuthEnum } from '../models/type.auth.enum';
 import { Store } from '@ngxs/store';
-import { UserStore } from '../../core/stateUser/user-state';
 
 @Component({
   selector: 'app-about',
@@ -27,8 +26,7 @@ export class AboutComponent implements OnInit, AfterViewInit {
 
   async login(typeAuth: TypeAuthEnum) {
     if (this.authService.isLoading) return;
-    const user = this.store.selectSnapshot(UserStore.getUser);
-    if (!Object.keys(user).length) {
+    if (!this.authService.isLogined) {
       // don`t user !user because object user always exist like object.
       switch (typeAuth) {
         case TypeAuthEnum.Google: {
@@ -46,7 +44,7 @@ export class AboutComponent implements OnInit, AfterViewInit {
           break;
         }
         default: {
-          throw new Error('Incorrec type');
+          throw new Error('Incorrect type');
         }
       }
     } else {

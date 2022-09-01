@@ -4,7 +4,7 @@
   </div>
   <app-full-note-active-users></app-full-note-active-users>
   <div class="actions">
-    <button type="button" routerLink="/about" #trigger>
+    <button type="button" (click)="login()" #trigger>
       <div class="text">{{ 'header.signIn' | translate }}</div>
       <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
     </button>

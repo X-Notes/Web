@@ -6,6 +6,7 @@ import { Store } from '@ngxs/store';
 import { Auth, Logout } from './stateUser/user-action';
 import firebase from 'firebase/compat/app';
 import { UserAPIService } from './user-api.service';
+import { UserStore } from './stateUser/user-state';
 
 @Injectable()
 export class AuthService {
@@ -22,16 +23,21 @@ export class AuthService {
     });
   }
 
+  get isLogined(): boolean {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    return Object.keys(user).length > 0;
+  }
+
   private get isFirefox(): boolean {
     return navigator?.userAgent?.includes('Firefox');
   }
 
-  async authGoogle() {
+  async authGoogle(navigateToUrl: string = 'notes') {
     try {
       if (this.isFirefox) {
         this.isLoading = true;
         const result = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-        this.handlerAuth(result.user);
+        this.handlerAuth(result.user, navigateToUrl);
         this.isLoading = false;
       } else {
         this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
@@ -62,11 +68,11 @@ export class AuthService {
     await user?.getIdToken(true);
   }
 
-  async redirectOnSuccessAuth() {
+  async redirectOnSuccessAuth(navigateToUrl: string = 'notes') {
     try {
       this.isLoading = true;
       const result = await this.afAuth.getRedirectResult();
-      await this.handlerAuth(result.user);
+      await this.handlerAuth(result.user, navigateToUrl);
     } catch (e) {
       console.log('e: ', e);
     } finally {
@@ -74,7 +80,7 @@ export class AuthService {
     }
   }
 
-  async handlerAuth(user: firebase.User) {
+  async handlerAuth(user: firebase.User, navigateToUrl: string) {
     if (user) {
       const token = await this.getToken();
       const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
@@ -84,7 +90,7 @@ export class AuthService {
           .toPromise();
         await this.apiAuth.setTokenClaims().toPromise();
         await this.refreshToken();
-        this.router.navigate(['notes']);
+        this.router.navigate([navigateToUrl]);
       }
     }
   }

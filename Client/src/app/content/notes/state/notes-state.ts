@@ -75,7 +75,7 @@ import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 
-interface FullNoteState {
+export interface FullNoteState {
   note: FullNote;
   isLocked: boolean;
   isCanView: boolean;
@@ -304,6 +304,11 @@ export class NoteStore {
   @Selector()
   static canView(state: NoteState): boolean {
     return state.fullNoteState?.isCanView;
+  }
+
+  @Selector()
+  static fullNoteState(state: NoteState): FullNoteState {
+    return state.fullNoteState;
   }
 
   @Selector()

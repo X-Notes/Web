@@ -56,10 +56,10 @@ public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOn
             var unrecognizedUsers = ents.Where(x => !x.UserId.HasValue).Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x));
             var recognizedUsers = ents.Where(x => x.UserId.HasValue).ToList();
 
-            var dict = recognizedUsers.ToDictionary(x => x.UserId);
+            var dict = recognizedUsers.ToLookup(x => x.UserId);
             var ids = recognizedUsers.Select(x => x.UserId.Value).ToList();
             var users = await userRepository.GetUsersWithPhotos(ids);
-            var dbUsers = users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x, dict[x.Id].Id));
+            var dbUsers = users.Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x, dict[x.Id].First().Id));
 
             return dbUsers.Concat(unrecognizedUsers).ToList();
         }
