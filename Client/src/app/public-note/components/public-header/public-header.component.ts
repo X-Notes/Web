@@ -3,7 +3,7 @@ import { Select, Store } from '@ngxs/store';
 import { NoteStore, FullNoteState } from '../../../content/notes/state/notes-state';
 import { Observable, Subject } from 'rxjs';
 import { OnlineUsersNote } from '../../../content/notes/models/online-users-note.model';
-import { AuthService } from 'src/app/core/auth.service';
+import { AuthService, AuthStatus } from 'src/app/core/auth.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -19,7 +19,7 @@ export class PublicHeaderComponent implements OnInit, OnDestroy {
 
   destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService, private store: Store) {}
+  constructor(public authService: AuthService, private store: Store) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -36,6 +36,7 @@ export class PublicHeaderComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
+    if (this.authService.authStatus.value === AuthStatus.InProgress) return;
     this.authService.authGoogle();
   }
 }

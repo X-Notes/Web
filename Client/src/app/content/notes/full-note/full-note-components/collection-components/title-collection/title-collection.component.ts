@@ -76,7 +76,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  focusOnTitle() {
+  focusOnTitle(): void {
     this.titleHtml.nativeElement.focus();
   }
 

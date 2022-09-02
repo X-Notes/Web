@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/core/auth.service';
+import { AuthService, AuthStatus } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { TypeAuthEnum } from '../models/type.auth.enum';
 import { Store } from '@ngxs/store';
@@ -25,7 +25,7 @@ export class AboutComponent implements OnInit, AfterViewInit {
   }
 
   async login(typeAuth: TypeAuthEnum) {
-    if (this.authService.isLoading) return;
+    if (this.authService.authStatus.value === AuthStatus.InProgress) return;
     if (!this.authService.isLogined) {
       // don`t user !user because object user always exist like object.
       switch (typeAuth) {
