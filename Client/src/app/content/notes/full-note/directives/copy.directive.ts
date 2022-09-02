@@ -32,7 +32,6 @@ export class CopyDirective implements OnDestroy, OnInit {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   customCopy(e: ClipboardEvent): void {
-    e.preventDefault();
     if (this.clickableContentService.isPhoto) {
       const contendId = this.clickableContentService.currentContent.id;
       const itemId = this.clickableContentService.currentItemId;
@@ -43,10 +42,13 @@ export class CopyDirective implements OnDestroy, OnInit {
       return;
     }
     const selectedItemsIds = this.selectionService.getSelectedItems();
-    const html = this.getHTMLContents(selectedItemsIds);
-    const text = this.getTextContents(selectedItemsIds);
-    e.clipboardData.setData('text/plain', text);
-    e.clipboardData.setData('text/html', html);
+    if (selectedItemsIds.length > 0) {
+      e.preventDefault();
+      const html = this.getHTMLContents(selectedItemsIds);
+      const text = this.getTextContents(selectedItemsIds);
+      e.clipboardData.setData('text/plain', text);
+      e.clipboardData.setData('text/html', html);
+    }
   }
 
   getHTMLContents(selectedItemsIds: string[]): string {
