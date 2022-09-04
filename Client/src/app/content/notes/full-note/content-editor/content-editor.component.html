@@ -244,6 +244,7 @@
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
 <app-text-edit-menu
+  *ngIf="selectedMenuType"
   [style.top.px]="menuSelectionService.getTop"
   [style.left.px]="menuSelectionService.getLeft"
   [style.visibility]="textEditMenuVisibility"

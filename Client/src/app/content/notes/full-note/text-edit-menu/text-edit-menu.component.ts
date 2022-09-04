@@ -129,6 +129,7 @@ export class TextEditMenuComponent {
     const sel = this.apiBrowserService.getSelection();
     if (!sel) return null;
     const tempDiv = this.getSelectedHTML();
+    if(!tempDiv) return null;
     if (tempDiv.innerHTML === '') return null;
     const res = this.getNodeProperty(sel, tempDiv, propertySelector);
     return res;
@@ -176,8 +177,8 @@ export class TextEditMenuComponent {
     const sel = this.apiBrowserService.getSelection();
     if (!sel) return false;
     const tempDiv = this.getSelectedHTML();
-    if (tempDiv.innerHTML === '') return false;
-
+    if (!tempDiv) return false;
+    if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
     const tagsSet = new Set<string>();
     for (const node of tempDiv.childNodes as any) {
       let tags = [node.nodeName.toLowerCase()];
