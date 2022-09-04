@@ -1,14 +1,9 @@
-import { BaseText } from './editor-models/base-text';
+export type TextStyles = 'bold' | 'italic' | 'color' | 'background';
 
-export type TextStyles = 'bold' | 'italic';
-
-export enum UpdateStyleMode {
-  Remove,
-  Add,
-}
+export type TextUpdateValue = boolean | string;
 
 export interface UpdateTextStyles {
-  content: BaseText;
+  isRemoveStyles: boolean;
   textStyle: TextStyles;
-  updateMode: UpdateStyleMode;
+  value: TextUpdateValue;
 }

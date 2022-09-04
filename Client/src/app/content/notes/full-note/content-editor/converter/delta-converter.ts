@@ -1,6 +1,7 @@
 import Quill, { DeltaStatic } from 'quill';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { TextType } from '../../../models/editor-models/text-models/text-type';
+import { TextUpdateValue } from '../../../models/update-text-styles';
 import { DeltaListEnum } from './entities/delta-list.enum';
 
 export interface StringAny {
@@ -76,10 +77,18 @@ export class DeltaConverter {
     index: number,
     length: number,
     format: string,
-    value: boolean,
+    value: TextUpdateValue,
   ): DeltaStatic {
     this.setHTMLToEditor(html);
     DeltaConverter.quillInstance.formatText(index, length, format, value);
+    const formatted = { ...DeltaConverter.getFormated };
+    this.clearEditor();
+    return formatted;
+  }
+
+  static removeStyles(html: string, index: number, length: number): DeltaStatic {
+    this.setHTMLToEditor(html);
+    DeltaConverter.quillInstance.removeFormat(index, length);
     const formatted = { ...DeltaConverter.getFormated };
     this.clearEditor();
     return formatted;

@@ -42,7 +42,7 @@ import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { BaseText } from '../../models/editor-models/base-text';
 import { InputHtmlEvent } from '../full-note-components/html-components/models/input-html-event';
-import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
+import { UpdateTextStyles } from '../../models/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from '../content-editor-services/web-sockets-note-updater.service';
 import { VideosCollection } from '../../models/editor-models/videos-collection';
@@ -59,6 +59,8 @@ import { ContentEditorSyncService } from '../content-editor-services/core/conten
 import { ContentEditorRestoreService } from '../content-editor-services/core/content-editor-restore.service';
 import { PasteEvent } from '../full-note-components/html-components/html-base.component';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
+import { DeltaStatic } from 'quill';
+import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -129,6 +131,20 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const isAnySelect = this.selectionService.isAnySelect();
     const divActive = this.selectionDirective?.isDivActive;
     return isAnySelect || divActive;
+  }
+
+  get textEditMenuVisibility(): string {
+    return this.selectedMenuType ? 'visible' : 'hidden';
+  }
+
+  get selectedMenuType(): TextEditMenuEnum {
+    if (this.menuSelectionService.menuActive && !this.isSelectModeActive) {
+      return TextEditMenuEnum.OneRow;
+    }
+    if (this.isSelectModeActive) {
+      return TextEditMenuEnum.MultiplyRows;
+    }
+    return null;
   }
 
   get contents() {
@@ -377,24 +393,53 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-  updateTextStyles = (styles: UpdateTextStyles) => {
-    const el = this.elements.toArray().find((x) => x.getContent() === styles.content);
-    if (!el) {
-      return;
-    }
-    const html = DeltaConverter.convertTextBlocksToHTML(styles.content.contents);
-    const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el.getEditableNative());
-    const resultDelta = DeltaConverter.setStyles(
-      html,
-      pos.start,
-      pos.end - pos.start,
-      styles.textStyle,
-      styles.updateMode === UpdateStyleMode.Add,
-    );
-    if (el) {
-      el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+  updateTextStyles = (updates: UpdateTextStyles) => {
+    const contentIdsToProcess = this.getIdsToUpdateTextStyles();
+    if (!contentIdsToProcess) return;
+    for (const id of contentIdsToProcess) {
+      const el = this.elements.toArray().find((x) => x.getContent().id === id);
+      if (!el) return;
+      const content = el.getContent() as BaseText;
+      const html = DeltaConverter.convertTextBlocksToHTML(content.contents);
+      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
+      let resultDelta: DeltaStatic;
+      if (updates.isRemoveStyles) {
+        resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);
+      } else {
+        resultDelta = DeltaConverter.setStyles(
+          html,
+          pos.index,
+          pos.length,
+          updates.textStyle,
+          updates.value,
+        );
+      }
+      if (el) {
+        el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+      }
     }
   };
+
+  getIndexAndLengthForUpdateStyle(el: HTMLElement | Element): { index: number; length: number } {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      const pos = this.apiBrowserFunctions.getSelectionCharacterOffsetsWithin(el);
+      return { index: pos.start, length: pos.end - pos.start };
+    }
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      return { index: 0, length: el.innerHTML.length };
+    }
+    return null;
+  }
+
+  getIdsToUpdateTextStyles(): string[] {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return [this.menuSelectionService.currentTextItem.id];
+    }
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      return this.selectionService.getSelectedItems();
+    }
+    return null;
+  }
 
   pasteTextHandler(e: PasteEvent): void {
     let contentId = e.element.content.id;

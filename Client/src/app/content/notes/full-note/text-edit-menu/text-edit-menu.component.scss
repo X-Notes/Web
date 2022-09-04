@@ -10,6 +10,7 @@
   border-radius: 5px;
   padding: 4px 10px;
   width: 100%;
+  align-items: center;
 
   .button {
     display: flex;
@@ -21,6 +22,25 @@
     .icon {
       width: 20px;
       height: 20px;
+    }
+  }
+
+  .text {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    .text-container {
+      width: 32px;
+      height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      p {
+        font-size: 1.25rem;
+      }
     }
   }
 
