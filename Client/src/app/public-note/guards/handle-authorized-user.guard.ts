@@ -29,14 +29,6 @@ export class HandleAuthorizedUserGuard implements CanActivate {
     if (!this.authService.isLogined) {
       return true;
     }
-    return this.store.dispatch(new LoadFullNote(noteId)).pipe(
-      concatMap(() => this.store.select(NoteStore.canView)),
-      map((canView) => {
-        if (canView) {
-          this.router.navigate([`notes/${noteId}`]);
-        }
-        return true;
-      }),
-    );
+    this.router.navigate([`notes/${noteId}`]);
   }
 }
