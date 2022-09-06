@@ -129,7 +129,7 @@ export class TextEditMenuComponent {
     const sel = this.apiBrowserService.getSelection();
     if (!sel) return null;
     const tempDiv = this.getSelectedHTML();
-    if(!tempDiv) return null;
+    if (!tempDiv) return null;
     if (tempDiv.innerHTML === '') return null;
     const res = this.getNodeProperty(sel, tempDiv, propertySelector);
     return res;

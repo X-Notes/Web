@@ -5,16 +5,18 @@ import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
 export class SelectionService {
-  constructor(private router: Router) {}
-
   menuHeight = 49;
 
   isResizingPhoto = false;
 
   private selectedItemsSet = new Set<string>();
 
+  constructor(private router: Router) {}
+
   get sidebarWidth(): number {
-    return this.router.url.includes('public') ? document.getElementById('public-left-section').offsetWidth : 270;
+    return this.router.url.includes('public')
+      ? document.getElementById('public-left-section').offsetWidth
+      : 270;
   }
 
   selectionHandler(

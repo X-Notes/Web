@@ -8,10 +8,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { concatMap, map } from 'rxjs/operators';
-import { LoadFullNote } from 'src/app/content/notes/state/notes-actions';
 import { AuthService } from 'src/app/core/auth.service';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
 
 @Injectable({
   providedIn: 'root',
