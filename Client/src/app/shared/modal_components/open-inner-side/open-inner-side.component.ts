@@ -67,6 +67,10 @@ export class OpenInnerSideComponent
     return 30;
   }
 
+  get isMaxNotesSelected(): boolean {
+    return this.selectedNotesChips.length >= this.maxCountOfNotes;
+  }
+
   get selectedNotesChips() {
     return this.notes.filter((x) => x.isSelected);
   }

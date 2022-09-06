@@ -27,6 +27,8 @@ export class NoteComponent implements OnInit {
 
   @Input() userId: string;
 
+  @Input() highlightCursorActive = true;
+
   @Output() highlightNote = new EventEmitter<SmallNote>();
 
   @Output() clickOnNote = new EventEmitter<SmallNote>();
