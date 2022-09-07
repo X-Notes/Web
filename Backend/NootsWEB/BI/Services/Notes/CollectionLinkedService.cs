@@ -80,7 +80,7 @@ namespace BI.Services.Notes
 
             var collections = await collectionNoteRepository.GetManyIncludeFiles(collectionIdsToDelete.ToList());
 
-            var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+            var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData(x.Id));
 
             await collectionNoteRepository.RemoveRangeAsync(collections);
             await TryToUnlink(filesToProcess);
@@ -92,7 +92,7 @@ namespace BI.Services.Notes
         {
             var ids = fileIds.ToHashSet();
             var files = await fileRepository.GetWhereAsync(x => ids.Contains(x.Id));
-            var filesToProcess = files.Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+            var filesToProcess = files.Select(x => new UnlinkMetaData(x.Id));
             await TryToUnlink(filesToProcess);
         }
     }

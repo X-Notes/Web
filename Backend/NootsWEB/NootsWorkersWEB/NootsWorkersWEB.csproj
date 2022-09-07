@@ -29,4 +29,6 @@
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="https://github.com/go-vela/types/releases/latest/download/schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

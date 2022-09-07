@@ -105,9 +105,15 @@ namespace Noots.Storage.Impl
 
         public async Task<Unit> Handle(RemoveFilesCommand request, CancellationToken cancellationToken)
         {
-            var pathes = request.AppFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-            await Handle(new RemoveFilesFromStorageCommand(pathes, request.UserId), CancellationToken.None);
-            await fileRepository.RemoveRangeAsync(request.AppFiles);
+            var idsToDelete = request.AppFiles.SelectMany(x => x.GetIds()).Distinct();
+
+            var files = await fileRepository.GetManyAsync(idsToDelete);
+            if (files.Any())
+            {
+                var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
+                await Handle(new RemoveFilesFromStorageCommand(pathes, request.UserId), CancellationToken.None);
+                await fileRepository.RemoveRangeAsync(files);
+            }
 
             return Unit.Value;
         }

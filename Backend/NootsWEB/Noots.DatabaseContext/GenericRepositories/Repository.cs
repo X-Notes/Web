@@ -46,6 +46,11 @@ namespace Noots.DatabaseContext.GenericRepositories
             return entities.Where(predicate).ToListAsync();
         }
 
+        public Task<List<T>> GetManyAsync(IEnumerable<IdType> ids)
+        {
+            return entities.Where(x => ids.Contains(x.Id)).ToListAsync();
+        }
+
         public Task<int> GetCountAsync(Expression<Func<T, bool>> predicate)
         {
             return entities.Where(predicate).CountAsync();

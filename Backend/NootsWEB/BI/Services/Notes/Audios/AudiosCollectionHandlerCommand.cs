@@ -77,7 +77,7 @@ namespace BI.Services.Notes.Audios
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
                     var fileIds = collectionItems.Select(x => x.AppFileId);
 
-                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData(x.Id));
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(filesToProcess);
 
                     collection.UpdatedAt = DateTimeProvider.Time;
