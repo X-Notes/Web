@@ -7,7 +7,7 @@ import { ShortUser } from './models/user/short-user.model';
 import { AnswerChangePhoto } from './models/answer-change-photo.model';
 import { UserUsedDiskSpace } from './models/search/user-disk-space';
 import { ThemeENUM } from '../shared/enums/theme.enum';
-import { FontSizeENUM } from '../shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from '../shared/enums/font-size.enum';
 import { LanguagesENUM } from '../shared/enums/languages.enum';
 import { OperationResult } from '../shared/models/operation-result.model';
 import { LongTermOperationsHandlerService } from '../content/long-term-operations-handler/services/long-term-operations-handler.service';
@@ -71,7 +71,7 @@ export class UserAPIService {
     return this.httpClient.post(`${environment.writeAPI}/api/user/theme`, obj);
   }
 
-  changeFontSize(id: FontSizeENUM) {
+  changeFontSize(id: EntitiesSizeENUM) {
     const obj = {
       id,
     };

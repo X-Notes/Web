@@ -1,4 +1,4 @@
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../background.model';
@@ -13,6 +13,6 @@ export interface ShortUser {
   currentBackground: Background;
   languageId: LanguagesENUM;
   themeId: ThemeENUM;
-  fontSizeId: FontSizeENUM;
+  fontSizeId: EntitiesSizeENUM;
   billingPlanId: BillingPlanId;
 }

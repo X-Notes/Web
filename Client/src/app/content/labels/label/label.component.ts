@@ -8,7 +8,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { LabelsColor } from 'src/app/shared/enums/labels-colors.enum';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { Label } from '../models/label.model';
 
@@ -35,7 +35,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   pallete = EnumUtil.getEnumValues(LabelsColor);
 

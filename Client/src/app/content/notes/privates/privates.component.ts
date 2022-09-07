@@ -12,7 +12,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Select, Store } from '@ngxs/store';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
@@ -39,7 +39,7 @@ export class PrivatesComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   loaded = false;
 

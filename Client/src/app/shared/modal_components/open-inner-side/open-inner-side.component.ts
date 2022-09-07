@@ -21,7 +21,7 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FontSizeENUM } from '../../enums/font-size.enum';
+import { EntitiesSizeENUM } from '../../enums/font-size.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
@@ -43,7 +43,7 @@ export class OpenInnerSideComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   destroy = new Subject<void>();
 

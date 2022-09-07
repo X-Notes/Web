@@ -11,7 +11,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { take, takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LabelStore } from '../state/labels-state';
@@ -40,7 +40,7 @@ export class DeletedComponent implements OnInit, AfterViewInit {
   @Select(LabelStore.countDeleted)
   countDeleted$: Observable<number>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   loaded = false;
 

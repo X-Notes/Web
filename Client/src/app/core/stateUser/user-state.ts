@@ -5,7 +5,7 @@ import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
@@ -14,7 +14,7 @@ import {
   Logout,
   ChangeTheme,
   ChangeLanguage,
-  ChangeFontSize,
+  ChangeEntitiesSize,
   SetCurrentBackground,
   SetDefaultBackground,
   UpdateUserInfo,
@@ -117,7 +117,7 @@ export class UserStore {
   }
 
   @Selector()
-  static getUserFontSize(state: UserState): FontSizeENUM {
+  static getUserFontSize(state: UserState): EntitiesSizeENUM {
     return state.user.fontSizeId;
   }
 
@@ -159,10 +159,10 @@ export class UserStore {
     patchState({ user: { ...getState().user, languageId: language } });
   }
 
-  @Action(ChangeFontSize)
+  @Action(ChangeEntitiesSize)
   async changeFontSize(
     { patchState, getState }: StateContext<UserState>,
-    { fontSize }: ChangeFontSize,
+    { fontSize }: ChangeEntitiesSize,
   ) {
     let { user } = getState();
     await this.userApi.changeFontSize(fontSize).toPromise();

@@ -8,6 +8,7 @@ import { LeftSectionBackgroundsComponent } from './left-section-backgrounds/left
 import { ProfileHeaderComponent } from './profile-components/profile-header/profile-header.component';
 import { ProfileUserInfoComponent } from './profile-components/profile-user-info/profile-user-info.component';
 import { ProfileBillingComponent } from './profile-components/profile-billing/profile-billing.component';
+import { ProfileUserPersonalizationComponent } from './profile-components/profile-user-personalization/profile-user-personalization.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { ProfileBillingComponent } from './profile-components/profile-billing/pr
     ProfileHeaderComponent,
     ProfileUserInfoComponent,
     ProfileBillingComponent,
+    ProfileUserPersonalizationComponent,
   ],
   imports: [CommonModule, ProfileRouting, SharedModule, FormsModule],
 })

@@ -1,4 +1,4 @@
-export enum FontSizeENUM {
+export enum EntitiesSizeENUM {
   Big = 1,
   Medium = 2,
 }

@@ -1,4 +1,4 @@
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM as EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../models/background.model';
@@ -28,10 +28,10 @@ export class ChangeLanguage {
   constructor(public language: LanguagesENUM) {}
 }
 
-export class ChangeFontSize {
-  static type = '[User] Change FontSize';
+export class ChangeEntitiesSize {
+  static type = '[User] Change Entities size';
 
-  constructor(public fontSize: FontSizeENUM) {}
+  constructor(public fontSize: EntitiesSizeENUM) {}
 }
 
 export class SetCurrentBackground {

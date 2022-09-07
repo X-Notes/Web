@@ -5,7 +5,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import {
   ChangeLanguage,
-  ChangeFontSize,
+  ChangeEntitiesSize,
   ChangeTheme,
   UpdateUserPhoto,
   SetDefaultBackground,
@@ -23,7 +23,7 @@ import {
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Personalization } from 'src/app/shared/enums/personalization.enum';
@@ -41,7 +41,7 @@ import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSizeENUM>;
+  public fontSize$: Observable<EntitiesSizeENUM>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   settingsInit: PersonalizationSetting;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   themes = ThemeENUM;
 
@@ -159,11 +159,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeFontSize(value: boolean) {
+  changeEntitiesSize(value: boolean) {
     if (value) {
-      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Big));
+      this.store.dispatch(new ChangeEntitiesSize(EntitiesSizeENUM.Big));
     } else {
-      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Medium));
+      this.store.dispatch(new ChangeEntitiesSize(EntitiesSizeENUM.Medium));
     }
   }
 

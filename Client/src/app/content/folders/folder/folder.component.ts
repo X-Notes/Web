@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
@@ -33,7 +33,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() userId: string;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   destroy = new Subject<void>();
 
