@@ -10,7 +10,7 @@
           <p>{{ getTitleById(plan.id) }}</p>
         </div>
         <div class="title-sub">
-          <p *ngIf="billingPlanId.Standart === plan.id">${{ plan.price }}</p>
+          <p *ngIf="billingPlanId.Standard === plan.id">${{ plan.price }}</p>
           <p *ngIf="billingPlanId.Premium === plan.id">
             ${{ plan.price }} {{'profile-billing.per-month' | translate}}
           </p>

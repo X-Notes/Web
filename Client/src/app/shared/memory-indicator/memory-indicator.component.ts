@@ -24,7 +24,7 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   get userBillingPlan() {
     switch (this.billing) {
-      case BillingPlanId.Standart: {
+      case BillingPlanId.Standard: {
         return 'S';
       }
       case BillingPlanId.Premium: {
@@ -42,7 +42,7 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   get userMemory() {
     switch (this.billing) {
-      case BillingPlanId.Standart: {
+      case BillingPlanId.Standard: {
         return 1000; // TODO LOAD THIS DATA FROM SERVER
       }
       case BillingPlanId.Premium: {

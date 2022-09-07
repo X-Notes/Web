@@ -9,7 +9,6 @@ import {
   ChangeTheme,
   UpdateUserPhoto,
   SetDefaultBackground,
-  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
@@ -26,7 +25,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { Personalization } from 'src/app/shared/enums/personalization.enum';
+import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
 import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
@@ -66,7 +65,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themes = ThemeENUM;
 
-  pSettings = Personalization;
+  pSettings = PersonalizationEnum;
 
   language = LanguagesENUM;
 
@@ -118,37 +117,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
-  }
-
-  async changePersonalizationSettings(value: any, type: Personalization) {
-    const types = Personalization;
-    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings) };
-    switch (type) {
-      case types.isViewVideoOnNote:
-        settings.isViewVideoOnNote = value;
-        break;
-      case types.isViewTextOnNote:
-        settings.isViewTextOnNote = value;
-        break;
-      case types.isViewPhotosOnNote:
-        settings.isViewPhotosOnNote = value;
-        break;
-      case types.isViewDocumentOnNote:
-        settings.isViewDocumentOnNote = value;
-        break;
-      case types.isViewAudioOnNote:
-        settings.isViewAudioOnNote = value;
-        break;
-      case types.contentInNoteCount:
-        settings.contentInNoteCount = value;
-        break;
-      case types.notesInFolderCount:
-        settings.notesInFolderCount = value;
-        break;
-      default:
-        throw new Error('Incorrect personalization setting');
-    }
-    this.store.dispatch(new UpdatePersonalization(settings));
   }
 
   changeTheme(value: boolean) {

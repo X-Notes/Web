@@ -61,7 +61,7 @@ export class OpenInnerSideComponent
 
   get maxCountOfNotes(): number {
     const plan = this.store.selectSnapshot(UserStore.getUserBillingPlan);
-    if (plan === BillingPlanId.Standart) {
+    if (plan === BillingPlanId.Standard) {
       return 5;
     }
     return 30;

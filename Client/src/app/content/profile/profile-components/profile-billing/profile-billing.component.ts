@@ -29,14 +29,14 @@ export class ProfileBillingComponent implements OnInit {
   }
 
   get hasUserDefault(): boolean {
-    return this.user.billingPlanId === BillingPlanId.Standart;
+    return this.user.billingPlanId === BillingPlanId.Standard;
   }
 
   ngOnInit(): void {}
 
   getTitleById(planId: BillingPlanId): string {
     switch (planId) {
-      case BillingPlanId.Standart: {
+      case BillingPlanId.Standard: {
         return 'Standart';
       }
       case BillingPlanId.Premium: {
@@ -50,7 +50,7 @@ export class ProfileBillingComponent implements OnInit {
 
   getHistoryValueById(planId: BillingPlanId): string {
     switch (planId) {
-      case BillingPlanId.Standart: {
+      case BillingPlanId.Standard: {
         return this.translate.instant('profile-billing.history-last-15');
       }
       case BillingPlanId.Premium: {

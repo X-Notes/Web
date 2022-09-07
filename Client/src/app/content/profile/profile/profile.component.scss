@@ -62,6 +62,7 @@
       }
 
       .fields {
+        user-select: none;
         display: flex;
         flex-direction: column;
         width: calc(100% - 150px - 2.5vw);

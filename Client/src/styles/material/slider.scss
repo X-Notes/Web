@@ -50,7 +50,7 @@
   }
   .mat-slider-disabled {
     .mat-slider-thumb {
-      background-color: #f2f2f2 !important;
+      background-color: #cbcbcb !important;
       border: none !important;
       transform: initial !important;
       width: 10px;
@@ -59,13 +59,13 @@
       bottom: -5px;   
     }
     .mat-slider-thumb-label {
-      background-color: #f2f2f2;
+      background-color: #cbcbcb;
       .mat-slider-thumb-label-text {
         color: white !important;
       }
     }
     .mat-slider-track-fill {
-      background-color: #f2f2f2 !important;
+      background-color: #cbcbcb !important;
     }
   }
 }
