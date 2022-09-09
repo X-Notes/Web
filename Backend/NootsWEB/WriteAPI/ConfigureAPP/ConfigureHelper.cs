@@ -7,42 +7,21 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BI.Services.Backgrounds;
 using BI.Services.Folders;
-using BI.Services.Labels;
 using BI.Services.Notes;
-using BI.Services.RelatedNotes;
 using Common.DatabaseModels.Models.Files;
-using Common.DTO.Backgrounds;
-using Common.DTO.Folders;
-using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Users;
-using Domain.Commands.Backgrounds;
 using Domain.Commands.FolderInner;
-using Domain.Commands.Folders;
-using Domain.Commands.Labels;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
-using Domain.Commands.Notes;
-using Domain.Commands.RelatedNotes;
-using Domain.Queries.Backgrounds;
-using Domain.Queries.Folders;
 using Domain.Queries.InnerFolder;
-using Domain.Queries.Labels;
-using Domain.Queries.Notes;
-using Domain.Queries.RelatedNotes;
-using Common.DTO.Notes.AdditionalContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
-using Common.DTO.Folders.AdditionalContent;
-using BI.Services.Auth;
-using Common.DTO.WebSockets.ReletedNotes;
 using BI.Services.DiffsMatchPatch;
 using Common.DTO.Notes.FullNoteSyncContents;
 using BI.Services.Notes.Audios;
@@ -51,6 +30,9 @@ using Domain.Queries.NoteInner;
 using BI.Services.Notes.Photos;
 using BI.Services.Notes.Documents;
 using BI.Services.Notes.Videos;
+using Noots.Auth.Impl;
+using Noots.Backgrounds;
+using Noots.Billing;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using WriteAPI.Models;
@@ -59,10 +41,15 @@ using Noots.Permissions;
 using Noots.Storage;
 using Noots.History;
 using Noots.Encryption;
+using Noots.Folders;
+using Noots.Labels;
+using Noots.Notes;
 using Noots.Search;
 using Noots.Personalization;
+using Noots.RelatedNotes;
 using Noots.Users;
 using Noots.Sharing;
+using Noots.SignalrUpdater;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -77,51 +64,17 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyUsersDI();
 
             // Backgrounds
-            services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>, BackgroundHandlerCommand>();
-
-            services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
-
+            services.ApplyBackgroundsDI();
+            
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsQuery, List<LabelDTO>>, LabelHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveAllFromBinCommand, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsLabelCommand, OperationResult<Unit>>, LabelHandlerCommand>();
+            services.ApplyLabelsDI();
 
             //Notes
-            services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, NoteHandlerCommand>();
+            services.ApplyNotesDI();
 
-            services.AddScoped<IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
-
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>, NoteHandlerQuery>();
-
+            
             // RELATED NOTES
-            services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();         
-            services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
+            services.ApplyRelatedNotesDI();
 
             // FULL NOTE TEXT
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
@@ -171,20 +124,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();
 
             //FOLDERS
-            services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>, FolderHandlerCommand>();
-
-
-            services.AddScoped<IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>, FolderHandlerQuery>();
+            services.ApplyFoldersDI();
 
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
@@ -214,6 +154,9 @@ namespace WriteAPI.ConfigureAPP
 
             // Personalizations
             services.ApplyPersonalizationDI();
+            
+            // Billing
+            services.ApplyBillingDI();
         }
 
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)
@@ -273,7 +216,7 @@ namespace WriteAPI.ConfigureAPP
 
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments("/hub")))
+                                (path.StartsWithSegments(HubSettings.endPoint)))
                             {
                                 context.Token = accessToken;
                             }

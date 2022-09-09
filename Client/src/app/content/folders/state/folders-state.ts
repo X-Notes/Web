@@ -45,6 +45,8 @@ import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-
 import { UpdateFolderUI } from './update-folder-ui.model';
 import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface FolderState {
   folders: Folders[];
@@ -70,7 +72,12 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private router: Router, private ngZone: NgZone) {}
+  constructor(
+    private api: ApiFoldersService, 
+    private router: Router, 
+    private ngZone: NgZone,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -216,19 +223,26 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { typeFolder, selectedIds }: CopyFolders,
   ) {
-    const newFolders = await this.api.copyFolders(selectedIds).toPromise();
+    const resp = await this.api.copyFolders(selectedIds).toPromise();
 
-    const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
-    dispatch(
-      new UpdateFolders(
-        new Folders(FolderTypeENUM.Private, [...newFolders, ...privateFolders]),
-        FolderTypeENUM.Private,
-      ),
-    );
-    dispatch([UnSelectAllFolder]);
-
-    if (typeFolder === FolderTypeENUM.Private) {
-      dispatch(new AddToDomFolders([...newFolders]));
+    if(resp.success && resp.data?.length > 0){
+      const newFolders = resp.data;
+      const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
+      dispatch(
+        new UpdateFolders(
+          new Folders(FolderTypeENUM.Private, [...newFolders, ...privateFolders]),
+          FolderTypeENUM.Private,
+        ),
+      );
+      dispatch([UnSelectAllFolder]);
+  
+      if (typeFolder === FolderTypeENUM.Private) {
+        dispatch(new AddToDomFolders([...newFolders]));
+      }
+    }
+    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
   }
 
@@ -491,11 +505,19 @@ export class FolderStore {
   // FUNCTIONS
   @Action(CreateFolder)
   async newFolder({ getState, dispatch }: StateContext<FolderState>) {
-    const newF = await this.api.new().toPromise();
-    const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
-    const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
-    dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
-    this.ngZone.run(() => this.router.navigate([`folders/${newF.id}`]));
+    const resp = await this.api.new().toPromise();
+    if(resp.success){
+      const newF = resp.data;
+      const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
+      const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
+      dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
+      this.ngZone.run(() => this.router.navigate([`folders/${newF.id}`]));
+      return;
+    }
+    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, 'end', 5000);
+    }
   }
 
   @Action(AddFolders)

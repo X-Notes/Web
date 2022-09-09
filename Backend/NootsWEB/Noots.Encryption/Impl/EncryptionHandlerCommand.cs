@@ -1,8 +1,8 @@
 ﻿using Common.DTO;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Encryption.Commands;
 using Noots.Permissions.Queries;
-using WriteContext.Repositories.Notes;
 
 namespace Noots.Encryption.Impl
 {

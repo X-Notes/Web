@@ -1,66 +1,84 @@
 <div (mousedown)="preventUnSelection($event)" class="container" appTheme>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H1)"
-    [ngClass]="{'active': getIsActiveHeader(headingType.H1)}"
+    [ngClass]="{ active: getIsActiveHeader(headingType.H1) }"
   >
     <div class="icon">
       <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H2)"
-    [ngClass]="{'active': getIsActiveHeader(headingType.H2)}"
+    [ngClass]="{ active: getIsActiveHeader(headingType.H2) }"
   >
     <div class="icon">
       <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Heading, headingType.H3)"
-    [ngClass]="{'active': getIsActiveHeader(headingType.H3)}"
+    [ngClass]="{ active: getIsActiveHeader(headingType.H3) }"
   >
     <div class="icon">
       <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
     </div>
   </div>
-  <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{'active': getIsBold()}">
+  <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{ active: getIsBold() }">
     <div class="icon">
       <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
     </div>
   </div>
-  <div class="button" (mousedown)="setItalicStyle($event)" [ngClass]="{'active': getIsItalic()}">
+  <div class="button" (mousedown)="setItalicStyle($event)" [ngClass]="{ active: getIsItalic() }">
     <div class="icon">
       <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Checklist)"
-    [ngClass]="{'active': getIsActiveType(textType.Checklist)}"
+    [ngClass]="{ active: getIsActiveType(textType.Checklist) }"
   >
     <div class="icon">
       <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Dotlist)"
-    [ngClass]="{'active': getIsActiveType(textType.Dotlist)}"
+    [ngClass]="{ active: getIsActiveType(textType.Dotlist) }"
   >
     <div class="icon">
       <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
+    *ngIf="selectedMenuType === menuType.OneRow"
     class="button"
     (mousedown)="transformContent($event, textType.Numberlist)"
-    [ngClass]="{'active': getIsActiveType(textType.Numberlist)}"
+    [ngClass]="{ active: getIsActiveType(textType.Numberlist) }"
   >
     <div class="icon">
       <mat-icon svgIcon="list" [inline]="true"></mat-icon>
     </div>
   </div>
+  <div class="button text" (mousedown)="removeStyles($event)">
+    <div
+      class="text-container"
+      [ngStyle]="{ backgroundColor: getProperty('backgroundColor'), color: getProperty('color') }"
+    >
+      <p>T</p>
+    </div>
+  </div>
+</div>
+<div class="color-pallete-container">
+  <div class="text-color-container"></div>
+  <div class="backround-color-container"></div>
 </div>

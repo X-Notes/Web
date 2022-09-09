@@ -9,7 +9,7 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
-import { FontSizeENUM } from '../enums/font-size.enum';
+import { EntitiesSizeENUM } from '../enums/font-size.enum';
 
 export const timeSidenavAnimation = 200; // TODO move to constant file
 
@@ -143,7 +143,7 @@ export const uploader = trigger('uploader', [
 })
 export class PersonalizationService {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSizeENUM>;
+  public fontSize$: Observable<EntitiesSizeENUM>;
 
   spinnerActive = false;
 

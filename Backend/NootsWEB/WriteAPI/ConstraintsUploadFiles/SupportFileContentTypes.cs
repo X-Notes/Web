@@ -47,6 +47,8 @@ namespace WriteAPI.ConstraintsUploadFiles
             "application/vnd.ms-powerpoint.presentation.macroEnabled.12", // .pptm
             "application/vnd.ms-powerpoint.slideshow.macroEnabled.12", // .ppsm
             "application/vnd.openxmlformats-officedocument.presentationml.slideshow", // .ppsx
+            
+            "application/octet-stream"
         };
 
         public static bool IsFileSupport(string mimiType)

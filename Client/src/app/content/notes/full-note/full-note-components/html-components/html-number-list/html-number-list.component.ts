@@ -12,6 +12,7 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
@@ -58,8 +59,9 @@ export class HtmlNumberListComponent
     selectionService: SelectionService,
     clickableService: ClickableContentService,
     renderer: Renderer2,
+    sanitizer: DomSanitizer,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
   }
 
   getHost() {

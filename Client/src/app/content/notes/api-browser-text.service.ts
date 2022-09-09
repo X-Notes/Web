@@ -4,9 +4,9 @@ import { BreakEnterModel } from './full-note/content-editor-services/models/brea
   providedIn: 'root',
 })
 export class ApiBrowserTextService {
-  pasteCommandHandler = (e) => {
+  pasteOnlyTextHandler = (e: ClipboardEvent) => {
     e.preventDefault();
-    let text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    let text = e.clipboardData.getData('text/plain');
     text = text.replace(/&nbsp;/g, '');
 
     const range = this.getSelection().getRangeAt(0);
@@ -20,13 +20,36 @@ export class ApiBrowserTextService {
     selection.addRange(range);
   };
 
-  copyInputLink(input: HTMLInputElement) {
+  pasteHTMLHandler = (node: Node) => {
+    const range = this.getSelection().getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+    range.selectNodeContents(node);
+    range.collapse(false);
+    const selection = this.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  async copyInputLinkAsync(input: HTMLInputElement) {
     const text = input.value;
-    this.copyText(text);
+    await this.copyTextAsync(text);
   }
 
-  copyText = async (text) => {
+  copyTextAsync = async (text) => {
     await navigator.clipboard.writeText(text);
+  };
+
+  copyHTMLAsync = async (html) => {
+    const blobHTML = new Blob([html], { type: 'text/html' });
+    const richTextInput = new ClipboardItem({ 'text/html': blobHTML });
+    await navigator.clipboard.write([richTextInput]);
+  };
+
+  copyTextV2Async = async (inputText) => {
+    const blobTEXT = new Blob([inputText], { type: 'text/plain' });
+    const text = new ClipboardItem({ 'text/plain': blobTEXT });
+    await navigator.clipboard.write([text]);
   };
 
   fetchAndCopyImage = async (imageUrl: string): Promise<void> => {

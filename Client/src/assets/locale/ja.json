@@ -112,8 +112,8 @@
     "isViewPhotosOnNote": "写真を表示",
     "isViewTextOnNote": "テキストを表示",
     "isViewVideoOnNote": "ビデオを表示",
-    "contentInNoteCount": "ノートで可視コンテンツをカウントする",
-    "notesInFolderCount": "フォルダ上の可視メモをカウントする",
+    "contentInNoteCount": "メモの表示内容の量",
+    "notesInFolderCount": "フォルダ上の可視メモの数",
     "countCurrent": "現在の："
   },
   "modal": {
@@ -326,7 +326,10 @@
     "movedToMany": "移動先",
     "movedToSingle": "移動先",
     "reloadPage": "不安定な接続は、ページを更新してください",
-    "noItemInExport": "コレクションが空です"
+    "noItemInExport": "コレクションが空です",
+    "subscriptionCreationError": "このサブスクリプションの作成制限を超えました。",
+    "subscriptionMaxNotesError": "本契約は最大{{count}}冊まで",
+    "copied": "コピー機"
   },
   "titles": {
     "labels": "ラベル",
@@ -353,5 +356,17 @@
     "editFolder": "フォルダを編集できます",
     "readNote": "メモを読むことしかできません",
     "readFolder": "フォルダの読み取りのみ可能"
+  },
+  "profile-billing": {
+    "notes": "筆記",
+    "folders": "フォルダー",
+    "labels": "ラベル",
+    "related": "メモの関連メモ",
+    "memory": "記憶",
+    "history-last-15": "ノートの最後の15部",
+    "history-all": "すべてのノート履歴",
+    "personalization": "パーソナライゼーション設定",
+    "per-month": "月額",
+    "upgrade": "更新情報"
   }
 }

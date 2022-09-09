@@ -13,10 +13,10 @@ using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes.Videos
 {

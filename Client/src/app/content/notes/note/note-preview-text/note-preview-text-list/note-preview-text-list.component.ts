@@ -20,7 +20,7 @@ export class NotePreviewTextListComponent {
 
   listType = NoteTextTypeENUM;
 
-  get dotColor() {
+  get dotColor(): string {
     return this.activeTheme === ThemeENUM.Dark ? 'white' : 'black';
   }
 }

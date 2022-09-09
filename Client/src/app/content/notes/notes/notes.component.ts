@@ -5,7 +5,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { CreateNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';

@@ -17,7 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ContentProcessing\ContentProcessing.csproj" />
-    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
+    <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
+    <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
   </ItemGroup>
 
 </Project>

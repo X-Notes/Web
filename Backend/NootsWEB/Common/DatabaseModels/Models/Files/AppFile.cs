@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
@@ -155,6 +156,13 @@ namespace Common.DatabaseModels.Models.Files
                 ids.Add(MetaData.ImageFileId.Value);
            }
            return ids;
+        }
+
+        public IEnumerable<Guid> GetIds()
+        {
+            var ids = GetAdditionalIds();
+            ids.Add(Id);
+            return ids;
         }
 
         public void SetAuthorPath(Func<Guid, string, string> setFieldAction, Guid authorId)

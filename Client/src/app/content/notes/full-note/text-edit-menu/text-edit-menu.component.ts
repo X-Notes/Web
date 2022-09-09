@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
-import { UpdateStyleMode, UpdateTextStyles } from '../../models/update-text-styles';
+import { TextStyles, TextUpdateValue, UpdateTextStyles } from '../../models/update-text-styles';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { TransformContent } from '../models/transform-content.model';
+import { TextEditMenuEnum } from './models/text-edit-menu.enum';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -17,6 +18,11 @@ export class TextEditMenuComponent {
 
   @Output()
   updateText = new EventEmitter<UpdateTextStyles>();
+
+  @Input()
+  selectedMenuType: TextEditMenuEnum;
+
+  menuType = TextEditMenuEnum;
 
   textType = NoteTextTypeENUM;
 
@@ -33,7 +39,7 @@ export class TextEditMenuComponent {
     return false;
   };
 
-  transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+  transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM): void {
     const item = this.menuSelectionService.currentTextItem;
     if (!item) return;
     if (item.noteTextTypeId === type && item.headingTypeId === heading) {
@@ -43,9 +49,10 @@ export class TextEditMenuComponent {
         setFocusToEnd: true,
       });
     } else {
+      const textType = type === item.noteTextTypeId ? NoteTextTypeENUM.Default : type;
       this.eventTransform.emit({
         id: item.id,
-        textType: type,
+        textType,
         headingType: heading,
         setFocusToEnd: true,
       });
@@ -53,24 +60,41 @@ export class TextEditMenuComponent {
     this.menuSelectionService.clearItemAndSelection();
   }
 
-  setBoldStyle($event) {
+  setBoldStyle($event): void {
     $event.preventDefault();
-    const content = this.menuSelectionService.currentTextItem;
-    this.updateText.emit({
-      content,
-      textStyle: 'bold',
-      updateMode: this.getIsBold() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
-    });
-    this.menuSelectionService.clearItemAndSelection();
+    this.updateStyles('bold', this.getIsBold() ? false : true);
   }
 
   setItalicStyle($event) {
     $event.preventDefault();
-    const content = this.menuSelectionService.currentTextItem;
+    this.updateStyles('italic', this.getIsItalic() ? false : true);
+  }
+
+  setTextColor($event, value: string = null) {
+    $event.preventDefault();
+    this.updateStyles('color', value);
+  }
+
+  setBackground($event, value: string = null) {
+    $event.preventDefault();
+    this.updateStyles('background', value);
+  }
+
+  removeStyles($event): void {
+    $event.preventDefault();
     this.updateText.emit({
-      content,
-      textStyle: 'italic',
-      updateMode: this.getIsItalic() ? UpdateStyleMode.Remove : UpdateStyleMode.Add,
+      textStyle: null,
+      value: null,
+      isRemoveStyles: true,
+    });
+    this.menuSelectionService.clearItemAndSelection();
+  }
+
+  updateStyles(textStyle: TextStyles, value: TextUpdateValue): void {
+    this.updateText.emit({
+      textStyle,
+      value,
+      isRemoveStyles: false,
     });
     this.menuSelectionService.clearItemAndSelection();
   }
@@ -101,12 +125,60 @@ export class TextEditMenuComponent {
     return this.isSelectionTags(['em']);
   };
 
+  getProperty(propertySelector: string): string {
+    const sel = this.apiBrowserService.getSelection();
+    if (!sel) return null;
+    const tempDiv = this.getSelectedHTML();
+    if (!tempDiv) return null;
+    if (tempDiv.innerHTML === '') return null;
+    const res = this.getNodeProperty(sel, tempDiv, propertySelector);
+    return res;
+  }
+
+  getNodeProperty(sel: Selection, el: HTMLElement, propertySelector: string): string {
+    const children = el.childNodes as any as HTMLElement[];
+    for (const child of children) {
+      if (child.style && child.style[propertySelector]) {
+        return child.style[propertySelector];
+      }
+      let tags = [child.nodeName.toLowerCase()];
+      while (tags.includes('#text')) {
+        const startParent = sel.anchorNode.parentNode as HTMLElement;
+        const endParent = sel.focusNode.parentNode as HTMLElement;
+
+        const startTag = startParent.nodeName.toLowerCase();
+        const endTag = endParent.nodeName.toLowerCase();
+
+        const startTagParent = startParent.parentElement as HTMLElement;
+        const endTagParent = endParent.parentElement as HTMLElement;
+
+        tags = [startTag, endTag];
+
+        if (endParent?.style && endParent?.style[propertySelector]) {
+          return endParent?.style[propertySelector];
+        }
+        if (startParent?.style && startParent?.style[propertySelector]) {
+          return startParent?.style[propertySelector];
+        }
+        if (startTagParent?.style && startTagParent?.style[propertySelector]) {
+          return startTagParent?.style[propertySelector];
+        }
+        if (endTagParent?.style && endTagParent?.style[propertySelector]) {
+          return endTagParent?.style[propertySelector];
+        }
+      }
+      this.getNodeProperty(sel, child, propertySelector);
+    }
+
+    return null;
+  }
+
   isSelectionTags(selTags: string[]): boolean {
     const sel = this.apiBrowserService.getSelection();
     if (!sel) return false;
     const tempDiv = this.getSelectedHTML();
-    if (tempDiv.innerHTML === '') return false;
-
+    if (!tempDiv) return false;
+    if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
     const tagsSet = new Set<string>();
     for (const node of tempDiv.childNodes as any) {
       let tags = [node.nodeName.toLowerCase()];
@@ -114,10 +186,15 @@ export class TextEditMenuComponent {
 
       // This covers selection that are inside bolded characters
       while (tags.includes('#text')) {
-        const startTag = sel.anchorNode.parentNode.nodeName.toLowerCase();
-        const endTag = sel.focusNode.parentNode.nodeName.toLowerCase();
-        const startTagParent = sel.anchorNode.parentNode.parentElement.nodeName.toLowerCase();
-        const endTagParent = sel.focusNode.parentNode.parentElement.nodeName.toLowerCase();
+        const startParent = sel.anchorNode.parentNode;
+        const endParent = sel.focusNode.parentNode;
+
+        const startTag = startParent.nodeName.toLowerCase();
+        const endTag = endParent.nodeName.toLowerCase();
+
+        const startTagParent = startParent.parentElement.nodeName.toLowerCase();
+        const endTagParent = endParent.parentElement.nodeName.toLowerCase();
+
         tags = [startTag, endTag];
         tagsSet.add(startTag);
         tagsSet.add(endTag);
@@ -129,13 +206,25 @@ export class TextEditMenuComponent {
     return selTags.some((x) => tagsSet.has(x));
   }
 
-  getSelectedHTML = (): HTMLDivElement => {
-    const selection = this.apiBrowserService.getSelection();
-    if (!selection) return;
-    const container = document.createElement('div');
-    for (let i = 0, len = selection.rangeCount; i < len; ++i) {
-      container.appendChild(selection.getRangeAt(i).cloneContents());
+  getSelectedHTML = (): HTMLElement => {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      const selection = this.apiBrowserService.getSelection();
+      if (!selection) return;
+      const container = document.createElement('div');
+      for (let i = 0, len = selection.rangeCount; i < len; ++i) {
+        container.appendChild(selection.getRangeAt(i).cloneContents());
+      }
+      return container;
     }
-    return container;
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      // TODO
+      const selection = this.apiBrowserService.getSelection();
+      if (!selection) return;
+      const container = document.createElement('div');
+      for (let i = 0, len = selection.rangeCount; i < len; ++i) {
+        container.appendChild(selection.getRangeAt(i).cloneContents());
+      }
+      return container;
+    }
   };
 }

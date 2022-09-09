@@ -26,7 +26,6 @@
     transition: 0.3s ease;
     border-radius: 20px 0 0 20px;
     overflow: hidden;
-    cursor: pointer;
 
     &:hover {
       background-color: darken($unhighlighting-note, $amount: 20%);

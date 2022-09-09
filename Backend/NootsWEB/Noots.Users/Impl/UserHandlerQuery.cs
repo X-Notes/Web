@@ -1,14 +1,14 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Domain.Queries.Users;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Storage.Queries;
 using Noots.Users.Entities;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Users;
+using Noots.Users.Queries;
 
-namespace BI.Services.UserHandlers
+namespace Noots.Users.Impl
 {
     public class UserHandlerQuery :
         IRequestHandler<GetUserDTOQuery, OperationResult<UserDTO>>,

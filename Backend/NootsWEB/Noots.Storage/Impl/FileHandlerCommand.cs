@@ -3,8 +3,9 @@ using Common.DTO;
 using Common.DTO.Files;
 using ContentProcessing;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.Mapper.Mapping;
 using Noots.Storage.Commands;
-using WriteContext.Repositories.Files;
 
 namespace Noots.Storage.Impl
 {
@@ -26,15 +27,19 @@ namespace Noots.Storage.Impl
         private readonly IImageProcessor imageProcessor;
 
         private readonly FileRepository fileRepository;
+        
+        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         public FileHandlerCommand(
             IFilesStorage filesStorage,
             IImageProcessor imageProcessor,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            NoteFolderLabelMapper noteFolderLabelMapper)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
             this.fileRepository = fileRepository;
+            this.noteFolderLabelMapper = noteFolderLabelMapper;
         }
 
         public async Task<AppFile> ProcessNotePhotos(Guid userId, byte[] bytes, string contentType, string fileName)
@@ -100,9 +105,15 @@ namespace Noots.Storage.Impl
 
         public async Task<Unit> Handle(RemoveFilesCommand request, CancellationToken cancellationToken)
         {
-            var pathes = request.AppFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-            await Handle(new RemoveFilesFromStorageCommand(pathes, request.UserId), CancellationToken.None);
-            await fileRepository.RemoveRangeAsync(request.AppFiles);
+            var idsToDelete = request.AppFiles.SelectMany(x => x.GetIds()).Distinct();
+
+            var files = await fileRepository.GetManyAsync(idsToDelete);
+            if (files.Any())
+            {
+                var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
+                await Handle(new RemoveFilesFromStorageCommand(pathes, request.UserId), CancellationToken.None);
+                await fileRepository.RemoveRangeAsync(files);
+            }
 
             return Unit.Value;
         }
@@ -113,7 +124,8 @@ namespace Noots.Storage.Impl
             var files = new List<AppFile>();
             foreach (var file in request.FileBytes)
             {
-                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, GetExtensionByMIME(file.ContentType));
+                var fileType = GetExtensionByMIME(file.ContentType, file.FileName);
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, fileType);
                 files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName));
             }
             return files;
@@ -273,14 +285,19 @@ namespace Noots.Storage.Impl
                 file.MetaData.SecondsDuration = request.SecondsDuration;
 
                 var imageFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.ImageFileId);
-                if (imageFile is not null)
+                if (imageFile is not null && file.MetaData != null && !file.MetaData.ImageFileId.HasValue)
                 {
-                    file.MetaData.ImageFileId = file.MetaData.ImageFileId ?? imageFile.Id;
-                    file.MetaData.ImagePath = file.MetaData.ImagePath ?? imageFile.GetFromSmallPath;
+                    file.MetaData.ImageFileId = imageFile.Id;
+                    file.MetaData.ImagePath = imageFile.GetFromSmallPath;
                 }
 
                 await fileRepository.UpdateAsync(file);
 
+                if (!string.IsNullOrEmpty(file.MetaData?.ImagePath))
+                {
+                    file.MetaData.ImagePath = noteFolderLabelMapper.BuildFilePath(request.UserId,file.MetaData.ImagePath);
+                };
+                
                 var respResult = new FileDTO(file.Id, file.PathPhotoSmall, file.PathPhotoMedium, file.PathPhotoBig, file.PathNonPhotoContent, file.Name, file.UserId, file.MetaData, file.CreatedAt);
                 return new OperationResult<FileDTO>(true, respResult);
             }
@@ -288,7 +305,7 @@ namespace Noots.Storage.Impl
             return new OperationResult<FileDTO>().SetNotFound();
         }
 
-        public static string GetExtensionByMIME(string mime) => mime switch
+        public static string GetExtensionByMIME(string mime, string fileName = null) => mime switch
         {
             "image/png" => ".png",
             "image/jpeg" => ".jpeg",
@@ -311,7 +328,8 @@ namespace Noots.Storage.Impl
             "application/vnd.ms-powerpoint.presentation.macroEnabled.12" => ".pptm",
             "application/vnd.ms-powerpoint.slideshow.macroEnabled.12" => ".ppsm",
             "application/vnd.openxmlformats-officedocument.presentationml.slideshow" => ".ppsx",
-            _ => throw new ArgumentOutOfRangeException(nameof(mime), $"Not expected direction value: {mime}"),
+            "application/octet-stream" => Path.GetExtension(fileName),
+            _ => string.IsNullOrEmpty(fileName) ? throw new ArgumentOutOfRangeException(nameof(mime), $"Not expected direction value: {mime}") : Path.GetExtension(fileName),
         };
     }
 }

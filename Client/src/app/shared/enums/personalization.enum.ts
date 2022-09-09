@@ -1,4 +1,4 @@
-export enum Personalization {
+export enum PersonalizationEnum {
   notesInFolderCount = 'notesInFolderCount',
   contentInNoteCount = 'contentInNoteCount',
   isViewVideoOnNote = 'isViewVideoOnNote',

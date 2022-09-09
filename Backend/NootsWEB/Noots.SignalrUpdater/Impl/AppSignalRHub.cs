@@ -1,10 +1,11 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Noots.DatabaseContext.Repositories.WS;
 using Noots.SignalrUpdater.Models;
-using WriteContext.Repositories.WS;
 
 namespace Noots.SignalrUpdater.Impl
 {
@@ -120,7 +121,10 @@ namespace Noots.SignalrUpdater.Impl
                 return;
             }
 
-            await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+            if (result.user != null)
+            {
+                await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+            }
         }
 
         private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier)

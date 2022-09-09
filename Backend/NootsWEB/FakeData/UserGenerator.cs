@@ -21,7 +21,7 @@ namespace FakeData
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.Name))
                 .RuleFor(u => u.DefaultPhotoUrl, (f, y) => "https://lh3.googleusercontent.com/-l2fMop7j1hw/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rcL2pg2Nfx60NEpPT4jrHIfRDdfzg/photo.jpg")
 
-                .RuleFor(u => u.BillingPlanId, (f, u) => BillingPlanTypeENUM.Free)
+                .RuleFor(u => u.BillingPlanId, (f, u) => BillingPlanTypeENUM.Standart)
                 .RuleFor(u => u.LanguageId, f => LanguageENUM.English)
                 .RuleFor(u => u.ThemeId, f => ThemeENUM.Dark)
                 .RuleFor(u => u.FontSizeId, f => FontSizeENUM.Medium);

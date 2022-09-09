@@ -5,53 +5,56 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Notifications;
+using Noots.DatabaseContext.Repositories.Notifications;
 using WriteAPI.ControllerConfig;
-using WriteContext.Repositories.Notifications;
 using Noots.Mapper.Mapping;
+using WriteAPI.Filters;
 
-namespace WriteAPI.Controllers.UserContollers
+namespace WriteAPI.Controllers.UserContollers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
+    private readonly NotificationRepository notificationRepository;
+
+    private readonly NoteFolderLabelMapper noteFolderLabelMapper;
+
+    public NotificationController(NotificationRepository notificationRepository,
+        NoteFolderLabelMapper noteFolderLabelMapper)
     {
-        private readonly NotificationRepository notificationRepository;
-
-        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
-
-        public NotificationController(NotificationRepository notificationRepository,
-                                      NoteFolderLabelMapper noteFolderLabelMapper)
-        {
-            this.notificationRepository = notificationRepository;
-            this.noteFolderLabelMapper = noteFolderLabelMapper;
-        }
+        this.notificationRepository = notificationRepository;
+        this.noteFolderLabelMapper = noteFolderLabelMapper;
+    }
 
 
-        [HttpGet]
-        public async Task<IEnumerable<NotificationDTO>> GetNotifications()
-        {
-            var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
-            return notifs.Select(t => new NotificationDTO(t, noteFolderLabelMapper.BuildFilePath));
-        }
+    [HttpGet]
+    [ValidationRequireUserIdFilter]
+    public async Task<IEnumerable<NotificationDTO>> GetNotifications()
+    {
+        var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
+        return notifs.Select(t => new NotificationDTO(t, noteFolderLabelMapper.BuildFilePath));
+    }
 
-        [HttpGet("read/all")]
-        public async Task<IActionResult> ReadAllNotifications()
-        {
-            var notifs = await notificationRepository
-                .GetWhereAsync(x => x.UserToId == this.GetUserId() && x.IsRead == false);
-            notifs.ForEach(x => x.IsRead = true);
-            await notificationRepository.UpdateRangeAsync(notifs);
-            return Ok();
-        }
+    [HttpGet("read/all")]
+    [ValidationRequireUserIdFilter]
+    public async Task<IActionResult> ReadAllNotifications()
+    {
+        var notifs = await notificationRepository
+            .GetWhereAsync(x => x.UserToId == this.GetUserId() && x.IsRead == false);
+        notifs.ForEach(x => x.IsRead = true);
+        await notificationRepository.UpdateRangeAsync(notifs);
+        return Ok();
+    }
 
-        [HttpGet("read/{id}")]
-        public async Task<IActionResult> ReadAllNotifications(Guid id)
-        {
-            var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == this.GetUserId() && x.Id == id);
-            notif.IsRead = true;
-            await notificationRepository.UpdateAsync(notif);
-            return Ok();
-        }
+    [HttpGet("read/{id}")]
+    [ValidationRequireUserIdFilter]
+    public async Task<IActionResult> ReadAllNotifications(Guid id)
+    {
+        var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == this.GetUserId() && x.Id == id);
+        notif.IsRead = true;
+        await notificationRepository.UpdateAsync(notif);
+        return Ok();
     }
 }

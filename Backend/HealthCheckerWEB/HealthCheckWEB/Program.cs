@@ -56,11 +56,11 @@ builder.Services.AddHealthChecks()
                     tags: new string[] { "services" })
                 .AddCheck<AzureBlobStorageHealthChecker>("AzureBlobStorageChecker");
 
-Console.WriteLine("TEST: " + Dns.GetHostName());
 
 builder.Services.AddHealthChecksUI(setup =>
                 {
-                    setup.AddHealthCheckEndpoint("TEST", $"http://{Dns.GetHostName():5600}/health");
+                    setup.SetEvaluationTimeInSeconds(5);
+                    setup.AddHealthCheckEndpoint("APPS", $"http://{Dns.GetHostName()}:5900/app-health");
                 })
                 .AddInMemoryStorage();
 
@@ -95,8 +95,9 @@ app.UseAuthorization();
 app.MapHealthChecksUI().RequireAuthorization();
 app.MapHealthChecks("/app-health", new HealthCheckOptions
 {
+    Predicate = registration => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-}).RequireAuthorization();
+});
 
 app.MapControllerRoute(
     name: "default",

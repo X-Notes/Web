@@ -84,6 +84,8 @@ import { NoteHistoryPopUpComponent } from './modal_components/note-history-pop-u
 import { HistoryRecordComponent } from '../content/notes/full-note/full-note-components/history-record/history-record.component';
 import { DateFromNowPipe } from './pipes/date-from-now.pipe';
 import { FullNoteActiveUsersComponent } from './custom-components/full-note-active-users/full-note-active-users.component';
+import { LongTermOperationsHandlerComponent } from '../content/long-term-operations-handler/long-term-operations-handler.component';
+import { LongTermOperationComponent } from '../content/long-term-operations-handler/long-term-operation/long-term-operation.component';
 
 @NgModule({
   declarations: [
@@ -151,6 +153,8 @@ import { FullNoteActiveUsersComponent } from './custom-components/full-note-acti
     HistoryRecordComponent,
     DateFromNowPipe,
     FullNoteActiveUsersComponent,
+    LongTermOperationsHandlerComponent,
+    LongTermOperationComponent,
   ],
   imports: [
     CommonModule,
@@ -239,6 +243,8 @@ import { FullNoteActiveUsersComponent } from './custom-components/full-note-acti
     HistoryRecordComponent,
     DateFromNowPipe,
     FullNoteActiveUsersComponent,
+    LongTermOperationsHandlerComponent,
+    LongTermOperationComponent,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
   entryComponents: [TooltipComponent],

@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO.Personalization;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Personalization.Queries;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Personalization.Impl
 {

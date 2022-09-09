@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { BillingENUM } from '../enums/billing.enum';
 import { ThemeENUM } from '../enums/theme.enum';
 @Component({
   selector: 'app-memory-indicator',
@@ -18,20 +18,17 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   memory: number;
 
-  billing: BillingENUM;
+  billing: BillingPlanId;
 
   constructor(private store: Store) {}
 
   get userBillingPlan() {
     switch (this.billing) {
-      case BillingENUM.Free: {
-        return 'F';
-      }
-      case BillingENUM.Standart: {
+      case BillingPlanId.Standard: {
         return 'S';
       }
-      case BillingENUM.Business: {
-        return 'B';
+      case BillingPlanId.Premium: {
+        return 'P';
       }
       default: {
         return '';
@@ -45,14 +42,11 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   get userMemory() {
     switch (this.billing) {
-      case BillingENUM.Free: {
+      case BillingPlanId.Standard: {
         return 1000; // TODO LOAD THIS DATA FROM SERVER
       }
-      case BillingENUM.Standart: {
+      case BillingPlanId.Premium: {
         return 5000;
-      }
-      case BillingENUM.Business: {
-        return 20000;
       }
       default: {
         return 9999999; // IT`S OK

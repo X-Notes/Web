@@ -4,7 +4,7 @@ import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { CreateFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 

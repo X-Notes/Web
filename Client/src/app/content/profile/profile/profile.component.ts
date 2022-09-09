@@ -5,13 +5,12 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import {
   ChangeLanguage,
-  ChangeFontSize,
+  ChangeEntitiesSize,
   ChangeTheme,
   UpdateUserPhoto,
   SetDefaultBackground,
-  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
 import { ShowSnackNotification, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
@@ -23,15 +22,16 @@ import {
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { Personalization } from 'src/app/shared/enums/personalization.enum';
+import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
 import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
 import { ResetNotes } from '../../notes/state/notes-actions';
 import { ResetFolders } from '../../folders/state/folders-actions';
+import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 
 @Component({
   selector: 'app-profile',
@@ -40,7 +40,7 @@ import { ResetFolders } from '../../folders/state/folders-actions';
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSizeENUM>;
+  public fontSize$: Observable<EntitiesSizeENUM>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -61,13 +61,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   settingsInit: PersonalizationSetting;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   themes = ThemeENUM;
 
-  pSettings = Personalization;
+  pSettings = PersonalizationEnum;
 
   language = LanguagesENUM;
+
+  billingPlanId = BillingPlanId;
 
   languages = Object.values(LanguagesENUM)
     .filter((x) => typeof x === 'string')
@@ -117,37 +119,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  async changePersonalizationSettings(value: any, type: Personalization) {
-    const types = Personalization;
-    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings) };
-    switch (type) {
-      case types.isViewVideoOnNote:
-        settings.isViewVideoOnNote = value;
-        break;
-      case types.isViewTextOnNote:
-        settings.isViewTextOnNote = value;
-        break;
-      case types.isViewPhotosOnNote:
-        settings.isViewPhotosOnNote = value;
-        break;
-      case types.isViewDocumentOnNote:
-        settings.isViewDocumentOnNote = value;
-        break;
-      case types.isViewAudioOnNote:
-        settings.isViewAudioOnNote = value;
-        break;
-      case types.contentInNoteCount:
-        settings.contentInNoteCount = value;
-        break;
-      case types.notesInFolderCount:
-        settings.notesInFolderCount = value;
-        break;
-      default:
-        throw new Error('Incorrect personalization setting');
-    }
-    this.store.dispatch(new UpdatePersonalization(settings));
-  }
-
   changeTheme(value: boolean) {
     if (value) {
       this.store.dispatch(new ChangeTheme(ThemeENUM.Light));
@@ -156,11 +127,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeFontSize(value: boolean) {
+  changeEntitiesSize(value: boolean) {
     if (value) {
-      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Big));
+      this.store.dispatch(new ChangeEntitiesSize(EntitiesSizeENUM.Big));
     } else {
-      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Medium));
+      this.store.dispatch(new ChangeEntitiesSize(EntitiesSizeENUM.Medium));
     }
   }
 

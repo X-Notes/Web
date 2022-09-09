@@ -1,5 +1,4 @@
 ﻿using Common.DTO.Notes;
-using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Noots.Search.Entities;

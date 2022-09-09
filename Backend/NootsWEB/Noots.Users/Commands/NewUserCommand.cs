@@ -1,9 +1,10 @@
 ﻿using Common.CQRS;
+using Common.DTO;
 using MediatR;
 
 namespace Noots.Users.Commands
 {
-    public class NewUserCommand : BaseCommandEntity, IRequest<Guid>
+    public class NewUserCommand : BaseCommandEntity, IRequest<OperationResult<Guid>>
     {
         public string Name { set; get; }
 

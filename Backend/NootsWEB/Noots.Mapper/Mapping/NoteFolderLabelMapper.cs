@@ -167,7 +167,7 @@ namespace Noots.Mapper.Mapping
         }
 
 
-        public RelatedNote MapNoteToRelatedNoteDTO(ReletatedNoteToInnerNote relation, Guid callerId)
+        public RelatedNote MapNoteToRelatedNoteDTO(RelatedNoteToInnerNote relation, Guid callerId)
         {
             var state = relation.RelatedNoteUserStates.FirstOrDefault(x => x.UserId == callerId);
             return new RelatedNote()

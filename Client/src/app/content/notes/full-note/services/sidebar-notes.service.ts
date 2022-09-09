@@ -53,6 +53,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
   async initializeEntities(noteId: string, isCanEdit: boolean) {
     this.noteId = noteId;
     this.isCanEdit = isCanEdit;
+    this.relatedNotesService.clearRelatedNotes();
     await this.relatedNotesService.loadRelatedNotes(noteId);
     this.entities = this.relatedNotesService.notes;
     super.initState();

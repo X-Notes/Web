@@ -1,12 +1,7 @@
 ﻿using Hangfire;
-using Microsoft.Extensions.Hosting;
 using NootsWorkersWEB.BI;
-using NootsWorkersWEB.Hosted;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace WriteAPI.Hosted
+namespace NootsWorkersWEB.Hosted
 {
     public class JobRegisterHosted : IHostedService
     {

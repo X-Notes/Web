@@ -17,9 +17,9 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FontSizeENUM } from '../../enums/font-size.enum';
+import { EntitiesSizeENUM } from '../../enums/font-size.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService } from '../../services/personalization.service';
 import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
@@ -41,7 +41,7 @@ export class AddNotesInFolderComponent
 
   destroy = new Subject<void>();
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   constructor(
     murriService: MurriService,

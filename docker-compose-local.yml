@@ -9,8 +9,12 @@ services:
     depends_on:
       - "noots-api"
   noots-api:
-    container_name: noots-api
+    # container_name: noots-api - prohibited for replicas use container-name
     image: noots-api
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+    deploy:
+      replicas: 1
   noots-worker-api:
     container_name: noots-worker-api
     image: noots-worker-api
@@ -19,5 +23,8 @@ services:
   noots-health-check-api:
     container_name: noots-health-check-api
     image: noots-health-check-api
+    environment:
+      - ASPNETCORE_URLS=http://+:5900;http://+:5950
     ports:
       - "5900:5900"
+      - "5950:5950"

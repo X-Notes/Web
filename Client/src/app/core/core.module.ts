@@ -29,6 +29,7 @@ import { ApiDocumentsService } from '../content/notes/full-note/services/api-doc
 import { ApiVideosService } from '../content/notes/full-note/services/api-videos.service';
 import { ApiTextService } from '../content/notes/full-note/services/api-text.service';
 import { AuthService } from './auth.service';
+import { ApiBillingService } from './api-billing.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -62,6 +63,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
   providers: [
     AuthService,
     UserAPIService,
+    ApiBillingService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,

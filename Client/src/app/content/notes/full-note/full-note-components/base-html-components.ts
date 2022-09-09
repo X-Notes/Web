@@ -22,7 +22,7 @@ export abstract class BaseEditorElementComponent {
 
   public isMouseOver = false;
 
-  protected cdr: ChangeDetectorRef;
+  public cdr: ChangeDetectorRef;
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;

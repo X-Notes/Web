@@ -197,6 +197,8 @@ export class AudioService {
           this.state.playing = true;
           this.state.loop = true;
           this.play();
+        } else {
+          this.playNextAudio();
         }
         break;
       case this.audioEvents.error:
@@ -207,6 +209,15 @@ export class AudioService {
         throw new Error('Error in audio player');
     }
     this.stateChange.next(this.state);
+  }
+
+  private playNextAudio(): void {
+    const index = this.playlist.indexOf(this.currentFile);
+    const nextIndex = index + 1;
+    if (index !== -1 && nextIndex < this.playlist.length) {
+      this.currentFile = this.playlist[nextIndex];
+      this.play();
+    }
   }
 
   private resetState() {

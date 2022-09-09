@@ -58,7 +58,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Default"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -71,6 +71,7 @@
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
               (runDetectChangesChildren)="runDetectChangesOnChildren()"
+              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
             </app-html-text-part>
@@ -78,7 +79,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Numberlist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [prevContent]="getTextContent(i - 1)"
               [prevType]="getTextContent(i - 1)?.noteTextTypeId"
               [content]="item"
@@ -92,6 +93,7 @@
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
               (runDetectChangesChildren)="runDetectChangesOnChildren()"
+              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-number-list>
@@ -99,7 +101,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Dotlist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -111,6 +113,7 @@
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
               (runDetectChangesChildren)="runDetectChangesOnChildren()"
+              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-dot-list>
@@ -118,7 +121,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Checklist"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -130,6 +133,7 @@
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
               (runDetectChangesChildren)="runDetectChangesOnChildren()"
+              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-check-list>
@@ -137,7 +141,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.Heading"
               [isSelected]="selectionService.isSelected(item.id)"
-              [theme]="theme$ | async"
+              [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
               [isSelectModeActive]="isSelectModeActive"
@@ -148,6 +152,7 @@
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
               (runDetectChangesChildren)="runDetectChangesOnChildren()"
+              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-headings>
@@ -157,7 +162,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Photos"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -173,7 +178,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Audios"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -189,7 +194,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Videos"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -205,7 +210,7 @@
             #htmlComp
             *ngSwitchCase="contentType.Documents"
             [isSelected]="selectionService.isSelected(item.id)"
-            [theme]="theme$ | async"
+            [theme]="editorTheme"
             [content]="item"
             [noteId]="note.id"
             [isReadOnlyMode]="isReadOnlyMode"
@@ -239,9 +244,11 @@
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
 <app-text-edit-menu
+  *ngIf="selectedMenuType"
   [style.top.px]="menuSelectionService.getTop"
   [style.left.px]="menuSelectionService.getLeft"
-  [style.visibility]="(menuSelectionService.menuActive && !isSelectModeActive) ? 'visible' : 'hidden'"
+  [style.visibility]="textEditMenuVisibility"
+  [selectedMenuType]="selectedMenuType"
   (eventTransform)="transformToTypeText($event)"
   (updateText)="updateTextStyles($event)"
 >

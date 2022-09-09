@@ -15,11 +15,11 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
@@ -43,6 +43,9 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -72,7 +75,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   foldersLink: SmallFolder[] = [];
 
@@ -108,6 +111,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private signalR: SignalRService,
     private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   initTitle() {
@@ -214,10 +219,18 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async (flag) => {
         if (flag) {
-          const newNote = await this.noteApiService.new().toPromise();
-          await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
-          this.ffnService.addToDom([newNote]);
-          this.updateState();
+          const res = await this.noteApiService.new().toPromise();
+          if (res.success) {
+            const newNote = res.data;
+            await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
+            this.ffnService.addToDom([newNote]);
+            this.updateState();
+            return;
+          }
+          if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
+            const message = this.translate.instant('snackBar.subscriptionCreationError');
+            this.snackbarService.openSnackBar(message, null, null, 5000);
+          }
         }
       });
 

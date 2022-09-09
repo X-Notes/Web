@@ -1,4 +1,5 @@
-﻿using Common.DTO.Personalization;
+﻿using Common.DTO;
+using Common.DTO.Personalization;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Noots.Personalization.Commands;
@@ -12,7 +13,7 @@ namespace Noots.Personalization
         public static void ApplyPersonalizationDI(this IServiceCollection services)
         {
             services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
-            services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>, PersonalizationHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, OperationResult<Unit>>, PersonalizationHandlerCommand>();
         }
     }
 }

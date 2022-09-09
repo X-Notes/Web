@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WriteAPI.ConstraintsUploadFiles;
 
@@ -33,6 +34,16 @@ namespace WriteAPI.ControllerConfig
         {
             var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
             return Guid.Parse(id);
+        }
+        
+        public static bool IsValidUserId(this ClaimsPrincipal user)
+        {
+            var id = user.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
+            if (id != null)
+            {
+                return Guid.TryParse(id, out var res); 
+            }
+            return false;
         }
 
         public static Guid GetUserIdUnStrict(this ControllerBase controller)

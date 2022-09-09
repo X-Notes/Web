@@ -8,33 +8,32 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Controllers.FullNoteAPI;
+using WriteAPI.Filters;
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner/audios")]
+[ApiController]
+public class FullNoteAudiosController : BaseNoteFileContentController
+<
+    RemoveAudiosFromCollectionCommand, 
+    AddAudiosToCollectionCommand,
+    UpdateAudiosCollectionInfoCommand,
+    GetNoteFilesByIdsQuery<AudioNoteDTO>,
+    AudioNoteDTO
+>
 {
-    [Authorize]
-    [Route("api/note/inner/audios")]
-    [ApiController]
-    public class FullNoteAudiosController : BaseNoteFileContentController
-        <
-        RemoveAudiosFromCollectionCommand, 
-        AddAudiosToCollectionCommand,
-        UpdateAudiosCollectionInfoCommand,
-        GetNoteFilesByIdsQuery<AudioNoteDTO>,
-        AudioNoteDTO
-        >
+
+    public FullNoteAudiosController(IMediator _mediator) : base(_mediator)
     {
-
-        public FullNoteAudiosController(IMediator _mediator) : base(_mediator)
-        {
-        }
-
-        [HttpPost("transform")] // TODO TO WS
-        public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
-        {
-            command.UserId = this.GetUserId();
-            return await _mediator.Send(command);
-        }
     }
 
+    [HttpPost("transform")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
+    public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
 }

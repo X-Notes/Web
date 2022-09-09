@@ -1,9 +1,6 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.History;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using WriteContext.Repositories.Histories;
+using Noots.DatabaseContext.Repositories.Histories;
 
 namespace Noots.History.Impl
 {

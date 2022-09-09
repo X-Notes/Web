@@ -5,6 +5,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
@@ -29,6 +30,9 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
+
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;

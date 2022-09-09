@@ -4,17 +4,17 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 using Noots.Users.Commands;
 using Noots.Users.Entities;
-using WriteContext.Repositories.Users;
 
-namespace BI.Services.UserHandlers
+namespace Noots.Users.Impl
 {
     public class UserHandlerСommand :
-        IRequestHandler<NewUserCommand, Guid>,
+        IRequestHandler<NewUserCommand, OperationResult<Guid>>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>,
         IRequestHandler<UpdateLanguageCommand, Unit>,
@@ -45,9 +45,14 @@ namespace BI.Services.UserHandlers
             this.userBackgroundMapper = userBackgroundMapper;
         }
 
-        public async Task<Guid> Handle(NewUserCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Guid>> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
-
+            var userExist = await userRepository.GetAnyAsync(x => x.Email == request.Email);
+            if (userExist)
+            {
+                return new OperationResult<Guid>().SetAnotherError();
+            }
+            
             var user = new User()
             {
                 Name = request.Name,
@@ -55,7 +60,7 @@ namespace BI.Services.UserHandlers
                 Email = request.Email,
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,
-                BillingPlanId = BillingPlanTypeENUM.Free,
+                BillingPlanId = BillingPlanTypeENUM.Standart,
                 DefaultPhotoUrl = request.PhotoURL
             };
 
@@ -65,7 +70,7 @@ namespace BI.Services.UserHandlers
 
             await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 
-            return user.Id;
+            return new OperationResult<Guid>(true, user.Id);
         }
 
         public async Task<Unit> Handle(UpdateMainUserInfoCommand request, CancellationToken cancellationToken)

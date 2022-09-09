@@ -1,8 +1,7 @@
 const PROXY_CONFIG = [
   {
       context: [
-          "/api",
-          "/hub",
+          "/api"
       ],
       target: "http://localhost:5000",
       secure: false,

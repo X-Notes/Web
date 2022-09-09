@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-properties */
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
@@ -14,7 +14,7 @@ import {
   Logout,
   ChangeTheme,
   ChangeLanguage,
-  ChangeFontSize,
+  ChangeEntitiesSize,
   SetCurrentBackground,
   SetDefaultBackground,
   UpdateUserInfo,
@@ -23,6 +23,8 @@ import {
   LoadPersonalization,
   UpdatePersonalization,
   Auth,
+  LoadBillingPlans,
+  UpdateBillingUserPlan,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
@@ -30,11 +32,16 @@ import { ApiPersonalizationSettingsService } from '../api-personalization-settin
 import { byteToMB } from '../defaults/byte-convert';
 import { maxProfilePhotoSize } from '../defaults/constraints';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { BillingPlan } from '../models/billing/billing-plan';
+import { ApiBillingService } from '../api-billing.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 
 interface UserState {
   user: ShortUser;
   memory: number;
   personalizationSettings: PersonalizationSetting;
+  billingPlans: BillingPlan[];
 }
 
 @State<UserState>({
@@ -43,22 +50,30 @@ interface UserState {
     user: {} as ShortUser,
     memory: 0,
     personalizationSettings: null,
+    billingPlans: [],
   },
 })
 @Injectable()
 export class UserStore {
   constructor(
-    private api: UserAPIService,
+    private userApi: UserAPIService,
+    private billingApi: ApiBillingService,
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
     private snackbarStatusHandler: SnackBarHandlerStatusService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private snackbarService: SnackbarService,
   ) {}
 
   @Selector()
   static getPersonalizationSettings(state: UserState): PersonalizationSetting {
     return state.personalizationSettings;
+  }
+
+  @Selector()
+  static getBillingsPlans(state: UserState): BillingPlan[] {
+    return state.billingPlans;
   }
 
   @Selector()
@@ -92,12 +107,17 @@ export class UserStore {
   }
 
   @Selector()
+  static getUserBillingPlan(state: UserState): BillingPlanId {
+    return state.user.billingPlanId;
+  }
+
+  @Selector()
   static getUserBackground(state: UserState): string {
     return state.user.currentBackground?.photoPath;
   }
 
   @Selector()
-  static getUserFontSize(state: UserState): FontSizeENUM {
+  static getUserFontSize(state: UserState): EntitiesSizeENUM {
     return state.user.fontSizeId;
   }
 
@@ -108,9 +128,9 @@ export class UserStore {
 
   @Action(Auth)
   async auth({ patchState }: StateContext<UserState>, { user }: Auth) {
-    let userdb = await this.api.getUser().toPromise();
+    let userdb = await this.userApi.getUser().toPromise();
     if (userdb.status === OperationResultAdditionalInfo.NotFound) {
-      userdb = await this.api.newUser(user).toPromise();
+      userdb = await this.userApi.newUser(user).toPromise();
     }
     patchState({ user: userdb.data });
   }
@@ -124,7 +144,7 @@ export class UserStore {
   @Action(ChangeTheme)
   async changeTheme({ patchState, getState }: StateContext<UserState>, { theme }: ChangeTheme) {
     let { user } = getState();
-    await this.api.changeTheme(theme).toPromise();
+    await this.userApi.changeTheme(theme).toPromise();
     user = { ...user, themeId: theme };
     patchState({ user });
   }
@@ -134,18 +154,18 @@ export class UserStore {
     { patchState, getState }: StateContext<UserState>,
     { language }: ChangeLanguage,
   ) {
-    await this.api.changeLanguage(language).toPromise();
+    await this.userApi.changeLanguage(language).toPromise();
     await this.translateService.use(LanguagesENUM[language].toLowerCase()).toPromise();
     patchState({ user: { ...getState().user, languageId: language } });
   }
 
-  @Action(ChangeFontSize)
+  @Action(ChangeEntitiesSize)
   async changeFontSize(
     { patchState, getState }: StateContext<UserState>,
-    { fontSize }: ChangeFontSize,
+    { fontSize }: ChangeEntitiesSize,
   ) {
     let { user } = getState();
-    await this.api.changeFontSize(fontSize).toPromise();
+    await this.userApi.changeFontSize(fontSize).toPromise();
     user = { ...user, fontSizeId: fontSize };
     patchState({ user });
   }
@@ -172,9 +192,19 @@ export class UserStore {
     { patchState, getState }: StateContext<UserState>,
     { newName }: UpdateUserInfo,
   ) {
-    await this.api.updateUserInfo(newName).toPromise();
+    await this.userApi.updateUserInfo(newName).toPromise();
     patchState({
       user: { ...getState().user, name: newName },
+    });
+  }
+
+  @Action(UpdateBillingUserPlan)
+  async updateBillingUserPlan(
+    { patchState, getState }: StateContext<UserState>,
+    { billingPlan }: UpdateBillingUserPlan,
+  ) {
+    patchState({
+      user: { ...getState().user, billingPlanId: billingPlan },
     });
   }
 
@@ -191,7 +221,7 @@ export class UserStore {
       true,
       true,
     );
-    const resp = await this.api.updateUserPhoto(photo, mini, operation).toPromise();
+    const resp = await this.userApi.updateUserPhoto(photo, mini, operation).toPromise();
     const result = resp.eventBody;
     const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
       getState().user.languageId,
@@ -211,8 +241,14 @@ export class UserStore {
 
   @Action(LoadUsedDiskSpace)
   async loadUsedDiskSpace({ patchState }: StateContext<UserState>) {
-    const memory = await this.api.getMemory().toPromise();
+    const memory = await this.userApi.getMemory().toPromise();
     patchState({ memory: memory.totalSize });
+  }
+
+  @Action(LoadBillingPlans)
+  async loadBillingPlans({ patchState }: StateContext<UserState>) {
+    const billingPlans = await this.billingApi.getBillingPlans().toPromise();
+    patchState({ billingPlans });
   }
 
   @Action(LoadPersonalization)
@@ -228,9 +264,15 @@ export class UserStore {
     { patchState }: StateContext<UserState>,
     { settings }: UpdatePersonalization,
   ) {
-    await this.apiPersonalizationSettingsService
+    const res = await this.apiPersonalizationSettingsService
       .updateUserPersonalizationSettings(settings)
       .toPromise();
-    patchState({ personalizationSettings: settings });
+    if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
+      const message = this.translateService.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
+    if (res.success) {
+      patchState({ personalizationSettings: settings });
+    }
   }
 }

@@ -1,0 +1,109 @@
+@import 'variables';
+
+.billing-forms {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    border-radius: 5px;
+    padding-bottom: 20px;
+    background: #fbfbfb;
+    color: #565656;
+    .titles-section {
+      display: flex;
+      flex-direction: column;
+      .title-main {
+        margin-top: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        p {
+          font-size: 1.125rem;
+          font-weight: bold;
+          color: #26220f;
+        }
+      }
+      .title-sub {
+        margin-top: 5px;
+        display: flex;
+        justify-content: center;
+      }
+    }
+    .plan-info {
+      margin-left: 25px;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      .info {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        .mat-icon {
+          width: 16px;
+        }
+        p {
+          margin-left: 10px;
+          font-size: 0.875rem;
+          font-weight: 400;
+        }
+      }
+    }
+    .upgrade-section {
+      display: flex;
+      justify-content: center;
+      padding-top: 20px;
+      .upgrade-button {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        min-width: 120px;
+        border-radius: 3px;
+        background: #00a2d6;
+        color: white;
+      }
+    }
+  }
+
+  .active {
+    border: 1px solid #00c2ff !important;
+    background: transparent;
+    color: white;
+    .titles-section {
+      .title-main {
+        p {
+          color: #00c2ff;
+        }
+      }
+    }
+  }
+}
+
+.light {
+  .billing-forms {
+    .form {
+      background-color: white;
+      color: #565656;
+      border: 1px solid #c5c5c5;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .billing-forms {
+    flex-direction: column;
+    align-items: center;
+
+    .form {
+      width: 80%;
+      &:not(:first-child) {
+        margin-top: 20px;
+      }
+    }
+  }
+}

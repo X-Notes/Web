@@ -201,8 +201,8 @@ export class ApiServiceNotes {
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
-  new() {
-    return this.httpClient.get<SmallNote>(`${environment.writeAPI}/api/note/new`);
+  new(): Observable<OperationResult<SmallNote>> {
+    return this.httpClient.get<OperationResult<SmallNote>>(`${environment.writeAPI}/api/note/new`);
   }
 
   getUsersOnPrivateNote(id: string) {

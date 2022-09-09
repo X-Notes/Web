@@ -1,7 +1,8 @@
 @import 'variables';
 
 :host {
-  display: none;
+  position: fixed;
+  z-index: 100;
 }
 
 .container {
@@ -9,6 +10,7 @@
   border-radius: 5px;
   padding: 4px 10px;
   width: 100%;
+  align-items: center;
 
   .button {
     display: flex;
@@ -20,6 +22,25 @@
     .icon {
       width: 20px;
       height: 20px;
+    }
+  }
+
+  .text {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    .text-container {
+      width: 32px;
+      height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      p {
+        font-size: 1.25rem;
+      }
     }
   }
 
@@ -66,13 +87,11 @@
 @media (max-width: 1024px) {
   :host {
     display: flex;
-    bottom: 0;
+    bottom: 82px; // mobile menu height
     left: 0 !important;
     top: initial !important;
     width: 100%;
-    position: absolute;
-    z-index: 100;
-  
+
     .container {
       height: 50px;
       box-shadow: none;
@@ -93,6 +112,7 @@
 
 @media (max-width: 640px) {
   :host {
+    bottom: 71px; // mobile menu height
     .container {
       .button {
         padding: 0 5px;

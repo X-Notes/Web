@@ -71,4 +71,5 @@ export enum Icons {
   history = 'history',
   notesInnerFolder = 'notesInnerFolder',
   dragAndDrop = 'dragAndDrop',
+  billingPoint = 'billingPoint',
 }

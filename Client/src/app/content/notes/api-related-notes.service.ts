@@ -9,12 +9,16 @@ import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
 import { PositionEntityModel } from './models/position-note.model';
 import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiRelatedNotesService {
   constructor(private httpClient: HttpClient) {}
 
-  updateRelatedNotes(noteId: string, relatedNoteIds: string[]) {
+  updateRelatedNotes(
+    noteId: string,
+    relatedNoteIds: string[],
+  ): Observable<OperationResult<UpdateRelatedNotesWS>> {
     const obj = {
       noteId,
       relatedNoteIds,

@@ -1,9 +1,8 @@
 ﻿using Common.CQRS;
 using MediatR;
 using Noots.Storage.Queries;
-using System;
 
-namespace Domain.Queries.Users
+namespace Noots.Users.Queries
 {
     public class GetUserMemoryQuery : BaseQueryEntity, IRequest<GetUserMemoryResponse>
     {

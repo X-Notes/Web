@@ -11,7 +11,6 @@
   border-radius: 5px;
 
   .preview {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,26 +27,27 @@
 
   .card-body {
     display: flex;
-    flex: 1;
+    align-items: center;
     overflow: hidden;
+    flex: 1;
     border-radius: 0 5px 5px 0;
+    padding: 0.5rem;
 
     .card-info {
       display: flex;
-      justify-content: center;
       flex-direction: column;
-      flex: 1 1 auto;
+      flex: 1;
       overflow: hidden;
-      padding: 0.5rem;
 
-      div {
-        @include text-overflow;
-      }
-
-      .title {
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-bottom: 0.125rem;
+      .title-container {
+        display: flex;
+        width: 100%;
+        .title {
+          @include text-overflow;
+          font-size: 0.875rem;
+          font-weight: 500;
+          margin-bottom: 0.125rem;
+        }
       }
 
       .link {
@@ -55,64 +55,15 @@
         color: #8e8e8e;
       }
     }
-
-    .card-action {
-      display: flex;
-      align-items: center;
-      padding: 0.5rem;
-
-      button[type='button'] {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 0.8px solid transparent;
-        padding: 0;
-        outline: none;
-        overflow: hidden;
-        user-select: none;
-        cursor: pointer;
-        background-color: transparent;
-        height: 35px;
-        width: 35px;
-        border-radius: 50%;
-        margin-left: auto;
-        transition: 0.2s ease;
-      }
-    }
   }
 }
 
 .dark {
   background-color: $dark-color;
-
-  .card-body {
-    .card-action {
-      button[type='button'] {
-        color: white;
-
-        &:hover {
-          background-color: $dark-button;
-        }
-      }
-    }
-  }
 }
 
 .light {
   background-color: #fafafa;
   color: $text-color;
   border: 0.8px solid #bababa;
-
-  .card-body {
-    .card-action {
-      button[type='button'] {
-        color: $dark-button;
-
-        &:hover {
-          background-color: #cacaca;
-        }
-      }
-    }
-  }
 }
