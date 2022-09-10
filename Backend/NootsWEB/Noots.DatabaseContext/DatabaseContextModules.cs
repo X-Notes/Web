@@ -35,7 +35,7 @@ namespace Noots.DatabaseContext
             // FILES
             services.AddScoped<FileRepository>();
             services.AddScoped<AppFileUploadInfoRepository>();
-
+            services.AddSingleton<StorageRepository>();
 
             // APP
             services.AddScoped<AppRepository>();

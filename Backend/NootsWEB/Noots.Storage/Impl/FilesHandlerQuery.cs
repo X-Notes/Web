@@ -1,6 +1,7 @@
 ﻿using Common.DTO.Files;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
+using Noots.Storage.Interfaces;
 using Noots.Storage.Queries;
 
 namespace Noots.Storage.Impl

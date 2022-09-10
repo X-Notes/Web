@@ -1,6 +1,6 @@
 ﻿using Noots.Storage.Entities;
 
-namespace Noots.Storage
+namespace Noots.Storage.Interfaces
 {
     public interface IFilesStorage : IDisposable
     {
