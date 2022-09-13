@@ -20,14 +20,14 @@ namespace Noots.Storage.Impl
 
         public async Task<FilesBytes> Handle(GetFileByPathQuery request, CancellationToken cancellationToken)
         {
-            var resp = await filesStorage.GetFile(request.UserId, request.Path);
+            var resp = await filesStorage.GetFile(request.StorageId, request.UserId.ToString(), request.Path);
             return new FilesBytes(resp.File, resp.ContentType, request.FileName);
         }
 
         public async Task<GetUserMemoryResponse> Handle(GetUserStorageMemoryQuery request, CancellationToken cancellationToken)
         {
-            var userId = (await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId)).Id.ToString();
-            var size = await filesStorage.GetUsedDiskSpace(userId);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
+            var size = await filesStorage.GetUsedDiskSpace(user.StorageId, user.Id.ToString());
             return new GetUserMemoryResponse { TotalSize = size };
         }
     }

@@ -94,10 +94,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       return;
     }
 
-    const documents = results
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const documents = this.mapFiles(results);
 
     this.afterUploadFilesToCollection(results);
     if (!documents || documents.length === 0) {
@@ -111,7 +108,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
           ...x,
           fileId: x.id,
           uploadAt: x.createdAt,
-          documentPath: x.pathNonPhotoContent,
+          documentPath: x.fromDefaultToSmall,
         }),
     );
 

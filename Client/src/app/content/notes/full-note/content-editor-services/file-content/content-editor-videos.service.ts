@@ -88,10 +88,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       return;
     }
 
-    const videos = results
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const videos = this.mapFiles(results);
 
     this.afterUploadFilesToCollection(results);
     if (!videos || videos.length === 0) {
@@ -105,7 +102,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
           ...x,
           fileId: x.id,
           uploadAt: x.createdAt,
-          videoPath: x.pathNonPhotoContent,
+          videoPath: x.fromDefaultToSmall,
         }),
     );
 

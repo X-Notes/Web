@@ -71,7 +71,7 @@ namespace Noots.Search.Impl
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.UserProfilePhoto.AppFile.StorageId, user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
 

@@ -49,7 +49,7 @@ namespace Noots.Users.Impl
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                PhotoPath = userBackgroundMapper.GetUserProfilePhotoPath(user),
                 CurrentBackground = user.CurrentBackground != null ? userBackgroundMapper.MapToBackgroundDTO(user.CurrentBackground) : null,
                 LanguageId = user.LanguageId,
                 ThemeId = user.ThemeId,
@@ -66,7 +66,7 @@ namespace Noots.Users.Impl
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                PhotoPath = userBackgroundMapper.GetUserProfilePhotoPath(user),
             };
         }
 

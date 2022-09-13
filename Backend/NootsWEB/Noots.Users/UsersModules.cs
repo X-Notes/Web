@@ -17,12 +17,12 @@ namespace Noots.Users
             services.AddScoped<IRequestHandler<GetUserShortDTOQuery, OperationResult<ShortUser>>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewUserCommand, OperationResult<Guid>>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<NewUserCommand, OperationResult<Guid>>, UserHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerCommand>();
         }
     }
 }

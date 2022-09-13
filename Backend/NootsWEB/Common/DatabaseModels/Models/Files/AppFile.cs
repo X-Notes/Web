@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
+using Common.DatabaseModels.Models.Files.Models;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
+using Common.DTO.Files;
 using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Files
@@ -12,14 +15,16 @@ namespace Common.DatabaseModels.Models.Files
     [Table(nameof(AppFile), Schema = SchemeConfig.File)]
     public class AppFile : BaseEntity<Guid>, IDateCreator
     {
-        public string PathPhotoSmall { set; get; }
-        public string PathPhotoMedium { set; get; }
-        public string PathPhotoBig { set; get; }
+        public string PathPrefix { set; get; }
+
+        public string PathFileId { set; get; }
+
+        [Column(TypeName = "jsonb")]
+        public PathFileSuffixes PathSuffixes { set; get; }
 
         public string Name { set; get; }
         public long Size { set; get; }
 
-        public string PathNonPhotoContent { set; get; }
         public string ContentType { set; get; }
 
         public FileTypeEnum FileTypeId { set; get; }
@@ -30,6 +35,10 @@ namespace Common.DatabaseModels.Models.Files
 
         public Guid UserId { set; get; }
         public User User { get; set; }
+
+        public StoragesEnum StorageId { set; get; }
+        public Storage Storage { get; set; }
+
 
         public AppFileUploadInfo AppFileUploadInfo { set; get; }
 
@@ -48,10 +57,8 @@ namespace Common.DatabaseModels.Models.Files
 
         }
 
-        // FOR NO PHOTOS TYPES
-        public AppFile(string pathNonPhotoContent, string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
+        public AppFile(string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
-            PathNonPhotoContent = pathNonPhotoContent;
             ContentType = type;
             Size = size;
             FileTypeId = fileTypeId;
@@ -62,90 +69,47 @@ namespace Common.DatabaseModels.Models.Files
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
-
-        // FOR PHOTOS
-        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, 
-            string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
+        public AppFile InitPathes(StoragesEnum storageId, string prefixFolder, string pathFileId, string _default, string small = null, string medium = null, string large = null)
         {
-            PathPhotoSmall = pathPhotoSmall;
-            PathPhotoMedium = pathPhotoMedium;
-            PathPhotoBig = pathPhotoBig;
-            ContentType = type;
-            Size = size;
-            FileTypeId = fileTypeId;
-            UserId = userId;
-            Name = name;
-            CreatedAt = DateTimeProvider.Time;
+            PathPrefix = prefixFolder;
+            PathFileId = pathFileId;
+            StorageId = storageId;
 
-            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
+            InitPathSuffixes(_default, small, medium, large);
+
+            return this;
         }
 
-        // FOR NO PHOTOS TYPES
-        public AppFile(string pathNoPhotoContent, AppFile appFile, Guid userId)
+        private AppFile InitPathSuffixes(string _default, string small, string medium, string large)
         {
-            PathNonPhotoContent = pathNoPhotoContent;
-            ContentType = appFile.ContentType;
-            Size = appFile.Size;
-            FileTypeId = appFile.FileTypeId;
-            UserId = userId;
-            Name = appFile.Name;
-            CreatedAt = DateTimeProvider.Time;
+            PathSuffixes ??= new PathFileSuffixes();
+            PathSuffixes.Default = _default;
+            PathSuffixes.Small = small;
+            PathSuffixes.Medium = medium;
+            PathSuffixes.Large = large;
 
-            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
+            return this;
         }
 
-        // FOR PHOTOS
-        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, AppFile appFile, Guid userId)
-        {
-            PathPhotoSmall = pathPhotoSmall;
-            PathPhotoMedium = pathPhotoMedium;
-            PathPhotoBig = pathPhotoBig;
-            ContentType = appFile.ContentType;
-            Size = appFile.Size;
-            FileTypeId = appFile.FileTypeId;
-            UserId = userId;
-            Name = appFile.Name;
-            CreatedAt = DateTimeProvider.Time;
 
-            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
+        public AppFile InitPathes(StoragesEnum storageId, string prefixFolder, string pathFileId, PathFileSuffixes suffixes)
+        {
+            PathPrefix = prefixFolder;
+            PathFileId = pathFileId;
+            StorageId = storageId;
+
+            PathSuffixes = suffixes;
+
+            return this;
         }
 
-        public string GetFromSmallPath
-        { 
-            get
-            {
-                return PathPhotoSmall ?? PathPhotoMedium ?? PathPhotoBig;
-            } 
-        }
-
-        public string GetFromBigPath
+        public List<FilePathesDTO> GetNotNullPathes()
         {
-            get
-            {
-                return PathPhotoBig ?? PathPhotoMedium ?? PathPhotoSmall;
-            }
-        }
+            if (PathSuffixes == null) return null;
 
-        public List<string> GetNotNullPathes()
-        {
-            var result = new List<string>();
-            if (!string.IsNullOrEmpty(PathPhotoSmall))
-            {
-                result.Add(PathPhotoSmall);
-            }
-            if (!string.IsNullOrEmpty(PathPhotoMedium))
-            {
-                result.Add(PathPhotoMedium);
-            }
-            if (!string.IsNullOrEmpty(PathPhotoBig))
-            {
-                result.Add(PathPhotoBig);
-            }
-            if (!string.IsNullOrEmpty(PathNonPhotoContent))
-            {
-                result.Add(PathNonPhotoContent);
-            }
-            return result;
+            string buildPath(string fileName) => PathPrefix + "/" + PathFileId + "/" + fileName;
+
+            return PathSuffixes.GetNotNullPathes().Select(x => new FilePathesDTO { FileName = x, FullPath = buildPath(x) }).ToList();
         }
 
         public List<Guid> GetAdditionalIds()
@@ -165,13 +129,63 @@ namespace Common.DatabaseModels.Models.Files
             return ids;
         }
 
-        public void SetAuthorPath(Func<Guid, string, string> setFieldAction, Guid authorId)
+        [NotMapped]
+        public string GetFromSmallPath
         {
-            PathNonPhotoContent = setFieldAction(authorId, PathNonPhotoContent);
-
-            PathPhotoSmall = setFieldAction(authorId, PathPhotoSmall);
-            PathPhotoMedium = setFieldAction(authorId, PathPhotoMedium);
-            PathPhotoBig = setFieldAction(authorId, PathPhotoBig);
+            get
+            {
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromSmallPath();
+            }
         }
+
+        [NotMapped]
+        public string GetFromBigPath
+        {
+            get
+            {
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromBigPath();
+            }
+        }
+
+        [NotMapped]
+        public string GetDefaultPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PathSuffixes.Default)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Default;
+            }
+        }
+
+        [NotMapped]
+        public string GetSmallPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PathSuffixes.Small)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Small;
+            }
+        }
+
+        [NotMapped]
+        public string GetMediumPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PathSuffixes.Medium)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Medium;
+            }
+        }
+
+        [NotMapped]
+        public string GetBigPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PathSuffixes.Large)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Large;
+            }
+        }
+
     }
 }

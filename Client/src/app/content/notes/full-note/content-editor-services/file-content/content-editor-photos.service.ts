@@ -91,10 +91,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
       return;
     }
 
-    const photos = results
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const photos = this.mapFiles(results);
 
     this.afterUploadFilesToCollection(results);
     if (!photos || photos.length === 0) {
@@ -109,9 +106,9 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           loaded: false,
           fileId: x.id,
           uploadAt: x.createdAt,
-          photoPathBig: x.pathPhotoBig,
-          photoPathMedium: x.pathPhotoMedium,
-          photoPathSmall: x.pathPhotoSmall,
+          photoPathBig: x.buildPath(x.pathSuffixes.large),
+          photoPathMedium: x.buildPath(x.pathSuffixes.medium),
+          photoPathSmall: x.buildPath(x.pathSuffixes.small),
         }),
     );
 

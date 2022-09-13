@@ -23,9 +23,10 @@ namespace Noots.Mapper.Mapping
                 UserId = user.Id,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+                PhotoPath = GetUserProfilePhotoPath(user)
             };
         }
+
 
         public OnlineUserOnNote MapToOnlineUserOnNote(UserIdentifierConnectionId user)
         {
@@ -35,7 +36,6 @@ namespace Noots.Mapper.Mapping
             };
         }
 
-
         public InvitedUsersToFoldersOrNote MapToInvitedUsersToFoldersOrNote(UserOnPrivateNotes user)
         {
             return new InvitedUsersToFoldersOrNote
@@ -44,7 +44,7 @@ namespace Noots.Mapper.Mapping
                 Name = user.User.Name,
                 Email = user.User.Email,
                 PhotoId = user.User.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.User.UserProfilePhoto != null ? BuildFilePath(user.UserId, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
+                PhotoPath = GetUserProfilePhotoPath(user.User),
                 AccessTypeId = user.AccessTypeId
             };
         }
@@ -57,7 +57,7 @@ namespace Noots.Mapper.Mapping
                 Name = user.User.Name,
                 Email = user.User.Email,
                 PhotoId = user.User.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.User.UserProfilePhoto != null ? BuildFilePath(user.UserId, user.User.UserProfilePhoto.AppFile.GetFromSmallPath) : user.User.DefaultPhotoUrl,
+                PhotoPath = GetUserProfilePhotoPath(user.User),
                 AccessTypeId = user.AccessTypeId
             };
         }
@@ -68,7 +68,7 @@ namespace Noots.Mapper.Mapping
             {
                 Id = background.Id,
                 PhotoId = background.FileId,
-                PhotoPath = BuildFilePath(background.UserId, background.File.GetFromBigPath)
+                PhotoPath = BuildFilePath(background.File.StorageId, background.UserId, background.File.GetFromBigPath)
             };
         }
 

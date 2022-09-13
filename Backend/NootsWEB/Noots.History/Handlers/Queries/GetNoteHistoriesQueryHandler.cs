@@ -91,14 +91,13 @@ public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuer
     
     private UserNoteHistory MapUserToUserNoteHistory(User user)
     {
-        var path = this.noteCustomMapper.BuildFilePath(user.Id, user.UserProfilePhoto?.AppFile.GetFromSmallPath);
         return new UserNoteHistory()
         {
             Id = user.Id,
             Email = user.Email,
             Name = user.Name,
             PhotoId = user.UserProfilePhoto?.AppFileId,
-            PhotoPath = path ?? user.DefaultPhotoUrl
+            PhotoPath = noteCustomMapper.GetUserProfilePhotoPath(user)
         };
     }
 }

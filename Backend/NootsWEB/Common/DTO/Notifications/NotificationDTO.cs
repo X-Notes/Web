@@ -20,7 +20,7 @@ namespace Common.DTO.Notifications
 
         public DateTimeOffset Date { set; get; }
 
-        public NotificationDTO(Notification notification, Func<Guid, string, string> mapPhotoFunc)
+        public NotificationDTO(Notification notification, string userPhotoPath)
         {
             this.Id = notification.Id;
 
@@ -32,7 +32,7 @@ namespace Common.DTO.Notifications
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;
-            this.UserFromPhotoPath = mapPhotoFunc(notification.UserFrom.Id, notification.UserFrom.UserProfilePhoto?.AppFile.GetFromSmallPath) ?? notification.UserFrom.DefaultPhotoUrl;
+            this.UserFromPhotoPath = userPhotoPath;
 
             this.Date = Date;
         }

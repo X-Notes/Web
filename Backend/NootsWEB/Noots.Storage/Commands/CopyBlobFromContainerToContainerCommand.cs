@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Files.Models;
 using MediatR;
 using Noots.Storage.Entities;
 
@@ -6,8 +7,10 @@ namespace Noots.Storage.Commands
 {
     public class CopyBlobFromContainerToContainerCommand : IRequest<AppFile>
     {
+        public StoragesEnum StorageFromId { set; get; }
         public Guid UserFromId { set; get; }
 
+        public StoragesEnum StorageToId { set; get; }
         public Guid UserToId { set; get; }
 
         public AppFile AppFile { set; get; }
@@ -15,13 +18,19 @@ namespace Noots.Storage.Commands
         public ContentTypesFile ContentTypesFile { set; get; }
 
         public CopyBlobFromContainerToContainerCommand(
+            StoragesEnum storageFromId,
             Guid userFromId,
+            StoragesEnum storageToId,
             Guid userToId,
             AppFile appFile,
             ContentTypesFile contentTypesFile)
         {
+            StorageFromId = storageFromId;
             UserFromId = userFromId;
+
             UserToId = userToId;
+            StorageToId = storageToId;
+
             ContentTypesFile = contentTypesFile;
             AppFile = appFile;
         }

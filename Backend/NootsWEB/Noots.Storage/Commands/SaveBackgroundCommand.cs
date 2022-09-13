@@ -6,13 +6,13 @@ namespace Noots.Storage.Commands
 {
     public class SaveBackgroundCommand : IRequest<AppFile>
     {
-        public FilesBytes FileBytes { set; get; }
+        public FilesBytes File { set; get; }
 
         public Guid UserId { set; get; }
 
         public SaveBackgroundCommand(Guid userId, FilesBytes fileBytes)
         {
-            FileBytes = fileBytes;
+            File = fileBytes;
             UserId = userId;
         }
     }

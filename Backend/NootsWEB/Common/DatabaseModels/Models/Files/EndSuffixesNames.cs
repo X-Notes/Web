@@ -10,5 +10,6 @@ namespace Common.DatabaseModels.Models.Files
         public const string large = "l";
 
         public const string _default = "d";
+
     }
 }
