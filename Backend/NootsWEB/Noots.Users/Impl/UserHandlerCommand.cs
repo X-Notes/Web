@@ -8,12 +8,13 @@ using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
+using Noots.Storage.Impl;
 using Noots.Users.Commands;
 using Noots.Users.Entities;
 
 namespace Noots.Users.Impl
 {
-    public class UserHandlerСommand :
+    public class UserHandlerCommand :
         IRequestHandler<NewUserCommand, OperationResult<Guid>>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>,
@@ -31,18 +32,22 @@ namespace Noots.Users.Impl
 
         private readonly UserBackgroundMapper userBackgroundMapper;
 
-        public UserHandlerСommand(
+        private readonly StorageIdProvider storageIdProvider;
+
+        public UserHandlerCommand(
             UserRepository userRepository,
             UserProfilePhotoRepository userProfilePhotoRepository,
             IMediator _mediator,
             PersonalizationSettingRepository personalizationSettingRepository,
-            UserBackgroundMapper userBackgroundMapper)
+            UserBackgroundMapper userBackgroundMapper,
+            StorageIdProvider storageIdProvider)
         {
             this.userRepository = userRepository;
             this.userProfilePhotoRepository = userProfilePhotoRepository;
             this._mediator = _mediator;
             this.personalizationSettingRepository = personalizationSettingRepository;
             this.userBackgroundMapper = userBackgroundMapper;
+            this.storageIdProvider = storageIdProvider;
         }
 
         public async Task<OperationResult<Guid>> Handle(NewUserCommand request, CancellationToken cancellationToken)
@@ -61,7 +66,8 @@ namespace Noots.Users.Impl
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,
                 BillingPlanId = BillingPlanTypeENUM.Standart,
-                DefaultPhotoUrl = request.PhotoURL
+                DefaultPhotoUrl = request.PhotoURL,
+                StorageId = storageIdProvider.GetStorageId(),
             };
 
             await userRepository.AddAsync(user);
@@ -105,7 +111,7 @@ namespace Noots.Users.Impl
             var success = await userRepository.UpdatePhoto(user, appFile);
             if (success)
             {
-                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = userBackgroundMapper.BuildFilePath(request.UserId, appFile.GetFromSmallPath) };
+                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = userBackgroundMapper.BuildFilePath(user.StorageId, request.UserId, appFile.GetFromSmallPath) };
                 return new OperationResult<AnswerChangeUserPhoto>(true, result);
             }
             else

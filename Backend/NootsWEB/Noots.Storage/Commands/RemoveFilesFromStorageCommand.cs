@@ -1,16 +1,17 @@
-﻿using MediatR;
+﻿using Common.DatabaseModels.Models.Files;
+using MediatR;
 
 namespace Noots.Storage.Commands
 {
     public class RemoveFilesFromStorageCommand : IRequest<Unit>
     {
-        public List<string> Pathes { set; get; }
+        public List<AppFile> Files { set; get; }
 
         public string UserId { set; get; }
 
-        public RemoveFilesFromStorageCommand(List<string> pathes, string userId)
+        public RemoveFilesFromStorageCommand(List<AppFile> files, string userId)
         {
-            Pathes = pathes;
+            Files = files;
             UserId = userId;
         }
     }

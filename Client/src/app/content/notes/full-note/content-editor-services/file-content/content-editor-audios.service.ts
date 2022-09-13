@@ -94,10 +94,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       return;
     }
 
-    const audios = results
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const audios = this.mapFiles(results);
 
     this.afterUploadFilesToCollection(results);
     if (!audios || audios.length === 0) {
@@ -111,7 +108,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
           ...x,
           fileId: x.id,
           uploadAt: x.createdAt,
-          audioPath: x.pathNonPhotoContent,
+          audioPath: x.fromDefaultToSmall,
         }),
     );
 

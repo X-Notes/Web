@@ -1,4 +1,4 @@
-﻿namespace Noots.Storage
+﻿namespace Noots.Storage.Entities
 {
     public enum ContentTypesFile
     {

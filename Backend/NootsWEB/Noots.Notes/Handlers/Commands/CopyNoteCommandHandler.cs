@@ -6,6 +6,7 @@ using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using MediatR;
 using Noots.Billing.Impl;
@@ -13,11 +14,12 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Encryption.Impl;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
-using Noots.Storage;
 using Noots.Storage.Commands;
+using Noots.Storage.Entities;
 
 namespace Noots.Notes.Handlers.Commands;
 
@@ -31,6 +33,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
     private readonly BaseNoteContentRepository baseNoteContentRepository;
     private readonly CollectionLinkedService collectionLinkedService;
     private readonly BillingPermissionService billingPermissionService;
+    private readonly UserRepository userRepository;
 
     public CopyNoteCommandHandler(
         IMediator _mediator, 
@@ -40,7 +43,8 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         UserNoteEncryptService userNoteEncryptStorage,
         BaseNoteContentRepository baseNoteContentRepository,
         CollectionLinkedService collectionLinkedService,
-        BillingPermissionService billingPermissionService)
+        BillingPermissionService billingPermissionService,
+        UserRepository userRepository)
     {
         mediator = _mediator;
         this.foldersNotesRepository = foldersNotesRepository;
@@ -50,18 +54,21 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         this.baseNoteContentRepository = baseNoteContentRepository;
         this.collectionLinkedService = collectionLinkedService;
         this.billingPermissionService = billingPermissionService;
+        this.userRepository = userRepository;
     }
     
     public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
     {
         var resultIds = new List<Guid>();
+
         List<Guid> idsForCopy = new();
+        User caller = null;
 
         if (request.FolderId.HasValue)
         {
             var commandFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
             var permissionFolder = await mediator.Send(commandFolder);
-
+            caller = permissionFolder.Caller;
             if (permissionFolder.CanRead)
             {
                 var folderNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId.Value && request.Ids.Contains(x.NoteId));
@@ -77,9 +84,14 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await mediator.Send(command);
             idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+
+            if (permissions.Any())
+            {
+                caller = permissions.First().perm.Caller;
+            }
         }
 
-        if (!idsForCopy.Any())
+        if (!idsForCopy.Any() || caller == null)
         {
             return new OperationResult<List<Guid>>().SetNotFound();
         }
@@ -128,7 +140,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
             }
 
             // COPY CONTENTS
-            var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, noteForCopy.UserId, request.UserId);
+            var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, noteForCopy.UserId, caller);
             await baseNoteContentRepository.AddRangeAsync(contents);
 
             // LINK FILES
@@ -141,9 +153,9 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         return new OperationResult<List<Guid>>(true, resultIds);
     }
     
-    public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, Guid authorId, Guid callerId)
+    public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, Guid authorId, User caller)
     {
-        var isOwner = authorId == callerId;
+        var isOwner = authorId == caller.Id;
         // VIDEO OTHER
         var contents = new List<BaseNoteContent>();
 
@@ -168,10 +180,14 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                         }
                         else
                         {
-                            var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId, callerId, file, MapToContentTypesFile(collection.FileTypeId)));
-                            var tasks = copyCommands.Select(x => mediator.Send(x)).ToList();
-                            var copies = (await Task.WhenAll(tasks)).ToList();
-                            contents.Add(new CollectionNote(collection, copies, noteId));
+                            var userFrom = await userRepository.FirstOrDefaultAsync(x => x.Id == authorId);
+                            var copyCommands = collection.Files?.Select(file => new CopyBlobFromContainerToContainerCommand(userFrom.StorageId, authorId, caller.StorageId, caller.Id, file, MapToContentTypesFile(collection.FileTypeId)));
+                            if(copyCommands != null)
+                            {
+                                var tasks = copyCommands.Select(x => mediator.Send(x)).ToList();
+                                var copies = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new CollectionNote(collection, copies, noteId));
+                            }
                         }
                         continue;
                     }

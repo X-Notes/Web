@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Files.Models;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
@@ -53,9 +54,13 @@ namespace Noots.DatabaseContext
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
         // FILES
+
+        public DbSet<Storage> Storages { set; get; }
+
         public DbSet<AppFile> Files { set; get; }
 
         public DbSet<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
+
         public DbSet<CollectionNote> CollectionNotes { set; get; }
 
 
@@ -407,6 +412,10 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }
+             );
+
+            modelBuilder.Entity<Storage>().HasData(
+                new Storage { Id = StoragesEnum.DEV, Name = "DEV" }
              );
         }
     }

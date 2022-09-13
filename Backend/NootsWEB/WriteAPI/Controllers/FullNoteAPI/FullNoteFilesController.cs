@@ -1,4 +1,5 @@
 ﻿using BI.Services.Notes;
+using Common.Azure;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
@@ -25,11 +26,16 @@ public class FullNoteFilesController : ControllerBase
 
     private readonly IMediator _mediator;
     private readonly CollectionLinkedService collectionLinkedService;
+    private readonly AzureConfig azureConfig;
 
-    public FullNoteFilesController(IMediator _mediator, CollectionLinkedService collectionLinkedService)
+    public FullNoteFilesController(
+        IMediator _mediator, 
+        CollectionLinkedService collectionLinkedService,
+        AzureConfig azureConfig)
     {
         this._mediator = _mediator;
         this.collectionLinkedService = collectionLinkedService;
+        this.azureConfig = azureConfig;
     }
 
     [HttpPost("upload/{noteId}/{fileType}")]
@@ -84,8 +90,7 @@ public class FullNoteFilesController : ControllerBase
         if(resp.Success)
         {
             var respResult = resp.Data
-                .Select(x => new FileDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.PathNonPhotoContent,
-                    x.Name, x.UserId, x.MetaData, x.CreatedAt)).ToList();
+                .Select(x => new FileDTO(x.Id, azureConfig.FirstOrDefaultCache(x.StorageId).Url, x.PathPrefix, x.PathFileId, x.PathSuffixes, x.Name, x.UserId, x.MetaData, x.CreatedAt)).ToList();
             return new OperationResult<List<FileDTO>>(true, respResult);
         }
 

@@ -5,40 +5,57 @@ using Azure;
 using Azure.Storage;
 using Microsoft.Extensions.Logging;
 using Noots.Storage.Entities;
+using Noots.Storage.Interfaces;
+using Common.DatabaseModels.Models.Files.Models;
+using Common.Azure;
 
-namespace Noots.Storage
+namespace Noots.Storage.Impl.AzureStorage
 {
     public class AzureFileStorage : IFilesStorage
     {
-        private readonly BlobServiceClient blobServiceClient;
-
         private readonly ILogger<AzureFileStorage> logger;
 
-        private Dictionary<ContentTypesFile, string> folders;
+        private readonly AzureConfig azureConfig;
 
-        public AzureFileStorage(BlobServiceClient blobServiceClient, ILogger<AzureFileStorage> logger)
+        public AzureFileStorage(
+            ILogger<AzureFileStorage> logger,
+            AzureConfig azureConfig)
         {
-            this.blobServiceClient = blobServiceClient;
             this.logger = logger;
-            folders = new Dictionary<ContentTypesFile, string>()
-            {
-                {  ContentTypesFile.Photos, "Images" },
-                {  ContentTypesFile.Videos, "Videos" },
-                {  ContentTypesFile.Documents,  "Files"  },
-                {  ContentTypesFile.Audios, "Audios" },
-            };
+            this.azureConfig = azureConfig;
         }
-
 
         public void Dispose()
         {
 
         }
 
-        public async Task<GetFileResponse> GetFile(string userId, string path)
+        private BlobServiceClient GetBlobServiceClient(StoragesEnum storageId)
         {
-            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
-            BlobClient blobClient = blobContainer.GetBlobClient(path);
+            var storage = azureConfig.FirstOrDefaultCache(storageId);
+            if(storage == null)
+            {
+                throw new NullReferenceException("Storage null");
+            }
+            return new BlobServiceClient(storage.Connection);
+        }
+
+        private BlobContainerClient GetBlobContainerClient(StoragesEnum storageId, string userId)
+        {
+            var service = GetBlobServiceClient(storageId);
+            return service.GetBlobContainerClient(userId);
+        }
+
+        private BlobClient GetBlobClient(StoragesEnum storageId, string userId, string path)
+        {
+            var blobContainerClient = GetBlobContainerClient(storageId, userId);
+            return blobContainerClient.GetBlobClient(path);
+        }
+
+
+        public async Task<GetFileResponse> GetFile(StoragesEnum storageId, string userId, string path)
+        {
+            var blobClient = GetBlobClient(storageId, userId, path);
             if (await blobClient.ExistsAsync())
             {
                 using var ms = new MemoryStream();
@@ -55,20 +72,36 @@ namespace Noots.Storage
             }
         }
 
-        public async Task RemoveFile(string userId, string path)
+        public async Task RemoveFile(StoragesEnum storageId, string userId, string path)
         {
-            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            var blobContainer = GetBlobContainerClient(storageId, userId);
+            var containerExist = await blobContainer.ExistsAsync();
+
+            if (!containerExist)
+            {
+                logger.LogCritical($"RemoveFile, CONTAINER does not exist, storageId: {storageId}, userId: {userId}, path: {path}");
+                return;
+            }
+
+            var blob = blobContainer.GetBlobClient(path);
+            var blobExist = blob.Exists();
+
+            if (!blobExist)
+            {
+                logger.LogCritical($"RemoveFile, BLOB does not exist, storageId: {storageId}, userId: {userId}, path: {path}");
+                return;
+            }
+
             await blobContainer.DeleteBlobAsync(path);
         }
 
-        public async Task RemoveFiles(string userId, params string[] pathes)
+        public async Task RemoveFiles(StoragesEnum storageId, string userId, params string[] pathes)
         {
             foreach (var path in pathes)
             {
                 if (!string.IsNullOrEmpty(path))
                 {
-                    var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
-                    await blobContainer.DeleteBlobAsync(path);
+                    await RemoveFile(storageId, userId, path);
                 }
             }
         }
@@ -82,10 +115,10 @@ namespace Noots.Storage
         }
 
 
-        public async Task<UploadFileResult> SaveFile(string userId, byte[] file, string contentType, ContentTypesFile contentFolder, string fileTypeEnd)
+        public async Task<UploadFileResult> SaveFile(StoragesEnum storageId, string userId, byte[] file, string contentType, string prefixFolder, string contentId, string fileName)
         {
-            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
-            var path = PathFactory(contentFolder, fileTypeEnd);
+            var blobContainer = GetBlobContainerClient(storageId, userId);
+            var path = PathFactory(prefixFolder, contentId, fileName);
             var blobClient = blobContainer.GetBlobClient(path);
 
             using var stream = new MemoryStream(file);
@@ -105,35 +138,39 @@ namespace Noots.Storage
 
             return new UploadFileResult
             {
+                FileName = fileName,
                 FilePath = blobClient.Name,
                 StorageFileSize = blobClient.GetProperties().Value.ContentLength,
                 UploadedFileSize = file.Length
             };
         }
 
-        public async Task<string> CopyBlobAsync(string userFromId, string path, string userToId, ContentTypesFile contentFolder, string fileTypeEnd)
+        public async Task<string> CopyBlobAsync(
+            StoragesEnum storageFromId, string userFromId, string pathFrom, 
+            StoragesEnum storageToId, string userToId,
+            string prefixFolder, string contentId, string fileName)
         {
+            var blobContainerFrom = GetBlobContainerClient(storageFromId, userFromId);
+            var blobContainerTo = GetBlobContainerClient(storageToId, userToId);
+
+            BlobClient sourceBlob = blobContainerFrom.GetBlobClient(pathFrom);
+
+            // Lease the source blob for the copy operation 
+            // to prevent another client from modifying it.
+            BlobLeaseClient lease = sourceBlob.GetBlobLeaseClient();
+
             try
             {
-                var blobContainerFrom = blobServiceClient.GetBlobContainerClient(userFromId);
-                var blobContainerTo = blobServiceClient.GetBlobContainerClient(userToId);
-
-                BlobClient sourceBlob = blobContainerFrom.GetBlobClient(path);
-
                 if (await sourceBlob.ExistsAsync())
                 {
-                    // Lease the source blob for the copy operation 
-                    // to prevent another client from modifying it.
-                    BlobLeaseClient lease = sourceBlob.GetBlobLeaseClient();
-
                     // Specifying -1 for the lease interval creates an infinite lease.
-                    await lease.AcquireAsync(TimeSpan.FromSeconds(-1));
+                    await lease.AcquireAsync(TimeSpan.FromMinutes(10));
 
                     // Get the source blob's properties and display the lease state.
                     BlobProperties sourceProperties = await sourceBlob.GetPropertiesAsync();
 
                     // Get a BlobClient representing the destination blob with a unique name.
-                    BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(contentFolder, fileTypeEnd));
+                    BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(prefixFolder, contentId, fileName));
 
                     // Start the copy operation.
                     await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
@@ -160,14 +197,15 @@ namespace Noots.Storage
             }
             catch (RequestFailedException ex)
             {
+                await lease.BreakAsync();
                 logger.LogDebug(ex.ToString());
                 throw;
             }
         }
 
-        public async Task<long> GetUsedDiskSpace(string userId)
+        public async Task<long> GetUsedDiskSpace(StoragesEnum storageId, string userId)
         {
-            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            var blobContainer = GetBlobContainerClient(storageId, userId);
             var files = blobContainer.GetBlobsByHierarchyAsync();
             long length = 0;
             await foreach (var file in files)
@@ -178,17 +216,18 @@ namespace Noots.Storage
         }
 
 
-        public string PathFactory(ContentTypesFile type, string fileTypeEnd)
+        public string PathFactory(string prefixFolder, string contentId, string fileName)
         {
-            if (string.IsNullOrEmpty(fileTypeEnd))
+            if (string.IsNullOrEmpty(prefixFolder) || string.IsNullOrEmpty(contentId) || string.IsNullOrEmpty(fileName))
             {
                 throw new Exception("Invalid file type end");
             }
-            return folders.GetValueOrDefault(type) + "/" + Guid.NewGuid() + "-" + Guid.NewGuid() + "-" + Guid.NewGuid() + fileTypeEnd;
+            return prefixFolder + "/" + contentId + "/" + fileName;
         }
 
-        public async Task CreateUserContainer(Guid userId)
+        public async Task CreateUserContainer(StoragesEnum storageId, Guid userId)
         {
+            var blobServiceClient = GetBlobServiceClient(storageId);
             var container = await blobServiceClient.CreateBlobContainerAsync(userId.ToString(), PublicAccessType.Blob);
         }
     }

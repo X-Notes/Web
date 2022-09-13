@@ -34,7 +34,7 @@ public class NotificationController : ControllerBase // TODO ADD TO MEDIATR
     public async Task<IEnumerable<NotificationDTO>> GetNotifications()
     {
         var notifs = await notificationRepository.GetByUserOrdered(this.GetUserId());
-        return notifs.Select(t => new NotificationDTO(t, noteFolderLabelMapper.BuildFilePath));
+        return notifs.Select(t => new NotificationDTO(t, noteFolderLabelMapper.GetUserProfilePhotoPath(t.UserFrom)));
     }
 
     [HttpGet("read/all")]

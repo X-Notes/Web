@@ -197,7 +197,7 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
                 .Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 
@@ -210,9 +210,9 @@ namespace Noots.DatabaseContext.Repositories.Notes
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as CollectionNote).CollectionNoteAppFiles)
+                .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
                 .Include(x => x.Contents)
-                .ThenInclude(z => (z as CollectionNote).Files)
+                .ThenInclude(q => (q as CollectionNote).Files)
                 .Where(x => noteIds.Contains(x.Id)).ToListAsync();
         }
 

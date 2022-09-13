@@ -74,6 +74,14 @@ export class ContentEditorFilesBase {
     this.contentsService.deleteById(contentId, false);
   }
 
+  protected mapFiles(res: OperationResult<FileNote[]>[]): FileNote[] {
+    return res
+      .filter((x) => x?.success)
+      .map((x) => x?.data)
+      .flat()
+      .map((x) => new FileNote(x));
+  }
+
   protected async uploadFilesParallel(
     uploadsRequests: Observable<FileProcessTracker<OperationResult<FileNote[]>>>[],
   ) {
