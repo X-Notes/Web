@@ -112,8 +112,8 @@
     "isViewPhotosOnNote": "Show photos",
     "isViewTextOnNote": "Show text",
     "isViewVideoOnNote": "Show videos",
-    "contentInNoteCount": "Count visible content on note",
-    "notesInFolderCount": "Count visible notes on folder",
+    "contentInNoteCount": "The amount of visible content of the note",
+    "notesInFolderCount": "Number of visible notes on the folder",
     "countCurrent": "Current: "
   },
   "modal": {
@@ -326,7 +326,10 @@
     "movedToMany": " moved to ",
     "movedToSingle": " moved to ",
     "reloadPage": "Unstable connection please refresh the page",
-    "noItemInExport": "Collection is empty"
+    "noItemInExport": "Collection is empty",
+    "subscriptionCreationError": "The creation limit for this subscription has been exceeded",
+    "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription",
+    "copied": "Copied"
   },
   "titles": {
     "labels": "Labels",
@@ -353,5 +356,17 @@
     "editFolder": "You can edit folder",
     "readNote": "You can only read note",
     "readFolder": "You can only read folder"
+  },
+  "profile-billing":{
+    "notes": "notes",
+    "folders": "folders",
+    "labels": "labels",
+    "related": "related notes for note",
+    "memory": "memory",
+    "history-last-15": "Last 15 copies of note",
+    "history-all": "All note history",
+    "personalization": "Personalization settings",
+    "per-month": "per month",
+    "upgrade": "Upgrade"
   }
 }

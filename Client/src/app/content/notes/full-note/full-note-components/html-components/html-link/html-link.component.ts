@@ -51,7 +51,7 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
 
   copyToBuffer = () => {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    this.apiBrowserService.copyText(this.link);
+    this.apiBrowserService.copyTextAsync(this.link);
     switch (language) {
       case LanguagesENUM.en:
         this.snackService.buildNotification(`Link copied`, null);

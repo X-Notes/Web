@@ -1,8 +1,8 @@
 ﻿using Hangfire;
 using Hangfire.PostgreSql;
 using NootsWorkersWEB.BI;
+using NootsWorkersWEB.Hosted;
 using NootsWorkersWEB.Models.Config;
-using WriteAPI.Hosted;
 
 namespace NootsWorkersWEB.ConfigureAPP
 {

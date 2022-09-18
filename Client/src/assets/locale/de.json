@@ -112,8 +112,8 @@
     "isViewPhotosOnNote": "Fotos anzeigen",
     "isViewTextOnNote": "Text anzeigen",
     "isViewVideoOnNote": "Videos anzeigen",
-    "contentInNoteCount": "Sichtbare Inhalte auf Notiz zählen",
-    "notesInFolderCount": "Zählen Sie sichtbare Notizen im Ordner",
+    "contentInNoteCount": "Die Menge des sichtbaren Inhalts der Notiz",
+    "notesInFolderCount": "Anzahl der sichtbaren Notizen auf dem Ordner",
     "countCurrent": "Strömung: "
   },
   "modal": {
@@ -326,7 +326,10 @@
     "movedToMany": " verschoben nach ",
     "movedToSingle": " verschoben nach ",
     "reloadPage": "Instabile Verbindung, bitte aktualisieren Sie die Seite",
-    "noItemInExport": "Sammlung ist leer"
+    "noItemInExport": "Sammlung ist leer",
+    "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten",
+    "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement",
+    "copied": "Kopiert"
   },
   "titles": {
     "labels": "Etiketten",
@@ -353,5 +356,17 @@
     "editFolder": "Sie können Ordner bearbeiten",
     "readNote": "Sie können nur Notiz lesen",
     "readFolder": "Sie können nur Ordner lesen"
+  },
+  "profile-billing": {
+    "notes": "Notizen",
+    "folders": "Faltprospekte",
+    "labels": "etiketten",
+    "related": "Zugehörige Hinweise zur Anmerkung",
+    "memory": "Gedächtnis",
+    "history-last-15": "Letzte 15 Exemplare der Notiz",
+    "history-all": "Gesamte Notizhistorie",
+    "personalization": "Personalisierungseinstellungen",
+    "per-month": "pro Monat",
+    "upgrade": "Update"
   }
 }

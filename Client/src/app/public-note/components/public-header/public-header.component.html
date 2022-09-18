@@ -4,8 +4,13 @@
   </div>
   <app-full-note-active-users></app-full-note-active-users>
   <div class="actions">
-    <button type="button" routerLink="/about" #trigger>
-      <div class="text">{{ 'header.signIn' | translate }}</div>
+    <button type="button" (click)="login()" #trigger>
+      <div *ngIf="(authService.IsAuthActive | async) === false; else spinner" class="text">
+        {{ 'header.signIn' | translate }}
+      </div>
+      <ng-template #spinner>
+        <app-spinner [size]="14"></app-spinner>
+      </ng-template>
       <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
     </button>
   </div>

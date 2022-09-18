@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { ApiRelatedNotesService } from '../../api-related-notes.service';
 import { RelatedNote } from '../../models/related-note.model';
 
@@ -9,18 +12,30 @@ import { RelatedNote } from '../../models/related-note.model';
 export class RelatedNotesService {
   notes: RelatedNote[] = [];
 
-  constructor(private apiRelated: ApiRelatedNotesService) {}
+  constructor(
+    private apiRelated: ApiRelatedNotesService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
+  ) {}
 
   async updateRelatedNotes(noteId: string, ids: string[]): Promise<void> {
     const resp = await this.apiRelated.updateRelatedNotes(noteId, ids).toPromise();
     if (resp.success) {
       this.handleUpdates(resp.data, noteId);
     }
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
   }
 
   async loadRelatedNotes(noteId: string): Promise<void> {
     const notes = await this.apiRelated.getRelatedNotes(noteId).toPromise();
     this.orderNotes(notes);
+  }
+
+  clearRelatedNotes(): void {
+    this.notes = [];
   }
 
   orderNotes(notes: RelatedNote[]): void {

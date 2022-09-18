@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
@@ -89,14 +88,17 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     let collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     collection.isLoading = true;
 
-    const results = await forkJoin(uploadsRequests).toPromise();
-    const audios = results
-      .map((x) => x.eventBody)
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const results = await this.uploadFilesParallel(uploadsRequests);
+    if (!results) {
+      collection.isLoading = false;
+      return;
+    }
 
+    const audios = this.mapFiles(results);
+
+    this.afterUploadFilesToCollection(results);
     if (!audios || audios.length === 0) {
+      collection.isLoading = false;
       return;
     }
 
@@ -106,14 +108,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
           ...x,
           fileId: x.id,
           uploadAt: x.createdAt,
-          audioPath: x.pathNonPhotoContent,
+          audioPath: x.fromDefaultToSmall,
         }),
     );
 
     collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     collection.addItemsToCollection(audiosMapped);
-    this.afterUploadFilesToCollection(results);
-
     collection.isLoading = false;
   };
 

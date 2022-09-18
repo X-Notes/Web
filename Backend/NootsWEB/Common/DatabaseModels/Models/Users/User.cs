@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Files.Models;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
@@ -65,6 +66,9 @@ namespace Common.DatabaseModels.Models.Users
 
         public BillingPlanTypeENUM BillingPlanId { set; get; }
         public BillingPlan BillingPlan { set; get; }
+
+        public StoragesEnum StorageId { set; get; }
+        public Storage Storage { get; set; }
 
         public List<RelatedNoteUserState> RelatedNoteUserStates { set; get; }
     }

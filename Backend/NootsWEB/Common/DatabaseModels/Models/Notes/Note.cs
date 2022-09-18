@@ -40,8 +40,8 @@ namespace Common.DatabaseModels.Models.Notes
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }
-        public List<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotesFrom { set; get; }
-        public List<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotesTo { set; get; }
+        public List<RelatedNoteToInnerNote> ReletatedNoteToInnerNotesFrom { set; get; }
+        public List<RelatedNoteToInnerNote> ReletatedNoteToInnerNotesTo { set; get; }
         public List<BaseNoteContent> Contents { set; get; }
         public List<NoteSnapshot> History { set; get; }
 

@@ -82,13 +82,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   processX(x: number): number {
-    return x - this.selectionService.sidebarWidth - 13;
+    return x - this.selectionService.sidebarWidth - 5;
   }
 
   ngOnInit(): void {
-    if (!this.isReadonly) {
-      this.initMouseHandlers();
-    }
+    if (this.isReadonly) return;
+    this.initMouseHandlers();
   }
 
   ngOnDestroy(): void {

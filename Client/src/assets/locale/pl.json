@@ -112,8 +112,8 @@
     "isViewPhotosOnNote": "Pokaż zdjęcia",
     "isViewTextOnNote": "Pokaż tekst",
     "isViewVideoOnNote": "Pokaż filmy",
-    "contentInNoteCount": "Zliczanie widocznej zawartości w notatce",
-    "notesInFolderCount": "Policz widoczne notatki w folderze",
+    "contentInNoteCount": "Ilość widocznej zawartości notatki",
+    "notesInFolderCount": "Liczba widocznych notatek w folderze",
     "countCurrent": "Aktualny: "
   },
   "modal": {
@@ -326,7 +326,10 @@
     "movedToMany": " przeniesiony do ",
     "movedToSingle": " przeniesiony do ",
     "reloadPage": "Niestabilne połączenie proszę odświeżyć stronę",
-    "noItemInExport": "Kolekcja jest pusta"
+    "noItemInExport": "Kolekcja jest pusta",
+    "subscriptionCreationError": "Limit tworzenia dla tej subskrypcji został przekroczony",
+    "subscriptionMaxNotesError": "maksymalnie {{count}} notatek dla tej subskrypcji",
+    "copied": "Skopiowane"
   },
   "titles": {
     "labels": "Etykiety",
@@ -353,5 +356,17 @@
     "editFolder": "Możesz edytować folder",
     "readNote": "Możesz tylko czytać notatki",
     "readFolder": "Możesz tylko odczytać folder"
+  },
+  "profile-billing": {
+    "notes": "Notatki",
+    "folders": "Folderów",
+    "labels": "Etykiety",
+    "related": "powiązane uwagi do uwagi",
+    "memory": "pamięć",
+    "history-last-15": "Ostatnie 15 kopii notatki",
+    "history-all": "Cała historia notatek",
+    "personalization": "Ustawienia personalizacji",
+    "per-month": "Miesięcznie",
+    "upgrade": "Aktualizacja"
   }
 }

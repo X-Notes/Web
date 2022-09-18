@@ -1,17 +1,16 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
-using Domain.Queries.InnerFolder;
 using MediatR;
+using Noots.DatabaseContext.Repositories;
+using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.Notes;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
 using Noots.Search.Entities;
 using Noots.Search.Queries;
-using WriteContext.Repositories;
-using WriteContext.Repositories.Folders;
-using WriteContext.Repositories.Notes;
-using WriteContext.Repositories.Users;
 
 namespace Noots.Search.Impl
 {
@@ -29,7 +28,7 @@ namespace Noots.Search.Impl
 
         private readonly IMediator _mediator;
 
-        private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
+        private readonly RelatedNoteToInnerNoteRepository relatedRepository;
 
         private readonly NoteRepository noteRepository;
 
@@ -42,7 +41,7 @@ namespace Noots.Search.Impl
             SearchRepository searchRepository,
             UserBackgroundMapper userBackgroundMapper,
             IMediator mediator,
-            ReletatedNoteToInnerNoteRepository relatedRepository,
+            RelatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
             MapperLockedEntities mapperLockedEntities,
             FoldersNotesRepository foldersNotesRepository)
@@ -72,7 +71,7 @@ namespace Noots.Search.Impl
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
+                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.UserProfilePhoto.AppFile.StorageId, user.Id, user.UserProfilePhoto.AppFile.GetFromSmallPath) : user.DefaultPhotoUrl
             };
         }
 

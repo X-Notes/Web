@@ -8,10 +8,12 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseText } from '../../../models/editor-models/base-text';
+import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -19,11 +21,16 @@ import { BreakEnterModel } from '../../content-editor-services/models/break-ente
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
+import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
 import { EnterEvent } from '../../models/enter-event.model';
+import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { InputHtmlEvent } from './models/input-html-event';
-import { isValidURL } from '../../../../../shared/utils/is-valid-url.util';
 
+export interface PasteEvent {
+  element: BaseTextElementComponent;
+  htmlElementsToInsert: HTMLElement[];
+}
 @Component({
   template: '',
 })
@@ -36,7 +43,13 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
+  transformTo = new EventEmitter<TransformContent>();
+
+  @Output()
   concatThisWithPrev = new EventEmitter<string>();
+
+  @Output()
+  pasteEvent = new EventEmitter<PasteEvent>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -66,6 +79,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     public selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
+    private sanitizer: DomSanitizer,
   ) {
     super(cdr);
 
@@ -91,14 +105,62 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   initBaseHTML(): void {
-    this.viewHtml = DeltaConverter.convertContentToHTML(this.content.contents);
+    if (this.content.contents?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+      this.sanitizer.bypassSecurityTrustHtml(html);
+      const convertedHTML = this.sanitizer.bypassSecurityTrustHtml(html) ?? '';
+      this.viewHtml = convertedHTML as string;
+      this.syncHtmlWithLayout();
+    }
+  }
+
+  transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+    $event?.preventDefault();
+    this.transformTo.emit({
+      textType: contentType,
+      headingType: heading,
+      id: this.content.id,
+      setFocusToEnd: true,
+    });
+  }
+
+  updateHTML(contents: TextBlock[]): void {
+    // TODO TEST IT
+    this.transformOnUpdate(contents);
+    const html = DeltaConverter.convertTextBlocksToHTML(contents);
+    this.updateNativeHTML(html);
     this.syncHtmlWithLayout();
   }
 
-  updateHTML(contents: TextBlock[]) {
-    const html = DeltaConverter.convertContentToHTML(contents);
-    this.updateNativeHTML(html);
-    this.syncHtmlWithLayout();
+  transformOnUpdate(contents: TextBlock[]): void {
+    const content = contents?.find((x) => x.list !== null);
+    if (content?.list) {
+      if (content.list === DeltaListEnum.bullet) {
+        let type = NoteTextTypeENUM.Dotlist;
+        if (content.text?.startsWith('[ ]')) {
+          content.text = content.text.slice(3);
+          type = NoteTextTypeENUM.Checklist;
+        }
+        this.transformContent(null, type);
+      }
+      if (content.list === DeltaListEnum.ordered) {
+        this.transformContent(null, NoteTextTypeENUM.Numberlist);
+      }
+    }
+    const headingType = contents?.find((x) => x.header !== null)?.header;
+    if (headingType) {
+      this.transformContent(null, NoteTextTypeENUM.Heading, this.getHeadingNumber(headingType));
+    }
+  }
+
+  getHeadingNumber(heading: number): HeadingTypeENUM {
+    if (heading >= 3 && heading <= 4) {
+      return HeadingTypeENUM.H2;
+    }
+    if (heading >= 5 && heading <= 6) {
+      return HeadingTypeENUM.H3;
+    }
+    return HeadingTypeENUM.H1;
   }
 
   syncContentWithLayout() {
@@ -122,8 +184,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   getTextBlocks(): TextBlock[] {
     const html = this.getEditableNative<HTMLElement>().innerHTML;
-    const delta = DeltaConverter.convertHTMLToDelta(html);
-    return DeltaConverter.convertToTextBlocks(delta);
+    return DeltaConverter.convertHTMLToTextBlocks(html);
   }
 
   isContentEmpty() {
@@ -178,25 +239,58 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     return false;
   }
 
-  pasteCommandHandler(e: ClipboardEvent) {
-    const isValid = isValidURL(e.clipboardData.getData('text/plain'));
-    if (isValid) {
-      e.preventDefault();
-      const isLink = this.isPasteLink(e.clipboardData.items);
-      if (isLink) {
-        const json = e.clipboardData.getData('text/link-preview') as any;
-        const data = JSON.parse(json);
-        const title = data.title;
-        const url = data.url;
-        this.convertTextToLink(title, url);
-      } else {
-        const data = e.clipboardData.getData('text/plain');
-        this.convertTextToLink(data, data);
-      }
-    } else {
-      this.apiBrowser.pasteCommandHandler(e);
+  async pasteCommandHandler(e: ClipboardEvent) {
+    const isLink = this.isPasteLink(e.clipboardData.items);
+    e.preventDefault();
+    if (isLink) {
+      this.convertTextToLink(e);
+      this.textChanged.next();
+      return;
     }
-    this.textChanged.next();
+    const html = e.clipboardData.getData('text/html');
+    if (html) {
+      this.handleHtmlInserting(html);
+      this.textChanged.next();
+      return;
+    }
+    const text = e.clipboardData.getData('text/plain');
+    if (text) {
+      this.apiBrowser.pasteOnlyTextHandler(e);
+      this.textChanged.next();
+      return;
+    }
+  }
+
+  handleHtmlInserting(html: string): void {
+    const htmlElements = DeltaConverter.splitDeltaByDividers(html);
+    if (htmlElements.length === 0) return;
+
+    const htmlEl = htmlElements[0];
+    this.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
+    const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
+    const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
+    this.updateHTML(resTextBlocks);
+    htmlElements.shift(); // remove first element
+
+    if (htmlElements.length > 0) {
+      const pasteObject: PasteEvent = {
+        element: this,
+        htmlElementsToInsert: htmlElements,
+      };
+      this.pasteEvent.emit(pasteObject);
+    }
+  }
+
+  convertTextToLink(e: ClipboardEvent) {
+    const json = e.clipboardData.getData('text/link-preview') as any;
+    const data = JSON.parse(json);
+    const title = data.title;
+    const url = data.url;
+    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
+    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
+    const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
+    this.updateHTML(resTextBlocks);
   }
 
   checkForDeleteOrConcatWithPrev($event) {
@@ -294,14 +388,6 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
-  }
-
-  private convertTextToLink(title: string, url: string) {
-    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-    const html = DeltaConverter.convertContentToHTML(this.content.contents);
-    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-    const resTextBlocks = DeltaConverter.convertToTextBlocks(resultDelta);
-    this.updateHTML(resTextBlocks);
   }
 
   abstract enter(e);

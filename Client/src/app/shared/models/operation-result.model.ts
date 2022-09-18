@@ -8,6 +8,7 @@ export enum OperationResultAdditionalInfo {
   NotFound,
   AnotherError,
   ContentLocked,
+  BillingError,
 }
 
 export interface OperationResult<T> {

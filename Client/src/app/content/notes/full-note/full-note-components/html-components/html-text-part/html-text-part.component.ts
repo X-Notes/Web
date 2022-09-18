@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { TransformContent } from '../../../models/transform-content.model';
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
@@ -25,6 +24,7 @@ import { SelectionService } from '../../../content-editor-services/selection.ser
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
+import { DomSanitizer } from '@angular/platform-browser';
 import { isValidURL } from '../../../../../../shared/utils/is-valid-url.util';
 
 @Component({
@@ -39,9 +39,6 @@ export class HtmlTextPartComponent
 {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
-
-  @Output()
-  transformTo = new EventEmitter<TransformContent>();
 
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output()
@@ -73,8 +70,9 @@ export class HtmlTextPartComponent
     selectionService: SelectionService,
     clickableService: ClickableContentService,
     renderer: Renderer2,
+    sanitizer: DomSanitizer,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer);
+    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
   }
 
   get isLink() {
@@ -110,16 +108,6 @@ export class HtmlTextPartComponent
 
   ngOnInit(): void {
     this.initBaseHTML();
-  }
-
-  transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    $event.preventDefault();
-    this.transformTo.emit({
-      textType: contentType,
-      headingType: heading,
-      id: this.content.id,
-      setFocusToEnd: true,
-    });
   }
 
   transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {

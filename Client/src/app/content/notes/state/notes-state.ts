@@ -72,8 +72,10 @@ import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { NoteHistory } from '../full-note/models/history/note-history.model';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
-interface FullNoteState {
+export interface FullNoteState {
   note: FullNote;
   isLocked: boolean;
   isCanView: boolean;
@@ -124,6 +126,8 @@ export class NoteStore {
     private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
     private zone: NgZone,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -170,12 +174,12 @@ export class NoteStore {
   static getSelectedNotes(state: NoteState): SmallNote[] {
     return state.notes
       .flatMap((x) => x.notes)
-      .filter((note) => state.selectedIds.some((z) => z === note.id));
+      .filter((note) => state.selectedIds.some((q) => q === note.id));
   }
 
   @Selector()
   static getSelectedFolderNotes(state: NoteState): SmallNote[] {
-    return state.folderNotes.filter((note) => state.selectedIds.some((z) => z === note.id));
+    return state.folderNotes.filter((note) => state.selectedIds.some((q) => q === note.id));
   }
 
   @Selector()
@@ -303,6 +307,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static fullNoteState(state: NoteState): FullNoteState {
+    return state.fullNoteState;
+  }
+
+  @Selector()
   static isLocked(state: NoteState): boolean {
     return state.fullNoteState?.isLocked;
   }
@@ -409,11 +418,19 @@ export class NoteStore {
 
   @Action(CreateNote)
   async newNote({ getState, dispatch }: StateContext<NoteState>) {
-    const note = await this.api.new().toPromise();
-    const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
-    const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
-    await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-    this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+    const res = await this.api.new().toPromise();
+    if(res.success) {
+      const note = res.data;
+      const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
+      const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
+      await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
+      this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      return;
+    }
+    if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
   }
 
   @Action(AddNotes)
@@ -660,6 +677,10 @@ export class NoteStore {
       const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
       dispatch(new AddToDomNotes(obj));
     }
+    if(!resp.eventBody.success && resp.eventBody.status === OperationResultAdditionalInfo.BillingError){
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.snackbarService.openSnackBar(message, null, null, 5000);
+    }
     dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
   }
 
@@ -686,7 +707,7 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) => {
-        if (!x.labels.some((z) => z.id === label.id)) {
+        if (!x.labels.some((q) => q.id === label.id)) {
           x.labels = [...x.labels, label];
         }
       });
@@ -717,7 +738,7 @@ export class NoteStore {
       // UPDATE FULL NOTE
       let note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
-        note = { ...note, labels: note.labels.filter((z) => z.id !== labelId) };
+        note = { ...note, labels: note.labels.filter((q) => q.id !== labelId) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
 
@@ -997,7 +1018,7 @@ export class NoteStore {
 
   @Action(LoadNotes)
   async loadNotes({ getState, patchState }: StateContext<NoteState>, { type, pr }: LoadNotes) {
-    if (!getState().notes.find((z) => z.typeNotes === type)) {
+    if (!getState().notes.find((q) => q.typeNotes === type)) {
       const notesAPI = await this.api.getNotes(type, pr).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],

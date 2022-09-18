@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
@@ -86,14 +85,17 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     let collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
     collection.isLoading = true;
 
-    const photosResult = await forkJoin(uploadsRequests).toPromise();
-    const photos = photosResult
-      .map((x) => x.eventBody)
-      .filter((x) => x?.success)
-      .map((x) => x?.data)
-      .flat();
+    const results = await this.uploadFilesParallel(uploadsRequests);
+    if (!results) {
+      collection.isLoading = false;
+      return;
+    }
 
+    const photos = this.mapFiles(results);
+
+    this.afterUploadFilesToCollection(results);
     if (!photos || photos.length === 0) {
+      collection.isLoading = false;
       return;
     }
 
@@ -104,15 +106,14 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           loaded: false,
           fileId: x.id,
           uploadAt: x.createdAt,
-          photoPathBig: x.pathPhotoBig,
-          photoPathMedium: x.pathPhotoMedium,
-          photoPathSmall: x.pathPhotoSmall,
+          photoPathBig: x.buildPath(x.pathSuffixes.large),
+          photoPathMedium: x.buildPath(x.pathSuffixes.medium),
+          photoPathSmall: x.buildPath(x.pathSuffixes.small),
         }),
     );
 
     collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
     collection.addItemsToCollection(photosMapped);
-    this.afterUploadFilesToCollection(photosResult);
     collection.isLoading = false;
   };
 

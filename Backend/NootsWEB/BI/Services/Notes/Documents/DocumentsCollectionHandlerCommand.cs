@@ -13,11 +13,11 @@ using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes.Documents
 {
@@ -47,7 +47,6 @@ namespace BI.Services.Notes.Documents
         public DocumentsCollectionHandlerCommand(
                                         IMediator _mediator,
                                         BaseNoteContentRepository baseNoteContentRepository,
-                                        AppFileUploadInfoRepository appFileUploadInfoRepository,
                                         CollectionNoteRepository documentNoteRepository,
                                         CollectionAppFileRepository documentNoteAppFileRepository,
                                         HistoryCacheService historyCacheService,

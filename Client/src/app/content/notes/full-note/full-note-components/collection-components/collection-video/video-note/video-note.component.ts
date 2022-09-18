@@ -40,8 +40,6 @@ export class VideoNoteComponent
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
 
-  video: HTMLVideoElement;
-
   isPlaying = false;
 
   isFullscreen = false;
@@ -93,13 +91,16 @@ export class VideoNoteComponent
   }
 
   get volumeIcon(): string {
-    if (this.video?.volume === 0) {
+    if (this.videoElement?.nativeElement?.volume === 0) {
       return 'volume_off';
     }
-    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
+    if (
+      this.videoElement?.nativeElement?.volume < 0.5 &&
+      this.videoElement?.nativeElement?.volume !== 0
+    ) {
       return 'volume_down';
     }
-    if (this.video?.volume >= 0.5) {
+    if (this.videoElement?.nativeElement?.volume >= 0.5) {
       return 'volume_up';
     }
     return null;
@@ -129,11 +130,7 @@ export class VideoNoteComponent
     this.translate = width;
   };
 
-  ngAfterViewInit(): void {
-    const nativeElement = this.videoElement?.nativeElement;
-    if (!nativeElement) return;
-    this.video = nativeElement;
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy = async () => {
     this.destroy.next();
@@ -146,9 +143,9 @@ export class VideoNoteComponent
   };
 
   togglePlay() {
-    this.isPlaying = this.video.paused;
+    this.isPlaying = this.videoElement?.nativeElement.paused;
     const action = this.isPlaying ? 'play' : 'pause';
-    this.video[action]();
+    this.videoElement?.nativeElement[action]();
   }
 
   toggleWideScreen() {
@@ -187,24 +184,24 @@ export class VideoNoteComponent
   }
 
   onSliderChangeEnd(evt) {
-    this.video.currentTime = evt.value;
+    this.videoElement.nativeElement.currentTime = evt.value;
   }
 
   onSliderVolumeChangeEnd(evt) {
-    this.video.volume = evt.value;
+    this.videoElement.nativeElement.volume = evt.value;
   }
 
   seekVolume(volume) {
-    this.video.volume = volume;
+    this.videoElement.nativeElement.volume = volume;
   }
 
   mute() {
-    const { volume } = this.video;
-    if (this.video.muted) {
-      this.video.muted = false;
+    const { volume } = this.videoElement?.nativeElement;
+    if (this.videoElement?.nativeElement.muted) {
+      this.videoElement.nativeElement.muted = false;
       this.seekVolume(this.volumeHelper);
     } else {
-      this.video.muted = true;
+      this.videoElement.nativeElement.muted = true;
       this.volumeHelper = volume;
       this.seekVolume(0);
     }
@@ -328,7 +325,7 @@ export class VideoNoteComponent
   }
 
   openThumbVideo(index) {
-    if (!this.video.paused) {
+    if (!this.videoElement?.nativeElement.paused) {
       this.togglePlay();
     }
     this.indexVideo = index;

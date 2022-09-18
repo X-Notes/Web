@@ -3,7 +3,6 @@ using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
 using MediatR;
-using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 using System;
@@ -11,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Files;
 
 namespace BI.Services.Notes
 {
@@ -20,17 +19,15 @@ namespace BI.Services.Notes
     {
 
         private readonly IMediator _mediator;
+
         private readonly FileRepository fileRepository;
-        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         public FullNoteFilesCollectionHandlerCommand(
             IMediator _mediator, 
-            FileRepository fileRepository, 
-            NoteFolderLabelMapper noteFolderLabelMapper)
+            FileRepository fileRepository)
         {
             this._mediator = _mediator;
             this.fileRepository = fileRepository;
-            this.noteFolderLabelMapper = noteFolderLabelMapper;
         }
 
         public async Task<OperationResult<List<AppFile>>> Handle(UploadNoteFilesToStorageAndSaveCommand request, CancellationToken cancellationToken)
@@ -81,8 +78,7 @@ namespace BI.Services.Notes
 
                 async Task removeFilesFromStorage()
                 {
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(dbFiles, permissions.Author.Id.ToString()));
                 }
 
                 if (cancellationToken.IsCancellationRequested)
@@ -99,8 +95,6 @@ namespace BI.Services.Notes
                     await removeFilesFromStorage();
                     return new OperationResult<List<AppFile>>(false, null, OperationResultAdditionalInfo.AnotherError, e.Message);
                 }
-
-                dbFiles.ForEach(x => x.SetAuthorPath(noteFolderLabelMapper.BuildFilePath, permissions.Author.Id));
 
                 return new OperationResult<List<AppFile>>(true, dbFiles);
             }

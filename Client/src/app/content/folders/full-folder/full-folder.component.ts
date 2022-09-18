@@ -3,10 +3,10 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
@@ -20,6 +20,9 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -42,7 +45,7 @@ export class FullFolderComponent implements OnInit {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   foldersLink: SmallFolder[] = [];
 
@@ -67,6 +70,11 @@ export class FullFolderComponent implements OnInit {
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
     public pB: PermissionsButtonsService,
+    private signalR: SignalRService,
+    private diffCheckerService: DiffCheckerService,
+    private apiBrowserFunctions: ApiBrowserTextService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   async ngOnInit() {
@@ -81,10 +89,18 @@ export class FullFolderComponent implements OnInit {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async (flag) => {
         if (flag) {
-          const newNote = await this.noteApiService.new().toPromise();
-          await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
-          this.ffnService.addToDom([newNote]);
-          this.updateState();
+          const res = await this.noteApiService.new().toPromise();
+          if (res.success) {
+            const newNote = res.data;
+            await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
+            this.ffnService.addToDom([newNote]);
+            this.updateState();
+            return;
+          }
+          if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
+            const message = this.translate.instant('snackBar.subscriptionCreationError');
+            this.snackbarService.openSnackBar(message, null, null, 5000);
+          }
         }
       });
 

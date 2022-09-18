@@ -6,10 +6,20 @@ import { Store } from '@ngxs/store';
 import { Auth, Logout } from './stateUser/user-action';
 import firebase from 'firebase/compat/app';
 import { UserAPIService } from './user-api.service';
+import { UserStore } from './stateUser/user-state';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export enum AuthStatus {
+  NoStarted,
+  InProgress,
+  Successful,
+  Failed,
+}
 
 @Injectable()
 export class AuthService {
-  isLoading = false;
+  authStatus = new BehaviorSubject<AuthStatus>(AuthStatus.NoStarted);
 
   constructor(
     private readonly afAuth: AngularFireAuth,
@@ -22,22 +32,32 @@ export class AuthService {
     });
   }
 
+  get isLogined(): boolean {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    return Object.keys(user).length > 0;
+  }
+
+  get IsAuthActive(): Observable<boolean> {
+    return this.authStatus.pipe(map((status) => status === AuthStatus.InProgress));
+  }
+
   private get isFirefox(): boolean {
     return navigator?.userAgent?.includes('Firefox');
   }
 
-  async authGoogle() {
+  async authGoogle(navigateToUrl: string = 'notes') {
     try {
       if (this.isFirefox) {
-        this.isLoading = true;
+        this.authStatus.next(AuthStatus.InProgress);
         const result = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-        this.handlerAuth(result.user);
-        this.isLoading = false;
+        this.handlerAuth(result.user, navigateToUrl);
       } else {
         this.afAuth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       }
     } catch (e) {
       console.log('e: ', e);
+    } finally {
+      this.authStatus.next(AuthStatus.Failed);
     }
   }
 
@@ -62,19 +82,19 @@ export class AuthService {
     await user?.getIdToken(true);
   }
 
-  async redirectOnSuccessAuth() {
+  async redirectOnSuccessAuth(navigateToUrl: string = 'notes') {
     try {
-      this.isLoading = true;
+      this.authStatus.next(AuthStatus.InProgress);
       const result = await this.afAuth.getRedirectResult();
-      await this.handlerAuth(result.user);
+      await this.handlerAuth(result.user, navigateToUrl);
     } catch (e) {
       console.log('e: ', e);
     } finally {
-      this.isLoading = false;
+      this.authStatus.next(AuthStatus.Failed);
     }
   }
 
-  async handlerAuth(user: firebase.User) {
+  async handlerAuth(user: firebase.User, navigateToUrl: string) {
     if (user) {
       const token = await this.getToken();
       const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
@@ -84,9 +104,12 @@ export class AuthService {
           .toPromise();
         await this.apiAuth.setTokenClaims().toPromise();
         await this.refreshToken();
-        this.router.navigate(['notes']);
+        this.authStatus.next(AuthStatus.Successful);
+        this.router.navigate([navigateToUrl]);
+        return;
       }
     }
+    this.authStatus.next(AuthStatus.Failed);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

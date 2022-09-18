@@ -9,7 +9,7 @@
     <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
-    <PackageReference Include="Npgsql" Version="6.0.3" />
+    <PackageReference Include="Npgsql" Version="6.0.6" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
 
@@ -23,7 +23,6 @@
     <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
-    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 
 </Project>

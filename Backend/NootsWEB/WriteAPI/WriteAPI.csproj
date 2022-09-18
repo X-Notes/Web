@@ -24,8 +24,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" />
-    <PackageReference Include="Npgsql" Version="6.0.3" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
+    <PackageReference Include="Npgsql" Version="6.0.6" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.6" />
 	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
 	<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
 	<PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
@@ -38,17 +38,23 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />
+    <ProjectReference Include="..\Noots.Auth\Noots.Auth.csproj" />
+    <ProjectReference Include="..\Noots.Backgrounds\Noots.Backgrounds.csproj" />
+    <ProjectReference Include="..\Noots.Billing\Noots.Billing.csproj" />
     <ProjectReference Include="..\Noots.Encryption\Noots.Encryption.csproj" />
+    <ProjectReference Include="..\Noots.Folders\Noots.Folders.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
+    <ProjectReference Include="..\Noots.Labels\Noots.Labels.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Notes\Noots.Notes.csproj" />
     <ProjectReference Include="..\Noots.Personalization\Noots.Personalization.csproj" />
+    <ProjectReference Include="..\Noots.RelatedNotes\Noots.RelatedNotes.csproj" />
     <ProjectReference Include="..\Noots.Search\Noots.Search.csproj" />
     <ProjectReference Include="..\Noots.Sharing\Noots.Sharing.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
     <ProjectReference Include="..\Noots.Users\Noots.Users.csproj" />
-    <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>
 
   <ItemGroup>

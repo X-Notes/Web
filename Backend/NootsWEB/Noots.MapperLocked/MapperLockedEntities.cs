@@ -17,7 +17,7 @@ namespace Noots.MapperLocked
             this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
 
-        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, Guid callerId)
+        public List<RelatedNote> MapNotesToRelatedNotes(List<RelatedNoteToInnerNote> notes, Guid callerId)
         {
             return notes.Select(note =>
             {

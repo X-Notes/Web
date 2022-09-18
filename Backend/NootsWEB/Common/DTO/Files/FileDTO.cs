@@ -1,9 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common.DTO.Files
 {
@@ -11,13 +7,13 @@ namespace Common.DTO.Files
     {
         public Guid Id { set; get; }
 
-        public string PathPhotoSmall { set; get; }
+        public string StorageUrl { set; get; }
 
-        public string PathPhotoMedium { set; get; }
+        public string PathPrefix { set; get; }
 
-        public string PathPhotoBig { set; get; }
+        public string PathFileId { set; get; }
 
-        public string PathNonPhotoContent { set; get; }
+        public PathFileSuffixes PathSuffixes { set; get; }
 
         public string Name { set; get; }
 
@@ -27,15 +23,22 @@ namespace Common.DTO.Files
 
         public DateTimeOffset CreatedAt { set; get; }
 
-        public FileDTO(Guid id, string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, string pathNonPhotoContent, string name, Guid authorId, AppFileMetaData metaData, DateTimeOffset createdAt)
+        public FileDTO(
+            Guid id, 
+            string storageUrl, string pathPrefix, string pathFileId, PathFileSuffixes pathSuffixes, 
+            string name, Guid authorId, AppFileMetaData metaData, DateTimeOffset createdAt)
         {
             Id = id;
-            PathPhotoSmall = pathPhotoSmall;
-            PathPhotoMedium = pathPhotoMedium;
-            PathPhotoBig = pathPhotoBig;
-            PathNonPhotoContent = pathNonPhotoContent;
+
+            StorageUrl = storageUrl;
+
+            PathPrefix = pathPrefix;
+            PathFileId = pathFileId;
+            PathSuffixes = pathSuffixes;
+
             AuthorId = authorId;
             CreatedAt = createdAt;
+
             Name = name;
             MetaData = metaData;
         }

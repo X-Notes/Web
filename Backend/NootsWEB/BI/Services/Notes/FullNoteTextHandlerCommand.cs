@@ -9,11 +9,11 @@ using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using MediatR;
+using Noots.DatabaseContext.Repositories.NoteContent;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.NoteContent;
-using WriteContext.Repositories.Notes;
 
 namespace BI.Services.Notes
 {

@@ -15,19 +15,20 @@
   </div>
   <div class="card-body">
     <div class="card-info">
-      <div class="title">{{ document.name | fileName }}</div>
+      <div class="title-container">
+        <p class="title">{{ document.name | fileName }}</p>
+      </div>
       <div class="link">
         <ng-container *ngIf="document.uploadAt">
-          {{ document.uploadAt | date: 'medium' }}
+          <p>{{ document.uploadAt | date: 'medium' }}</p>
         </ng-container>
       </div>
     </div>
-    <div *ngIf="!isSelectModeActive" class="card-action">
-      <app-button-collection
-        [matMenuTriggerFor]="menu"
-        [button]="'more_vert'"
-      ></app-button-collection>
-    </div>
+    <app-button-collection
+      *ngIf="!isSelectModeActive"
+      [matMenuTriggerFor]="menu"
+      [button]="'more_vert'"
+    ></app-button-collection>
   </div>
   <div *ngIf="isLoading" class="spinner-container">
     <app-spinner [size]="16"></app-spinner>

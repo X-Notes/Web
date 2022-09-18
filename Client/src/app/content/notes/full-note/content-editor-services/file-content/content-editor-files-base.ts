@@ -1,4 +1,5 @@
 import { Store } from '@ngxs/store';
+import { forkJoin, Observable } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
@@ -13,6 +14,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
+import { FileNote } from '../../models/file-note';
 import { ContentEditorContentsService } from '../core/content-editor-contents.service';
 
 export class ContentEditorFilesBase {
@@ -58,8 +60,8 @@ export class ContentEditorFilesBase {
     }
   }
 
-  protected afterUploadFilesToCollection<T>(results: FileProcessTracker<OperationResult<T[]>>[]) {
-    const unsuccess = results.map((x) => x.eventBody).filter((x) => !x.success);
+  protected afterUploadFilesToCollection<T>(results: OperationResult<T[]>[]) {
+    const unsuccess = results.filter((x) => !x.success);
     if (unsuccess?.length > 0) {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
       unsuccess.forEach((op) => {
@@ -70,5 +72,23 @@ export class ContentEditorFilesBase {
 
   protected deleteHandler(contentId: string) {
     this.contentsService.deleteById(contentId, false);
+  }
+
+  protected mapFiles(res: OperationResult<FileNote[]>[]): FileNote[] {
+    return res
+      .filter((x) => x?.success)
+      .map((x) => x?.data)
+      .flat()
+      .map((x) => new FileNote(x));
+  }
+
+  protected async uploadFilesParallel(
+    uploadsRequests: Observable<FileProcessTracker<OperationResult<FileNote[]>>>[],
+  ) {
+    try {
+      const resp = await forkJoin(uploadsRequests).toPromise();
+      return resp.map((x) => x.eventBody);
+    } catch (e) {}
+    return null;
   }
 }

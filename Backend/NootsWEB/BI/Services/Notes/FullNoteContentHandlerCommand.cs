@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories.NoteContent;
+using Noots.DatabaseContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {

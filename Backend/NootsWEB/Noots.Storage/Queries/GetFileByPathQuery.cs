@@ -1,4 +1,5 @@
 ﻿using Common.CQRS;
+using Common.DatabaseModels.Models.Files.Models;
 using Common.DTO.Files;
 using MediatR;
 
@@ -10,13 +11,14 @@ namespace Noots.Storage.Queries
 
         public string FileName { set; get; }
 
-        public string UserId { set; get; }
+        public StoragesEnum StorageId { set; get; }
 
-        public GetFileByPathQuery(string path, string userId, string fileName)
+        public GetFileByPathQuery(StoragesEnum storageId, string path, Guid userId, string fileName)
         {
             Path = path;
             UserId = userId;
             FileName = fileName;
+            StorageId = storageId;
         }
     }
 }

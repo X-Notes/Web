@@ -13,10 +13,10 @@ using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes.Audios
 {
@@ -77,7 +77,7 @@ namespace BI.Services.Notes.Audios
                     await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
                     var fileIds = collectionItems.Select(x => x.AppFileId);
 
-                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+                    var filesToProcess = collectionItems.Select(x => x.AppFile).Select(x => new UnlinkMetaData(x.Id));
                     var idsToUnlink = await collectionLinkedService.TryToUnlink(filesToProcess);
 
                     collection.UpdatedAt = DateTimeProvider.Time;

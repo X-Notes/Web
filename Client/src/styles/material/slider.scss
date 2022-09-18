@@ -25,16 +25,15 @@
 .slider-controls,
 .volume-slider,
 .video-volume-slider,
-.slider-row
- {
-  .slider, .slider-profile {
+.slider-row {
+  .slider,
+  .slider-profile {
     .mat-slider-wrapper {
       background-color: white;
 
       .mat-slider-thumb {
         background-color: #0887a7;
-        border: none;
-        transform: scale(0.7) !important;
+        border: none;    
       }
 
       .mat-slider-thumb-label {
@@ -47,6 +46,26 @@
       .mat-slider-track-fill {
         background-color: #0887a7;
       }
+    }
+  }
+  .mat-slider-disabled {
+    .mat-slider-thumb {
+      background-color: #cbcbcb !important;
+      border: none !important;
+      transform: initial !important;
+      width: 10px;
+      height: 10px;
+      right: -5px;
+      bottom: -5px;   
+    }
+    .mat-slider-thumb-label {
+      background-color: #cbcbcb;
+      .mat-slider-thumb-label-text {
+        color: white !important;
+      }
+    }
+    .mat-slider-track-fill {
+      background-color: #cbcbcb !important;
     }
   }
 }

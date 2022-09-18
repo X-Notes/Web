@@ -17,11 +17,11 @@ export class ThemeDirective implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((theme) => {
         if (!theme) {
+          this.renderDarkTheme();
           return;
         }
         if (theme === ThemeENUM.Dark) {
-          this.renderer.addClass(this.el.nativeElement, 'dark');
-          this.renderer.removeClass(this.el.nativeElement, 'light');
+          this.renderDarkTheme();
         } else {
           this.renderer.removeClass(this.el.nativeElement, 'dark');
           this.renderer.addClass(this.el.nativeElement, 'light');
@@ -32,5 +32,10 @@ export class ThemeDirective implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  private renderDarkTheme(): void {
+    this.renderer.addClass(this.el.nativeElement, 'dark');
+    this.renderer.removeClass(this.el.nativeElement, 'light');
   }
 }

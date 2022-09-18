@@ -12,6 +12,26 @@
   border-radius: 5px;
   color: $text-color;
   cursor: pointer;
+  position: relative;
+
+  .lock-container {
+    border-radius: 5px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-left: 5px;
+    padding-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    mat-icon {
+      width: 10px;
+      height: auto;
+      color: #646464;
+    }
+  }
 
   p {
     @include text-overflow;

@@ -1,0 +1,56 @@
+<div appTheme>
+  <div class="billing-forms">
+    <div
+      *ngFor="let plan of billingPlans$ | async"
+      [ngClass]="{ active: user.billingPlanId === plan.id }"
+      class="form"
+    >
+      <div class="titles-section">
+        <div class="title-main">
+          <p>{{ getTitleById(plan.id) }}</p>
+        </div>
+        <div class="title-sub">
+          <p *ngIf="billingPlanId.Standard === plan.id">${{ plan.price }}</p>
+          <p *ngIf="billingPlanId.Premium === plan.id">
+            ${{ plan.price }} {{'profile-billing.per-month' | translate}}
+          </p>
+        </div>
+      </div>
+      <div class="plan-info">
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getCount(plan.maxNotes) }} {{'profile-billing.notes' | translate}}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getCount(plan.maxFolders) }} {{'profile-billing.folders' | translate}}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getCount(plan.maxLabels) }} {{'profile-billing.labels' | translate}}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getCount(plan.maxRelatedNotes) }} {{'profile-billing.related' | translate}}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getSize(plan.maxSize) }}mb {{'profile-billing.memory' | translate}}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ getHistoryValueById(plan.id) }}</p>
+        </div>
+        <div *ngIf="billingPlanId.Premium === plan.id" class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{'profile-billing.personalization' | translate}}</p>
+        </div>
+      </div>
+      <div *ngIf="billingPlanId.Premium === plan.id && hasUserDefault" class="upgrade-section">
+        <div class="upgrade-button" (click)="updateBillingPlan(billingPlanId.Premium)">
+          <span>{{'profile-billing.upgrade' | translate}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

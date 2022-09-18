@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { Background } from 'src/app/core/models/background.model';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({

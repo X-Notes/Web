@@ -6,7 +6,7 @@ import { FullFolder } from 'src/app/content/folders/models/full-folder.model';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';

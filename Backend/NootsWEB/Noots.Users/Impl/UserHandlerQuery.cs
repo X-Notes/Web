@@ -1,14 +1,14 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Domain.Queries.Users;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Storage.Queries;
 using Noots.Users.Entities;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Users;
+using Noots.Users.Queries;
 
-namespace BI.Services.UserHandlers
+namespace Noots.Users.Impl
 {
     public class UserHandlerQuery :
         IRequestHandler<GetUserDTOQuery, OperationResult<UserDTO>>,
@@ -49,7 +49,7 @@ namespace BI.Services.UserHandlers
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                PhotoPath = userBackgroundMapper.GetUserProfilePhotoPath(user),
                 CurrentBackground = user.CurrentBackground != null ? userBackgroundMapper.MapToBackgroundDTO(user.CurrentBackground) : null,
                 LanguageId = user.LanguageId,
                 ThemeId = user.ThemeId,
@@ -66,7 +66,7 @@ namespace BI.Services.UserHandlers
                 Name = user.Name,
                 Email = user.Email,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
-                PhotoPath = user.UserProfilePhoto != null ? userBackgroundMapper.BuildFilePath(user.Id, user.UserProfilePhoto.AppFile.GetFromBigPath) : user.DefaultPhotoUrl,
+                PhotoPath = userBackgroundMapper.GetUserProfilePhotoPath(user),
             };
         }
 

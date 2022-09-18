@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Histories;
-using WriteContext.Repositories.NoteContent;
+using Noots.DatabaseContext.Repositories.Files;
+using Noots.DatabaseContext.Repositories.Histories;
+using Noots.DatabaseContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
@@ -80,7 +80,7 @@ namespace BI.Services.Notes
 
             var collections = await collectionNoteRepository.GetManyIncludeFiles(collectionIdsToDelete.ToList());
 
-            var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+            var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData(x.Id));
 
             await collectionNoteRepository.RemoveRangeAsync(collections);
             await TryToUnlink(filesToProcess);
@@ -92,7 +92,7 @@ namespace BI.Services.Notes
         {
             var ids = fileIds.ToHashSet();
             var files = await fileRepository.GetWhereAsync(x => ids.Contains(x.Id));
-            var filesToProcess = files.Select(x => new UnlinkMetaData(x.Id, x.GetAdditionalIds()));
+            var filesToProcess = files.Select(x => new UnlinkMetaData(x.Id));
             await TryToUnlink(filesToProcess);
         }
     }

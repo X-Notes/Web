@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Common.Azure;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,43 +12,49 @@ namespace WriteAPI.Hosted
 {
     public class SetupServicesHosted : BackgroundService
     {
-        private readonly BlobServiceClient blobServiceClient;
+        private readonly AzureConfig azureConfig;
+
         private readonly ILogger<SetupServicesHosted> logger;
 
-        public SetupServicesHosted(BlobServiceClient blobServiceClient, ILogger<SetupServicesHosted> logger)
+        public SetupServicesHosted(AzureConfig azureConfig, ILogger<SetupServicesHosted> logger)
         {
-            this.blobServiceClient = blobServiceClient;
+            this.azureConfig = azureConfig;
             this.logger = logger;
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var props = await this.blobServiceClient.GetPropertiesAsync();
-
-            var prevVersion = "2017-04-17";
-            var version = "2019-07-07";
-
-            if (props.Value.DefaultServiceVersion != version)
+            foreach(var storage in azureConfig.GetAll())
             {
-                props.Value.DefaultServiceVersion = version;
-            }
+                var blobServiceClient = new BlobServiceClient(storage.Connection);
+                var props = await blobServiceClient.GetPropertiesAsync();
 
-            props.Value.Cors.Clear();
-            props.Value.Cors.Add(
-                new BlobCorsRule{ 
-                    AllowedOrigins = "*",
-                    AllowedHeaders = "*",
-                    ExposedHeaders = "*",
-                    AllowedMethods = "GET,OPTIONS,POST,MERGE,HEAD,DELETE,PATCH,PUT"
+                var prevVersion = "2017-04-17";
+                var version = "2019-07-07";
+
+                if (props.Value.DefaultServiceVersion != version)
+                {
+                    props.Value.DefaultServiceVersion = version;
                 }
-            );
 
-            await blobServiceClient.SetPropertiesAsync(props);
+                props.Value.Cors.Clear();
+                props.Value.Cors.Add(
+                    new BlobCorsRule
+                    {
+                        AllowedOrigins = "*",
+                        AllowedHeaders = "*",
+                        ExposedHeaders = "*",
+                        AllowedMethods = "GET,OPTIONS,POST,MERGE,HEAD,DELETE,PATCH,PUT"
+                    }
+                );
 
-            await TryToCreateMock();
+                await blobServiceClient.SetPropertiesAsync(props);
+
+                await TryToCreateMock(blobServiceClient);
+            }
         }
 
-        private async Task TryToCreateMock()
+        private async Task TryToCreateMock(BlobServiceClient blobServiceClient)
         {
             try
             {

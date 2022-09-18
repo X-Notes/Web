@@ -1,6 +1,6 @@
 ﻿using Common;
+using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Encryption.Entities;
-using WriteContext.Repositories.Notes;
 
 namespace Noots.Encryption.Impl
 {

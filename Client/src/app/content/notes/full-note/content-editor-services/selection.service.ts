@@ -1,4 +1,5 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { Router } from '@angular/router';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
@@ -6,11 +7,17 @@ import { ParentInteraction } from '../models/parent-interaction.interface';
 export class SelectionService {
   menuHeight = 49;
 
-  sidebarWidth = 270;
-
   isResizingPhoto = false;
 
   private selectedItemsSet = new Set<string>();
+
+  constructor(private router: Router) {}
+
+  get sidebarWidth(): number {
+    return this.router.url.includes('public')
+      ? document.getElementById('public-left-section').offsetWidth
+      : 270;
+  }
 
   selectionHandler(
     secondRect: DOMRect,

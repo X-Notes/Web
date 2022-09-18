@@ -11,7 +11,7 @@ namespace Common.DatabaseModels.Models.Notes
         override public int Id { set; get; }
 
         public int ReletatedNoteInnerNoteId { set; get; }
-        public ReletatedNoteToInnerNote ReletatedNoteInnerNote { set; get; }
+        public RelatedNoteToInnerNote RelatedNoteInnerNote { set; get; }
 
         public Guid UserId { get; set; }
         public User User { get; set; }

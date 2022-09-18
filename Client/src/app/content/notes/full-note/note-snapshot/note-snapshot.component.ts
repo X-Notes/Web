@@ -5,6 +5,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { LoadSnapshotNote } from '../../state/notes-actions';
@@ -27,6 +28,9 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.snapshotNote)
   public snapshotNote$: Observable<NoteSnapshot>;
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
 
   @Select(NoteStore.snapshotNoteTitle)
   public snapshotNoteTitle$: Observable<string>;

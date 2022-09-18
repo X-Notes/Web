@@ -9,6 +9,8 @@ using Noots.Storage.Queries;
 using Common.Azure;
 using Microsoft.Extensions.Azure;
 using ContentProcessing;
+using Noots.Storage.Impl.AzureStorage;
+using Noots.Storage.Interfaces;
 
 namespace Noots.Storage
 {
@@ -43,15 +45,14 @@ namespace Noots.Storage
             services.AddScoped<IFilesStorage, AzureFileStorage>();
 
             services.AddScoped<IImageProcessor, ImageProcessor>();
+
+            services.AddSingleton<StorageIdProvider>();
+            services.AddSingleton<PathStorageBuilder>();
         }
 
         public static void ApplyAzureConfig(this IServiceCollection services, AzureConfig config)
         {
             services.AddSingleton(x => config);
-            services.AddAzureClients(builder =>
-            {
-                builder.AddBlobServiceClient(config.StorageConnectionEmulator);
-            });
         }
     }
 }

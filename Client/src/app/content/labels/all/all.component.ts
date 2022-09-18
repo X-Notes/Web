@@ -11,7 +11,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LabelsService } from '../labels.service';
@@ -38,7 +38,7 @@ export class AllComponent implements OnInit, AfterViewInit {
   @Select(LabelStore.countNoDeleted)
   countAll$: Observable<number>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   loaded = false;
 

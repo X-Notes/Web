@@ -1,4 +1,6 @@
 ﻿using Common.Azure;
+using Common.DatabaseModels.Models.Files.Models;
+using Common.DatabaseModels.Models.Users;
 
 namespace Noots.Mapper.Mapping
 {
@@ -11,13 +13,23 @@ namespace Noots.Mapper.Mapping
             this.azureConfig = azureConfig;
         }
 
-        public string BuildFilePath(Guid userId, string path)
+        public string BuildFilePath(StoragesEnum storageId, Guid userId, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
                 return null;
             }
-            return azureConfig.StorageEmulatorUrl + "/" + userId + "/" + path;
+            return azureConfig.FirstOrDefaultCache(storageId).Url + "/" + userId + "/" + path;
+        }
+
+        public string GetUserProfilePhotoPath(User user)
+        {
+            if (user.UserProfilePhoto == null)
+            {
+                return user.DefaultPhotoUrl;
+            }
+            var file = user.UserProfilePhoto.AppFile;
+            return BuildFilePath(file.StorageId, user.Id, file.GetFromSmallPath);
         }
     }
 }

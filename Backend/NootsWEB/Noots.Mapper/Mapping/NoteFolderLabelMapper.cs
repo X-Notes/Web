@@ -23,24 +23,35 @@ namespace Noots.Mapper.Mapping
         {
         }
 
-        public AudioNoteDTO MapToAudioDTO(AppFile item, Guid ownerId)
+        public AudioNoteDTO MapToAudioDTO(AppFile file, Guid ownerId)
         {
-            return new AudioNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.MetaData?.SecondsDuration, BuildFilePath(ownerId, item.MetaData?.ImagePath), item.CreatedAt);
+            return new AudioNoteDTO(file.Name, file.Id, 
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+                file.UserId, file.MetaData?.SecondsDuration,
+                BuildFilePath(file.StorageId, ownerId, file.MetaData?.ImagePath), file.CreatedAt);
         }
 
-        public VideoNoteDTO MapToVideoDTO(AppFile item, Guid ownerId)
+        public VideoNoteDTO MapToVideoDTO(AppFile file, Guid ownerId)
         {
-            return new VideoNoteDTO(item.Name, item.Id, BuildFilePath(ownerId, item.PathNonPhotoContent), item.UserId, item.CreatedAt);
+            return new VideoNoteDTO(file.Name, file.Id, 
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+                file.UserId, file.CreatedAt);
         }
 
-        public DocumentNoteDTO MapToDocumentDTO(AppFile item, Guid ownerId)
+        public DocumentNoteDTO MapToDocumentDTO(AppFile file, Guid ownerId)
         {
-            return new DocumentNoteDTO(item.Name, BuildFilePath(ownerId, item.PathNonPhotoContent), item.Id, item.UserId, item.CreatedAt);
+            return new DocumentNoteDTO(file.Name, 
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+                file.Id, file.UserId, file.CreatedAt);
         }
 
-        public PhotoNoteDTO MapToPhotoDTO(AppFile item, Guid ownerId)
+        public PhotoNoteDTO MapToPhotoDTO(AppFile file, Guid ownerId)
         {
-            return new PhotoNoteDTO(item.Id, item.Name, BuildFilePath(ownerId, item.PathPhotoSmall), BuildFilePath(ownerId, item.PathPhotoMedium), BuildFilePath(ownerId, item.PathPhotoBig), item.UserId, item.CreatedAt);
+            return new PhotoNoteDTO(file.Id, file.Name, 
+                BuildFilePath(file.StorageId, ownerId, file.GetSmallPath), 
+                BuildFilePath(file.StorageId, ownerId, file.GetMediumPath), 
+                BuildFilePath(file.StorageId, ownerId, file.GetBigPath ?? file.GetDefaultPath), 
+                file.UserId, file.CreatedAt);
         }
 
         // CONTENTS
@@ -167,7 +178,7 @@ namespace Noots.Mapper.Mapping
         }
 
 
-        public RelatedNote MapNoteToRelatedNoteDTO(ReletatedNoteToInnerNote relation, Guid callerId)
+        public RelatedNote MapNoteToRelatedNoteDTO(RelatedNoteToInnerNote relation, Guid callerId)
         {
             var state = relation.RelatedNoteUserStates.FirstOrDefault(x => x.UserId == callerId);
             return new RelatedNote()

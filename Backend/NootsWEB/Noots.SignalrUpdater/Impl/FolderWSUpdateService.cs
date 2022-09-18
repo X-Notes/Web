@@ -1,9 +1,4 @@
 ﻿using Common.DTO.WebSockets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WriteContext.Repositories.Users;
 
 namespace Noots.SignalrUpdater.Impl
 {

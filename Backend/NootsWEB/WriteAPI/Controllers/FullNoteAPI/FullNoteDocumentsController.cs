@@ -8,32 +8,31 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Controllers.FullNoteAPI;
+using WriteAPI.Filters;
 
-namespace WriteAPI.Controllers.FullNoteAPI
+namespace WriteAPI.Controllers.FullNoteAPI;
+
+[Authorize]
+[Route("api/note/inner/documents")]
+[ApiController]
+public class FullNoteDocumentsController : BaseNoteFileContentController
+<
+    RemoveDocumentsFromCollectionCommand,
+    AddDocumentsToCollectionCommand,
+    UpdateDocumentsCollectionInfoCommand,
+    GetNoteFilesByIdsQuery<DocumentNoteDTO>,
+    DocumentNoteDTO
+>
 {
-    [Authorize]
-    [Route("api/note/inner/documents")]
-    [ApiController]
-    public class FullNoteDocumentsController : BaseNoteFileContentController
-        <
-        RemoveDocumentsFromCollectionCommand,
-        AddDocumentsToCollectionCommand,
-        UpdateDocumentsCollectionInfoCommand,
-        GetNoteFilesByIdsQuery<DocumentNoteDTO>,
-        DocumentNoteDTO
-        >
+    public FullNoteDocumentsController(IMediator _mediator) : base(_mediator)
     {
-        public FullNoteDocumentsController(IMediator _mediator) : base(_mediator)
-        {
-        }
-
-        [HttpPost("transform")] // TODO TO WS
-        public async Task<OperationResult<DocumentsCollectionNoteDTO>> TransformToDocuments(TransformToDocumentsCollectionCommand command)
-        {
-            command.UserId = this.GetUserId();
-            return await _mediator.Send(command);
-        }
     }
 
+    [HttpPost("transform")] // TODO TO WS
+    [ValidationRequireUserIdFilter]
+    public async Task<OperationResult<DocumentsCollectionNoteDTO>> TransformToDocuments(TransformToDocumentsCollectionCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
 }

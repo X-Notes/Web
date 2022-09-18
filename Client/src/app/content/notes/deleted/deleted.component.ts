@@ -12,13 +12,13 @@ import { Select, Store } from '@ngxs/store';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user.model';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { BaseNotesComponent } from '../base-notes-component';
 
 @Component({
@@ -39,7 +39,7 @@ export class DeletedComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  fontSize = FontSizeENUM;
+  fontSize = EntitiesSizeENUM;
 
   loaded = false;
 
