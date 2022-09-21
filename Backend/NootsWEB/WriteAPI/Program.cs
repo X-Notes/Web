@@ -24,6 +24,7 @@ using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
 using WriteAPI.Hosted;
 using WriteAPI.Middlewares;
+using Common.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,13 +62,14 @@ FirebaseApp.Create(new AppOptions
 
 
 var dbConn = builder.Configuration.GetSection("WriteDB").Value;
-var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
+var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
+var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 builder.Services.SetupLogger(builder.Configuration, environment);
 
-builder.Services.ApplyAzureConfig(storageConfig);
+builder.Services.ApplyAzureConfig(azureConfig);
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JWT(builder.Configuration);
 
@@ -83,7 +85,8 @@ builder.Services.AddHealthChecks();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer(); // check
 
-builder.Services.AddSignalR();
+builder.Services.SetupSignalR(redisConfig);
+
 builder.Services.AddSingleton<IUserIdProvider, IdProvider>();
 
 builder.Services.Mediatr();
