@@ -17,4 +17,11 @@ public class FolderConnectionRepository : Repository<FolderConnection, int>
                        .Where(x => x.FolderId == folderId)
                        .Select(x => x.UserIdentifierConnectionId).ToListAsync();
     }
+
+    public Task<List<string>> GetConnectionsById(Guid folderId, Guid exceptUserId)
+    {
+        return entities.Include(x => x.UserIdentifierConnectionIdId)
+                       .Where(x => x.FolderId == folderId && x.UserId != exceptUserId)
+                       .Select(x => x.ConnectionId).ToListAsync();
+    }
 }
