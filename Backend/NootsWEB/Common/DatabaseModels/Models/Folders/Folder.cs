@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.WS;
 using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Folders
@@ -25,6 +26,8 @@ namespace Common.DatabaseModels.Models.Folders
 
         public List<FoldersNotes> FoldersNotes { set; get; }
         public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+
+        public List<FolderConnection> FolderConnections { set; get; }
 
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }

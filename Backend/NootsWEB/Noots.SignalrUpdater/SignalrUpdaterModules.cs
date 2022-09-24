@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Noots.SignalrUpdater.Impl;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
 
 namespace Noots.SignalrUpdater
 {
@@ -11,8 +12,8 @@ namespace Noots.SignalrUpdater
             services.AddScoped<FolderWSUpdateService>();
             services.AddScoped<NoteWSUpdateService>();
 
-            services.AddSingleton<WebsocketsNotesServiceStorage>();
-            services.AddSingleton<WebsocketsFoldersServiceStorage>();
+            services.AddSingleton<WSMemoryNotesServiceStorage>();
+            services.AddSingleton<WSMemoryFoldersServiceStorage>();
         }
     }
 }

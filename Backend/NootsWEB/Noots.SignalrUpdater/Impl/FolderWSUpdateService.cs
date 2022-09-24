@@ -1,14 +1,15 @@
 ﻿using Common.DTO.WebSockets;
+using Noots.SignalrUpdater.Impl.NoteFolderStates;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class FolderWSUpdateService
     {
-        private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
+        private readonly WSFoldersServiceStorage websocketsFoldersService;
         private readonly AppSignalRService appSignalRService;
 
         public FolderWSUpdateService(
-            WebsocketsFoldersServiceStorage websocketsFoldersService,
+            WSFoldersServiceStorage websocketsFoldersService,
             AppSignalRService appSignalRService)
         {
             this.websocketsFoldersService = websocketsFoldersService;

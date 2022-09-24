@@ -5,10 +5,10 @@ using Noots.SignalrUpdater.Models;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 
-namespace Noots.SignalrUpdater.Impl
+namespace Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage
 {
 
-    public class WebsocketsBaseEntities
+    public class WSMemoryBaseEntitiesStorage
     {
 
         protected ConcurrentDictionary<Guid, WsEntitiesState> entityId_users = new();
@@ -16,7 +16,7 @@ namespace Noots.SignalrUpdater.Impl
 
         public int CountActiveEntities => entityId_users.Count;
 
-        public WebsocketsBaseEntities(ILogger logger)
+        public WSMemoryBaseEntitiesStorage(ILogger logger)
         {
             this.logger = logger;
         }

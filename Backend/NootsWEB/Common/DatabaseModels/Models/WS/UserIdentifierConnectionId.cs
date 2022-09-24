@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.WS
@@ -15,5 +16,9 @@ namespace Common.DatabaseModels.Models.WS
         public string ConnectionId { set; get; }
 
         public DateTimeOffset ConnectedAt { set; get; }
+
+        public List<FolderConnection> FolderConnections { set; get; }
+
+        public List<NoteConnection> NoteConnections { set; get; }
     }
 }

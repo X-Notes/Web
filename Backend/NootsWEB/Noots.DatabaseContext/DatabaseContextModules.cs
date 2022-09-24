@@ -75,6 +75,9 @@ namespace Noots.DatabaseContext
 
             // WS
             services.AddScoped<UserIdentifierConnectionIdRepository>();
+            services.AddScoped<FolderConnectionRepository>();
+            services.AddScoped<NoteConnectionRepository>();
+
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
     }

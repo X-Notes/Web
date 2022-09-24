@@ -108,7 +108,6 @@ builder.Services.AddInMemoryRateLimiting();
 
 builder.Services.AddHostedService<ManageUsersOnEntitiesHosted>();
 builder.Services.AddHostedService<SetupServicesHosted>();
-builder.Services.AddHostedService<StartDBCleanerHosted>();
 
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 

@@ -5,20 +5,20 @@ using Noots.Encryption.Impl;
 using Noots.Mapper.Mapping;
 using Noots.Notes.Queries;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Impl;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
 
 namespace Noots.Notes.Handlers.Queries;
 
 public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>
 {
-    private readonly WebsocketsNotesServiceStorage websocketsNotesService;
+    private readonly WSMemoryNotesServiceStorage websocketsNotesService;
     private readonly UserRepository userRepository;
     private readonly IMediator mediator;
     private readonly UserBackgroundMapper userBackgroundMapper;
     private readonly UserNoteEncryptService userNoteEncryptStorage;
 
     public GetOnlineUsersOnNoteQueryHandler(
-        WebsocketsNotesServiceStorage websocketsNotesService,
+        WSMemoryNotesServiceStorage websocketsNotesService,
         UserRepository userRepository,
         IMediator mediator,
         UserBackgroundMapper userBackgroundMapper,

@@ -5,20 +5,21 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
 using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class AppSignalRHub : Hub
     {
-        private readonly WebsocketsNotesServiceStorage wsNotesService;
-        private readonly WebsocketsFoldersServiceStorage wsFoldersService;
+        private readonly WSMemoryNotesServiceStorage wsNotesService;
+        private readonly WSFoldersServiceStorage wsFoldersService;
         private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
         private readonly ILogger<AppSignalRHub> logger;
 
         public AppSignalRHub(
-            WebsocketsNotesServiceStorage websocketsNotesService,
-            WebsocketsFoldersServiceStorage websocketsFoldersService,
+            WSMemoryNotesServiceStorage websocketsNotesService,
+            WSFoldersServiceStorage websocketsFoldersService,
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
             ILogger<AppSignalRHub> logger)
         {

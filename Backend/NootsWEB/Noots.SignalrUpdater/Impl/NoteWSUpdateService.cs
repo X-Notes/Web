@@ -1,18 +1,19 @@
 ﻿using Common.DTO.WebSockets;
 using Noots.DatabaseContext.Repositories.Folders;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class NoteWSUpdateService
     {
-        private readonly WebsocketsNotesServiceStorage websocketsNotesService;
+        private readonly WSMemoryNotesServiceStorage websocketsNotesService;
         private readonly AppSignalRService appSignalRService;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly WebsocketsFoldersServiceStorage websocketsFoldersService;
+        private readonly WSMemoryFoldersServiceStorage websocketsFoldersService;
 
         public NoteWSUpdateService(
-            WebsocketsNotesServiceStorage websocketsNotesService,
-            WebsocketsFoldersServiceStorage websocketsFoldersService,
+            WSMemoryNotesServiceStorage websocketsNotesService,
+            WSMemoryFoldersServiceStorage websocketsFoldersService,
             AppSignalRService appSignalRService,
             FoldersNotesRepository foldersNotesRepository)
         {

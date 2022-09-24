@@ -41,6 +41,11 @@ namespace Noots.DatabaseContext.GenericRepositories
             return entities.ToListAsync();
         }
 
+        public virtual Task<List<T>> GetAllNoTrackAsync()
+        {
+            return entities.AsNoTracking().ToListAsync();
+        }
+
         public Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
         {
             return entities.Where(predicate).ToListAsync();
