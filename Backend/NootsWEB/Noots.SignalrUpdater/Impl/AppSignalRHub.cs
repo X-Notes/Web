@@ -1,30 +1,32 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections.Features;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
+using Noots.SignalrUpdater.Interfaces;
 using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class AppSignalRHub : Hub
     {
-        private readonly WSMemoryNotesServiceStorage wsNotesService;
-        private readonly WSFoldersServiceStorage wsFoldersService;
+        private readonly IFolderServiceStorage folderServiceStorage;
+        private readonly INoteServiceStorage noteServiceStorage;
         private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
         private readonly ILogger<AppSignalRHub> logger;
 
         public AppSignalRHub(
-            WSMemoryNotesServiceStorage websocketsNotesService,
-            WSFoldersServiceStorage websocketsFoldersService,
+            IFolderServiceStorage folderServiceStorage,
+            INoteServiceStorage noteServiceStorage,
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
             ILogger<AppSignalRHub> logger)
         {
-            wsNotesService = websocketsNotesService;
-            wsFoldersService = websocketsFoldersService;
+            this.folderServiceStorage = folderServiceStorage;
+            this.noteServiceStorage = noteServiceStorage;
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
             this.logger = logger;
         }
@@ -45,38 +47,30 @@ namespace Noots.SignalrUpdater.Impl
         // NOTES
         public async Task JoinNote(Guid noteId)
         {
-            if (wsNotesService.IsContainsConnectionId(noteId, Context.ConnectionId))
-            {
-                return;
-            }
-
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
             if (ent == null)
             {
                 return;
             }
 
-            if (wsNotesService.Add(noteId, ent))
-            {
-                var groupId = GetNoteGroupName(noteId);
-                await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
-                await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
-                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId); // TODO change on userId that can be added to ui list
-            }
+            await noteServiceStorage.AddAsync(noteId, ent);
+
+            var groupId = GetNoteGroupName(noteId);
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
+            await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
+            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId); // TODO change on userId that can be added to ui list
         }
 
         public async Task LeaveNote(Guid noteId)
         {
-            var result = wsNotesService.Remove(noteId, Context.ConnectionId);
-            if (!result.isRemoved)
-            {
-                logger.LogError("User did`nt deleted from online on note, UserId: " + GetUserId());
-                return;
-            }
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
 
-            if (result.user != null)
+            await noteServiceStorage.RemoveAsync(noteId, Context.ConnectionId);
+
+            var userId = ent.UserId ?? ent.UnauthorizedId;
+            if (userId != null && !userId.HasValue)
             {
-                await RemoveOnlineUsersNoteAsync(noteId, result.user.Id);
+                await RemoveOnlineUsersNoteAsync(noteId, userId.Value);
             }
         }
 
@@ -92,39 +86,31 @@ namespace Noots.SignalrUpdater.Impl
         // FOLDERS
         public async Task JoinFolder(Guid folderId)
         {
-            if (wsFoldersService.IsContainsConnectionId(folderId, Context.ConnectionId))
-            {
-                return;
-            }
-
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
             if (ent == null)
             {
                 return;
             }
 
-            if (wsFoldersService.Add(folderId, ent))
-            {
-                var groupId = GetFolderGroupName(folderId);
-                await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, folderId);
-                await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
-                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId); // TODO change on userId that can be added to ui list
-            }
+            await folderServiceStorage.AddAsync(folderId, ent);
+
+            var groupId = GetFolderGroupName(folderId);
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, folderId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
+            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId); // TODO change on userId that can be added to ui list
         }
 
 
         public async Task LeaveFolder(Guid folderId)
         {
-            var result = wsFoldersService.Remove(folderId, Context.ConnectionId);
-            if (!result.isRemoved)
-            {
-                logger.LogError("User did`nt deleted from online on folder, UserId: " + GetUserId());
-                return;
-            }
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
 
-            if (result.user != null)
+            await folderServiceStorage.RemoveAsync(folderId, Context.ConnectionId);
+
+            var userId = ent.UserId ?? ent.UnauthorizedId;
+            if (userId != null && !userId.HasValue)
             {
-                await RemoveOnlineUsersFolderAsync(folderId, result.user.Id);
+                await RemoveOnlineUsersFolderAsync(folderId, userId.Value);
             }
         }
 
@@ -147,6 +133,9 @@ namespace Noots.SignalrUpdater.Impl
 
         private async Task AddConnectionAsync()
         {
+            var httpContext = Context.Features.Get<IHttpContextFeature>();
+            var userAgent = httpContext.HttpContext.Request.Headers["User-Agent"];
+
             var userId = GetUserId();
             UserIdentifierConnectionId entity = null;
             if (userId.HasValue)
@@ -154,12 +143,24 @@ namespace Noots.SignalrUpdater.Impl
                 entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
                 if (entity == null)
                 {
-                    entity = new UserIdentifierConnectionId { UserId = userId.Value, ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
+                    entity = new UserIdentifierConnectionId { 
+                        UserId = userId.Value, 
+                        ConnectionId = Context.ConnectionId,
+                        UserAgent = userAgent,
+                        Connected = true,
+                        ConnectedAt = DateTimeProvider.Time 
+                    };
                 }
             }
             else
             {
-                entity = new UserIdentifierConnectionId { ConnectionId = Context.ConnectionId, ConnectedAt = DateTimeProvider.Time };
+                entity = new UserIdentifierConnectionId { 
+                    ConnectionId = Context.ConnectionId,
+                    UserAgent = userAgent,
+                    Connected = true,
+                    ConnectedAt = DateTimeProvider.Time,
+                    UnauthorizedId = Guid.NewGuid()
+                };
             }
 
             if (entity != null)
@@ -171,37 +172,26 @@ namespace Noots.SignalrUpdater.Impl
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             await RemoveConnectionAsync();
-
-            var folderEnts = wsFoldersService.RemoveUserFromEntities(Context.ConnectionId);
-            foreach (var ent in folderEnts)
-            {
-                await RemoveOnlineUsersFolderAsync(ent.entityId, ent.userId);
-            }
-
-            var noteEnts = wsNotesService.RemoveUserFromEntities(Context.ConnectionId);
-            foreach (var ent in noteEnts)
-            {
-                await RemoveOnlineUsersNoteAsync(ent.entityId, ent.userId);
-            }
-
             await base.OnDisconnectedAsync(exception);
         }
 
         private async Task RemoveConnectionAsync()
         {
             var userId = GetUserId();
-            UserIdentifierConnectionId entity = null;
-            if (userId.HasValue) // USE DAPPER
+            List<UserIdentifierConnectionId> ents = null;
+
+            if (userId.HasValue) // TODO USE DAPPER
             {
-                entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
+                ents = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
             }
             else
             {
-                entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+                ents = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.ConnectionId == Context.ConnectionId);
             }
-            if (entity != null)
+
+            if (ents != null && ents.Any())
             {
-                await userIdentifierConnectionIdRepository.RemoveAsync(entity);
+                await userIdentifierConnectionIdRepository.RemoveRangeAsync(ents);
             }
         }
     }

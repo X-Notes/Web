@@ -1,18 +1,19 @@
 ﻿using Common.DTO.WebSockets;
-using Noots.SignalrUpdater.Impl.NoteFolderStates;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage;
+using Noots.SignalrUpdater.Interfaces;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class FolderWSUpdateService
     {
-        private readonly WSFoldersServiceStorage websocketsFoldersService;
+        private readonly IFolderServiceStorage WSFolderServiceStorage;
         private readonly AppSignalRService appSignalRService;
 
         public FolderWSUpdateService(
-            WSFoldersServiceStorage websocketsFoldersService,
+            IFolderServiceStorage WSFolderServiceStorage,
             AppSignalRService appSignalRService)
         {
-            this.websocketsFoldersService = websocketsFoldersService;
+            this.WSFolderServiceStorage = WSFolderServiceStorage;
             this.appSignalRService = appSignalRService;
         }
 
@@ -26,7 +27,7 @@ namespace Noots.SignalrUpdater.Impl
 
         public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = websocketsFoldersService.GetConnectiondsById(update.FolderId, exceptUserId);
+            var connections = await WSFolderServiceStorage.GetConnectionsByIdAsync(update.FolderId, exceptUserId);
 
             if (userIds != null && userIds.Any())
             {

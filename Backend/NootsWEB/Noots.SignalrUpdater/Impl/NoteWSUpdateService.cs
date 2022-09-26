@@ -1,24 +1,25 @@
 ﻿using Common.DTO.WebSockets;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
+using Noots.SignalrUpdater.Interfaces;
 
 namespace Noots.SignalrUpdater.Impl
 {
     public class NoteWSUpdateService
     {
-        private readonly WSMemoryNotesServiceStorage websocketsNotesService;
+        private readonly INoteServiceStorage WSNoteServiceStorage;
+        private readonly IFolderServiceStorage WSFolderServiceStorage;
+
         private readonly AppSignalRService appSignalRService;
         private readonly FoldersNotesRepository foldersNotesRepository;
-        private readonly WSMemoryFoldersServiceStorage websocketsFoldersService;
 
         public NoteWSUpdateService(
-            WSMemoryNotesServiceStorage websocketsNotesService,
-            WSMemoryFoldersServiceStorage websocketsFoldersService,
+            INoteServiceStorage WSNoteServiceStorage,
+            IFolderServiceStorage WSFolderServiceStorage,
             AppSignalRService appSignalRService,
             FoldersNotesRepository foldersNotesRepository)
         {
-            this.websocketsNotesService = websocketsNotesService;
-            this.websocketsFoldersService = websocketsFoldersService;
+            this.WSNoteServiceStorage = WSNoteServiceStorage;
+            this.WSFolderServiceStorage = WSFolderServiceStorage;
             this.appSignalRService = appSignalRService;
             this.foldersNotesRepository = foldersNotesRepository;
         }
@@ -33,7 +34,7 @@ namespace Noots.SignalrUpdater.Impl
 
         public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = websocketsNotesService.GetConnectiondsById(update.NoteId, exceptUserId);
+            var connections = await WSNoteServiceStorage.GetConnectionsByIdAsync(update.NoteId, exceptUserId);
 
             if (userIds != null && userIds.Any())
             {
@@ -54,7 +55,14 @@ namespace Noots.SignalrUpdater.Impl
         {
             var ents = await foldersNotesRepository.GetWhereAsync(x => updates.NoteId == x.NoteId);
             var folderIds = ents.Select(x => x.FolderId).Distinct();
-            return folderIds.SelectMany(id => websocketsFoldersService.GetConnectiondsById(id, exceptUserId)).ToList();
+
+            var result = new List<string>();
+            foreach(var folderId in folderIds)
+            {
+                var conns = await WSFolderServiceStorage.GetConnectionsByIdAsync(folderId, exceptUserId);
+                result.AddRange(conns);
+            }
+            return result;
         }
     }
 }

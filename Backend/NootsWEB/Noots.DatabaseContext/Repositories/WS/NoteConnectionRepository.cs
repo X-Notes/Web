@@ -13,14 +13,14 @@ public class NoteConnectionRepository : Repository<NoteConnection, int>
 
     public Task<List<UserIdentifierConnectionId>> GetUserConnectionsById(Guid noteId)
     {
-        return entities.Include(x => x.UserIdentifierConnectionIdId)
+        return entities.Include(x => x.UserIdentifierConnectionId)
                        .Where(x => x.NoteId == noteId)
                        .Select(x => x.UserIdentifierConnectionId).ToListAsync();
     }
 
     public Task<List<string>> GetConnectionsById(Guid noteId, Guid exceptUserId)
     {
-        return entities.Include(x => x.UserIdentifierConnectionIdId)
+        return entities.Include(x => x.UserIdentifierConnectionId)
                        .Where(x => x.NoteId == noteId && x.UserId != exceptUserId)
                        .Select(x => x.ConnectionId).ToListAsync();
     }

@@ -19,6 +19,10 @@ namespace Common.DatabaseModels.Models.WS
         [Required(AllowEmptyStrings = false)]
         public string ConnectionId { set; get; }
 
+        public string UserAgent { get; set; }
+
+        public bool Connected { set; get; }
+
         public DateTimeOffset ConnectedAt { set; get; }
 
         public List<FolderConnection> FolderConnections { set; get; }

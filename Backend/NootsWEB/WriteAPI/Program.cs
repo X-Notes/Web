@@ -106,7 +106,6 @@ builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection
 // inject counter and rules stores
 builder.Services.AddInMemoryRateLimiting();
 
-builder.Services.AddHostedService<ManageUsersOnEntitiesHosted>();
 builder.Services.AddHostedService<SetupServicesHosted>();
 
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Noots.SignalrUpdater.Impl;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.MemoryStorage;
+using Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage;
+using Noots.SignalrUpdater.Interfaces;
 
 namespace Noots.SignalrUpdater
 {
@@ -12,8 +13,8 @@ namespace Noots.SignalrUpdater
             services.AddScoped<FolderWSUpdateService>();
             services.AddScoped<NoteWSUpdateService>();
 
-            services.AddSingleton<WSMemoryNotesServiceStorage>();
-            services.AddSingleton<WSMemoryFoldersServiceStorage>();
+            services.AddScoped<INoteServiceStorage, WSNoteServiceStorage>();
+            services.AddScoped<IFolderServiceStorage, WSFolderServiceStorage>();
         }
     }
 }
