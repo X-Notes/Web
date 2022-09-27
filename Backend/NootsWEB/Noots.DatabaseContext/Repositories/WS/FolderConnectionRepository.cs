@@ -13,14 +13,14 @@ public class FolderConnectionRepository : Repository<FolderConnection, int>
 
     public Task<List<UserIdentifierConnectionId>> GetUserConnectionsById(Guid folderId)
     {
-        return entities.Include(x => x.UserIdentifierConnectionIdId)
+        return entities.Include(x => x.UserIdentifierConnectionId)
                        .Where(x => x.FolderId == folderId)
                        .Select(x => x.UserIdentifierConnectionId).ToListAsync();
     }
 
     public Task<List<string>> GetConnectionsById(Guid folderId, Guid exceptUserId)
     {
-        return entities.Include(x => x.UserIdentifierConnectionIdId)
+        return entities.Include(x => x.UserIdentifierConnectionId)
                        .Where(x => x.FolderId == folderId && x.UserId != exceptUserId)
                        .Select(x => x.ConnectionId).ToListAsync();
     }
