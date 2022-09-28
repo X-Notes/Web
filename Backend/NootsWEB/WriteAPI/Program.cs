@@ -65,6 +65,9 @@ var dbConn = builder.Configuration.GetSection("WriteDB").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
 
+Console.WriteLine("REDIS ACTIVE: " + redisConfig.Active);
+Console.WriteLine("REDIS STR: "+ redisConfig.Connection);
+
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 builder.Services.SetupLogger(builder.Configuration, environment);
