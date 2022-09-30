@@ -18,8 +18,8 @@ services:
     image: noots-api
     environment:
       - ASPNETCORE_URLS=http://+:5000
-      - Redis:Active=false
-      - Redis:Connection=http://host.docker.internal:6379
+      - Redis:Active=true
+      - Redis:Connection=redis
     deploy:
       replicas: 1
   noots-api-2:
@@ -27,8 +27,8 @@ services:
     image: noots-api
     environment:
       - ASPNETCORE_URLS=http://+:5005
-      - Redis:Active=false
-      - Redis:Connection=http://host.docker.internal:6379
+      - Redis:Active=true
+      - Redis:Connection=redis
     deploy:
       replicas: 1
   noots-worker-api:
@@ -44,11 +44,8 @@ services:
     ports:
       - "5900:5900"
       - "5950:5950"
-#  redis:
-#    image: redis/redis-stack
-#    ports:
-#      - 6379:6379
-#    restart: unless-stopped
-
-# volumes:
-#   redis_data:
+  redis:
+    image: redis/redis-stack
+    ports:
+      - 6379:6379
+    restart: unless-stopped
