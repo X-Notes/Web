@@ -1,11 +1,11 @@
 version: "3"
 
 services:
-  noots-static-proxy:
-    container_name: noots-static-proxy
+  noots-static:
+    container_name: noots-static
     build:
       context: .
-      dockerfile: noots-static-proxy.dockerfile
+      dockerfile: noots-static.dockerfile
     ports:
       - "80:80"
     depends_on:

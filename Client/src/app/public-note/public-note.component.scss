@@ -16,17 +16,18 @@
   height: calc(100% - 50px);
 
   .left-section {
-    width: 100%;
+    flex: 1;
     @media (max-width: 1024px) {
       display: none;
     }
   }
   .full-note {
     display: flex;
+    flex-grow: 5;
     max-width: 1024px;
   }
   .right-section {
-    width: 100%;
+    flex: 1;
     @media (max-width: 1024px) {
       display: none;
     }

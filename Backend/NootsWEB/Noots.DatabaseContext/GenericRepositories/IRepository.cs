@@ -18,6 +18,7 @@ namespace Noots.DatabaseContext.GenericRepositories
         Task RemoveRangeAsync(IEnumerable<T> entities);
 
         Task<List<T>> GetAllAsync();
+        Task<List<T>> GetAllNoTrackAsync();
         Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate);
     }
 }
