@@ -1,11 +1,18 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
+import { TextColors } from 'src/app/shared/enums/text-colors.enum';
+import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { TextStyles, TextUpdateValue, UpdateTextStyles } from '../../models/update-text-styles';
 import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
+import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TextEditMenuEnum } from './models/text-edit-menu.enum';
+
+
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -22,11 +29,20 @@ export class TextEditMenuComponent {
   @Input()
   selectedMenuType: TextEditMenuEnum;
 
+  @Input()
+  elements: QueryList<ParentInteraction>;
+
+  @ViewChild('textColor') textColorMenuTrigger: MatMenuTrigger;
+
   menuType = TextEditMenuEnum;
 
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;
+
+  textColorPalete = Object.entries(TextColors);
+
+  textBackgroundPalete = Object.entries(TextBackgroundColors);
 
   constructor(
     public menuSelectionService: MenuSelectionService,
@@ -82,19 +98,19 @@ export class TextEditMenuComponent {
 
   removeStyles($event): void {
     $event.preventDefault();
-    this.updateText.emit({
-      textStyle: null,
-      value: null,
-      isRemoveStyles: true,
-    });
-    this.menuSelectionService.clearItemAndSelection();
+    this.textColorMenuTrigger.openMenu();
   }
 
   updateStyles(textStyle: TextStyles, value: TextUpdateValue): void {
+    let isRemoveStyles = false;
+    if(value === TextColors.Default || value === TextBackgroundColors.Default) {
+      value = null;
+      isRemoveStyles = true;
+    }
     this.updateText.emit({
       textStyle,
       value,
-      isRemoveStyles: false,
+      isRemoveStyles,
     });
     this.menuSelectionService.clearItemAndSelection();
   }
@@ -217,13 +233,11 @@ export class TextEditMenuComponent {
       return container;
     }
     if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
-      // TODO
-      const selection = this.apiBrowserService.getSelection();
-      if (!selection) return;
       const container = document.createElement('div');
-      for (let i = 0, len = selection.rangeCount; i < len; ++i) {
-        container.appendChild(selection.getRangeAt(i).cloneContents());
+      for (let el of this.elements.map(x => x.getEditableNative())) {
+        container.appendChild(el.cloneNode());
       }
+      console.log('container: ', container);
       return container;
     }
   };
