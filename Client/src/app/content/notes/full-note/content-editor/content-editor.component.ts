@@ -147,8 +147,12 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return null;
   }
 
-  get contents() {
+  get contents(): ContentModelBase[] {
     return this.contentEditorContentsService.getContents;
+  }
+
+  get selectedElements() {
+    return this.elements.filter(x => this.selectionService.isSelected(x.getContentId()));
   }
 
   @Input() set contents(contents: ContentModelBase[]) {

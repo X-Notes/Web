@@ -16,3 +16,24 @@
     }
   }
 }
+
+.dark-text-color-menu {
+  background: $dark-button;
+  overflow: hidden !important;
+  max-height: initial !important;
+  .mat-menu-item {
+    color: white;
+
+    &::after {
+      color: white;
+    }
+
+    .mat-icon {
+      color: white;
+    }
+
+    .mat-menu-submenu-icon{
+      color: white;
+    }
+  }
+}

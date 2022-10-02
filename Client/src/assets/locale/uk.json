@@ -244,6 +244,9 @@
     },
     "photo": {
       "plsUpload": "Завантажте фото"
+    },
+    "text-color-menu" : {
+      "background": "Фон"
     }
   },
   "noResult": {

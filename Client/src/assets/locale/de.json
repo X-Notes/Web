@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "Foto hochladen"
+    },
+    "text-color-menu" : {
+      "background": "Hintergrund"
     }
   },
   "noResult": {

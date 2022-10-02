@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "Télécharger la photo"
+    },
+    "text-color-menu" : {
+      "background": "Arrière-plan"
     }
   },
   "noResult": {

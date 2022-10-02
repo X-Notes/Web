@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "写真のアップロード"
+    },
+    "text-color-menu" : {
+      "background": "背景"
     }
   },
   "noResult": {

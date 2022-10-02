@@ -39,6 +39,13 @@
   }
 }
 
+.mat-menu-default {
+  .mat-menu-content:not(:empty) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
 .cdk-global-scrollblock {
   overflow-y: hidden;
 }

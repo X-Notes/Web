@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "上传照片"
+    },
+    "text-color-menu" : {
+      "background": "背景"
     }
   },
   "noResult": {
