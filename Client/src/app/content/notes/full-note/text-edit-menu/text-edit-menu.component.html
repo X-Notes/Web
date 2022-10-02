@@ -75,7 +75,7 @@
         class="text-container"
         [ngStyle]="{ backgroundColor: getProperty('backgroundColor'), color: getProperty('color') }"
       >
-        <p>T</p>
+        <p>A</p>
       </div>
     </div>
   </div>
@@ -88,7 +88,7 @@
   class="color-pallete-container"
   #textColorMenu="matMenu"
 >
-  <div class="text-color-menu-container">
+  <div (mousedown)="preventUnSelection($event)" class="text-color-menu-container">
     <div class="default-item">
       <mat-icon svgIcon="textColor" [inline]="true"></mat-icon>
       <span class="default-text">{{ 'innerNote.text' | translate }}</span>

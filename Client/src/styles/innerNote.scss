@@ -16,7 +16,6 @@
 }
 
 .block-generic {
-  min-height: 22px;
   overflow-wrap: anywhere;
   outline: none;
   width: 100%;
@@ -41,6 +40,8 @@
 
 .no-content-list {
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 100%;
   color: #6b6b6b;
   font-weight: 300;

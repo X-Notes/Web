@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, Output, QueryList, ViewChild } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
 import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
 import { TextColors } from 'src/app/shared/enums/text-colors.enum';
-import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
@@ -11,8 +9,6 @@ import { MenuSelectionService } from '../content-editor-services/menu-selection.
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TextEditMenuEnum } from './models/text-edit-menu.enum';
-
-
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -31,8 +27,6 @@ export class TextEditMenuComponent {
 
   @Input()
   elements: QueryList<ParentInteraction>;
-
-  @ViewChild('textColor') textColorMenuTrigger: MatMenuTrigger;
 
   menuType = TextEditMenuEnum;
 
@@ -87,23 +81,20 @@ export class TextEditMenuComponent {
   }
 
   setTextColor($event, value: string = null) {
+    console.log('setTextColor');
     $event.preventDefault();
     this.updateStyles('color', value);
   }
 
   setBackground($event, value: string = null) {
+    console.log('setBackground');
     $event.preventDefault();
     this.updateStyles('background', value);
   }
 
-  removeStyles($event): void {
-    $event.preventDefault();
-    this.textColorMenuTrigger.openMenu();
-  }
-
   updateStyles(textStyle: TextStyles, value: TextUpdateValue): void {
     let isRemoveStyles = false;
-    if(value === TextColors.Default || value === TextBackgroundColors.Default) {
+    if (value === TextColors.Default || value === TextBackgroundColors.Default) {
       value = null;
       isRemoveStyles = true;
     }
@@ -141,14 +132,68 @@ export class TextEditMenuComponent {
     return this.isSelectionTags(['em']);
   };
 
+  isSelectionTags(selTags: string[]): boolean {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      const sel = this.apiBrowserService.getSelection();
+      if (!sel) return false;
+      const tempDiv = this.getOneRowSelectedHTML();
+      if (!tempDiv) return false;
+      if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
+      const tagsSet = new Set<string>();
+      for (const node of tempDiv.childNodes as any) {
+        let tags = [node.nodeName.toLowerCase()];
+        tagsSet.add(node.nodeName.toLowerCase());
+
+        // This covers selection that are inside bolded characters
+        while (tags.includes('#text')) {
+          const startParent = sel.anchorNode.parentNode;
+          const endParent = sel.focusNode.parentNode;
+
+          const startTag = startParent.nodeName.toLowerCase();
+          const endTag = endParent.nodeName.toLowerCase();
+
+          const startTagParent = startParent.parentElement.nodeName.toLowerCase();
+          const endTagParent = endParent.parentElement.nodeName.toLowerCase();
+
+          tags = [startTag, endTag];
+          tagsSet.add(startTag);
+          tagsSet.add(endTag);
+          tagsSet.add(startTagParent);
+          tagsSet.add(endTagParent);
+        }
+      }
+      return selTags.some((x) => tagsSet.has(x));
+    }
+    // TODO
+    return false;
+  }
+
   getProperty(propertySelector: string): string {
-    const sel = this.apiBrowserService.getSelection();
-    if (!sel) return null;
-    const tempDiv = this.getSelectedHTML();
-    if (!tempDiv) return null;
-    if (tempDiv.innerHTML === '') return null;
-    const res = this.getNodeProperty(sel, tempDiv, propertySelector);
-    return res;
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      const sel = this.apiBrowserService.getSelection();
+      if (!sel) return null;
+      const tempDiv = this.getOneRowSelectedHTML();
+      if (!tempDiv) return null;
+      if (tempDiv.innerHTML === '') return null;
+      const res = this.getNodeProperty(sel, tempDiv, propertySelector);
+      return res;
+    }
+    const rootEl = this.getMultiRowSelectedHTML();
+    const properties: string[] = [];
+    this.findProperty(rootEl, propertySelector, properties);
+    if (properties?.length > 0) {
+      return properties[0];
+    }
+    return null;
+  }
+
+  findProperty(child: HTMLElement, propertySelector: string, properties: string[]): void {
+    if (child?.style && child?.style[propertySelector]) {
+      properties.push(child?.style[propertySelector]);
+    }
+    for (let subChild of child.childNodes as any as HTMLElement[]) {
+      this.findProperty(subChild, propertySelector, properties);
+    }
   }
 
   getNodeProperty(sel: Selection, el: HTMLElement, propertySelector: string): string {
@@ -189,56 +234,21 @@ export class TextEditMenuComponent {
     return null;
   }
 
-  isSelectionTags(selTags: string[]): boolean {
-    const sel = this.apiBrowserService.getSelection();
-    if (!sel) return false;
-    const tempDiv = this.getSelectedHTML();
-    if (!tempDiv) return false;
-    if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
-    const tagsSet = new Set<string>();
-    for (const node of tempDiv.childNodes as any) {
-      let tags = [node.nodeName.toLowerCase()];
-      tagsSet.add(node.nodeName.toLowerCase());
-
-      // This covers selection that are inside bolded characters
-      while (tags.includes('#text')) {
-        const startParent = sel.anchorNode.parentNode;
-        const endParent = sel.focusNode.parentNode;
-
-        const startTag = startParent.nodeName.toLowerCase();
-        const endTag = endParent.nodeName.toLowerCase();
-
-        const startTagParent = startParent.parentElement.nodeName.toLowerCase();
-        const endTagParent = endParent.parentElement.nodeName.toLowerCase();
-
-        tags = [startTag, endTag];
-        tagsSet.add(startTag);
-        tagsSet.add(endTag);
-        tagsSet.add(startTagParent);
-        tagsSet.add(endTagParent);
-      }
+  getOneRowSelectedHTML = (): HTMLElement => {
+    const selection = this.apiBrowserService.getSelection();
+    if (!selection) return;
+    const container = document.createElement('div');
+    for (let i = 0, len = selection.rangeCount; i < len; ++i) {
+      container.appendChild(selection.getRangeAt(i).cloneContents());
     }
+    return container;
+  };
 
-    return selTags.some((x) => tagsSet.has(x));
-  }
-
-  getSelectedHTML = (): HTMLElement => {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      const selection = this.apiBrowserService.getSelection();
-      if (!selection) return;
-      const container = document.createElement('div');
-      for (let i = 0, len = selection.rangeCount; i < len; ++i) {
-        container.appendChild(selection.getRangeAt(i).cloneContents());
-      }
-      return container;
+  getMultiRowSelectedHTML = (): HTMLElement => {
+    const container = document.createElement('div');
+    for (let el of this.elements.map((x) => x.getEditableNative())) {
+      container.appendChild(el.cloneNode(true));
     }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
-      const container = document.createElement('div');
-      for (let el of this.elements.map(x => x.getEditableNative())) {
-        container.appendChild(el.cloneNode());
-      }
-      console.log('container: ', container);
-      return container;
-    }
+    return container;
   };
 }
