@@ -164,7 +164,14 @@ export class TextEditMenuComponent {
       }
       return selTags.some((x) => tagsSet.has(x));
     }
-    // TODO
+
+    const rootEl = this.getMultiRowSelectedHTML();
+    const properties: { isFounded: boolean } = { isFounded: false };
+    this.findTag(rootEl, selTags, properties);
+    if (properties.isFounded) {
+      return true;
+    }
+
     return false;
   }
 
@@ -185,6 +192,15 @@ export class TextEditMenuComponent {
       return properties[0];
     }
     return null;
+  }
+
+  findTag(child: HTMLElement, tags: string[], properties: { isFounded: boolean }): void {
+    if (tags.some((x) => x === child?.nodeName.toLowerCase())) {
+      properties.isFounded = true;
+    }
+    for (let subChild of child.childNodes as any as HTMLElement[]) {
+      this.findTag(subChild, tags, properties);
+    }
   }
 
   findProperty(child: HTMLElement, propertySelector: string, properties: string[]): void {

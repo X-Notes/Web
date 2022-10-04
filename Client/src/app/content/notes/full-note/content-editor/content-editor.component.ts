@@ -147,12 +147,33 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return null;
   }
 
+  get textEditMenuTop(): number {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return this.menuSelectionService.getTop;
+    }
+    const top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
+    if(top < 152) return 152;
+    return top;
+  }
+
+  get textEditMenuLeft(): number {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return this.menuSelectionService.getLeft;
+    }
+    console.log('selectedElementsRects: ', this.selectedElementsRects);
+    return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
+  }
+
   get contents(): ContentModelBase[] {
     return this.contentEditorContentsService.getContents;
   }
 
-  get selectedElements() {
-    return this.elements.filter(x => this.selectionService.isSelected(x.getContentId()));
+  get selectedElementsRects(): DOMRect[] {
+    return this.selectedElements.map((x) => x.getHost().nativeElement.getBoundingClientRect());
+  }
+
+  get selectedElements(): ParentInteraction[] {
+    return this.elements.filter((x) => this.selectionService.isSelected(x.getContentId()));
   }
 
   @Input() set contents(contents: ContentModelBase[]) {
