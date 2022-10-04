@@ -74,5 +74,5 @@ export enum Icons {
   billingPoint = 'billingPoint',
   textBackgroundColor = 'textBackgroundColor',
   textColor = 'textColor',
-  textColorPreview = 'textColorPreview'
+  textColorPreview = 'textColorPreview',
 }

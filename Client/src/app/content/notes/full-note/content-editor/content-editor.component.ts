@@ -68,7 +68,7 @@ import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
   providers: [WebSocketsNoteUpdaterService],
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -156,6 +156,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
     }
+    console.log('top: ', this.menuSelectionService.selectedHtmlItemRect.top);
     if (top < 152) return 152;
     return top;
   }
