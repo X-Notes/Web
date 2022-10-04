@@ -152,7 +152,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       return this.menuSelectionService.getTop;
     }
     const top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
-    if(top < 152) return 152;
+    if (top < 152) return 152;
     return top;
   }
 
@@ -160,7 +160,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
       return this.menuSelectionService.getLeft;
     }
-    console.log('selectedElementsRects: ', this.selectedElementsRects);
     return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
   }
 
@@ -176,6 +175,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.elements.filter((x) => this.selectionService.isSelected(x.getContentId()));
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents);
