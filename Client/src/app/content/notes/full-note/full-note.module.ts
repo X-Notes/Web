@@ -13,7 +13,6 @@ import { HtmlCheckListComponent } from './full-note-components/html-components/h
 import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { PhotoComponent } from './full-note-components/collection-components/collection-photos/photo/photo.component';
 import { CopyDirective } from './directives/copy.directive';
-import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
 import { AudioNoteComponent } from './full-note-components/collection-components/collection-audio/audio-note/audio-note.component';
@@ -62,7 +61,6 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
     MenuSelectionDirective,
     SelectionDirective,
     CopyDirective,
-    TextEditMenuDirective,
     ChangeSizeAlbumHeightDirective,
     AudioNoteComponent,
     VideoNoteComponent,

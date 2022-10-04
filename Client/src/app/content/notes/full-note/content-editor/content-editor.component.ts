@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Input,
@@ -67,6 +68,7 @@ import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
   providers: [WebSocketsNoteUpdaterService],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -148,17 +150,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get textEditMenuTop(): number {
+    let top = 0;
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return this.menuSelectionService.getTop;
+      top = this.menuSelectionService.selectedHtmlItemRect.top - 50;
+    } else {
+      top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
     }
-    const top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
     if (top < 152) return 152;
     return top;
   }
 
   get textEditMenuLeft(): number {
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return this.menuSelectionService.getLeft;
+      return this.menuSelectionService.getCursorLeft;
     }
     return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
   }
@@ -219,6 +223,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   runDetectChangesOnChildren(): void {
+    console.log('run detection');
     this.elements.toArray().forEach((x) => x.detectChanges());
   }
 
@@ -458,7 +463,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getIdsToUpdateTextStyles(): string[] {
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return [this.menuSelectionService.currentTextItem.id];
+      return [this.menuSelectionService.selectedTextItem.id];
     }
     if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
       return this.selectionService.getSelectedItems();

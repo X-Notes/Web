@@ -51,13 +51,12 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
 
       const currentItem = this.getCurrentItem();
       if (currentItem) {
-        this.menuSelectionService.currentTextItem = currentItem.getContent() as BaseText;
-        this.menuSelectionService.left = left;
-        this.menuSelectionService.startTop = top;
-        this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
+        const textEl = currentItem.getContent() as BaseText;
+        const scrollTop = this.elementRef.nativeElement.scrollTop;
+        this.menuSelectionService.init(currentItem.getHost(), textEl, top, left, scrollTop);
       }
     } else {
-      this.menuSelectionService.currentTextItem = null;
+      this.menuSelectionService.cleatItem();
     }
   }
 

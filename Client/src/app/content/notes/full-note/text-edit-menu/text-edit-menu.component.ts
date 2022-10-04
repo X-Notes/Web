@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, QueryList, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList } from '@angular/core';
 import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
 import { TextColors } from 'src/app/shared/enums/text-colors.enum';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
@@ -50,7 +50,7 @@ export class TextEditMenuComponent {
   };
 
   transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM): void {
-    const item = this.menuSelectionService.currentTextItem;
+    const item = this.menuSelectionService.selectedTextItem;
     if (!item) return;
     if (item.noteTextTypeId === type && item.headingTypeId === heading) {
       this.eventTransform.emit({
@@ -107,7 +107,7 @@ export class TextEditMenuComponent {
   }
 
   getIsActiveHeader(heading: HeadingTypeENUM): boolean {
-    const item = this.menuSelectionService.currentTextItem;
+    const item = this.menuSelectionService.selectedTextItem;
     if (
       item &&
       item.noteTextTypeId === NoteTextTypeENUM.Heading &&
@@ -119,7 +119,7 @@ export class TextEditMenuComponent {
   }
 
   getIsActiveType(type: NoteTextTypeENUM): boolean {
-    const item = this.menuSelectionService.currentTextItem;
+    const item = this.menuSelectionService.selectedTextItem;
     if (!item) return false;
     return type === item.noteTextTypeId;
   }
@@ -198,7 +198,7 @@ export class TextEditMenuComponent {
     if (tags.some((x) => x === child?.nodeName.toLowerCase())) {
       properties.isFounded = true;
     }
-    for (let subChild of child.childNodes as any as HTMLElement[]) {
+    for (const subChild of child.childNodes as any as HTMLElement[]) {
       this.findTag(subChild, tags, properties);
     }
   }
@@ -207,7 +207,7 @@ export class TextEditMenuComponent {
     if (child?.style && child?.style[propertySelector]) {
       properties.push(child?.style[propertySelector]);
     }
-    for (let subChild of child.childNodes as any as HTMLElement[]) {
+    for (const subChild of child.childNodes as any as HTMLElement[]) {
       this.findProperty(subChild, propertySelector, properties);
     }
   }
@@ -262,7 +262,7 @@ export class TextEditMenuComponent {
 
   getMultiRowSelectedHTML = (): HTMLElement => {
     const container = document.createElement('div');
-    for (let el of this.elements.map((x) => x.getEditableNative())) {
+    for (const el of this.elements.map((x) => x.getEditableNative())) {
       container.appendChild(el.cloneNode(true));
     }
     return container;
