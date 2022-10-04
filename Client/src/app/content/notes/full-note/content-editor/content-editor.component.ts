@@ -136,7 +136,20 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get textEditMenuVisibility(): string {
-    return this.selectedMenuType ? 'visible' : 'hidden';
+    return this.selectedMenuType && !this.isHideMenu ? 'visible' : 'hidden';
+  }
+
+  get isHideMenu(): boolean {
+    let top = 0;
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      top = this.menuSelectionService.selectedHtmlItemRect.top - 50;
+    } else {
+      top = Math.max(...this.selectedElementsRects.map((x) => x.top)) - 50;
+    }
+    if(top && top < 75) {
+      return true;
+    }
+    return false;
   }
 
   get selectedMenuType(): TextEditMenuEnum {
@@ -156,7 +169,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
     }
-    console.log('top: ', this.menuSelectionService.selectedHtmlItemRect.top);
     if (top < 152) return 152;
     return top;
   }
@@ -360,6 +372,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!this.isSelectModeActive) return;
     this.apiBrowserFunctions.removeAllRanges();
   }
+
+  onScroll($event: Event): void {}
 
   enterHandler(value: EnterEvent) {
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);

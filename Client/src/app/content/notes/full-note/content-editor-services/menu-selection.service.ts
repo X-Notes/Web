@@ -23,7 +23,7 @@ export class MenuSelectionService {
   ) {}
 
   get selectedHtmlItemRect(): DOMRect {
-    return this.selectedHtmlItem.nativeElement.getBoundingClientRect();
+    return this.selectedHtmlItem?.nativeElement?.getBoundingClientRect();
   }
 
   get selectedHtmlItem(): ElementRef<HTMLElement> {

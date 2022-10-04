@@ -8,7 +8,6 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { ScrollEvent } from 'muuri';
 import { fromEvent, Subscription } from 'rxjs';
 import { bufferTime } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -27,6 +26,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   @Output()
   selectionEndEvent = new EventEmitter<DOMRect>();
+
+  @Output()
+  onScrollEvent = new EventEmitter<Event>();
 
   @Input() isReadonly: boolean;
 
@@ -261,7 +263,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scrollEvent(e: ScrollEvent, scrollSection: HTMLElement) {
+  scrollEvent(e: Event, scrollSection: HTMLElement): void {
+    this.onScrollEvent.emit(e);
     this.mouseMoveDelay(this.prevMouseEvent);
   }
 }
