@@ -45,6 +45,7 @@ import { ContentUpdateWsService } from './content-editor-services/content-update
 import { MobileTransformMenuComponent } from './full-note-components/mobile-transform-menu/mobile-transform-menu.component';
 import { ContentEditorRestoreService } from './content-editor-services/core/content-editor-restore.service';
 import { ContentEditorSyncService } from './content-editor-services/core/content-editor-sync.service';
+import { HtmlPropertyTagCollectorService } from './content-editor-services/html-property-tag-collector.service';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
   providers: [
     MenuSelectionService,
     SelectionService,
+    HtmlPropertyTagCollectorService,
     ClickableContentService,
     ContentEditorElementsListenerService,
     ContentEditorListenerService,
