@@ -1,36 +1,36 @@
 <div appTheme class="transform-buttons-container">
   <div class="buttons" (mousedown)="preventClick($event)">
-    <div class="button" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
+    <div class="button" (mousedown)="transformContent($event, textType.heading, headingType.H1)">
       <div class="icon">
         <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
       </div>
     </div>
 
-    <div class="button" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
+    <div class="button" (mousedown)="transformContent($event, textType.heading, headingType.H2)">
       <div class="icon">
         <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
       </div>
     </div>
 
-    <div class="button" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
+    <div class="button" (mousedown)="transformContent($event, textType.heading, headingType.H3)">
       <div class="icon">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
     </div>
 
-    <div class="button" (mousedown)="transformContent($event, textType.Checklist)">
+    <div class="button" (mousedown)="transformContent($event, textType.checkList)">
       <div class="icon">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
       </div>
     </div>
 
-    <div class="button" (mousedown)="transformContent($event, textType.Dotlist)">
+    <div class="button" (mousedown)="transformContent($event, textType.dotList)">
       <div class="icon">
         <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
       </div>
     </div>
 
-    <div class="button" (mousedown)="transformContent($event, textType.Numberlist)">
+    <div class="button" (mousedown)="transformContent($event, textType.numberList)">
       <div class="icon">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>

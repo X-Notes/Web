@@ -14,11 +14,11 @@ export class ClickableContentService {
 
   type: ClickableSelectableEntities;
 
-  curentTextItem: BaseTextElementComponent;
+  currentTextItem: BaseTextElementComponent;
 
   get isEmptyTextItemFocus() {
-    if (this.curentTextItem?.content?.noteTextTypeId === NoteTextTypeENUM.Default) {
-      return this.curentTextItem.isActiveState;
+    if (this.currentTextItem?.content?.noteTextTypeId === NoteTextTypeENUM.default) {
+      return this.currentTextItem.isActiveState;
     }
     return false;
   }
@@ -32,23 +32,23 @@ export class ClickableContentService {
   }
 
   reset() {
-    this.setSontent(null, null, this.type, this.curentTextItem);
+    this.setContent(null, null, this.type, this.currentTextItem);
   }
 
   isClicked(itemId: string): boolean {
     return this.currentItemId === itemId;
   }
 
-  setSontent(
+  setContent(
     content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
-    curentTextItem: BaseTextElementComponent,
+    currentTextItem: BaseTextElementComponent,
   ) {
     this.currentContent = content;
     this.currentItemId = itemId;
     this.type = type;
-    this.curentTextItem = curentTextItem;
+    this.currentTextItem = currentTextItem;
   }
 
   getTextContentIdOrNull(): string {
