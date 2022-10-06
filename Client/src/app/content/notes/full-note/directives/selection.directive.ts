@@ -28,6 +28,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   selectionEndEvent = new EventEmitter<DOMRect>();
 
   @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onScrollEvent = new EventEmitter<Event>();
 
   @Input() isReadonly: boolean;

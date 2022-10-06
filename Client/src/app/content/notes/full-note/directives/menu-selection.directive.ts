@@ -8,11 +8,9 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { BaseText } from '../../models/editor-models/base-text';
 
 @Directive({
   selector: '[appMenuSelection]',
@@ -28,7 +26,6 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     public apiBrowserService: ApiBrowserTextService,
-    public menuSelectionService: MenuSelectionService,
     public selectionService: SelectionService,
   ) {}
 
@@ -51,12 +48,9 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
 
       const currentItem = this.getCurrentItem();
       if (currentItem) {
-        const textEl = currentItem.getContent() as BaseText;
         const scrollTop = this.elementRef.nativeElement.scrollTop;
-        this.menuSelectionService.init(currentItem.getHost(), textEl, top, left, scrollTop);
+        this.selectionService.initSingle(currentItem.getContentId(), top, left, scrollTop);
       }
-    } else {
-      this.menuSelectionService.cleatItem();
     }
   }
 

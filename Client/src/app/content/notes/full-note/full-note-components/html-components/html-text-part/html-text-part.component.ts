@@ -60,7 +60,7 @@ export class HtmlTextPartComponent
 
   formats: string;
 
-  isMulptiply = false;
+  isMultiply = false;
 
   constructor(
     private host: ElementRef,
@@ -79,7 +79,7 @@ export class HtmlTextPartComponent
     return isValidURL(this.contentHtml?.nativeElement?.textContent);
   }
 
-  get currentTextCotent() {
+  get currentTextContent() {
     return this.contentHtml?.nativeElement?.textContent;
   }
 
@@ -110,9 +110,9 @@ export class HtmlTextPartComponent
     this.initBaseHTML();
   }
 
-  transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {
+  transformToFileHandler($event, type: TypeUploadFile, isMultiply: boolean) {
     $event.preventDefault();
-    this.isMulptiply = isMulptiply;
+    this.isMultiply = isMultiply;
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());
@@ -124,18 +124,20 @@ export class HtmlTextPartComponent
 
   isFocusToNext = () => true;
 
-  changeDetectionChecker = (): void => {};
+  changeDetectionChecker = () => {
+    // console.log('Text html contents: ');
+  };
 
-  uploadFiles(event) {
+  uploadFiles(event): void {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
     const files = event.target.files as File[];
     this.transformToFile.emit({ contentId: this.content.id, typeFile: type, files: [...files] });
   }
 
-  enter($event: any) {
+  enter($event: any): void {
     $event.preventDefault();
     const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
-    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, this.content.id);
+    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
   }
 }

@@ -24,7 +24,6 @@ import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
 import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
-import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { SelectionService } from './content-editor-services/selection.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
@@ -84,7 +83,6 @@ import { HtmlPropertyTagCollectorService } from './content-editor-services/html-
     RightSectionContentComponent,
   ],
   providers: [
-    MenuSelectionService,
     SelectionService,
     HtmlPropertyTagCollectorService,
     ClickableContentService,

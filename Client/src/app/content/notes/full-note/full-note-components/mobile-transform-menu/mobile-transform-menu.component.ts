@@ -1,4 +1,13 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -6,11 +15,13 @@ import { TypeUploadFile } from '../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { TransformContent } from '../../models/transform-content.model';
 import { TransformToFileContent } from '../../models/transform-file-content.model';
+import { TextEditMenuOptions } from '../../text-edit-menu/models/text-edit-menu-options';
 
 @Component({
   selector: 'app-mobile-transform-menu',
   templateUrl: './mobile-transform-menu.component.html',
   styleUrls: ['./mobile-transform-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTransformMenuComponent implements OnInit {
   @ViewChild('uploadFile') uploadFile: ElementRef;
@@ -20,6 +31,9 @@ export class MobileTransformMenuComponent implements OnInit {
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
+
+  @Input()
+  options: TextEditMenuOptions;
 
   textType = NoteTextTypeENUM;
 
@@ -44,9 +58,9 @@ export class MobileTransformMenuComponent implements OnInit {
     if (!contentId) return;
     $event.preventDefault();
     this.transformTo.emit({
+      id: this.options.ids[0],
       textType: contentType,
       headingType: heading,
-      id: contentId,
       setFocusToEnd: true,
     });
   }

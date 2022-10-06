@@ -23,26 +23,26 @@
     <div *ngIf="isActiveState && !isReadOnlyMode" class="no-content">
       <p>{{'innerNote.text' | translate}}</p>
       <div
-        *ngIf="(pS.isTranformMenuMobile$ | async) === false"
+        *ngIf="(pS.isTransformMenuMobile$ | async) === false"
         class="buttons"
         (mousedown)="preventClick($event)"
       >
-        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
+        <div class="icon" (mousedown)="transformContent($event, textType.heading, headingType.H1)">
           <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
         </div>
-        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
+        <div class="icon" (mousedown)="transformContent($event, textType.heading, headingType.H2)">
           <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
         </div>
-        <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
+        <div class="icon" (mousedown)="transformContent($event, textType.heading, headingType.H3)">
           <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
         </div>
-        <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
+        <div class="icon" (mousedown)="transformContent($event, textType.checkList)">
           <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
         </div>
-        <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
+        <div class="icon" (mousedown)="transformContent($event, textType.dotList)">
           <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
         </div>
-        <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
+        <div class="icon" (mousedown)="transformContent($event, textType.numberList)">
           <mat-icon svgIcon="list" [inline]="true"></mat-icon>
         </div>
         <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.photos, true)">
@@ -64,7 +64,7 @@
 <input
   #uploadFile
   type="file"
-  [multiple]="isMulptiply"
+  [multiple]="isMultiply"
   [accept]="formats"
   hidden="true"
   (change)="uploadFiles($event)"
@@ -72,5 +72,6 @@
 <app-html-link
   [isReadOnlyMode]="isReadOnlyMode"
   *ngIf="false"
-  [link]="currentTextCotent"
+  [link]="currentTextContent"
 ></app-html-link>
+{{ changeDetectionChecker() }}
