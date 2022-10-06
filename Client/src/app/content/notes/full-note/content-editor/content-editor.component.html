@@ -240,7 +240,6 @@
   *ngIf="
     (pS.isTransformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus
   "
-  [options]="options"
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>

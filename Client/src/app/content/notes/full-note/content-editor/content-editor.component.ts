@@ -238,6 +238,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
     this.selectionService.onSelectChanges$.pipe(takeUntil(this.destroy)).subscribe(() => {
       this.options = this.buildMenuOptions();
+      console.log('this.options: ', this.options);
+      this.cdr.detectChanges();
     });
   }
 
@@ -344,6 +346,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe(() => {
         const ids = this.contents.map((x) => x.id);
         this.selectionService.selectItems(ids);
+        this.cdr.detectChanges();
       });
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
@@ -458,6 +461,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   transformToTypeText(value: TransformContent) {
+    console.log('value2: ', value);
     this.unSelectItems();
     const index = this.contentEditorTextService.transformTextContentTo(value);
     setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
@@ -465,6 +469,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
+    console.log('updates2: ', updates);
     for (const id of updates.ids) {
       const el = this.elements.toArray().find((x) => x.getContent().id === id);
       if (!el) {

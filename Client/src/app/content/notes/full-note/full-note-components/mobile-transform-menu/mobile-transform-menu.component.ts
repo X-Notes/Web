@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
   OnInit,
   Output,
   ViewChild,
@@ -15,7 +14,6 @@ import { TypeUploadFile } from '../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { TransformContent } from '../../models/transform-content.model';
 import { TransformToFileContent } from '../../models/transform-file-content.model';
-import { TextEditMenuOptions } from '../../text-edit-menu/models/text-edit-menu-options';
 
 @Component({
   selector: 'app-mobile-transform-menu',
@@ -32,12 +30,9 @@ export class MobileTransformMenuComponent implements OnInit {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
-  @Input()
-  options: TextEditMenuOptions;
-
   textType = NoteTextTypeENUM;
 
-  isMulptiply = false;
+  isMultiply = false;
 
   headingType = HeadingTypeENUM;
 
@@ -58,16 +53,16 @@ export class MobileTransformMenuComponent implements OnInit {
     if (!contentId) return;
     $event.preventDefault();
     this.transformTo.emit({
-      id: this.options.ids[0],
+      id: contentId,
       textType: contentType,
       headingType: heading,
       setFocusToEnd: true,
     });
   }
 
-  transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {
+  transformToFileHandler($event, type: TypeUploadFile, isMultiply: boolean) {
     $event.preventDefault();
-    this.isMulptiply = isMulptiply;
+    this.isMultiply = isMultiply;
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());
