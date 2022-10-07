@@ -46,7 +46,10 @@ export class TextEditMenuComponent {
         setFocusToEnd: true,
       });
     } else {
-      const textType = type === this.options.textType ? NoteTextTypeENUM.default : type;
+      const textType =
+        type === this.options.textType && type !== NoteTextTypeENUM.heading
+          ? NoteTextTypeENUM.default
+          : type;
       this.eventTransform.emit({
         id: this.options.ids[0],
         textType,

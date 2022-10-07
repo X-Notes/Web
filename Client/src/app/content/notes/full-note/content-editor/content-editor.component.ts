@@ -474,7 +474,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.contents[index] as BaseText;
   }
 
-  transformToTypeText(value: TransformContent) {
+  transformToTypeText(value: TransformContent): void {
     this.unSelectItems();
     const index = this.contentEditorTextService.transformTextContentTo(value);
     setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
