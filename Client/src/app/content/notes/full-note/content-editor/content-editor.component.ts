@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, map, take, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
@@ -143,13 +143,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return isAnySelect || divActive;
   }
 
-  get textEditMenuVisibility(): string {
-    return this.selectedMenuType && !this.isHideMenu ? 'visible' : 'hidden';
-  }
-
   get isHideMenu(): boolean {
     const top = this.textEditMenuTop;
-    if (top < 80) {
+    if (top < 80 && !this.pS.isMobile()) {
       return true;
     }
     return false;
@@ -160,7 +156,18 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get isTextMenuActive(): boolean {
-    return this.selectedMenuType !== null && !!this.options && this.options.ids?.length > 0;
+    return (
+      this.selectedMenuType !== null &&
+      !this.isHideMenu &&
+      !!this.options &&
+      this.options.ids?.length > 0
+    );
+  }
+
+  get isMobileMenuActive$(): Observable<boolean> {
+    return this.pS.isTransformMenuMobile$.pipe(
+      map((x) => x === true && this.clickableContentService.isEmptyTextItemFocus),
+    );
   }
 
   get textEditMenuTop(): number {

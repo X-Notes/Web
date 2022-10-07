@@ -238,9 +238,7 @@
   </div>
 </div>
 <app-mobile-transform-menu
-  *ngIf="
-    (pS.isTransformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus
-  "
+  *ngIf="(isMobileMenuActive$ | async) === true"
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
@@ -248,8 +246,9 @@
   #textEditMenu
   [style.top.px]="textEditMenuTop"
   [style.left.px]="textEditMenuLeft"
-  [style.visibility]="isTextMenuActive && textEditMenuVisibility"
+  [style.visibility]="(isTextMenuActive && (isMobileMenuActive$ | async) === false) ? 'visible' : 'hidden'"
   [options]="options"
+  [theme]="editorTheme"
   (eventTransform)="transformToTypeText($event)"
   (updateText)="updateTextStyles($event)"
 >

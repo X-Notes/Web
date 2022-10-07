@@ -92,7 +92,7 @@
   class="color-pallete-container"
   #textColorMenu="matMenu"
 >
-  <div (mousedown)="preventUnSelection($event)" class="text-color-menu-container">
+  <div appTheme (mousedown)="preventUnSelection($event)" class="text-color-menu-container">
     <div class="default-item">
       <mat-icon svgIcon="textColor" [inline]="true"></mat-icon>
       <span class="default-text">{{ 'innerNote.text' | translate }}</span>
@@ -105,9 +105,15 @@
       >
         <div class="preview-container">
           <div class="preview-icon">
-            <mat-icon [ngStyle]="{ color: value[1] }" svgIcon="textColorPreview"></mat-icon>
+            <mat-icon
+              [ngStyle]="{ color: getColor(value[1]) }"
+              svgIcon="textColorPreview"
+            ></mat-icon>
           </div>
-          <div [ngStyle]="{ backgroundColor: value[1] }" class="preview-expand-container"></div>
+          <div
+            [ngStyle]="{ backgroundColor: getColor(value[1]) }"
+            class="preview-expand-container"
+          ></div>
           <p class="text-color">{{ value[0] }}</p>
         </div>
       </div>
@@ -124,9 +130,15 @@
       >
         <div class="preview-container">
           <div class="preview-icon">
-            <mat-icon [ngStyle]="{ color: value[1] }" svgIcon="textColorPreview"></mat-icon>
+            <mat-icon
+              [ngStyle]="{ color: getColor(value[1]) }"
+              svgIcon="textColorPreview"
+            ></mat-icon>
           </div>
-          <div [ngStyle]="{ backgroundColor: value[1] }" class="preview-expand-container"></div>
+          <div
+            [ngStyle]="{ backgroundColor: getColor(value[1]) }"
+            class="preview-expand-container"
+          ></div>
           <p class="text-color">{{ value[0] }}</p>
         </div>
       </div>

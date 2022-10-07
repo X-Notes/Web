@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
 import { TextColors } from 'src/app/shared/enums/text-colors.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { TextStyles, TextUpdateValue, UpdateTextStyles } from '../../models/update-text-styles';
@@ -22,6 +23,9 @@ export class TextEditMenuComponent {
 
   @Input()
   options: TextEditMenuOptions;
+
+  @Input()
+  theme: ThemeENUM;
 
   textType = NoteTextTypeENUM;
 
@@ -57,6 +61,13 @@ export class TextEditMenuComponent {
         setFocusToEnd: true,
       });
     }
+  }
+
+  getColor(color: TextBackgroundColors): string {
+    if (color === TextBackgroundColors.Default && this.theme === ThemeENUM.Light) {
+      return '#f2f2f2';
+    }
+    return color;
   }
 
   setBoldStyle($event): void {
