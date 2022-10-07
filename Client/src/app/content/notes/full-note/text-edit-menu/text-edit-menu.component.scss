@@ -135,7 +135,6 @@
 
     @media (max-width: 1024px) {
       border: none;
-      background-color: $dark-color;
     }
   }
 }
@@ -163,7 +162,7 @@
 @media (max-width: 1024px) {
   :host {
     display: flex;
-    bottom: 82px; // mobile menu height
+    bottom: 80px; // mobile menu height
     left: 0 !important;
     top: initial !important;
     width: 100%;
@@ -186,13 +185,19 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   :host {
-    bottom: 71px; // mobile menu height
+    bottom: 69px; // mobile menu height
     .menu-buttons-container {
       .button {
         padding: 0 5px;
       }
     }
+  }
+}
+
+@media (max-width: 320px) {
+  :host {
+    bottom: 65px;
   }
 }

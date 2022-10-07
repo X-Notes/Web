@@ -9,7 +9,7 @@
 
 .transform-buttons-container {
   height: 50px;
-  background-color: $dark-color;
+  background-color: $dark-button;
 
   .buttons {
     height: 100%;
@@ -104,7 +104,7 @@
       .button {
         .icon {
           width: 18px;
-          height: 18px;  
+          height: 18px;
           .mat-icon {
             display: flex;
             font-size: 1.125rem;

@@ -1,36 +1,36 @@
 <div appTheme class="root-menu-buttons-container">
   <div (mousedown)="preventUnSelection($event)" class="menu-buttons-container">
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H1)"
-      [ngClass]="{ active: options.headingType === headingType.H1 }"
+      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H1 }"
     >
       <div class="icon">
         <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H2)"
-      [ngClass]="{ active: options.headingType === headingType.H2 }"
+      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H2 }"
     >
       <div class="icon">
         <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H3)"
-      [ngClass]="{ active: options.headingType === headingType.H3 }"
+      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H3 }"
     >
       <div class="icon">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
     </div>
-    <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{ active: options.isBold }">
+    <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{ active: options?.isBold }">
       <div class="icon">
         <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
       </div>
@@ -38,34 +38,34 @@
     <div
       class="button"
       (mousedown)="setItalicStyle($event)"
-      [ngClass]="{ active: options.isItalic }"
+      [ngClass]="{ active: options?.isItalic }"
     >
       <div class="icon">
         <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.checkList)"
-      [ngClass]="{ active: options.textType === textType.checkList }"
+      [ngClass]="{ active: options?.textType === textType.checkList }"
     >
       <div class="icon">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.dotList)"
-      [ngClass]="{ active: options.textType === textType.dotList }"
+      [ngClass]="{ active: options?.textType === textType.dotList }"
     >
       <div class="icon">
         <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options.isOneRowType"
+      *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.numberList)"
       [ngClass]="{ active: options.textType === textType.numberList }"
@@ -77,7 +77,7 @@
     <div class="button text" [matMenuTriggerFor]="textColorMenu">
       <div
         class="text-container"
-        [ngStyle]="{ backgroundColor: options.backgroundColor, color: options.color }"
+        [ngStyle]="{ backgroundColor: options?.backgroundColor, color: options?.color }"
       >
         <p>A</p>
       </div>

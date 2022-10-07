@@ -15,13 +15,9 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
-  private startScroll = 0;
+  private selectionTop = 0;
 
-  private currentScroll = 0;
-
-  private top = 0;
-
-  private left = 0;
+  private selectionLeft = 0;
 
   private selectedItemId: string;
 
@@ -53,14 +49,14 @@ export class SelectionService {
     if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
       return 0;
     }
-    return this.left;
+    return this.selectionLeft;
   }
 
   get getCursorTop() {
     if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
       return 0;
     }
-    return this.top + this.startScroll - this.currentScroll;
+    return this.selectionTop;
   }
 
   selectionHandler(
@@ -174,11 +170,14 @@ export class SelectionService {
     );
   };
 
-  initSingle(id: string, top: number, left: number, startScroll: number): void {
+  initSingle(id: string, scrollElement: HTMLElement, selectionCoords: DOMRect): void {
     this.selectedItemId = id;
-    this.top = top;
-    this.left = left;
-    this.startScroll = startScroll;
+
+    const left = (selectionCoords.left + selectionCoords.right) / 2;
+    const top = selectionCoords.top + scrollElement?.scrollTop;
+    this.selectionTop = top;
+    this.selectionLeft = left;
+
     this.onSetChanges();
   }
 }

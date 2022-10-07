@@ -79,6 +79,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
+  @ViewChild('textEditMenu', { read: ElementRef, static: false })
+  textEditMenu: ElementRef<HTMLElement>;
+
   @ViewChild('contentSection', { read: ElementRef }) contentSection: ElementRef<HTMLElement>;
 
   @Input()
@@ -145,8 +148,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get isHideMenu(): boolean {
-    const top = Math.max(...this.selectedElementsRects.map((x) => x.top)) - 50;
-    if (top && top < 105) {
+    const top = this.textEditMenuTop;
+    if (top < 80) {
       return true;
     }
     return false;
@@ -161,16 +164,28 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get textEditMenuTop(): number {
-    const top = Math.min(...this.selectedElementsRects.map((x) => x.top)) - 50;
-    if (top < 152) return 152;
-    return top;
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return (
+        this.selectionService.getCursorTop -
+        this.textEditMenu.nativeElement.offsetHeight -
+        this.contentSection.nativeElement.scrollTop
+      );
+    }
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
+      return top - this.textEditMenu.nativeElement.offsetHeight;
+    }
+    return 0;
   }
 
   get textEditMenuLeft(): number {
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
       return this.selectionService.getCursorLeft;
     }
-    return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
+    }
+    return 0;
   }
 
   get contents(): ContentModelBase[] {
@@ -178,12 +193,12 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get selectedElementsRects(): DOMRect[] {
-    return this.selectedElements.map((x) => x.getHost().nativeElement.getBoundingClientRect());
+    return this.selectedElements?.map((x) => x.getHost().nativeElement.getBoundingClientRect());
   }
 
   get selectedTextElements(): BaseText[] {
     return this.selectedElements
-      .filter((x) => x.getContent().typeId === ContentTypeENUM.Text)
+      ?.filter((x) => x.getContent().typeId === ContentTypeENUM.Text)
       .map((x) => x.getContent() as BaseText);
   }
 
@@ -192,7 +207,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get selectedElements(): ParentInteraction[] {
-    return this.elements.filter((x) => this.selectionService.isSelectedAll(x.getContentId()));
+    return this.elements?.filter((x) => this.selectionService.isSelectedAll(x.getContentId()));
   }
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
@@ -238,7 +253,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
     this.selectionService.onSelectChanges$.pipe(takeUntil(this.destroy)).subscribe(() => {
       this.options = this.buildMenuOptions();
-      console.log('this.options: ', this.options);
       this.cdr.detectChanges();
     });
   }
@@ -461,7 +475,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   transformToTypeText(value: TransformContent) {
-    console.log('value2: ', value);
     this.unSelectItems();
     const index = this.contentEditorTextService.transformTextContentTo(value);
     setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
@@ -469,7 +482,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
-    console.log('updates2: ', updates);
     for (const id of updates.ids) {
       const el = this.elements.toArray().find((x) => x.getContent().id === id);
       if (!el) {
