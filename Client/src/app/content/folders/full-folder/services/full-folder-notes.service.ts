@@ -36,15 +36,12 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   async initializeEntities(notes: SmallNote[], folderId: string) {
-    this.folderId = folderId;
-    let tempNotes = this.transformSpread(notes);
-    tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
+    this.initializeEntitiesGeneric(notes, folderId);
+    await this.loadAdditionNoteInformation();
+  }
 
-    this.entities = tempNotes;
-
-    this.initState();
-
-    // await this.loadAdditionNoteInformation();
+  async initializePublicEntities(notes: SmallNote[], folderId: string) {
+    this.initializeEntitiesGeneric(notes, folderId);
   }
 
   murriInitialize(refElements: QueryList<ElementRef>) {
@@ -95,5 +92,15 @@ export class FullFolderNotesService extends NoteEntitiesService {
 
   toNote(note: SmallNote) {
     this.baseToNote(note, () => this.navigateFunc(note));
+  }
+
+  private async initializeEntitiesGeneric(notes: SmallNote[], folderId: string) {
+    this.folderId = folderId;
+    let tempNotes = this.transformSpread(notes);
+    tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
+
+    this.entities = tempNotes;
+
+    this.initState();
   }
 }

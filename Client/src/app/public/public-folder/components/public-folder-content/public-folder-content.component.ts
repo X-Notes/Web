@@ -79,7 +79,7 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
 
         // INIT FOLDER NOTES
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
-        await this.ffnService.initializeEntities(notes, this.folderId);
+        await this.ffnService.initializePublicEntities(notes, this.folderId);
         this.updateState();
 
         if (isReinit) {
