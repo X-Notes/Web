@@ -15,7 +15,6 @@ import { FullFolder } from '../../../../content/folders/models/full-folder.model
 import { LoadFullFolder } from '../../../../content/folders/state/folders-actions';
 import { FolderStore } from '../../../../content/folders/state/folders-state';
 import { SetFolderNotes } from '../../../../content/notes/state/notes-actions';
-import { SignalRService } from '../../../../core/signal-r.service';
 import { EntitiesSizeENUM } from '../../../../shared/enums/font-size.enum';
 import { PersonalizationService } from '../../../../shared/services/personalization.service';
 import { OnDestroy } from '@angular/core';
@@ -54,21 +53,13 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     public readonly ffnService: FullFolderNotesService,
     private readonly store: Store,
     private readonly apiFullFolder: ApiFullFolderService,
-    private readonly signalR: SignalRService,
     private readonly router: Router,
     private readonly updateNoteService: UpdaterEntitiesService,
   ) {}
 
   ngOnInit(): void {
     this.pService.setSpinnerState(true);
-
     this.routeSubscription = this.route.params.subscribe(async (params) => {
-      // REINIT LAYOUT
-      let isReinit = false;
-      if (this.folderId) {
-        await this.ffnService.murriService.destroyGridAsync();
-        isReinit = true;
-      }
       // lOAD FOLDER
       this.folderId = params.id;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
@@ -81,11 +72,6 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
         await this.ffnService.initializePublicEntities(notes, this.folderId);
         this.updateState();
-
-        if (isReinit) {
-          await this.ffnService.murriService.initFolderNotesAsync();
-          await this.ffnService.murriService.setOpacityFlagAsync(0);
-        }
       }
 
       await this.pService.waitPreloading();
