@@ -50,6 +50,7 @@ using Noots.RelatedNotes;
 using Noots.Users;
 using Noots.Sharing;
 using Noots.SignalrUpdater;
+using Common.Redis;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -233,6 +234,19 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<DatabaseFakeDataBridge>();
             services.AddScoped<DiffsMatchPatchService>();
             services.AddScoped<CollectionLinkedService>();
+        }
+
+        public static void SetupSignalR(this IServiceCollection services, RedisConfig config)
+        {
+            var signalR = services.AddSignalR();
+
+            if(config.Active)
+            {
+                signalR.AddStackExchangeRedis(config.Connection, options => 
+                    {
+                        options.Configuration.ChannelPrefix = "Noots-";
+                    });
+            }
         }
     }
 }

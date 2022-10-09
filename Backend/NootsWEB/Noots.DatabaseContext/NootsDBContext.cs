@@ -82,6 +82,10 @@ namespace Noots.DatabaseContext
         // WS
         public DbSet<UserIdentifierConnectionId> UserIdentifierConnectionId { set; get; }
 
+        public DbSet<NoteConnection> NoteConnection { set; get; }
+
+        public DbSet<FolderConnection> FolderConnection { set; get; }
+
         // SYSTEMS
         public DbSet<Language> Languages { set; get; }
 

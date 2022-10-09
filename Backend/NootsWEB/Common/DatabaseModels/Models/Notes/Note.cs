@@ -7,6 +7,7 @@ using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.WS;
 using Common.Interfaces;
 using Common.Interfaces.Note;
 
@@ -44,6 +45,8 @@ namespace Common.DatabaseModels.Models.Notes
         public List<RelatedNoteToInnerNote> ReletatedNoteToInnerNotesTo { set; get; }
         public List<BaseNoteContent> Contents { set; get; }
         public List<NoteSnapshot> History { set; get; }
+
+        public List<NoteConnection> NoteConnections { set; get; }
 
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }

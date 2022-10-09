@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -17,9 +18,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220924161233_scale-signal-r")]
+    partial class scalesignalr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1188,9 +1190,6 @@ namespace Noots.DatabaseContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Connected")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTimeOffset>("ConnectedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -1200,9 +1199,6 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Property<Guid?>("UnauthorizedId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("UserAgent")
-                        .HasColumnType("text");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
