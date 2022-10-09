@@ -6,13 +6,13 @@ import { PublicAPIService } from '../services/public-api.service';
 import { ShortUserPublic } from '../interfaces/short-user-public.model';
 
 interface UserState {
-  owner: ShortUserPublic;
+  owner: ShortUserPublic | undefined;
 }
 
 @State<UserState>({
   name: 'Public',
   defaults: {
-    owner: {} as ShortUserPublic,
+    owner: undefined,
   },
 })
 @Injectable()

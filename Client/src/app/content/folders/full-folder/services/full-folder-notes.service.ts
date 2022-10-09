@@ -5,7 +5,6 @@ import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { UpdateFolderWS } from 'src/app/core/models/signal-r/update-folder-ws';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -25,14 +24,13 @@ export class FullFolderNotesService extends NoteEntitiesService {
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     router: Router,
-    private updateService: UpdaterEntitiesService,
   ) {
     super(dialogsManageService, store, murriService, apiNoteService, router);
   }
 
   onDestroy(): void {
     console.log('full folder notes destroy');
-    super.destroyLayout();
+    this.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -44,12 +42,12 @@ export class FullFolderNotesService extends NoteEntitiesService {
 
     this.entities = tempNotes;
 
-    super.initState();
+    this.initState();
 
-    await super.loadAdditionNoteInformation();
+    // await this.loadAdditionNoteInformation();
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>) {
+  murriInitialize(refElements: QueryList<ElementRef>) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (this.getIsFirstInit(z)) {
         await this.murriService.initFolderNotesAsync();
@@ -96,6 +94,6 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   toNote(note: SmallNote) {
-    super.baseToNote(note, () => this.navigateFunc(note));
+    this.baseToNote(note, () => this.navigateFunc(note));
   }
 }

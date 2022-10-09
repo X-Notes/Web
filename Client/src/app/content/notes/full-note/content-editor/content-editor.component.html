@@ -13,7 +13,7 @@
 >
   <div class="top-section">
     <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
-    <div class="labels-section">
+    <div *ngIf="(note?.labels | noDeletedLabels)?.length" class="labels-section">
       <div
         class="label"
         *ngFor="let label of note?.labels | noDeletedLabels"

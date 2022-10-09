@@ -15,21 +15,10 @@
   width: 100%;
   height: calc(100% - 50px);
 
-  .left-section {
-    width: 100%;
-    @media (max-width: 1024px) {
-      display: none;
-    }
-  }
   .full-note {
     display: flex;
+    flex: 1;
     max-width: 1024px;
-  }
-  .right-section {
-    width: 100%;
-    @media (max-width: 1024px) {
-      display: none;
-    }
   }
 }
 

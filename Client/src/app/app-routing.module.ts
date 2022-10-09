@@ -39,14 +39,16 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'public',
+    path: 'note',
     loadChildren: () =>
-      import('./public-note/public-note.module').then(({ PublicNoteModule }) => PublicNoteModule),
+      import('./public/public-note/public-note.module').then(
+        ({ PublicNoteModule }) => PublicNoteModule,
+      ),
   },
   {
-    path: 'public-folder',
+    path: 'folder',
     loadChildren: () =>
-      import('./public-folder/public-folder.module').then(
+      import('./public/public-folder/public-folder.module').then(
         ({ PublicFolderModule }) => PublicFolderModule,
       ),
   },

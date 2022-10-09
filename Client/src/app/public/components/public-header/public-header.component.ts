@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { NoteStore, FullNoteState } from '../../../content/notes/state/notes-state';
 import { Observable, Subject } from 'rxjs';
-import { OnlineUsersNote } from '../../../content/notes/models/online-users-note.model';
 import { AuthService, AuthStatus } from 'src/app/core/auth.service';
 import { takeUntil } from 'rxjs/operators';
+import { OnlineUsersNote } from '../../../content/notes/models/online-users-note.model';
 
 @Component({
   selector: 'app-public-header',

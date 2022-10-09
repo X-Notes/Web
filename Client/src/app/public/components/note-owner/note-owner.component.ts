@@ -7,5 +7,5 @@ import { ShortUserPublic } from '../../interfaces/short-user-public.model';
   styleUrls: ['./note-owner.component.scss'],
 })
 export class NoteOwnerComponent {
-  @Input() owner: ShortUserPublic;
+  @Input() owner: ShortUserPublic | undefined;
 }

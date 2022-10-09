@@ -1,4 +1,4 @@
-<div class="user">
+<div *ngIf="owner" class="user">
   <div class="user-image">
     <div class="image-wrapper">
       <img [src]="owner.photoPath" [alt]="owner.name" />

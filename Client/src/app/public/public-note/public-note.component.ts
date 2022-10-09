@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AudioService } from '../content/notes/audio.service';
-import { DeltaConverter } from '../content/notes/full-note/content-editor/converter/delta-converter';
-import { SignalRService } from '../core/signal-r.service';
+import { AudioService } from '../../content/notes/audio.service';
+import { DeltaConverter } from '../../content/notes/full-note/content-editor/converter/delta-converter';
+import { SignalRService } from '../../core/signal-r.service';
 
 @Component({
   selector: 'app-public-note',

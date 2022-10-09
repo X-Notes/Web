@@ -1,10 +1,10 @@
-<app-public-header></app-public-header>
+<app-public-header>
+  <app-full-note-active-users></app-full-note-active-users>
+</app-public-header>
 <div class="note-content">
-  <div id="public-left-section" class="left-section"></div>
   <div class="full-note">
     <app-public-note-content></app-public-note-content>
   </div>
-  <div class="right-section"></div>
 </div>
 <div class="player-container">
   <app-audio-controls *ngIf="audioService.currentFile"></app-audio-controls>
