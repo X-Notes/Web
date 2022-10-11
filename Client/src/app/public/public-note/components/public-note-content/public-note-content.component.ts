@@ -1,17 +1,18 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { NoteStore } from '../../../content/notes/state/notes-state';
+import { NoteStore } from '../../../../content/notes/state/notes-state';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { FullNote } from '../../../content/notes/models/full-note.model';
+import { FullNote } from '../../../../content/notes/models/full-note.model';
 import { ActivatedRoute } from '@angular/router';
-import { DeleteCurrentNoteData, LoadFullNote } from '../../../content/notes/state/notes-actions';
-import { PersonalizationService } from '../../../shared/services/personalization.service';
-import { ContentModelBase } from '../../../content/notes/models/editor-models/content-model-base';
-import { ApiServiceNotes } from '../../../content/notes/api-notes.service';
-import { PublicUser } from '../../storage/public-action';
-import { PublicStore } from '../../storage/public-state';
-import { ShortUserPublic } from '../../interfaces/short-user-public.model';
+import { DeleteCurrentNoteData, LoadFullNote } from '../../../../content/notes/state/notes-actions';
+import { PersonalizationService } from '../../../../shared/services/personalization.service';
+import { ContentModelBase } from '../../../../content/notes/models/editor-models/content-model-base';
+import { ApiServiceNotes } from '../../../../content/notes/api-notes.service';
+import { PublicUser } from '../../../storage/public-action';
+import { PublicStore } from '../../../storage/public-state';
+import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-public-note-content',
@@ -42,7 +43,7 @@ export class PublicNoteContentComponent implements OnDestroy {
   private routeSubscription: Subscription;
 
   constructor(
-    route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
     private api: ApiServiceNotes,
@@ -62,7 +63,9 @@ export class PublicNoteContentComponent implements OnDestroy {
   }
 
   async loadMain(id: string) {
-    await this.store.dispatch(new LoadFullNote(id)).toPromise();
+    const maybeFolderId = await this.tryGetFolderId();
+    const folderId = typeof maybeFolderId === 'string' ? maybeFolderId : null;
+    await this.store.dispatch(new LoadFullNote(id, folderId)).toPromise();
     const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
     if (!isLocked) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
@@ -73,5 +76,13 @@ export class PublicNoteContentComponent implements OnDestroy {
       }
     }
     this.loaded = true;
+  }
+
+  private tryGetFolderId() {
+    return new Promise((resolve) => {
+      this.route.queryParams.pipe(take(1)).subscribe((v) => {
+        resolve(v.folderId);
+      });
+    });
   }
 }

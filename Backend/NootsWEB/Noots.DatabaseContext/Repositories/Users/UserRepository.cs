@@ -28,6 +28,7 @@ namespace Noots.DatabaseContext.Repositories.Users
         {
             return context.Users
                 .Include(x => x.CurrentBackground)
+                .ThenInclude(x => x.File)
                 .Include(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)
                 .FirstOrDefaultAsync(x => x.Id == userId);

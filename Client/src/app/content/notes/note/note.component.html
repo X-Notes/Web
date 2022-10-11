@@ -6,7 +6,12 @@
     [ngStyle]="{ backgroundColor: note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '', cursor: highlightCursorActive ? 'pointer' : 'initial' }"
     [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''"
   >
-    <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
+    <div
+      *ngIf="note.lockRedirect"
+      class="ripple-container"
+      matRipple
+      [matRippleTrigger]="highlightNote"
+    ></div>
   </div>
   <div
     (click)="toNote(note)"

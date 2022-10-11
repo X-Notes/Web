@@ -73,8 +73,8 @@ interface FolderState {
 @Injectable()
 export class FolderStore {
   constructor(
-    private api: ApiFoldersService, 
-    private router: Router, 
+    private api: ApiFoldersService,
+    private router: Router,
     private ngZone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService) {}
@@ -203,6 +203,11 @@ export class FolderStore {
     return state.foldersAddToDOM;
   }
 
+  @Selector()
+  static getOwnerId(state: FolderState): string {
+    return state.fullFolder.userId
+  }
+
   @Action(ClearUpdatesUIFolders)
   // eslint-disable-next-line class-methods-use-this
   clearUpdates({ patchState }: StateContext<FolderState>) {
@@ -235,7 +240,7 @@ export class FolderStore {
         ),
       );
       dispatch([UnSelectAllFolder]);
-  
+
       if (typeFolder === FolderTypeENUM.Private) {
         dispatch(new AddToDomFolders([...newFolders]));
       }

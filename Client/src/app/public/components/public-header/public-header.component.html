@@ -2,7 +2,7 @@
   <div class="logo">
     <img src="../../../../assets/icons/svg/logo.svg" alt="Noots logo" />
   </div>
-  <app-full-note-active-users></app-full-note-active-users>
+  <ng-content></ng-content>
   <div class="actions">
     <button type="button" (click)="login()" #trigger>
       <div *ngIf="(authService.IsAuthActive | async) === false; else spinner" class="text">

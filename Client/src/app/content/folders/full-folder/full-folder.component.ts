@@ -305,7 +305,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.ffnService.murriInitialise(this.refElements);
+    this.ffnService.murriInitialize(this.refElements);
     this.initPanelClassStyleSubscribe();
   }
 

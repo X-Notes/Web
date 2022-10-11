@@ -14,7 +14,7 @@ export class ApiFullFolderService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getFolderNotes(folderId: string, settings: PersonalizationSetting, noteIds?: string[]) {
+  getFolderNotes(folderId: string, settings?: PersonalizationSetting, noteIds?: string[]) {
     const obj = {
       folderId,
       settings,

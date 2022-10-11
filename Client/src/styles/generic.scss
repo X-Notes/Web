@@ -130,7 +130,9 @@
 
 .content-generic-project {
   position: relative;
-  width: calc(100% - 190px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
