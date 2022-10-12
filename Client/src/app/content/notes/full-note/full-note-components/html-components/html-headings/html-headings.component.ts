@@ -87,7 +87,7 @@ export class HtmlHeadingsComponent
   enter($event: any) {
     $event.preventDefault();
     const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
-    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, this.content.id);
+    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
   }
 }

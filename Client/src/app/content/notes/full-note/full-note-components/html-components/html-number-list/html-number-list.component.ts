@@ -87,7 +87,7 @@ export class HtmlNumberListComponent
   }
 
   setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
+    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.numberList) {
       this.content.listNumber = this.prevContent.listNumber + 1;
     } else {
       this.content.listNumber = 1;
@@ -110,14 +110,14 @@ export class HtmlNumberListComponent
     if (this.isContentEmpty()) {
       this.transformTo.emit({
         id: this.content.id,
-        textType: NoteTextTypeENUM.Default,
+        textType: NoteTextTypeENUM.default,
         setFocusToEnd: true,
       });
     } else {
       const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
       const event = super.eventEventFactory(
         breakModel,
-        NoteTextTypeENUM.Numberlist,
+        NoteTextTypeENUM.numberList,
         this.content.id,
       );
       this.enterEvent.emit(event);

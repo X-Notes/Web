@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "Subir foto"
+    },
+    "text-color-menu" : {
+      "background": "Fondo"
     }
   },
   "noResult": {
@@ -368,5 +371,11 @@
     "personalization": "Configuración de personalización",
     "per-month": "por mes",
     "upgrade": "Actualizar"
+  },
+  "files": {
+    "noAccessRightsNote": "No hay permiso para cargar archivos a la nota",
+    "noEnoughMemory": "No hay suficiente memoria para cargar el archivo",
+    "fileTooLarge": "El tamaño del archivo no debe exceder {{sizeMB}} MB",
+    "fileNoSupport": "No se admite el archivo de este formato"
   }
 }

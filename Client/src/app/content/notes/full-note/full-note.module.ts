@@ -13,7 +13,6 @@ import { HtmlCheckListComponent } from './full-note-components/html-components/h
 import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { PhotoComponent } from './full-note-components/collection-components/collection-photos/photo/photo.component';
 import { CopyDirective } from './directives/copy.directive';
-import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
 import { AudioNoteComponent } from './full-note-components/collection-components/collection-audio/audio-note/audio-note.component';
@@ -25,7 +24,6 @@ import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
 import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
-import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { SelectionService } from './content-editor-services/selection.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
@@ -46,6 +44,8 @@ import { ContentUpdateWsService } from './content-editor-services/content-update
 import { MobileTransformMenuComponent } from './full-note-components/mobile-transform-menu/mobile-transform-menu.component';
 import { ContentEditorRestoreService } from './content-editor-services/core/content-editor-restore.service';
 import { ContentEditorSyncService } from './content-editor-services/core/content-editor-sync.service';
+import { HtmlPropertyTagCollectorService } from './content-editor-services/html-property-tag-collector.service';
+import { ColorPickItemComponent } from './text-edit-menu/components/color-pick-item/color-pick-item.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +62,6 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
     MenuSelectionDirective,
     SelectionDirective,
     CopyDirective,
-    TextEditMenuDirective,
     ChangeSizeAlbumHeightDirective,
     AudioNoteComponent,
     VideoNoteComponent,
@@ -78,6 +77,7 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
     DocumentItemComponent,
     EmptyCollectionItemsPlaceholderComponent,
     MobileTransformMenuComponent,
+    ColorPickItemComponent,
   ],
   exports: [
     LeftSectionContentNotesListComponent,
@@ -85,8 +85,8 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
     RightSectionContentComponent,
   ],
   providers: [
-    MenuSelectionService,
     SelectionService,
+    HtmlPropertyTagCollectorService,
     ClickableContentService,
     ContentEditorElementsListenerService,
     ContentEditorListenerService,

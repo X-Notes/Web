@@ -35,7 +35,7 @@ export class ContentEditorTextService {
     return { index, content: nContent };
   }
 
-  tranformTextContentTo(value: TransformContent) {
+  transformTextContentTo(value: TransformContent) {
     const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
     item.content.updateNoteTextTypeId(value.textType);
     if (value.headingType) {
@@ -46,7 +46,7 @@ export class ContentEditorTextService {
 
   getNewTextContent = (): BaseText => {
     const nContent = BaseText.getNew();
-    nContent.updateNoteTextTypeId(NoteTextTypeENUM.Default);
+    nContent.updateNoteTextTypeId(NoteTextTypeENUM.default);
     return nContent;
   };
 

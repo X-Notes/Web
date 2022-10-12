@@ -1,5 +1,8 @@
 .checkbox-container {
   display: flex;
+  mat-checkbox {
+    display: flex;
+  }
 }
 
 .text-container {
@@ -11,6 +14,10 @@
 
   p {
     transition: 0.2s ease;
+  }
+
+  .check-list {
+    min-height: 26px;
   }
 
   .checked-item {

@@ -135,7 +135,7 @@ export class CollectionBaseComponent<
   }
 
   clickItemHandler(itemId: string) {
-    this.clickableContentService.setSontent(this.content, itemId, this.selectType, null);
+    this.clickableContentService.setContent(this.content, itemId, this.selectType, null);
     const item = document.getElementById(itemId);
     item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     this.runDetectChangesChildren.emit();

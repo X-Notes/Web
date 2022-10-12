@@ -26,12 +26,12 @@ import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
-import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
 import { ResetNotes } from '../../notes/state/notes-actions';
 import { ResetFolders } from '../../folders/state/folders-actions';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile',
@@ -81,7 +81,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private store: Store,
     private authService: AuthService,
-    private snackbarTranslateHelper: SnackBarTranlateHelperService,
+    private translateService: TranslateService,
   ) {}
 
   async ngOnInit() {
@@ -143,11 +143,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const file = event.target.files[0] as File;
     if (file) {
       if (file.size > maxBackgroundPhotoSize) {
-        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
-          language,
-          byteToMB(maxBackgroundPhotoSize),
-        );
+        const message = this.translateService.instant('files.fileTooLarge', {
+          sizeMB: byteToMB(maxBackgroundPhotoSize),
+        });
         this.store.dispatch(new ShowSnackNotification(message));
       } else {
         const formDate = new FormData();
@@ -163,11 +161,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const file = event.target.files[0] as File;
     if (file) {
       if (file.size > maxProfilePhotoSize) {
-        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
-          language,
-          byteToMB(maxProfilePhotoSize),
-        );
+        const message = this.translateService.instant('files.fileTooLarge', {
+          sizeMB: byteToMB(maxProfilePhotoSize),
+        });
         this.store.dispatch(new ShowSnackNotification(message));
       } else {
         const formDate = new FormData();

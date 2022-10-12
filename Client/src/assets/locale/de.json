@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "Foto hochladen"
+    },
+    "text-color-menu" : {
+      "background": "Hintergrund"
     }
   },
   "noResult": {
@@ -368,5 +371,11 @@
     "personalization": "Personalisierungseinstellungen",
     "per-month": "pro Monat",
     "upgrade": "Update"
+  },
+  "files": {
+    "noAccessRightsNote": "Keine Berechtigung zum Hochladen von Dateien, die notiert werden sollen",
+    "noEnoughMemory": "Nicht genügend Arbeitsspeicher zum Hochladen der Datei",
+    "fileTooLarge": "Dateigröße darf {{sizeMB}} MB nicht überschreiten",
+    "fileNoSupport": "Datei dieses Formats wird nicht unterstützt"
   }
 }

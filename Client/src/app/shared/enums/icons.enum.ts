@@ -72,4 +72,6 @@ export enum Icons {
   notesInnerFolder = 'notesInnerFolder',
   dragAndDrop = 'dragAndDrop',
   billingPoint = 'billingPoint',
+  textBackgroundColor = 'textBackgroundColor',
+  textColor = 'textColor',
 }

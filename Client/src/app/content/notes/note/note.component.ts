@@ -76,7 +76,7 @@ export class NoteComponent implements OnInit {
     let num = 1;
     this.contents = this.note.contents.map((item, index, array) => {
       const prev = array[index - 1];
-      if (item instanceof BaseText && item.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
+      if (item instanceof BaseText && item.noteTextTypeId === NoteTextTypeENUM.numberList) {
         return {
           ...item,
           listNumber: item.listId === (prev as BaseText)?.listId ? (num += 1) : (num = 1),

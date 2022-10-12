@@ -1,13 +1,14 @@
 <div
   appTheme
-  appTextEditMenu
   appSelection
   [isReadonly]="isReadOnlyMode"
   [appMenuSelection]="elements"
+  [scrollElement]="contentSection"
   [appCopy]="elements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
   (selectionEndEvent)="selectionEndHandler($event)"
+  (onScrollEvent)="onScroll($event)"
   class="main-content"
   [ngClass]="{ 'nope-select': isSelectModeActive }"
 >
@@ -56,7 +57,7 @@
           >
             <app-html-text-part
               #htmlComp
-              *ngIf="item.noteTextTypeId === textType.Default"
+              *ngIf="item.noteTextTypeId === textType.default"
               [isSelected]="selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
@@ -77,7 +78,7 @@
             </app-html-text-part>
             <app-html-number-list
               #htmlComp
-              *ngIf="item.noteTextTypeId === textType.Numberlist"
+              *ngIf="item.noteTextTypeId === textType.numberList"
               [isSelected]="selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [prevContent]="getTextContent(i - 1)"
@@ -99,7 +100,7 @@
             ></app-html-number-list>
             <app-html-dot-list
               #htmlComp
-              *ngIf="item.noteTextTypeId === textType.Dotlist"
+              *ngIf="item.noteTextTypeId === textType.dotList"
               [isSelected]="selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
@@ -119,7 +120,7 @@
             ></app-html-dot-list>
             <app-html-check-list
               #htmlComp
-              *ngIf="item.noteTextTypeId === textType.Checklist"
+              *ngIf="item.noteTextTypeId === textType.checkList"
               [isSelected]="selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
@@ -139,7 +140,7 @@
             ></app-html-check-list>
             <app-html-headings
               #htmlComp
-              *ngIf="item.noteTextTypeId === textType.Heading"
+              *ngIf="item.noteTextTypeId === textType.heading"
               [isSelected]="selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
@@ -237,19 +238,19 @@
   </div>
 </div>
 <app-mobile-transform-menu
-  *ngIf="
-    (pS.isTranformMenuMobile$ | async) === true && clickableContentService.isEmptyTextItemFocus
-  "
+  *ngIf="(isMobileMenuActive$ | async) === true"
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
 <app-text-edit-menu
-  *ngIf="selectedMenuType"
-  [style.top.px]="menuSelectionService.getTop"
-  [style.left.px]="menuSelectionService.getLeft"
-  [style.visibility]="textEditMenuVisibility"
-  [selectedMenuType]="selectedMenuType"
+  #textEditMenu
+  [style.top.px]="textEditMenuTop"
+  [style.left.px]="textEditMenuLeft"
+  [style.visibility]="(isTextMenuActive && (isMobileMenuActive$ | async) === false) ? 'visible' : 'hidden'"
+  [options]="options"
+  [theme]="editorTheme"
   (eventTransform)="transformToTypeText($event)"
   (updateText)="updateTextStyles($event)"
 >
 </app-text-edit-menu>
+{{ changeDetectionChecker() }}

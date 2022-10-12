@@ -205,7 +205,7 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 
-  get isTranformMenuMobile$() {
+  get isTransformMenuMobile$() {
     return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 

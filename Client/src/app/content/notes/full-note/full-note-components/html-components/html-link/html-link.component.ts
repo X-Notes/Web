@@ -1,12 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
-import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
-import { ApiServiceNotes } from '../../../../api-notes.service';
 
 @Component({
   selector: 'app-html-link',
@@ -31,10 +28,9 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
   isLoaded = false;
 
   constructor(
-    private api: ApiServiceNotes,
     private apiBrowserService: ApiBrowserTextService,
-    private snackService: SnackBarWrapperService,
-    private store: Store,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -50,21 +46,8 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
   }
 
   copyToBuffer = () => {
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     this.apiBrowserService.copyTextAsync(this.link);
-    switch (language) {
-      case LanguagesENUM.en:
-        this.snackService.buildNotification(`Link copied`, null);
-        break;
-      case LanguagesENUM.ru:
-        this.snackService.buildNotification(`Ссылка скопирована`, null);
-        break;
-      case LanguagesENUM.uk:
-        this.snackService.buildNotification(`Посилання скопійоване`, null);
-        break;
-      default:
-        throw new Error('error');
-    }
+    this.snackbarService.openSnackBar(this.translate.instant('snackBar.copied'));
   };
 
   ngOnDestroy(): void {

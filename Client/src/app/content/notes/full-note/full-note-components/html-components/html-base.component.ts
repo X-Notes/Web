@@ -136,20 +136,20 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     const content = contents?.find((x) => x.list !== null);
     if (content?.list) {
       if (content.list === DeltaListEnum.bullet) {
-        let type = NoteTextTypeENUM.Dotlist;
+        let type = NoteTextTypeENUM.dotList;
         if (content.text?.startsWith('[ ]')) {
           content.text = content.text.slice(3);
-          type = NoteTextTypeENUM.Checklist;
+          type = NoteTextTypeENUM.checkList;
         }
         this.transformContent(null, type);
       }
       if (content.list === DeltaListEnum.ordered) {
-        this.transformContent(null, NoteTextTypeENUM.Numberlist);
+        this.transformContent(null, NoteTextTypeENUM.numberList);
       }
     }
     const headingType = contents?.find((x) => x.header !== null)?.header;
     if (headingType) {
-      this.transformContent(null, NoteTextTypeENUM.Heading, this.getHeadingNumber(headingType));
+      this.transformContent(null, NoteTextTypeENUM.heading, this.getHeadingNumber(headingType));
     }
   }
 
@@ -225,7 +225,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   setFocusedElement() {
-    this.clickableService.setSontent(this.content, null, ClickableSelectableEntities.Text, this);
+    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 
   // LISTENERS

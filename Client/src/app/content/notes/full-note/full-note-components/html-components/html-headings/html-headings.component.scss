@@ -3,16 +3,34 @@
 .h1 {
   font-size: 2rem;
   line-height: 2.2rem;
+
+  .main-item {
+    .heading-block {
+      min-height: 36px;
+    }
+  }
 }
 
 .h2 {
   font-size: 1.5rem;
   line-height: 1.7rem;
+
+  .main-item {
+    .heading-block {
+      min-height: 28px;
+    }
+  }
 }
 
 .h3 {
   font-size: 1.3rem;
   line-height: 1.5rem;
+
+  .main-item {
+    .heading-block {
+      min-height: 24px;
+    }
+  }
 }
 
 .no-content {

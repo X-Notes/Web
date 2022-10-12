@@ -12,7 +12,6 @@ import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
@@ -62,7 +61,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
     private dialogsManageService: DialogsManageService,
@@ -99,19 +97,19 @@ export class FullNoteComponent implements OnInit, OnDestroy {
         .subscribe(async (flag) => {
           if (flag) {
             await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-            await this.loadIternalContent();
+            await this.loadInternalContent();
             await this.loadLeftMenuWithNotes();
           }
           this.loaded = true;
         });
     } else {
-      await this.loadIternalContent();
+      await this.loadInternalContent();
       await this.loadLeftMenuWithNotes();
       this.loaded = true;
     }
   }
 
-  async loadIternalContent() {
+  async loadInternalContent() {
     const note = this.store.selectSnapshot(NoteStore.oneFull);
     if (note) {
       await this.loadContent();
@@ -120,7 +118,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   async loadLeftMenuWithNotes() {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    const types = Object.values(NoteTypeENUM).filter((z) => typeof z === 'number');
+    const types = Object.values(NoteTypeENUM).filter((q) => typeof q === 'number');
     const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
 
     await this.store.dispatch(actions).toPromise();

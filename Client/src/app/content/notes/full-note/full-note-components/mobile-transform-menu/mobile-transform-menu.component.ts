@@ -1,4 +1,12 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
@@ -11,6 +19,7 @@ import { TransformToFileContent } from '../../models/transform-file-content.mode
   selector: 'app-mobile-transform-menu',
   templateUrl: './mobile-transform-menu.component.html',
   styleUrls: ['./mobile-transform-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileTransformMenuComponent implements OnInit {
   @ViewChild('uploadFile') uploadFile: ElementRef;
@@ -23,7 +32,7 @@ export class MobileTransformMenuComponent implements OnInit {
 
   textType = NoteTextTypeENUM;
 
-  isMulptiply = false;
+  isMultiply = false;
 
   headingType = HeadingTypeENUM;
 
@@ -44,16 +53,16 @@ export class MobileTransformMenuComponent implements OnInit {
     if (!contentId) return;
     $event.preventDefault();
     this.transformTo.emit({
+      id: contentId,
       textType: contentType,
       headingType: heading,
-      id: contentId,
       setFocusToEnd: true,
     });
   }
 
-  transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {
+  transformToFileHandler($event, type: TypeUploadFile, isMultiply: boolean) {
     $event.preventDefault();
-    this.isMulptiply = isMulptiply;
+    this.isMultiply = isMultiply;
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());

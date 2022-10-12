@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -12,7 +14,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, map, take, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
@@ -27,7 +29,6 @@ import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
@@ -61,12 +62,15 @@ import { PasteEvent } from '../full-note-components/html-components/html-base.co
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { DeltaStatic } from 'quill';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
+import { TextEditMenuOptions } from '../text-edit-menu/models/text-edit-menu-options';
+import { HtmlPropertyTagCollectorService } from '../content-editor-services/html-property-tag-collector.service';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
   providers: [WebSocketsNoteUpdaterService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -74,6 +78,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
+
+  @ViewChild('textEditMenu', { read: ElementRef, static: false })
+  textEditMenu: ElementRef<HTMLElement>;
 
   @ViewChild('contentSection', { read: ElementRef }) contentSection: ElementRef<HTMLElement>;
 
@@ -102,13 +109,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   textType = NoteTextTypeENUM;
 
+  options: TextEditMenuOptions;
+
   destroy = new Subject<void>();
 
   constructor(
     public selectionService: SelectionService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
-    public menuSelectionService: MenuSelectionService,
     public contentEditorContentsService: ContentEditorContentsService,
     public contentEditorPhotosService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
@@ -125,6 +133,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public clickableContentService: ClickableContentService,
     private contentEditorSyncService: ContentEditorSyncService,
     private contentEditorRestoreService: ContentEditorRestoreService,
+    private cdr: ChangeDetectorRef,
+    private htmlPTCollectorService: HtmlPropertyTagCollectorService,
   ) {}
 
   get isSelectModeActive(): boolean {
@@ -133,24 +143,81 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return isAnySelect || divActive;
   }
 
-  get textEditMenuVisibility(): string {
-    return this.selectedMenuType ? 'visible' : 'hidden';
+  get isHideMenu(): boolean {
+    const top = this.textEditMenuTop;
+    if (top < 80 && !this.pS.isMobile()) {
+      return true;
+    }
+    return false;
   }
 
   get selectedMenuType(): TextEditMenuEnum {
-    if (this.menuSelectionService.menuActive && !this.isSelectModeActive) {
-      return TextEditMenuEnum.OneRow;
-    }
-    if (this.isSelectModeActive) {
-      return TextEditMenuEnum.MultiplyRows;
-    }
-    return null;
+    return this.selectionService.selectedMenuType;
   }
 
-  get contents() {
+  get isTextMenuActive(): boolean {
+    return (
+      this.selectedMenuType !== null &&
+      !this.isHideMenu &&
+      !!this.options &&
+      this.options.ids?.length > 0
+    );
+  }
+
+  get isMobileMenuActive$(): Observable<boolean> {
+    return this.pS.isTransformMenuMobile$.pipe(
+      map((x) => x === true && this.clickableContentService.isEmptyTextItemFocus),
+    );
+  }
+
+  get textEditMenuTop(): number {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return (
+        this.selectionService.getCursorTop -
+        this.textEditMenu.nativeElement.offsetHeight -
+        this.contentSection.nativeElement.scrollTop
+      );
+    }
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
+      return top - this.textEditMenu.nativeElement.offsetHeight;
+    }
+    return 0;
+  }
+
+  get textEditMenuLeft(): number {
+    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+      return this.selectionService.getCursorLeft;
+    }
+    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+      return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
+    }
+    return 0;
+  }
+
+  get contents(): ContentModelBase[] {
     return this.contentEditorContentsService.getContents;
   }
 
+  get selectedElementsRects(): DOMRect[] {
+    return this.selectedElements?.map((x) => x.getHost().nativeElement.getBoundingClientRect());
+  }
+
+  get selectedTextElements(): BaseText[] {
+    return this.selectedElements
+      ?.filter((x) => x.getContent().typeId === ContentTypeENUM.Text)
+      .map((x) => x.getContent() as BaseText);
+  }
+
+  get selectedTextElement(): BaseText {
+    return this.selectedTextElements.length > 0 ? this.selectedTextElements[0] : null;
+  }
+
+  get selectedElements(): ParentInteraction[] {
+    return this.elements?.filter((x) => this.selectionService.isSelectedAll(x.getContentId()));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents);
@@ -191,14 +258,44 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     );
     this.webSocketsUpdaterService.tryJoinToNote(this.note.id);
     this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
+    this.selectionService.onSelectChanges$.pipe(takeUntil(this.destroy)).subscribe(() => {
+      this.options = this.buildMenuOptions();
+      this.cdr.detectChanges();
+    });
+  }
+
+  buildMenuOptions(): TextEditMenuOptions {
+    const obj: TextEditMenuOptions = {
+      isBold: this.htmlPTCollectorService.getIsBold(this.selectedMenuType, this.selectedElements),
+      isItalic: this.htmlPTCollectorService.getIsItalic(
+        this.selectedMenuType,
+        this.selectedElements,
+      ),
+      ids: this.selectionService.getAllSelectedItems(),
+      textType: this.selectedTextElement?.noteTextTypeId,
+      headingType: this.selectedTextElement?.headingTypeId,
+      isOneRowType: this.selectedMenuType === TextEditMenuEnum.OneRow,
+      backgroundColor: this.htmlPTCollectorService.getProperty(
+        'backgroundColor',
+        this.selectedMenuType,
+        this.selectedElements,
+      ),
+      color: this.htmlPTCollectorService.getProperty(
+        'color',
+        this.selectedMenuType,
+        this.selectedElements,
+      ),
+    };
+    return obj;
   }
 
   runDetectChangesOnChildren(): void {
+    console.log('run detection');
     this.elements.toArray().forEach((x) => x.detectChanges());
   }
 
   ngOnDestroy(): void {
-    this.menuSelectionService.clearItemAndSelection();
+    this.selectionService.resetSelectionAndItems();
     this.webSocketsUpdaterService.leaveNote(this.note.id);
     this.destroy.next();
     this.destroy.complete();
@@ -270,6 +367,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe(() => {
         const ids = this.contents.map((x) => x.id);
         this.selectionService.selectItems(ids);
+        this.cdr.detectChanges();
       });
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
@@ -286,7 +384,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         if (contentId) {
           this.enterHandler({
             breakModel: { isFocusToNext: true },
-            nextItemType: NoteTextTypeENUM.Default,
+            nextItemType: NoteTextTypeENUM.default,
             contentId,
           });
         }
@@ -304,7 +402,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getElementById(id: string): ParentInteraction {
-    return this.elements.find((z) => z.getContentId() === id);
+    return this.elements.find((q) => q.getContentId() === id);
   }
 
   selectionHandler(secondRect: DOMRect) {
@@ -329,6 +427,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!this.isSelectModeActive) return;
     this.apiBrowserFunctions.removeAllRanges();
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onScroll($event: Event): void {}
 
   enterHandler(value: EnterEvent) {
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
@@ -380,25 +481,20 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.contents[index] as BaseText;
   }
 
-  transformToTypeText(value: TransformContent) {
-    const index = this.contentEditorTextService.tranformTextContentTo(value);
+  transformToTypeText(value: TransformContent): void {
+    this.unSelectItems();
+    const index = this.contentEditorTextService.transformTextContentTo(value);
     setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
     this.postAction();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateHtmlHandler(model: InputHtmlEvent) {
-    const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
-    model.content.contents = contents;
-    this.postAction();
-  }
-
   updateTextStyles = (updates: UpdateTextStyles) => {
-    const contentIdsToProcess = this.getIdsToUpdateTextStyles();
-    if (!contentIdsToProcess) return;
-    for (const id of contentIdsToProcess) {
+    for (const id of updates.ids) {
       const el = this.elements.toArray().find((x) => x.getContent().id === id);
-      if (!el) return;
+      if (!el) {
+        this.unSelectItems();
+        return;
+      }
       const content = el.getContent() as BaseText;
       const html = DeltaConverter.convertTextBlocksToHTML(content.contents);
       const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
@@ -418,7 +514,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
       }
     }
+    this.unSelectItems();
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  updateHtmlHandler(model: InputHtmlEvent) {
+    const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
+    model.content.contents = contents;
+    this.postAction();
+  }
+
+  unSelectItems(): void {
+    this.selectionService.resetSelectionAndItems();
+  }
 
   getIndexAndLengthForUpdateStyle(el: HTMLElement | Element): { index: number; length: number } {
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
@@ -431,42 +539,32 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return null;
   }
 
-  getIdsToUpdateTextStyles(): string[] {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return [this.menuSelectionService.currentTextItem.id];
-    }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
-      return this.selectionService.getSelectedItems();
-    }
-    return null;
-  }
-
   pasteTextHandler(e: PasteEvent): void {
     let contentId = e.element.content.id;
     for (const el of e.htmlElementsToInsert) {
-      let type = NoteTextTypeENUM.Default;
+      let type = NoteTextTypeENUM.default;
       let heading: HeadingTypeENUM = null;
       if (el.tagName === 'H1' || el.tagName === 'H2') {
-        type = NoteTextTypeENUM.Heading;
+        type = NoteTextTypeENUM.heading;
         heading = HeadingTypeENUM.H1;
       }
       if (el.tagName === 'H3' || el.tagName === 'H4') {
-        type = NoteTextTypeENUM.Heading;
+        type = NoteTextTypeENUM.heading;
         heading = HeadingTypeENUM.H2;
       }
       if (el.tagName === 'H5' || el.tagName === 'H6') {
-        type = NoteTextTypeENUM.Heading;
+        type = NoteTextTypeENUM.heading;
         heading = HeadingTypeENUM.H3;
       }
       if (el.tagName === 'UL') {
-        type = NoteTextTypeENUM.Dotlist;
+        type = NoteTextTypeENUM.dotList;
         if (el.firstElementChild?.textContent?.trimStart().startsWith('[ ]')) {
           el.firstElementChild.textContent = el.firstElementChild?.textContent.slice(3);
-          type = NoteTextTypeENUM.Checklist;
+          type = NoteTextTypeENUM.checkList;
         }
       }
       if (el.tagName === 'OL') {
-        type = NoteTextTypeENUM.Numberlist;
+        type = NoteTextTypeENUM.numberList;
       }
 
       const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
@@ -482,7 +580,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   changeDetectionChecker = () => {
-    console.log('Check contents');
+    // console.log('Check contents');
   };
 
   drop(event: CdkDragDrop<ContentModelBase[]>) {
@@ -502,7 +600,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       return true;
     }
     const text = content as BaseText;
-    if (text.noteTextTypeId !== NoteTextTypeENUM.Default) {
+    if (text.noteTextTypeId !== NoteTextTypeENUM.default) {
       return true;
     }
     if (text.contents && text.contents?.length !== 0) {

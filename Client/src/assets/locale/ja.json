@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "写真のアップロード"
+    },
+    "text-color-menu" : {
+      "background": "背景"
     }
   },
   "noResult": {
@@ -368,5 +371,11 @@
     "personalization": "パーソナライゼーション設定",
     "per-month": "月額",
     "upgrade": "更新情報"
+  },
+  "files": {
+    "noAccessRightsNote": "メモにファイルをアップロードする権限がありません",
+    "noEnoughMemory": "ファイルをアップロードするのに十分なメモリがありません",
+    "fileTooLarge": "ファイルサイズは{{sizeMB}} MB を超えてはなりません。",
+    "fileNoSupport": "この形式のファイルはサポートされていません"
   }
 }

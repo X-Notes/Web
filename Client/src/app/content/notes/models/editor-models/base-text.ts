@@ -39,7 +39,7 @@ export class BaseText extends ContentModelBase {
 
   resetToDefault(): void {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    this.updateNoteTextTypeId(NoteTextTypeENUM.Default);
+    this.updateNoteTextTypeId(NoteTextTypeENUM.default);
     this.updateChecked(null);
     this.updateHeadingTypeId(null);
     this.updateContent([]);

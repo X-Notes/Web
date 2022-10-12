@@ -58,6 +58,15 @@ header {
             height: 100%;
             object-fit: cover;
           }
+          .photo-error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            mat-icon {
+              height: 20px;
+            }
+          }
         }
 
         p {

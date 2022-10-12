@@ -242,6 +242,9 @@
     },
     "photo": {
       "plsUpload": "Ladda upp foto"
+    },
+    "text-color-menu" : {
+      "background": "Bakgrund"
     }
   },
   "noResult": {
@@ -368,5 +371,11 @@
     "personalization": "Inställningar för anpassning",
     "per-month": "per månad",
     "upgrade": "Uppgradera"
+  },
+  "files": {
+    "noAccessRightsNote": "Ingen behörighet att ladda upp filer att notera",
+    "noEnoughMemory": "Inte tillräckligt med minne för att ladda upp filen",
+    "fileTooLarge": "Filstorleken får inte överstiga {{sizeMB}} MB",
+    "fileNoSupport": "Fil med det här formatet stöds inte"
   }
 }

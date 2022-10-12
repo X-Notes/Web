@@ -95,14 +95,14 @@ export class HtmlCheckListComponent
     if (this.isContentEmpty()) {
       this.transformTo.emit({
         id: this.content.id,
-        textType: NoteTextTypeENUM.Default,
+        textType: NoteTextTypeENUM.default,
         setFocusToEnd: true,
       });
     } else {
       const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
       const event = super.eventEventFactory(
         breakModel,
-        NoteTextTypeENUM.Checklist,
+        NoteTextTypeENUM.checkList,
         this.content.id,
       );
       this.enterEvent.emit(event);

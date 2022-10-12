@@ -1,0 +1,49 @@
+.text-color-item {
+  user-select: none;
+  position: relative;
+  border-top: 1px solid #4a4a4a;
+  .preview-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    .preview-icon {
+      width: 8px;
+      height: 24px;
+      border-radius: 5px 0 0 5px;
+    }
+    .preview-expand-container {
+      height: 24px;
+      border-radius: 0 5px 5px 0;
+      transition: all 0.3s;
+    }
+    .text-color {
+      position: absolute;
+      display: flex;
+      padding-left: 1.5rem;
+      align-items: center;
+      font-size: 0.875rem;
+      width: 100%;
+    }
+  }
+}
+
+.light {
+  .preview-container {
+    .text-color {
+      color: #a0a0a0;
+    }
+  }
+}
+
+.expand-left-section {
+  &:hover {
+    .preview-container {
+      .preview-expand-container {
+        flex-grow: 1;
+      }
+      .text-color {
+        color: black;
+      }
+    }
+  }
+}

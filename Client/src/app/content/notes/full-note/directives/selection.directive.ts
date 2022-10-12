@@ -8,7 +8,6 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { ScrollEvent } from 'muuri';
 import { fromEvent, Subscription } from 'rxjs';
 import { bufferTime } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -27,6 +26,10 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   @Output()
   selectionEndEvent = new EventEmitter<DOMRect>();
+
+  @Output()
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  onScrollEvent = new EventEmitter<Event>();
 
   @Input() isReadonly: boolean;
 
@@ -156,6 +159,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).tagName === 'svg' ||
       (evt.target as HTMLElement).tagName === 'path' ||
       (evt.target as HTMLElement).localName === 'mat-icon' ||
+      evt.target === this.scrollSection || // scroll click
       this.pS.isMobile()
     ) {
       return;
@@ -260,7 +264,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scrollEvent(e: ScrollEvent, scrollSection: HTMLElement) {
+  scrollEvent(e: Event, scrollSection: HTMLElement): void {
+    this.onScrollEvent.emit(e);
     this.mouseMoveDelay(this.prevMouseEvent);
   }
 }

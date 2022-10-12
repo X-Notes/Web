@@ -1,7 +1,7 @@
 export enum NoteTextTypeENUM {
-  Default = 1,
-  Heading = 2,
-  Dotlist = 3,
-  Numberlist = 4,
-  Checklist = 5,
+  default = 1,
+  heading = 2,
+  dotList = 3,
+  numberList = 4,
+  checkList = 5,
 }
