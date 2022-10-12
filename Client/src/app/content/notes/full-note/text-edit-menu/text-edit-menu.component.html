@@ -4,7 +4,9 @@
       *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H1)"
-      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H1 }"
+      [ngClass]="{
+        active: options?.textType === textType.heading && options?.headingType === headingType.H1
+      }"
     >
       <div class="icon">
         <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
@@ -14,7 +16,9 @@
       *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H2)"
-      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H2 }"
+      [ngClass]="{
+        active: options?.textType === textType.heading && options?.headingType === headingType.H2
+      }"
     >
       <div class="icon">
         <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
@@ -24,7 +28,9 @@
       *ngIf="options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H3)"
-      [ngClass]="{ active: options?.textType === textType.heading && options?.headingType === headingType.H3 }"
+      [ngClass]="{
+        active: options?.textType === textType.heading && options?.headingType === headingType.H3
+      }"
     >
       <div class="icon">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
@@ -98,50 +104,28 @@
       <span class="default-text">{{ 'innerNote.text' | translate }}</span>
     </div>
     <div class="text-color-container">
-      <div
+      <app-color-pick-item
         *ngFor="let value of textColorPalete"
-        class="text-color-item"
-        (click)="setTextColor($event, value[1])"
-      >
-        <div class="preview-container">
-          <div class="preview-icon">
-            <mat-icon
-              [ngStyle]="{ color: getColor(value[1]) }"
-              svgIcon="textColorPreview"
-            ></mat-icon>
-          </div>
-          <div
-            [ngStyle]="{ backgroundColor: getColor(value[1]) }"
-            class="preview-expand-container"
-          ></div>
-          <p class="text-color">{{ value[0] }}</p>
-        </div>
-      </div>
+        [name]="value[0]"
+        [color]="value[1]"
+        [isBackground]="false"
+        [theme]="theme"
+        (pickColor)="setTextColor(value[1])"
+      ></app-color-pick-item>
     </div>
     <div class="default-item">
       <mat-icon svgIcon="textBackgroundColor" [inline]="true"></mat-icon>
       <span class="default-text">{{ 'innerNote.text-color-menu.background' | translate }}</span>
     </div>
     <div class="text-color-container">
-      <div
+      <app-color-pick-item
         *ngFor="let value of textBackgroundPalete"
-        class="text-color-item"
-        (click)="setBackground($event, value[1])"
-      >
-        <div class="preview-container">
-          <div class="preview-icon">
-            <mat-icon
-              [ngStyle]="{ color: getColor(value[1]) }"
-              svgIcon="textColorPreview"
-            ></mat-icon>
-          </div>
-          <div
-            [ngStyle]="{ backgroundColor: getColor(value[1]) }"
-            class="preview-expand-container"
-          ></div>
-          <p class="text-color">{{ value[0] }}</p>
-        </div>
-      </div>
+        [name]="value[0]"
+        [color]="value[1]"
+        [isBackground]="true"
+        [theme]="theme"
+        (pickColor)="setBackground(value[1])"
+      ></app-color-pick-item>
     </div>
   </div>
 </mat-menu>

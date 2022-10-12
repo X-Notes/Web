@@ -63,13 +63,6 @@ export class TextEditMenuComponent {
     }
   }
 
-  getColor(color: TextBackgroundColors): string {
-    if (color === TextBackgroundColors.Default && this.theme === ThemeENUM.Light) {
-      return '#f2f2f2';
-    }
-    return color;
-  }
-
   setBoldStyle($event): void {
     $event.preventDefault();
     this.updateStyles('bold', !this.options.isBold);
@@ -80,15 +73,11 @@ export class TextEditMenuComponent {
     this.updateStyles('italic', !this.options.isItalic);
   }
 
-  setTextColor($event, value: string = null) {
-    console.log('setTextColor');
-    $event.preventDefault();
+  setTextColor(value: string = null) {
     this.updateStyles('color', value);
   }
 
-  setBackground($event, value: string = null) {
-    console.log('setBackground');
-    $event.preventDefault();
+  setBackground(value: string = null) {
     this.updateStyles('background', value);
   }
 

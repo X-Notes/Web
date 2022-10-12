@@ -1,0 +1,17 @@
+<div
+  appTheme
+  class="text-color-item"
+  [ngClass]="{ 'expand-left-section': isBackground }"
+  (click)="setColor($event)"
+>
+  <div class="preview-container">
+    <div [ngStyle]="{ backgroundColor: getColor(color) }" class="preview-icon"></div>
+    <div [ngStyle]="{ backgroundColor: color }" class="preview-expand-container"></div>
+    <p
+      class="text-color"
+      [ngStyle]="{'color': hoverText && !isBackground ? getColorText(color) : null}"
+    >
+      {{ name }}
+    </p>
+  </div>
+</div>
