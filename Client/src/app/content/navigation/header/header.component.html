@@ -3,7 +3,15 @@
     <div class="profile" routerLink="/profile" #profile>
       <div class="profile-data">
         <div class="photo">
-          <img alt="photo" [src]="(user$ | async).photoPath" />
+          <img
+            *ngIf="!photoError"
+            alt="photo"
+            [src]="(user$ | async).photoPath"
+            (error)="changeSource()"
+          />
+          <div *ngIf="photoError" class="photo-error">
+            <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+          </div>
         </div>
         <p>{{(user$ | async).name}}</p>
       </div>

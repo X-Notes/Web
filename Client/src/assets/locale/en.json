@@ -371,5 +371,11 @@
     "personalization": "Personalization settings",
     "per-month": "per month",
     "upgrade": "Upgrade"
+  },
+  "files": {
+    "noAccessRightsNote" : "No permission to upload files to note",
+    "noEnoughMemory" : "Not enough memory to upload the file",
+    "fileTooLarge" : "File size must not exceed {{sizeMB}} MB",
+    "fileNoSupport" : "File of this format is not supported"
   }
 }

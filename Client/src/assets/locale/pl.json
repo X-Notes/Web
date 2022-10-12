@@ -371,5 +371,11 @@
     "personalization": "Ustawienia personalizacji",
     "per-month": "Miesięcznie",
     "upgrade": "Aktualizacja"
+  },
+  "files": {
+    "noAccessRightsNote": "Brak uprawnień do przesyłania plików do odnotowania",
+    "noEnoughMemory": "Za mało pamięci do przesłania pliku",
+    "fileTooLarge": "Rozmiar pliku nie może przekraczać {{sizeMB}} MB",
+    "fileNoSupport": "Plik tego formatu nie jest obsługiwany"
   }
 }

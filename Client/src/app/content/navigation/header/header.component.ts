@@ -59,6 +59,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   isOpenNotification = false;
 
+  public photoError = false;
+
   public positions = [
     new ConnectionPositionPair(
       {
@@ -99,6 +101,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (folder) => this.routeChangeFullFolder(folder));
 
+    this.store
+      .select(UserStore.getUser)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        this.photoError = false;
+      });
+
     this.store.dispatch(LoadNotifications);
     await this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
   }
@@ -109,6 +118,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   closeNotification() {
     this.isOpenNotification = false;
+  }
+
+  changeSource() {
+    this.photoError = true;
   }
 
   hideMenu() {

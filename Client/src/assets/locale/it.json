@@ -371,5 +371,11 @@
     "personalization": "Impostazioni di personalizzazione",
     "per-month": "al mese",
     "upgrade": "Aggiornamento"
+  },
+  "files": {
+    "noAccessRightsNote": "Nessuna autorizzazione per caricare file da annotare",
+    "noEnoughMemory": "Memoria insufficiente per caricare il file",
+    "fileTooLarge": "La dimensione del file non deve superare {{sizeMB}} MB",
+    "fileNoSupport": "Il file di questo formato non è supportato"
   }
 }

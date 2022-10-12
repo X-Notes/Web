@@ -371,5 +371,11 @@
     "personalization": "Paramètres de personnalisation",
     "per-month": "par mois",
     "upgrade": "Mise à jour"
+  },
+  "files": {
+    "noAccessRightsNote": "Aucune autorisation de télécharger des fichiers à noter",
+    "noEnoughMemory": "Mémoire insuffisante pour télécharger le fichier",
+    "fileTooLarge": "La taille du fichier ne doit pas dépasser {{sizeMB}} MB",
+    "fileNoSupport": "Le fichier de ce format n’est pas pris en charge"
   }
 }
