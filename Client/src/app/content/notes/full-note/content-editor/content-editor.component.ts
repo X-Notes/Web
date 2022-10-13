@@ -417,7 +417,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     );
   }
 
-  selectionStartHandler($event: DOMRect) {
+  selectionStartHandler($event: DOMRect): void {
     const isSelectionInZone = this.selectionService.isSelectionInZone(
       $event,
       this.elements,
