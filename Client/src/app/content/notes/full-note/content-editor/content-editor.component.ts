@@ -95,6 +95,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   elements: QueryList<ParentInteraction>;
 
+  focusedElement: ParentInteraction;
+
   title: string;
 
   uiTitle: string;
@@ -392,8 +394,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onFocusHandler(content: ParentInteraction) {
-    this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
+  onFocusHandler(content: ParentInteraction): void {
+    this.focusedElement?.detectChanges();
+    this.focusedElement = content;
+    this.focusedElement?.markForCheck();
   }
 
   pasteCommandHandler(e) {
@@ -580,7 +584,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   changeDetectionChecker = () => {
-    // console.log('Check contents');
+    console.log('Check contents');
   };
 
   drop(event: CdkDragDrop<ContentModelBase[]>) {
