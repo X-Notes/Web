@@ -47,7 +47,7 @@
         (cdkDragStarted)="dragStarted($event)"
         (cdkDragEnded)="dragEnded($event)"
         class="item"
-        *ngxtFor="let item of contents; itemsAtOnce: 100; intervalLength: 20; let i = index"
+        *lazyFor="let item of contents; itemsAtOnce: 400; onChange: ngForSubject; intervalLength: 5000; let i = index"
       >
         <ng-container [ngSwitch]="item.typeId">
           <div

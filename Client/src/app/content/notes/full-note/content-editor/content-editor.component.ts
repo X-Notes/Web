@@ -115,6 +115,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   destroy = new Subject<void>();
 
+  ngForSubject = new Subject<void>();
+
   constructor(
     public selectionService: SelectionService,
     private apiBrowserFunctions: ApiBrowserTextService,
@@ -391,6 +393,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           });
         }
       });
+
+    this.ngForSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
+      this.cdr.detectChanges();
+      console.log('fuck');
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -470,7 +477,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
 
-    const prevRef = this.elements.find((z) => z.getContentId() === prevContent.id);
+    const prevRef = this.elements.find((q) => q.getContentId() === prevContent.id);
     prevRef.updateHTML(resContent);
     this.contentEditorContentsService.deleteById(id, false);
 
@@ -584,7 +591,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   changeDetectionChecker = () => {
-    console.log('Check contents');
+    // console.log('Check contents');
   };
 
   drop(event: CdkDragDrop<ContentModelBase[]>) {

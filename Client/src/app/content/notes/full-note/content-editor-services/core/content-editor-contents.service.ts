@@ -336,14 +336,24 @@ export class ContentEditorContentsService {
   }
 
   // REMOVE
-  deleteById(contentId: string, isDeleteInContentSync: boolean) {
-    this.contents = this.contents.filter((x) => x.id !== contentId);
+  deleteById(contentId: string, isDeleteInContentSync: boolean): void {
+    let index = this.contents.findIndex((x) => x.id === contentId);
+    if (index > -1) {
+      this.contents.splice(index, 1);
+    }
     if (isDeleteInContentSync) {
-      this.contentsSync = this.contentsSync.filter((x) => x.id !== contentId);
+      index = this.contentsSync.findIndex((x) => x.id === contentId);
+      if (index > -1) {
+        this.contentsSync.splice(index, 1);
+      }
     }
   }
 
-  deleteByIds(contentIds: string[], isDeleteInContentSync: boolean) {
+  deleteByIds(contentIds: string[], isDeleteInContentSync: boolean): void {
+    contentIds.forEach((id) => this.deleteById(id, isDeleteInContentSync));
+  }
+
+  deleteByIdsMutate(contentIds: string[], isDeleteInContentSync: boolean): void {
     this.contents = this.contents.filter((x) => !contentIds.some((q) => q === x.id));
     if (isDeleteInContentSync) {
       this.contentsSync = this.contentsSync.filter((x) => !contentIds.some((q) => q === x.id));
