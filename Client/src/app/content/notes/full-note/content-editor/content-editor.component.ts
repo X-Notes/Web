@@ -93,6 +93,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input()
   title$: Observable<string>;
 
+  @Input() progressiveLoading = false;
+
   elements: QueryList<ParentInteraction>;
 
   focusedElement: ParentInteraction;
@@ -224,9 +226,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
-      this.contentEditorContentsService.initOnlyRead(contents);
+      this.contentEditorContentsService.initOnlyRead(contents, this.progressiveLoading);
     } else {
-      this.contentEditorContentsService.initEdit(contents);
+      this.contentEditorContentsService.initEdit(contents, this.progressiveLoading);
       this.contentEditorRestoreService.initEdit();
       this.contentEditorSyncService.initEdit(this.note.id);
     }
@@ -398,6 +400,12 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.cdr.detectChanges();
       console.log('fuck');
     });
+
+    this.contentEditorContentsService.onProgressiveAdding
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        this.cdr.detectChanges();
+      });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

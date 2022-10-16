@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { AudiosCollection } from '../../../models/editor-models/audios-collection';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
@@ -29,26 +29,39 @@ export interface ContentAndIndex<T extends ContentModelBase> {
 export class ContentEditorContentsService {
   private contentsSync: ContentModelBase[] = [];
 
-  private isEdit = false;
-
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
+
+  private progressiveLoadOptions = {
+    firstLoadCount: 30,
+    stepCount: 4,
+    renderInterval: 10,
+  };
+
+  onProgressiveAdding = new Subject<void>();
+
+  isRendering = false;
 
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
-    private apiBrowser: ApiBrowserTextService,
   ) {}
 
   // TODO 1. Worker
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  initEdit(contents: ContentModelBase[]): void {
-    this.isEdit = true;
+  initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
+    const setInStack = () => {
+      this.contentEditorMomentoStateService.clear();
+      this.contentEditorMomentoStateService.saveToStack(contents);
+    };
+    if (progressiveLoading) {
+      this.initContentProgressively(contents, setInStack);
+      return;
+    }
     this.initContent(contents);
-    this.contentEditorMomentoStateService.clear();
-    this.contentEditorMomentoStateService.saveToStack(contents);
+    setInStack();
   }
 
   saveToStack(): void {
@@ -66,20 +79,59 @@ export class ContentEditorContentsService {
     return this.contentEditorMomentoStateService.getPrev();
   }
 
-  cleaPrevInStack(): void {
+  clearPrevInStack(): void {
     this.contentEditorMomentoStateService.clearPrev();
   }
 
-  initOnlyRead(contents: ContentModelBase[]) {
+  initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
+    if (progressiveLoading) {
+      this.initContentProgressively(contents);
+      return;
+    }
     this.contents = contents;
   }
 
-  private initContent(contents: ContentModelBase[]) {
+  private initContent(contents: ContentModelBase[]): void {
     this.contents = contents;
     this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
+  }
+
+  private initContentProgressively(
+    contents: ContentModelBase[],
+    onRenderCallback?: () => void,
+  ): void {
+    this.isRendering = true;
+    let end = this.progressiveLoadOptions.firstLoadCount;
+    if (end > contents.length) {
+      end = contents.length;
+    }
+    this.contents = contents.slice(0, end);
+    this.onProgressiveAdding.next();
+
+    if (this.contents.length === contents.length) {
+      onRenderCallback();
+      this.isRendering = false;
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const start = this.contents.length;
+      end = start + this.progressiveLoadOptions.stepCount;
+      if (end > contents.length) {
+        end = contents.length;
+      }
+      const contentsToPush = contents.slice(start, end);
+      this.contents.push(...contentsToPush);
+      this.onProgressiveAdding.next();
+      if (start >= contents.length) {
+        this.isRendering = false;
+        onRenderCallback();
+        clearInterval(interval);
+      }
+    }, this.progressiveLoadOptions.renderInterval);
   }
 
   // UI CONTENTS

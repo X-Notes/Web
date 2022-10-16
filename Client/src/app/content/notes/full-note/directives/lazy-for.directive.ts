@@ -27,6 +27,8 @@ export class LazyForDirective implements DoCheck {
 
   private diffsChecker: IterableDiffer<any> | undefined;
 
+  // usage *lazyFor="let item of contents; itemsAtOnce: 400; onChange: ngForSubject; intervalLength: 5000; let i = index"
+
   @Input('lazyForItemsAtOnce')
   public itemsAtOnce = 10;
 
