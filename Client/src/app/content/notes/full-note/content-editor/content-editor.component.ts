@@ -13,7 +13,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, filter, map, take, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';

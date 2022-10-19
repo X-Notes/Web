@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
