@@ -88,7 +88,7 @@ export class CollectionBaseComponent<
   syncContentWithLayout() {
     const el = this.titleComponent.titleHtml.nativeElement;
     const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
-    this.updateIternal();
+    this.updateInternal();
     this.detectChanges();
     this.apiBrowserTextService.setCaretFirstChild(el, data);
   }
@@ -123,7 +123,7 @@ export class CollectionBaseComponent<
     return this.content;
   }
 
-  updateIternal() {}
+  updateInternal() {}
 
   syncContentItems() {
     this.detectChanges();
