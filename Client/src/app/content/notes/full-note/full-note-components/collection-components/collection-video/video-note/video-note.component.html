@@ -1,6 +1,6 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="isDragActive"></ng-content
+    ><ng-content *ngIf="isDragActive && (isSelectModeActive$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="playlist main-item"
@@ -10,7 +10,7 @@
     [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
   >
     <app-title-collection
-      [isSelectionStart]="isSelectModeActive"
+      [isSelectionStart]="isSelectModeActive$ | async"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       (changeTitleEvent)="onTitleChangeInput($event)"
@@ -36,7 +36,7 @@
         (ended)="isPlaying = false"
         [src]="getMainVideo?.videoPath"
       ></video>
-      <div *ngIf="!isSelectModeActive" class="controls">
+      <div *ngIf="(isSelectModeActive$ | async) === false" class="controls">
         <div class="progress slider-controls">
           <mat-slider
             class="slider"
@@ -123,7 +123,7 @@
           <div class="thumb-video" [ngClass]="{ 'thumb-active': i === indexVideo }">
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
-              *ngIf="!isReadOnlyMode && !isSelectModeActive"
+              *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
               class="more-thumb-button"
               [matMenuTriggerFor]="menu"
               [button]="'more_vert'"

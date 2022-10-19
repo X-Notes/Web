@@ -11,7 +11,7 @@
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
@@ -20,11 +20,13 @@
     <p
       #contentHtml
       class="block-generic default-text-id heading-block"
-      [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
+      [attr.contenteditable]="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
       [innerHTML]="viewHtml"
       (input)="onInput()"
       (click)="textClick($event)"
     ></p>
-    <p class="no-content" *ngIf="isActiveState">{{'innerNote.heading' | translate}}</p>
+    <p class="no-content" *ngIf="isActiveState && (isSelectModeActive$ | async) === false">
+      {{'innerNote.heading' | translate}}
+    </p>
   </div>
 </div>

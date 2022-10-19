@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
   template: '',
@@ -6,7 +7,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export abstract class BaseEditorElementComponent {
   @Input()
-  isSelectModeActive = false;
+  isSelectModeActive$: Observable<boolean>;
 
   @Input()
   isReadOnlyMode = false;

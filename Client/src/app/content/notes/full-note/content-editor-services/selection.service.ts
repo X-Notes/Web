@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
@@ -95,6 +95,10 @@ export class SelectionService {
 
   isAnySelect(): boolean {
     return this.selectedItemsSet.size > 0;
+  }
+
+  isAnySelect$(): Observable<boolean> {
+    return of(this.selectedItemsSet.size > 0);
   }
 
   isSelected(id: string) {

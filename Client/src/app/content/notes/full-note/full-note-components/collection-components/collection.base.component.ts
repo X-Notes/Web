@@ -60,7 +60,7 @@ export class CollectionBaseComponent<
   }
 
   get isDragActive(): boolean {
-    return !this.isReadOnlyMode && !this.isSelectModeActive && !this.content.isLoading;
+    return !this.isReadOnlyMode && !this.content.isLoading;
   }
 
   get isEmpty(): boolean {

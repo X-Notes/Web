@@ -201,7 +201,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter($event) {
     $event.preventDefault();
-    this.preFocus = !this.isSelectModeActive;
+    this.preFocus = true;
     this.isMouseOver = true;
   }
 
