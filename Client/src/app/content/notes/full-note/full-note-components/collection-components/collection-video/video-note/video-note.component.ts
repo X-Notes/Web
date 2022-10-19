@@ -64,9 +64,15 @@ export class VideoNoteComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Video);
+    super(
+      cdr,
+      clickableContentService,
+      apiBrowserTextService,
+      ClickableSelectableEntities.Video,
+      selectionService,
+    );
   }
 
   get fullWidth() {

@@ -76,12 +76,12 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   constructor(
     cdr: ChangeDetectorRef,
     protected apiBrowser: ApiBrowserTextService,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
     private sanitizer: DomSanitizer,
   ) {
-    super(cdr);
+    super(cdr, selectionService);
 
     this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
       if (!this.contentHtml) return;
@@ -201,7 +201,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter($event) {
     $event.preventDefault();
-    this.preFocus = true;
+    this.preFocus = !this.isSelectModeActive;
     this.isMouseOver = true;
   }
 

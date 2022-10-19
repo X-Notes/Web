@@ -49,14 +49,20 @@ export class PhotosComponent
 
   constructor(
     private renderer: Renderer2,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
     private exportService: ExportService,
     clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Photo);
+    super(
+      cdr,
+      clickableContentService,
+      apiBrowserTextService,
+      ClickableSelectableEntities.Photo,
+      selectionService,
+    );
   }
 
   get countOfBlocks() {

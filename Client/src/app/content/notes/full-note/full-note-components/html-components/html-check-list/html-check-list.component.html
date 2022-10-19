@@ -6,7 +6,7 @@
   (mouseleave)="mouseLeave($event)"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && isSelectModeActive === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
@@ -24,7 +24,7 @@
       <p
         class="block-generic default-text-size default-text-id check-list"
         #contentHtml
-        [attr.contenteditable]="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
+        [attr.contenteditable]="!isReadOnlyMode && isSelectModeActive === false"
         (input)="onInput()"
         (click)="textClick($event)"
         [innerHTML]="viewHtml"
@@ -32,7 +32,7 @@
           'checked-item': content.checked
         }"
       ></p>
-      <p class="no-content-list" *ngIf="isActiveState && (isSelectModeActive$ | async) === false">
+      <p class="no-content-list" *ngIf="isActiveState && isSelectModeActive === false">
         {{'innerNote.text' | translate}}
       </p>
     </div>

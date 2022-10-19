@@ -143,10 +143,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
   ) {}
 
-  get isSelectModeActive$(): Observable<boolean> {
-    return of(this.isSelectModeActive);
-  }
-
   get isSelectModeActive(): boolean {
     const isAnySelect = this.selectionService.isAnySelect();
     const divActive = this.selectionDirective?.isDivActive;

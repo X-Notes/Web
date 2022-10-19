@@ -15,6 +15,8 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
+  selectionDivActive$ = new BehaviorSubject(false);
+
   private selectionTop = 0;
 
   private selectionLeft = 0;
@@ -95,10 +97,6 @@ export class SelectionService {
 
   isAnySelect(): boolean {
     return this.selectedItemsSet.size > 0;
-  }
-
-  isAnySelect$(): Observable<boolean> {
-    return of(this.selectedItemsSet.size > 0);
   }
 
   isSelected(id: string) {

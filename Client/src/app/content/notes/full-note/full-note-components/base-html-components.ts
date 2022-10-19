@@ -1,14 +1,11 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import { SelectionService } from '../content-editor-services/selection.service';
 
 @Component({
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export abstract class BaseEditorElementComponent {
-  @Input()
-  isSelectModeActive$: Observable<boolean>;
-
   @Input()
   isReadOnlyMode = false;
 
@@ -25,8 +22,15 @@ export abstract class BaseEditorElementComponent {
 
   public cdr: ChangeDetectorRef;
 
-  constructor(cdr: ChangeDetectorRef) {
+  public selectionService: SelectionService;
+
+  constructor(cdr: ChangeDetectorRef, selectionService: SelectionService) {
     this.cdr = cdr;
+    this.selectionService = selectionService;
+  }
+
+  get isSelectModeActive(): boolean {
+    return this.selectionService.selectionDivActive$.getValue();
   }
 
   detectChanges(): void {

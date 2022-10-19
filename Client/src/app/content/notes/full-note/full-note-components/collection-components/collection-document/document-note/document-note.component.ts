@@ -38,13 +38,14 @@ export class DocumentNoteComponent
     cdr: ChangeDetectorRef,
     clickableContentService: ClickableContentService,
     apiBrowserTextService: ApiBrowserTextService,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
   ) {
     super(
       cdr,
       clickableContentService,
       apiBrowserTextService,
       ClickableSelectableEntities.Document,
+      selectionService,
     );
   }
 

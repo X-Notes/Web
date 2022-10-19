@@ -75,6 +75,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return size.width > 5 && size.height > 5 && this.div.style.opacity === '1';
   }
 
+  get isSelectionActive(): boolean {
+    if (!this.div) return false;
+    const size = this.div.getBoundingClientRect();
+    return size.width > 5 && size.height > 5;
+  }
+
   processY(y: number): number {
     return (
       y +
@@ -199,6 +205,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.x = 0;
     this.y = 0;
     this.resetDiv();
+    this.selectionService.selectionDivActive$.next(false);
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -237,6 +244,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setWidth(newValueWidth);
     this.setHeight(newValueHeight);
 
+    this.selectionService.selectionDivActive$.next(this.isSelectionActive);
     this.selectionEvent.emit(this.div.getBoundingClientRect());
   }
 

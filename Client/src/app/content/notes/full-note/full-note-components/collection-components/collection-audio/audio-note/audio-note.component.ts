@@ -39,9 +39,15 @@ export class AudioNoteComponent
     private host: ElementRef,
     cdr: ChangeDetectorRef,
     apiBrowserTextService: ApiBrowserTextService,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
   ) {
-    super(cdr, clickableContentService, apiBrowserTextService, ClickableSelectableEntities.Audio);
+    super(
+      cdr,
+      clickableContentService,
+      apiBrowserTextService,
+      ClickableSelectableEntities.Audio,
+      selectionService,
+    );
   }
 
   ngOnInit(): void {}

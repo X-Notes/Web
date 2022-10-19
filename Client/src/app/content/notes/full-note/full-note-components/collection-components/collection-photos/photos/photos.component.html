@@ -1,6 +1,6 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="photo-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="isDragActive && (isSelectModeActive$ | async) === false"></ng-content
+    ><ng-content *ngIf="isDragActive && isSelectModeActive === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
@@ -13,7 +13,7 @@
   >
     <div class="content-photos">
       <app-title-collection
-        [isSelectionStart]="(isSelectModeActive$ | async)"
+        [isSelectionStart]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
         (changeTitleEvent)="onTitleChangeInput($event)"
@@ -32,7 +32,7 @@
             <app-photo
               *ngFor="let item of block"
               [photo]="item"
-              [isSelectModeActive]="(isSelectModeActive$ | async)"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
@@ -49,7 +49,7 @@
             <app-photo
               *ngFor="let item of lastBlock"
               [photo]="item"
-              [isSelectModeActive]="(isSelectModeActive$ | async)"
+              [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"
@@ -64,7 +64,7 @@
           (changeHeight)="changeHeight($event)"
           class="slider-bottom"
           [ngClass]="{ slider: !isReadOnlyMode }"
-          [ngStyle]="{ opacity: (isSelectModeActive$ | async) ? '0' : '1' }"
+          [ngStyle]="{ opacity: isSelectModeActive ? '0' : '1' }"
         ></div>
       </div>
       <app-empty-collection-items-placeholder
