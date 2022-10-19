@@ -458,6 +458,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       value.nextItemType,
       value.breakModel.isFocusToNext,
     );
+    this.cdr.detectChanges();
     setTimeout(() => {
       const el = this.elements?.toArray()[newTextContent.index];
       const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
@@ -811,6 +812,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         throw new Error('incorrect type');
       }
     }
+
+    this.cdr.detectChanges();
 
     if (newContentId) {
       const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);

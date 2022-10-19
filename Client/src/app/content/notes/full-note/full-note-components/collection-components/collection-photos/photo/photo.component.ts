@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../../../../models/editor-models/photos-collection';
@@ -10,7 +10,7 @@ import { ClickableContentService } from '../../../../content-editor-services/cli
   styleUrls: ['./photo.component.scss'],
   animations: [photoInit],
 })
-export class PhotoComponent {
+export class PhotoComponent implements OnInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -36,7 +36,9 @@ export class PhotoComponent {
     return this.clickableService.isClicked(this.photo.fileId);
   }
 
-  onLoadImage() {
+  ngOnInit(): void {}
+
+  onLoadImage(): void {
     this.photo.loaded = true;
   }
 

@@ -107,5 +107,6 @@ export class ContentEditorListenerService {
     for (const destroyFunc of this.listeners) {
       destroyFunc();
     }
+    this.onPressEnterSubject.next(null);
   }
 }
