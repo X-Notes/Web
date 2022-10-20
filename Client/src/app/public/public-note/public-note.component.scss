@@ -18,6 +18,7 @@
   .full-note {
     display: flex;
     flex: 1;
+    width: 100%; // bug overflow documents with long name 
     max-width: 1024px;
   }
 }

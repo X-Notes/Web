@@ -15,6 +15,7 @@ import { TextBlock } from '../../../models/editor-models/text-models/text-block'
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
+import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { TitleCollectionComponent } from './title-collection/title-collection.component';
@@ -69,6 +70,10 @@ export class CollectionBaseComponent<
     if (!this.content.items || this.content.items.length === 0) {
       return true;
     }
+    return false;
+  }
+
+  get isActiveState(): boolean {
     return false;
   }
 
@@ -133,13 +138,16 @@ export class CollectionBaseComponent<
     this.titleComponent.focusOnTitle();
     this.titleComponent.scrollToTitle();
     this.clickItemHandler(null);
-    this.runDetectChangesChildren.emit();
   }
 
   clickItemHandler(itemId: string) {
-    this.clickableContentService.setContent(this.content, itemId, this.selectType, null);
+    this.clickableContentService.setContent(
+      this.content,
+      itemId,
+      this.selectType,
+      this as any as ParentInteraction,
+    );
     const item = document.getElementById(itemId);
     item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    this.runDetectChangesChildren.emit();
   }
 }

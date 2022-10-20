@@ -27,4 +27,5 @@ export interface ParentInteraction {
   deleteDown();
   detectChanges();
   markForCheck();
+  get isActiveState(): boolean;
 }

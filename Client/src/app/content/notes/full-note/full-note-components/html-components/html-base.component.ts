@@ -92,7 +92,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     });
   }
 
-  get isActiveState() {
+  get isActiveState(): boolean {
     return this.getIsActive() && !this.isReadOnlyMode;
   }
 
@@ -224,12 +224,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     this.onFocus.emit(this);
   }
 
-  setFocusedElement() {
-    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
-  }
-
   // LISTENERS
-
   isPasteLink(data: DataTransferItemList): boolean {
     for (const item of data as any) {
       if ((item as DataTransferItem).type === 'text/link-preview') {
@@ -391,4 +386,6 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   abstract enter(e);
+
+  abstract setFocusedElement(): void;
 }

@@ -97,8 +97,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   elements: QueryList<ParentInteraction>;
 
-  focusedElement: ParentInteraction;
-
   title: string;
 
   uiTitle: string;
@@ -295,11 +293,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return obj;
   }
 
-  runDetectChangesOnChildren(): void {
-    console.log('run detection');
-    this.elements.toArray().forEach((x) => x.detectChanges());
-  }
-
   ngOnDestroy(): void {
     this.selectionService.resetSelectionAndItems();
     this.webSocketsUpdaterService.leaveNote(this.note.id);
@@ -398,7 +391,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.ngForSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
       this.cdr.detectChanges();
-      console.log('fuck');
     });
 
     this.contentEditorContentsService.onProgressiveAdding
@@ -410,9 +402,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFocusHandler(content: ParentInteraction): void {
-    this.focusedElement?.detectChanges();
-    this.focusedElement = content;
-    this.focusedElement?.markForCheck();
+    this.clickableContentService.prevItem?.detectChanges();
   }
 
   pasteCommandHandler(e) {

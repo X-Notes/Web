@@ -79,6 +79,10 @@ export class PhotosComponent
 
   ngOnChanges(): void {}
 
+  changeDetectionChecker = () => {
+    console.log('Photos html changeDetectionChecker: ');
+  };
+
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();

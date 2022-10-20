@@ -16,6 +16,7 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
+import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../../content-editor-services/selection.service';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -79,6 +80,10 @@ export class HtmlCheckListComponent
 
   changeCheckBox() {
     this.someChangesEvent.emit();
+  }
+
+  setFocusedElement(): void {
+    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 
   // eslint-disable-next-line class-methods-use-this

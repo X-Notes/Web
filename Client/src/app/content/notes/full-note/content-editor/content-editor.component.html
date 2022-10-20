@@ -71,7 +71,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
@@ -92,7 +91,6 @@
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -111,7 +109,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -130,7 +127,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -148,7 +144,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -167,7 +162,6 @@
             (deleteContentEvent)="deletePhotosCollection($event)"
             (deleteContentItemEvent)="deletePhotoHandler($event, item)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-photos>
           <app-audio-note
@@ -182,7 +176,6 @@
             (deleteContentItemEvent)="deleteAudioHandler($event, item)"
             (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-audio-note>
           <app-video-note
@@ -197,7 +190,6 @@
             (deleteContentItemEvent)="deleteVideoHandler($event, item)"
             (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-video-note>
           <app-document-note
@@ -212,7 +204,6 @@
             (deleteContentItemEvent)="deleteDocumentHandler($event, item)"
             (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-document-note>
           <div *ngSwitchDefault>Default</div>
