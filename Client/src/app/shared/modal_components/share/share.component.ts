@@ -12,7 +12,6 @@ import {
   UpdateOneFolder,
 } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invited-users-to-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
@@ -40,8 +39,6 @@ import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
-import { SnackbarService } from '../../services/snackbar/snackbar.service';
-import { TranslateService } from '@ngx-translate/core';
 
 export interface StartType {
   id: string;
@@ -65,18 +62,6 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.getUsersOnPrivateNote)
   private usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
-
-  windowType = EntityPopupType;
-
-  noteType = NoteTypeENUM;
-
-  themes = ThemeENUM;
-
-  folderType = FolderTypeENUM;
-
-  refType = RefTypeENUM;
-
-  refTypes = Object.values(RefTypeENUM).filter((x) => typeof x === 'string');
 
   notes: SmallNote[] = [];
 
@@ -116,7 +101,6 @@ export class ShareComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService,
-    private apiBrowserFunctions: ApiBrowserTextService,
     private updaterEntitiesService: UpdaterEntitiesService,
     @Inject(MAT_DIALOG_DATA)
     public data: {
@@ -124,14 +108,42 @@ export class ShareComponent implements OnInit, OnDestroy {
       ents: SmallFolder[] | SmallNote[];
     },
     public dialogRef: MatDialogRef<ShareComponent>,
-    private snackbarService: SnackbarService,
-    private translate: TranslateService,
   ) {}
+
+  get entities(): SmallFolder[] | SmallNote[] {
+    if (this.isNoteWindowType) {
+      return this.notes;
+    }
+    if (this.isFolderWindowType) {
+      return this.folders;
+    }
+  }
+
+  get selectedEntityId(): string {
+    if (this.isNoteWindowType) {
+      return this.currentNote.id;
+    }
+    if (this.isFolderWindowType) {
+      return this.currentFolder.id;
+    }
+  }
+
+  get isNoteWindowType(): boolean {
+    return this.data.currentWindowType === EntityPopupType.Note;
+  }
+
+  get isFolderWindowType(): boolean {
+    return this.data.currentWindowType === EntityPopupType.Folder;
+  }
+
+  get dropdownActive(): boolean {
+    return this.folderDropdownActive || this.noteDropdownActive;
+  }
 
   get folderDropdownActive(): boolean {
     return (
       this.currentFolder?.folderTypeId === FolderTypeENUM.Shared &&
-      this.data.currentWindowType === this.windowType.Folder &&
+      this.isFolderWindowType &&
       this.currentFolder.refTypeId !== null
     );
   }
@@ -139,44 +151,59 @@ export class ShareComponent implements OnInit, OnDestroy {
   get noteDropdownActive(): boolean {
     return (
       this.currentNote?.noteTypeId === NoteTypeENUM.Shared &&
-      this.data.currentWindowType === this.windowType.Note &&
+      this.isNoteWindowType &&
       this.currentNote.noteTypeId !== null
     );
   }
 
-  get folderSelectedValue(): string {
-    return this.refType[this.currentFolder?.refTypeId];
+  get refTypeSelectedValue(): RefTypeENUM {
+    if (this.isNoteWindowType) {
+      return this.currentNote?.refTypeId;
+    }
+    return this.currentFolder?.refTypeId;
   }
 
-  get noteSelectedValue(): string {
-    return this.refType[this.currentNote?.refTypeId];
+  get toggleDescription(): string {
+    if (this.isNoteWindowType) {
+      if (this.currentNote?.noteTypeId === NoteTypeENUM.Shared) {
+        return 'modal.shareModal.sharedMessage';
+      }
+      return 'modal.shareModal.noSharedMessage';
+    }
+    if (this.isFolderWindowType) {
+      if (this.currentFolder?.folderTypeId === FolderTypeENUM.Shared) {
+        return 'modal.shareModal.sharedMessage';
+      }
+      return 'modal.shareModal.noSharedMessage';
+    }
+    throw new Error('Incorrect type');
   }
 
-  get isPrivateButtonActive() {
-    if (this.data.currentWindowType === EntityPopupType.Note) {
+  get isPrivateButtonActive(): boolean {
+    if (this.isNoteWindowType) {
       return this.currentNote?.noteTypeId !== NoteTypeENUM.Shared;
     }
-    if (this.data.currentWindowType === EntityPopupType.Folder) {
+    if (this.isFolderWindowType) {
       return this.currentFolder?.folderTypeId !== FolderTypeENUM.Shared;
     }
     throw new Error('Incorrect type');
   }
 
   get isSharedButtonActive() {
-    if (this.data.currentWindowType === EntityPopupType.Note) {
+    if (this.isNoteWindowType) {
       return this.currentNote?.noteTypeId === NoteTypeENUM.Shared;
     }
-    if (this.data.currentWindowType === EntityPopupType.Folder) {
+    if (this.isFolderWindowType) {
       return this.currentFolder?.folderTypeId === FolderTypeENUM.Shared;
     }
     throw new Error('Incorrect type');
   }
 
   get invitedUsers$(): Observable<InvitedUsersToNoteOrFolder[]> {
-    if (this.data.currentWindowType === this.windowType.Note) {
+    if (this.isNoteWindowType) {
       return this.usersOnPrivateNote$;
     }
-    if (this.data.currentWindowType === this.windowType.Folder) {
+    if (this.isFolderWindowType) {
       return this.usersOnPrivateFolder$;
     }
     return null;
@@ -206,10 +233,10 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.data.currentWindowType === EntityPopupType.Note) {
+    if (this.isNoteWindowType) {
       this.getNotes();
     }
-    if (this.data.currentWindowType === EntityPopupType.Folder) {
+    if (this.isFolderWindowType) {
       this.getFolders();
     }
 
@@ -275,25 +302,6 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.selectNote(this.notes[0]);
   }
 
-  async copyInputLink() {
-    let input;
-    switch (this.data.currentWindowType) {
-      case EntityPopupType.Folder: {
-        input = document.getElementById('linkInputFolder') as HTMLInputElement;
-        break;
-      }
-      case EntityPopupType.Note: {
-        input = document.getElementById('linkInputNote') as HTMLInputElement;
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
-    await this.apiBrowserFunctions.copyInputLinkAsync(input);
-    this.snackbarService.openSnackBar(this.translate.instant('snackBar.copied'));
-  }
-
   async changeNoteType() {
     if (!this.startIdsType.some((x) => x.id === this.currentNote.id)) {
       this.startIdsType.push({ id: this.currentNote.id, type: this.currentNote.noteTypeId });
@@ -352,16 +360,14 @@ export class ShareComponent implements OnInit, OnDestroy {
     return new TransformTypeFolders(typeTo, [id], false);
   };
 
-  async changeRefTypeNote(refTypeId: string) {
-    const refType = this.refType[refTypeId]; // map from string to number;
+  async changeRefTypeNote(refType: RefTypeENUM): Promise<void> {
     await this.apiNote.makePublic(refType, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
     this.store.dispatch(new UpdateOneNote(this.currentNote));
   }
 
-  async changeRefTypeFolder(refTypeId: string) {
-    const refType = this.refType[refTypeId]; // map from string to number;
+  async changeRefTypeFolder(refType: RefTypeENUM): Promise<void> {
     await this.apiFolder.makePublic(refType, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
