@@ -9,7 +9,6 @@ import {
   UpdateFullFolder,
   GetInvitedUsersToFolder,
   TransformTypeFolders,
-  UpdateOneFolder,
 } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
@@ -19,7 +18,6 @@ import {
   UpdateFullNote,
   GetInvitedUsersToNote,
   TransformTypeNotes,
-  UpdateOneNote,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
@@ -43,6 +41,7 @@ import { InvitationFormResult } from './mail-invitations/models/invitation-form-
 export interface StartType {
   id: string;
   type: NoteTypeENUM | FolderTypeENUM;
+  refType: RefTypeENUM;
 }
 
 @Component({
@@ -217,16 +216,16 @@ export class ShareComponent implements OnInit, OnDestroy {
       .filter((x) => this.startIdsType.some((q) => q.id === x.id && q.type !== x.noteTypeId))
       .map((x) =>
         x.noteTypeId === NoteTypeENUM.Shared
-          ? this.factoryForCommandNote(x.id, NoteTypeENUM.Shared)
-          : this.factoryForCommandNote(x.id, NoteTypeENUM.Private),
+          ? this.factoryForCommandNote(x.id, NoteTypeENUM.Shared, x.refTypeId)
+          : this.factoryForCommandNote(x.id, NoteTypeENUM.Private, x.refTypeId),
       );
 
     const commandsFolders = this.folders
       .filter((x) => this.startIdsType.some((q) => q.id === x.id && q.type !== x.folderTypeId))
       .map((x) =>
         x.folderTypeId === FolderTypeENUM.Shared
-          ? this.factoryForCommandFolder(x.id, FolderTypeENUM.Shared)
-          : this.factoryForCommandFolder(x.id, FolderTypeENUM.Private),
+          ? this.factoryForCommandFolder(x.id, FolderTypeENUM.Shared, x.refTypeId)
+          : this.factoryForCommandFolder(x.id, FolderTypeENUM.Private, x.refTypeId),
       );
 
     this.store.dispatch([...commandsNotes, ...commandsFolders]);
@@ -304,7 +303,11 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   async changeNoteType() {
     if (!this.startIdsType.some((x) => x.id === this.currentNote.id)) {
-      this.startIdsType.push({ id: this.currentNote.id, type: this.currentNote.noteTypeId });
+      this.startIdsType.push({
+        id: this.currentNote.id,
+        type: this.currentNote.noteTypeId,
+        refType: this.currentNote.refTypeId,
+      });
     }
 
     let type = NoteTypeENUM.Private;
@@ -329,7 +332,11 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   async changeFolderType() {
     if (!this.startIdsType.some((x) => x.id === this.currentFolder.id)) {
-      this.startIdsType.push({ id: this.currentFolder.id, type: this.currentFolder.folderTypeId });
+      this.startIdsType.push({
+        id: this.currentFolder.id,
+        type: this.currentFolder.folderTypeId,
+        refType: this.currentFolder.refTypeId,
+      });
     }
 
     let type = FolderTypeENUM.Private;
@@ -352,26 +359,32 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.store.dispatch([new UpdateFullFolder({ folderTypeId: type }, this.currentFolder.id)]);
   }
 
-  factoryForCommandNote = (id: string, typeTo: NoteTypeENUM): TransformTypeNotes => {
-    return new TransformTypeNotes(typeTo, [id], false);
+  factoryForCommandNote = (
+    id: string,
+    typeTo: NoteTypeENUM,
+    refType: RefTypeENUM,
+  ): TransformTypeNotes => {
+    return new TransformTypeNotes(typeTo, [id], false, refType);
   };
 
-  factoryForCommandFolder = (id: string, typeTo: FolderTypeENUM): TransformTypeFolders => {
-    return new TransformTypeFolders(typeTo, [id], false);
+  factoryForCommandFolder = (
+    id: string,
+    typeTo: FolderTypeENUM,
+    refType: RefTypeENUM,
+  ): TransformTypeFolders => {
+    return new TransformTypeFolders(typeTo, [id], false, refType);
   };
 
   async changeRefTypeNote(refType: RefTypeENUM): Promise<void> {
     await this.apiNote.makePublic(refType, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
-    this.store.dispatch(new UpdateOneNote(this.currentNote));
   }
 
   async changeRefTypeFolder(refType: RefTypeENUM): Promise<void> {
     await this.apiFolder.makePublic(refType, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
-    this.store.dispatch(new UpdateOneFolder(this.currentFolder));
   }
 
   async sendInvites(model: InvitationFormResult) {

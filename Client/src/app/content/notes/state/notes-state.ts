@@ -495,7 +495,7 @@ export class NoteStore {
     const typeFrom = getState()
       .notes.map((x) => x.notes)
       .flat()
-      .find((z) => selectedIds.some((x) => x === z.id)).noteTypeId;
+      .find((q) => selectedIds.some((x) => x === q.id)).noteTypeId;
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
@@ -535,7 +535,7 @@ export class NoteStore {
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
-    dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+    dispatch([UnSelectAllNote, RemoveFromDomMurri]); // TODO REMOVE FROM HERE
 
     if (isAddToDom) {
       const obj: AddNotesToDom = { notes: notesAdded };

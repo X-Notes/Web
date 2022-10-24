@@ -88,12 +88,8 @@
                     class="empty-placeholder-container"
                   >
                     <p>
-                      {{
-                        (isNoteWindowType
-                          ? 'modal.shareModal.noPeopleNote'
-                          : 'modal.shareModal.noPeopleFolder'
-                        ) | translate
-                      }}
+                      {{ (isNoteWindowType ? 'modal.shareModal.noPeopleNote' :
+                      'modal.shareModal.noPeopleFolder' ) | translate }}
                     </p>
                   </div>
                 </ng-container>
