@@ -15,6 +15,8 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
+  selectionDivActive$ = new BehaviorSubject(false);
+
   private selectionTop = 0;
 
   private selectionLeft = 0;

@@ -71,8 +71,18 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   get isDivActive(): boolean {
     if (!this.div) return false;
+    return this.isUserStartSelect && this.div.style.opacity === '1';
+  }
+
+  get isSelectionActive(): boolean {
+    if (!this.div) return false;
+    return this.isUserStartSelect;
+  }
+
+  get isUserStartSelect(): boolean {
     const size = this.div.getBoundingClientRect();
-    return size.width > 5 && size.height > 5 && this.div.style.opacity === '1';
+    // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
+    return size.width > 5 && size.height > 5;
   }
 
   processY(y: number): number {
@@ -199,6 +209,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.x = 0;
     this.y = 0;
     this.resetDiv();
+    this.selectionService.selectionDivActive$.next(false);
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -237,6 +248,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setWidth(newValueWidth);
     this.setHeight(newValueHeight);
 
+    this.selectionService.selectionDivActive$.next(this.isSelectionActive);
     this.selectionEvent.emit(this.div.getBoundingClientRect());
   }
 

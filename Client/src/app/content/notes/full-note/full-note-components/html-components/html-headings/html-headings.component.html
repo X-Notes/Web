@@ -25,6 +25,8 @@
       (input)="onInput()"
       (click)="textClick($event)"
     ></p>
-    <p class="no-content" *ngIf="isActiveState">{{'innerNote.heading' | translate}}</p>
+    <p class="no-content" *ngIf="isActiveState && !isSelectModeActive">
+      {{'innerNote.heading' | translate}}
+    </p>
   </div>
 </div>

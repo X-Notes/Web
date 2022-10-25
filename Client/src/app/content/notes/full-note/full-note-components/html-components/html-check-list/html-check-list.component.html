@@ -32,7 +32,9 @@
           'checked-item': content.checked
         }"
       ></p>
-      <p class="no-content-list" *ngIf="isActiveState">{{'innerNote.text' | translate}}</p>
+      <p class="no-content-list" *ngIf="isActiveState && !isSelectModeActive">
+        {{'innerNote.text' | translate}}
+      </p>
     </div>
   </div>
 </div>

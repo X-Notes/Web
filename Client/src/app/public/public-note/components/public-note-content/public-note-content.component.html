@@ -2,6 +2,7 @@
   <div *ngIf="(canView$ | async) === true && loaded" class="wrapper-note">
     <app-content-editor
       [note]="note$ | async"
+      [progressiveLoading]="true"
       [isReadOnlyMode]="true"
       [title$]="noteTitle$"
       [contents]="contents"

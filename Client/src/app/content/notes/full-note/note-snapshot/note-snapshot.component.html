@@ -9,6 +9,7 @@
   <div *ngIf="(snapshotState$ | async)?.canView" class="wrapper-note">
     <app-content-editor
       [note]="snapshotNote$ | async"
+      [progressiveLoading]="true"
       [title$]="snapshotNoteTitle$"
       [contents]="contents"
       [isReadOnlyMode]="true"

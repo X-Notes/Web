@@ -76,12 +76,12 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   constructor(
     cdr: ChangeDetectorRef,
     protected apiBrowser: ApiBrowserTextService,
-    public selectionService: SelectionService,
+    selectionService: SelectionService,
     protected clickableService: ClickableContentService,
     private renderer: Renderer2,
     private sanitizer: DomSanitizer,
   ) {
-    super(cdr);
+    super(cdr, selectionService);
 
     this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
       if (!this.contentHtml) return;

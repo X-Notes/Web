@@ -125,7 +125,7 @@ export class HtmlTextPartComponent
   isFocusToNext = () => true;
 
   changeDetectionChecker = () => {
-    // console.log('Text html contents: ');
+    console.log('Text html contents: ');
   };
 
   uploadFiles(event): void {

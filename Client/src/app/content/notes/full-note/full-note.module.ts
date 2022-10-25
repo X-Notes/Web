@@ -46,6 +46,7 @@ import { ContentEditorRestoreService } from './content-editor-services/core/cont
 import { ContentEditorSyncService } from './content-editor-services/core/content-editor-sync.service';
 import { HtmlPropertyTagCollectorService } from './content-editor-services/html-property-tag-collector.service';
 import { ColorPickItemComponent } from './text-edit-menu/components/color-pick-item/color-pick-item.component';
+import { LazyForDirective } from './directives/lazy-for.directive';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { ColorPickItemComponent } from './text-edit-menu/components/color-pick-i
     EmptyCollectionItemsPlaceholderComponent,
     MobileTransformMenuComponent,
     ColorPickItemComponent,
+    LazyForDirective,
   ],
   exports: [
     LeftSectionContentNotesListComponent,

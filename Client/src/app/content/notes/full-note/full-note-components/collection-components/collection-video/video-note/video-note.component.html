@@ -1,6 +1,6 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="isDragActive"></ng-content
+    ><ng-content *ngIf="isDragActive && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="playlist main-item"

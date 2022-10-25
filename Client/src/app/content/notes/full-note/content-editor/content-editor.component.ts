@@ -93,7 +93,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input()
   title$: Observable<string>;
 
+  @Input() progressiveLoading = false;
+
   elements: QueryList<ParentInteraction>;
+
+  focusedElement: ParentInteraction;
 
   title: string;
 
@@ -112,6 +116,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   options: TextEditMenuOptions;
 
   destroy = new Subject<void>();
+
+  ngForSubject = new Subject<void>();
 
   constructor(
     public selectionService: SelectionService,
@@ -220,9 +226,9 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
-      this.contentEditorContentsService.initOnlyRead(contents);
+      this.contentEditorContentsService.initOnlyRead(contents, this.progressiveLoading);
     } else {
-      this.contentEditorContentsService.initEdit(contents);
+      this.contentEditorContentsService.initEdit(contents, this.progressiveLoading);
       this.contentEditorRestoreService.initEdit();
       this.contentEditorSyncService.initEdit(this.note.id);
     }
@@ -389,11 +395,24 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           });
         }
       });
+
+    this.ngForSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
+      this.cdr.detectChanges();
+      console.log('fuck');
+    });
+
+    this.contentEditorContentsService.onProgressiveAdding
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        this.cdr.detectChanges();
+      });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onFocusHandler(content: ParentInteraction) {
-    this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
+  onFocusHandler(content: ParentInteraction): void {
+    this.focusedElement?.detectChanges();
+    this.focusedElement = content;
+    this.focusedElement?.markForCheck();
   }
 
   pasteCommandHandler(e) {
@@ -413,7 +432,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     );
   }
 
-  selectionStartHandler($event: DOMRect) {
+  selectionStartHandler($event: DOMRect): void {
     const isSelectionInZone = this.selectionService.isSelectionInZone(
       $event,
       this.elements,
@@ -466,7 +485,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
 
-    const prevRef = this.elements.find((z) => z.getContentId() === prevContent.id);
+    const prevRef = this.elements.find((q) => q.getContentId() === prevContent.id);
     prevRef.updateHTML(resContent);
     this.contentEditorContentsService.deleteById(id, false);
 

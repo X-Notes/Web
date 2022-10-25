@@ -108,7 +108,7 @@ export class ContentEditorRestoreService {
     this.processCollectionItemsDiffs(ContentTypeENUM.Videos, collectionItems, result);
 
     if (result.isNeedUpdate) {
-      this.contentEditorContentsService.cleaPrevInStack();
+      this.contentEditorContentsService.clearPrevInStack();
       this.contentEditorSyncService.change();
     }
   }

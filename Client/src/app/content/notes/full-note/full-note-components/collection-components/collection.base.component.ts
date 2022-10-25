@@ -14,6 +14,7 @@ import { BaseFile } from '../../../models/editor-models/base-file';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
+import { SelectionService } from '../../content-editor-services/selection.service';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { TitleCollectionComponent } from './title-collection/title-collection.component';
@@ -55,12 +56,13 @@ export class CollectionBaseComponent<
     protected clickableContentService: ClickableContentService,
     protected apiBrowserTextService: ApiBrowserTextService,
     public selectType: ClickableSelectableEntities,
+    selectionService: SelectionService,
   ) {
-    super(cdr);
+    super(cdr, selectionService);
   }
 
   get isDragActive(): boolean {
-    return !this.isReadOnlyMode && !this.isSelectModeActive && !this.content.isLoading;
+    return !this.isReadOnlyMode && !this.content.isLoading;
   }
 
   get isEmpty(): boolean {

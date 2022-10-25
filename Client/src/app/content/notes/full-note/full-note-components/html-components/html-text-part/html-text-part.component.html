@@ -20,7 +20,7 @@
       [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
       [innerHTML]="viewHtml"
     ></p>
-    <div *ngIf="isActiveState && !isReadOnlyMode" class="no-content">
+    <div *ngIf="isActiveState && !isSelectModeActive" class="no-content">
       <p>{{'innerNote.text' | translate}}</p>
       <div
         *ngIf="(pS.isTransformMenuMobile$ | async) === false"
