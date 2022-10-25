@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { DeltaConverter } from '../../content/notes/full-note/content-editor/converter/delta-converter';
 
 @Component({
@@ -7,6 +10,9 @@ import { DeltaConverter } from '../../content/notes/full-note/content-editor/con
   styleUrls: ['./public-folder.component.scss'],
 })
 export class PublicFolderComponent implements OnInit {
+  @Select(FolderStore.isFullFolderEditor)
+  isFullFolderEditor$: Observable<boolean>;
+
   async ngOnInit(): Promise<void> {
     DeltaConverter.initQuill();
   }

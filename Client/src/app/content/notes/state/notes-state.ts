@@ -74,6 +74,7 @@ import { NoteHistory } from '../full-note/models/history/note-history.model';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export interface FullNoteState {
   note: FullNote;
@@ -279,6 +280,16 @@ export class NoteStore {
   @Selector()
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
+  }
+
+  @Selector()
+  static isFullNoteViewer(state: NoteState): boolean {
+    return state.fullNoteState?.note?.refTypeId === RefTypeENUM.Viewer;
+  }
+
+  @Selector()
+  static isFullNoteEditor(state: NoteState): boolean {
+    return state.fullNoteState?.note?.refTypeId === RefTypeENUM.Editor;
   }
 
   @Selector()

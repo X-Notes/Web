@@ -47,6 +47,7 @@ import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 interface FolderState {
   folders: Folders[];
@@ -96,6 +97,16 @@ export class FolderStore {
   @Selector()
   static full(state: FolderState) {
     return state.fullFolder;
+  }
+
+  @Selector()
+  static isFullFolderViewer(state: FolderState): boolean {
+    return state.fullFolder?.refTypeId === RefTypeENUM.Viewer;
+  }
+
+  @Selector()
+  static isFullFolderEditor(state: FolderState): boolean {
+    return state.fullFolder?.refTypeId === RefTypeENUM.Editor;
   }
 
   @Selector()

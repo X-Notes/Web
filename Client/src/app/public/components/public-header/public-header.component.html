@@ -6,7 +6,7 @@
   <div class="actions">
     <button type="button" (click)="login()" #trigger>
       <div *ngIf="(authService.IsAuthActive | async) === false; else spinner" class="text">
-        {{ 'header.signIn' | translate }}
+        {{ loginMessage | translate }}
       </div>
       <ng-template #spinner>
         <app-spinner [size]="14"></app-spinner>

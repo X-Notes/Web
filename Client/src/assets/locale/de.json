@@ -66,7 +66,8 @@
       "order": "Benutzerdefinierte ziehbare Bestellung"
     },
     "anonymous": "Anonym",
-    "signIn": "Eintragen"
+    "signIn": "Eintragen",
+    "signInEditing": "Zum Bearbeiten anmelden"
   },
   "menu": {
     "label": "Etikett",

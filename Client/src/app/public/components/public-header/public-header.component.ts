@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { NoteStore, FullNoteState } from '../../../content/notes/state/notes-state';
 import { Observable, Subject } from 'rxjs';
@@ -12,6 +12,9 @@ import { OnlineUsersNote } from '../../../content/notes/models/online-users-note
   styleUrls: ['./public-header.component.scss'],
 })
 export class PublicHeaderComponent implements OnInit, OnDestroy {
+  @Input()
+  isEditingMessage = false;
+
   @Select(NoteStore.getOnlineUsersOnNote)
   onlineUsers$: Observable<OnlineUsersNote[]>;
 
@@ -20,6 +23,13 @@ export class PublicHeaderComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
 
   constructor(public authService: AuthService, private store: Store) {}
+
+  get loginMessage(): string {
+    if (this.isEditingMessage) {
+      return 'header.signInEditing';
+    }
+    return 'header.signIn';
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

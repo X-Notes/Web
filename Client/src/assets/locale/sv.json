@@ -66,7 +66,8 @@
       "order": "Anpassad dragbar ordning"
     },
     "anonymous": "Anonymt",
-    "signIn": "Logga in"
+    "signIn": "Logga in",
+    "signInEditing": "Logga in för att redigera"
   },
   "menu": {
     "label": "Etikett",

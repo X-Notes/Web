@@ -1,4 +1,4 @@
-<app-public-header>
+<app-public-header [isEditingMessage]="isFullNoteEditor$ | async">
   <app-full-note-active-users></app-full-note-active-users>
 </app-public-header>
 <div class="note-content">
