@@ -1,6 +1,6 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content *ngIf="isDragActive && isSelectModeActive === false"></ng-content
+    ><ng-content *ngIf="isDragActive && !isSelectModeActive"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="playlist main-item"
@@ -36,7 +36,7 @@
         (ended)="isPlaying = false"
         [src]="getMainVideo?.videoPath"
       ></video>
-      <div *ngIf="isSelectModeActive === false" class="controls">
+      <div *ngIf="!isSelectModeActive" class="controls">
         <div class="progress slider-controls">
           <mat-slider
             class="slider"
@@ -123,7 +123,7 @@
           <div class="thumb-video" [ngClass]="{ 'thumb-active': i === indexVideo }">
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
-              *ngIf="!isReadOnlyMode && isSelectModeActive === false"
+              *ngIf="!isReadOnlyMode && !isSelectModeActive"
               class="more-thumb-button"
               [matMenuTriggerFor]="menu"
               [button]="'more_vert'"
