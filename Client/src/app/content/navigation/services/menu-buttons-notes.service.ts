@@ -10,6 +10,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { FolderStore } from '../../folders/state/folders-state';
+import { SmallNote } from '../../notes/models/small-note.model';
 import { CopyNotes, ChangeTypeNote, DeleteNotesPermanently } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { DialogsManageService } from './dialogs-manage.service';
@@ -56,13 +57,14 @@ export class MenuButtonsNotesService {
   }
 
   setDeleteNotes = () => {
-    const ids = this.getSelectedNoteIds();
+    const notes = this.getSelectedNotes();
+    const ids = notes.map((x) => x.id);
     const message =
-      this.sbws.getNotesNaming(ids.length > 1) +
-      this.sbws.getMoveToMessage(ids.length > 1) +
+      this.sbws.getNotesNaming(notes.length > 1) +
+      this.sbws.getMoveToMessage(notes.length > 1) +
       this.apiTranslate.instant('snackBar.toBin');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
+      this.successNoteCallback(notes, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Deleted,
       ids,
@@ -74,13 +76,14 @@ export class MenuButtonsNotesService {
   };
 
   setPrivateNotes = () => {
-    const ids = this.getSelectedNoteIds();
+    const notes = this.getSelectedNotes();
+    const ids = notes.map((x) => x.id);
     const message =
-      this.sbws.getNotesNaming(ids.length > 1) +
-      this.sbws.getMoveToMessage(ids.length > 1) +
+      this.sbws.getNotesNaming(notes.length > 1) +
+      this.sbws.getMoveToMessage(notes.length > 1) +
       this.apiTranslate.instant('snackBar.toPrivate');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
+      this.successNoteCallback(notes, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Private,
       ids,
@@ -92,13 +95,14 @@ export class MenuButtonsNotesService {
   };
 
   archiveNotes = () => {
-    const ids = this.getSelectedNoteIds();
+    const notes = this.getSelectedNotes();
+    const ids = notes.map((x) => x.id);
     const message =
-      this.sbws.getNotesNaming(ids.length > 1) +
-      this.sbws.getMoveToMessage(ids.length > 1) +
+      this.sbws.getNotesNaming(notes.length > 1) +
+      this.sbws.getMoveToMessage(notes.length > 1) +
       this.apiTranslate.instant('snackBar.archive');
     const successCallback = () =>
-      this.successNoteCallback(ids, this.getSelectedNoteType(), message);
+      this.successNoteCallback(notes, this.getSelectedNoteType(), message);
     const command = new ChangeTypeNote(
       NoteTypeENUM.Archive,
       ids,
@@ -112,12 +116,12 @@ export class MenuButtonsNotesService {
   private permissionsErrorMessage = (): string =>
     this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
-  private getSelectedNoteIds(): string[] {
+  private getSelectedNotes(): SmallNote[] {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      return [note.id];
+      const note = this.store.selectSnapshot(NoteStore.oneFull) as SmallNote;
+      return [note];
     }
-    return this.store.selectSnapshot(NoteStore.selectedIds);
+    return this.store.selectSnapshot(NoteStore.getSelectedNotes);
   }
 
   private getSelectedNoteType(): NoteTypeENUM {
@@ -127,27 +131,57 @@ export class MenuButtonsNotesService {
     return this.store.selectSnapshot(AppStore.getTypeNote);
   }
 
-  private successNoteCallback = (ids: string[], typeFrom: NoteTypeENUM, message: string) => {
+  private successNoteCallback = (notes: SmallNote[], typeFrom: NoteTypeENUM, message: string) => {
     this.sbws.build(() => {
-      this.store.dispatch(this.getRevertActionNotes(typeFrom, ids));
+      this.store.dispatch([...this.getRevertActionNotes(typeFrom, notes)]);
     }, message);
   };
 
   // eslint-disable-next-line class-methods-use-this
-  private getRevertActionNotes(type: NoteTypeENUM, ids): ChangeTypeNote {
+  private getRevertActionNotes(type: NoteTypeENUM, notes: SmallNote[]): ChangeTypeNote[] {
     const types = NoteTypeENUM;
+    const ids = notes.map((x) => x.id);
     switch (type) {
       case types.Private: {
-        return new ChangeTypeNote(NoteTypeENUM.Private, ids, true);
+        return [new ChangeTypeNote(NoteTypeENUM.Private, ids, true)];
       }
       case types.Shared: {
-        return new ChangeTypeNote(NoteTypeENUM.Private, ids, true, null, null, RefTypeENUM.Viewer);
+        const commands: ChangeTypeNote[] = [];
+        const viewersNoteIds = notes
+          .filter((x) => x.refTypeId === RefTypeENUM.Viewer)
+          .map((x) => x.id);
+        const editorsNoteIds = notes
+          .filter((x) => x.refTypeId === RefTypeENUM.Editor)
+          .map((x) => x.id);
+        if (viewersNoteIds.length > 0) {
+          const command = new ChangeTypeNote(
+            NoteTypeENUM.Shared,
+            viewersNoteIds,
+            true,
+            null,
+            null,
+            RefTypeENUM.Viewer,
+          );
+          commands.push(command);
+        }
+        if (editorsNoteIds.length > 0) {
+          const command = new ChangeTypeNote(
+            NoteTypeENUM.Shared,
+            editorsNoteIds,
+            true,
+            null,
+            null,
+            RefTypeENUM.Editor,
+          );
+          commands.push(command);
+        }
+        return commands;
       }
       case types.Archive: {
-        return new ChangeTypeNote(NoteTypeENUM.Archive, ids, true);
+        return [new ChangeTypeNote(NoteTypeENUM.Archive, ids, true)];
       }
       case types.Deleted: {
-        return new ChangeTypeNote(NoteTypeENUM.Deleted, ids, true);
+        return [new ChangeTypeNote(NoteTypeENUM.Deleted, ids, true)];
       }
       default: {
         throw new Error('incorrect type');

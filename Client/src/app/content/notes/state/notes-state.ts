@@ -598,7 +598,7 @@ export class NoteStore {
         break;
       }
       case NoteTypeENUM.Shared: {
-        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        resp = await this.api.makePublic(refTypeId, selectedIds).toPromise();
         dispatch(
           new TransformTypeNotes(NoteTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
         );

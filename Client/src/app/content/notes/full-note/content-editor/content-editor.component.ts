@@ -23,6 +23,7 @@ import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
 import { UpdateNoteTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
+import { MenuSelectionDirective } from '../directives/menu-selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
@@ -76,6 +77,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
+
+  @ViewChild(MenuSelectionDirective) menuSelectionDirective: MenuSelectionDirective;
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
@@ -532,6 +535,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
     model.content.contents = contents;
     this.postAction();
+    this.menuSelectionDirective.onSelectionchange(true);
   }
 
   unSelectItems(): void {

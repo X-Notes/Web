@@ -31,15 +31,19 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  onSelectionchange() {
+  onSelectionchange(clearIfEmpty: boolean = false) {
     const selection = this.apiBrowserService.getSelection();
-    if (selection.toString() !== '') {
+    const selectionEmpty = selection.toString() === '';
+    if (!selectionEmpty) {
       const range = selection.getRangeAt(0);
       const coords = range.getBoundingClientRect();
       const currentItem = this.getCurrentItem();
       if (currentItem) {
         this.selectionService.initSingle(currentItem.getContentId(), this.scrollElement, coords);
       }
+    }
+    if (clearIfEmpty && selectionEmpty) {
+      this.selectionService.resetSelectionItems();
     }
   }
 
