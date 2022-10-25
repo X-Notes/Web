@@ -9,6 +9,7 @@ import {
   UpdateFullFolder,
   GetInvitedUsersToFolder,
   TransformTypeFolders,
+  UpdateOneFolder,
 } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
@@ -18,6 +19,7 @@ import {
   UpdateFullNote,
   GetInvitedUsersToNote,
   TransformTypeNotes,
+  UpdateOneNote,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
@@ -64,9 +66,13 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   notes: SmallNote[] = [];
 
+  notesChangeRefId: SmallNote[] = [];
+
   currentNote: SmallNote;
 
   folders: SmallFolder[] = [];
+
+  folderChangeRefId: SmallFolder[] = [];
 
   currentFolder: SmallFolder;
 
@@ -228,6 +234,20 @@ export class ShareComponent implements OnInit, OnDestroy {
           : this.factoryForCommandFolder(x.id, FolderTypeENUM.Private, x.refTypeId),
       );
 
+    const commandsNoteIds = commandsNotes.map((x) => x.selectedIds[0]);
+    for (const note of this.notesChangeRefId) {
+      if (!commandsNoteIds.some((x) => x === note.id)) {
+        this.store.dispatch(new UpdateOneNote(note));
+      }
+    }
+
+    const commandsFolderIds = commandsFolders.map((x) => x.selectedIds[0]);
+    for (const folder of this.folderChangeRefId) {
+      if (!commandsFolderIds.some((x) => x === folder.id)) {
+        this.store.dispatch(new UpdateOneFolder(folder));
+      }
+    }
+
     this.store.dispatch([...commandsNotes, ...commandsFolders]);
   }
 
@@ -379,12 +399,14 @@ export class ShareComponent implements OnInit, OnDestroy {
     await this.apiNote.makePublic(refType, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
+    this.notesChangeRefId.push(this.currentNote);
   }
 
   async changeRefTypeFolder(refType: RefTypeENUM): Promise<void> {
     await this.apiFolder.makePublic(refType, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
+    this.folderChangeRefId.push(this.currentFolder);
   }
 
   async sendInvites(model: InvitationFormResult) {
