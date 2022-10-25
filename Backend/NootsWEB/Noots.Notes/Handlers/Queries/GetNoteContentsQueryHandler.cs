@@ -32,6 +32,14 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
+        var isCanRead = permissions.CanRead;
+
+        if (request.FolderId.HasValue && !isCanRead)
+        {
+            var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+            var permissionsFolder = await mediator.Send(queryFolder);
+            isCanRead = permissionsFolder.CanRead;
+        }
 
         if (permissions.Note.IsLocked)
         {
@@ -42,7 +50,7 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
             }
         }
 
-        if (permissions.CanRead)
+        if (isCanRead)
         {
             var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
             var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);

@@ -41,7 +41,7 @@ export class ApiServiceNotes {
     return this.httpClient
       .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`, { params })
       .pipe(
-        map((z) => TransformNoteUtil.transformNotes(z)),
+        map((q) => TransformNoteUtil.transformNotes(q)),
         map((notes) => new Notes(type, notes)),
       );
   }
@@ -55,9 +55,9 @@ export class ApiServiceNotes {
     return this.httpClient
       .post<OperationResult<SmallNote[]>>(`${environment.writeAPI}/api/note/many`, obj)
       .pipe(
-        map((z) => {
-          if (z.success) {
-            return TransformNoteUtil.transformNotes(z.data);
+        map((q) => {
+          if (q.success) {
+            return TransformNoteUtil.transformNotes(q.data);
           }
           return [];
         }),
@@ -283,10 +283,17 @@ export class ApiServiceNotes {
 
   // CONTENTS
 
-  getContents(noteId: string): Observable<ContentModelBase[]> {
+  getContents(noteId: string, folderId: string = null): Observable<ContentModelBase[]> {
+    let params = new HttpParams();
+    if (folderId) {
+      params = params.append('folderId', folderId);
+    }
     return this.httpClient
       .get<OperationResult<ContentModelBase[]>>(
         `${environment.writeAPI}/api/note/inner/contents/${noteId}`,
+        {
+          params,
+        },
       )
       .pipe(
         map((x) => {

@@ -112,7 +112,9 @@ export class ContentEditorContentsService {
     this.onProgressiveAdding.next();
 
     if (this.contents.length === contents.length) {
-      onRenderCallback();
+      if (onRenderCallback) {
+        onRenderCallback();
+      }
       this.isRendering = false;
       return;
     }
@@ -128,7 +130,9 @@ export class ContentEditorContentsService {
       this.onProgressiveAdding.next();
       if (start >= contents.length) {
         this.isRendering = false;
-        onRenderCallback();
+        if (onRenderCallback) {
+          onRenderCallback();
+        }
         clearInterval(interval);
       }
     }, this.progressiveLoadOptions.renderInterval);

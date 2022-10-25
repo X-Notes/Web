@@ -29,9 +29,9 @@ public class FullNoteContentController : ControllerBase
 
     [HttpGet("{noteId}")]
     [AllowAnonymous]
-    public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId)
+    public async Task<OperationResult<List<BaseNoteContentDTO>>> GetNoteContents(Guid noteId, [FromQuery] Guid? folderId)
     {
-        var command = new GetNoteContentsQuery(this.GetUserIdUnStrict(), noteId);
+        var command = new GetNoteContentsQuery(this.GetUserIdUnStrict(), noteId, folderId);
         return await this._mediator.Send(command);
     }
 
