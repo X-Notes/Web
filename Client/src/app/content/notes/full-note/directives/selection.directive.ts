@@ -71,13 +71,17 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   get isDivActive(): boolean {
     if (!this.div) return false;
-    const size = this.div.getBoundingClientRect();
-    return size.width > 5 && size.height > 5 && this.div.style.opacity === '1';
+    return this.isUserStartSelect && this.div.style.opacity === '1';
   }
 
   get isSelectionActive(): boolean {
     if (!this.div) return false;
+    return this.isUserStartSelect;
+  }
+
+  get isUserStartSelect(): boolean {
     const size = this.div.getBoundingClientRect();
+    // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
     return size.width > 5 && size.height > 5;
   }
 

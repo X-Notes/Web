@@ -20,11 +20,7 @@ export abstract class BaseEditorElementComponent {
 
   public isMouseOver = false;
 
-  public cdr: ChangeDetectorRef;
-
-  public selectionService: SelectionService;
-
-  constructor(cdr: ChangeDetectorRef, selectionService: SelectionService) {
+  constructor(public cdr: ChangeDetectorRef, public selectionService: SelectionService) {
     this.cdr = cdr;
     this.selectionService = selectionService;
   }

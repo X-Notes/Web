@@ -17,10 +17,10 @@
       class="block-generic default-text-size default-text-id text-part"
       (input)="onInput()"
       (click)="textClick($event)"
-      [attr.contenteditable]="!isReadOnlyMode && isSelectModeActive === false"
+      [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
       [innerHTML]="viewHtml"
     ></p>
-    <div *ngIf="isActiveState && isSelectModeActive === false" class="no-content">
+    <div *ngIf="isActiveState && !isSelectModeActive" class="no-content">
       <p>{{'innerNote.text' | translate}}</p>
       <div
         *ngIf="(pS.isTransformMenuMobile$ | async) === false"
