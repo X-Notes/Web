@@ -166,7 +166,9 @@ export class HtmlPropertyTagCollectorService {
   private getMultiRowSelectedHTML = (htmlItems: ParentInteraction[]): HTMLElement => {
     const container = document.createElement('div');
     for (const el of htmlItems.map((x) => x.getEditableNative())) {
-      container.appendChild(el.cloneNode(true));
+      if (el) {
+        container.appendChild(el.cloneNode(true));
+      }
     }
     return container;
   };

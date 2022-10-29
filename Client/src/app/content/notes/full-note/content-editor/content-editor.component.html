@@ -52,7 +52,7 @@
         <ng-container [ngSwitch]="item.typeId">
           <div
             [appDrop]="'is-placeholder-active'"
-            (fileDropped)="uploadRandomFiles($event, i, item.id)"
+            (fileDropped)="uploadRandomFiles($event, item.id)"
             *ngSwitchCase="contentType.Text"
           >
             <!-- TODO get rid of isSelectModeActive run detect changes mechanism-->
@@ -210,11 +210,16 @@
         </ng-container>
         <div class="custom-placeholder" *cdkDragPlaceholder></div>
       </div>
+      <div *ngIf="isOverEmpty" class="custom-placeholder"></div>
       <div
         class="empty"
         (mousedown)="placeHolderClick($event)"
         (mousemove)="mouseEnter($event)"
         (mouseout)="mouseOut($event)"
+        appDrop
+        (fileDropped)="uploadRandomFiles($event, lastContentId)"
+        (dragOverEvent)="isOverEmpty = true"
+        (dragLeaveEvent)="isOverEmpty = false"
       ></div>
       <div id="note-selector" class="full-note-selection"></div>
     </div>

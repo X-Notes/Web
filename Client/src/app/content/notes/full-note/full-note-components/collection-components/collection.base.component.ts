@@ -147,7 +147,10 @@ export class CollectionBaseComponent<
       this.selectType,
       this as any as ParentInteraction,
     );
-    const item = document.getElementById(itemId);
-    item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (itemId) {
+      const item = document.getElementById(itemId);
+      item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    this.clickableContentService.prevItem?.detectChanges();
   }
 }
