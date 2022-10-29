@@ -55,7 +55,6 @@
             (fileDropped)="uploadRandomFiles($event, item.id)"
             *ngSwitchCase="contentType.Text"
           >
-            <!-- TODO get rid of isSelectModeActive run detect changes mechanism-->
             <app-html-text-part
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.default"
