@@ -48,7 +48,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   ) {}
 
   get labelsActive() {
-    return this.labelsFilters.filter((z) => z.selected === true).length > 0;
+    return this.labelsFilters.filter((q) => q.selected === true).length > 0;
   }
 
   async ngOnInit() {
@@ -62,7 +62,7 @@ export class NotesComponent implements OnInit, OnDestroy {
           return labels.map((label) => {
             return {
               label,
-              selected: this.labelsFilters.find((z) => z.label.id === label.id)?.selected,
+              selected: this.labelsFilters.find((q) => q.label.id === label.id)?.selected,
             };
           });
         }),

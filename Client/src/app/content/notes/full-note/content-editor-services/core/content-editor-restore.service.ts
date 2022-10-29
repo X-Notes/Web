@@ -62,14 +62,7 @@ export class ContentEditorRestoreService {
       return;
     }
 
-    /*
-    console.log(
-      'this.contentEditorMomentoStateService.size(): ',
-      this.contentEditorMomentoStateService.size(),
-    );
-    */
     const prev = this.contentEditorContentsService.getPrevFromStack();
-    // console.log('prev: ', { ...prev });
     const result: IsNeedUpdate = { isNeedUpdate: false };
 
     // STRUCTURE

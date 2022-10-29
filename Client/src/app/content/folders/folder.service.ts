@@ -181,7 +181,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     this.updateService.foldersIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
       if (ids.length > 0) {
         const folders = await this.apiFolders.getFoldersMany(ids, pr).toPromise();
-        const actionsForUpdate = folders.map((folder) => new UpdateOneFolder(folder));
+        const actionsForUpdate = folders.map((folder) => new UpdateOneFolder(folder, folder.id));
         this.store.dispatch(actionsForUpdate);
         const transformFolders = this.transformSpread(folders);
         transformFolders.forEach((folder) => {

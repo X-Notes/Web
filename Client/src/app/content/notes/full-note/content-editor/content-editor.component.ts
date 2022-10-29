@@ -118,6 +118,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   destroy = new Subject<void>();
 
+  isOverEmpty = false;
+
   ngForSubject = new Subject<void>();
 
   constructor(
@@ -200,6 +202,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
     }
     return 0;
+  }
+
+  get lastContentId(): string {
+    return this.contents[this.contents.length - 1].id;
   }
 
   get contents(): ContentModelBase[] {
@@ -644,16 +650,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     requestAnimationFrame(() => this.elements?.last?.setFocus());
   }
 
-  mouseEnter($event) {
+  mouseEnter($event): void {
     this.elements?.last?.mouseEnter($event);
+    this.elements?.last?.detectChanges();
   }
 
-  mouseOut($event) {
+  mouseOut($event): void {
     this.elements?.last?.mouseLeave($event);
+    this.elements?.last?.detectChanges();
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async uploadRandomFiles(files: File[], index: number, contentId: string) {
+  async uploadRandomFiles(files: File[], contentId: string) {
+    this.isOverEmpty = false;
     const formats = files.map((x) => `.${x.name.split('.').pop()}`);
     const photosFormats = TypeUploadFormats.photos.split(',');
     const audiosFormats = TypeUploadFormats.audios.split(',');
@@ -678,7 +687,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomPhotosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorPhotosService.insertNewCollection(
       contentId,
-      false,
+      true,
       PhotosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -700,7 +709,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomAudiosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorAudiosService.insertNewCollection(
       contentId,
-      false,
+      true,
       AudiosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -722,7 +731,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomVideosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorVideosService.insertNewCollection(
       contentId,
-      false,
+      true,
       VideosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -744,7 +753,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomDocumentsUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorDocumentsService.insertNewCollection(
       contentId,
-      false,
+      true,
       DocumentsCollection.getNew(),
     );
     const prevId = cont.content.id;

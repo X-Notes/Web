@@ -80,7 +80,7 @@ export class PhotosComponent
   ngOnChanges(): void {}
 
   changeDetectionChecker = () => {
-    console.log('Photos html changeDetectionChecker: ');
+    // console.log('Photos html changeDetectionChecker: ');
   };
 
   ngOnDestroy(): void {
