@@ -283,7 +283,7 @@ export class SignalRService {
           folder.id = update.entityId;
           folder.refTypeId = update.refTypeId;
           folder.isCanEdit = folder.refTypeId === RefTypeENUM.Editor;
-          this.store.dispatch(new UpdateOneFolder(folder));
+          this.store.dispatch(new UpdateOneFolder(folder, folder.id));
 
           // FULL FOLDER
           this.store.dispatch(new UpdateFullFolder(folder, folder.id));

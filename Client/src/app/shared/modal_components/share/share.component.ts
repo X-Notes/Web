@@ -244,7 +244,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     const commandsFolderIds = commandsFolders.map((x) => x.selectedIds[0]);
     for (const folder of this.folderChangeRefId) {
       if (!commandsFolderIds.some((x) => x === folder.id)) {
-        this.store.dispatch(new UpdateOneFolder(folder));
+        this.store.dispatch(new UpdateOneFolder(folder, folder.id));
       }
     }
 
