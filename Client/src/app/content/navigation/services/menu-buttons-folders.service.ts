@@ -29,7 +29,7 @@ export class MenuButtonsFoldersService {
 
   setDeleteFolders = () => {
     const folders = this.getSelectedFolderIds();
-    const ids = folders.map(x => x.id);
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
@@ -48,7 +48,7 @@ export class MenuButtonsFoldersService {
 
   setPrivateFolders = () => {
     const folders = this.getSelectedFolderIds();
-    const ids = folders.map(x => x.id);
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
@@ -67,7 +67,7 @@ export class MenuButtonsFoldersService {
 
   archiveFolders = () => {
     const folders = this.getSelectedFolderIds();
-    const ids = folders.map(x => x.id);
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
@@ -125,7 +125,11 @@ export class MenuButtonsFoldersService {
   private permissionsErrorMessage = (): string =>
     this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
-  private successFolderCallback = (folders: SmallFolder[], typeFrom: FolderTypeENUM, message: string) => {
+  private successFolderCallback = (
+    folders: SmallFolder[],
+    typeFrom: FolderTypeENUM,
+    message: string,
+  ) => {
     this.sbws.build(() => {
       this.store.dispatch([...this.getRevertActionFolders(typeFrom, folders)]);
     }, message);
