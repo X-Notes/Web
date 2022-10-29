@@ -237,7 +237,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     const commandsNoteIds = commandsNotes.map((x) => x.selectedIds[0]);
     for (const note of this.notesChangeRefId) {
       if (!commandsNoteIds.some((x) => x === note.id)) {
-        this.store.dispatch(new UpdateOneNote(note));
+        this.store.dispatch(new UpdateOneNote(note, note.id));
       }
     }
 

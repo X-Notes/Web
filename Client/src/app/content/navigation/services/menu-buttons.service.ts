@@ -492,7 +492,7 @@ export class MenuButtonsService {
     const updatedNote = { ...this.getNote(id) };
     updatedNote.isLockedNow = true;
     updatedNote.isLocked = true;
-    this.store.dispatch(new UpdateOneNote(updatedNote));
+    this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.id));
     this.store.dispatch(new UpdateFullNote({ isLocked: true, isLockedNow: true }, id));
 
     const obj = new UpdateNoteUI(id);

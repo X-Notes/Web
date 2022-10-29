@@ -241,7 +241,7 @@ export class SignalRService {
           note.id = update.entityId;
           note.refTypeId = update.refTypeId;
           note.isCanEdit = note.refTypeId === RefTypeENUM.Editor;
-          this.store.dispatch(new UpdateOneNote(note));
+          this.store.dispatch(new UpdateOneNote(note, note.id));
 
           // FULL NOTE
           this.store.dispatch(new UpdateFullNote(note, update.entityId));

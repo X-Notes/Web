@@ -15,6 +15,6 @@ public class GetCountNotesByLabelQueryHandler : IRequestHandler<GetCountNotesByL
     
     public async Task<int> Handle(GetCountNotesByLabelQuery request, CancellationToken cancellationToken)
     {
-        return await this.labelRepository.GetNotesCountByLabelId(request.UserId);
+        return await this.labelRepository.GetNotesCountByLabelId(request.LabelId);
     }
 }

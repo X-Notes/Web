@@ -92,6 +92,7 @@ export class DialogsManageService {
     } else {
       labelIds = this.store.selectSnapshot(NoteStore.labelsIds);
     }
+
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
