@@ -241,7 +241,7 @@ export class SignalRService {
           note.id = update.entityId;
           note.refTypeId = update.refTypeId;
           note.isCanEdit = note.refTypeId === RefTypeENUM.Editor;
-          this.store.dispatch(new UpdateOneNote(note));
+          this.store.dispatch(new UpdateOneNote(note, note.id));
 
           // FULL NOTE
           this.store.dispatch(new UpdateFullNote(note, update.entityId));
@@ -283,7 +283,7 @@ export class SignalRService {
           folder.id = update.entityId;
           folder.refTypeId = update.refTypeId;
           folder.isCanEdit = folder.refTypeId === RefTypeENUM.Editor;
-          this.store.dispatch(new UpdateOneFolder(folder));
+          this.store.dispatch(new UpdateOneFolder(folder, folder.id));
 
           // FULL FOLDER
           this.store.dispatch(new UpdateFullFolder(folder, folder.id));

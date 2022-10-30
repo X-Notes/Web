@@ -18,7 +18,6 @@ import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
-import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
@@ -92,7 +91,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     });
   }
 
-  get isActiveState() {
+  get isActiveState(): boolean {
     return this.getIsActive() && !this.isReadOnlyMode;
   }
 
@@ -224,12 +223,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     this.onFocus.emit(this);
   }
 
-  setFocusedElement() {
-    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
-  }
-
   // LISTENERS
-
   isPasteLink(data: DataTransferItemList): boolean {
     for (const item of data as any) {
       if ((item as DataTransferItem).type === 'text/link-preview') {
@@ -391,4 +385,6 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   abstract enter(e);
+
+  abstract setFocusedElement(): void;
 }

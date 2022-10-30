@@ -53,6 +53,7 @@ export class ContentEditorListenerService {
           }
           if (upEl) {
             upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Up });
+            el.detectChanges();
           }
         }
       },
@@ -86,6 +87,7 @@ export class ContentEditorListenerService {
               : el;
             if (upEl) {
               upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Down });
+              el.detectChanges();
             }
           }
         }
@@ -107,5 +109,6 @@ export class ContentEditorListenerService {
     for (const destroyFunc of this.listeners) {
       destroyFunc();
     }
+    this.onPressEnterSubject.next(null);
   }
 }

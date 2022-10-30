@@ -47,6 +47,7 @@ import { Router } from '@angular/router';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 interface FolderState {
   folders: Folders[];
@@ -96,6 +97,16 @@ export class FolderStore {
   @Selector()
   static full(state: FolderState) {
     return state.fullFolder;
+  }
+
+  @Selector()
+  static isFullFolderViewer(state: FolderState): boolean {
+    return state.fullFolder?.refTypeId === RefTypeENUM.Viewer;
+  }
+
+  @Selector()
+  static isFullFolderEditor(state: FolderState): boolean {
+    return state.fullFolder?.refTypeId === RefTypeENUM.Editor;
   }
 
   @Selector()
@@ -341,7 +352,7 @@ export class FolderStore {
         break;
       }
       case FolderTypeENUM.Shared: {
-        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        resp = await this.api.makePublic(refTypeId, selectedIds).toPromise();
         dispatch(
           new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
         );
@@ -372,7 +383,7 @@ export class FolderStore {
         if (folder) {
           folder.order = pos.position;
         }
-        dispatch(new UpdateOneFolder(folder));
+        dispatch(new UpdateOneFolder(folder, folder.id));
       });
     }
   }
@@ -385,7 +396,7 @@ export class FolderStore {
     const typeFrom = getState()
       .folders.map((x) => x.folders)
       .flat()
-      .find((z) => selectedIds.some((x) => x === z.id)).folderTypeId;
+      .find((q) => selectedIds.some((x) => x === q.id)).folderTypeId;
 
     const foldersFrom = this.getFoldersByType(getState, typeFrom);
 
@@ -552,7 +563,7 @@ export class FolderStore {
         this.toUpdateFolderUI(folder.id, folder.color, null, false),
       );
       patchState({ updateFolderEvent: updatesUI });
-      foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder)));
+      foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder, folder.id)));
       dispatch([UnSelectAllFolder]);
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
@@ -561,19 +572,21 @@ export class FolderStore {
   }
 
   @Action(UpdateOneFolder)
-  updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder }: UpdateOneFolder) {
+  updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder, folderId }: UpdateOneFolder) {
     for (const foldersState of getState().folders) {
       let isUpdate = false;
+      let type: FolderTypeENUM = null;
       const folders = foldersState.folders.map((storeFolder) => {
-        if (storeFolder.id === folder.id) {
+        if (storeFolder.id === folderId) {
           isUpdate = true;
+          type = storeFolder.folderTypeId;
           return { ...storeFolder, ...folder };
         }
         return storeFolder;
       });
-      if (isUpdate) {
-        const state = new Folders(folder.folderTypeId, [...folders]);
-        dispatch(new UpdateFolders(state, folder.folderTypeId));
+      if (isUpdate && type) {
+        const state = new Folders(type, [...folders]);
+        dispatch(new UpdateFolders(state, type));
       }
     }
   }
@@ -608,7 +621,7 @@ export class FolderStore {
       if (isUpdateSmallFolders) {
         const folderUpdate = this.getFolderById(getState, folderId);
         if (folderUpdate) {
-          dispatch(new UpdateOneFolder({ ...folderUpdate, title: str }));
+          dispatch(new UpdateOneFolder({ ...folderUpdate, title: str }, folderUpdate.id));
         }
         // UI CHANGES
         const uiChanges = this.toUpdateFolderUI(folderId, null, str, true);

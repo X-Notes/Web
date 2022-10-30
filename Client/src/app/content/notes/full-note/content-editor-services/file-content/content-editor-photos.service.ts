@@ -106,7 +106,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           loaded: false,
           fileId: x.id,
           uploadAt: x.createdAt,
-          photoPathBig: x.buildPath(x.pathSuffixes.large),
+          photoPathBig: x.buildPath(x.pathSuffixes.large) || x.buildPath(x.pathSuffixes.default),
           photoPathMedium: x.buildPath(x.pathSuffixes.medium),
           photoPathSmall: x.buildPath(x.pathSuffixes.small),
         }),

@@ -1,26 +1,32 @@
 import { Injectable } from '@angular/core';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
-import { BaseTextElementComponent } from '../full-note-components/html-components/html-base.component';
+import { ParentInteraction } from '../models/parent-interaction.interface';
 import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
 
 @Injectable()
 export class ClickableContentService {
   setTime: Date;
 
+  // prev
+  prevContent: ContentModelBase;
+
+  prevItemId: string;
+
+  prevType: ClickableSelectableEntities;
+
+  prevItem: ParentInteraction;
+
+  // current
   currentContent: ContentModelBase;
 
   currentItemId: string;
 
   type: ClickableSelectableEntities;
 
-  currentTextItem: BaseTextElementComponent;
+  currentItem: ParentInteraction;
 
-  get isEmptyTextItemFocus() {
-    if (this.currentTextItem?.content?.noteTextTypeId === NoteTextTypeENUM.default) {
-      return this.currentTextItem.isActiveState;
-    }
-    return false;
+  get isEmptyTextItemFocus(): boolean {
+    return this.currentItem?.isActiveState;
   }
 
   get isPhoto(): boolean {
@@ -32,7 +38,7 @@ export class ClickableContentService {
   }
 
   reset() {
-    this.setContent(null, null, this.type, this.currentTextItem);
+    this.setContent(null, null, this.type, this.currentItem);
   }
 
   isClicked(itemId: string): boolean {
@@ -43,12 +49,18 @@ export class ClickableContentService {
     content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
-    currentTextItem: BaseTextElementComponent,
+    currentItem: ParentInteraction,
   ) {
+    // PREV
+    this.prevContent = this.currentContent;
+    this.prevItemId = this.currentItemId;
+    this.prevType = this.type;
+    this.prevItem = this.currentItem;
+    // CURRENT
     this.currentContent = content;
     this.currentItemId = itemId;
     this.type = type;
-    this.currentTextItem = currentTextItem;
+    this.currentItem = currentItem;
   }
 
   getTextContentIdOrNull(): string {

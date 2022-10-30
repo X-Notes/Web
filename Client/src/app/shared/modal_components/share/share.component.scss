@@ -28,7 +28,7 @@
         justify-content: space-between;
         height: 550px;
         width: 100%;
-        
+
         .dropdown-wrapper {
           display: flex;
 
@@ -38,92 +38,7 @@
           }
         }
 
-        .content-access {
-          display: flex;
-          flex-direction: column;
-          margin-top: 1.25rem;
-
-          &::after {
-            content: '';
-            width: 100%;
-            height: 1px;
-            background-color: #f2f2f2;
-            border-radius: 5px;
-          }
-
-          .link-access-field {
-            display: flex;
-            align-items: center;
-            width: 100%;
-
-            input[type='text'] {
-              display: flex;
-              flex-grow: 1;
-              height: 32px;
-              padding-left: 0.75rem;
-              border-radius: 5px;
-              border: 0.8px solid;
-              outline: none;
-              font-size: 1.125rem;
-              color: #484848;
-              background-color: #f2f2f2;
-              transition: 0.2s ease;
-            }
-
-            .dropdown-wrapper {
-              margin-left: 1rem;
-
-              .dropdown-button {
-                width: 145px;
-                height: 32px;
-              }
-            }
-
-            .copy {
-              position: relative;
-              z-index: 5;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 32px;
-              width: 36px;
-              margin-left: 0.375rem;
-              border-radius: 5px;
-              transition: 0.2s ease;
-              font-size: 1.5rem;
-              cursor: pointer;
-              overflow: hidden;
-
-              .icon {
-                position: relative;
-                z-index: 5;
-                display: flex;
-              }
-            }
-          }
-
-          .toggle-field {
-            display: flex;
-            width: 100%;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-
-            .toggle {
-              height: 32px;
-              width: 200px;
-            }
-
-            .toggle-description {
-              display: flex;
-              justify-content: flex-end;
-              align-items: center;
-              margin-left: 1rem;
-              font-size: 0.75rem;
-            }
-          }
-        }
-
-        .clear-container{
+        .clear-container {
           margin-top: 1rem;
           display: flex;
           justify-content: flex-end;
@@ -146,7 +61,7 @@
             height: 100%;
           }
         }
-        
+
         .search-container {
           margin-top: 1.25rem;
         }
@@ -345,28 +260,6 @@
 
   .sharing {
     flex: 0 1 60%;
-
-    .tabs {
-      .tab-content {
-        .content-access {
-          .toggle-field {
-            flex-direction: column;
-            flex-wrap: wrap;
-
-            .toggle {
-              width: 100%;
-            }
-
-            .toggle-description {
-              justify-content: center;
-              width: 100%;
-              margin-top: 1.25rem;
-              margin-left: 0;
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -383,36 +276,6 @@
 
   .sharing {
     background-color: white;
-
-    .tabs {
-      .tab-content {
-        .content-access {
-          .link-access-field {
-            input[type='text'] {
-              border-color: transparent;
-            }
-
-            .copy {
-              .icon {
-                color: #cacaca;
-              }
-            }
-          }
-
-          .toggle-field {
-            .toggle {
-              border-color: #f2f2f2;
-
-              .text-toggle {
-                .text {
-                  color: #484848;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -423,18 +286,6 @@
 
   .sharing {
     background-color: $dark-color;
-
-    .tabs {
-      .tab-content {
-        .content-access {
-          .link-access-field {
-            input[type='text'] {
-              border-color: #c5c5c5;
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -530,34 +381,6 @@
   }
 }
 
-@media (max-width: 680px) {
-  .outer {
-    .sharing {
-      .tabs {
-        .tab-content {
-          .content-access {
-            .toggle-field {
-              flex-direction: column;
-              flex-wrap: wrap;
-
-              .toggle {
-                width: 100%;
-              }
-
-              .toggle-description {
-                justify-content: center;
-                width: 100%;
-                margin-top: 1.25rem;
-                margin-left: 0;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 @media (max-width: 600px) {
   .outer {
     .sharing {
@@ -565,45 +388,6 @@
         padding-top: 1rem;
 
         .tab-content {
-          .content-access {
-            &::after {
-              margin-top: 1rem;
-            }
-
-            .link-access-field {
-              flex-wrap: wrap;
-              margin-top: 1rem;
-
-              input[type='text'] {
-                order: 1;
-                width: calc(100% - 42px);
-              }
-
-              .copy {
-                order: 2;
-              }
-
-              .dropdown-wrapper {
-                width: 100%;
-                order: 3;
-                margin-top: 1rem;
-                margin-left: 0;
-
-                .dropdown-button {
-                  width: 100%;
-                }
-              }
-            }
-
-            .toggle-field {
-              margin-top: 1rem;
-
-              .toggle-description {
-                margin-top: 1rem;
-              }
-            }
-          }
-
           .user-access {
             margin: 1rem 1.875rem;
           }
@@ -614,15 +398,15 @@
             .interaction-inner-container {
               .user-suggestions {
                 margin-top: 1rem;
-  
+
                 .user {
                   height: 35px;
-  
+
                   .photo {
                     height: 25px;
                     width: 25px;
                   }
-  
+
                   .email {
                     font-size: 0.875rem;
                   }
@@ -673,11 +457,6 @@
           .user-access {
             margin: 1rem 1.125rem;
           }
-
-          .content-access {
-            margin: 0 1.75rem;
-          }
-
           .interaction-container {
             margin: 0 1.125rem 1rem 1.125rem;
           }

@@ -52,10 +52,9 @@
         <ng-container [ngSwitch]="item.typeId">
           <div
             [appDrop]="'is-placeholder-active'"
-            (fileDropped)="uploadRandomFiles($event, i, item.id)"
+            (fileDropped)="uploadRandomFiles($event, item.id)"
             *ngSwitchCase="contentType.Text"
           >
-            <!-- TODO get rid of isSelectModeActive run detect changes mechanism-->
             <app-html-text-part
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.default"
@@ -71,7 +70,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
@@ -92,7 +90,6 @@
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -111,7 +108,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -130,7 +126,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -148,7 +143,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (runDetectChangesChildren)="runDetectChangesOnChildren()"
               (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
@@ -167,7 +161,6 @@
             (deleteContentEvent)="deletePhotosCollection($event)"
             (deleteContentItemEvent)="deletePhotoHandler($event, item)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-photos>
           <app-audio-note
@@ -182,7 +175,6 @@
             (deleteContentItemEvent)="deleteAudioHandler($event, item)"
             (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-audio-note>
           <app-video-note
@@ -197,7 +189,6 @@
             (deleteContentItemEvent)="deleteVideoHandler($event, item)"
             (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-video-note>
           <app-document-note
@@ -212,18 +203,22 @@
             (deleteContentItemEvent)="deleteDocumentHandler($event, item)"
             (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
             (someChangesEvent)="postAction()"
-            (runDetectChangesChildren)="runDetectChangesOnChildren()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-document-note>
           <div *ngSwitchDefault>Default</div>
         </ng-container>
         <div class="custom-placeholder" *cdkDragPlaceholder></div>
       </div>
+      <div *ngIf="isOverEmpty" class="custom-placeholder"></div>
       <div
         class="empty"
         (mousedown)="placeHolderClick($event)"
         (mousemove)="mouseEnter($event)"
         (mouseout)="mouseOut($event)"
+        appDrop
+        (fileDropped)="uploadRandomFiles($event, lastContentId)"
+        (dragOverEvent)="isOverEmpty = true"
+        (dragLeaveEvent)="isOverEmpty = false"
       ></div>
       <div id="note-selector" class="full-note-selection"></div>
     </div>

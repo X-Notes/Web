@@ -23,6 +23,7 @@ import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { FullNote } from '../../models/full-note.model';
 import { UpdateNoteTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
+import { MenuSelectionDirective } from '../directives/menu-selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
@@ -77,6 +78,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
+  @ViewChild(MenuSelectionDirective) menuSelectionDirective: MenuSelectionDirective;
+
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
   @ViewChild('textEditMenu', { read: ElementRef, static: false })
@@ -97,8 +100,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   elements: QueryList<ParentInteraction>;
 
-  focusedElement: ParentInteraction;
-
   title: string;
 
   uiTitle: string;
@@ -116,6 +117,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   options: TextEditMenuOptions;
 
   destroy = new Subject<void>();
+
+  isOverEmpty = false;
 
   ngForSubject = new Subject<void>();
 
@@ -199,6 +202,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
     }
     return 0;
+  }
+
+  get lastContentId(): string {
+    return this.contents[this.contents.length - 1].id;
   }
 
   get contents(): ContentModelBase[] {
@@ -293,11 +300,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       ),
     };
     return obj;
-  }
-
-  runDetectChangesOnChildren(): void {
-    console.log('run detection');
-    this.elements.toArray().forEach((x) => x.detectChanges());
   }
 
   ngOnDestroy(): void {
@@ -398,7 +400,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.ngForSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
       this.cdr.detectChanges();
-      console.log('fuck');
     });
 
     this.contentEditorContentsService.onProgressiveAdding
@@ -410,9 +411,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onFocusHandler(content: ParentInteraction): void {
-    this.focusedElement?.detectChanges();
-    this.focusedElement = content;
-    this.focusedElement?.markForCheck();
+    this.clickableContentService.prevItem?.detectChanges();
   }
 
   pasteCommandHandler(e) {
@@ -458,6 +457,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       value.nextItemType,
       value.breakModel.isFocusToNext,
     );
+    this.cdr.detectChanges();
     setTimeout(() => {
       const el = this.elements?.toArray()[newTextContent.index];
       const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
@@ -541,6 +541,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
     model.content.contents = contents;
     this.postAction();
+    this.menuSelectionDirective.onSelectionchange(true);
   }
 
   unSelectItems(): void {
@@ -649,16 +650,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     requestAnimationFrame(() => this.elements?.last?.setFocus());
   }
 
-  mouseEnter($event) {
+  mouseEnter($event): void {
     this.elements?.last?.mouseEnter($event);
+    this.elements?.last?.detectChanges();
   }
 
-  mouseOut($event) {
+  mouseOut($event): void {
     this.elements?.last?.mouseLeave($event);
+    this.elements?.last?.detectChanges();
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async uploadRandomFiles(files: File[], index: number, contentId: string) {
+  async uploadRandomFiles(files: File[], contentId: string) {
+    this.isOverEmpty = false;
     const formats = files.map((x) => `.${x.name.split('.').pop()}`);
     const photosFormats = TypeUploadFormats.photos.split(',');
     const audiosFormats = TypeUploadFormats.audios.split(',');
@@ -683,7 +687,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomPhotosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorPhotosService.insertNewCollection(
       contentId,
-      false,
+      true,
       PhotosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -705,7 +709,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomAudiosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorAudiosService.insertNewCollection(
       contentId,
-      false,
+      true,
       AudiosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -727,7 +731,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomVideosUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorVideosService.insertNewCollection(
       contentId,
-      false,
+      true,
       VideosCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -749,7 +753,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   async handleRandomDocumentsUpload(contentId: string, files: File[]): Promise<void> {
     const cont = this.contentEditorDocumentsService.insertNewCollection(
       contentId,
-      false,
+      true,
       DocumentsCollection.getNew(),
     );
     const prevId = cont.content.id;
@@ -811,6 +815,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         throw new Error('incorrect type');
       }
     }
+
+    this.cdr.detectChanges();
 
     if (newContentId) {
       const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);

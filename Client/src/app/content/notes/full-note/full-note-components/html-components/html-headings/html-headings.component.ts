@@ -4,11 +4,9 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
   Renderer2,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -17,6 +15,7 @@ import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
+import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../../content-editor-services/selection.service';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { BaseTextElementComponent } from '../html-base.component';
@@ -31,11 +30,6 @@ export class HtmlHeadingsComponent
   extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
 {
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output()
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  onFocus = new EventEmitter<HtmlHeadingsComponent>();
-
   @Input()
   theme: ThemeENUM;
 
@@ -89,5 +83,9 @@ export class HtmlHeadingsComponent
     const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
+  }
+
+  setFocusedElement(): void {
+    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 }

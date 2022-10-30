@@ -86,6 +86,7 @@ import { DateFromNowPipe } from './pipes/date-from-now.pipe';
 import { FullNoteActiveUsersComponent } from './custom-components/full-note-active-users/full-note-active-users.component';
 import { LongTermOperationsHandlerComponent } from '../content/long-term-operations-handler/long-term-operations-handler.component';
 import { LongTermOperationComponent } from '../content/long-term-operations-handler/long-term-operation/long-term-operation.component';
+import { ContentAccessSectionComponent } from './modal_components/share/content-access-section/content-access-section.component';
 
 @NgModule({
   declarations: [
@@ -155,6 +156,7 @@ import { LongTermOperationComponent } from '../content/long-term-operations-hand
     FullNoteActiveUsersComponent,
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
+    ContentAccessSectionComponent,
   ],
   imports: [
     CommonModule,

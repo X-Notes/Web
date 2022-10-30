@@ -2,11 +2,11 @@
   appTheme
   class="outer"
   [ngClass]="[
-    pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '',
-    notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note'
+    pService.isCollapseShared && entities.length > 1 ? 'half-helper' : '',
+    entities.length > 1 ? 'many-notes' : 'one-note'
   ]"
 >
-  <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
+  <div class="few-notes" *ngIf="entities.length > 1">
     <app-dialog-generic-header
       [message]="'modal.shareModal.selectedNotes' | translate"
       [isMessage]="pService.isCollapseShared"
@@ -15,7 +15,6 @@
     </app-dialog-generic-header>
 
     <ng-scrollbar
-      *ngIf="data.currentWindowType === windowType.Note"
       class="notes-sharing"
       [visibility]="'hover'"
       [track]="'all'"
@@ -23,43 +22,19 @@
     >
       <div
         class="note"
-        *ngFor="let item of notes"
+        *ngFor="let item of entities"
         CustomTooltip="{{ item.title }}"
         position="Top"
         [ngStyle]="{ backgroundColor: item.color }"
         labelColor="{{ item.color }}"
-        [ngClass]="{ 'active-note': currentNote?.id === item.id }"
-        (click)="selectNote(item)"
+        [ngClass]="{ 'active-note': selectedEntityId === item.id }"
+        (click)="isNoteWindowType ? selectNote(item) : selectFolder(item)"
         flagDisable="{{ disableTooltipUser() }}"
       >
         <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
         <p *ngIf="!item.title" class="empty-placeholder">
-          {{ 'placeholder.unnamedNote' | translate }}
-        </p>
-      </div>
-    </ng-scrollbar>
-
-    <ng-scrollbar
-      *ngIf="data.currentWindowType === windowType.Folder"
-      class="notes-sharing"
-      [visibility]="'hover'"
-      [track]="'all'"
-      [appearance]="'compact'"
-    >
-      <div
-        class="note"
-        *ngFor="let item of folders"
-        CustomTooltip="{{ item.title }}"
-        position="Top"
-        [ngStyle]="{ backgroundColor: item.color }"
-        labelColor="{{ item.color }}"
-        [ngClass]="{ 'active-note': currentFolder?.id === item.id }"
-        (click)="selectFolder(item)"
-        flagDisable="{{ disableTooltipUser() }}"
-      >
-        <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
-        <p *ngIf="!item.title" class="empty-placeholder">
-          {{ 'placeholder.unnamedFolder' | translate }}
+          {{ (isNoteWindowType ? 'placeholder.unnamedNote' : 'placeholder.unnamedFolder') |
+          translate }}
         </p>
       </div>
     </ng-scrollbar>
@@ -74,119 +49,23 @@
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
       <mat-tab isActive="true" [label]="'modal.shareModal.access' | translate">
         <div class="tab-content">
-          <div class="content-access content-padding">
-            <div class="link-access-field">
-              <input
-                *ngIf="data.currentWindowType === windowType.Note"
-                readonly
-                type="text"
-                [value]="currentNote?.id | sharingLink: data.currentWindowType"
-                id="linkInputNote"
-              />
-              <input
-                *ngIf="data.currentWindowType === windowType.Folder"
-                readonly
-                type="text"
-                [value]="currentFolder?.id | sharingLink: data.currentWindowType"
-                id="linkInputFolder"
-              />
-              <div class="dropdown-wrapper" *ngIf="folderDropdownActive">
-                <app-select
-                  class="dropdown-button"
-                  [translate]="'modal.shareModal'"
-                  [selectValue]="folderSelectedValue"
-                  (selectValueChange)="changeRefTypeFolder($event)"
-                >
-                  <app-select-option *ngFor="let item of refTypes" [value]="item">
-                    {{ 'modal.shareModal.' + item | translate }}
-                  </app-select-option>
-                </app-select>
-              </div>
-              <div class="dropdown-wrapper" *ngIf="noteDropdownActive">
-                <app-select
-                  class="dropdown-button"
-                  [translate]="'modal.shareModal'"
-                  [selectValue]="noteSelectedValue"
-                  (selectValueChange)="changeRefTypeNote($event)"
-                >
-                  <app-select-option *ngFor="let item of refTypes" [value]="item">
-                    {{ 'modal.shareModal.' + item | translate }}
-                  </app-select-option>
-                </app-select>
-              </div>
-              <div class="copy" #copy (click)="copyInputLink()">
-                <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
-                <div class="icon">
-                  <mat-icon svgIcon="copy"></mat-icon>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="data.currentWindowType === windowType.Note" class="toggle-field">
-              <app-button-toggle
-                class="toggle"
-                [value]="isPrivateButtonActive ? false : true"
-                [style]="'classic'"
-                (valueChange)="changeNoteType()"
-              >
-                <app-toggle-text
-                  on
-                  [color]="
-                    (theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''
-                  "
-                >
-                  {{ 'modal.shareModal.personal' | translate }}</app-toggle-text
-                >
-                <app-toggle-text
-                  off
-                  [color]="
-                    (theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''
-                  "
-                >
-                  {{ 'modal.shareModal.shared' | translate }}</app-toggle-text
-                >
-              </app-button-toggle>
-              <div class="toggle-description">
-                <p *ngIf="currentNote?.noteTypeId === noteType.Shared">
-                  {{ 'modal.shareModal.sharedMessage' | translate }}
-                </p>
-                <p *ngIf="currentNote?.noteTypeId !== noteType.Shared">
-                  {{ 'modal.shareModal.noSharedMessage' | translate }}
-                </p>
-              </div>
-            </div>
-            <div *ngIf="data.currentWindowType === windowType.Folder" class="toggle-field">
-              <app-button-toggle
-                class="toggle"
-                [value]="isPrivateButtonActive ? false : true"
-                [style]="'classic'"
-                (valueChange)="changeFolderType()"
-              >
-                <app-toggle-text
-                  on
-                  [color]="
-                    (theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''
-                  "
-                >
-                  {{ 'modal.shareModal.personal' | translate }}</app-toggle-text
-                >
-                <app-toggle-text
-                  off
-                  [color]="
-                    (theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''
-                  "
-                >
-                  {{ 'modal.shareModal.shared' | translate }}</app-toggle-text
-                >
-              </app-button-toggle>
-              <div class="toggle-description">
-                <p *ngIf="currentFolder?.folderTypeId === folderType.Shared">
-                  {{ 'modal.shareModal.sharedMessage' | translate }}
-                </p>
-                <p *ngIf="currentFolder?.folderTypeId !== folderType.Shared">
-                  {{ 'modal.shareModal.noSharedMessage' | translate }}
-                </p>
-              </div>
-            </div>
+          <div class="content-padding">
+            <app-content-access-section
+              [dropdownActive]="dropdownActive"
+              [link]="
+                isNoteWindowType
+                  ? (currentNote?.id | sharingLink: data.currentWindowType)
+                  : (currentFolder?.id | sharingLink: data.currentWindowType)
+              "
+              [refTypeId]="refTypeSelectedValue"
+              [toggleDescription]="toggleDescription | translate"
+              [currentTheme]="theme$ | async"
+              [isPrivateButtonActive]="isPrivateButtonActive"
+              (changeRefTypeEvent)="
+                isNoteWindowType ? changeRefTypeNote($event) : changeRefTypeFolder($event)
+              "
+              (changeEntityTypeEvent)="isNoteWindowType ? changeNoteType() : changeFolderType()"
+            ></app-content-access-section>
           </div>
           <ng-container *ngIf="!isLoading">
             <div
@@ -197,7 +76,7 @@
             </div>
             <ng-scrollbar class="user-access" [visibility]="'hover'" [appearance]="'compact'">
               <div class="content-inner content-padding">
-                <ng-container *ngIf="data.currentWindowType === windowType.Note">
+                <ng-container>
                   <app-user-on-entity-card
                     *ngFor="let user of invitedUsers$ | async"
                     [user]="user"
@@ -208,21 +87,10 @@
                     *ngIf="(invitedUsers$ | async).length === 0"
                     class="empty-placeholder-container"
                   >
-                    <p>{{ 'modal.shareModal.noPeopleNote' | translate }}</p>
-                  </div>
-                </ng-container>
-                <ng-container *ngIf="data.currentWindowType === windowType.Folder">
-                  <app-user-on-entity-card
-                    *ngFor="let user of invitedUsers$ | async"
-                    [user]="user"
-                    (changeUserPermission)="changeUserPermission($event, user.id)"
-                    (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
-                  ></app-user-on-entity-card>
-                  <div
-                    *ngIf="(invitedUsers$ | async).length === 0"
-                    class="empty-placeholder-container"
-                  >
-                    <p>{{ 'modal.shareModal.noPeopleFolder' | translate }}</p>
+                    <p>
+                      {{ (isNoteWindowType ? 'modal.shareModal.noPeopleNote' :
+                      'modal.shareModal.noPeopleFolder' ) | translate }}
+                    </p>
                   </div>
                 </ng-container>
               </div>

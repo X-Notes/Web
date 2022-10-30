@@ -54,7 +54,7 @@ export class VideoNoteComponent
 
   translate = 0;
 
-  indexVideo = 0;
+  currentVideo: VideoModel;
 
   destroy = new Subject<void>();
 
@@ -87,13 +87,6 @@ export class VideoNoteComponent
 
   get playlistWidth() {
     return this.videoPlaylist.nativeElement.clientWidth;
-  }
-
-  get getMainVideo() {
-    if (this.content.items && this.content.items.length > 0) {
-      return this.content.items[this.indexVideo];
-    }
-    return null;
   }
 
   get volumeIcon(): string {
@@ -213,7 +206,7 @@ export class VideoNoteComponent
     }
   }
 
-  isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
+  isClicked = (itemId: string): boolean => this.clickableContentService.isClicked(itemId);
 
   isFocusToNext(entity: SetFocus) {
     if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
@@ -330,11 +323,18 @@ export class VideoNoteComponent
     }
   }
 
-  openThumbVideo(index) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  openThumbVideo(video: VideoModel) {
     if (!this.videoElement?.nativeElement.paused) {
       this.togglePlay();
     }
-    this.indexVideo = index;
+    this.currentVideo = video;
+    this.clickableContentService.setContent(
+      this.content,
+      video.fileId,
+      ClickableSelectableEntities.Video,
+      this,
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

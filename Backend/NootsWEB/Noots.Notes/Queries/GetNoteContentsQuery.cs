@@ -10,10 +10,14 @@ namespace Noots.Notes.Queries
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
-        public GetNoteContentsQuery(Guid userId, Guid NoteId)
+
+        public Guid? FolderId { set; get; }
+
+        public GetNoteContentsQuery(Guid userId, Guid noteId, Guid? folderId = null)
             : base(userId)
         {
-            this.NoteId = NoteId;
+            this.NoteId = noteId;
+            FolderId = folderId;
         }
     }
 }

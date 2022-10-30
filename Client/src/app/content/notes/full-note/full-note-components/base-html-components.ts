@@ -15,9 +15,6 @@ export abstract class BaseEditorElementComponent {
   @Output()
   someChangesEvent = new EventEmitter();
 
-  @Output()
-  runDetectChangesChildren = new EventEmitter();
-
   public isMouseOver = false;
 
   constructor(public cdr: ChangeDetectorRef, public selectionService: SelectionService) {

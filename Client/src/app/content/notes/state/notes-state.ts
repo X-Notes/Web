@@ -74,6 +74,7 @@ import { NoteHistory } from '../full-note/models/history/note-history.model';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export interface FullNoteState {
   note: FullNote;
@@ -279,6 +280,16 @@ export class NoteStore {
   @Selector()
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
+  }
+
+  @Selector()
+  static isFullNoteViewer(state: NoteState): boolean {
+    return state.fullNoteState?.note?.refTypeId === RefTypeENUM.Viewer;
+  }
+
+  @Selector()
+  static isFullNoteEditor(state: NoteState): boolean {
+    return state.fullNoteState?.note?.refTypeId === RefTypeENUM.Editor;
   }
 
   @Selector()
@@ -495,7 +506,7 @@ export class NoteStore {
     const typeFrom = getState()
       .notes.map((x) => x.notes)
       .flat()
-      .find((z) => selectedIds.some((x) => x === z.id)).noteTypeId;
+      .find((q) => selectedIds.some((x) => x === q.id)).noteTypeId;
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
@@ -535,7 +546,7 @@ export class NoteStore {
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
-    dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+    dispatch([UnSelectAllNote, RemoveFromDomMurri]); // TODO REMOVE FROM HERE
 
     if (isAddToDom) {
       const obj: AddNotesToDom = { notes: notesAdded };
@@ -598,7 +609,7 @@ export class NoteStore {
         break;
       }
       case NoteTypeENUM.Shared: {
-        await this.api.makePublic(refTypeId, selectedIds).toPromise();
+        resp = await this.api.makePublic(refTypeId, selectedIds).toPromise();
         dispatch(
           new TransformTypeNotes(NoteTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
         );
@@ -634,7 +645,7 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
-        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({ ...note, color })));
+        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({ ...note, color }, note.id)));
       }
 
       // UPDATE UI
@@ -711,7 +722,7 @@ export class NoteStore {
           x.labels = [...x.labels, label];
         }
       });
-      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x)));
+      notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x, x.id)));
       dispatch([new UpdateLabelCount(label.id)]);
 
       // UPDATE UI
@@ -745,7 +756,7 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) =>
-        dispatch(new UpdateOneNote({ labels: x.labels.filter((z) => z.id !== labelId) })),
+        dispatch(new UpdateOneNote({ labels: x.labels.filter((q) => q.id !== labelId) }, x.id)),
       );
       dispatch([new UpdateLabelCount(labelId)]);
 
@@ -833,7 +844,7 @@ export class NoteStore {
         if (note) {
           note.order = pos.position;
         }
-        dispatch(new UpdateOneNote(note));
+        dispatch(new UpdateOneNote(note, note.id));
       });
     }
   }
@@ -849,19 +860,21 @@ export class NoteStore {
   }
 
   @Action(UpdateOneNote)
-  updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note }: UpdateOneNote) {
+  updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, noteId }: UpdateOneNote) {
     for (const noteState of getState().notes) {
       let isUpdate = false;
+      let noteType: NoteTypeENUM = null;
       const notes = noteState.notes.map((storeNote) => {
-        if (storeNote.id === note.id) {
+        if (storeNote.id === noteId) {
           isUpdate = true;
+          noteType = storeNote.noteTypeId;
           return { ...storeNote, ...note };
         }
         return storeNote;
       });
-      if (isUpdate) {
-        const state = new Notes(note.noteTypeId, [...notes]);
-        dispatch(new UpdateNotes(state, note.noteTypeId));
+      if (isUpdate && noteType) {
+        const state = new Notes(noteType, [...notes]);
+        dispatch(new UpdateNotes(state, noteType));
       }
     }
   }
@@ -957,7 +970,7 @@ export class NoteStore {
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
-        dispatch(new UpdateOneNote({ ...noteUpdate, title: newTitle }));
+        dispatch(new UpdateOneNote({ ...noteUpdate, title: newTitle }, noteUpdate.id));
       }
 
       // UPDATE UI

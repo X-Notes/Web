@@ -26,6 +26,7 @@ import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/tex
 import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
 import { DomSanitizer } from '@angular/platform-browser';
 import { isValidURL } from '../../../../../../shared/utils/is-valid-url.util';
+import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 
 @Component({
   selector: 'app-html-text-part',
@@ -39,11 +40,6 @@ export class HtmlTextPartComponent
 {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
-
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output()
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  onFocus = new EventEmitter<HtmlTextPartComponent>();
 
   @ViewChild('uploadFile') uploadFile: ElementRef;
 
@@ -125,7 +121,7 @@ export class HtmlTextPartComponent
   isFocusToNext = () => true;
 
   changeDetectionChecker = () => {
-    console.log('Text html contents: ');
+    // console.log('Text html changeDetectionChecker: ');
   };
 
   uploadFiles(event): void {
@@ -139,5 +135,9 @@ export class HtmlTextPartComponent
     const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
+  }
+
+  setFocusedElement(): void {
+    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
   }
 }

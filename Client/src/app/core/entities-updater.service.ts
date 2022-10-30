@@ -43,7 +43,7 @@ export class UpdaterEntitiesService {
     updatedNote.isLocked = isLocked ?? updatedNote.isLocked;
     updatedNote.isLockedNow = isLockedNow ?? updatedNote.isLockedNow;
     updatedNote.unlockedTime = !isLockedNow ? new Date() : null;
-    await this.store.dispatch(new UpdateOneNote(updatedNote)).toPromise();
+    await this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.id)).toPromise();
     this.store.dispatch(new UpdateFullNote({ isLocked, isLockedNow }, noteid));
 
     //

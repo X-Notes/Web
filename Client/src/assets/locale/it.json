@@ -66,7 +66,8 @@
       "order": "Ordine trascinabile personalizzato"
     },
     "anonymous": "Anonimo",
-    "signIn": "Accedi"
+    "signIn": "Accedi",
+    "signInEditing": "Accedere per modificare"
   },
   "menu": {
     "label": "Etichetta",

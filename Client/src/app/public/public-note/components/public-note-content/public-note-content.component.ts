@@ -46,7 +46,7 @@ export class PublicNoteContentComponent implements OnDestroy {
     private readonly route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    private api: ApiServiceNotes,
+    private apiNotes: ApiServiceNotes,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       await this.loadMain(params.id);
@@ -72,7 +72,7 @@ export class PublicNoteContentComponent implements OnDestroy {
       if (note) {
         const ownerId = this.store.selectSnapshot(NoteStore.getOwnerId);
         await this.store.dispatch(new PublicUser(ownerId)).toPromise();
-        this.contents = await this.api.getContents(id).toPromise();
+        this.contents = await this.apiNotes.getContents(id, folderId).toPromise();
       }
     }
     this.loaded = true;

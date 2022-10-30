@@ -16,7 +16,7 @@
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="scrollAndFocusToTitle()"
       [menu]="menu"
-      [isDisablebutton]="this.content.isLoading"
+      [isDisableButton]="this.content.isLoading"
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <div
@@ -26,15 +26,15 @@
       class="video-wrapper"
     >
       <video
-        [id]="getMainVideo?.fileId"
-        (click)="clickItemHandler(getMainVideo?.fileId)"
+        [id]="currentVideo?.fileId"
+        (click)="clickItemHandler(currentVideo?.fileId)"
         (timeupdate)="cdr.detectChanges()"
         #videoplayer
         oncontextmenu="return false"
         preload="metadata"
         controlslist="nodownload"
         (ended)="isPlaying = false"
-        [src]="getMainVideo?.videoPath"
+        [src]="currentVideo?.videoPath"
       ></video>
       <div *ngIf="!isSelectModeActive" class="controls">
         <div class="progress slider-controls">
@@ -118,9 +118,9 @@
           [id]="item.fileId"
           class="thumb-video-wrapper"
           *ngFor="let item of content.orderedItems; let i = index"
-          (click)="openThumbVideo(i)"
+          (click)="openThumbVideo(item)"
         >
-          <div class="thumb-video" [ngClass]="{ 'thumb-active': i === indexVideo }">
+          <div class="thumb-video" [ngClass]="[isClicked(item.fileId) ? 'is-selected': '']">
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
               *ngIf="!isReadOnlyMode && !isSelectModeActive"

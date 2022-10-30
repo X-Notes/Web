@@ -152,7 +152,7 @@ export class UpdateFolderTitle {
 export class UpdateOneFolder {
   static type = '[Folders] update one one';
 
-  constructor(public folder: Partial<SmallFolder>) {}
+  constructor(public folder: Partial<SmallFolder>, public folderId: string) {}
 }
 
 export class LoadFullFolder {

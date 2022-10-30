@@ -7,6 +7,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
+import { SmallFolder } from '../../folders/models/folder.model';
 import {
   ChangeTypeFolder,
   CopyFolders,
@@ -27,13 +28,14 @@ export class MenuButtonsFoldersService {
   ) {}
 
   setDeleteFolders = () => {
-    const ids = this.getSelectedFolderIds();
+    const folders = this.getSelectedFolderIds();
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toBin');
     const successCallback = () =>
-      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
+      this.successFolderCallback(folders, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Deleted,
       ids,
@@ -45,13 +47,14 @@ export class MenuButtonsFoldersService {
   };
 
   setPrivateFolders = () => {
-    const ids = this.getSelectedFolderIds();
+    const folders = this.getSelectedFolderIds();
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.toPrivate');
     const successCallback = () =>
-      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
+      this.successFolderCallback(folders, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Private,
       ids,
@@ -63,13 +66,14 @@ export class MenuButtonsFoldersService {
   };
 
   archiveFolders = () => {
-    const ids = this.getSelectedFolderIds();
+    const folders = this.getSelectedFolderIds();
+    const ids = folders.map((x) => x.id);
     const message =
       this.sbws.getFoldersNaming(ids.length > 1) +
       this.sbws.getMoveToMessage(ids.length > 1) +
       this.apiTranslate.instant('snackBar.archive');
     const successCallback = () =>
-      this.successFolderCallback(ids, this.getSelectedFolderType(), message);
+      this.successFolderCallback(folders, this.getSelectedFolderType(), message);
     const command = new ChangeTypeFolder(
       FolderTypeENUM.Archive,
       ids,
@@ -121,33 +125,63 @@ export class MenuButtonsFoldersService {
   private permissionsErrorMessage = (): string =>
     this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
-  private successFolderCallback = (ids: string[], typeFrom: FolderTypeENUM, message: string) => {
+  private successFolderCallback = (
+    folders: SmallFolder[],
+    typeFrom: FolderTypeENUM,
+    message: string,
+  ) => {
     this.sbws.build(() => {
-      this.store.dispatch(this.getRevertActionFolders(typeFrom, ids));
+      this.store.dispatch([...this.getRevertActionFolders(typeFrom, folders)]);
     }, message);
   };
 
-  private getRevertActionFolders = (type: FolderTypeENUM, ids): ChangeTypeFolder => {
+  private getRevertActionFolders = (
+    type: FolderTypeENUM,
+    folders: SmallFolder[],
+  ): ChangeTypeFolder[] => {
     const types = FolderTypeENUM;
+    const ids = folders.map((x) => x.id);
     switch (type) {
       case types.Private: {
-        return new ChangeTypeFolder(FolderTypeENUM.Private, ids, true);
+        return [new ChangeTypeFolder(FolderTypeENUM.Private, ids, true)];
       }
       case types.Shared: {
-        return new ChangeTypeFolder(
-          FolderTypeENUM.Private,
-          ids,
-          true,
-          null,
-          null,
-          RefTypeENUM.Viewer,
-        );
+        const commands: ChangeTypeFolder[] = [];
+        const viewersFolderIds = folders
+          .filter((x) => x.refTypeId === RefTypeENUM.Viewer)
+          .map((x) => x.id);
+        const editorsFolderIds = folders
+          .filter((x) => x.refTypeId === RefTypeENUM.Editor)
+          .map((x) => x.id);
+        if (viewersFolderIds.length > 0) {
+          const command = new ChangeTypeFolder(
+            FolderTypeENUM.Shared,
+            viewersFolderIds,
+            true,
+            null,
+            null,
+            RefTypeENUM.Viewer,
+          );
+          commands.push(command);
+        }
+        if (editorsFolderIds.length > 0) {
+          const command = new ChangeTypeFolder(
+            FolderTypeENUM.Shared,
+            editorsFolderIds,
+            true,
+            null,
+            null,
+            RefTypeENUM.Editor,
+          );
+          commands.push(command);
+        }
+        return commands;
       }
       case types.Archive: {
-        return new ChangeTypeFolder(FolderTypeENUM.Archive, ids, true);
+        return [new ChangeTypeFolder(FolderTypeENUM.Archive, ids, true)];
       }
       case types.Deleted: {
-        return new ChangeTypeFolder(FolderTypeENUM.Deleted, ids, true);
+        return [new ChangeTypeFolder(FolderTypeENUM.Deleted, ids, true)];
       }
       default: {
         throw new Error('incorrect type');
@@ -163,11 +197,11 @@ export class MenuButtonsFoldersService {
     return this.store.selectSnapshot(AppStore.getTypeFolder);
   }
 
-  private getSelectedFolderIds(): string[] {
+  private getSelectedFolderIds(): SmallFolder[] {
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
       const folder = this.store.selectSnapshot(FolderStore.full);
-      return [folder.id];
+      return [folder as SmallFolder];
     }
-    return this.store.selectSnapshot(FolderStore.selectedIds);
+    return this.store.selectSnapshot(FolderStore.getSelectedFolders);
   }
 }

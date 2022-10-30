@@ -27,7 +27,7 @@ namespace Noots.DatabaseContext.Repositories.Labels
 
         public Task<int> GetNotesCountByLabelId(Guid id)
         {
-            return context.LabelsNotes.Include(x => x.Note).Where(x => x.LabelId == id).CountAsync();
+            return context.LabelsNotes.Where(x => x.LabelId == id).CountAsync();
         }
     }
 }

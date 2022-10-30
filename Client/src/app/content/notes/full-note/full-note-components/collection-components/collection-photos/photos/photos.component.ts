@@ -45,7 +45,7 @@ export class PhotosComponent
 
   changeHeightSubject = new Subject<string>();
 
-  changeSizeAlbumHalder = combineLatest([this.changeHeightSubject]);
+  changeSizeAlbumHandler = combineLatest([this.changeHeightSubject]);
 
   constructor(
     private renderer: Renderer2,
@@ -79,6 +79,10 @@ export class PhotosComponent
 
   ngOnChanges(): void {}
 
+  changeDetectionChecker = () => {
+    // console.log('Photos html changeDetectionChecker: ');
+  };
+
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
@@ -111,7 +115,7 @@ export class PhotosComponent
     for (const photo of this.content.items) {
       photo.loaded = false;
     }
-    this.changeSizeAlbumHalder
+    this.changeSizeAlbumHandler
       .pipe(takeUntil(this.destroy), debounceTime(300)) // TODO export const
       .subscribe((values) => {
         let [height] = values;
@@ -159,7 +163,7 @@ export class PhotosComponent
     super.syncContentItems();
   }
 
-  updateIternal() {
+  updateInternal() {
     this.setPhotosInRow(this.content.countInRow);
     this.syncHeight();
   }
@@ -167,18 +171,18 @@ export class PhotosComponent
   setPhotosInRow(count: number): void {
     if (this.uiCountInRow === count) return;
     this.initCountInRow(count);
-    this.reinitPhotosToDefault();
+    this.reInitPhotosToDefault();
   }
 
   syncPhotos(): void {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
     if (photosCount !== currentLength) {
-      this.reinitPhotosToDefault();
+      this.reInitPhotosToDefault();
     }
   }
 
-  reinitPhotosToDefault(): void {
+  reInitPhotosToDefault(): void {
     this.setFalseLoadedForAllPhotos();
     this.setHeight('auto');
     this.initBlocks();

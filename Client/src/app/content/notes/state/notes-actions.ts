@@ -212,7 +212,7 @@ export class SelectAllNote {
 export class UpdateOneNote {
   static type = '[Notes] update one one';
 
-  constructor(public note: Partial<SmallNote>) {}
+  constructor(public note: Partial<SmallNote>, public noteId: string) {}
 }
 
 export class CancelAllSelectedLabels {
