@@ -351,6 +351,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.noteTitleChanged.next($event.target.innerText);
   }
 
+  onTitleClick($event): void {
+    this.clickableContentService.currentItem.detectChanges();
+  }
+
   handlerTitleEnter($event: KeyboardEvent) {
     $event.preventDefault();
     this.contentEditorTextService.appendNewEmptyContentToStart();

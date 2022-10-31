@@ -33,6 +33,7 @@
         [textContent]="uiTitle"
         class="title"
         (input)="onTitleInput($event)"
+        (click)="onTitleClick($event)"
         (keydown.enter)="handlerTitleEnter($event)"
       ></div>
       <div class="placeholder">{{ 'innerNote.title' | translate }}</div>

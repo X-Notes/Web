@@ -20,8 +20,7 @@ export class DeltaConverter {
     const quillDIV = document.createElement('div');
     quillDIV.style.display = 'none';
     quillDIV.id = id;
-    document.body.appendChild(quillDIV);
-    DeltaConverter.quillInstance = new Quill(`#${id}`);
+    DeltaConverter.quillInstance = new Quill(quillDIV);
   }
 
   // CONVERT METHODS
