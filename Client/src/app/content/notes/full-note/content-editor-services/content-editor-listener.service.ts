@@ -49,6 +49,7 @@ export class ContentEditorListenerService {
           const upEl = isFocusToNext ? arr[index - 1] : el;
           if (index === 0 && isFocusToNext) {
             noteTitleEl.nativeElement?.focus();
+            el.detectChanges();
             return;
           }
           if (upEl) {

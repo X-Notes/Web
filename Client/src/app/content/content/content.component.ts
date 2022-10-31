@@ -21,7 +21,7 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 })
 export class ContentComponent implements OnInit, OnDestroy {
   @Select(AppStore.isDeletedFoldersNotesLabels)
-  public isMesageActive$: Observable<boolean>;
+  public isMessageActive$: Observable<boolean>;
 
   @Select(AppStore.getRouting)
   public routing$: Observable<EntityType>;

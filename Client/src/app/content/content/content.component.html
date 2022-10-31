@@ -24,6 +24,6 @@
   <app-long-term-operations-handler></app-long-term-operations-handler>
 </main>
 <app-generic-delete-entity-message
-  *ngIf="isMesageActive$ | async"
+  *ngIf="isMessageActive$ | async"
   [message]="getMessage(routing$ | async) | translate: { days: getDays(routing$ | async) }"
 ></app-generic-delete-entity-message>
