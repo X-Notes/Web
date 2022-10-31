@@ -351,7 +351,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.noteTitleChanged.next($event.target.innerText);
   }
 
-  onTitleClick($event): void {
+  onTitleClick(): void {
     this.clickableContentService.currentItem.detectChanges();
   }
 
@@ -515,11 +515,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     for (const id of updates.ids) {
       const el = this.elements.toArray().find((x) => x.getContent().id === id);
       if (!el) {
-        this.unSelectItems();
-        return;
+        continue;
       }
       const content = el.getContent() as BaseText;
       const html = DeltaConverter.convertTextBlocksToHTML(content.contents);
+      if (!html) continue;
       const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
       let resultDelta: DeltaStatic;
       if (updates.isRemoveStyles) {
