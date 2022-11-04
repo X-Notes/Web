@@ -4,24 +4,20 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
-using Domain.Commands.NoteInner;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.NoteContent;
+using Noots.Editor.Commands;
+using Noots.Editor.Entities.EditorStructure;
+using BI.Services.Notes;
 
-namespace BI.Services.Notes
+namespace Noots.Editor.Handlers
 {
-    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
+    public class SyncStructureCommandHandler : IRequestHandler<SyncStructureCommand, OperationResult<NoteStructureResult>>
     {
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
@@ -37,9 +33,10 @@ namespace BI.Services.Notes
         private readonly IMediator _mediator;
 
         private readonly CollectionLinkedService collectionLinkedService;
-        private readonly ILogger<FullNoteContentHandlerCommand> logger;
 
-        public FullNoteContentHandlerCommand(
+        private readonly ILogger<SyncStructureCommandHandler> logger;
+
+        public SyncStructureCommandHandler(
             BaseNoteContentRepository baseNoteContentRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
@@ -47,7 +44,7 @@ namespace BI.Services.Notes
             CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,
             CollectionLinkedService collectionLinkedService,
-            ILogger<FullNoteContentHandlerCommand> logger)
+            ILogger<SyncStructureCommandHandler> logger)
         {
 
             this.historyCacheService = historyCacheService;
@@ -61,7 +58,7 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<NoteStructureResult>> Handle(SyncStructureCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -110,7 +107,7 @@ namespace BI.Services.Notes
                         var items = textItemsThatNeedAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
                         await textNotesRepository.AddRangeAsync(items);
 
-                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds {  PrevId = x.PrevId, Id = x.Id}));
+                        result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                         SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -201,14 +198,14 @@ namespace BI.Services.Notes
                 if (request.Diffs.Positions != null && request.Diffs.Positions.Any())
                 {
                     var updateItems = new List<BaseNoteContent>();
-                    foreach(var item in request.Diffs.Positions)
+                    foreach (var item in request.Diffs.Positions)
                     {
-                       var content = contents.FirstOrDefault(x => x.Id == item.Id);
-                       if(content != null)
-                       {
+                        var content = contents.FirstOrDefault(x => x.Id == item.Id);
+                        if (content != null)
+                        {
                             content.Order = item.Order;
                             updateItems.Add(content);
-                       }
+                        }
                     }
                     if (updateItems.Any())
                     {
@@ -243,10 +240,10 @@ namespace BI.Services.Notes
 
         private void SetNewIds<T>(List<UpdateIds> updateIds, List<T> contents) where T : BaseNoteContentDTO
         {
-            foreach(var item in updateIds)
+            foreach (var item in updateIds)
             {
                 var content = contents.FirstOrDefault(x => x.Id == item.PrevId);
-                if(content != null)
+                if (content != null)
                 {
                     content.Id = item.Id;
                 }

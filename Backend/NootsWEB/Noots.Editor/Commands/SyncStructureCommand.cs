@@ -1,14 +1,13 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
-using Common.DTO.Notes.FullNoteSyncContents;
 using MediatR;
-using System;
+using Noots.Editor.Entities.EditorStructure;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Commands.NoteInner
+namespace Noots.Editor.Commands
 {
-    public class SyncNoteStructureCommand : BaseCommandEntity, IRequest<OperationResult<NoteStructureResult>>
+    public class SyncStructureCommand : BaseCommandEntity, IRequest<OperationResult<NoteStructureResult>>
     {
         [Required]
         public DiffsChanges Diffs { set; get; }

@@ -1,8 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
-using System;
-using System.Collections.Generic;
 
-namespace Common.DTO.Notes.FullNoteSyncContents
+namespace Noots.Editor.Entities.EditorStructure
 {
     public class DiffsChanges
     {

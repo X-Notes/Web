@@ -17,13 +17,10 @@ using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Queries.InnerFolder;
-using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
-using Domain.Commands.NoteInner;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
 using BI.Services.DiffsMatchPatch;
-using Common.DTO.Notes.FullNoteSyncContents;
 using BI.Services.Notes.Audios;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Queries.NoteInner;
@@ -51,6 +48,9 @@ using Noots.Users;
 using Noots.Sharing;
 using Noots.SignalrUpdater;
 using Common.Redis;
+using Noots.Editor.Commands;
+using Noots.Editor.Handlers;
+using Noots.Editor.Entities.EditorStructure;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -78,11 +78,11 @@ namespace WriteAPI.ConfigureAPP
             services.ApplyRelatedNotesDI();
 
             // FULL NOTE TEXT
-            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleCommand, OperationResult<Unit>>, UpdateTitleCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, UpdateTextContentsCommandHandler>();
 
             // FULL NOTE CONTENT
-            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<SyncStructureCommand, OperationResult<NoteStructureResult>>, SyncStructureCommandHandler>();
 
 
             // FULL NOTE PHOTOS

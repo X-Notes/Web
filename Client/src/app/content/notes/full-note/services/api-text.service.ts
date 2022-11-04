@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Diff } from 'diff-match-patch';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { BaseText } from '../../models/editor-models/base-text';
+import { TextDiff } from '../content-editor-services/models/text-diff';
 
 @Injectable()
 export class ApiTextService {
@@ -21,10 +21,10 @@ export class ApiTextService {
     );
   }
 
-  syncContents(noteId: string, texts: BaseText[]) {
+  syncContents(noteId: string, updates: TextDiff[]) {
     const obj = {
       noteId,
-      texts,
+      updates,
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/text/sync`,

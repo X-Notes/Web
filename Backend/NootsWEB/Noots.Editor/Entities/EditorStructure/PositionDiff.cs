@@ -1,6 +1,6 @@
-﻿using System;
+﻿
 
-namespace Common.DTO.Notes.FullNoteSyncContents
+namespace Noots.Editor.Entities.EditorStructure
 {
     public class PositionDiff
     {

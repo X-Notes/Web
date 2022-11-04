@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Notes.FullNoteSyncContents;
-using Domain.Commands.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands;
+using Noots.Editor.Entities.EditorStructure;
 using Noots.Notes.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
@@ -37,7 +37,7 @@ public class FullNoteContentController : ControllerBase
 
     [HttpPatch("sync/structure")] // TODO TO WS
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
+    public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncStructureCommand command)
     {
         command.UserId = this.GetUserId();
         return await this._mediator.Send(command);
