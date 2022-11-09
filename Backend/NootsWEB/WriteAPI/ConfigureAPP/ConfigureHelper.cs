@@ -51,6 +51,7 @@ using Common.Redis;
 using Noots.Editor.Commands;
 using Noots.Editor.Handlers;
 using Noots.Editor.Entities.EditorStructure;
+using Noots.Editor;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -77,13 +78,7 @@ namespace WriteAPI.ConfigureAPP
             // RELATED NOTES
             services.ApplyRelatedNotesDI();
 
-            // FULL NOTE TEXT
-            services.AddScoped<IRequestHandler<UpdateTitleCommand, OperationResult<Unit>>, UpdateTitleCommandHandler>();
-            services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, UpdateTextContentsCommandHandler>();
-
-            // FULL NOTE CONTENT
-            services.AddScoped<IRequestHandler<SyncStructureCommand, OperationResult<NoteStructureResult>>, SyncStructureCommandHandler>();
-
+            services.ApplyEditorDI();
 
             // FULL NOTE PHOTOS
             services.AddScoped<IRequestHandler<RemovePhotosFromCollectionCommand, OperationResult<Unit>>, PhotosCollectionHandlerCommand>();

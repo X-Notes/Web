@@ -14,6 +14,7 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands;
 using Noots.Editor.Entities.EditorStructure;
 using BI.Services.Notes;
+using Noots.Editor.Impl;
 
 namespace Noots.Editor.Handlers
 {
@@ -24,7 +25,7 @@ namespace Noots.Editor.Handlers
 
         private readonly HistoryCacheService historyCacheService;
 
-        private readonly AppSignalRService appSignalRService;
+        private readonly EditorSignalRService appSignalRService;
 
         private readonly TextNotesRepository textNotesRepository;
 
@@ -39,7 +40,7 @@ namespace Noots.Editor.Handlers
         public SyncStructureCommandHandler(
             BaseNoteContentRepository baseNoteContentRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService,
+            EditorSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
             CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Noots.Editor.Commands
 {
-    public class UpdateTitleCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         public List<List<object>> Diffs { set; get; }
 

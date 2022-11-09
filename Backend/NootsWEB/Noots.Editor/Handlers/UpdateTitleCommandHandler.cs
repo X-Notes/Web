@@ -11,7 +11,7 @@ using Noots.SignalrUpdater.Impl;
 
 namespace Noots.Editor.Handlers
 {
-    public class UpdateTitleCommandHandler : IRequestHandler<UpdateTitleCommand, OperationResult<Unit>>
+    public class UpdateTitleCommandHandler : IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -38,7 +38,7 @@ namespace Noots.Editor.Handlers
             this.diffsMatchPatchService = diffsMatchPatchService;
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateTitleCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);

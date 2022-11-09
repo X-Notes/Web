@@ -29,10 +29,6 @@
 
         public const string updateRelatedNotes = "updateRelatedNotes";
 
-        public const string updateTextContent = "updateTextContent";
-
-        public const string updateNoteStructure = "updateNoteStructure";
-
         public const string updateDocumentsCollection = "updateDocumentsCollection";
 
         public const string updatePhotosCollection = "updatePhotosCollection";

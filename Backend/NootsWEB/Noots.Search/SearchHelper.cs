@@ -21,7 +21,7 @@ namespace Noots.Search
                 return false;
             }
 
-            var contentText = contents.Select(x => x.Text).Aggregate((pv, cv) => pv + cv);
+            var contentText = contents.Select(x => x.GetText()).Aggregate((pv, cv) => pv + cv);
             if (!string.IsNullOrEmpty(contentText) && contentText.Contains(search))
             {
                 return true;

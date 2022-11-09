@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Common.DTO;
-using Domain.Commands.NoteInner.FileContent.Texts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 

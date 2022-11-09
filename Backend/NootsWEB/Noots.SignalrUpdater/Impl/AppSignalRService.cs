@@ -9,30 +9,12 @@ using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
-    public class AppSignalRService
+    public class AppSignalRService : BaseSignalRService
     {
-        public IHubContext<AppSignalRHub> signalRContext;
-
-        private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
-
         public AppSignalRService(
             IHubContext<AppSignalRHub> context,
-            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository)
+            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository) : base(userIdentifierConnectionIdRepository, context)
         {
-            signalRContext = context;
-            this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
-        }
-
-
-        public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)
-        {
-            return userIdentifierConnectionIdRepository.GetConnectionsAsync(userIds, exceptUserId);
-        }
-
-        public async Task<List<string>> GetAuthorizedConnections(Guid userId)
-        {
-            var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId == userId);
-            return connections.Select(x => x.ConnectionId).ToList();
         }
 
         public async Task SendNewNotification(Guid userId, bool flag)
@@ -59,23 +41,10 @@ namespace Noots.SignalrUpdater.Impl
         }
 
         // INNER NOTE
-
         public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateRelatedNotes, updates);
-        }
-
-        public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
-        {
-            var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateTextContent, updates);
-        }
-
-        public async Task UpdateNoteStructure(Guid noteId, Guid userId, UpdateNoteStructureWS updates)
-        {
-            var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateNoteStructure, updates);
         }
 
         // FILE CONTENT
