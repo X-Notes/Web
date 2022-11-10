@@ -40,7 +40,7 @@ export class DeltaConverter {
       if (typeof item.insert !== 'string') return; // Todo there are can be paste image
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
-        block.text = clearStr;
+        block.applyText(clearStr);
         block.textTypes = this.getTextTypes(item.attributes);
         block.textColor = this.getTextColor(item.attributes);
         block.link = this.getLink(item.attributes);
@@ -119,6 +119,8 @@ export class DeltaConverter {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = this.convertDeltaToHtml(delta);
 
+    console.log('tempDiv: ', tempDiv);
+
     const processList = (node: HTMLElement, tag: 'ul' | 'ol'): HTMLElement[] => {
       const listElements: HTMLElement[] = [];
       for (const subListChild of node.childNodes as unknown as HTMLElement[]) {
@@ -157,13 +159,13 @@ export class DeltaConverter {
     }
     const staticDelta = {} as DeltaStatic;
     const ops = contents.map((item) => {
-      return { insert: item.text, attributes: this.convertToAttibutes(item) };
+      return { insert: item.getTextOrdered(), attributes: this.convertToAttributes(item) };
     });
     staticDelta.ops = ops;
     return staticDelta;
   }
 
-  private static convertToAttibutes(block: TextBlock): StringAny {
+  private static convertToAttributes(block: TextBlock): StringAny {
     if (!block || !block.textTypes) {
       return {};
     }

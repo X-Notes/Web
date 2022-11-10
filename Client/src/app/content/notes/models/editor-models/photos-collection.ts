@@ -11,7 +11,13 @@ export class PhotosCollection extends BaseCollection<Photo> {
   countInRow: number;
 
   constructor(collection: Partial<PhotosCollection>, items: Photo[]) {
-    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
+    super(
+      collection.typeId,
+      collection.id,
+      collection.order,
+      collection.updatedAt,
+      collection.version,
+    );
     this.countInRow = collection.countInRow;
     this.setHeightWidth(collection.height, collection.width);
     this.name = collection.name;

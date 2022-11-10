@@ -136,8 +136,8 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     if (content?.list) {
       if (content.list === DeltaListEnum.bullet) {
         let type = NoteTextTypeENUM.dotList;
-        if (content.text?.startsWith('[ ]')) {
-          content.text = content.text.slice(3);
+        if (content.getTextOrdered()?.startsWith('[ ]')) {
+          content.applyText(content.getTextOrdered().slice(3));
           type = NoteTextTypeENUM.checkList;
         }
         this.transformContent(null, type);
@@ -256,6 +256,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   handleHtmlInserting(html: string): void {
+    console.log('html: ', html);
     const htmlElements = DeltaConverter.splitDeltaByDividers(html);
     if (htmlElements.length === 0) return;
 

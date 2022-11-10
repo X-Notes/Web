@@ -1,3 +1,4 @@
+import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
 import { BaseFile } from './base-file';
 import { ContentModelBase } from './content-model-base';
 
@@ -64,6 +65,9 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     if (!fileIds || fileIds.length === 0) return;
     this.items = this.items.filter((x) => !fileIds.some((z) => z === x.fileId));
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  patchTextDiffs(diff: TextDiff): void {}
 
   abstract isEqualCollectionInfo(content: BaseCollection<T>): boolean;
 }

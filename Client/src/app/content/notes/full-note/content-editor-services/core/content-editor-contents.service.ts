@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { AudiosCollection } from '../../../models/editor-models/audios-collection';
@@ -39,30 +39,38 @@ export class ContentEditorContentsService {
 
   onProgressiveAdding = new Subject<void>();
 
-  isRendering = false;
+  isRendering$ = new BehaviorSubject(true); // TODO no sync when render
 
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
-  ) {}
+  ) {
+    this.isRendering$.subscribe((isRendering) => {
+      if (!isRendering) {
+        this.initSyncContent(this.contents);
+        this.initStack(this.contents);
+      }
+    });
+  }
 
   // TODO 1. Worker
   // TODO 2. File Content process change + ctrlx + z
   //
 
   initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
-    const setInStack = () => {
-      this.contentEditorMomentoStateService.clear();
-      this.contentEditorMomentoStateService.saveToStack(contents);
-    };
     if (progressiveLoading) {
-      this.initContentProgressively(contents, setInStack);
-      return;
+      this.initContentProgressively(contents);
+    } else {
+      this.initContent(contents);
+      this.isRendering$.next(false);
     }
-    this.initContent(contents);
-    setInStack();
   }
+
+  initStack = (contents: ContentModelBase[]) => {
+    this.contentEditorMomentoStateService.clear();
+    this.contentEditorMomentoStateService.saveToStack(contents);
+  };
 
   saveToStack(): void {
     const isContentEqual = this.isContentsEquals();
@@ -86,24 +94,25 @@ export class ContentEditorContentsService {
   initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
     if (progressiveLoading) {
       this.initContentProgressively(contents);
-      return;
+    } else {
+      this.initContent(contents);
+      this.isRendering$.next(false);
     }
-    this.contents = contents;
   }
 
   private initContent(contents: ContentModelBase[]): void {
     this.contents = contents;
+  }
+
+  private initSyncContent(contents: ContentModelBase[]): void {
     this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
   }
 
-  private initContentProgressively(
-    contents: ContentModelBase[],
-    onRenderCallback?: () => void,
-  ): void {
-    this.isRendering = true;
+  private initContentProgressively(contents: ContentModelBase[]): void {
+    this.isRendering$.next(true);
     let end = this.progressiveLoadOptions.firstLoadCount;
     if (end > contents.length) {
       end = contents.length;
@@ -112,10 +121,7 @@ export class ContentEditorContentsService {
     this.onProgressiveAdding.next();
 
     if (this.contents.length === contents.length) {
-      if (onRenderCallback) {
-        onRenderCallback();
-      }
-      this.isRendering = false;
+      this.isRendering$.next(false);
       return;
     }
 
@@ -129,10 +135,7 @@ export class ContentEditorContentsService {
       this.contents.push(...contentsToPush);
       this.onProgressiveAdding.next();
       if (start >= contents.length) {
-        this.isRendering = false;
-        if (onRenderCallback) {
-          onRenderCallback();
-        }
+        this.isRendering$.next(false);
         clearInterval(interval);
       }
     }, this.progressiveLoadOptions.renderInterval);

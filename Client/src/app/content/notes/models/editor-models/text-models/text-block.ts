@@ -1,8 +1,9 @@
 import { DeltaListEnum } from '../../../full-note/content-editor/converter/entities/delta-list.enum';
+import { Letter } from './letter';
 import { TextType } from './text-type';
 
 export class TextBlock {
-  text: string;
+  letters: Letter[];
 
   highlightColor: string;
 
@@ -12,6 +13,10 @@ export class TextBlock {
 
   textTypes: TextType[];
 
+  version: number;
+
+  id: string;
+
   // not mapped UI fields
 
   list?: DeltaListEnum;
@@ -19,16 +24,26 @@ export class TextBlock {
   header?: number;
 
   constructor(block: Partial<TextBlock>) {
-    this.text = block.text;
+    this.letters = block.letters?.map((x) => new Letter(x.symbol, x.fractionalIndex, x.id)) ?? [];
     this.highlightColor = block.highlightColor;
     this.textColor = block.textColor;
     this.link = block.link;
     this.textTypes = block.textTypes;
+
+    this.id = block.id ?? this.randomIntFromInterval(1000, 9999).toString();
+  }
+
+  get lettersOrdered(): Letter[] {
+    return [...this.letters]?.sort((a, b) => a.fractionalIndex - b.fractionalIndex);
+  }
+
+  getTextOrdered(): string {
+    return this.lettersOrdered.map((x) => x.symbol).join('') ?? '';
   }
 
   isEqual(block: TextBlock): boolean {
     return (
-      this.text === block.text &&
+      this.getTextOrdered() === block.getTextOrdered() &&
       this.highlightColor === block.highlightColor &&
       this.textColor === block.textColor &&
       this.link === block.link &&
@@ -49,5 +64,19 @@ export class TextBlock {
 
   copy(): TextBlock {
     return new TextBlock(this);
+  }
+
+  applyText(text: string): void {
+    const letters: Letter[] = [];
+    for (let index = 0; index < text.length; index++) {
+      const id = this.randomIntFromInterval(1000, 9999).toString();
+      letters.push(new Letter(text[index], index, id));
+    }
+    this.letters = letters;
+  }
+
+  randomIntFromInterval(min, max): number {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 }

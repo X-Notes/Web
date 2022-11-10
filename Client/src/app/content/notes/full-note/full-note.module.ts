@@ -47,6 +47,7 @@ import { ContentEditorSyncService } from './content-editor-services/core/content
 import { HtmlPropertyTagCollectorService } from './content-editor-services/html-property-tag-collector.service';
 import { ColorPickItemComponent } from './text-edit-menu/components/color-pick-item/color-pick-item.component';
 import { LazyForDirective } from './directives/lazy-for.directive';
+import { CrdtDiffsService } from './content-editor/crdt/crdt-diffs.service';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { LazyForDirective } from './directives/lazy-for.directive';
     ContentUpdateWsService,
     ContentEditorRestoreService,
     ContentEditorSyncService,
+    CrdtDiffsService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

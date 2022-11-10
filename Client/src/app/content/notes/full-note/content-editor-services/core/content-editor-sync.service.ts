@@ -17,6 +17,7 @@ import { ContentTypeENUM } from '../../../models/editor-models/content-types.enu
 import { DocumentsCollection } from '../../../models/editor-models/documents-collection';
 import { PhotosCollection } from '../../../models/editor-models/photos-collection';
 import { VideosCollection } from '../../../models/editor-models/videos-collection';
+import { CrdtDiffsService } from '../../content-editor/crdt/crdt-diffs.service';
 import { BaseAddToCollectionItemsCommand } from '../../models/api/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../../models/api/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../../models/api/base-update-collection-info-command';
@@ -30,6 +31,7 @@ import { ApiPhotosService } from '../../services/api-photos.service';
 import { ApiTextService } from '../../services/api-text.service';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { StructureDiffs } from '../models/structure-diffs';
+import { TextDiff } from '../models/text-diff';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 
 export interface SyncResult {
@@ -72,12 +74,13 @@ export class ContentEditorSyncService {
     private apiPhotos: ApiPhotosService,
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
+    private crdtDiffsService: CrdtDiffsService,
   ) {
     this.initTimer();
   }
 
   initTimer(): void {
-    this.intervalSyncer.subscribe(() => this.change());
+    // this.intervalSyncer.subscribe(() => this.change());
   }
 
   initEdit(noteId: string): void {
@@ -86,21 +89,22 @@ export class ContentEditorSyncService {
 
     this.destroyAndInitSubject();
 
+    const isCanSync = (flag: boolean) =>
+      flag === true && !this.isSync && !this.contentService.isRendering$.getValue();
+
     this.updateSubject
       .pipe(
-        filter((x) => x === true && !this.isSync),
+        filter((x) => isCanSync(x)),
         debounceTime(updateNoteContentDelay),
       )
       .subscribe(async () => {
         await this.processChanges();
       });
     //
-    this.updateImmediatelySubject
-      .pipe(filter((x) => x === true && !this.isSync))
-      .subscribe(async () => {
-        await this.processChanges();
-        this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
-      });
+    this.updateImmediatelySubject.pipe(filter((x) => isCanSync(x))).subscribe(async () => {
+      await this.processChanges();
+      this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
+    });
   }
 
   initProcessChangesAutoTimer(): void {}
@@ -133,6 +137,7 @@ export class ContentEditorSyncService {
   }
 
   private async processStructureChanges(): Promise<void> {
+    // TODO MAYBE SEND EMPTY TEXT FIELD
     const [structureDiffs, res] = this.contentService.getStructureDiffsNew();
     if (structureDiffs.isAnyChanges()) {
       const resp = await this.apiContent
@@ -322,28 +327,33 @@ export class ContentEditorSyncService {
     item?.addItemsToCollection(files);
   }
 
-  private async processTextsChanges() {
+  private async processTextsChanges(): Promise<void> {
     const textDiffs = this.getTextDiffs();
     if (textDiffs.length > 0) {
       await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
-      for (const text of textDiffs) {
-        const item = this.contentService.getSyncContentById<BaseText>(text.id);
-        item.patch(text);
+      for (const diffs of textDiffs) {
+        console.log('diffs: ', diffs);
+        const item = this.contentService.getSyncContentById<BaseText>(diffs.contentId);
+        item.patchTextDiffs(diffs);
       }
     }
   }
 
-  private getTextDiffs(): BaseText[] {
+  private getTextDiffs(): TextDiff[] {
     const oldContents = this.contentService.getTextSyncContents;
     const newContents = this.contentService.getTextContents;
-    const contents: BaseText[] = [];
+    const diffs: TextDiff[] = [];
     for (const content of newContents) {
-      const isNeedUpdate = oldContents.some((x) => x.id === content.id && !content.isEqual(x));
-      if (isNeedUpdate) {
-        contents.push(content.copy());
+      const oldSyncContent = oldContents.find((syncContent) => syncContent.id === content.id);
+      if (oldSyncContent) {
+        const contentDiffs = this.crdtDiffsService.findChanges(oldSyncContent, content);
+        if (contentDiffs.hasChanges) {
+          console.log('contentDiffs: ', contentDiffs);
+          diffs.push(contentDiffs);
+        }
       }
     }
-    return contents;
+    return diffs;
   }
 
   private getCollectionsInfoDiffs<T extends BaseCollection<BaseFile>>(type: ContentTypeENUM): T[] {

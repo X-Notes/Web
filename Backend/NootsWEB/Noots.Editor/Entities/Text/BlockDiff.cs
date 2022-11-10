@@ -1,14 +1,11 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Noots.Editor.Entities.Text;
 
 public class BlockDiff
 {
+    public string Id { set; get; }
+
     public string? HighlightColor { set; get; }
 
     public string? TextColor { set; get; }
@@ -17,7 +14,7 @@ public class BlockDiff
 
     public List<TextType>? TextTypes { set; get; }
 
-    public List<Guid>? LetterIdsToDelete { set; get; }
+    public List<string>? LetterIdsToDelete { set; get; }
 
-    public List<LetterDiff>? LettersToAdd { set; get; }
+    public List<BlockLetter>? LettersToAdd { set; get; }
 }

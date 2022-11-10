@@ -1,3 +1,4 @@
+import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
 import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
@@ -10,15 +11,18 @@ export abstract class ContentModelBase {
 
   order: number;
 
+  version: number;
+
   // UI FIELDS
 
   prevId?: string;
 
-  constructor(type: ContentTypeENUM, id: string, order: number, updatedAt: Date) {
+  constructor(type: ContentTypeENUM, id: string, order: number, updatedAt: Date, version: number) {
     this.typeId = type;
     this.id = id;
     this.updatedAt = updatedAt;
     this.order = order;
+    this.version = version;
   }
 
   transform(typeId: ContentTypeENUM): void {
@@ -37,4 +41,6 @@ export abstract class ContentModelBase {
   // abstract isEqualLite(content: ContentModelBase): boolean; Compare only by date;
 
   abstract patch(content: ContentModelBase);
+
+  abstract patchTextDiffs(diff: TextDiff);
 }

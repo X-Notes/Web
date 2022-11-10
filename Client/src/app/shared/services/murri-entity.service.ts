@@ -52,9 +52,9 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     this.murriService.muuriDestroy();
   }
 
-  getIsFirstInit(z: any): boolean {
+  getIsFirstInit(q: any): boolean {
     return (
-      z.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
+      q.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
     );
   }
 

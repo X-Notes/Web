@@ -5,6 +5,8 @@ import { BaseFile } from './base-file';
 import { TextBlock } from './text-models/text-block';
 import { NoteTextTypeENUM } from './text-models/note-text-type.enum';
 import { HeadingTypeENUM } from './text-models/heading-type.enum';
+import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
+import { BlockDiff } from '../../full-note/content-editor-services/models/block-diff';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
@@ -20,7 +22,7 @@ export class BaseText extends ContentModelBase {
   listId?: number;
 
   constructor(text: Partial<BaseText>) {
-    super(text.typeId, text.id, text.order, text.updatedAt);
+    super(text.typeId, text.id, text.order, text.updatedAt, text.version);
     this.contents = text.contents?.map((x) => new TextBlock(x));
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
@@ -114,15 +116,56 @@ export class BaseText extends ContentModelBase {
     this.checked = text.checked;
   }
 
+  patchTextDiffs(diff: TextDiff): void {
+    this.patchBlock(diff.blockDiffs);
+    this.headingTypeId = diff.headingTypeId ?? this.headingTypeId;
+    this.noteTextTypeId = diff.noteTextTypeId ?? this.noteTextTypeId;
+    this.checked = diff.checked ?? this.checked;
+  }
+
+  patchBlock(blockDiffs: BlockDiff[]): void {
+    if (!blockDiffs || blockDiffs?.length === 0) return;
+    //
+    for (let i = 0; i < blockDiffs.length; i++) {
+      const diff = blockDiffs[i];
+      if (i < this.contents?.length) {
+        const currentBlock = this.contents[i];
+        this.applyBlockDiffs(diff, currentBlock);
+      } else {
+        const newBlock = new TextBlock({ id: diff.id });
+        this.applyBlockDiffs(diff, newBlock);
+      }
+    }
+  }
+
+  applyBlockDiffs(diff: BlockDiff, block: TextBlock): void {
+    if (block) {
+      block.highlightColor = diff.highlightColor ?? block.highlightColor;
+      block.textColor = diff.textColor ?? block.textColor;
+      block.link = diff.link ?? block.link;
+      block.textTypes = diff.textTypes ?? block.textTypes;
+
+      if (diff.letterIdsToDelete?.length > 0) {
+        block.letters = block.letters.filter(
+          (x) => !diff.letterIdsToDelete.some((q) => q === x.id),
+        );
+      }
+      if (diff.lettersToAdd?.length > 0) {
+        block.letters ??= [];
+        block.letters.push(...diff.lettersToAdd);
+      }
+    }
+  }
+
   getConcatedText(): string {
     return this.contents
-      .map((z) => z.text)
+      .map((q) => q.getTextOrdered())
       .filter((x) => x.length > 0)
       .reduce((pv, cv) => pv + cv);
   }
 
   isHaveText(): boolean {
-    return this.contents?.some((z) => z.text.length > 0);
+    return this.contents?.some((q) => q.letters.length > 0);
   }
 
   private updateDate() {

@@ -5,7 +5,13 @@ import { BaseFile } from './base-file';
 
 export class AudiosCollection extends BaseCollection<AudioModel> {
   constructor(collection: Partial<AudiosCollection>, items: AudioModel[]) {
-    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
+    super(
+      collection.typeId,
+      collection.id,
+      collection.order,
+      collection.updatedAt,
+      collection.version,
+    );
     this.name = collection.name;
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.items = items ? items.map((q) => new AudioModel(q)) : [];
