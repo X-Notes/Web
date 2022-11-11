@@ -17,6 +17,7 @@ import { PhotosCollection } from '../../../models/editor-models/photos-collectio
 import { VideosCollection } from '../../../models/editor-models/videos-collection';
 import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
 import { StructureDiffs, PositionDiff, ItemForRemove } from '../models/structure-diffs';
+import { TextDiff } from '../models/text-diff';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { SyncResult } from './content-editor-sync.service';
 
@@ -484,15 +485,17 @@ export class ContentEditorContentsService {
     this.insertInto(collection, collection.order, true);
   }
 
-  patchText(data: BaseText, isSync = false): void {
-    const content = this.getContentById(data.id);
+  patchText(data: TextDiff, isSync = false): void {
+    const content = this.getContentById(data.contentId);
     if (content) {
-      content.patch(data);
+      content.patchTextDiffs(data);
     }
-    const contentSync = this.getSyncContentById(data.id);
+    console.log('content1: ', content);
+    const contentSync = this.getSyncContentById(data.contentId);
     if (contentSync && isSync) {
-      contentSync.patch(data);
+      contentSync.patchTextDiffs(data);
     }
+    console.log('content2: ', contentSync);
   }
 
   patchCollectionInfo(data: Partial<BaseCollection<BaseFile>>, isSync = false): void {

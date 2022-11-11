@@ -79,7 +79,7 @@ export class CrdtDiffsService {
     // console.log('newBlockText: ', newBlockText);
     if (prevBlockText !== newBlockText) {
       const letterDiffs = this.diffCheckerService.getDiffs(prevBlockText, newBlockText);
-      //console.log('letterDiffs: ', letterDiffs);
+      console.log('letterDiffs: ', letterDiffs);
       if (letterDiffs?.length > 0) {
         const letterDiffsMapped = letterDiffs.map((x) => new LetterDiff(x[0], x[1]));
         this.processDiffs(diffs, letterDiffsMapped, prevBlock);
@@ -110,14 +110,16 @@ export class CrdtDiffsService {
               nIndex < prevBlock.lettersOrdered.length ? prevBlock.lettersOrdered[nIndex] : null;
             // console.log('nextLetter: ', nextLetter);
             if (!prevLetter && !nextLetter) {
-              const newLetter = new Letter(letter, currentAllIndex + 1, null);
+              const newLetter = new Letter(letter, currentAllIndex + 1);
+              newLetter.initId();
               blockDiffs.lettersToAdd.push(newLetter);
             } else {
               const prevFractionalIndex = prevLetter?.fractionalIndex ?? 0;
               const nextFractionalIndex =
                 nextLetter?.fractionalIndex ?? prevBlock.lettersOrdered.length + 1;
               const fIndex = (prevFractionalIndex + nextFractionalIndex) / 2;
-              const newLetter = new Letter(letter, fIndex, null);
+              const newLetter = new Letter(letter, fIndex);
+              newLetter.initId();
               blockDiffs.lettersToAdd.push(newLetter);
             }
             break;

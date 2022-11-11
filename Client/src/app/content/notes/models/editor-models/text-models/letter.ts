@@ -5,18 +5,14 @@ export class Letter {
 
   id: string;
 
-  constructor(symbol: string, fractionalIndex: number, id: string) {
+  constructor(symbol: string, fractionalIndex: number, id: string = null) {
     this.symbol = symbol;
     this.fractionalIndex = parseFloat(fractionalIndex.toFixed(3));
-    this.id = id ?? this.randomIntFromInterval(1000, 9999).toString();
+    this.id = id;
   }
 
-  isEqual(letter: Letter): boolean {
-    return (
-      this.symbol === letter.symbol &&
-      this.fractionalIndex === letter.fractionalIndex &&
-      this.id === letter.id
-    );
+  initId(): void {
+    this.id = this.randomIntFromInterval(10000, 99999).toString();
   }
 
   randomIntFromInterval(min, max): number {

@@ -26,4 +26,16 @@ export class BlockDiff {
       this.lettersToAdd?.length > 0;
     return flag;
   }
+
+  init(block: Partial<BlockDiff>): void {
+    this.highlightColor = block.highlightColor === 'd' ? null : block.highlightColor;
+    this.textColor = block.textColor === 'd' ? null : block.textColor;
+    this.link = block.link;
+    this.textTypes = block.textTypes;
+
+    this.letterIdsToDelete.push(...block.letterIdsToDelete);
+    this.lettersToAdd.push(
+      ...block.lettersToAdd.map((x) => new Letter(x.symbol, x.fractionalIndex, x.id)),
+    );
+  }
 }

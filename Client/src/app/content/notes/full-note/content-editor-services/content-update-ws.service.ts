@@ -23,6 +23,7 @@ import {
 } from '../../models/editor-models/documents-collection';
 import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
+import { TextDiff } from './models/text-diff';
 
 @Injectable()
 export class ContentUpdateWsService implements OnDestroy {
@@ -106,6 +107,8 @@ export class ContentUpdateWsService implements OnDestroy {
       .subscribe((content) => {
         if (content) {
           try {
+            content.textDiff = TextDiff.getNewFrom(content.textDiff);
+            console.log('content.textDiff: ', content.textDiff);
             this.handleTextUpdates(content);
           } catch (e) {
             console.error(e);
@@ -114,9 +117,9 @@ export class ContentUpdateWsService implements OnDestroy {
       });
   }
 
-  handleTextUpdates(content: UpdateNoteTextWS) {
-    this.contentEditorContentsService.patchText(content.collection, true);
-    this.updateUI(content.collection.id);
+  handleTextUpdates(content: UpdateNoteTextWS): void {
+    this.contentEditorContentsService.patchText(content.textDiff, true);
+    this.updateUI(content.textDiff.contentId);
   }
 
   updateVideoCollections() {

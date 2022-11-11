@@ -17,7 +17,7 @@ import {
 } from '../content/folders/state/folders-actions';
 import { UpdateFolderUI } from '../content/folders/state/update-folder-ui.model';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
-import { BaseText } from '../content/notes/models/editor-models/base-text';
+import { TextDiff } from '../content/notes/full-note/content-editor-services/models/text-diff';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
@@ -181,7 +181,6 @@ export class SignalRService {
     });
 
     this.hubConnection.on('updateTextContent', (updates: UpdateNoteTextWS) => {
-      updates.collection = new BaseText(updates.collection);
       this.updateTextContentEvent$.next(updates);
     });
 

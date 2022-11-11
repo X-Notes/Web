@@ -165,6 +165,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   syncContentWithLayout() {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.apiBrowser.saveSelection(el);
+    console.log('this.content.contents: ', this.content.contents);
     this.updateHTML(this.content.contents);
     this.apiBrowser.restoreSelection(el, savedSel);
   }

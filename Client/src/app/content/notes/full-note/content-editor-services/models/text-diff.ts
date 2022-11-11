@@ -25,4 +25,22 @@ export class TextDiff {
       this.blockDiffs.filter((x) => x.isAnyChanges)?.length > 0
     );
   }
+
+  static getNewFrom(diff: Partial<TextDiff>): TextDiff {
+    const obj = new TextDiff(diff.contentId);
+    obj.init(diff);
+    return obj;
+  }
+
+  init(diffs: Partial<TextDiff>) {
+    this.headingTypeId = diffs.headingTypeId;
+    this.noteTextTypeId = diffs.noteTextTypeId;
+    this.checked = diffs.checked;
+    const newBlocks = diffs.blockDiffs?.map((x) => {
+      const obj = new BlockDiff(x.id);
+      obj.init(x);
+      return obj;
+    });
+    this.blockDiffs.push(...newBlocks);
+  }
 }

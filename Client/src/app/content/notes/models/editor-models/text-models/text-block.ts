@@ -24,13 +24,14 @@ export class TextBlock {
   header?: number;
 
   constructor(block: Partial<TextBlock>) {
+    console.log('constructor: ');
     this.letters = block.letters?.map((x) => new Letter(x.symbol, x.fractionalIndex, x.id)) ?? [];
     this.highlightColor = block.highlightColor;
     this.textColor = block.textColor;
     this.link = block.link;
     this.textTypes = block.textTypes;
 
-    this.id = block.id ?? this.randomIntFromInterval(1000, 9999).toString();
+    this.id = block.id ?? this.randomIntFromInterval(10000, 99999).toString();
   }
 
   get lettersOrdered(): Letter[] {
@@ -69,8 +70,8 @@ export class TextBlock {
   applyText(text: string): void {
     const letters: Letter[] = [];
     for (let index = 0; index < text.length; index++) {
-      const id = this.randomIntFromInterval(1000, 9999).toString();
-      letters.push(new Letter(text[index], index, id));
+      console.log('applyText: ');
+      letters.push(new Letter(text[index], index, null));
     }
     this.letters = letters;
   }
