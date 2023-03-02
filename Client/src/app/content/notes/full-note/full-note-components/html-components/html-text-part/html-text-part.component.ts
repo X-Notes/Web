@@ -22,11 +22,11 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SelectionService } from '../../../content-editor-services/selection.service';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
-import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
-import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
 import { DomSanitizer } from '@angular/platform-browser';
 import { isValidURL } from '../../../../../../shared/utils/is-valid-url.util';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
+import { NoteTextTypeENUM } from '../../../content-editor/text/note-text-type.enum';
+import { HeadingTypeENUM } from '../../../content-editor/text/heading-type.enum';
 
 @Component({
   selector: 'app-html-text-part',

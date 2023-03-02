@@ -1,4 +1,3 @@
-import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
 import { BaseFile } from './base-file';
 import { ContentTypeENUM } from './content-types.enum';
 
@@ -41,6 +40,4 @@ export abstract class ContentModelBase {
   // abstract isEqualLite(content: ContentModelBase): boolean; Compare only by date;
 
   abstract patch(content: ContentModelBase);
-
-  abstract patchTextDiffs(diff: TextDiff);
 }

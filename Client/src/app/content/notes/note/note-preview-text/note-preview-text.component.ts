@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DeltaConverter } from '../../full-note/content-editor/converter/delta-converter';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NoteTextTypeENUM } from '../../full-note/content-editor/text/note-text-type.enum';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -24,8 +24,8 @@ export class NotePreviewTextComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    if (this.content.contents?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    if (this.content.contentsUI?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
       this.viewHtml = this.sanitizer.bypassSecurityTrustHtml(html) as string;
     }
   }

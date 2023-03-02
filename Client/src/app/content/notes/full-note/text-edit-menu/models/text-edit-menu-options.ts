@@ -1,5 +1,5 @@
-import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
+import { HeadingTypeENUM } from '../../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
 
 export interface TextEditMenuOptions {
   ids: string[];

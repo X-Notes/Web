@@ -11,7 +11,7 @@ import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
-import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
+import { DiffCheckerService } from '../../notes/full-note/content-editor/crdt/diff-checker.service';
 
 @Component({
   selector: 'app-folder',
@@ -65,7 +65,7 @@ export class FolderComponent implements OnInit, OnDestroy {
     this.titleChange$
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffs(this.folder.title, title);
+        const diffs = this.diffCheckerService.getDiffsText(this.folder.title, title);
         this.store.dispatch(
           new UpdateFolderTitle(diffs, title, this.folder.id, true, null, false, false),
         );

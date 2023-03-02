@@ -7,9 +7,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { HeadingTypeENUM } from '../../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
 import { TypeUploadFile } from '../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { TransformContent } from '../../models/transform-content.model';

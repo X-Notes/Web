@@ -2,11 +2,12 @@ import * as uuid from 'uuid';
 import { ContentTypeENUM } from './content-types.enum';
 import { ContentModelBase } from './content-model-base';
 import { BaseFile } from './base-file';
-import { TextBlock } from './text-models/text-block';
-import { NoteTextTypeENUM } from './text-models/note-text-type.enum';
-import { HeadingTypeENUM } from './text-models/heading-type.enum';
+import { HeadingTypeENUM } from '../../full-note/content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../full-note/content-editor/text/note-text-type.enum';
+import { TreeBlock } from '../../full-note/content-editor/text/entities/blocks/tree-block';
+import { BlockDiff } from '../../full-note/content-editor/text/entities/diffs/block-diff';
+import { ProjectBlock } from '../../full-note/content-editor/text/entities/blocks/projection-block';
 import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
-import { BlockDiff } from '../../full-note/content-editor-services/models/block-diff';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
@@ -17,13 +18,16 @@ export class BaseText extends ContentModelBase {
 
   checked?: boolean;
 
-  contents: TextBlock[];
+  contents: TreeBlock[];
+
+  contentsUI: ProjectBlock[];
 
   listId?: number;
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt, text.version);
-    this.contents = text.contents?.map((x) => new TextBlock(x));
+    this.contents = text.contents?.map((x) => new TreeBlock(x));
+    this.contentsUI = this.contents?.map((x) => x.getProjection());
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
@@ -34,8 +38,8 @@ export class BaseText extends ContentModelBase {
     return null;
   }
 
-  updateContent(contents: TextBlock[]) {
-    this.contents = contents;
+  updateContent(contents: ProjectBlock[]) {
+    this.contentsUI = contents;
     this.updateDate();
   }
 
@@ -88,7 +92,7 @@ export class BaseText extends ContentModelBase {
   }
 
   isEqual(content: BaseText): boolean {
-    const isEqualText = this.isEqualText(this.contents, content.contents);
+    const isEqualText = this.isEqualBlock(this.contents, content.contents);
     return (
       isEqualText &&
       this.headingTypeId === content.headingTypeId &&
@@ -97,13 +101,13 @@ export class BaseText extends ContentModelBase {
     );
   }
 
-  isEqualText = (blockF: TextBlock[], blockS: TextBlock[]): boolean => {
+  isEqualBlock = (blockF: TreeBlock[], blockS: TreeBlock[]): boolean => {
     if (blockF === blockS) return true;
     if (blockF == null || blockS == null) return false;
     if (blockF.length !== blockS.length) return false;
 
     for (let i = 0; i < blockF.length; i += 1) {
-      if (!blockF[i].isEqual(blockS[i])) return false;
+      if (!blockF[i].isEqualBlock(blockS[i])) return false;
     }
 
     return true;
@@ -116,56 +120,73 @@ export class BaseText extends ContentModelBase {
     this.checked = text.checked;
   }
 
+  ///
+
   patchTextDiffs(diff: TextDiff): void {
-    this.patchBlock(diff.blockDiffs);
+    this.processDiffsTextAndProps(diff.blockDiffs, this.contents);
     this.headingTypeId = diff.headingTypeId ?? this.headingTypeId;
     this.noteTextTypeId = diff.noteTextTypeId ?? this.noteTextTypeId;
     this.checked = diff.checked ?? this.checked;
   }
 
-  patchBlock(blockDiffs: BlockDiff[]): void {
-    if (!blockDiffs || blockDiffs?.length === 0) return;
-    //
+  processDiffsTextAndProps(blockDiffs: BlockDiff[], stateBlocks: TreeBlock[]): void {
+    if (!blockDiffs) return;
+    this.alignBlocks(blockDiffs, stateBlocks);
+    this.processText(blockDiffs, stateBlocks);
+    this.processProps(blockDiffs, stateBlocks);
+  }
+
+  processDiffsProps(blockDiffs: BlockDiff[], stateBlocks: TreeBlock[]): void {
+    if (!blockDiffs) return;
+    this.alignBlocks(blockDiffs, stateBlocks);
+    this.processProps(blockDiffs, stateBlocks);
+  }
+
+  processProps(blockDiffs: BlockDiff[], stateBlocks: TreeBlock[]): void {
     for (let i = 0; i < blockDiffs.length; i++) {
-      const diff = blockDiffs[i];
-      if (i < this.contents?.length) {
-        const currentBlock = this.contents[i];
-        this.applyBlockDiffs(diff, currentBlock);
-      } else {
-        const newBlock = new TextBlock({ id: diff.id });
-        this.applyBlockDiffs(diff, newBlock);
+      const diffs = blockDiffs[i];
+      const stateBlock = stateBlocks[i];
+
+      if (diffs.highlightColor) {
+        stateBlock.updateHighlightColor(diffs.highlightColor);
+      }
+      if (diffs.link) {
+        stateBlock.updateLink(diffs.link);
+      }
+      if (diffs.textColor) {
+        stateBlock.updateTextColor(diffs.textColor);
+      }
+      if (diffs.textTypes) {
+        stateBlock.updateTextTypes(diffs.textTypes);
       }
     }
   }
 
-  applyBlockDiffs(diff: BlockDiff, block: TextBlock): void {
-    if (block) {
-      block.highlightColor = diff.highlightColor ?? block.highlightColor;
-      block.textColor = diff.textColor ?? block.textColor;
-      block.link = diff.link ?? block.link;
-      block.textTypes = diff.textTypes ?? block.textTypes;
+  processText(blockDiffs: BlockDiff[], stateBlocks: TreeBlock[]): void {
+    for (let i = 0; i < blockDiffs.length; i++) {
+      const diffs = blockDiffs[i];
+      const stateBlock = stateBlocks[i];
+      stateBlock.tree.merge([diffs.mergeOps]);
+    }
+  }
 
-      if (diff.letterIdsToDelete?.length > 0) {
-        block.letters = block.letters.filter(
-          (x) => !diff.letterIdsToDelete.some((q) => q === x.id),
-        );
-      }
-      if (diff.lettersToAdd?.length > 0) {
-        block.letters ??= [];
-        block.letters.push(...diff.lettersToAdd);
+  alignBlocks(blockDiffs: BlockDiff[], stateBlocks: TreeBlock[]): void {
+    for (let i = 0; i < blockDiffs.length; i++) {
+      if (i >= stateBlocks.length) {
+        stateBlocks.push(new TreeBlock({}));
       }
     }
   }
 
-  getConcatedText(): string {
-    return this.contents
-      .map((q) => q.getTextOrdered())
+  getUIConcatedText(): string {
+    return this.contentsUI
+      .map((q) => q.getText())
       .filter((x) => x.length > 0)
       .reduce((pv, cv) => pv + cv);
   }
 
-  isHaveText(): boolean {
-    return this.contents?.some((q) => q.letters.length > 0);
+  isHaveUIText(): boolean {
+    return this.getUIConcatedText()?.length > 0;
   }
 
   private updateDate() {

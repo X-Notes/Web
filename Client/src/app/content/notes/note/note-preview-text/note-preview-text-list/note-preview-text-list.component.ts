@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ThemeENUM } from '../../../../../shared/enums/theme.enum';
+import { NoteTextTypeENUM } from '../../../full-note/content-editor/text/note-text-type.enum';
 import { BaseText } from '../../../models/editor-models/base-text';
-import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 
 @Component({
   selector: 'app-note-preview-text-list',

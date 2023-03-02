@@ -1,7 +1,7 @@
-import Quill, { DeltaStatic } from 'quill';
-import { TextBlock } from '../../../models/editor-models/text-models/text-block';
-import { TextType } from '../../../models/editor-models/text-models/text-type';
+import Quill, { DeltaStatic, StringMap } from 'quill';
 import { TextUpdateValue } from '../../../models/update-text-styles';
+import { ProjectBlock } from '../text/entities/blocks/projection-block';
+import { TextTypeENUM } from '../text/text-type.enum';
 import { DeltaListEnum } from './entities/delta-list.enum';
 
 export interface StringAny {
@@ -25,22 +25,22 @@ export class DeltaConverter {
 
   // CONVERT METHODS
 
-  static convertHTMLToTextBlocks(html: string): TextBlock[] {
+  static convertHTMLToTextBlocks(html: string): ProjectBlock[] {
     const delta = this.convertHTMLToDelta(html);
     return this.convertDeltaToTextBlocks(delta);
   }
 
-  static convertDeltaToTextBlocks(delta: DeltaStatic): TextBlock[] {
+  static convertDeltaToTextBlocks(delta: DeltaStatic): ProjectBlock[] {
     if (!delta.ops || delta.ops.length === 0) {
       return [];
     }
-    const result: TextBlock[] = [];
+    const result: ProjectBlock[] = [];
     delta.ops.forEach((item) => {
-      const block = new TextBlock({});
+      const block = new ProjectBlock({});
       if (typeof item.insert !== 'string') return; // Todo there are can be paste image
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
-        block.applyText(clearStr);
+        block.content = clearStr;
         block.textTypes = this.getTextTypes(item.attributes);
         block.textColor = this.getTextColor(item.attributes);
         block.link = this.getLink(item.attributes);
@@ -54,20 +54,20 @@ export class DeltaConverter {
     return result;
   }
 
-  static convertTextBlocksToHTML(contents: TextBlock[]): string {
+  static convertTextBlocksToHTML(contents: ProjectBlock[]): string | null {
     const ops = this.convertTextBlocksToDelta(contents);
     const html = this.convertDeltaToHtml(ops);
     return html;
   }
 
-  static convertDeltaToHtml = (deltaStatic: DeltaStatic): string => {
+  static convertDeltaToHtml = (deltaStatic: DeltaStatic | null): string => {
     if (!deltaStatic?.ops || deltaStatic?.ops?.length === 0) {
-      return null;
+      return '';
     }
 
     DeltaConverter.quillInstance.setContents(deltaStatic);
     const result = DeltaConverter.quillInstance.root.innerHTML;
-    DeltaConverter.quillInstance.setContents(null);
+    DeltaConverter.quillInstance.setContents({} as DeltaStatic);
     return result;
   };
 
@@ -99,7 +99,8 @@ export class DeltaConverter {
   }
 
   static clearEditor(): void {
-    DeltaConverter.quillInstance.setContents(null);
+    DeltaConverter.quillInstance.setContents({} as DeltaStatic);
+    // DeltaConverter.quillInstance.setContents(null);
   }
 
   static insertLink(html: string, posIndex: number, title: string, url: string): DeltaStatic {
@@ -153,28 +154,31 @@ export class DeltaConverter {
     return DeltaConverter.quillInstance.clipboard.convert(html);
   }
 
-  private static convertTextBlocksToDelta(contents: TextBlock[]): DeltaStatic {
+  private static convertTextBlocksToDelta(contents: ProjectBlock[]): DeltaStatic | null {
     if (!contents || contents.length === 0) {
       return null;
     }
     const staticDelta = {} as DeltaStatic;
     const ops = contents.map((item) => {
-      return { insert: item.getTextOrdered(), attributes: this.convertToAttributes(item) };
+      return {
+        insert: item.getText(),
+        attributes: this.convertToAttributes(item),
+      };
     });
     staticDelta.ops = ops;
     return staticDelta;
   }
 
-  private static convertToAttributes(block: TextBlock): StringAny {
+  private static convertToAttributes(block: ProjectBlock): StringAny {
     if (!block || !block.textTypes) {
       return {};
     }
     const obj: StringAny = {};
     block.textTypes.forEach((i) => {
-      if (i === TextType.Bold) {
+      if (i === TextTypeENUM.Bold) {
         obj.bold = true;
       }
-      if (i === TextType.Italic) {
+      if (i === TextTypeENUM.Italic) {
         obj.italic = true;
       }
     });
@@ -190,7 +194,7 @@ export class DeltaConverter {
     return obj;
   }
 
-  private static getHighlightColorColor(map: StringAny): string {
+  private static getHighlightColorColor(map: StringAny | StringMap | undefined): string | null {
     if (!map) {
       return null;
     }
@@ -200,7 +204,7 @@ export class DeltaConverter {
     return null;
   }
 
-  private static getList(map: StringAny): DeltaListEnum {
+  private static getList(map: StringAny | StringMap | undefined): DeltaListEnum | null {
     if (!map) {
       return null;
     }
@@ -210,7 +214,7 @@ export class DeltaConverter {
     return null;
   }
 
-  private static getHeader(map: StringAny): number {
+  private static getHeader(map: StringAny | StringMap | undefined): number | null {
     if (!map) {
       return null;
     }
@@ -220,7 +224,7 @@ export class DeltaConverter {
     return null;
   }
 
-  private static getLink(map: StringAny): string {
+  private static getLink(map: StringAny | StringMap | undefined): string | null {
     if (!map) {
       return null;
     }
@@ -230,7 +234,7 @@ export class DeltaConverter {
     return null;
   }
 
-  private static getTextColor(map: StringAny): string {
+  private static getTextColor(map: StringAny | StringMap | undefined): string | null {
     if (!map) {
       return null;
     }
@@ -240,16 +244,16 @@ export class DeltaConverter {
     return null;
   }
 
-  private static getTextTypes(map: StringAny): TextType[] {
-    const types: TextType[] = [];
+  private static getTextTypes(map: StringAny | StringMap | undefined): TextTypeENUM[] {
+    const types: TextTypeENUM[] = [];
     if (!map) {
       return types;
     }
     if (map.bold) {
-      types.push(TextType.Bold);
+      types.push(TextTypeENUM.Bold);
     }
     if (map.italic) {
-      types.push(TextType.Italic);
+      types.push(TextTypeENUM.Italic);
     }
     return types;
   }

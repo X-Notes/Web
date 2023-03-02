@@ -1,6 +1,6 @@
-import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
-import { BlockDiff } from './block-diff';
+import { BlockDiff } from '../../content-editor/text/entities/diffs/block-diff';
+import { HeadingTypeENUM } from '../../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
 
 export class TextDiff {
   contentId: string;
@@ -12,6 +12,8 @@ export class TextDiff {
   checked?: boolean;
 
   blockDiffs: BlockDiff[] = [];
+
+  agent: number;
 
   constructor(contentId: string) {
     this.contentId = contentId;
@@ -37,7 +39,7 @@ export class TextDiff {
     this.noteTextTypeId = diffs.noteTextTypeId;
     this.checked = diffs.checked;
     const newBlocks = diffs.blockDiffs?.map((x) => {
-      const obj = new BlockDiff(x.id);
+      const obj = new BlockDiff(x.agentId);
       obj.init(x);
       return obj;
     });

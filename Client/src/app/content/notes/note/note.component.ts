@@ -7,7 +7,7 @@ import { BaseText } from '../models/editor-models/base-text';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
 import dayjs from 'dayjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { NoteTextTypeENUM } from '../models/editor-models/text-models/note-text-type.enum';
+import { NoteTextTypeENUM } from '../full-note/content-editor/text/note-text-type.enum';
 
 @Component({
   selector: 'app-note',

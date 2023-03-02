@@ -11,10 +11,10 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
-import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../content-editor-services/selection.service';
+import { ProjectBlock } from '../../content-editor/text/entities/blocks/projection-block';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { BaseEditorElementComponent } from '../base-html-components';
@@ -98,7 +98,7 @@ export class CollectionBaseComponent<
     this.apiBrowserTextService.setCaretFirstChild(el, data);
   }
 
-  getTextBlocks = (): TextBlock[] => {
+  getTextBlocks = (): ProjectBlock[] => {
     return null;
   };
 

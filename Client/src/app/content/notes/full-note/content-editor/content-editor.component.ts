@@ -51,20 +51,20 @@ import { VideosCollection } from '../../models/editor-models/videos-collection';
 import { DocumentsCollection } from '../../models/editor-models/documents-collection';
 import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
-import { DiffCheckerService } from './diffs/diff-checker.service';
+import { DiffCheckerService } from './crdt/diff-checker.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { ContentEditorSyncService } from '../content-editor-services/core/content-editor-sync.service';
 import { ContentEditorRestoreService } from '../content-editor-services/core/content-editor-restore.service';
 import { PasteEvent } from '../full-note-components/html-components/html-base.component';
-import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { DeltaStatic } from 'quill';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 import { TextEditMenuOptions } from '../text-edit-menu/models/text-edit-menu-options';
 import { HtmlPropertyTagCollectorService } from '../content-editor-services/html-property-tag-collector.service';
+import { NoteTextTypeENUM } from './text/note-text-type.enum';
+import { HeadingTypeENUM } from './text/heading-type.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -326,7 +326,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffs(this.title, title);
+        const diffs = this.diffCheckerService.getDiffsText(this.title, title);
         this.store.dispatch(new UpdateNoteTitle(diffs, title, this.note.id, true, null, false));
         this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
@@ -518,7 +518,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
         continue;
       }
       const content = el.getContent() as BaseText;
-      const html = DeltaConverter.convertTextBlocksToHTML(content.contents);
+      const html = DeltaConverter.convertTextBlocksToHTML(content.contentsUI);
       if (!html) continue;
       const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
       let resultDelta: DeltaStatic;
@@ -542,8 +542,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent) {
-    const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
-    model.content.contents = contents;
     this.postAction();
     this.menuSelectionDirective.onSelectionchange(true);
   }
@@ -627,7 +625,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (text.noteTextTypeId !== NoteTextTypeENUM.default) {
       return true;
     }
-    if (text.contents && text.contents?.length !== 0) {
+    if (text.contentsUI && text.contentsUI?.length !== 0) {
       return true;
     }
     return false;

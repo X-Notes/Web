@@ -3,11 +3,11 @@ import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { Photo } from '../../models/editor-models/photos-collection';
-import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
+import { HeadingTypeENUM } from '../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../content-editor/text/note-text-type.enum';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Directive({
@@ -103,10 +103,10 @@ export class CopyDirective implements OnDestroy, OnInit {
         (x) =>
           selectedItemsIds.some((q) => q === x.id) &&
           x instanceof BaseText &&
-          (x as BaseText).isHaveText(),
+          (x as BaseText).isHaveUIText(),
       )
       .map((x) => x as BaseText);
-    const texts = items.map((item) => item.getConcatedText());
+    const texts = items.map((item) => item.getUIConcatedText());
     if (texts.length > 0) {
       return texts.reduce((pv, cv) => `${pv}\n${cv}`);
     }

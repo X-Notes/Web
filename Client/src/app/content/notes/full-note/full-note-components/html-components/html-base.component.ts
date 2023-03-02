@@ -13,14 +13,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseText } from '../../../models/editor-models/base-text';
-import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
-import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
+import { ProjectBlock } from '../../content-editor/text/entities/blocks/projection-block';
+import { HeadingTypeENUM } from '../../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
 import { EnterEvent } from '../../models/enter-event.model';
 import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
@@ -84,10 +84,10 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
     this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
       if (!this.contentHtml) return;
-      this.inputHtmlEvent.emit({
-        content: this.content,
-        html: this.contentHtml.nativeElement.innerHTML,
-      });
+      const html = this.contentHtml.nativeElement.innerHTML;
+      const contents = DeltaConverter.convertHTMLToTextBlocks(html);
+      this.content.contentsUI = contents;
+      this.inputHtmlEvent.emit({ content: this.content });
     });
   }
 
@@ -104,8 +104,8 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   initBaseHTML(): void {
-    if (this.content.contents?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    if (this.content.contentsUI?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
       this.sanitizer.bypassSecurityTrustHtml(html);
       const convertedHTML = this.sanitizer.bypassSecurityTrustHtml(html) ?? '';
       this.viewHtml = convertedHTML as string;
@@ -123,7 +123,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     });
   }
 
-  updateHTML(contents: TextBlock[]): void {
+  updateHTML(contents: ProjectBlock[]): void {
     // TODO TEST IT
     this.transformOnUpdate(contents);
     const html = DeltaConverter.convertTextBlocksToHTML(contents);
@@ -131,13 +131,13 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     this.syncHtmlWithLayout();
   }
 
-  transformOnUpdate(contents: TextBlock[]): void {
+  transformOnUpdate(contents: ProjectBlock[]): void {
     const content = contents?.find((x) => x.list !== null);
     if (content?.list) {
       if (content.list === DeltaListEnum.bullet) {
         let type = NoteTextTypeENUM.dotList;
-        if (content.getTextOrdered()?.startsWith('[ ]')) {
-          content.applyText(content.getTextOrdered().slice(3));
+        if (content.getText()?.startsWith('[ ]')) {
+          content.content = content.getText().slice(3);
           type = NoteTextTypeENUM.checkList;
         }
         this.transformContent(null, type);
@@ -165,8 +165,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   syncContentWithLayout() {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.apiBrowser.saveSelection(el);
-    console.log('this.content.contents: ', this.content.contents);
-    this.updateHTML(this.content.contents);
+    this.updateHTML(this.content.contentsUI);
     this.apiBrowser.restoreSelection(el, savedSel);
   }
 
@@ -182,7 +181,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     return this.contentHtml?.nativeElement as T;
   }
 
-  getTextBlocks(): TextBlock[] {
+  getTextBlocks(): ProjectBlock[] {
     const html = this.getEditableNative<HTMLElement>().innerHTML;
     return DeltaConverter.convertHTMLToTextBlocks(html);
   }
@@ -283,7 +282,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     const title = data.title;
     const url = data.url;
     const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
     const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
     const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
     this.updateHTML(resTextBlocks);

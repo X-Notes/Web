@@ -5,7 +5,8 @@ import { Select } from '@ngxs/store';
 import { UserStore } from '../../../../core/stateUser/user-state';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 import { Observable } from 'rxjs';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { NoteTextTypeENUM } from '../content-editor/text/note-text-type.enum';
+
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',

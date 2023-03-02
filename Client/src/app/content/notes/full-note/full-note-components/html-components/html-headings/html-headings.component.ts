@@ -11,12 +11,12 @@ import {
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
-import { HeadingTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { SelectionService } from '../../../content-editor-services/selection.service';
+import { HeadingTypeENUM } from '../../../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../../../content-editor/text/note-text-type.enum';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { BaseTextElementComponent } from '../html-base.component';
 

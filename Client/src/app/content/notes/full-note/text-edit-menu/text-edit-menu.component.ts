@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
 import { TextColors } from 'src/app/shared/enums/text-colors.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { TextStyles, TextUpdateValue, UpdateTextStyles } from '../../models/update-text-styles';
+import { HeadingTypeENUM } from '../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../content-editor/text/note-text-type.enum';
 import { TransformContent } from '../models/transform-content.model';
 import { TextEditMenuOptions } from './models/text-edit-menu-options';
 

@@ -486,12 +486,12 @@ export class ContentEditorContentsService {
   }
 
   patchText(data: TextDiff, isSync = false): void {
-    const content = this.getContentById(data.contentId);
+    const content = this.getContentById<BaseText>(data.contentId);
     if (content) {
       content.patchTextDiffs(data);
     }
     console.log('content1: ', content);
-    const contentSync = this.getSyncContentById(data.contentId);
+    const contentSync = this.getSyncContentById<BaseText>(data.contentId);
     if (contentSync && isSync) {
       contentSync.patchTextDiffs(data);
     }

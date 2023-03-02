@@ -52,6 +52,8 @@ export class ContentEditorSyncService {
 
   private noteId: string;
 
+  private agent: number;
+
   private isEdit = false;
 
   private updateSubject: BehaviorSubject<boolean>;
@@ -77,6 +79,12 @@ export class ContentEditorSyncService {
     private crdtDiffsService: CrdtDiffsService,
   ) {
     this.initTimer();
+    this.agent = this.randomIntFromInterval(1, 100000);
+  }
+
+  randomIntFromInterval(min, max) {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   initTimer(): void {
@@ -346,7 +354,7 @@ export class ContentEditorSyncService {
     for (const content of newContents) {
       const oldSyncContent = oldContents.find((syncContent) => syncContent.id === content.id);
       if (oldSyncContent) {
-        const contentDiffs = this.crdtDiffsService.findChanges(oldSyncContent, content);
+        const contentDiffs = this.crdtDiffsService.getDiffs(oldSyncContent, content, this.agent);
         if (contentDiffs.hasChanges) {
           console.log('contentDiffs: ', contentDiffs);
           diffs.push(contentDiffs);

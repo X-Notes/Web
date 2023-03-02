@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
-import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { HeadingTypeENUM } from '../content-editor/text/heading-type.enum';
+import { NoteTextTypeENUM } from '../content-editor/text/note-text-type.enum';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 
