@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.WS;
 using Common.Interfaces;
+using Noots.RGA_CRDT;
 
 namespace Common.DatabaseModels.Models.Folders
 {
@@ -17,12 +18,15 @@ namespace Common.DatabaseModels.Models.Folders
         public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
-        public string Title { set; get; }
+        [Column(TypeName = "jsonb")]
+        public TreeRGA<string> Title { set; get; } = new TreeRGA<string>();
+
         public string Color { set; get; }
+
         public int Order { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
-
 
         public List<FoldersNotes> FoldersNotes { set; get; }
         public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }

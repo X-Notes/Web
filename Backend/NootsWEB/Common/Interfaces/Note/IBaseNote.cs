@@ -3,7 +3,7 @@ using Common.DatabaseModels.Models.Systems;
 
 namespace Common.Interfaces.Note
 {
-    public interface IBaseNote
+    public interface IBaseNote<T>
     {
         public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
@@ -11,7 +11,8 @@ namespace Common.Interfaces.Note
         public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
-        public string Title { set; get; }
+        public T Title { set; get; }
+
         public string Color { set; get; }
     }
 }

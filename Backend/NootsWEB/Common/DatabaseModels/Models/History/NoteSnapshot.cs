@@ -1,6 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.History.Contents;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
@@ -12,7 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Common.DatabaseModels.Models.History
 {
     [Table(nameof(NoteSnapshot), Schema = SchemeConfig.NoteHistory)]
-    public class NoteSnapshot : BaseEntity<Guid>, IBaseNote
+    public class NoteSnapshot : BaseEntity<Guid>, IBaseNote<string>
     {
         public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }

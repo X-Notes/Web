@@ -13,8 +13,6 @@ export class BlockDiff {
 
   mergeOps = new MergeTransaction<string>();
 
-  constructor(public agentId: number) {}
-
   get isAnyChanges(): boolean {
     const flag =
       this.highlightColor !== undefined ||

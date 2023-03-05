@@ -13,8 +13,6 @@ export class TextDiff {
 
   blockDiffs: BlockDiff[] = [];
 
-  agent: number;
-
   constructor(contentId: string) {
     this.contentId = contentId;
   }
@@ -39,7 +37,7 @@ export class TextDiff {
     this.noteTextTypeId = diffs.noteTextTypeId;
     this.checked = diffs.checked;
     const newBlocks = diffs.blockDiffs?.map((x) => {
-      const obj = new BlockDiff(x.agentId);
+      const obj = new BlockDiff();
       obj.init(x);
       return obj;
     });

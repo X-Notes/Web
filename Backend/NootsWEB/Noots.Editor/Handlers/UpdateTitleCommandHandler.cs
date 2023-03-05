@@ -1,5 +1,4 @@
-﻿using BI.Services.DiffsMatchPatch;
-using Common;
+﻿using Common;
 using Common.DTO;
 using Common.DTO.WebSockets;
 using MediatR;
@@ -7,13 +6,13 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Editor.Commands;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
+using Noots.RGA_CRDT;
 using Noots.SignalrUpdater.Impl;
 
 namespace Noots.Editor.Handlers
 {
     public class UpdateTitleCommandHandler : IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>
     {
-
         private readonly IMediator _mediator;
 
         private readonly NoteRepository noteRepository;
@@ -22,20 +21,16 @@ namespace Noots.Editor.Handlers
 
         private readonly NoteWSUpdateService noteWSUpdateService;
 
-        private readonly DiffsMatchPatchService diffsMatchPatchService;
-
         public UpdateTitleCommandHandler(
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
-            NoteWSUpdateService noteWSUpdateService,
-            DiffsMatchPatchService diffsMatchPatchService)
+            NoteWSUpdateService noteWSUpdateService)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
             this.historyCacheService = historyCacheService;
             this.noteWSUpdateService = noteWSUpdateService;
-            this.diffsMatchPatchService = diffsMatchPatchService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -47,9 +42,9 @@ namespace Noots.Editor.Handlers
             {
                 var note = permissions.Note;
 
-                async Task UpdateNoteTitle(string title)
+                async Task UpdateNoteTitle(MergeTransaction<string> transaction)
                 {
-                    note.Title = title;
+                    note.Title.Merge(transaction);
                     note.UpdatedAt = DateTimeProvider.Time;
                     await noteRepository.UpdateAsync(note);
 
@@ -58,15 +53,15 @@ namespace Noots.Editor.Handlers
 
                 if (permissions.IsSingleUpdate)
                 {
-                    await UpdateNoteTitle(request.Title);
+                    await UpdateNoteTitle(request.Transaction);
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
 
-                var title = diffsMatchPatchService.PatchToStr(request.Diffs, note.Title);
-                await UpdateNoteTitle(title);
+                await UpdateNoteTitle(request.Transaction);
 
                 // WS UPDATES
-                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true }, permissions.GetAllUsers(), Guid.Empty);
+                var updateCommand = new UpdateNoteWS { TitleTransaction = request.Transaction, NoteId = note.Id, IsUpdateTitle = true };
+                await noteWSUpdateService.UpdateNote(updateCommand, permissions.GetAllUsers(), Guid.Empty);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

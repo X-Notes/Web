@@ -42,6 +42,14 @@ namespace Noots.Permissions.Entities
             }
         }
 
+        public bool IsSingleUpdate
+        {
+            get
+            {
+                return !IsMultiplyUpdate;
+            }
+        }
+
         public UserPermissionsForFolder GetFullAccess(User user, Folder folder)
         {
             Caller = user;

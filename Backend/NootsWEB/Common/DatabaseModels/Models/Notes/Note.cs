@@ -10,11 +10,12 @@ using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.WS;
 using Common.Interfaces;
 using Common.Interfaces.Note;
+using Noots.RGA_CRDT;
 
 namespace Common.DatabaseModels.Models.Notes
 {
     [Table(nameof(Note), Schema = SchemeConfig.Note)]
-    public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote
+    public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote<TreeRGA<string>>
     {
         public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
@@ -22,7 +23,9 @@ namespace Common.DatabaseModels.Models.Notes
         public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
-        public string Title { set; get; }
+        [Column(TypeName = "jsonb")]
+        public TreeRGA<string> Title { set; get; } = new TreeRGA<string>();
+
         public string Color { set; get; }
         public int Order { set; get; }
 

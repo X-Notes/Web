@@ -71,7 +71,7 @@ export class CrdtDiffsService {
   }
 
   private findChangesBlock(treeBlock: TreeBlock, uiBlock: ProjectBlock, agent: number): BlockDiff {
-    const diffs: BlockDiff = new BlockDiff(agent);
+    const diffs: BlockDiff = new BlockDiff();
 
     if (treeBlock.hC?.value !== uiBlock.highlightColor) {
       const value = uiBlock.highlightColor === null ? 'd' : uiBlock.highlightColor;

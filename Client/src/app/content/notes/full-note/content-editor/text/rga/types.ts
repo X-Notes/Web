@@ -98,7 +98,7 @@ export type LocalTransaction<T> = {
 };
 
 export enum MergeOpType {
-  Insert,
+  Insert = 1,
   Delete
 }
 

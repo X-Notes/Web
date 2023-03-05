@@ -17,16 +17,17 @@ namespace Noots.DatabaseContext.Repositories
         public async Task<List<Note>> GetNotesByUserIdSearch(Guid userId)
         {
             return await context.Notes // TODO OPTIMIZATION
-                .Include(x => x.FoldersNotes).ThenInclude(z => z.Folder)
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as CollectionNote).Files)
+                .Include(x => x.FoldersNotes).ThenInclude(q => q.Folder)
+                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                .Include(x => x.Contents).ThenInclude(q => (q as CollectionNote).Files)
                 .Where(x => x.UserId == userId).ToListAsync();
         }
 
         // TODO MAKE FOR ALL FOLDERS
         public async Task<List<Folder>> GetFolderByUserIdAndString(Guid userId, string searchStr)
         {
-            return await context.Folders.Where(x => x.UserId == userId && x.Title.Contains(searchStr)).ToListAsync();
+            var folders = await context.Folders.Where(x => x.UserId == userId).ToListAsync();
+            return folders.Where(x => x.Title.ReadStr().Contains(searchStr)).ToList();
         }
 
     }

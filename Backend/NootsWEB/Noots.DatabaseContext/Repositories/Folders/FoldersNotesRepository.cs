@@ -31,13 +31,15 @@ namespace Noots.DatabaseContext.Repositories.Folders
             return entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
         }
 
-        public Task<List<string>> GetNotesTitle(Guid folderId)
+        public async Task<List<string>> GetNotesTitle(Guid folderId)
         {
-            return entities
+            var ents = await entities
                 .Include(x => x.Note)
                 .Where(x => x.FolderId == folderId)
                 .OrderBy(x => x.Order)
                 .Select(x => x.Note).Select(x => x.Title).ToListAsync();
+
+            return ents.Select(x => x.ReadStr()).ToList();
         }
     }
 }

@@ -20,7 +20,6 @@ using Domain.Queries.InnerFolder;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Files;
-using BI.Services.DiffsMatchPatch;
 using BI.Services.Notes.Audios;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Queries.NoteInner;
@@ -227,7 +226,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FirebaseAuthService>();
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
-            services.AddScoped<DiffsMatchPatchService>();
             services.AddScoped<CollectionLinkedService>();
         }
 

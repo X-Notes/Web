@@ -2,7 +2,7 @@
 
 public enum MergeOpType
 {
-    Insert,
+    Insert = 1,
     Delete
 }
 

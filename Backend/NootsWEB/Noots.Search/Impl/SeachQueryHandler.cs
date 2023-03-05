@@ -80,7 +80,7 @@ namespace Noots.Search.Impl
             var allNotes = await searchRepository.GetNotesByUserIdSearch(request.UserId);
 
             allNotes = allNotes.Where(x =>
-                    SearchHelper.IsMatchContent(x.Title, request.SearchString)
+                    SearchHelper.IsMatchContent(x.Title.ReadStr(), request.SearchString)
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.SearchString))
                     || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => SearchHelper.IsMatchContent(label.Name, request.SearchString))).ToList();
 
@@ -89,13 +89,13 @@ namespace Noots.Search.Impl
             var searchedNotes = allNotes.Take(5).Select(note => new NoteSearch()
             {
                 Id = note.Id,
-                Name = note.Title
+                Name = note.Title.ReadStr()
             }).ToList();
 
             var searchedFolders = folders.Take(5).Select(note => new FolderSearch()
             {
                 Id = note.Id,
-                Name = note.Title
+                Name = note.Title.ReadStr()
             }).ToList();
 
             return new SearchNoteFolderResult()
@@ -126,7 +126,7 @@ namespace Noots.Search.Impl
                 else
                 {
                     allNotes = allNotes.Where(x =>
-                    SearchHelper.IsMatchContent(x.Title, request.Search)
+                    SearchHelper.IsMatchContent(x.Title.ReadStr(), request.Search)
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
                     || relatedNotesIds.Contains(x.Id)
                     ).ToList();
@@ -156,7 +156,7 @@ namespace Noots.Search.Impl
                     var notes = await noteRepository.GetNotesByUserIdWithContentNoLocked(permissions.Caller.Id, folderNoteIds);
 
                     var noteIds = notes.Where(x =>
-                                    SearchHelper.IsMatchContent(x.Title, request.Search) ||
+                                    SearchHelper.IsMatchContent(x.Title.ReadStr(), request.Search) ||
                                     x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
                                     ).Select(x => x.Id);
 
