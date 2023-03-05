@@ -13,7 +13,7 @@ import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-not
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
-import { Diff } from 'diff-match-patch';
+import { MergeTransaction } from '../notes/full-note/content-editor/text/rga/types';
 
 @Injectable()
 export class ApiFoldersService {
@@ -201,10 +201,9 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(diffs: Diff[], title: string, id: string) {
+  updateTitle(transaction: MergeTransaction<string>, id: string) {
     const obj = {
-      diffs,
-      title,
+      transaction,
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(

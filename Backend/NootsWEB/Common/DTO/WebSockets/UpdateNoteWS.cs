@@ -1,4 +1,5 @@
 ﻿using Common.DTO.Labels;
+using Noots.RGA_CRDT;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Common.DTO.WebSockets
 
         public string Color { set; get; }
 
-        public string Title { set; get; }
+        public MergeTransaction<string> TitleTransaction { set; get; }
 
         public bool IsUpdateTitle { set; get; }
 

@@ -1,18 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Diff } from 'diff-match-patch';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { TextDiff } from '../content-editor-services/models/text-diff';
+import { MergeTransaction } from '../content-editor/text/rga/types';
 
 @Injectable()
 export class ApiTextService {
   constructor(private httpClient: HttpClient) {}
 
-  updateTitle(diffs: Diff[], title: string, id: string) {
+  updateTitle(transaction: MergeTransaction<string>, id: string) {
     const obj = {
-      diffs,
-      title,
+      transaction,
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(
