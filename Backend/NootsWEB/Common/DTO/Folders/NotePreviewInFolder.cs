@@ -1,4 +1,5 @@
-﻿namespace Common.DTO.Folders
+﻿
+namespace Common.DTO.Folders
 {
     public class NotePreviewInFolder
     {

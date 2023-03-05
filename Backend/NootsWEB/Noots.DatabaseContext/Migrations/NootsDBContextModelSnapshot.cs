@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
+using Noots.RGA_CRDT;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -174,8 +175,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("RefTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                    b.Property<TreeRGA<string>>("Title")
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -573,8 +574,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("RefTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                    b.Property<TreeRGA<string>>("Title")
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTimeOffset?>("UnlockTime")
                         .HasColumnType("timestamp with time zone");

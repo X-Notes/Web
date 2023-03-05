@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
+using Noots.RGA_CRDT;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -18,8 +19,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    [Migration("20220823195328_billing_plans_renaming")]
-    partial class billing_plans_renaming
+    [Migration("20230305184643_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,20 +53,20 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("PathNonPhotoContent")
+                    b.Property<string>("PathFileId")
                         .HasColumnType("text");
 
-                    b.Property<string>("PathPhotoBig")
+                    b.Property<string>("PathPrefix")
                         .HasColumnType("text");
 
-                    b.Property<string>("PathPhotoMedium")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PathPhotoSmall")
-                        .HasColumnType("text");
+                    b.Property<PathFileSuffixes>("PathSuffixes")
+                        .HasColumnType("jsonb");
 
                     b.Property<long>("Size")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("StorageId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -73,6 +74,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FileTypeId");
+
+                    b.HasIndex("StorageId");
 
                     b.HasIndex("UserId");
 
@@ -130,6 +133,26 @@ namespace Noots.DatabaseContext.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Storage", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Storage", "file");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 9000,
+                            Name = "DEV"
+                        });
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
                 {
                     b.Property<Guid>("Id")
@@ -154,8 +177,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("RefTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                    b.Property<TreeRGA<string>>("Title")
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -553,8 +576,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("RefTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+                    b.Property<TreeRGA<string>>("Title")
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTimeOffset?>("UnlockTime")
                         .HasColumnType("timestamp with time zone");
@@ -701,6 +724,9 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
                     b.HasKey("Id");
 
                     b.ToTable("BillingPlan", "user");
@@ -714,7 +740,8 @@ namespace Noots.DatabaseContext.Migrations
                             MaxNotes = 250,
                             MaxRelatedNotes = 5,
                             MaxSize = 1048576000L,
-                            Name = "Standart"
+                            Name = "Standart",
+                            Price = 0.0
                         },
                         new
                         {
@@ -724,7 +751,8 @@ namespace Noots.DatabaseContext.Migrations
                             MaxNotes = 10000,
                             MaxRelatedNotes = 30,
                             MaxSize = 5242880000L,
-                            Name = "Premium"
+                            Name = "Premium",
+                            Price = 1.5
                         });
                 });
 
@@ -1055,6 +1083,9 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int>("StorageId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ThemeId")
                         .HasColumnType("integer");
 
@@ -1071,6 +1102,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.HasIndex("FontSizeId");
 
                     b.HasIndex("LanguageId");
+
+                    b.HasIndex("StorageId");
 
                     b.HasIndex("ThemeId");
 
@@ -1092,16 +1125,86 @@ namespace Noots.DatabaseContext.Migrations
                     b.ToTable("UserProfilePhoto", "user");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.FolderConnection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConnectionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserIdentifierConnectionIdId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FolderId");
+
+                    b.HasIndex("UserIdentifierConnectionIdId");
+
+                    b.ToTable("FolderConnection", "ws");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.NoteConnection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConnectionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserIdentifierConnectionIdId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("UserIdentifierConnectionIdId");
+
+                    b.ToTable("NoteConnection", "ws");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Connected")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("ConnectedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ConnectionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UnauthorizedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserAgent")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("UserId")
@@ -1163,6 +1266,12 @@ namespace Noots.DatabaseContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Common.DatabaseModels.Models.Files.Storage", "Storage")
+                        .WithMany("AppFiles")
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
                         .WithMany("Files")
                         .HasForeignKey("UserId")
@@ -1170,6 +1279,8 @@ namespace Noots.DatabaseContext.Migrations
                         .IsRequired();
 
                     b.Navigation("FileType");
+
+                    b.Navigation("Storage");
 
                     b.Navigation("User");
                 });
@@ -1591,6 +1702,12 @@ namespace Noots.DatabaseContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Common.DatabaseModels.Models.Files.Storage", "Storage")
+                        .WithMany("Users")
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.Models.Systems.Theme", "Theme")
                         .WithMany("Users")
                         .HasForeignKey("ThemeId")
@@ -1604,6 +1721,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("FontSize");
 
                     b.Navigation("Language");
+
+                    b.Navigation("Storage");
 
                     b.Navigation("Theme");
                 });
@@ -1625,6 +1744,44 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("AppFile");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.FolderConnection", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Folders.Folder", "Folder")
+                        .WithMany("FolderConnections")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", "UserIdentifierConnectionId")
+                        .WithMany("FolderConnections")
+                        .HasForeignKey("UserIdentifierConnectionIdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("UserIdentifierConnectionId");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.NoteConnection", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithMany("NoteConnections")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", "UserIdentifierConnectionId")
+                        .WithMany("NoteConnections")
+                        .HasForeignKey("UserIdentifierConnectionIdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("UserIdentifierConnectionId");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
@@ -1692,8 +1849,17 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("AppFiles");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Storage", b =>
+                {
+                    b.Navigation("AppFiles");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
                 {
+                    b.Navigation("FolderConnections");
+
                     b.Navigation("FoldersNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
@@ -1742,6 +1908,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("History");
 
                     b.Navigation("LabelsNotes");
+
+                    b.Navigation("NoteConnections");
 
                     b.Navigation("ReletatedNoteToInnerNotesFrom");
 
@@ -1834,6 +2002,13 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("UserProfilePhoto");
 
                     b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.WS.UserIdentifierConnectionId", b =>
+                {
+                    b.Navigation("FolderConnections");
+
+                    b.Navigation("NoteConnections");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>

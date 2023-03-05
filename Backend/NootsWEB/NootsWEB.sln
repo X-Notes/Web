@@ -55,7 +55,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Notes", "Noots.Notes\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Folders", "Noots.Folders\Noots.Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.Editor", "Noots.Editor\Noots.Editor.csproj", "{97ADCE3E-C292-4CAE-822C-0BCAD2D7086E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Editor", "Noots.Editor\Noots.Editor.csproj", "{97ADCE3E-C292-4CAE-822C-0BCAD2D7086E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Noots.RGA-CRDT", "Noots.RGA-CRDT\Noots.RGA-CRDT.csproj", "{79922C71-7C16-4517-9B1F-60736514940A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +173,10 @@ Global
 		{97ADCE3E-C292-4CAE-822C-0BCAD2D7086E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97ADCE3E-C292-4CAE-822C-0BCAD2D7086E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97ADCE3E-C292-4CAE-822C-0BCAD2D7086E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79922C71-7C16-4517-9B1F-60736514940A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79922C71-7C16-4517-9B1F-60736514940A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79922C71-7C16-4517-9B1F-60736514940A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79922C71-7C16-4517-9B1F-60736514940A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

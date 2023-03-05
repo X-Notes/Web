@@ -2,6 +2,7 @@
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Labels;
 using Common.Interfaces;
+using Noots.RGA_CRDT;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace Common.DTO.Notes
     {
         public Guid Id { get; set; }
 
-        public string Title { set; get; }
+        public TreeRGA<string> Title { set; get; }
 
         public string Color { set; get; }
 
