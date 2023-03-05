@@ -97,8 +97,13 @@ export type LocalTransaction<T> = {
   delete_ops?: LocalDeleteOp[];
 };
 
+export enum MergeOpType {
+  Insert,
+  Delete
+}
+
 export type MergeOp<T> = {
-  readonly type: 'insert' | 'delete';
+  readonly type: MergeOpType;
   readonly delete_nodeId?: Id;
   readonly insert_after_node_id?: Id;
   readonly content?: T;
@@ -110,7 +115,7 @@ export class MergeTransaction<T> {
 
   addInsertOp(content: T, new_node_id: Id, insert_after_node_id: Id): void {
     const mergeOp: MergeOp<T> = {
-      type: 'insert',
+      type: MergeOpType.Insert,
       content,
       new_node_id,
       insert_after_node_id,
@@ -120,7 +125,7 @@ export class MergeTransaction<T> {
 
   addRemoveOp(delete_nodeId: Id): void {
     const mergeOp: MergeOp<T> = {
-      type: 'delete',
+      type: MergeOpType.Delete,
       delete_nodeId,
     };
     this.ops.push(mergeOp);

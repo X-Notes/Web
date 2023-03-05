@@ -1,4 +1,4 @@
-import { DocTreeItem, MergeTransaction } from './types';
+import { DocTreeItem, MergeOpType, MergeTransaction } from './types';
 
 export class TreeRGA<T> {
   root: DocTreeItem<T>;
@@ -59,14 +59,14 @@ export class TreeRGA<T> {
     for (const tx of transactions) {
       for (const op of tx.ops ?? []) {
         switch (op.type) {
-          case 'insert': {
+          case MergeOpType.Insert: {
             const nodes = this.getAllNodes();
             const predecessor = nodes.find((x) => x.isEqualId(op.insert_after_node_id));
             const newNode = new DocTreeItem<T>(op.content, op.new_node_id);
             this.insertOne(newNode, predecessor);
             break;
           }
-          case 'delete': {
+          case MergeOpType.Delete: {
             const nodes = this.getAllNodes();
             const node = nodes.find((x) => x.isEqualId(op.delete_nodeId));
             this.removeOne(node);
