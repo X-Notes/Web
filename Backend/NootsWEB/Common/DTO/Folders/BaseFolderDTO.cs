@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
 using Common.Interfaces;
+using Noots.RGA_CRDT;
 using System;
-using System.Collections.Generic;
 
 namespace Common.DTO.Folders
 {
@@ -10,7 +10,7 @@ namespace Common.DTO.Folders
     {
         public Guid Id { get; set; }
 
-        public string Title { set; get; }
+        public TreeRGA<string> Title { set; get; }
 
         public string Color { set; get; }
 

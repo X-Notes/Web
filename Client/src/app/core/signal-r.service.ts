@@ -150,7 +150,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateNoteTitle(null, updates.title, updates.noteId, false));
+        this.store.dispatch(new UpdateNoteTitle(updates.titleTransaction, updates.noteId, false));
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {
@@ -169,7 +169,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorFolder(updates.color, [updates.folderId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateFolderTitle(null, updates.title, updates.folderId, false));
+        this.store.dispatch(new UpdateFolderTitle(updates.titleTransaction, updates.folderId, false));
       }
       this.updateFolder$.next(updates);
     });

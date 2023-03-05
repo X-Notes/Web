@@ -9,6 +9,7 @@ import { UpdateNoteUI } from './update-note-ui.model';
 import { FullNote } from '../models/full-note.model';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { Diff } from 'diff-match-patch';
+import { MergeTransaction } from '../full-note/content-editor/text/rga/types';
 
 export class LoadNoteHistories {
   static type = '[Notes] Load note histories';
@@ -248,8 +249,7 @@ export class UpdateNoteTitle {
   static type = '[Notes] update title';
 
   constructor(
-    public diffs: Diff[],
-    public newTitle: string,
+    public transaction: MergeTransaction<string>,
     public noteId: string,
     public isCallApi = true,
     public errorPermissionMessage?: string,

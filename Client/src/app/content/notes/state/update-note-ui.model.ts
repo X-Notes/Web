@@ -1,11 +1,12 @@
 import { Label } from '../../labels/models/label.model';
+import { TreeRGA } from '../full-note/content-editor/text/rga/tree-rga';
 
 export class UpdateNoteUI {
   id: string;
 
   color: string;
 
-  title: string;
+  title: TreeRGA<string>;
 
   removeLabelIds: string[];
 

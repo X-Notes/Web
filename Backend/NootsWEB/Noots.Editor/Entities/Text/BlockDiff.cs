@@ -1,20 +1,19 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Noots.RGA_CRDT;
 
 namespace Noots.Editor.Entities.Text;
 
 public class BlockDiff
 {
-    public string Id { set; get; }
+    public TreeRGA<string> Tree { set; get; } // Text
 
-    public string? HighlightColor { set; get; }
+    public BlockProperty<string> HighlightColor { set; get; } // highlightColor
 
-    public string? TextColor { set; get; }
+    public BlockProperty<string> TextColor { set; get; } // textColor
 
-    public string? Link { set; get; }
+    public BlockProperty<string> Link { set; get; } // link
 
-    public List<TextType>? TextTypes { set; get; }
+    public BlockProperty<List<TextType>> TextTypes { set; get; } // textTypes
 
-    public List<string>? LetterIdsToDelete { set; get; }
-
-    public List<BlockLetter>? LettersToAdd { set; get; }
+    public MergeTransaction<string> MergeOps { set; get; }
 }
