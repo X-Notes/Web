@@ -19,6 +19,8 @@ namespace Common.DatabaseModels.Models.Users
     {
         public string Name { set; get; }
 
+        public int AgentId { set; get; }
+
         [Required]
         public string Email { set; get; }
 

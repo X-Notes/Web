@@ -48,6 +48,7 @@ namespace Noots.Users.Impl
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
+                AgentId = user.AgentId,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
                 PhotoPath = userBackgroundMapper.GetUserProfilePhotoPath(user),
                 CurrentBackground = user.CurrentBackground != null ? userBackgroundMapper.MapToBackgroundDTO(user.CurrentBackground) : null,
