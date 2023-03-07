@@ -7,6 +7,8 @@ import { TreeBlock } from '../text/entities/blocks/tree-block';
 import { BlockDiff } from '../text/entities/diffs/block-diff';
 import { DiffOperation } from '../text/entities/diffs/letter-diff';
 import { TreeOperator } from '../text/rga/tree-operator';
+import { TreeRGA } from '../text/rga/tree-rga';
+import { MergeTransaction } from '../text/rga/types';
 import { DiffCheckerService } from './diff-checker.service';
 
 @Injectable()
@@ -93,38 +95,47 @@ export class CrdtDiffsService {
       diffs.setTextTypes(value, agent);
     }
 
-    this.processTextChanges(treeBlock, uiBlock, diffs, agent);
+    this.processBlocksTextChanges(treeBlock, uiBlock, diffs, agent);
 
     return diffs;
   }
 
-  private processTextChanges(
+  private processBlocksTextChanges(
     treeBlock: TreeBlock,
     uiBlock: ProjectBlock,
     diffs: BlockDiff,
     agent: number,
   ): void {
-    const treeBlockText = treeBlock.getText();
-    const uiBlockText = uiBlock.getText();
-    if (treeBlockText !== uiBlockText) {
-      const clientDiffs = this.diffCheckerService.getDiffsTextFormatted(treeBlockText, uiBlockText);
-      const deleteOps = clientDiffs.filter((x) => x.operation === DiffOperation.DELETE);
-      const addOps = clientDiffs.filter((x) => x.operation === DiffOperation.ADD);
-
-      const operator = new TreeOperator(treeBlock.tree, agent);
-
-      for (const op of deleteOps) {
-        operator.remove(op.shiftedIndex);
-      }
-
-      for (const op of addOps) {
-        operator.insert(op.str, op.shiftedIndex);
-      }
-
-      operator.apply();
-
-      diffs.mergeOps = operator.mergeOps;
-      console.log('diffs.mergeOps: ', [...diffs.mergeOps.ops]);
+    const changes = this.processTextChanges(treeBlock.tree, uiBlock.getText(), agent);
+    if (changes?.ops?.length > 0) {
+      diffs.mergeOps = changes;
     }
+  }
+
+  processTextChanges(
+    stateTree: TreeRGA<string>,
+    uiText: string,
+    agent: number,
+  ): MergeTransaction<string> {
+    const stateText = stateTree.readStr();
+    if (stateText === uiText) return null;
+
+    const clientDiffs = this.diffCheckerService.getDiffsTextFormatted(stateText, uiText);
+    const deleteOps = clientDiffs.filter((x) => x.operation === DiffOperation.DELETE);
+    const addOps = clientDiffs.filter((x) => x.operation === DiffOperation.ADD);
+
+    const operator = new TreeOperator(stateTree, agent);
+
+    for (const op of deleteOps) {
+      operator.remove(op.shiftedIndex);
+    }
+
+    for (const op of addOps) {
+      operator.insert(op.str, op.shiftedIndex);
+    }
+
+    operator.apply();
+
+    return operator.mergeOps;
   }
 }

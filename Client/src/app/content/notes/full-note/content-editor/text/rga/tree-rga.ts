@@ -16,6 +16,13 @@ export class TreeRGA<T> {
     }
   }
 
+  static initFrom<T>(tree: TreeRGA<T>): TreeRGA<T> {
+    const obj = new TreeRGA<T>();
+    obj.seq = tree.seq;
+    obj.root = DocTreeItem.initFrom<T>(tree.root);
+    return obj;
+  } 
+
   getCounter(): number {
     return ++this.seq;
   }
@@ -61,14 +68,14 @@ export class TreeRGA<T> {
         switch (op.type) {
           case MergeOpType.Insert: {
             const nodes = this.getAllNodes();
-            const predecessor = nodes.find((x) => x.isEqualId(op.insert_after_node_id));
-            const newNode = new DocTreeItem<T>(op.content, op.new_node_id);
+            const predecessor = nodes.find((x) => x.isEqualId(op.insertAfterNodeId));
+            const newNode = new DocTreeItem<T>(op.content, op.newNodeId);
             this.insertOne(newNode, predecessor);
             break;
           }
           case MergeOpType.Delete: {
             const nodes = this.getAllNodes();
-            const node = nodes.find((x) => x.isEqualId(op.delete_nodeId));
+            const node = nodes.find((x) => x.isEqualId(op.deleteNodeId));
             this.removeOne(node);
             break;
           }

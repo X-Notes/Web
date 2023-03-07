@@ -7,7 +7,7 @@ public static class MergeOpHelper
         var trans = new MergeTransaction<string>();
 
         var agent_id = 0;
-        var seq = 1;
+        var seq = 0;
 
         foreach(var symbol in str)
         {

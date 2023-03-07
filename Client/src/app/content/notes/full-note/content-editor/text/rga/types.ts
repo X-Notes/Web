@@ -18,6 +18,13 @@ export class DocTreeItem<T> {
     this.children = [];
   }
 
+  static initFrom<I>(obj: DocTreeItem<I>): DocTreeItem<I> {
+    const res = new DocTreeItem<I>(obj.content, obj.id);
+    res.deleted = obj.deleted;
+    res.children = obj.children.map(x => this.initFrom(x));
+    return res;
+  }
+
   isEqualId(id: Id): boolean {
     return id.agent === this.id.agent && id.seq === this.id.seq;
   }
@@ -104,10 +111,10 @@ export enum MergeOpType {
 
 export type MergeOp<T> = {
   readonly type: MergeOpType;
-  readonly delete_nodeId?: Id;
-  readonly insert_after_node_id?: Id;
+  readonly deleteNodeId?: Id;
+  readonly insertAfterNodeId?: Id;
   readonly content?: T;
-  readonly new_node_id?: Id;
+  readonly newNodeId?: Id;
 };
 
 export class MergeTransaction<T> {
@@ -117,8 +124,8 @@ export class MergeTransaction<T> {
     const mergeOp: MergeOp<T> = {
       type: MergeOpType.Insert,
       content,
-      new_node_id,
-      insert_after_node_id,
+      newNodeId: new_node_id,
+      insertAfterNodeId: insert_after_node_id,
     };
     this.ops.push(mergeOp);
   }
@@ -126,7 +133,7 @@ export class MergeTransaction<T> {
   addRemoveOp(delete_nodeId: Id): void {
     const mergeOp: MergeOp<T> = {
       type: MergeOpType.Delete,
-      delete_nodeId,
+      deleteNodeId: delete_nodeId,
     };
     this.ops.push(mergeOp);
   }

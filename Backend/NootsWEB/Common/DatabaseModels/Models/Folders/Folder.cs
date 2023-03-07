@@ -19,7 +19,7 @@ namespace Common.DatabaseModels.Models.Folders
         public RefType RefType { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public TreeRGA<string> Title { set; get; } = new TreeRGA<string>();
+        public TreeRGA<string> Title { set; get; }
 
         public string Color { set; get; }
 

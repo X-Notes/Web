@@ -9,6 +9,7 @@ using Common.DTO.Folders;
 using Common.DTO.WebSockets;
 using Domain.Commands.FolderInner;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
@@ -27,6 +28,7 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly NoteRepository noteRepository;
+        private readonly ILogger<FullFolderHandlerCommand> logger;
         private readonly IMediator _mediator;
 
         public FullFolderHandlerCommand(
@@ -34,13 +36,15 @@ namespace BI.Services.Folders
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
             FolderWSUpdateService folderWSUpdateService,
-            NoteRepository noteRepository)
+            NoteRepository noteRepository,
+            ILogger<FullFolderHandlerCommand> logger)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
             this.folderWSUpdateService = folderWSUpdateService;
             this.noteRepository = noteRepository;
+            this.logger = logger;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
@@ -53,6 +57,7 @@ namespace BI.Services.Folders
             {
                 async Task UpdateFolderTitle(MergeTransaction<string> transaction)
                 {
+                    folder.Title ??= new TreeRGA<string>();
                     folder.Title.Merge(transaction);
                     folder.UpdatedAt = DateTimeProvider.Time;
                     await folderRepository.UpdateAsync(folder);

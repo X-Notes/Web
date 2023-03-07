@@ -4,6 +4,10 @@ public class MergeTransaction<T>
 {
     public List<MergeOp<T>> Ops { set; get; } = new List<MergeOp<T>>();
 
+    public List<MergeOp<T>> ValidOps { set; get; } = new List<MergeOp<T>>();
+
+    public List<MergeOp<T>> UnValidOps { set; get; } = new List<MergeOp<T>>();
+
     public void AddInsertOp(T content, NodeId new_node_id, NodeId insert_after_node_id)
     {
         var mergeOp = new MergeOp<T>

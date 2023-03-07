@@ -274,7 +274,7 @@ namespace Noots.Mapper.Mapping
         {
             return new NotePreviewInFolder()
             {
-                Title = note.Title
+                Title = note.Title?.ReadStr()
             };
         }
 

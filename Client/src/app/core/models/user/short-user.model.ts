@@ -8,6 +8,7 @@ export interface ShortUser {
   id: string;
   name: string;
   email: string;
+  agentId: number;
   photoId?: string;
   photoPath: string;
   currentBackground: Background;

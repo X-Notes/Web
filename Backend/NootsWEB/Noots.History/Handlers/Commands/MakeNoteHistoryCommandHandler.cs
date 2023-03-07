@@ -35,7 +35,7 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 		{
 			NoteTypeId = noteForCopy.NoteTypeId,
 			RefTypeId = noteForCopy.RefTypeId,
-			Title = noteForCopy.Title.ReadStr(),
+			Title = noteForCopy.Title?.ReadStr(),
 			Color = noteForCopy.Color,
 			SnapshotTime = DateTimeProvider.Time,
 			NoteId = noteForCopy.Id,

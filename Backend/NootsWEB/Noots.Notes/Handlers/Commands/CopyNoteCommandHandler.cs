@@ -18,6 +18,7 @@ using Noots.DatabaseContext.Repositories.Users;
 using Noots.Encryption.Impl;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
+using Noots.RGA_CRDT;
 using Noots.Storage.Commands;
 using Noots.Storage.Entities;
 
@@ -116,9 +117,11 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                 }
             }
 
+            var titleStr = noteForCopy.Title?.ReadStr() + " (1)";
+            var tran = titleStr.ConvertStrIntoTransaction();
+
             var newNote = new Note()
             {
-                Title = noteForCopy.Title + " (1)",
                 Color = noteForCopy.Color,
                 CreatedAt = DateTimeProvider.Time,
                 UpdatedAt = DateTimeProvider.Time,
@@ -126,6 +129,10 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+
+            newNote.Title ??= new TreeRGA<string>();
+            newNote.Title.Merge(tran);
+
             var dbNote = await noteRepository.AddAsync(newNote);
 
             if (isNoteOwner)

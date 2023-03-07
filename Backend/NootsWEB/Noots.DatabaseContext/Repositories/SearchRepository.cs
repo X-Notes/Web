@@ -27,7 +27,11 @@ namespace Noots.DatabaseContext.Repositories
         public async Task<List<Folder>> GetFolderByUserIdAndString(Guid userId, string searchStr)
         {
             var folders = await context.Folders.Where(x => x.UserId == userId).ToListAsync();
-            return folders.Where(x => x.Title.ReadStr().Contains(searchStr)).ToList();
+            return folders.Where(x =>
+            {
+                if (x.Title == null) return false;
+                return x.Title.ReadStr().Contains(searchStr);
+            }).ToList();
         }
 
     }

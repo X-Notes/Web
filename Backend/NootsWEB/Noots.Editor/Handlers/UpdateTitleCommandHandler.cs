@@ -44,6 +44,7 @@ namespace Noots.Editor.Handlers
 
                 async Task UpdateNoteTitle(MergeTransaction<string> transaction)
                 {
+                    note.Title ??= new TreeRGA<string>();
                     note.Title.Merge(transaction);
                     note.UpdatedAt = DateTimeProvider.Time;
                     await noteRepository.UpdateAsync(note);
