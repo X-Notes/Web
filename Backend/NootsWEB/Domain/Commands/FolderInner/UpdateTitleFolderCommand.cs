@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
@@ -9,7 +10,7 @@ namespace Domain.Commands.FolderInner
 {
     public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        public MergeTransaction<string> Transaction { set; get; }
+        public List<MergeTransaction<string>> Transactions { set; get; }
 
         [ValidationGuid]
         public Guid Id { set; get; }

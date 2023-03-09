@@ -5,7 +5,7 @@ import { PositionEntityModel } from 'src/app/content/notes/models/position-note.
 export interface UpdateFolderWS {
   folderId: string;
   color: string;
-  titleTransaction: MergeTransaction<string>;
+  titleTransactions: MergeTransaction<string>[];
   isUpdateTitle: string;
   previewNotes: PreviewNotesInFolder[];
   idsToRemove: string[];

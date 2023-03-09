@@ -1,5 +1,7 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.Helpers;
 using Common.Interfaces.Note;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,10 +9,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
     [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
-    public class TextNote : BaseNoteContent, INoteText
+    public class TextNote : BaseNoteContent, INoteText<string>
     {
         [Column(TypeName = "jsonb")]
-        public List<TextBlock> Contents { set; get; }
+        public string Contents { set; get; }
 
         public NoteTextTypeENUM NoteTextTypeId { set; get; }
         public NoteTextType NoteTextType { set; get; }
@@ -40,6 +42,16 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             Checked = text.Checked;
 
             ContentTypeId = ContentTypeENUM.Text;
+        }
+
+        public void SetContents(List<TextBlock> contents)
+        {
+            Contents = contents.JSerialize();
+        }
+
+        public List<TextBlock> GetContents()
+        {
+            return Contents.JDeserializeObject<List<TextBlock>>();
         }
     }
 }

@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.WS;
+using Common.Helpers;
 using Common.Interfaces;
+using Newtonsoft.Json;
 using Noots.RGA_CRDT;
 
 namespace Common.DatabaseModels.Models.Folders
@@ -19,7 +21,7 @@ namespace Common.DatabaseModels.Models.Folders
         public RefType RefType { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public TreeRGA<string> Title { set; get; }
+        public string Title { set; get; }
 
         public string Color { set; get; }
 
@@ -42,6 +44,16 @@ namespace Common.DatabaseModels.Models.Folders
             DeletedAt = deletedAt;
             FolderTypeId = folderTypeId;
             UpdatedAt = DateTimeProvider.Time;
+        }
+
+        public void SetTitle(TreeRGA<string> tree)
+        {
+            Title = tree.JSerialize();
+        }
+
+        public TreeRGA<string> GetTitle()
+        {
+            return Title.JDeserializeObject<TreeRGA<string>>();
         }
 
         public bool IsShared() => FolderTypeId == FolderTypeENUM.Shared;

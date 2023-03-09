@@ -1,17 +1,14 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
-using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using System.Collections.Generic;
 
-namespace Common.Interfaces.Note
+namespace Common.Interfaces.Note;
+
+public interface INoteText<T>
 {
-    public interface INoteText
-    {
-        public List<TextBlock> Contents { set; get; }
+    public T Contents { set; get; }
 
-        NoteTextTypeENUM NoteTextTypeId { set; get; }
+    NoteTextTypeENUM NoteTextTypeId { set; get; }
 
-        HTypeENUM? HTypeId { set; get; }
+    HTypeENUM? HTypeId { set; get; }
 
-        public bool? Checked { set; get; }
-    }
+    public bool? Checked { set; get; }
 }

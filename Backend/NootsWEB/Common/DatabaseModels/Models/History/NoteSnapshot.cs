@@ -3,6 +3,7 @@ using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.Helpers;
 using Common.Interfaces.Note;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Common.DatabaseModels.Models.History
         public List<SnapshotNoteLabel> Labels { get; set; }
 
         [Column(TypeName = "jsonb")]
-        public ContentSnapshot Contents { set; get; }
+        public string Contents { set; get; }
 
         public DateTimeOffset SnapshotTime { set; get; }
 
@@ -38,5 +39,16 @@ namespace Common.DatabaseModels.Models.History
 
         public List<AppFile> AppFiles { set; get; }
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }
+
+
+        public void SetContents(ContentSnapshot contents)
+        {
+            Contents = contents.JSerialize();
+        }
+
+        public ContentSnapshot GetContents()
+        {
+            return Contents.JDeserializeObject<ContentSnapshot>();
+        }
     }
 }

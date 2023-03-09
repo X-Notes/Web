@@ -81,7 +81,10 @@ builder.Services.ApplyMapperDI();
 builder.Services.ApplyMapperLockedDI();
 
 builder.Services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson(opt =>
+                {
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
 
 builder.Services.AddHealthChecks();
 

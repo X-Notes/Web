@@ -201,9 +201,9 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(transaction: MergeTransaction<string>, id: string) {
+  updateTitle(transactions: MergeTransaction<string>[], id: string) {
     const obj = {
-      transaction,
+      transactions,
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(

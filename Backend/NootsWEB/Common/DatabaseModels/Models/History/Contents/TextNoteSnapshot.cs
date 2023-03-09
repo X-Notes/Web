@@ -1,16 +1,16 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.Helpers;
 using Common.Interfaces.Note;
+using Noots.RGA_CRDT;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.History.Contents
 {
-    public class TextNoteSnapshot : BaseNoteContentSnapshot, INoteText
+    public class TextNoteSnapshot : BaseNoteContentSnapshot, INoteText<List<TextBlock>>
     {
-        [Column(TypeName = "jsonb")]
         public List<TextBlock> Contents { set; get; }
 
         public NoteTextTypeENUM NoteTextTypeId { set; get; }
@@ -27,6 +27,11 @@ namespace Common.DatabaseModels.Models.History.Contents
             NoteTextTypeId = noteTextTypeId;
             HTypeId = hTypeId;
             Checked = @checked; 
+        }
+
+        public string GetContentsJson()
+        {
+            return Contents.JSerialize();
         }
     }
 }

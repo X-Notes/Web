@@ -4,7 +4,7 @@ import { MergeTransaction } from 'src/app/content/notes/full-note/content-editor
 export interface UpdateNoteWS {
   noteId: string;
   color: string;
-  titleTransaction: MergeTransaction<string>;
+  titleTransactions: MergeTransaction<string>[];
   isUpdateTitle: boolean;
   removeLabelIds: string[];
   addLabels: Label[];

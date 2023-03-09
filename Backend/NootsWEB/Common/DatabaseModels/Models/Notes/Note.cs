@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.WS;
+using Common.Helpers;
 using Common.Interfaces;
 using Common.Interfaces.Note;
 using Noots.RGA_CRDT;
@@ -15,7 +16,7 @@ using Noots.RGA_CRDT;
 namespace Common.DatabaseModels.Models.Notes
 {
     [Table(nameof(Note), Schema = SchemeConfig.Note)]
-    public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote<TreeRGA<string>>
+    public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote<string>
     {
         public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
@@ -24,7 +25,7 @@ namespace Common.DatabaseModels.Models.Notes
         public RefType RefType { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public TreeRGA<string> Title { set; get; }
+        public string Title { set; get; }
 
         public string Color { set; get; }
         public int Order { set; get; }
@@ -60,6 +61,16 @@ namespace Common.DatabaseModels.Models.Notes
             DeletedAt = deletedAt;
             NoteTypeId = noteTypeId;
             UpdatedAt = DateTimeProvider.Time;
+        }
+
+        public void SetTitle(TreeRGA<string> tree)
+        {
+            Title = tree.JSerialize();
+        }
+
+        public TreeRGA<string> GetTitle()
+        {
+            return Title.JDeserializeObject<TreeRGA<string>>();
         }
 
         public bool IsShared() => NoteTypeId == NoteTypeENUM.Shared;

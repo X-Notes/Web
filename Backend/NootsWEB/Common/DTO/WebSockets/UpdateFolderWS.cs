@@ -12,7 +12,7 @@ namespace Common.DTO.WebSockets
 
         public string Color { set; get; }
 
-        public MergeTransaction<string> TitleTransaction { set; get; }
+        public List<MergeTransaction<string>> TitleTransactions { set; get; }
 
         public bool IsUpdateTitle { set; get; }
 
