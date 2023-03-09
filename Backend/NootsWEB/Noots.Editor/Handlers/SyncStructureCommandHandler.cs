@@ -9,7 +9,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Impl;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands;
 using Noots.Editor.Entities.EditorStructure;

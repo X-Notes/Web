@@ -15,7 +15,9 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
-  selectionDivActive$ = new BehaviorSubject(false);
+  _selectionDivActive$ = new BehaviorSubject(false);
+
+  disableDiv = false;
 
   private selectionTop = 0;
 
@@ -30,6 +32,10 @@ export class SelectionService {
     private apiBrowserService: ApiBrowserTextService,
     private router: Router,
   ) {}
+
+  get selectionDivActive(): boolean {
+    return !this.disableDiv && this._selectionDivActive$.getValue(); 
+  }
 
   get selectedMenuType(): TextEditMenuEnum {
     if (this.selectedItemId && this.selectedItemsSet.size === 0) {
@@ -131,6 +137,7 @@ export class SelectionService {
   }
 
   resetSelectionItems(): void {
+    this.disableDiv = false;
     this.selectedItemId = null;
     this.selectedItemsSet.clear();
     this.onSetChanges();

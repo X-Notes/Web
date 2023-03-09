@@ -23,7 +23,7 @@ export abstract class BaseEditorElementComponent {
   }
 
   get isSelectModeActive(): boolean {
-    return this.selectionService.selectionDivActive$.getValue();
+    return this.selectionService._selectionDivActive$.getValue();
   }
 
   detectChanges(): void {

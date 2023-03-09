@@ -17,12 +17,12 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public HTypeENUM? HeadingTypeId { set; get; }
 
-        public List<TextBlock> Contents { set; get; }
+        public string Contents { set; get; }
 
         public int ListId { set; get; }
 
         public TextNoteDTO(
-            List<TextBlock> contents, 
+            string contents, 
             Guid id, 
             int order,
             NoteTextTypeENUM noteTextTypeId, 

@@ -117,8 +117,9 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                 }
             }
 
-            var titleStr = noteForCopy.Title?.ReadStr() + " (1)";
-            var tran = titleStr.ConvertStrIntoTransaction();
+            var titleStrLazy = noteForCopy.GetTitle()?.ReadStrLazy();
+            var newTitle = titleStrLazy + " (1)";
+            var tran = newTitle.ConvertStrIntoTransaction();
 
             var newNote = new Note()
             {
@@ -130,8 +131,9 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                 UserId = request.UserId,
             };
 
-            newNote.Title ??= new TreeRGA<string>();
-            newNote.Title.Merge(tran);
+            var title = newNote.GetTitle() ?? new TreeRGA<string>();
+            title.Merge(tran);
+            newNote.SetTitle(title);
 
             var dbNote = await noteRepository.AddAsync(newNote);
 
