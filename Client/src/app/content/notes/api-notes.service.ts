@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { finalize, map, takeUntil } from 'rxjs/operators';
+import { finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
@@ -189,7 +189,7 @@ export class ApiServiceNotes {
       {
         params,
       },
-    );
+    ).pipe(tap(x => x.data.title = TransformNoteUtil.transformTreeRga(x.data.title)));
   }
 
   getAll(settings: PersonalizationSetting) {
@@ -198,7 +198,7 @@ export class ApiServiceNotes {
     };
     return this.httpClient
       .post<SmallNote[]>(`${environment.writeAPI}/api/note/all`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   new(): Observable<OperationResult<SmallNote>> {
