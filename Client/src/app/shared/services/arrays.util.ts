@@ -14,9 +14,11 @@ export const arraysEqual = (a, b) => {
   return true;
 };
 
-export const groupBy = (array, key) => {
-  return array.reduce((rv, x) => {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
+export const groupBy = <T>(arr: T[], fn: (item: T) => any) => {
+  return arr.reduce<Record<string, T[]>>((prev, curr) => {
+      const groupKey = fn(curr);
+      const group = prev[groupKey] || [];
+      group.push(curr);
+      return { ...prev, [groupKey]: group };
   }, {});
-};
+}
