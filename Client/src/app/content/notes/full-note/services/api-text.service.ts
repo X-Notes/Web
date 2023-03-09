@@ -9,9 +9,9 @@ import { MergeTransaction } from '../content-editor/text/rga/types';
 export class ApiTextService {
   constructor(private httpClient: HttpClient) {}
 
-  updateTitle(transaction: MergeTransaction<string>, id: string) {
+  updateTitle(transactions: MergeTransaction<string>[], id: string) {
     const obj = {
-      transaction,
+      transactions,
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(

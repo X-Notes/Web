@@ -1,3 +1,4 @@
+import { TreeRGA } from 'src/app/content/notes/full-note/content-editor/text/rga/tree-rga';
 import {
   ApiAudiosCollection,
   AudiosCollection,
@@ -25,8 +26,16 @@ export class TransformNoteUtil {
     return notes.map((note) => {
       // eslint-disable-next-line no-param-reassign
       note.contents = this.transformContent(note.contents);
+      note.title = this.transformTreeRga(note.title);
       return note;
     });
+  }
+
+  public static transformTreeRga(obj: TreeRGA<string>): TreeRGA<string>  {
+    if(obj) {
+      return TreeRGA.initFrom(obj);
+    }
+    return new TreeRGA<string>();
   }
 
   // eslint-disable-next-line class-methods-use-this

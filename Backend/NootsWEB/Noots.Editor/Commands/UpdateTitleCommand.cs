@@ -8,7 +8,7 @@ namespace Noots.Editor.Commands
 {
     public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        public MergeTransaction<string> Transaction { set; get; }
+        public List<MergeTransaction<string>> Transactions { set; get; }
 
         [ValidationGuid]
         public Guid Id { set; get; }
