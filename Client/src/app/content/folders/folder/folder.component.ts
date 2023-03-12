@@ -1,22 +1,28 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
-import { takeUntil, debounceTime } from 'rxjs/operators';
+import { Actions, Store } from '@ngxs/store';
+import { interval, Subject } from 'rxjs';
+import { takeUntil, buffer } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
-import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import { SelectIdFolder, UnSelectIdFolder, UpdateFolderTitle } from '../state/folders-actions';
+import { updateFolderTitleDelay, } from 'src/app/core/defaults/bounceDelay';
+import { SelectIdFolder, UnSelectIdFolder, UpdateSmallFolderTitleUI } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
-import { DiffCheckerService } from '../../notes/full-note/content-editor/crdt/diff-checker.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { CrdtDiffsService } from '../../notes/full-note/content-editor/crdt/crdt-diffs.service';
+import { TreeRGA } from '../../notes/full-note/content-editor/text/rga/tree-rga';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { MergeTransaction } from '../../notes/full-note/content-editor/text/rga/types';
+import { groupBy } from 'src/app/shared/services/arrays.util';
 
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.component.html',
   styleUrls: ['./folder.component.scss'],
+  providers: [DestroyComponentService]
 })
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
@@ -35,62 +41,90 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   fontSize = EntitiesSizeENUM;
 
-  destroy = new Subject<void>();
-
   folderType = FolderTypeENUM;
+
+  isLoading = true;
 
   // TITLE
   uiTitle: string;
 
-  titleChange$: Subject<string> = new Subject<string>();
+  rgaTitle: TreeRGA<string>;
+
+  intervalEvents = interval(updateFolderTitleDelay);
+
+  private folderTitleChanged$ = new Subject<{ trans: MergeTransaction<string>; folderId: string }>();
   //
 
   constructor(
     private store: Store,
     private router: Router,
     public pService: PersonalizationService,
-    private diffCheckerService: DiffCheckerService,
+    private diffCheckerService: CrdtDiffsService,
     private apiBrowserFunctions: ApiBrowserTextService,
+    private destroyComponentService: DestroyComponentService,
+    public actions$: Actions,
   ) {}
 
   get isAuthor(): boolean {
     return this.userId === this.folder.userId;
   }
 
+  // TITLE
   setTitle(): void {
     // SET
-    this.uiTitle = this.folder.title;
+    this.rgaTitle = this.folder.title.clone();
+    this.uiTitle = this.rgaTitle.readStr();
+    if(this.folder.isCanEdit) {
+      this.subscribeOnEditUI();
+    }
+  }
 
-    // UPDATE CURRENT
-    this.titleChange$
-      .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
-      .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffsText(this.folder.title, title);
-        this.store.dispatch(
-          new UpdateFolderTitle(diffs, title, this.folder.id, true, null, false, false),
-        );
-        this.folder.title = title;
+  subscribeOnEditUI(): void {
+    this.folderTitleChanged$
+      .pipe(takeUntil(this.destroyComponentService.d$), buffer(this.intervalEvents))
+      .subscribe((trans) => {
+        if (trans.length > 0) {
+          const group = groupBy(trans, (x) => x.folderId);
+          for (const folderId in group) {
+            const updates = group[folderId].map((x) => x.trans);
+            this.store.dispatch(new UpdateSmallFolderTitleUI(updates, this.rgaTitle.clone(), this.folder.id));
+          }
+        }
       });
   }
 
-  updateTitle(title: string): void {
-    const el = this.folderTitleEl?.nativeElement;
-    if (this.folder.title !== title && el) {
+  updateRGATitle(trans: MergeTransaction<string>[]) {
+    if (this.folderTitleEl?.nativeElement) {
+      const el = this.folderTitleEl.nativeElement;
       const pos = this.apiBrowserFunctions.getInputSelection(el);
 
-      this.uiTitle = title;
-      this.folder.title = title;
+      this.rgaTitle.merge(trans);
+      this.uiTitle = this.rgaTitle.readStr();
 
       requestAnimationFrame(() => this.apiBrowserFunctions.setCaretInput(el, pos));
     }
   }
 
+  pushChangesToTitle(title: string): void {
+    if (this.isLoading) return;
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    const operator = this.diffCheckerService.processTextChanges(
+      this.rgaTitle,
+      title,
+      user.agentId,
+    );
+    operator.apply();
+    this.folderTitleChanged$.next({ trans: operator.mergeOps, folderId: this.folder.id });
+  }
+  
+
   ngOnInit(): void {
     this.setTitle();
+    this.isLoading = false;
   }
 
-  tryFind(z: string[]): boolean {
-    const exist = z.find((id) => id === this.folder.id);
+  tryFind(q: string[]): boolean {
+    const exist = q.find((id) => id === this.folder.id);
     return exist !== undefined;
   }
 
@@ -140,8 +174,5 @@ export class FolderComponent implements OnInit, OnDestroy {
     return `#${RR}${GG}${BB}`;
   };
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
+  ngOnDestroy(): void {}
 }

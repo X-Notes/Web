@@ -10,7 +10,16 @@ export class Folders {
 
   constructor(typeFolders: FolderTypeENUM, folders: SmallFolder[]) {
     this.typeFolders = typeFolders;
+    this.validate(folders);
     this.folders = folders;
     this.count = folders.length;
+  }
+
+  validate(notes: SmallFolder[]): void {
+    notes.forEach((note) => {
+      if (!note.title.isContainsMethods) {
+        throw new Error('Title invalid');
+      }
+    });
   }
 }

@@ -245,17 +245,26 @@ export class DeleteCurrentNoteData {
   static type = '[Notes] delete full note';
 }
 
-export class UpdateNoteTitle {
+export class UpdateNoteTitleWS {
+  static type = '[Notes] update note title ws';
+
+  constructor(
+    public transactions: MergeTransaction<string>[],
+    public noteId: string,
+    public errorPermissionMessage?: string,
+  ) {}
+}
+
+export class UpdateSmallNoteTitle {
   static type = '[Notes] update title';
 
   constructor(
-    public transaction: MergeTransaction<string>,
+    public transactions: MergeTransaction<string>[],
     public noteId: string,
-    public isCallApi = true,
     public errorPermissionMessage?: string,
-    public isUpdateFullNote = true,
   ) {}
 }
+
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';
 

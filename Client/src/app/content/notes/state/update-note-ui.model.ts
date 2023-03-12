@@ -6,8 +6,6 @@ export class UpdateNoteUI {
 
   color: string;
 
-  title: TreeRGA<string>;
-
   removeLabelIds: string[];
 
   isCanEdit: boolean;

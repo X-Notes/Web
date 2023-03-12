@@ -23,7 +23,7 @@
       type="text"
       [placeholder]="'placeholder.folderSmall' | translate"
       [ngModel]="uiTitle"
-      (ngModelChange)="titleChange$.next($event)"
+      (ngModelChange)="pushChangesToTitle($event)"
       [disabled]="isSelectedMode || !folder.isCanEdit"
     />
     <div

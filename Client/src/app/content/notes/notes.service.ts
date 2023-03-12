@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Store } from '@ngxs/store';
+import { Actions, Store } from '@ngxs/store';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -28,7 +28,6 @@ import { NoteComponent } from './note/note.component';
 /** Injection only in component */
 @Injectable()
 export class NotesService extends NoteEntitiesService implements OnDestroy {
-  viewElements: QueryList<NoteComponent>;
 
   labelsIds: Subscription;
 
@@ -45,8 +44,9 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
     private updateService: UpdaterEntitiesService,
+    actions$: Actions
   ) {
-    super(dialogsManageService, store, murriService, apiService, router);
+    super(dialogsManageService, store, murriService, apiService, router, actions$, null);
 
     this.store
       .select(NoteStore.removeFromMurriEvent)

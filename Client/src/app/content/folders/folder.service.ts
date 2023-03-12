@@ -1,5 +1,5 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Actions, ofActionDispatched, Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
@@ -16,6 +16,7 @@ import {
   ClearAddToDomFolders,
   ClearUpdatesUIFolders,
   LoadFolders,
+  UpdateFolderTitleWS,
   UpdateOneFolder,
   UpdatePositionsFolders,
 } from './state/folders-actions';
@@ -38,6 +39,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     murriService: MurriService,
     private updateService: UpdaterEntitiesService,
     private apiFolders: ApiFoldersService,
+    public actions$: Actions,
   ) {
     super(store, murriService);
 
@@ -46,6 +48,15 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
       .pipe(takeUntil(this.destroy))
       .subscribe(async (values) => {
         await this.updateFolders(values);
+      });
+
+    this.actions$
+      .pipe(takeUntil(this.destroy), ofActionDispatched(UpdateFolderTitleWS))
+      .subscribe((value: UpdateFolderTitleWS) => {
+        const viewChid = this.viewElements.toArray().find((x) => x.folder.id === value.folderId);
+        if (viewChid) {
+          viewChid.updateRGATitle(value.transactions);
+        }
       });
 
     this.store
@@ -135,14 +146,6 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
       const folder = this.entities.find((x) => x.id === value.id) as SmallFolder;
       if (folder !== undefined) {
         folder.color = value.color ?? folder.color;
-
-        if (value.isUpdateTitle) {
-          const viewChid = this.viewElements.toArray().find((x) => x.folder.id === value.id);
-          if (viewChid) {
-            viewChid.updateTitle(value.title);
-          }
-        }
-
         folder.isCanEdit = value.isCanEdit ?? folder.isCanEdit;
       }
     }
@@ -164,8 +167,8 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled: boolean = true) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (this.getIsFirstInit(q)) {
         // eslint-disable-next-line no-param-reassign
         isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(isDragEnabled);
@@ -224,7 +227,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     await this.store.dispatch(new LoadFolders(typeENUM, pr)).toPromise();
 
     const types = Object.values(FolderTypeENUM).filter(
-      (z) => typeof z === 'number' && z !== typeENUM,
+      (q) => typeof q === 'number' && q !== typeENUM,
     );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);

@@ -10,7 +10,16 @@ export class Notes {
 
   constructor(typeNotes: NoteTypeENUM, notes: SmallNote[]) {
     this.typeNotes = typeNotes;
+    this.validate(notes);
     this.notes = notes;
     this.count = notes.length;
+  }
+
+  validate(notes: SmallNote[]): void {
+    notes.forEach((note) => {
+      if (!note.title.isContainsMethods) {
+        throw new Error('Title invalid');
+      }
+    });
   }
 }

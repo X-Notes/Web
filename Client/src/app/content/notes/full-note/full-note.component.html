@@ -6,10 +6,12 @@
 >
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
-      [note]="note$ | async"
+      [noteId]="(note$ | async).id"
+      [color]="(note$ | async).color"
+      [labels]="(note$ | async).labels"
+      [titleType]="titleType.Note"
       [progressiveLoading]="true"
       [isReadOnlyMode]="(canEdit$ | async) === false"
-      [title$]="noteTitle$"
       [contents]="contents"
       [editorTheme]="theme$ | async"
     ></app-content-editor>

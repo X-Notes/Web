@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngxs/store';
+import { Actions, Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
@@ -24,8 +24,9 @@ export class FullFolderNotesService extends NoteEntitiesService {
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     router: Router,
+    actions: Actions,
   ) {
-    super(dialogsManageService, store, murriService, apiNoteService, router);
+    super(dialogsManageService, store, murriService, apiNoteService, router, actions, null);
   }
 
   onDestroy(): void {

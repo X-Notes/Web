@@ -7,8 +7,8 @@
         [ngStyle]="{ backgroundColor: item.color }"
         (click)="navigateToFolder(item.id)"
       >
-        <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
-        <p *ngIf="!item.title" class="empty-placeholder">
+        <p *ngIf="getTitle(item)?.length > 0">{{ getTitle(item) }}</p>
+        <p *ngIf="!getTitle(item)" class="empty-placeholder">
           {{ 'placeholder.unnamedFolder' | translate }}
         </p>
       </div>
@@ -24,75 +24,11 @@
     'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
   }"
 >
-  <div class="folder-sub-header" [ngClass]="{ 'sub-header-photo': (userBackground$ | async) }">
-    <div class="container info-container">
-      <div class="dot" [ngStyle]="{ backgroundColor: (folder$ | async).color }"></div>
-      <div class="navigation">
-        <a
-          [routerLink]="'/folders/' + ((folder$ | async).folderTypeId | folderType)?.route"
-          class="link"
-        >
-          {{ ((folder$ | async).folderTypeId | folderType)?.tranlate | translate }}
-        </a>
-        <span class="divider">/</span>
-        <input
-          #folderTitle
-          [ngModel]="uiTitle"
-          [placeholder]="'placeholder.folderSmall' | translate"
-          (ngModelChange)="titleChange$.next($event)"
-          [disabled]="(canEdit$ | async) === false"
-        />
-      </div>
-    </div>
-    <div *ngIf="canEdit$ | async" class="container buttons-container">
-      <button
-        class="side-button"
-        type="button"
-        name="Color"
-        #color
-        (click)="openChangeColorPopup()"
-      >
-        <div class="inner-content">
-          <div class="icon">
-            <mat-icon svgIcon="color" [inline]="true"></mat-icon>
-          </div>
-          <p>{{ 'menu.color' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
-      </button>
-      <button
-        *ngIf="(user$ | async).id === (folder$ | async).userId"
-        class="side-button"
-        type="button"
-        name="share"
-        #share
-        (click)="menuButtonService.openShareWithFolders()"
-      >
-        <div class="inner-content">
-          <div class="icon">
-            <mat-icon svgIcon="share" [inline]="true"></mat-icon>
-          </div>
-          <p>{{ 'menu.share' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="share"></div>
-      </button>
-      <button
-        class="side-button icon-only"
-        type="button"
-        name="more"
-        #more
-        [matMenuTriggerFor]="menu"
-      >
-        <div class="inner-content">
-          <div class="icon">
-            <mat-icon [inline]="true">more_horiz</mat-icon>
-          </div>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
-      </button>
-    </div>
-    <div class="folder-color" [ngStyle]="{ backgroundColor: (folder$ | async).color }"></div>
-  </div>
+  <app-full-folder-sub-header
+    [folder]="folder$ | async"
+    [canEdit]="canEdit$ | async"
+    [user$]="user$"
+  ></app-full-folder-sub-header>
   <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
     <div class="content-inner">
       <div class="grid" [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }">
@@ -139,29 +75,3 @@
   ></app-no-results-illustration>
 </div>
 <div class="drag-helper main-helper"></div>
-<mat-menu #menu="matMenu">
-  <ng-container
-    *ngFor="
-      let item of getFolderMenu(folder$ | async)
-        | manageMenuButtons
-          : (canEdit$ | async)
-          : (user$ | async).id === (folder$ | async)?.userId
-          : true
-    "
-  >
-    <button
-      (click)="item.operation()"
-      mat-menu-item
-      type="button"
-      [name]="item.icon"
-      *ngIf="(item?.isVisible | async) === (true || undefined || null)"
-    >
-      <mat-icon
-        *ngIf="item.icon !== 'history'"
-        [svgIcon]="item.icon"
-        style="width: 1rem; height: 1rem; font-size: 1rem"
-      ></mat-icon>
-      <span> {{ 'menu.' + item.icon | translate }} </span>
-    </button>
-  </ng-container>
-</mat-menu>

@@ -7,6 +7,7 @@ import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { FullFolder } from '../models/full-folder.model';
 import { UpdateFolderUI } from './update-folder-ui.model';
 import { MergeTransaction } from '../../notes/full-note/content-editor/text/rga/types';
+import { TreeRGA } from '../../notes/full-note/content-editor/text/rga/tree-rga';
 
 export class LoadFolders {
   static type = '[Folders] Load folders';
@@ -135,17 +136,21 @@ export class SelectAllFolder {
   constructor(public typeFolder: FolderTypeENUM) {}
 }
 
-export class UpdateFolderTitle {
-  static type = '[Folders] update title';
+export class UpdateSmallFolderTitleUI {
+  static type = '[Folders] update small folder title ui';
 
   constructor(
-    public transaction: MergeTransaction<string>,
+    public transactions: MergeTransaction<string>[],
+    public uiTree: TreeRGA<string>,
     public folderId: string,
-    public isCallApi = true,
     public errorPermissionMessage?: string,
-    public isUpdateFullNote = true,
-    public isUpdateSmallFolders = true,
   ) {}
+}
+
+export class UpdateFolderTitleWS {
+  static type = '[Folders] update folder title ws';
+
+  constructor(public transactions: MergeTransaction<string>[], public folderId: string) {}
 }
 
 export class UpdateOneFolder {

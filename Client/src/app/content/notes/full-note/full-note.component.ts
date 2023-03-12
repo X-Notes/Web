@@ -19,6 +19,8 @@ import { DialogsManageService } from '../../navigation/services/dialogs-manage.s
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { EditorTitleEnum } from './content-editor/entities/editor-title.enum';
+
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -42,9 +44,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
-  @Select(NoteStore.fullNoteTitle)
-  noteTitle$: Observable<string>;
-
   public notesLink: SmallNote[];
 
   loaded = false;
@@ -54,6 +53,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   contents: ContentModelBase[];
 
   id: string;
+
+  titleType = EditorTitleEnum;
 
   private routeSubscription: Subscription;
 

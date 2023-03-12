@@ -10,14 +10,14 @@
   (selectionEndEvent)="selectionEndHandler($event)"
   (onScrollEvent)="onScroll($event)"
   class="main-content"
-  [ngClass]="{ 'nope-select': selectionService.selectionDivActive$ | async }"
+  [ngClass]="{ 'nope-select': facade.selectionService.selectionDivActive }"
 >
   <div class="top-section">
-    <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
-    <div *ngIf="(note?.labels | noDeletedLabels)?.length" class="labels-section">
+    <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
+    <div *ngIf="(labels | noDeletedLabels)?.length" class="labels-section">
       <div
         class="label"
-        *ngFor="let label of note?.labels | noDeletedLabels"
+        *ngFor="let label of labels | noDeletedLabels"
         [ngStyle]="{ backgroundColor: label.color }"
       >
         <p>{{ label.name }}</p>
@@ -28,8 +28,9 @@
       <div
         id="title-element"
         #noteTitle
-        [attr.contenteditable]="!isReadOnlyMode && (selectionService.selectionDivActive$ | async) === false"
+        [attr.contenteditable]="!isReadOnlyMode && facade.selectionService.selectionDivActive === false"
         (paste)="pasteCommandHandler($event)"
+        (selectstart)="startTitleSelection($event)"
         [textContent]="uiTitle"
         class="title"
         (input)="onTitleInput($event)"
@@ -59,7 +60,7 @@
             <app-html-text-part
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.default"
-              [isSelected]="selectionService.isSelected(item.id)"
+              [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -78,7 +79,7 @@
             <app-html-number-list
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.numberList"
-              [isSelected]="selectionService.isSelected(item.id)"
+              [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [prevContent]="getTextContent(i - 1)"
               [prevType]="getTextContent(i - 1)?.noteTextTypeId"
@@ -98,7 +99,7 @@
             <app-html-dot-list
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.dotList"
-              [isSelected]="selectionService.isSelected(item.id)"
+              [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -116,7 +117,7 @@
             <app-html-check-list
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.checkList"
-              [isSelected]="selectionService.isSelected(item.id)"
+              [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -134,7 +135,7 @@
             <app-html-headings
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.heading"
-              [isSelected]="selectionService.isSelected(item.id)"
+              [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -153,12 +154,12 @@
           <app-photos
             #htmlComp
             *ngSwitchCase="contentType.Photos"
-            [isSelected]="selectionService.isSelected(item.id)"
+            [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
-            [noteId]="note.id"
+            [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
-            (uploadEvent)="uploadPhotoToAlbumHandler($event, note.id)"
+            (uploadEvent)="uploadPhotoToAlbumHandler($event, noteId)"
             (deleteContentEvent)="deletePhotosCollection($event)"
             (deleteContentItemEvent)="deletePhotoHandler($event, item)"
             (someChangesEvent)="postAction()"
@@ -167,42 +168,42 @@
           <app-audio-note
             #htmlComp
             *ngSwitchCase="contentType.Audios"
-            [isSelected]="selectionService.isSelected(item.id)"
+            [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
-            [noteId]="note.id"
+            [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteAudiosCollection($event)"
             (deleteContentItemEvent)="deleteAudioHandler($event, item)"
-            (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
+            (uploadEvent)="uploadAudiosToCollectionHandler($event, noteId)"
             (someChangesEvent)="postAction()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-audio-note>
           <app-video-note
             #htmlComp
             *ngSwitchCase="contentType.Videos"
-            [isSelected]="selectionService.isSelected(item.id)"
+            [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
-            [noteId]="note.id"
+            [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteVideosCollection($event)"
             (deleteContentItemEvent)="deleteVideoHandler($event, item)"
-            (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
+            (uploadEvent)="uploadVideosToCollectionHandler($event, noteId)"
             (someChangesEvent)="postAction()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-video-note>
           <app-document-note
             #htmlComp
             *ngSwitchCase="contentType.Documents"
-            [isSelected]="selectionService.isSelected(item.id)"
+            [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
-            [noteId]="note.id"
+            [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteDocumentsCollection($event)"
             (deleteContentItemEvent)="deleteDocumentHandler($event, item)"
-            (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
+            (uploadEvent)="uploadDocumentsToCollectionHandler($event, noteId)"
             (someChangesEvent)="postAction()"
             ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-document-note>

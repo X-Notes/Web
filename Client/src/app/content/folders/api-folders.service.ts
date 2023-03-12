@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
@@ -32,7 +32,8 @@ export class ApiFoldersService {
       .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${type}`, { params })
       .pipe(
         map((q) => EntityMapperUtil.transformFolders(q)),
-        map((folders) => new Folders(type, folders)));
+        map((folders) => new Folders(type, folders)),
+      );
   }
 
   getUsersOnPrivateFolder(id: string) {
@@ -59,12 +60,13 @@ export class ApiFoldersService {
     return this.httpClient
       .post<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/many`, obj)
       .pipe(
-        map((z) => {
-          if (z.success) {
-            return z.data;
+        map((q): SmallFolder[] => {
+          if (q.success) {
+            return q.data;
           }
-          return [];
+          return [] as SmallFolder[];
         }),
+        map((s) => EntityMapperUtil.transformFolders(s)),
       );
   }
 
@@ -109,15 +111,27 @@ export class ApiFoldersService {
   }
 
   get(id: string): Observable<OperationResult<FullFolder>> {
-    return this.httpClient.get<OperationResult<FullFolder>>(
-      `${environment.writeAPI}/api/folder/${id}`,
-    );
+    return this.httpClient
+      .get<OperationResult<FullFolder>>(`${environment.writeAPI}/api/folder/${id}`)
+      .pipe(
+        tap((s) => {
+          if (s.data) {
+            s.data.title = EntityMapperUtil.transformTreeRga(s.data.title);
+          }
+        }),
+      );
   }
 
   new(): Observable<OperationResult<SmallFolder>> {
-    return this.httpClient.get<OperationResult<SmallFolder>>(
-      `${environment.writeAPI}/api/folder/new`,
-    );
+    return this.httpClient
+      .get<OperationResult<SmallFolder>>(`${environment.writeAPI}/api/folder/new`)
+      .pipe(
+        tap((s) => {
+          if (s.data) {
+            s.data.title = EntityMapperUtil.transformTreeRga(s.data.title);
+          }
+        }),
+      );
   }
 
   archive(ids: string[]) {
@@ -154,10 +168,17 @@ export class ApiFoldersService {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<SmallFolder[]>>(
-      `${environment.writeAPI}/api/folder/copy`,
-      obj,
-    );
+    return this.httpClient
+      .patch<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/copy`, obj)
+      .pipe(
+        tap((s) => {
+          if (s.data) {
+            s.data.forEach((x) => {
+              x.title = EntityMapperUtil.transformTreeRga(x.title);
+            });
+          }
+        }),
+      );
   }
 
   changeColor(ids: string[], color: string) {

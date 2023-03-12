@@ -1,14 +1,17 @@
+import { QueryList } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngxs/store';
+import { Actions, ofActionDispatched, Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { NoteComponent } from 'src/app/content/notes/note/note.component';
 import {
   ClearUpdatesUINotes,
   SelectIdNote,
   UnSelectIdNote,
+  UpdateNoteTitleWS,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
@@ -17,6 +20,7 @@ import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 
 export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallNote> {
+
   destroy = new Subject<void>();
 
   constructor(
@@ -25,6 +29,8 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     murriService: MurriService,
     public apiService: ApiServiceNotes,
     protected router: Router,
+    public actions$: Actions,
+    public viewElements: QueryList<NoteComponent>
   ) {
     super(store, murriService);
 
@@ -44,6 +50,15 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       .subscribe(async (values: UpdateNoteUI[]) => {
         await this.updateNotes(values);
       });
+
+    this.actions$
+      .pipe(takeUntil(this.destroy), ofActionDispatched(UpdateNoteTitleWS))
+      .subscribe((value: UpdateNoteTitleWS) => {        
+        const viewChid = this.viewElements.toArray().find((x) => x.note.id === value.noteId);
+        if (viewChid) {
+          viewChid.updateRGATitle(value.transactions);
+        }
+      });
   }
 
   async updateNotes(updates: UpdateNoteUI[]) {
@@ -60,7 +75,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
           note.labels = value.allLabels;
         }
         note.color = value.color ?? note.color;
-        note.title = value.title ?? note.title;
         note.isCanEdit = value.isCanEdit ?? note.isCanEdit;
         note.isLocked = value.isLocked ?? note.isLocked;
         note.isLockedNow = value.isLockedNow ?? note.isLockedNow;

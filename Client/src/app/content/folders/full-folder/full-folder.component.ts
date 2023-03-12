@@ -6,24 +6,20 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
-  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
-import { MatMenu } from '@angular/material/menu';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
-import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
 import { SmallFolder } from '../models/folder.model';
@@ -33,19 +29,16 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote, SetFolderNotes, UnSelectAllNote } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
-import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
-import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
-import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
+import { LoadFullFolder, LoadFolders } from '../state/folders-actions';
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { DiffCheckerService } from '../../notes/full-note/content-editor/crdt/diff-checker.service';
-import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { NoteComponent } from '../../notes/note/note.component';
 
 @Component({
   selector: 'app-full-folder',
@@ -56,18 +49,11 @@ import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-r
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
-  @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
-
-  @ViewChild(MatMenu) menu: MatMenu;
-
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
 
   @Select(FolderStore.full)
   public folder$: Observable<FullFolder>;
-
-  @Select(FolderStore.fullFolderTitle)
-  folderTitle$: Observable<string>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<string>;
@@ -75,20 +61,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @ViewChildren(NoteComponent) set viewNoteChildren(elms: QueryList<NoteComponent>) {
+    this.ffnService.viewElements = elms;
+  }
+
   fontSize = EntitiesSizeENUM;
 
   foldersLink: SmallFolder[] = [];
 
   loaded = false;
-
-  // TITLE
-  title: string;
-
-  uiTitle: string;
-
-  titleChange$: Subject<string> = new Subject<string>();
-
-  //
 
   private routeSubscription: Subscription;
 
@@ -105,58 +86,12 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
-    private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
     public pB: PermissionsButtonsService,
     private signalR: SignalRService,
-    private diffCheckerService: DiffCheckerService,
-    private apiBrowserFunctions: ApiBrowserTextService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
   ) {}
-
-  initTitle() {
-    const folder = this.store.selectSnapshot(FolderStore.full);
-    // SET
-    if (folder) {
-      this.uiTitle = folder.title;
-      this.title = folder.title;
-      this.htmlTitleService.setCustomOrDefault(this.title, 'titles.folder');
-    }
-  }
-
-  setTitle(): void {
-    this.initTitle();
-
-    // UPDATE WS
-    this.store
-      .select(FolderStore.fullFolderTitle)
-      .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe((title) => this.updateTitle(title));
-
-    // UPDATE CURRENT
-    this.titleChange$
-      .pipe(takeUntil(this.ffnService.destroy), debounceTime(updateTitleEntitesDelay))
-      .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffsText(this.title, title);
-        this.store.dispatch(new UpdateFolderTitle(diffs, title, this.folderId, true, null, false));
-        this.title = title;
-        this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
-      });
-  }
-
-  updateTitle(title: string): void {
-    if (this.title !== title && this.folderTitleEl?.nativeElement) {
-      const el = this.folderTitleEl?.nativeElement;
-      const startPos = this.apiBrowserFunctions.getInputSelection(el);
-
-      this.uiTitle = title;
-      this.title = title;
-      this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
-
-      requestAnimationFrame(() => this.apiBrowserFunctions.setCaretInput(el, startPos));
-    }
-  }
 
   async ngOnInit() {
     this.store.dispatch(new LoadLabels());
@@ -171,10 +106,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         isReinit = true;
         this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
       }
+
       // lOAD FOLDER
       this.folderId = params.id;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
-      this.setTitle();
 
       // INIT FOLDER NOTES
       const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
@@ -199,19 +134,11 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.loadSideBar();
 
-      const title = this.store.selectSnapshot(FolderStore.full)?.title;
-      this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
-
       this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
     });
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
-  }
-
-  openChangeColorPopup() {
-    const ids = [this.store.selectSnapshot(FolderStore.full).id];
-    return this.dialogsService.openChangeColorDialog(EntityPopupType.Folder, ids);
   }
 
   initHeaderButtonSubscribe() {
@@ -247,21 +174,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  initPanelClassStyleSubscribe() {
-    // TODO REMOVE KOSTIL
-    this.store
-      .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe((theme) => {
-        if (theme) {
-          if (theme === ThemeENUM.Dark) {
-            this.menu.panelClass = 'dark-menu';
-          } else {
-            this.menu.panelClass = null;
-          }
-        }
-      });
-  }
 
   initManageButtonSubscribe() {
     this.pService.addNotesToFolderSubject.pipe(takeUntil(this.ffnService.destroy)).subscribe(() => {
@@ -299,14 +211,12 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store.dispatch(new SetFolderNotes(mappedNotes));
   }
 
-  getFolderMenu(folder: FullFolder) {
-    if (!folder) return [];
-    return this.menuButtonService.getFolderMenuByFolderType(folder.folderTypeId);
+  getTitle(folder: SmallFolder): string {
+    return folder.title?.readStr();
   }
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialize(this.refElements);
-    this.initPanelClassStyleSubscribe();
   }
 
   navigateToFolder(folderId: string): void {

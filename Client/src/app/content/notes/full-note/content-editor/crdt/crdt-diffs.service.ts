@@ -105,18 +105,21 @@ export class CrdtDiffsService {
     uiBlock: ProjectBlock,
     diffs: BlockDiff,
     agent: number,
-  ): void {
-    const changes = this.processTextChanges(treeBlock.tree, uiBlock.getText(), agent);
+  ): TreeOperator<string>  {
+    const operator = this.processTextChanges(treeBlock.tree, uiBlock.getText(), agent);
+    operator.apply();
+    const changes = operator.mergeOps;
     if (changes?.ops?.length > 0) {
       diffs.mergeOps = changes;
     }
+    return operator;
   }
 
   processTextChanges(
     stateTree: TreeRGA<string>,
     uiText: string,
     agent: number,
-  ): MergeTransaction<string> {
+  ): TreeOperator<string> {
     const stateText = stateTree.readStr();
     if (stateText === uiText) return null;
 
@@ -136,6 +139,6 @@ export class CrdtDiffsService {
 
     operator.apply();
 
-    return operator.mergeOps;
+    return operator;
   }
 }

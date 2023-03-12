@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
-import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { PreviewNote } from './models/preview-note.model';
 import { RelatedNote } from './models/related-note.model';
@@ -32,7 +32,7 @@ export class ApiRelatedNotesService {
   getRelatedNotes(noteId: string) {
     return this.httpClient
       .get<RelatedNote[]>(`${environment.writeAPI}/api/relatedNotes/${noteId}`)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((z) => EntityMapperUtil.transformNotes(z)));
   }
 
   getAllPreviewNotes(noteId: string, search: string, settings: PersonalizationSetting) {
@@ -43,7 +43,7 @@ export class ApiRelatedNotesService {
     };
     return this.httpClient
       .post<PreviewNote[]>(`${environment.writeAPI}/api/relatedNotes/preview`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((z) => EntityMapperUtil.transformNotes(z)));
   }
 
   updateState(noteId: string, reletatedNoteInnerNoteId: number, isOpened: boolean) {

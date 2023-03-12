@@ -6,7 +6,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { SmallNote } from './models/small-note.model';
@@ -41,7 +41,7 @@ export class ApiServiceNotes {
     return this.httpClient
       .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`, { params })
       .pipe(
-        map((q) => TransformNoteUtil.transformNotes(q)),
+        map((q) => EntityMapperUtil.transformNotes(q)),
         map((notes) => new Notes(type, notes)),
       );
   }
@@ -57,7 +57,7 @@ export class ApiServiceNotes {
       .pipe(
         map((q) => {
           if (q.success) {
-            return TransformNoteUtil.transformNotes(q.data);
+            return EntityMapperUtil.transformNotes(q.data);
           }
           return [];
         }),
@@ -189,7 +189,7 @@ export class ApiServiceNotes {
       {
         params,
       },
-    ).pipe(tap(x => x.data.title = TransformNoteUtil.transformTreeRga(x.data.title)));
+    ).pipe(tap(x => x.data.title = EntityMapperUtil.transformTreeRga(x.data.title)));
   }
 
   getAll(settings: PersonalizationSetting) {
@@ -198,7 +198,7 @@ export class ApiServiceNotes {
     };
     return this.httpClient
       .post<SmallNote[]>(`${environment.writeAPI}/api/note/all`, obj)
-      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
+      .pipe(map((q) => EntityMapperUtil.transformNotes(q)));
   }
 
   new(): Observable<OperationResult<SmallNote>> {
@@ -298,7 +298,7 @@ export class ApiServiceNotes {
       .pipe(
         map((x) => {
           if (x.success) {
-            return TransformNoteUtil.transformContent(x.data);
+            return EntityMapperUtil.transformContent(x.data);
           }
           return [];
         }),

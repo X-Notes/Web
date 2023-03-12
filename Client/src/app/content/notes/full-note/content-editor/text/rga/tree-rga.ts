@@ -62,6 +62,8 @@ export class TreeRGA<T> {
     return this.read().join('');
   }
 
+  isContainsMethods = () => true;
+
   merge(transactions: MergeTransaction<T>[]): void {
     for (const tx of transactions) {
       for (const op of tx.ops ?? []) {

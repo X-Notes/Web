@@ -8,6 +8,8 @@ import { ContentModelBase } from '../models/editor-models/content-model-base';
 import dayjs from 'dayjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { NoteTextTypeENUM } from '../full-note/content-editor/text/note-text-type.enum';
+import { TreeRGA } from '../full-note/content-editor/text/rga/tree-rga';
+import { MergeTransaction } from '../full-note/content-editor/text/rga/types';
 
 @Component({
   selector: 'app-note',
@@ -41,6 +43,8 @@ export class NoteComponent implements OnInit {
 
   contents: ContentModelBase[];
 
+  rgaTitle: TreeRGA<string>;
+
   constructor(public pService: PersonalizationService) {}
 
   get noteFolders() {
@@ -68,7 +72,22 @@ export class NoteComponent implements OnInit {
     return dayjs(this.note.unlockedTime).add(5, 'minutes').format('LT');
   }
 
+  get title(): string {
+    return this.rgaTitle?.readStr() ?? '';
+  }
+
+  setTitle(): void {
+    this.rgaTitle = this.note.title.clone();
+  }
+
+  updateRGATitle(trans: MergeTransaction<string>[]) {
+    if (this.rgaTitle) {
+      this.rgaTitle.merge(trans);
+    }
+  }
+
   ngOnInit(): void {
+    this.setTitle();
     this.syncContent();
   }
 
