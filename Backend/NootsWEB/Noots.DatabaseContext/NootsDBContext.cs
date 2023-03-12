@@ -128,7 +128,7 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.AgentId }).IsUnique();
-            modelBuilder.Entity<User>().Property(x => x.AgentId).UseIdentityAlwaysColumn();
+            modelBuilder.Entity<User>().Property(x => x.AgentId).UseIdentityByDefaultColumn();
 
             modelBuilder.Entity<User>()
                 .HasOne(x => x.CurrentBackground)
