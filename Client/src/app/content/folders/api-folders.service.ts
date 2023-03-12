@@ -14,6 +14,7 @@ import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
 import { MergeTransaction } from '../notes/full-note/content-editor/text/rga/types';
+import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 
 @Injectable()
 export class ApiFoldersService {
@@ -29,7 +30,9 @@ export class ApiFoldersService {
 
     return this.httpClient
       .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${type}`, { params })
-      .pipe(map((folders) => new Folders(type, folders)));
+      .pipe(
+        map((q) => EntityMapperUtil.transformFolders(q)),
+        map((folders) => new Folders(type, folders)));
   }
 
   getUsersOnPrivateFolder(id: string) {

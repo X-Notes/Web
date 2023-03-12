@@ -14,4 +14,8 @@ export class LeftSectionContentNotesListComponent {
   public notesLink: SmallNote[];
 
   constructor(public pService: PersonalizationService, public notesService: NotesService) {}
+
+  getTitle(note: SmallNote): string {
+    return note.title?.readStr();
+  }
 }

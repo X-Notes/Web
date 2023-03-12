@@ -7,8 +7,8 @@
         [ngStyle]="{ backgroundColor: note.color }"
         (click)="notesService.toNote(note)"
       >
-        <p *ngIf="note.title && note.title.length > 0">{{ note.title }}</p>
-        <p *ngIf="!note.title" class="empty-placeholder">
+        <p *ngIf="getTitle(note)?.length > 0">{{ getTitle(note) }}</p>
+        <p *ngIf="!getTitle(note)" class="empty-placeholder">
           {{ 'placeholder.unnamedNote' | translate }}
         </p>
         <div class="lock-container" [ngStyle]="{ backgroundColor: note.color }">
