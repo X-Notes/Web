@@ -12,7 +12,6 @@ import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
 import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
 import { FullNoteModule } from '../notes/full-note/full-note.module';
-import { FullFolderContentComponent } from './full-folder-content/full-folder-content.component';
 import { WebSocketsFolderUpdaterService } from './full-folder/services/web-sockets-folder-updater.service';
 import { FullFolderSubHeaderComponent } from './full-folder/components/full-folder-sub-header/full-folder-sub-header.component';
 
@@ -26,11 +25,10 @@ import { FullFolderSubHeaderComponent } from './full-folder/components/full-fold
     ArchiveComponent,
     FullFolderComponent,
     FullFolderNoteComponent,
-    FullFolderContentComponent,
     FullFolderSubHeaderComponent,
   ],
   imports: [CommonModule, FoldersRouting, SharedModule, FullNoteModule],
   providers: [MurriService, WebSocketsFolderUpdaterService],
-  exports: [FullFolderContentComponent],
+  exports: [],
 })
 export class FoldersModule {}

@@ -13,6 +13,7 @@ import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { take } from 'rxjs/operators';
+import { EditorTitleEnum } from 'src/app/content/notes/full-note/content-editor/entities/editor-title.enum';
 
 @Component({
   selector: 'app-public-note-content',
@@ -26,15 +27,14 @@ export class PublicNoteContentComponent implements OnDestroy {
   @Select(PublicStore.owner)
   owner$: Observable<ShortUserPublic>;
 
-  @Select(NoteStore.fullNoteTitle)
-  noteTitle$: Observable<string>;
-
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
 
   destroy = new Subject<void>();
 
   loaded = false;
+
+  titleType = EditorTitleEnum;
 
   contents: ContentModelBase[];
 

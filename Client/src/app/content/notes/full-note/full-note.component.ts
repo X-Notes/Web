@@ -152,7 +152,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
-    this.notesLink = notes.filter((z) => z.id !== this.id);
+    this.notesLink = notes.filter((q) => q.id !== this.id);
   }
 
   ngOnDestroy() {

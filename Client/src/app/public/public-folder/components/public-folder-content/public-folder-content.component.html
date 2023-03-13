@@ -10,7 +10,7 @@
     [ngStyle]="{ backgroundColor: (folder$ | async).color }"
   ></div>
   <div class="wrapper">
-    <h1 *ngIf="loaded && (folder$ | async)">{{ (folder$ | async).title }}</h1>
+    <h1 *ngIf="loaded && (folder$ | async)">{{ (folder$ | async)?.title?.readStr() }}</h1>
     <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
       <div class="content-inner">
         <div

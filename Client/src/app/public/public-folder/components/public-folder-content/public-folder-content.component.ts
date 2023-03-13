@@ -23,6 +23,8 @@ import { PublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { UpdaterEntitiesService } from '../../../../core/entities-updater.service';
+import { SignalRService } from 'src/app/core/signal-r.service';
+import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -55,13 +57,24 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     private readonly apiFullFolder: ApiFullFolderService,
     private readonly router: Router,
     private readonly updateNoteService: UpdaterEntitiesService,
+    private signalR: SignalRService,
+    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.signalR.init();
     this.pService.setSpinnerState(true);
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       // lOAD FOLDER
       this.folderId = params.id;
+
+      // REINIT LAYOUT
+      let isReinit = false;
+      if (isReinit) {
+        isReinit = true;
+        this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
+      }
+
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
       const folder = this.store.selectSnapshot(FolderStore.full);
       if (folder) {
@@ -71,14 +84,17 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
         // INIT FOLDER NOTES
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
         await this.ffnService.initializePublicEntities(notes, this.folderId);
-        this.updateState();
+        this.ffnService.updateState();
       }
 
       await this.pService.waitPreloading();
       this.pService.setSpinnerState(false);
       this.loaded = true;
+
+      this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
     });
   }
+
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialize(this.refElements);
@@ -90,12 +106,6 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     this.routeSubscription.unsubscribe();
   }
 
-  updateState(): void {
-    const isHasEntities = this.ffnService.entities?.length > 0;
-    this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
-    const mappedNotes = this.ffnService.entities.map((x) => ({ ...x }));
-    this.store.dispatch(new SetFolderNotes(mappedNotes));
-  }
 
   toPublicNote(note: SmallNote) {
     this.ffnService.baseToNote(note, () =>
