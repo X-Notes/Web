@@ -184,12 +184,11 @@ export class ApiServiceNotes {
     if (folderId) {
       params = params.append('folderId', folderId);
     }
-    return this.httpClient.get<OperationResult<FullNote>>(
-      `${environment.writeAPI}/api/note/${noteId}`,
-      {
+    return this.httpClient
+      .get<OperationResult<FullNote>>(`${environment.writeAPI}/api/note/${noteId}`, {
         params,
-      },
-    ).pipe(tap(x => x.data.title = EntityMapperUtil.transformTreeRga(x.data.title)));
+      })
+      .pipe(tap((x) => (x.data.title = EntityMapperUtil.transformTreeRga(x.data.title))));
   }
 
   getAll(settings: PersonalizationSetting) {

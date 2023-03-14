@@ -18,6 +18,7 @@ export interface ParentInteraction {
   getEditableNative(): HTMLElement | Element;
   getHost(): ElementRef<HTMLElement>;
   getTextBlocks(): ProjectBlock[];
+  getText(): string;
   getContent(): ContentModelBase;
   getContentId(): string;
   mouseEnter($event);

@@ -21,7 +21,7 @@ export class TreeRGA<T> {
     obj.seq = tree.seq;
     obj.root = DocTreeItem.initFrom<T>(tree.root);
     return obj;
-  } 
+  }
 
   getCounter(): number {
     return ++this.seq;

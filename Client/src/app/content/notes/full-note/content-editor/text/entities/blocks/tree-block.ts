@@ -23,6 +23,12 @@ export class TreeBlock {
     this.tree = new TreeRGA({ root: block.tree?.root, seq: block.tree?.seq ?? 0 });
   }
 
+  static initFrom(block: TreeBlock): TreeBlock {
+    const obj = new TreeBlock({ ...block });
+    obj.tree = TreeRGA.initFrom(block.tree);
+    return obj;
+  }
+
   updateHighlightColor(value: BlockProperty<string>): void {
     if (
       !this.hC ||
@@ -98,19 +104,19 @@ export class TreeBlock {
     if (this === block) return true;
     if (block == null) return false;
 
-    if (this.hC.value !== block.hC.value || !this.propIdEqual(this.hC.id, block.hC.id)) {
+    if (this.hC?.value !== block.hC?.value || !this.propIdEqual(this.hC?.id, block.hC?.id)) {
       return false;
     }
 
-    if (this.tC.value !== block.tC.value || !this.propIdEqual(this.tC.id, block.tC.id)) {
+    if (this.tC?.value !== block.tC?.value || !this.propIdEqual(this.tC?.id, block.tC?.id)) {
       return false;
     }
 
-    if (this.l.value !== block.l.value || !this.propIdEqual(this.l.id, block.l.id)) {
+    if (this.l?.value !== block.l?.value || !this.propIdEqual(this.l?.id, block.l?.id)) {
       return false;
     }
 
-    if (!this.isEqualTextTypes(block.tT.value) || !this.propIdEqual(this.tT.id, block.tT.id)) {
+    if (!this.isEqualTextTypes(block.tT?.value) || !this.propIdEqual(this.tT?.id, block.tT?.id)) {
       return false;
     }
 
@@ -118,6 +124,6 @@ export class TreeBlock {
   };
 
   propIdEqual(id1: Id, id2: Id): boolean {
-    return id1.agent === id2.agent && id1.seq === id2.seq;
+    return id1?.agent === id2?.agent && id1?.seq === id2?.seq;
   }
 }

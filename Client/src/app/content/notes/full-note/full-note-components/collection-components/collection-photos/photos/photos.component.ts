@@ -7,20 +7,17 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
-import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { Photo, PhotosCollection } from '../../../../../models/editor-models/photos-collection';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
+import { HtmlComponentsFacadeService } from '../../../../content-editor/services/html-facade.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -48,21 +45,12 @@ export class PhotosComponent
   changeSizeAlbumHandler = combineLatest([this.changeHeightSubject]);
 
   constructor(
-    private renderer: Renderer2,
-    selectionService: SelectionService,
     private exportService: ExportService,
-    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Photo,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Photo, facade);
   }
 
   get countOfBlocks() {
@@ -108,7 +96,7 @@ export class PhotosComponent
 
   saveHeight(isResizingPhoto: boolean) {
     this.startHeight = this.albumChild.nativeElement.offsetHeight;
-    this.selectionService.isResizingPhoto = isResizingPhoto;
+    this.facade.selectionService.isResizingPhoto = isResizingPhoto;
   }
 
   ngOnInit(): void {
@@ -321,7 +309,7 @@ export class PhotosComponent
 
   private setHeight(value: string): void {
     value = value ?? 'auto';
-    this.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
+    this.facade.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
     this.changeHeightSubject.next(value);
   }
 }

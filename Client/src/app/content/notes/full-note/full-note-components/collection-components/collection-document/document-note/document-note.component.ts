@@ -16,8 +16,7 @@ import {
   DocumentModel,
   DocumentsCollection,
 } from '../../../../../models/editor-models/documents-collection';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { HtmlComponentsFacadeService } from '../../../../content-editor/services/html-facade.service';
 
 @Component({
   selector: 'app-document-note',
@@ -36,17 +35,9 @@ export class DocumentNoteComponent
     private host: ElementRef,
     private clickableService: ClickableContentService,
     cdr: ChangeDetectorRef,
-    clickableContentService: ClickableContentService,
-    apiBrowserTextService: ApiBrowserTextService,
-    selectionService: SelectionService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Document,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Document, facade);
   }
 
   get isClicked() {

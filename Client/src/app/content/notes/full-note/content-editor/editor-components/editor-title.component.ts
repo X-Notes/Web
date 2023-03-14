@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { ofActionDispatched } from '@ngxs/store';
 import { interval, Subject } from 'rxjs';
@@ -8,12 +9,13 @@ import { groupBy } from 'src/app/shared/services/arrays.util';
 import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 import { UpdateNoteTitleWS, UpdateSmallNoteTitle } from '../../../state/notes-actions';
 import { EditorTitleEnum } from '../entities/editor-title.enum';
-import { EditorFacadeService as EditorFacadeService } from '../services/editor-api-facade.service';
+import { EditorFacadeService as EditorFacadeService } from '../services/editor-facade.service';
 import { TreeRGA } from '../text/rga/tree-rga';
 import { MergeTransaction } from '../text/rga/types';
 import { EditorBaseComponent } from './edit-base.components';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: '',
   template: '',
 })
@@ -82,12 +84,14 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.facade.htmlTitleService.setCustomOrDefault(this.uiTitle, 'titles.note');
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   subscribeOnEditUI(): void {
     this.noteTitleChanged
       .pipe(takeUntil(this.facade.dc.d$), buffer(this.intervalEvents))
       .subscribe((trans) => {
         if (trans.length > 0) {
           const group = groupBy(trans, (x) => x.noteId);
+          // eslint-disable-next-line guard-for-in
           for (const noteId in group) {
             const updates = group[noteId].map((x) => x.trans);
             this.updateRgaTitleAPI(updates, noteId);
@@ -96,6 +100,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
       });
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   subscribeUpdates(): void {
     this.facade.actions$
       .pipe(takeUntil(this.facade.dc.d$), ofActionDispatched(UpdateNoteTitleWS))
@@ -107,6 +112,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
   }
 
   // OUTSIDE UPDATES
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   updateRGATitle(trans: MergeTransaction<string>[]) {
     if (this.noteTitleEl?.nativeElement) {
       const el = this.noteTitleEl.nativeElement;
@@ -122,6 +128,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   startTitleSelection($event): void {
     this.facade.selectionService.disableDiv = true;
   }
@@ -157,6 +164,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
           this.facade.store.dispatch(new UpdateSmallNoteTitle(trans, noteId));
           return this.rgaTitle.readStr();
         }
+        break;
       }
       default: {
         throw new Error('Type not supported');
@@ -192,6 +200,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(facade: EditorFacadeService) {
     super(facade);
   }

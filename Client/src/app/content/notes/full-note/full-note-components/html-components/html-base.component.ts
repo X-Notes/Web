@@ -1,21 +1,7 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseText } from '../../../models/editor-models/base-text';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
-import { SelectionService } from '../../content-editor-services/selection.service';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
 import { ProjectBlock } from '../../content-editor/text/entities/blocks/projection-block';
@@ -24,7 +10,6 @@ import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum'
 import { EnterEvent } from '../../models/enter-event.model';
 import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
-import { InputHtmlEvent } from './models/input-html-event';
 
 export interface PasteEvent {
   element: BaseTextElementComponent;
@@ -57,39 +42,19 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<BaseTextElementComponent>();
 
-  @Output()
-  inputHtmlEvent = new EventEmitter<InputHtmlEvent>();
-
   @ViewChild('contentHtml') contentHtml: ElementRef;
+
+  contentsUI: ProjectBlock[];
 
   preFocus = false;
 
-  textChanged: Subject<string> = new Subject();
+  syncUI$: Subject<string> = new Subject();
 
   destroy = new Subject<void>();
 
   viewHtml: string;
 
   listeners = [];
-
-  constructor(
-    cdr: ChangeDetectorRef,
-    protected apiBrowser: ApiBrowserTextService,
-    selectionService: SelectionService,
-    protected clickableService: ClickableContentService,
-    private renderer: Renderer2,
-    private sanitizer: DomSanitizer,
-  ) {
-    super(cdr, selectionService);
-
-    this.textChanged.pipe(takeUntil(this.destroy)).subscribe(() => {
-      if (!this.contentHtml) return;
-      const html = this.contentHtml.nativeElement.innerHTML;
-      const contents = DeltaConverter.convertHTMLToTextBlocks(html);
-      this.content.contentsUI = contents;
-      this.inputHtmlEvent.emit({ content: this.content });
-    });
-  }
 
   get isActiveState(): boolean {
     return this.getIsActive() && !this.isReadOnlyMode;
@@ -100,14 +65,15 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   syncHtmlWithLayout() {
-    this.textChanged.next();
+    this.syncUI$.next();
   }
 
   initBaseHTML(): void {
-    if (this.content.contentsUI?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
-      this.sanitizer.bypassSecurityTrustHtml(html);
-      const convertedHTML = this.sanitizer.bypassSecurityTrustHtml(html) ?? '';
+    this.contentsUI = this.content.contents?.map((x) => x.getProjection());
+    if (this.contentsUI?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this.contentsUI);
+      this.facade.sanitizer.bypassSecurityTrustHtml(html);
+      const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html) ?? '';
       this.viewHtml = convertedHTML as string;
       this.syncHtmlWithLayout();
     }
@@ -164,9 +130,9 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   syncContentWithLayout() {
     const el = this.contentHtml.nativeElement;
-    const savedSel = this.apiBrowser.saveSelection(el);
-    this.updateHTML(this.content.contentsUI);
-    this.apiBrowser.restoreSelection(el, savedSel);
+    const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
+    this.updateHTML(this.contentsUI);
+    this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
   }
 
   getContent(): BaseText {
@@ -184,6 +150,10 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   getTextBlocks(): ProjectBlock[] {
     const html = this.getEditableNative<HTMLElement>().innerHTML;
     return DeltaConverter.convertHTMLToTextBlocks(html);
+  }
+
+  getText(): string {
+    return this.getEditableNative<HTMLElement>().textContent;
   }
 
   isContentEmpty() {
@@ -218,7 +188,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   }
 
   setFocusToEnd() {
-    this.apiBrowser.setCursor(this.contentHtml.nativeElement, false);
+    this.facade.apiBrowserTextService.setCursor(this.contentHtml.nativeElement, false);
     this.setFocusedElement();
     this.onFocus.emit(this);
   }
@@ -238,19 +208,19 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     e.preventDefault();
     if (isLink) {
       this.convertTextToLink(e);
-      this.textChanged.next();
+      this.syncUI$.next();
       return;
     }
     const html = e.clipboardData.getData('text/html');
     if (html) {
       this.handleHtmlInserting(html);
-      this.textChanged.next();
+      this.syncUI$.next();
       return;
     }
     const text = e.clipboardData.getData('text/plain');
     if (text) {
-      this.apiBrowser.pasteOnlyTextHandler(e);
-      this.textChanged.next();
+      this.facade.apiBrowserTextService.pasteOnlyTextHandler(e);
+      this.syncUI$.next();
       return;
     }
   }
@@ -261,7 +231,7 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     if (htmlElements.length === 0) return;
 
     const htmlEl = htmlElements[0];
-    this.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
+    this.facade.apiBrowserTextService.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
     const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
     const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
     this.updateHTML(resTextBlocks);
@@ -281,21 +251,23 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     const data = JSON.parse(json);
     const title = data.title;
     const url = data.url;
-    const pos = this.apiBrowser.getSelectionCharacterOffsetsWithin(this.getEditableNative());
-    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
+    const pos = this.facade.apiBrowserTextService.getSelectionCharacterOffsetsWithin(
+      this.getEditableNative(),
+    );
+    const html = DeltaConverter.convertTextBlocksToHTML(this.contentsUI);
     const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
     const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
     this.updateHTML(resTextBlocks);
   }
 
   checkForDeleteOrConcatWithPrev($event) {
-    if (this.selectionService.isAnySelect()) {
+    if (this.facade.selectionService.isAnySelect()) {
       return;
     }
 
-    const selection = this.apiBrowser.getSelection().toString();
+    const selection = this.facade.apiBrowserTextService.getSelection().toString();
     if (
-      this.apiBrowser.isStart(this.getEditableNative()) &&
+      this.facade.apiBrowserTextService.isStart(this.getEditableNative()) &&
       !this.isContentEmpty() &&
       selection === ''
     ) {
@@ -311,25 +283,25 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   setHandlers() {
     const el = this.getEditableNative();
-    const blur = this.renderer.listen(el, 'blur', (e) => {
+    const blur = this.facade.renderer.listen(el, 'blur', (e) => {
       this.onBlur(e);
     });
-    const paste = this.renderer.listen(el, 'paste', (e) => {
+    const paste = this.facade.renderer.listen(el, 'paste', (e) => {
       this.pasteCommandHandler(e);
     });
-    const selectStart = this.renderer.listen(el, 'selectstart', (e) => {
+    const selectStart = this.facade.renderer.listen(el, 'selectstart', (e) => {
       this.onSelectStart(e);
     });
-    const keydownEnter = this.renderer.listen(el, 'keydown.enter', (e) => {
+    const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e) => {
       this.enter(e);
     });
-    const keydownBackspace = this.renderer.listen(el, 'keydown.backspace', (e) => {
+    const keydownBackspace = this.facade.renderer.listen(el, 'keydown.backspace', (e) => {
       this.checkForDeleteOrConcatWithPrev(e);
     });
-    const keyupBackspace = this.renderer.listen(el, 'keyup.backspace', (e) => {
+    const keyupBackspace = this.facade.renderer.listen(el, 'keyup.backspace', (e) => {
       this.backUp(e);
     });
-    const keydownDelete = this.renderer.listen(el, 'keydown.delete', (e) => {
+    const keydownDelete = this.facade.renderer.listen(el, 'keydown.delete', (e) => {
       this.checkForDeleteOrConcatWithPrev(e);
     });
     this.listeners.push(

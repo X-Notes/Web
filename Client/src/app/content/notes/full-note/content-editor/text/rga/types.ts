@@ -21,7 +21,7 @@ export class DocTreeItem<T> {
   static initFrom<I>(obj: DocTreeItem<I>): DocTreeItem<I> {
     const res = new DocTreeItem<I>(obj.content, obj.id);
     res.deleted = obj.deleted;
-    res.children = obj.children.map(x => this.initFrom(x));
+    res.children = obj.children.map((x) => this.initFrom(x));
     return res;
   }
 
@@ -106,7 +106,7 @@ export type LocalTransaction<T> = {
 
 export enum MergeOpType {
   Insert = 1,
-  Delete
+  Delete,
 }
 
 export type MergeOp<T> = {

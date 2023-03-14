@@ -1,4 +1,5 @@
 import { SmallFolder } from 'src/app/content/folders/models/folder.model';
+import { TreeBlock } from 'src/app/content/notes/full-note/content-editor/text/entities/blocks/tree-block';
 import { TreeRGA } from 'src/app/content/notes/full-note/content-editor/text/rga/tree-rga';
 import {
   ApiAudiosCollection,
@@ -40,11 +41,15 @@ export class EntityMapperUtil {
     });
   }
 
-  public static transformTreeRga(obj: TreeRGA<string>): TreeRGA<string>  {
-    if(obj) {
+  public static transformTreeRga(obj: TreeRGA<string>): TreeRGA<string> {
+    if (obj) {
       return TreeRGA.initFrom(obj);
     }
     return new TreeRGA<string>();
+  }
+
+  public static transformBlockTreeRga(obj: TreeBlock): TreeBlock {
+    return TreeBlock.initFrom(obj);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -68,7 +73,9 @@ export class EntityMapperUtil {
         return new DocumentsCollection(collection, collection.documents);
       }
       if (q.typeId === ContentTypeENUM.Text) {
-        return new BaseText(q as BaseText);
+        const text = new BaseText(q as BaseText);
+        text.contents = text.contents?.map((x) => this.transformBlockTreeRga(x));
+        return text;
       }
     });
   }

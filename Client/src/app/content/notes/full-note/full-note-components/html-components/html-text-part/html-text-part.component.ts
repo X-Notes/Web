@@ -9,7 +9,6 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -17,16 +16,12 @@ import { ParentInteraction } from '../../../models/parent-interaction.interface'
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
-import { BaseTextElementComponent } from '../html-base.component';
-import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { SelectionService } from '../../../content-editor-services/selection.service';
-import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { isValidURL } from '../../../../../../shared/utils/is-valid-url.util';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { NoteTextTypeENUM } from '../../../content-editor/text/note-text-type.enum';
 import { HeadingTypeENUM } from '../../../content-editor/text/heading-type.enum';
+import { HtmlTextChangesComponent } from '../../html-text-changes-component';
+import { HtmlComponentsFacadeService } from '../../../content-editor/services/html-facade.service';
 
 @Component({
   selector: 'app-html-text-part',
@@ -35,7 +30,7 @@ import { HeadingTypeENUM } from '../../../content-editor/text/heading-type.enum'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent
-  extends BaseTextElementComponent
+  extends HtmlTextChangesComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction
 {
   @Output()
@@ -61,14 +56,9 @@ export class HtmlTextPartComponent
   constructor(
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
-    public pS: PersonalizationService,
-    selectionService: SelectionService,
-    clickableService: ClickableContentService,
-    renderer: Renderer2,
-    sanitizer: DomSanitizer,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
+    super(cdr, facade);
   }
 
   get isLink() {
@@ -132,12 +122,19 @@ export class HtmlTextPartComponent
 
   enter($event: any): void {
     $event.preventDefault();
-    const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
+    const breakModel = this.facade.apiBrowserTextService.pressEnterHandler(
+      this.getEditableNative(),
+    );
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
   }
 
   setFocusedElement(): void {
-    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
+    this.facade.clickableService.setContent(
+      this.content,
+      null,
+      ClickableSelectableEntities.Text,
+      this,
+    );
   }
 }

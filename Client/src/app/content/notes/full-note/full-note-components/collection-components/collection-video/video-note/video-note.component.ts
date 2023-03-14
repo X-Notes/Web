@@ -13,16 +13,14 @@ import { Subject } from 'rxjs';
 import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
-import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionBaseComponent } from '../../collection.base.component';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 import {
   VideoModel,
   VideosCollection,
 } from 'src/app/content/notes/models/editor-models/videos-collection';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { HtmlComponentsFacadeService } from '../../../../content-editor/services/html-facade.service';
 
 @Component({
   selector: 'app-video-note',
@@ -60,19 +58,11 @@ export class VideoNoteComponent
 
   constructor(
     private exportService: ExportService,
-    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
-    selectionService: SelectionService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Video,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Video, facade);
   }
 
   get fullWidth() {
@@ -206,7 +196,7 @@ export class VideoNoteComponent
     }
   }
 
-  isClicked = (itemId: string): boolean => this.clickableContentService.isClicked(itemId);
+  isClicked = (itemId: string): boolean => this.facade.clickableService.isClicked(itemId);
 
   isFocusToNext(entity: SetFocus) {
     if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
@@ -329,7 +319,7 @@ export class VideoNoteComponent
       this.togglePlay();
     }
     this.currentVideo = video;
-    this.clickableContentService.setContent(
+    this.facade.clickableService.setContent(
       this.content,
       video.fileId,
       ClickableSelectableEntities.Video,
