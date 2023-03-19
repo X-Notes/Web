@@ -1,11 +1,15 @@
-﻿namespace Noots.RGA_CRDT;
+﻿using System.Text.Json.Serialization;
+
+namespace Noots.RGA_CRDT;
 
 public class MergeTransaction<T>
 {
     public List<MergeOp<T>> Ops { set; get; } = new List<MergeOp<T>>();
 
+    [JsonIgnore]
     public List<MergeOp<T>> ValidOps { set; get; } = new List<MergeOp<T>>();
 
+    [JsonIgnore]
     public List<MergeOp<T>> UnValidOps { set; get; } = new List<MergeOp<T>>();
 
     public void AddInsertOp(T content, NodeId new_node_id, NodeId insert_after_node_id)

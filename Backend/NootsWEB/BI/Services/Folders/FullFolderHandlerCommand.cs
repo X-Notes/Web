@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.WebSockets;
@@ -55,25 +57,27 @@ namespace BI.Services.Folders
 
             if (permissions.CanWrite)
             {
-                async Task UpdateFolderTitle(MergeTransaction<string> transaction)
+                async Task UpdateFolderTitle(List<MergeTransaction<string>> transactions)
                 {
-                    folder.Title ??= new TreeRGA<string>();
-                    folder.Title.Merge(transaction);
+                    var title = folder.GetTitle() ?? new TreeRGA<string>();
+                    title.Merge(transactions.ToArray());
+                    folder.SetTitle(title);
+
                     folder.UpdatedAt = DateTimeProvider.Time;
                     await folderRepository.UpdateAsync(folder);
                 }
 
                 if (permissions.IsSingleUpdate)
                 {
-                    await UpdateFolderTitle(request.Transaction);
+                    await UpdateFolderTitle(request.Transactions);
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
 
-                await UpdateFolderTitle(request.Transaction);
+                await UpdateFolderTitle(request.Transactions);
 
                 // WS UPDATES
-                var updateCommand = new UpdateFolderWS { TitleTransaction = request.Transaction, IsUpdateTitle = true, FolderId = folder.Id };
-                await folderWSUpdateService.UpdateFolder(updateCommand, permissions.GetAllUsers(), Guid.Empty);
+                var updateCommand = new UpdateFolderWS { TitleTransactions = request.Transactions, IsUpdateTitle = true, FolderId = folder.Id };
+                await folderWSUpdateService.UpdateFolder(updateCommand, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

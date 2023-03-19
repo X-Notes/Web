@@ -5,6 +5,7 @@ using Common.Attributes;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.Helpers;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
@@ -17,12 +18,12 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public HTypeENUM? HeadingTypeId { set; get; }
 
-        public string Contents { set; get; }
+        public List<TextBlock> Contents { set; get; }
 
         public int ListId { set; get; }
 
         public TextNoteDTO(
-            string contents, 
+            List<TextBlock> contents, 
             Guid id, 
             int order,
             NoteTextTypeENUM noteTextTypeId, 

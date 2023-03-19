@@ -42,10 +42,12 @@ namespace Noots.Editor.Handlers
             {
                 var note = permissions.Note;
 
-                async Task UpdateNoteTitle(MergeTransaction<string> transaction)
+                async Task UpdateNoteTitle(List<MergeTransaction<string>> transactions)
                 {
-                    note.Title ??= new TreeRGA<string>();
-                    note.Title.Merge(transaction);
+                    var title = note.GetTitle() ?? new TreeRGA<string>();
+                    title.Merge(transactions.ToArray());
+                    note.SetTitle(title);
+
                     note.UpdatedAt = DateTimeProvider.Time;
                     await noteRepository.UpdateAsync(note);
 
@@ -54,15 +56,15 @@ namespace Noots.Editor.Handlers
 
                 if (permissions.IsSingleUpdate)
                 {
-                    await UpdateNoteTitle(request.Transaction);
+                    await UpdateNoteTitle(request.Transactions);
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
 
-                await UpdateNoteTitle(request.Transaction);
+                await UpdateNoteTitle(request.Transactions);
 
                 // WS UPDATES
-                var updateCommand = new UpdateNoteWS { TitleTransaction = request.Transaction, NoteId = note.Id, IsUpdateTitle = true };
-                await noteWSUpdateService.UpdateNote(updateCommand, permissions.GetAllUsers(), Guid.Empty);
+                var updateCommand = new UpdateNoteWS { TitleTransactions = request.Transactions, NoteId = note.Id, IsUpdateTitle = true };
+                await noteWSUpdateService.UpdateNote(updateCommand, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
