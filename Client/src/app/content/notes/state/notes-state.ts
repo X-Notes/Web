@@ -945,7 +945,6 @@ export class NoteStore {
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
     {
-      diffs,
       newTitle,
       isCallApi,
       noteId,
@@ -955,7 +954,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.apiText.updateTitle(diffs, newTitle, noteId).toPromise();
+      resp = await this.apiText.updateTitle(newTitle, noteId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE

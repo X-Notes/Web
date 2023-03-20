@@ -51,7 +51,6 @@ import { VideosCollection } from '../../models/editor-models/videos-collection';
 import { DocumentsCollection } from '../../models/editor-models/documents-collection';
 import { AudiosCollection } from '../../models/editor-models/audios-collection';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
-import { DiffCheckerService } from './diffs/diff-checker.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ContentUpdateWsService } from '../content-editor-services/content-update-ws.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -136,7 +135,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     private contentEditorListenerService: ContentEditorListenerService,
     private htmlTitleService: HtmlTitleService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
-    private diffCheckerService: DiffCheckerService,
     private contentUpdateWsService: ContentUpdateWsService,
     public pS: PersonalizationService,
     public clickableContentService: ClickableContentService,
@@ -326,8 +324,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffs(this.title, title);
-        this.store.dispatch(new UpdateNoteTitle(diffs, title, this.note.id, true, null, false));
+        this.store.dispatch(new UpdateNoteTitle(title, this.note.id, true, null, false));
         this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });

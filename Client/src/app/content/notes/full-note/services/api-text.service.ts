@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Diff } from 'diff-match-patch';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { BaseText } from '../../models/editor-models/base-text';
@@ -9,9 +8,8 @@ import { BaseText } from '../../models/editor-models/base-text';
 export class ApiTextService {
   constructor(private httpClient: HttpClient) {}
 
-  updateTitle(diffs: Diff[], title: string, id: string) {
+  updateTitle(title: string, id: string) {
     const obj = {
-      diffs,
       title,
       id,
     };

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BI.Services.DiffsMatchPatch;
 using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
@@ -27,7 +26,6 @@ namespace BI.Services.Folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly FolderWSUpdateService folderWSUpdateService;
         private readonly NoteRepository noteRepository;
-        private readonly DiffsMatchPatchService diffsMatchPatchService;
         private readonly IMediator _mediator;
 
         public FullFolderHandlerCommand(
@@ -35,15 +33,13 @@ namespace BI.Services.Folders
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository,
             FolderWSUpdateService folderWSUpdateService,
-            NoteRepository noteRepository,
-            DiffsMatchPatchService diffsMatchPatchService)
+            NoteRepository noteRepository)
         {
             this.folderRepository = folderRepository;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
             this.folderWSUpdateService = folderWSUpdateService;
             this.noteRepository = noteRepository;
-            this.diffsMatchPatchService = diffsMatchPatchService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
@@ -67,8 +63,7 @@ namespace BI.Services.Folders
                     return new OperationResult<Unit>(true, Unit.Value);
                 }
 
-                var title = diffsMatchPatchService.PatchToStr(request.Diffs, folder.Title);
-                await UpdateFolderTitle(title);
+                await UpdateFolderTitle(request.Title);
 
                 // WS UPDATES
                 await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id }, permissions.GetAllUsers(), Guid.Empty);

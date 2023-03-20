@@ -595,7 +595,6 @@ export class FolderStore {
   async updateTitleFolder(
     { getState, dispatch, patchState }: StateContext<FolderState>,
     {
-      diffs,
       str,
       folderId,
       isCallApi,
@@ -606,7 +605,7 @@ export class FolderStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.updateTitle(diffs, str, folderId).toPromise();
+      resp = await this.api.updateTitle(str, folderId).toPromise();
     }
     if (resp.success) {
       // FULL NOTE

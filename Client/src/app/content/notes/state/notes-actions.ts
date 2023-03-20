@@ -248,7 +248,6 @@ export class UpdateNoteTitle {
   static type = '[Notes] update title';
 
   constructor(
-    public diffs: Diff[],
     public newTitle: string,
     public noteId: string,
     public isCallApi = true,

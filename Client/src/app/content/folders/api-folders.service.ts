@@ -201,9 +201,8 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(diffs: Diff[], title: string, id: string) {
+  updateTitle(title: string, id: string) {
     const obj = {
-      diffs,
       title,
       id,
     };

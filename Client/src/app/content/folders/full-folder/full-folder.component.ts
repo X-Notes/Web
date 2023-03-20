@@ -41,7 +41,6 @@ import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -109,7 +108,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
     public pB: PermissionsButtonsService,
     private signalR: SignalRService,
-    private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
@@ -138,8 +136,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleChange$
       .pipe(takeUntil(this.ffnService.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffs(this.title, title);
-        this.store.dispatch(new UpdateFolderTitle(diffs, title, this.folderId, true, null, false));
+        this.store.dispatch(new UpdateFolderTitle(title, this.folderId, true, null, false));
         this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
       });
