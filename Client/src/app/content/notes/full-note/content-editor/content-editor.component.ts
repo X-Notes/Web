@@ -55,17 +55,28 @@ import { NoteTextTypeENUM } from './text/note-text-type.enum';
 import { HeadingTypeENUM } from './text/heading-type.enum';
 import { Label } from 'src/app/content/labels/models/label.model';
 import { EditorTitleComponent } from './editor-components/editor-title.component';
-import { EditorFacadeService } from './services/editor-api-facade.service';
+import { EditorFacadeService } from './services/editor-facade.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { HtmlComponentsFacadeService } from './services/html-facade.service';
+import { TextDiff } from '../content-editor-services/models/text-diff';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
-  providers: [WebSocketsNoteUpdaterService, EditorFacadeService, DestroyComponentService],
+  providers: [
+    WebSocketsNoteUpdaterService,
+    EditorFacadeService,
+    DestroyComponentService,
+    HtmlComponentsFacadeService,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContentEditorComponent extends EditorTitleComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class ContentEditorComponent
+  extends EditorTitleComponent
+  implements OnInit, AfterViewInit, OnChanges, OnDestroy
+{
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
@@ -200,7 +211,9 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   }
 
   get selectedElements(): ParentInteraction[] {
-    return this.elements?.filter((x) => this.facade.selectionService.isSelectedAll(x.getContentId()));
+    return this.elements?.filter((x) =>
+      this.facade.selectionService.isSelectedAll(x.getContentId()),
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
@@ -227,10 +240,12 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
     );
     this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
     this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
-    this.facade.selectionService.onSelectChanges$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
-      this.options = this.buildMenuOptions();
-      this.facade.cdr.detectChanges();
-    });
+    this.facade.selectionService.onSelectChanges$
+      .pipe(takeUntil(this.facade.dc.d$))
+      .subscribe(() => {
+        this.options = this.buildMenuOptions();
+        this.facade.cdr.detectChanges();
+      });
   }
 
   buildMenuOptions(): TextEditMenuOptions {
@@ -266,20 +281,20 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const noteIdChanges = changes['noteId'];
-    if(noteIdChanges && noteIdChanges.previousValue) { 
+    const noteIdChanges = changes.noteId;
+    if (noteIdChanges && noteIdChanges.previousValue) {
       this.reInitTitle();
     }
-    for (let propName in changes) {
-      let chng = changes[propName];
-      let cur = JSON.stringify(chng.currentValue);
-      let prev = JSON.stringify(chng.previousValue);
-      console.log(`${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+    // eslint-disable-next-line guard-for-in
+    for (const propName in changes) {
+      const chng = changes[propName];
+      const cur = JSON.stringify(chng.currentValue);
+      const prev = JSON.stringify(chng.previousValue);
+      // console.log(`${propName}: currentValue = ${cur}, previousValue = ${prev}`);
     }
   }
 
   ngOnInit(): void {
-    console.log('title: ', this.titleType);
     this.initTitle();
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
@@ -366,6 +381,7 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   onScroll($event: Event): void {}
 
   enterHandler(value: EnterEvent) {
+    console.log('value: ', value);
     const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
     curEl.syncHtmlWithLayout();
     const newTextContent = this.contentEditorTextService.insertNewContent(
@@ -383,6 +399,7 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   }
 
   deleteRowHandler(id: string) {
+    console.log('id: ', id);
     const index = this.contentEditorContentsService.deleteContent(id);
     if (index !== 0) {
       this.elements?.toArray()[index - 1].setFocusToEnd();
@@ -424,15 +441,17 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
+    console.log('updates: ', updates);
+    const selectMenuType = this.selectedMenuType;
     for (const id of updates.ids) {
       const el = this.elements.toArray().find((x) => x.getContent().id === id);
       if (!el) {
         continue;
       }
-      const content = el.getContent() as BaseText;
-      const html = DeltaConverter.convertTextBlocksToHTML(content.contentsUI);
+      const blocks = el.getTextBlocks();
+      const html = DeltaConverter.convertTextBlocksToHTML(blocks);
       if (!html) continue;
-      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
+      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative(), selectMenuType);
       let resultDelta: DeltaStatic;
       if (updates.isRemoveStyles) {
         resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);
@@ -455,6 +474,9 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent) {
     this.postAction();
+    const diff = new TextDiff(model.content.id);
+    diff.blockDiffs = model.diffs;
+    this.facade.contentEditorSyncService.updateTextBlocks$.next(diff);
     this.menuSelectionDirective.onSelectionchange(true);
   }
 
@@ -462,15 +484,18 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
     this.facade.selectionService.resetSelectionAndItems();
   }
 
-  getIndexAndLengthForUpdateStyle(el: HTMLElement | Element): { index: number; length: number } {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+  getIndexAndLengthForUpdateStyle(
+    el: HTMLElement | Element,
+    selectType: TextEditMenuEnum,
+  ): { index: number; length: number } {
+    if (selectType === TextEditMenuEnum.OneRow) {
       const pos = this.facade.apiBrowser.getSelectionCharacterOffsetsWithin(el);
       return { index: pos.start, length: pos.end - pos.start };
     }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+    if (selectType === TextEditMenuEnum.MultiplyRows) {
       return { index: 0, length: el.innerHTML.length };
     }
-    return null;
+    throw new Error('selectedMenuType can not be null');
   }
 
   pasteTextHandler(e: PasteEvent): void {
@@ -501,14 +526,21 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
         type = NoteTextTypeENUM.numberList;
       }
 
-      const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
       const newTextContent = this.contentEditorTextService.insertNewContent(
         contentId,
         type,
         true,
-        textBlocks,
         heading,
       );
+
+      const agentId = this.facade.store.selectSnapshot(UserStore.getUser).agentId;
+      const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
+      this.facade.diffCheckerService.getAndApplyBlocksDiffs(
+        newTextContent.content,
+        textBlocks,
+        agentId,
+      );
+
       contentId = newTextContent.content.id;
     }
   }
@@ -527,7 +559,6 @@ export class ContentEditorComponent extends EditorTitleComponent implements OnIn
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   dragEnded = (event: CdkDragEnd) => {};
-
 
   placeHolderClick($event) {
     if (this.isReadOnlyMode) {

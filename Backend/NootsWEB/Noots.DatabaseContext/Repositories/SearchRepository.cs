@@ -29,8 +29,9 @@ namespace Noots.DatabaseContext.Repositories
             var folders = await context.Folders.Where(x => x.UserId == userId).ToListAsync();
             return folders.Where(x =>
             {
-                if (x.Title == null) return false;
-                return x.Title.ReadStr().Contains(searchStr);
+                var title = x.GetTitle();
+                if (title == null) return false;
+                return title.ReadStr().Contains(searchStr);
             }).ToList();
         }
 

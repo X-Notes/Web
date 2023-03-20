@@ -210,7 +210,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.x = 0;
     this.y = 0;
     this.resetDiv();
-    this.selectionService._selectionDivActive$.next(false);
+    this.selectionService.selectionDivActive$.next(false);
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -249,7 +249,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setWidth(newValueWidth);
     this.setHeight(newValueHeight);
 
-    this.selectionService._selectionDivActive$.next(this.isSelectionActive);
+    this.selectionService.selectionDivActive$.next(this.isSelectionActive);
     this.selectionEvent.emit(this.div.getBoundingClientRect());
   }
 

@@ -15,7 +15,7 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
-  _selectionDivActive$ = new BehaviorSubject(false);
+  selectionDivActive$ = new BehaviorSubject(false);
 
   disableDiv = false;
 
@@ -34,7 +34,7 @@ export class SelectionService {
   ) {}
 
   get selectionDivActive(): boolean {
-    return !this.disableDiv && this._selectionDivActive$.getValue(); 
+    return !this.disableDiv && this.selectionDivActive$.getValue();
   }
 
   get selectedMenuType(): TextEditMenuEnum {
@@ -114,11 +114,11 @@ export class SelectionService {
   }
 
   getSelectedItems(): string[] {
-    return Array.from(this.selectedItemsSet);
+    return Array.from(this.selectedItemsSet).filter((x) => x);
   }
 
   getAllSelectedItems(): string[] {
-    return [...this.getSelectedItems(), this.selectedItemId];
+    return [...this.getSelectedItems(), this.selectedItemId].filter((x) => x);
   }
 
   selectItems(ids: string[]) {

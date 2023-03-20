@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 import { environment } from 'src/environments/environment';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { NoteHistory } from '../models/history/note-history.model';
@@ -29,6 +29,6 @@ export class ApiNoteHistoryService {
       .get<OperationResult<ContentModelBase[]>>(
         `${environment.writeAPI}/api/history/snapshot/contents/${noteId}/${snapshotId}`,
       )
-      .pipe(map((x) => (x.success ? TransformNoteUtil.transformContent(x.data) : [])));
+      .pipe(map((x) => (x.success ? EntityMapperUtil.transformContent(x.data) : [])));
   }
 }

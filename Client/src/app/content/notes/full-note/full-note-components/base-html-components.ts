@@ -23,7 +23,7 @@ export abstract class BaseEditorElementComponent {
 
   get isSelectModeActive(): boolean {
     // eslint-disable-next-line no-underscore-dangle
-    return this.facade.selectionService._selectionDivActive$.getValue();
+    return this.facade.selectionService.selectionDivActive$.getValue();
   }
 
   detectChanges(): void {

@@ -11,13 +11,12 @@ import {
   ChangeColorFolder,
   DeleteFoldersPermanently,
   PatchUpdatesUIFolders,
-  UpdateFolderTitle,
+  UpdateFolderTitleWS,
   UpdateFullFolder,
   UpdateOneFolder,
 } from '../content/folders/state/folders-actions';
 import { UpdateFolderUI } from '../content/folders/state/update-folder-ui.model';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
-import { TextDiff } from '../content/notes/full-note/content-editor-services/models/text-diff';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
@@ -29,8 +28,8 @@ import {
   RemoveLabelFromNote,
   RemoveOnlineUsersOnNote,
   UpdateFullNote,
-  UpdateNoteTitle,
   UpdateOneNote,
+  UpdateNoteTitleWS,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
 import { EntityType } from '../shared/enums/entity-types.enum';
@@ -150,7 +149,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateNoteTitle(updates.titleTransactions, updates.noteId, true));
+        this.store.dispatch(new UpdateNoteTitleWS(updates.titleTransactions, updates.noteId));
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {
@@ -165,11 +164,12 @@ export class SignalRService {
     });
 
     this.hubConnection.on('updateFolderGeneral', (updates: UpdateFolderWS) => {
+      console.log('updates; ', updates);
       if (updates.color) {
         this.store.dispatch(new ChangeColorFolder(updates.color, [updates.folderId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateFolderTitle(updates.titleTransactions, updates.folderId, false));
+        this.store.dispatch(new UpdateFolderTitleWS(updates.titleTransactions, updates.folderId));
       }
       this.updateFolder$.next(updates);
     });

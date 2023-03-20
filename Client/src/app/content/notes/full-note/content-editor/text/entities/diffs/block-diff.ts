@@ -18,7 +18,7 @@ export class BlockDiff {
       this.highlightColor !== undefined ||
       this.textColor !== undefined ||
       this.link !== undefined ||
-      this.textTypes !== undefined ||
+      !!this.textTypes?.value ||
       this.mergeOps?.ops?.length > 0;
     return flag;
   }
@@ -60,8 +60,8 @@ export class BlockDiff {
   }
 
   init(block: Partial<BlockDiff>): void {
-    this.highlightColor = block.highlightColor?.value === 'd' ? null : block.highlightColor;
-    this.textColor = block.textColor?.value === 'd' ? null : block.textColor;
+    this.highlightColor = block.highlightColor;
+    this.textColor = block.textColor;
     this.link = block.link;
     this.textTypes = block.textTypes;
     this.mergeOps = block.mergeOps;

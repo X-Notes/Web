@@ -33,7 +33,7 @@ namespace Common.DatabaseModels.Models.Notes
         [NotMapped]
         public bool IsLocked { get => !string.IsNullOrEmpty(Password); }
 
-        public string Password { set; get; }
+        public string? Password { set; get; }
 
         public DateTimeOffset? UnlockTime { set; get; }
 

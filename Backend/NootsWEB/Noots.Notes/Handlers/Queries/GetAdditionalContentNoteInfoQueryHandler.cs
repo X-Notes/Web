@@ -51,7 +51,7 @@ public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAddit
         {
             IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
             NoteId = noteId,
-            NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
+            NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.GetTitle()?.ReadStr())).ToList() : null,
             TotalSize = GetSize(noteId, size, sizeSnapshots)
         }).ToList();
     }

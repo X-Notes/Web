@@ -25,6 +25,7 @@ using WriteAPI.Filters;
 using WriteAPI.Hosted;
 using WriteAPI.Middlewares;
 using Common.Redis;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,7 +84,9 @@ builder.Services.ApplyMapperLockedDI();
 builder.Services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson(opt =>
                 {
-                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    opt.SerializerSettings.Formatting = Formatting.Indented;
+                    opt.SerializerSettings.MaxDepth = int.MaxValue;
                 });
 
 builder.Services.AddHealthChecks();

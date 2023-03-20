@@ -37,7 +37,7 @@ namespace Noots.MapperLocked
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 UserId = note.UserId,
-                Title = note.Title,
+                Title = note.GetTitle(),
                 IsCanEdit = isCanWrite,
                 Labels = note.LabelsNotes != null ? noteMapper.MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,

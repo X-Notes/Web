@@ -1,58 +1,61 @@
 import { Component, Input, QueryList, ViewChildren } from '@angular/core';
 import { BaseText } from '../../../models/editor-models/base-text';
-import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { NoteTextTypeENUM } from '../text/note-text-type.enum';
-import { EditorFacadeService as EditorFacadeService } from '../services/editor-api-facade.service';
+import { EditorFacadeService as EditorFacadeService } from '../services/editor-facade.service';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: '',
   template: '',
 })
 export class EditorBaseComponent {
-    @Input() noteId?: string;
+  @Input() noteId?: string;
 
-    @Input() snapshotId?: string;
+  @Input() snapshotId?: string;
 
-    @Input() folderId?: string;
+  @Input() folderId?: string;
 
-    @Input()
-    isReadOnlyMode = true;
+  @Input()
+  isReadOnlyMode = true;
 
-    elements: QueryList<ParentInteraction>;
+  elements: QueryList<ParentInteraction>;
 
-    @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction>) {
-      this.elements = elms;
-      this.facade.contentUpdateWsService.elements = elms;
+  constructor(public facade: EditorFacadeService) {}
+
+  @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction>) {
+    this.elements = elms;
+    this.facade.contentUpdateWsService.elements = elms;
+  }
+
+  postAction(): void {
+    if (this.isReadOnlyMode || !this.elements) {
+      return;
     }
-
-    postAction(): void {
-      if (this.isReadOnlyMode) {
-        return;
-      }
-      const isCanAppend = this.isCanAddNewItem(this.elements?.last?.getContent());
-      if (isCanAppend) {
-        this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
-      }
-      this.facade.contentEditorSyncService.change();
-      this.facade.contentEditorRestoreService.save();
+    const empty = this.elements.toArray()?.length === 0;
+    const isCanAppend = empty || this.isCanAddNewItem(this.elements?.last);
+    if (isCanAppend) {
+      this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
     }
+    this.facade.contentEditorSyncService.change();
+    this.facade.contentEditorRestoreService.save();
+  }
 
-    isCanAddNewItem(content: ContentModelBase) {
-      if (!content) return true;
-      if (content.typeId !== ContentTypeENUM.Text) {
-        return true;
-      }
-      const text = content as BaseText;
-      if (text.noteTextTypeId !== NoteTextTypeENUM.default) {
-        return true;
-      }
-      if (text.contentsUI && text.contentsUI?.length !== 0) {
-        return true;
-      }
-      return false;
+  isCanAddNewItem(el: ParentInteraction) {
+    const content = el.getContent();
+    if (!content) return true;
+    if (content.typeId !== ContentTypeENUM.Text) {
+      return true;
     }
-
-    constructor(public facade: EditorFacadeService) {}
+    const text = content as BaseText;
+    if (text.noteTextTypeId !== NoteTextTypeENUM.default) {
+      return true;
+    }
+    const uiText = el.getText();
+    if (uiText && uiText?.length !== 0) {
+      return true;
+    }
+    return false;
+  }
 }

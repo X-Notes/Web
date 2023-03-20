@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 import { BaseText } from '../../../models/editor-models/base-text';
 import { BreakEnterModel } from '../../content-editor-services/models/break-enter.model';
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
-import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
 import { ProjectBlock } from '../../content-editor/text/entities/blocks/projection-block';
 import { HeadingTypeENUM } from '../../content-editor/text/heading-type.enum';
 import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
@@ -20,6 +19,8 @@ export interface PasteEvent {
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export abstract class BaseTextElementComponent extends BaseEditorElementComponent {
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
   @Input()
   content: BaseText;
 
@@ -42,41 +43,14 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onFocus = new EventEmitter<BaseTextElementComponent>();
 
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  contentsUI: ProjectBlock[];
-
   preFocus = false;
 
-  syncUI$: Subject<string> = new Subject();
-
   destroy = new Subject<void>();
-
-  viewHtml: string;
 
   listeners = [];
 
   get isActiveState(): boolean {
     return this.getIsActive() && !this.isReadOnlyMode;
-  }
-
-  onInput() {
-    this.syncHtmlWithLayout();
-  }
-
-  syncHtmlWithLayout() {
-    this.syncUI$.next();
-  }
-
-  initBaseHTML(): void {
-    this.contentsUI = this.content.contents?.map((x) => x.getProjection());
-    if (this.contentsUI?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.contentsUI);
-      this.facade.sanitizer.bypassSecurityTrustHtml(html);
-      const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html) ?? '';
-      this.viewHtml = convertedHTML as string;
-      this.syncHtmlWithLayout();
-    }
   }
 
   transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
@@ -89,35 +63,6 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     });
   }
 
-  updateHTML(contents: ProjectBlock[]): void {
-    // TODO TEST IT
-    this.transformOnUpdate(contents);
-    const html = DeltaConverter.convertTextBlocksToHTML(contents);
-    this.updateNativeHTML(html);
-    this.syncHtmlWithLayout();
-  }
-
-  transformOnUpdate(contents: ProjectBlock[]): void {
-    const content = contents?.find((x) => x.list !== null);
-    if (content?.list) {
-      if (content.list === DeltaListEnum.bullet) {
-        let type = NoteTextTypeENUM.dotList;
-        if (content.getText()?.startsWith('[ ]')) {
-          content.content = content.getText().slice(3);
-          type = NoteTextTypeENUM.checkList;
-        }
-        this.transformContent(null, type);
-      }
-      if (content.list === DeltaListEnum.ordered) {
-        this.transformContent(null, NoteTextTypeENUM.numberList);
-      }
-    }
-    const headingType = contents?.find((x) => x.header !== null)?.header;
-    if (headingType) {
-      this.transformContent(null, NoteTextTypeENUM.heading, this.getHeadingNumber(headingType));
-    }
-  }
-
   getHeadingNumber(heading: number): HeadingTypeENUM {
     if (heading >= 3 && heading <= 4) {
       return HeadingTypeENUM.H2;
@@ -128,10 +73,10 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     return HeadingTypeENUM.H1;
   }
 
-  syncContentWithLayout() {
+  saveAndRestoreCursorWrapper(func: () => void): void {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
-    this.updateHTML(this.contentsUI);
+    func();
     this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
   }
 
@@ -201,63 +146,6 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
       }
     }
     return false;
-  }
-
-  async pasteCommandHandler(e: ClipboardEvent) {
-    const isLink = this.isPasteLink(e.clipboardData.items);
-    e.preventDefault();
-    if (isLink) {
-      this.convertTextToLink(e);
-      this.syncUI$.next();
-      return;
-    }
-    const html = e.clipboardData.getData('text/html');
-    if (html) {
-      this.handleHtmlInserting(html);
-      this.syncUI$.next();
-      return;
-    }
-    const text = e.clipboardData.getData('text/plain');
-    if (text) {
-      this.facade.apiBrowserTextService.pasteOnlyTextHandler(e);
-      this.syncUI$.next();
-      return;
-    }
-  }
-
-  handleHtmlInserting(html: string): void {
-    console.log('html: ', html);
-    const htmlElements = DeltaConverter.splitDeltaByDividers(html);
-    if (htmlElements.length === 0) return;
-
-    const htmlEl = htmlElements[0];
-    this.facade.apiBrowserTextService.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
-    const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
-    const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
-    this.updateHTML(resTextBlocks);
-    htmlElements.shift(); // remove first element
-
-    if (htmlElements.length > 0) {
-      const pasteObject: PasteEvent = {
-        element: this,
-        htmlElementsToInsert: htmlElements,
-      };
-      this.pasteEvent.emit(pasteObject);
-    }
-  }
-
-  convertTextToLink(e: ClipboardEvent) {
-    const json = e.clipboardData.getData('text/link-preview') as any;
-    const data = JSON.parse(json);
-    const title = data.title;
-    const url = data.url;
-    const pos = this.facade.apiBrowserTextService.getSelectionCharacterOffsetsWithin(
-      this.getEditableNative(),
-    );
-    const html = DeltaConverter.convertTextBlocksToHTML(this.contentsUI);
-    const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
-    const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
-    this.updateHTML(resTextBlocks);
   }
 
   checkForDeleteOrConcatWithPrev($event) {
@@ -353,11 +241,9 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
 
   syncContentItems() {}
 
-  private updateNativeHTML(html: string): void {
-    this.contentHtml.nativeElement.innerHTML = html;
-  }
-
   abstract enter(e);
 
   abstract setFocusedElement(): void;
+
+  abstract pasteCommandHandler(e): void;
 }

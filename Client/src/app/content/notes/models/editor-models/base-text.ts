@@ -6,7 +6,6 @@ import { HeadingTypeENUM } from '../../full-note/content-editor/text/heading-typ
 import { NoteTextTypeENUM } from '../../full-note/content-editor/text/note-text-type.enum';
 import { TreeBlock } from '../../full-note/content-editor/text/entities/blocks/tree-block';
 import { BlockDiff } from '../../full-note/content-editor/text/entities/diffs/block-diff';
-import { ProjectBlock } from '../../full-note/content-editor/text/entities/blocks/projection-block';
 import { TextDiff } from '../../full-note/content-editor-services/models/text-diff';
 
 export class BaseText extends ContentModelBase {
@@ -20,14 +19,11 @@ export class BaseText extends ContentModelBase {
 
   contents: TreeBlock[];
 
-  contentsUI: ProjectBlock[];
-
   listId?: number;
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt, text.version);
-    this.contents = text.contents?.map((x) => new TreeBlock(x));
-    this.contentsUI = this.contents?.map((x) => x.getProjection());
+    this.contents = text.contents;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
@@ -38,17 +34,11 @@ export class BaseText extends ContentModelBase {
     return null;
   }
 
-  updateContent(contents: ProjectBlock[]) {
-    this.contentsUI = contents;
-    this.updateDate();
-  }
-
   resetToDefault(): void {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.updateNoteTextTypeId(NoteTextTypeENUM.default);
     this.updateChecked(null);
     this.updateHeadingTypeId(null);
-    this.updateContent([]);
   }
 
   updateHeadingTypeId(headingTypeId?: HeadingTypeENUM) {
@@ -122,8 +112,11 @@ export class BaseText extends ContentModelBase {
 
   ///
 
-  patchTextDiffs(diff: TextDiff): void {
-    this.processDiffsTextAndProps(diff.blockDiffs, this.contents);
+  patchTextDiffs(diff: TextDiff, syncBlocks: boolean): void {
+    if (syncBlocks) {
+      this.contents ??= [];
+      this.processDiffsTextAndProps(diff.blockDiffs, this.contents);
+    }
     this.headingTypeId = diff.headingTypeId ?? this.headingTypeId;
     this.noteTextTypeId = diff.noteTextTypeId ?? this.noteTextTypeId;
     this.checked = diff.checked ?? this.checked;
@@ -176,17 +169,6 @@ export class BaseText extends ContentModelBase {
         stateBlocks.push(new TreeBlock({}));
       }
     }
-  }
-
-  getUIConcatedText(): string {
-    return this.contentsUI
-      .map((q) => q.getText())
-      .filter((x) => x.length > 0)
-      .reduce((pv, cv) => pv + cv);
-  }
-
-  isHaveUIText(): boolean {
-    return this.getUIConcatedText()?.length > 0;
   }
 
   private updateDate() {

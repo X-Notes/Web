@@ -10,6 +10,7 @@ public static class JsonHelper
 
     public static string JSerialize<T>(this T tree)
     {
+        if (tree == null) return null;
         return JsonConvert.SerializeObject(tree, serializeSettings);
     }
 

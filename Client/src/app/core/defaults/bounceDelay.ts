@@ -1,5 +1,5 @@
 export const updateNoteContentAutoTimerDelay = 500;
-export const updateNoteContentTextAutoTimerDelay = 500;
+export const updateNoteContentTextAutoTimerDelay = 1000;
 export const updateNoteContentDelay = 200;
 export const updateNoteTitleDelay = 500;
 export const updateFolderTitleDelay = 500;

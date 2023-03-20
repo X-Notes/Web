@@ -29,7 +29,6 @@ import {
   ClearAddToDomFolders,
   UpdatePositionsFolders,
   UpdateFolders,
-  UpdateFolderTitle,
   UpdateOneFolder,
   LoadFullFolder,
   TransformTypeFolders,
@@ -39,6 +38,8 @@ import {
   ResetFolders,
   AddFolders,
   PatchUpdatesUIFolders,
+  UpdateSmallFolderTitleUI,
+  UpdateFolderTitleWS,
 } from './folders-actions';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
@@ -48,6 +49,8 @@ import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { TreeRGA } from '../../notes/full-note/content-editor/text/rga/tree-rga';
+import { EntityMapperUtil } from 'src/app/shared/services/entity-mapper.util';
 
 interface FolderState {
   folders: Folders[];
@@ -78,7 +81,8 @@ export class FolderStore {
     private router: Router,
     private ngZone: NgZone,
     private snackbarService: SnackbarService,
-    private translate: TranslateService) {}
+    private translate: TranslateService,
+  ) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -107,11 +111,6 @@ export class FolderStore {
   @Selector()
   static isFullFolderEditor(state: FolderState): boolean {
     return state.fullFolder?.refTypeId === RefTypeENUM.Editor;
-  }
-
-  @Selector()
-  static fullFolderTitle(state: FolderState): string {
-    return state.fullFolder?.title;
   }
 
   @Selector()
@@ -216,7 +215,7 @@ export class FolderStore {
 
   @Selector()
   static getOwnerId(state: FolderState): string {
-    return state.fullFolder.userId
+    return state.fullFolder.userId;
   }
 
   @Action(ClearUpdatesUIFolders)
@@ -241,7 +240,7 @@ export class FolderStore {
   ) {
     const resp = await this.api.copyFolders(selectedIds).toPromise();
 
-    if(resp.success && resp.data?.length > 0){
+    if (resp.success && resp.data?.length > 0) {
       const newFolders = resp.data;
       const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
       dispatch(
@@ -256,7 +255,7 @@ export class FolderStore {
         dispatch(new AddToDomFolders([...newFolders]));
       }
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
@@ -522,15 +521,16 @@ export class FolderStore {
   @Action(CreateFolder)
   async newFolder({ getState, dispatch }: StateContext<FolderState>) {
     const resp = await this.api.new().toPromise();
-    if(resp.success){
+    if (resp.success) {
       const newF = resp.data;
+      newF.title = EntityMapperUtil.transformTreeRga(newF.title);
       const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
       const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
       dispatch(new UpdateFolders(toUpdate, FolderTypeENUM.Private));
       this.ngZone.run(() => this.router.navigate([`folders/${newF.id}`]));
       return;
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
@@ -560,7 +560,7 @@ export class FolderStore {
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
       foldersForUpdate.forEach((folder) => (folder.color = color));
       const updatesUI = foldersForUpdate.map((folder) =>
-        this.toUpdateFolderUI(folder.id, folder.color, null, false),
+        this.toUpdateFolderUI(folder.id, folder.color),
       );
       patchState({ updateFolderEvent: updatesUI });
       foldersForUpdate.forEach((folder) => dispatch(new UpdateOneFolder(folder, folder.id)));
@@ -572,7 +572,13 @@ export class FolderStore {
   }
 
   @Action(UpdateOneFolder)
-  updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder, folderId }: UpdateOneFolder) {
+  updateOneFolder(
+    { dispatch, getState }: StateContext<FolderState>,
+    { folder, folderId }: UpdateOneFolder,
+  ) {
+    if (!folder.title.isContainsMethods) {
+      throw new Error('title invalid');
+    }
     for (const foldersState of getState().folders) {
       let isUpdate = false;
       let type: FolderTypeENUM = null;
@@ -591,45 +597,41 @@ export class FolderStore {
     }
   }
 
-  @Action(UpdateFolderTitle)
-  async updateTitleFolder(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
-    {
-      diffs,
-      str,
-      folderId,
-      isCallApi,
-      errorPermissionMessage,
-      isUpdateFullNote,
-      isUpdateSmallFolders,
-    }: UpdateFolderTitle,
+  @Action(UpdateSmallFolderTitleUI)
+  async updateSmallFolderTitle(
+    { getState, dispatch }: StateContext<FolderState>,
+    { transactions, uiTree, folderId, errorPermissionMessage }: UpdateSmallFolderTitleUI,
   ) {
-    let resp: OperationResult<any> = { success: true, data: null, message: null };
-    if (isCallApi) {
-      resp = await this.api.updateTitle(diffs, str, folderId).toPromise();
-    }
+    const resp = await this.api.updateTitle(transactions, folderId).toPromise();
     if (resp.success) {
-      // FULL NOTE
-      if (isUpdateFullNote) {
-        const folder = getState().fullFolder;
-        if (folder && folder.id === folderId) {
-          patchState({ fullFolder: { ...folder, title: str } });
-        }
-      }
-
-      // UPDATE SMALL NOTE
-      if (isUpdateSmallFolders) {
-        const folderUpdate = this.getFolderById(getState, folderId);
-        if (folderUpdate) {
-          dispatch(new UpdateOneFolder({ ...folderUpdate, title: str }, folderUpdate.id));
-        }
-        // UI CHANGES
-        const uiChanges = this.toUpdateFolderUI(folderId, null, str, true);
-        patchState({ updateFolderEvent: [uiChanges] });
+      const folderUpdate = this.getFolderById(getState, folderId);
+      if (folderUpdate) {
+        dispatch(new UpdateOneFolder({ ...folderUpdate, title: uiTree }, folderUpdate.id));
       }
     }
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
+    }
+  }
+
+  @Action(UpdateFolderTitleWS)
+  async updateSmallFolderTitleWS(
+    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { transactions, folderId }: UpdateFolderTitleWS,
+  ) {
+    console.log('folderId; ', folderId);
+    const folderUpdate = this.getFolderById(getState, folderId);
+    if (folderUpdate) {
+      const tree = folderUpdate.title.clone();
+      tree.merge(transactions);
+      dispatch(new UpdateOneFolder({ ...folderUpdate, title: tree }, folderUpdate.id));
+    }
+    const fullFolder = getState().fullFolder;
+    if (fullFolder && fullFolder.id === folderId) {
+      const title = fullFolder.title.clone();
+      title.merge(transactions);
+      console.log('title: ', title);
+      patchState({ fullFolder: { ...fullFolder, title } });
     }
   }
 
@@ -665,11 +667,9 @@ export class FolderStore {
     });
   }
 
-  toUpdateFolderUI = (id: string, color: string, title: string, isUpdateTitle: boolean) => {
+  toUpdateFolderUI = (id: string, color: string) => {
     const obj = new UpdateFolderUI(id);
     obj.color = color;
-    obj.title = title;
-    obj.isUpdateTitle = isUpdateTitle;
     return obj;
   };
 
@@ -699,7 +699,7 @@ export class FolderStore {
   };
 
   getFoldersByType = (getState: () => FolderState, type: FolderTypeENUM) => {
-    return getState().folders.find((z) => z.typeFolders === type).folders;
+    return getState().folders.find((q) => q.typeFolders === type).folders;
   };
 
   itemNoFromFilterArray = (ids: string[], folder: SmallFolder) => {

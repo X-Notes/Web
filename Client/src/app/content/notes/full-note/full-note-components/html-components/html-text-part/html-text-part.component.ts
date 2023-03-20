@@ -93,6 +93,7 @@ export class HtmlTextPartComponent
   }
 
   ngOnInit(): void {
+    console.log('222: ', this.content);
     this.initBaseHTML();
   }
 

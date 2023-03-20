@@ -113,14 +113,13 @@ export class DeltaConverter {
 
   static splitDeltaByDividers(html: string): HTMLElement[] {
     const delta = this.convertHTMLToDelta(html);
+
     if (!delta.ops || delta.ops.length === 0) {
       return [];
     }
 
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = this.convertDeltaToHtml(delta);
-
-    console.log('tempDiv: ', tempDiv);
 
     const processList = (node: HTMLElement, tag: 'ul' | 'ol'): HTMLElement[] => {
       const listElements: HTMLElement[] = [];

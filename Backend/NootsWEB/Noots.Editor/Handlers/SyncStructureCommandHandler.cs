@@ -14,6 +14,7 @@ using Noots.Editor.Commands;
 using Noots.Editor.Entities.EditorStructure;
 using BI.Services.Notes;
 using Noots.Editor.Impl;
+using Common.Helpers;
 
 namespace Noots.Editor.Handlers
 {
@@ -266,7 +267,7 @@ namespace Noots.Editor.Handlers
             textDb.NoteTextTypeId = textDto.NoteTextTypeId;
             textDb.HTypeId = textDto.HeadingTypeId;
             textDb.Checked = textDto.Checked;
-            textDb.Contents = textDto.Contents;
+            textDb.Contents = textDto.Contents.JSerialize();
 
             return textDb;
         }

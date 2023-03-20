@@ -15,7 +15,6 @@ public class BaseSignalRService
 	{
         this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         this.signalRContext = context;
-
     }
 
     public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)

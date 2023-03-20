@@ -7,19 +7,19 @@ import { ProjectBlock } from './projection-block';
 export class TreeBlock {
   tree: TreeRGA<string>;
 
-  hC: BlockProperty<string> | undefined; // highlightColor
+  hc: BlockProperty<string> | undefined; // highlightColor
 
-  tC: BlockProperty<string> | undefined; // textColor
+  tc: BlockProperty<string> | undefined; // textColor
 
   l: BlockProperty<string> | undefined; // link
 
-  tT: BlockProperty<TextTypeENUM[]> | undefined; // textTypes
+  tt: BlockProperty<TextTypeENUM[]> | undefined; // textTypes
 
   constructor(block: Partial<TreeBlock>) {
-    this.hC = block.hC;
-    this.tC = block.tC;
+    this.hc = block.hc;
+    this.tc = block.tc;
     this.l = block.l;
-    this.tT = block.tT;
+    this.tt = block.tt;
     this.tree = new TreeRGA({ root: block.tree?.root, seq: block.tree?.seq ?? 0 });
   }
 
@@ -31,21 +31,21 @@ export class TreeBlock {
 
   updateHighlightColor(value: BlockProperty<string>): void {
     if (
-      !this.hC ||
-      value.id.seq > this.hC.id.seq ||
-      (value.id.seq === this.hC.id.seq && value.id.agent <= this.hC.id.agent)
+      !this.hc ||
+      value.id.seq > this.hc.id.seq ||
+      (value.id.seq === this.hc.id.seq && value.id.agent <= this.hc.id.agent)
     ) {
-      this.hC = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
+      this.hc = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
     }
   }
 
   updateTextColor(value: BlockProperty<string>): void {
     if (
-      !this.tC ||
-      value.id.seq > this.tC.id.seq ||
-      (value.id.seq === this.tC.id.seq && value.id.agent <= this.tC.id.agent)
+      !this.tc ||
+      value.id.seq > this.tc.id.seq ||
+      (value.id.seq === this.tc.id.seq && value.id.agent <= this.tc.id.agent)
     ) {
-      this.tC = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
+      this.tc = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
     }
   }
 
@@ -61,11 +61,11 @@ export class TreeBlock {
 
   updateTextTypes(value: BlockProperty<TextTypeENUM[]>): void {
     if (
-      !this.tT ||
-      value.id.seq > this.tT.id.seq ||
-      (value.id.seq === this.tT.id.seq && value.id.agent <= this.tT.id.agent)
+      !this.tt ||
+      value.id.seq > this.tt.id.seq ||
+      (value.id.seq === this.tt.id.seq && value.id.agent <= this.tt.id.agent)
     ) {
-      this.tT = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
+      this.tt = { id: { agent: value.id.agent, seq: value.id.seq }, value: value.value };
     }
   }
 
@@ -74,11 +74,11 @@ export class TreeBlock {
   }
 
   copy(): TreeBlock {
-    return new TreeBlock(this);
+    return TreeBlock.initFrom(this);
   }
 
   isEqualTextTypes(textTypes: TextTypeENUM[] | undefined): boolean {
-    const types = this.tT?.value;
+    const types = this.tt?.value;
     if (types === textTypes) return true;
     if (types == null || textTypes == null) return false;
     if (types.length !== textTypes.length) return false;
@@ -91,10 +91,10 @@ export class TreeBlock {
 
   getProjection(): ProjectBlock {
     const block = new ProjectBlock({
-      highlightColor: this.hC?.value,
-      textColor: this.tC?.value,
+      highlightColor: this.hc?.value,
+      textColor: this.tc?.value,
       link: this.l?.value,
-      textTypes: this.tT?.value,
+      textTypes: this.tt?.value,
       content: this.tree.readStr(),
     });
     return block;
@@ -104,11 +104,11 @@ export class TreeBlock {
     if (this === block) return true;
     if (block == null) return false;
 
-    if (this.hC?.value !== block.hC?.value || !this.propIdEqual(this.hC?.id, block.hC?.id)) {
+    if (this.hc?.value !== block.hc?.value || !this.propIdEqual(this.hc?.id, block.hc?.id)) {
       return false;
     }
 
-    if (this.tC?.value !== block.tC?.value || !this.propIdEqual(this.tC?.id, block.tC?.id)) {
+    if (this.tc?.value !== block.tc?.value || !this.propIdEqual(this.tc?.id, block.tc?.id)) {
       return false;
     }
 
@@ -116,7 +116,7 @@ export class TreeBlock {
       return false;
     }
 
-    if (!this.isEqualTextTypes(block.tT?.value) || !this.propIdEqual(this.tT?.id, block.tT?.id)) {
+    if (!this.isEqualTextTypes(block.tt?.value) || !this.propIdEqual(this.tt?.id, block.tt?.id)) {
       return false;
     }
 

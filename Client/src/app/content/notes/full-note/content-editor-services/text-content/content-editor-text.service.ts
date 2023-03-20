@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BaseText } from '../../../models/editor-models/base-text';
-import { ProjectBlock } from '../../content-editor/text/entities/blocks/projection-block';
 import { NoteTextTypeENUM } from '../../content-editor/text/note-text-type.enum';
 import { TransformContent } from '../../models/transform-content.model';
 import { ContentEditorContentsService } from '../core/content-editor-contents.service';
@@ -16,7 +15,6 @@ export class ContentEditorTextService {
     contentId: string,
     nextRowType: NoteTextTypeENUM,
     insertAfter: boolean,
-    textBlocks?: ProjectBlock[],
     heading?: number,
   ) {
     let index = this.contentsService.getIndexByContentId(contentId);
@@ -25,9 +23,6 @@ export class ContentEditorTextService {
     }
     const nContent = BaseText.getNew();
     nContent.updateNoteTextTypeId(nextRowType);
-    if (textBlocks?.length > 0) {
-      nContent.updateContent(textBlocks);
-    }
     if (heading) {
       nContent.updateHeadingTypeId(heading);
     }

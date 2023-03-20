@@ -56,7 +56,7 @@ namespace Noots.History.Handlers.Queries
             if (permissions.CanRead)
             {
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
-                var result = await Convert(snapshot.Contents);
+                var result = await Convert(snapshot.GetContents());
                 var data = result.OrderBy(x => x.Order).ToList();
                 return new OperationResult<List<BaseNoteContentDTO>>(true, data);
             }

@@ -10,6 +10,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { LoadSnapshotNote } from '../../state/notes-actions';
 import { NoteStore } from '../../state/notes-state';
+import { EditorTitleEnum } from '../content-editor/entities/editor-title.enum';
 import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
@@ -32,12 +33,11 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
 
-  @Select(NoteStore.snapshotNoteTitle)
-  public snapshotNoteTitle$: Observable<string>;
-
   destroy = new Subject<void>();
 
   contents: ContentModelBase[];
+
+  titleType = EditorTitleEnum;
 
   isLoading = true;
 
@@ -50,7 +50,7 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    private route: ActivatedRoute,
+    route: ActivatedRoute,
     private apiHistory: ApiNoteHistoryService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {

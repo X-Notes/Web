@@ -4,6 +4,7 @@ using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.Helpers;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.Notes;
@@ -31,19 +32,21 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 		var noteForCopy = await noteRepository.GetNoteWithContent(request.Id);
 		var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(q => new SnapshotNoteLabel { Name = q.Name, Color = q.Color }).ToList();
 
-		var snapshot = new NoteSnapshot()
+        var contents = Convert(noteForCopy.Contents).JSerialize();
+
+        var snapshot = new NoteSnapshot()
 		{
 			NoteTypeId = noteForCopy.NoteTypeId,
 			RefTypeId = noteForCopy.RefTypeId,
-			Title = noteForCopy.Title?.ReadStr(),
+			Title = noteForCopy.GetTitle()?.ReadStr(),
 			Color = noteForCopy.Color,
 			SnapshotTime = DateTimeProvider.Time,
 			NoteId = noteForCopy.Id,
 			Labels = labels,
 			UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),
 			SnapshotFileContents = noteForCopy.Contents.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
-			Contents = Convert(noteForCopy.Contents)
-		};
+			Contents = contents
+        };
 
 		var dbSnapshot = await noteSnapshotRepository.AddAsync(snapshot);
 		return Unit.Value;
@@ -59,7 +62,7 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
             {
                 case TextNote tN:
                     {
-                        var tNDTO = new TextNoteSnapshot(tN.Contents, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
+                        var tNDTO = new TextNoteSnapshot(tN.GetContents(), tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
                         result.TextNoteSnapshots.Add(tNDTO);
                         break;
                     }

@@ -101,6 +101,13 @@ export class ContentUpdateWsService implements OnDestroy {
     }
   }
 
+  updateUIText(contentId: string) {
+    const el = this.elements.toArray().find((x) => x.getContentId() === contentId);
+    if (el) {
+      el.syncStateContentWithUI();
+    }
+  }
+
   updateText() {
     this.signalRService.updateTextContentEvent$
       .pipe(takeUntil(this.destroy))
@@ -108,7 +115,6 @@ export class ContentUpdateWsService implements OnDestroy {
         if (content) {
           try {
             content.textDiff = TextDiff.getNewFrom(content.textDiff);
-            console.log('content.textDiff: ', content.textDiff);
             this.handleTextUpdates(content);
           } catch (e) {
             console.error(e);
@@ -118,8 +124,9 @@ export class ContentUpdateWsService implements OnDestroy {
   }
 
   handleTextUpdates(content: UpdateNoteTextWS): void {
+    console.log('handleTextUpdates: ', content.textDiff);
     this.contentEditorContentsService.patchText(content.textDiff, true);
-    this.updateUI(content.textDiff.contentId);
+    this.updateUIText(content.textDiff.contentId);
   }
 
   updateVideoCollections() {

@@ -37,9 +37,9 @@ namespace Noots.DatabaseContext.Repositories.Folders
                 .Include(x => x.Note)
                 .Where(x => x.FolderId == folderId)
                 .OrderBy(x => x.Order)
-                .Select(x => x.Note).Select(x => x.Title).ToListAsync();
+                .Select(x => x.Note).ToListAsync();
 
-            return ents.Select(x => x.ReadStr()).ToList();
+            return ents.Select(x => x.GetTitle()?.ReadStr()).ToList();
         }
     }
 }

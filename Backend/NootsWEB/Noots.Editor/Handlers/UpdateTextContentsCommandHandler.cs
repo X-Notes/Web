@@ -51,28 +51,38 @@ public class UpdateTextContentsCommandHandler : IRequestHandler<UpdateTextConten
 
             return new OperationResult<Unit>(success: true, Unit.Value);
         }
+
         return new OperationResult<Unit>().SetNoPermissions();
     }
 
     private async Task UpdateOne(TextDiff textDiff, Guid noteId, Guid userId, bool isMultiplyUpdate)
     {
         var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == textDiff.ContentId);
-        if (textForUpdate != null)
+
+        if (textForUpdate == null) return;
+
+        textForUpdate.UpdatedAt = DateTimeProvider.Time;
+        textForUpdate.NoteTextTypeId = textDiff.NoteTextTypeId ?? textForUpdate.NoteTextTypeId;
+        textForUpdate.HTypeId = textDiff.HeadingTypeId ?? textForUpdate.HTypeId;
+        textForUpdate.Checked = textDiff.Checked ?? textForUpdate.Checked;
+
+        ProcessContents(textForUpdate, textDiff.BlockDiffs);
+
+        await textNotesRepository.UpdateAsync(textForUpdate);
+
+        if (isMultiplyUpdate && textDiff != null)
         {
-            textForUpdate.UpdatedAt = DateTimeProvider.Time;
-            textForUpdate.NoteTextTypeId = textDiff.NoteTextTypeId ?? textForUpdate.NoteTextTypeId;
-            textForUpdate.HTypeId = textDiff.HeadingTypeId ?? textForUpdate.HTypeId;
-            textForUpdate.Checked = textDiff.Checked ?? textForUpdate.Checked;
-
-            ProcessContents(textForUpdate, textDiff.BlockDiffs);
-
-            await textNotesRepository.UpdateAsync(textForUpdate);
-
-            if (isMultiplyUpdate)
+            textDiff.BlockDiffs?.ForEach(x =>
             {
-                var updates = new UpdateTextWS(textDiff);
-                await appSignalRService.UpdateTextContent(noteId, userId, updates);
-            }
+                if (x.MergeOps != null)
+                {
+                    x.MergeOps.Ops = x.MergeOps.ValidOps;
+                }
+            });
+
+            var updates = new UpdateTextWS(textDiff);
+
+            await appSignalRService.UpdateTextContent(noteId, userId, updates);
         }
     }
 
@@ -80,50 +90,63 @@ public class UpdateTextContentsCommandHandler : IRequestHandler<UpdateTextConten
     { 
         if (blockDiffs == null || blockDiffs.Count == 0) return;
 
-        textNote.Contents ??= new List<TextBlock>();
+        var contents = textNote.GetContents() ?? new List<TextBlock>();
 
-        for (var i = 0; i < blockDiffs.Count; i++)
+        AlignBlocks(contents, blockDiffs);
+        ProcessText(contents, blockDiffs);
+        ProcessProps(contents, blockDiffs);
+
+        textNote.SetContents(contents);
+    }
+
+    private void AlignBlocks(List<TextBlock> contents, List<BlockDiff> blockDiffs)
+    {
+        if (blockDiffs.Count > contents.Count)
         {
-            var diffs = blockDiffs[i];
-            if (i < textNote.Contents.Count)
+            var countToAdd = blockDiffs.Count - contents.Count;
+
+            for(var i = 0; i < countToAdd; i++)
             {
-                var currentBlock = textNote.Contents[i];
-                ApplyBlockDiffs(diffs, currentBlock);
-            }
-            else
-            {
-                var newBlock = new TextBlock
-                {
-                    Id = diffs.Id,
-                };
-                ApplyBlockDiffs(diffs, newBlock);
-                textNote.Contents.Add(newBlock);
+                contents.Add(new TextBlock());
             }
         }
     }
 
-    private void ApplyBlockDiffs(BlockDiff blockDiff, TextBlock block)
+    private void ProcessText(List<TextBlock> contents, List<BlockDiff> blockDiffs)
     {
-        if (block != null)
+        for(var i = 0; i < blockDiffs.Count; i++)
         {
-            block.HighlightColor = blockDiff.HighlightColor ?? block.HighlightColor;
-            block.HighlightColor = block.HighlightColor == "d" ? null : block.HighlightColor;
-
-            block.TextColor = blockDiff.TextColor ?? block.TextColor;
-            block.TextColor = block.TextColor == "d" ? null : block.TextColor; // d - default color
-
-            block.Link = blockDiff.Link ?? block.Link;
-            block.TextTypes = blockDiff.TextTypes ?? block.TextTypes;
-
-            // UPDATE LETTERS
-            if (blockDiff.LetterIdsToDelete?.Count > 0)
+            var diffs = blockDiffs[i];
+            var stateBlockToUpdate = contents[i];
+            if(diffs.MergeOps != null)
             {
-                block.Letters = block.Letters?.Where(x => !blockDiff.LetterIdsToDelete!.Contains(x.Id)).ToList();
+                stateBlockToUpdate.UpdateTree(diffs.MergeOps);
             }
-            if (blockDiff.LettersToAdd?.Count > 0)
+        }
+    }
+
+    private void ProcessProps(List<TextBlock> contents, List<BlockDiff> blockDiffs)
+    {
+        for (var i = 0; i < blockDiffs.Count; i++)
+        {
+            var diffs = blockDiffs[i];
+            var stateBlockToUpdate = contents[i];
+
+            if (diffs.HighlightColor != null)
             {
-                block.Letters ??= new List<BlockLetter>();
-                block.Letters.AddRange(blockDiff.LettersToAdd!);
+                stateBlockToUpdate.UpdateHighlightColor(diffs.HighlightColor);
+            }
+            if (diffs.Link != null)
+            {
+                stateBlockToUpdate.UpdateLink(diffs.Link);
+            }
+            if (diffs.TextColor != null)
+            {
+                stateBlockToUpdate.UpdateTextColor(diffs.TextColor);
+            }
+            if (diffs.TextTypes != null)
+            {
+                stateBlockToUpdate.UpdateTextTypes(diffs.TextTypes);
             }
         }
     }

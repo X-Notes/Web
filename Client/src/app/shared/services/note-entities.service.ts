@@ -20,7 +20,6 @@ import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 
 export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallNote> {
-
   destroy = new Subject<void>();
 
   constructor(
@@ -30,7 +29,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     public apiService: ApiServiceNotes,
     protected router: Router,
     public actions$: Actions,
-    public viewElements: QueryList<NoteComponent>
+    public viewElements: QueryList<NoteComponent>,
   ) {
     super(store, murriService);
 
@@ -53,7 +52,8 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
 
     this.actions$
       .pipe(takeUntil(this.destroy), ofActionDispatched(UpdateNoteTitleWS))
-      .subscribe((value: UpdateNoteTitleWS) => {        
+      .subscribe((value: UpdateNoteTitleWS) => {
+        if (!this.viewElements) return;
         const viewChid = this.viewElements.toArray().find((x) => x.note.id === value.noteId);
         if (viewChid) {
           viewChid.updateRGATitle(value.transactions);

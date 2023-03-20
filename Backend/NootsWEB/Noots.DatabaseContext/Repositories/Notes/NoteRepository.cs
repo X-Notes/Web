@@ -70,11 +70,11 @@ namespace Noots.DatabaseContext.Repositories.Notes
 
             var types = GetFilterTypes(settings);
 
-            var notesIds = notes.Select(z => z.Id).ToHashSet();
+            var notesIds = notes.Select(q => q.Id).ToHashSet();
 
             var contents = await context.BaseNoteContents
-                .Include(z => (z as CollectionNote).Files)
-                .Where(z => types.Contains(z.ContentTypeId) && notesIds.Contains(z.NoteId))
+                .Include(q => (q as CollectionNote).Files)
+                .Where(q => types.Contains(q.ContentTypeId) && notesIds.Contains(q.NoteId))
                 .AsSplitQuery().AsNoTracking().ToListAsync();
 
             contents = FilterFileContents(contents, settings);
@@ -83,8 +83,8 @@ namespace Noots.DatabaseContext.Repositories.Notes
             notes.ForEach(note =>
             {
                 SetListIdIfNeed(contentLookUp[note.Id]);
-                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents?.Count > 0));
-                var content = baseContent.OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList();
+                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote)?.GetContents()?.Count > 0));
+                var content = baseContent.OrderBy(q => q.Order).Take(settings.ContentInNoteCount).ToList();
                 note.Contents = content;
             });
 

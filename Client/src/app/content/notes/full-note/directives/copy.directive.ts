@@ -98,15 +98,14 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   getTextContents(selectedItemsIds: string[]): string {
-    const items = this.contentEditorContentsService.getContents
-      .filter(
-        (x) =>
-          selectedItemsIds.some((q) => q === x.id) &&
-          x instanceof BaseText &&
-          (x as BaseText).isHaveUIText(),
-      )
-      .map((x) => x as BaseText);
-    const texts = items.map((item) => item.getUIConcatedText());
+    const elements = this.appCopy.toArray();
+    const texts = elements
+      .filter((x) => selectedItemsIds.some((q) => q === x.getContentId()))
+      .map((x) => {
+        const strs = x.getTextBlocks()?.map((q) => q.content);
+        return strs.join('');
+      })
+      .filter((x) => x.length > 0);
     if (texts.length > 0) {
       return texts.reduce((pv, cv) => `${pv}\n${cv}`);
     }

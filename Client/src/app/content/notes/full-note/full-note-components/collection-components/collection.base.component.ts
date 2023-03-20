@@ -82,6 +82,8 @@ export class CollectionBaseComponent<
     // TODO
   };
 
+  syncStateContentWithUI = () => {};
+
   updateHTML = () => {
     return null;
   };

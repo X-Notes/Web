@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, interval } from 'rxjs';
-import { debounceTime, filter } from 'rxjs/operators';
+import { buffer, debounceTime, filter } from 'rxjs/operators';
 import {
   updateNoteContentAutoTimerDelay,
   updateNoteContentDelay,
+  updateNoteContentTextAutoTimerDelay,
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
@@ -50,20 +51,23 @@ export class ItemsDiffs {
 export class ContentEditorSyncService {
   intervalSyncer = interval(updateNoteContentAutoTimerDelay);
 
-  private noteId: string;
+  intervalEvents = interval(updateNoteContentTextAutoTimerDelay);
 
-  private agent: number;
+  private noteId: string;
 
   private isEdit = false;
 
-  private updateSubject: BehaviorSubject<boolean>;
+  private updateContent$: BehaviorSubject<boolean>;
 
-  private updateImmediatelySubject: BehaviorSubject<boolean>;
+  private updateImmediatelyContent$: BehaviorSubject<boolean>;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public onStructureSync$: BehaviorSubject<NoteStructureResult>;
 
   private isSync = false;
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  updateTextBlocks$: BehaviorSubject<TextDiff>;
 
   constructor(
     private contentService: ContentEditorContentsService,
@@ -78,17 +82,11 @@ export class ContentEditorSyncService {
     private translateService: TranslateService,
     private crdtDiffsService: CrdtDiffsService,
   ) {
-    this.initTimer();
-    this.agent = this.randomIntFromInterval(1, 100000);
+    this.initTimers();
   }
 
-  randomIntFromInterval(min, max) {
-    // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  initTimer(): void {
-    // this.intervalSyncer.subscribe(() => this.change());
+  initTimers(): void {
+    this.intervalSyncer.subscribe(() => this.change());
   }
 
   initEdit(noteId: string): void {
@@ -100,7 +98,7 @@ export class ContentEditorSyncService {
     const isCanSync = (flag: boolean) =>
       flag === true && !this.isSync && !this.contentService.isRendering$.getValue();
 
-    this.updateSubject
+    this.updateContent$
       .pipe(
         filter((x) => isCanSync(x)),
         debounceTime(updateNoteContentDelay),
@@ -109,9 +107,20 @@ export class ContentEditorSyncService {
         await this.processChanges();
       });
     //
-    this.updateImmediatelySubject.pipe(filter((x) => isCanSync(x))).subscribe(async () => {
+    this.updateImmediatelyContent$.pipe(filter((x) => isCanSync(x))).subscribe(async () => {
       await this.processChanges();
       this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
+    });
+
+    this.updateTextBlocks$.pipe(buffer(this.intervalEvents)).subscribe(async (inputDiffs) => {
+      inputDiffs = inputDiffs.filter((x) => x?.hasChanges);
+      if (inputDiffs?.length > 0) {
+        try {
+          await this.apiTexts.syncContents(this.noteId, inputDiffs).toPromise();
+        } catch (e) {
+          console.error('e: ', e);
+        }
+      }
     });
   }
 
@@ -119,22 +128,25 @@ export class ContentEditorSyncService {
 
   change() {
     if (!this.isEdit) return;
-    this.updateSubject?.next(true);
+    this.updateContent$?.next(true);
   }
 
   changeImmediately() {
-    this.updateImmediatelySubject.next(true);
+    this.updateImmediatelyContent$.next(true);
   }
 
   destroyAndInitSubject() {
-    this.updateSubject?.complete();
-    this.updateSubject = new BehaviorSubject<boolean>(false);
+    this.updateContent$?.complete();
+    this.updateContent$ = new BehaviorSubject<boolean>(false);
 
-    this.updateImmediatelySubject?.complete();
-    this.updateImmediatelySubject = new BehaviorSubject<boolean>(false);
+    this.updateImmediatelyContent$?.complete();
+    this.updateImmediatelyContent$ = new BehaviorSubject<boolean>(false);
 
     this.onStructureSync$?.complete();
     this.onStructureSync$ = new BehaviorSubject<NoteStructureResult>(null);
+
+    this.updateTextBlocks$?.complete();
+    this.updateTextBlocks$ = new BehaviorSubject<TextDiff>(null);
   }
 
   private async processChanges() {
@@ -340,27 +352,41 @@ export class ContentEditorSyncService {
     if (textDiffs.length > 0) {
       await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
       for (const diffs of textDiffs) {
-        console.log('diffs: ', diffs);
         const item = this.contentService.getSyncContentById<BaseText>(diffs.contentId);
-        item.patchTextDiffs(diffs);
+        item.patchTextDiffs(diffs, false);
       }
     }
   }
 
   private getTextDiffs(): TextDiff[] {
     const oldContents = this.contentService.getTextSyncContents;
-    const newContents = this.contentService.getTextContents;
+    const uiContents = this.contentService.getTextContents;
     const diffs: TextDiff[] = [];
-    for (const content of newContents) {
-      const oldSyncContent = oldContents.find((syncContent) => syncContent.id === content.id);
+    for (const uiContent of uiContents) {
+      const oldSyncContent = oldContents.find((syncContent) => syncContent.id === uiContent.id);
       if (oldSyncContent) {
-        const contentDiffs = this.crdtDiffsService.getDiffs(oldSyncContent, content, this.agent);
+        const contentDiffs = this.getTextRowDiffs(oldSyncContent, uiContent);
         if (contentDiffs.hasChanges) {
-          console.log('contentDiffs: ', contentDiffs);
           diffs.push(contentDiffs);
         }
       }
     }
+    return diffs;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  getTextRowDiffs(prevTContent: BaseText, newTContent: BaseText): TextDiff {
+    const diffs: TextDiff = new TextDiff(newTContent.id);
+    if (prevTContent.headingTypeId !== newTContent.headingTypeId) {
+      diffs.headingTypeId = newTContent.headingTypeId;
+    }
+    if (prevTContent.noteTextTypeId !== newTContent.noteTextTypeId) {
+      diffs.noteTextTypeId = newTContent.noteTextTypeId;
+    }
+    if (prevTContent.checked !== newTContent.checked) {
+      diffs.checked = newTContent.checked;
+    }
+
     return diffs;
   }
 

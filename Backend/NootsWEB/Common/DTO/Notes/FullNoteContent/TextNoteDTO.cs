@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using Common.Helpers;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
@@ -18,7 +15,7 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public HTypeENUM? HeadingTypeId { set; get; }
 
-        public List<TextBlock> Contents { set; get; }
+        public List<TextBlock>? Contents { set; get; }
 
         public int ListId { set; get; }
 

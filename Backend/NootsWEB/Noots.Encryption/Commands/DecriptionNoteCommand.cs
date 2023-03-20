@@ -10,6 +10,6 @@ namespace Noots.Encryption.Commands
         [ValidationGuid]
         public Guid NoteId { set; get; }
 
-        public string Password { set; get; }
+        public string? Password { set; get; }
     }
 }

@@ -147,9 +147,11 @@ export class ApiBrowserTextService {
         range.selectNodeContents(el);
         range.setStart(selRange.endContainer, selRange.startOffset);
         nextContent = range.extractContents();
-        nextHtml = (nextContent.firstChild as HTMLElement).innerHTML;
+        const htmlEl = nextContent.firstChild as HTMLElement;
+        nextHtml = htmlEl.nodeName === '#text' ? htmlEl.textContent : htmlEl.innerHTML;
       }
     }
+
     return { isFocusToNext, nextHtml, nextContent };
   }
 

@@ -488,14 +488,12 @@ export class ContentEditorContentsService {
   patchText(data: TextDiff, isSync = false): void {
     const content = this.getContentById<BaseText>(data.contentId);
     if (content) {
-      content.patchTextDiffs(data);
+      content.patchTextDiffs(data, true);
     }
-    console.log('content1: ', content);
     const contentSync = this.getSyncContentById<BaseText>(data.contentId);
     if (contentSync && isSync) {
-      contentSync.patchTextDiffs(data);
+      contentSync.patchTextDiffs(data, false);
     }
-    console.log('content2: ', contentSync);
   }
 
   patchCollectionInfo(data: Partial<BaseCollection<BaseFile>>, isSync = false): void {

@@ -24,8 +24,9 @@ export class NotePreviewTextComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    if (this.content.contentsUI?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contentsUI);
+    const contentsUI = this.content.contents?.map((x) => x.getProjection());
+    if (contentsUI?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(contentsUI);
       this.viewHtml = this.sanitizer.bypassSecurityTrustHtml(html) as string;
     }
   }

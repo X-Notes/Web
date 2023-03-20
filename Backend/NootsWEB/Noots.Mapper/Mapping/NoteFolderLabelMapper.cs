@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.App;
@@ -13,6 +14,7 @@ using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
+using Common.Helpers;
 
 namespace Noots.Mapper.Mapping
 {
@@ -70,7 +72,8 @@ namespace Noots.Mapper.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId,
+                            var c = tN.Contents.JDeserializeObject<List<TextBlock>>();
+                            var tNDTO = new TextNoteDTO(c, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId,
                                 tN.Checked, tN.ListId, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
@@ -186,7 +189,7 @@ namespace Noots.Mapper.Mapping
                 ReletionId = relation.Id,
                 Id = relation.RelatedNote.Id,
                 Color = relation.RelatedNote.Color,
-                Title = relation.RelatedNote.Title,
+                Title = relation.RelatedNote.GetTitle(),
                 Order = relation.Order,
                 UserId = relation.RelatedNote.UserId,
                 IsOpened = state != null ? state.IsOpened : true,
@@ -207,7 +210,7 @@ namespace Noots.Mapper.Mapping
             {
                 Id = note.Id,
                 Color = note.Color,
-                Title = note.Title,
+                Title = note.GetTitle(),
                 Order = note.Order,
                 UserId = note.UserId,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
@@ -227,7 +230,7 @@ namespace Noots.Mapper.Mapping
             {
                 Id = note.Id,
                 Color = note.Color,
-                Title = note.Title,
+                Title = note.GetTitle(),
                 Order = note.Order,
                 UserId = note.UserId,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
@@ -274,7 +277,7 @@ namespace Noots.Mapper.Mapping
         {
             return new NotePreviewInFolder()
             {
-                Title = note.Title?.ReadStr()
+                Title = note.GetTitle()?.ReadStr()
             };
         }
 
@@ -316,7 +319,7 @@ namespace Noots.Mapper.Mapping
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
-                Title = folder.Title,
+                Title = folder.GetTitle(),
                 FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId,
                 IsCanEdit = isCanEdit,
@@ -335,7 +338,7 @@ namespace Noots.Mapper.Mapping
                 CreatedAt = folder.CreatedAt,
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
-                Title = folder.Title,
+                Title = folder.GetTitle(),
                 FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId
             };
