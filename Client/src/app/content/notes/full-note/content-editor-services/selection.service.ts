@@ -17,6 +17,8 @@ export class SelectionService {
 
   selectionDivActive$ = new BehaviorSubject(false);
 
+  disableDiv = false;
+
   private selectionTop = 0;
 
   private selectionLeft = 0;
@@ -59,6 +61,10 @@ export class SelectionService {
       return 0;
     }
     return this.selectionTop;
+  }
+
+  get selectionDivActive(): boolean {
+    return !this.disableDiv && this.selectionDivActive$.getValue();
   }
 
   selectionHandler(
@@ -108,11 +114,11 @@ export class SelectionService {
   }
 
   getSelectedItems(): string[] {
-    return Array.from(this.selectedItemsSet);
+    return Array.from(this.selectedItemsSet).filter((x) => x);
   }
 
   getAllSelectedItems(): string[] {
-    return [...this.getSelectedItems(), this.selectedItemId];
+    return [...this.getSelectedItems(), this.selectedItemId].filter((x) => x);
   }
 
   selectItems(ids: string[]) {
@@ -131,6 +137,7 @@ export class SelectionService {
   }
 
   resetSelectionItems(): void {
+    this.disableDiv = false;
     this.selectedItemId = null;
     this.selectedItemsSet.clear();
     this.onSetChanges();

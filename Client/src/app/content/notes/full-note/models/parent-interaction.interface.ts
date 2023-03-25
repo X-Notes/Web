@@ -20,6 +20,7 @@ export interface ParentInteraction {
   getTextBlocks(): TextBlock[];
   getContent(): ContentModelBase;
   getContentId(): string;
+  getText(): string;
   mouseEnter($event);
   mouseLeave($event);
   backspaceUp();

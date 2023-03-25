@@ -82,6 +82,10 @@ export class CollectionBaseComponent<
     this.uploadRef.nativeElement.click();
   };
 
+  getText(): string {
+    throw new Error('Incorrect Type');
+  }
+
   syncHtmlWithLayout = () => {
     // TODO
   };

@@ -8,7 +8,6 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { FullNote } from '../models/full-note.model';
 import { AddNotesToDom } from './add-notes-to-dom.model';
-import { Diff } from 'diff-match-patch';
 
 export class LoadNoteHistories {
   static type = '[Notes] Load note histories';
@@ -255,6 +254,17 @@ export class UpdateNoteTitle {
     public isUpdateFullNote = true,
   ) {}
 }
+
+export class UpdateNoteTitleWS {
+  static type = '[Notes] update note title ws';
+
+  constructor(
+    public title: string,
+    public noteId: string,
+    public errorPermissionMessage?: string,
+  ) {}
+}
+
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';
 

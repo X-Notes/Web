@@ -29,7 +29,7 @@ import {
   RemoveLabelFromNote,
   RemoveOnlineUsersOnNote,
   UpdateFullNote,
-  UpdateNoteTitle,
+  UpdateNoteTitleWS,
   UpdateOneNote,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
@@ -150,7 +150,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateNoteTitle(updates.title, updates.noteId, false));
+        this.store.dispatch(new UpdateNoteTitleWS(updates.title, updates.noteId));
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {

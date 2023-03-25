@@ -170,7 +170,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).tagName === 'path' ||
       (evt.target as HTMLElement).localName === 'mat-icon' ||
       evt.target === this.scrollSection || // scroll click
-      this.pS.isMobile()
+      this.pS.isMobile() ||
+      this.selectionService.disableDiv
     ) {
       return;
     }
@@ -214,7 +215,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseMoveDelay(evt: MouseEvent) {
-    if (!this.isMouseDown || this.selectionService.isResizingPhoto) {
+    if (
+      !this.isMouseDown ||
+      this.selectionService.isResizingPhoto ||
+      this.selectionService.disableDiv
+    ) {
       return;
     }
 

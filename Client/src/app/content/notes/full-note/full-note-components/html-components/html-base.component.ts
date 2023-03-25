@@ -103,6 +103,10 @@ export abstract class BaseTextElementComponent extends BaseEditorElementComponen
     this.textChanged.next();
   }
 
+  getText(): string {
+    return this.getEditableNative<HTMLElement>().textContent;
+  }
+
   initBaseHTML(): void {
     if (this.content.contents?.length > 0) {
       const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
