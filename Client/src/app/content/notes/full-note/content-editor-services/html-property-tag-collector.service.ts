@@ -3,7 +3,7 @@ import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { ParentInteractionHTML } from '../models/parent-interaction.interface';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 
 @Injectable()
@@ -20,18 +20,18 @@ export class HtmlPropertyTagCollectorService {
     return textItems.some((x) => type === x.noteTextTypeId);
   }
 
-  getIsBold = (selectedMenuType: TextEditMenuEnum, htmlItems: ParentInteraction[]): boolean => {
-    return this.isSelectionTags(['strong', 'b'], selectedMenuType, htmlItems);
+  getIsBold = (selectedMenuType: TextEditMenuEnum, items: ParentInteractionHTML[]): boolean => {
+    return this.isSelectionTags(['strong', 'b'], selectedMenuType, items);
   };
 
-  getIsItalic = (selectedMenuType: TextEditMenuEnum, htmlItems: ParentInteraction[]): boolean => {
-    return this.isSelectionTags(['em'], selectedMenuType, htmlItems);
+  getIsItalic = (selectedMenuType: TextEditMenuEnum, items: ParentInteractionHTML[]): boolean => {
+    return this.isSelectionTags(['em'], selectedMenuType, items);
   };
 
   isSelectionTags(
     selTags: string[],
     selectedMenuType: TextEditMenuEnum,
-    htmlItems: ParentInteraction[],
+    htmlItems: ParentInteractionHTML[],
   ): boolean {
     if (selectedMenuType === TextEditMenuEnum.OneRow) {
       const sel = this.apiBrowserService.getSelection();
@@ -78,7 +78,7 @@ export class HtmlPropertyTagCollectorService {
   getProperty(
     propertySelector: string,
     selectedMenuType: TextEditMenuEnum,
-    htmlItems: ParentInteraction[],
+    htmlItems: ParentInteractionHTML[],
   ): string {
     if (selectedMenuType === TextEditMenuEnum.OneRow) {
       const sel = this.apiBrowserService.getSelection();
@@ -163,7 +163,7 @@ export class HtmlPropertyTagCollectorService {
     return container;
   };
 
-  private getMultiRowSelectedHTML = (htmlItems: ParentInteraction[]): HTMLElement => {
+  private getMultiRowSelectedHTML = (htmlItems: ParentInteractionHTML[]): HTMLElement => {
     const container = document.createElement('div');
     for (const el of htmlItems.map((x) => x.getEditableNative())) {
       if (el) {

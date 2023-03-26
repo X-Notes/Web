@@ -16,9 +16,6 @@ import { ContentEditorTextService } from './text-content/content-editor-text.ser
 @Injectable()
 export class EditorFacadeService {
   constructor(
-    public apiNote: ApiServiceNotes,
-    public apiNoteText: ApiTextService,
-    public apiNoteHistoryService: ApiNoteHistoryService,
     public store: Store,
     public htmlTitleService: HtmlTitleService,
     public dc: DestroyComponentService,

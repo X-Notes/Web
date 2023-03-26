@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
-import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
@@ -16,8 +15,7 @@ import {
   DocumentModel,
   DocumentsCollection,
 } from '../../../../../models/editor-models/documents-collection';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { HtmlComponentsFacadeService } from '../../../html-components-services/html-components.facade.service';
 
 @Component({
   selector: 'app-document-note',
@@ -34,23 +32,14 @@ export class DocumentNoteComponent
   constructor(
     private exportService: ExportService,
     private host: ElementRef,
-    private clickableService: ClickableContentService,
     cdr: ChangeDetectorRef,
-    clickableContentService: ClickableContentService,
-    apiBrowserTextService: ApiBrowserTextService,
-    selectionService: SelectionService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Document,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Document, facade);
   }
 
   get isClicked() {
-    return this.clickableService.isClicked(this.getFirst?.fileId);
+    return this.facade.clickableService.isClicked(this.getFirst?.fileId);
   }
 
   get getFirst(): DocumentModel {
@@ -122,10 +111,6 @@ export class DocumentNoteComponent
   };
 
   setFocusToEnd = () => {};
-
-  getEditableNative = () => {
-    return null;
-  };
 
   getHost() {
     return this.host;

@@ -4,23 +4,24 @@ import { ContentModelBase } from '../../models/editor-models/content-model-base'
 import { TextBlock } from '../../models/editor-models/text-models/text-block';
 import { SetFocus } from './set-focus';
 
+export enum ComponentType {
+  HTML = 1,
+  Collection,
+}
+
 export interface ParentInteraction {
+  type: ComponentType;
   isReadOnlyMode: boolean;
   isSelected: boolean;
   theme: ThemeENUM;
   isFocusToNext(entity?: SetFocus): boolean;
   setFocus(entity?: SetFocus);
   setFocusToEnd();
-  updateHTML(contents: TextBlock[]);
   syncContentWithLayout();
   syncContentItems();
-  syncHtmlWithLayout();
-  getEditableNative(): HTMLElement | Element;
   getHost(): ElementRef<HTMLElement>;
-  getTextBlocks(): TextBlock[];
   getContent(): ContentModelBase;
   getContentId(): string;
-  getText(): string;
   mouseEnter($event);
   mouseLeave($event);
   backspaceUp();
@@ -28,5 +29,16 @@ export interface ParentInteraction {
   deleteDown();
   detectChanges();
   markForCheck();
+}
+
+export interface ParentInteractionHTML extends ParentInteraction {
+  syncHtmlWithLayout();
+  updateHTML(contents: TextBlock[]);
+  getEditableNative(): HTMLElement | Element;
+  getTextBlocks(): TextBlock[];
+  getText(): string;
   get isActiveState(): boolean;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ParentInteractionCollection extends ParentInteraction {}

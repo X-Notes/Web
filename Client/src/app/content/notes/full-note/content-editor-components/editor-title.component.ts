@@ -89,7 +89,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
   handlerTitleEnter($event: KeyboardEvent) {
     $event.preventDefault();
     this.facade.contentEditorTextService.appendNewEmptyContentToStart();
-    setTimeout(() => this.elements?.first?.setFocus());
+    setTimeout(() => this.first?.setFocus());
     this.postAction();
   }
 

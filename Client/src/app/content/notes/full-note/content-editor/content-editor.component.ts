@@ -20,7 +20,7 @@ import { SelectionDirective } from '../directives/selection.directive';
 import { MenuSelectionDirective } from '../directives/menu-selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { ParentInteraction, ParentInteractionHTML } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
@@ -28,7 +28,6 @@ import { ContentEditorPhotosCollectionService } from '../content-editor-services
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
-import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
@@ -55,12 +54,18 @@ import { DestroyComponentService } from 'src/app/shared/services/destroy-compone
 import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
 import { EditorTitleComponent } from '../content-editor-components/editor-title.component';
 import { Label } from 'src/app/content/labels/models/label.model';
+import { HtmlComponentsFacadeService } from '../full-note-components/html-components-services/html-components.facade.service';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
-  providers: [WebSocketsNoteUpdaterService, EditorFacadeService, DestroyComponentService],
+  providers: [
+    WebSocketsNoteUpdaterService,
+    EditorFacadeService,
+    DestroyComponentService,
+    HtmlComponentsFacadeService,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentEditorComponent
@@ -109,7 +114,6 @@ export class ContentEditorComponent
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorAudiosService: ContentEditorAudiosCollectionService,
-    public contentEditorTextService: ContentEditorTextService,
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
@@ -187,23 +191,17 @@ export class ContentEditorComponent
   }
 
   get selectedElementsRects(): DOMRect[] {
-    return this.selectedElements?.map((x) => x.getHost().nativeElement.getBoundingClientRect());
+    return this.getSelectedElements()?.map((x) =>
+      x.getHost().nativeElement.getBoundingClientRect(),
+    );
   }
 
   get selectedTextElements(): BaseText[] {
-    return this.selectedElements
-      ?.filter((x) => x.getContent().typeId === ContentTypeENUM.Text)
-      .map((x) => x.getContent() as BaseText);
+    return this.getSelectedHTMLElements()?.map((x) => x.getContent() as BaseText);
   }
 
   get selectedTextElement(): BaseText {
     return this.selectedTextElements.length > 0 ? this.selectedTextElements[0] : null;
-  }
-
-  get selectedElements(): ParentInteraction[] {
-    return this.elements?.filter((x) =>
-      this.facade.selectionService.isSelectedAll(x.getContentId()),
-    );
   }
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
@@ -217,14 +215,14 @@ export class ContentEditorComponent
     }
 
     if (contents.length === 0) {
-      this.contentEditorTextService.appendNewEmptyContentToEnd();
+      this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
     }
   }
 
   ngAfterViewInit(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elements);
+    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
     this.contentEditorListenerService.setHandlers(
-      this.elements,
+      this.elementsQuery,
       this.noteTitleEl,
       this.contentSection,
     );
@@ -239,12 +237,10 @@ export class ContentEditorComponent
   }
 
   buildMenuOptions(): TextEditMenuOptions {
+    const htmlElements = this.getSelectedHTMLElements();
     const obj: TextEditMenuOptions = {
-      isBold: this.htmlPTCollectorService.getIsBold(this.selectedMenuType, this.selectedElements),
-      isItalic: this.htmlPTCollectorService.getIsItalic(
-        this.selectedMenuType,
-        this.selectedElements,
-      ),
+      isBold: this.htmlPTCollectorService.getIsBold(this.selectedMenuType, htmlElements),
+      isItalic: this.htmlPTCollectorService.getIsItalic(this.selectedMenuType, htmlElements),
       ids: this.facade.selectionService.getAllSelectedItems(),
       textType: this.selectedTextElement?.noteTextTypeId,
       headingType: this.selectedTextElement?.headingTypeId,
@@ -252,13 +248,9 @@ export class ContentEditorComponent
       backgroundColor: this.htmlPTCollectorService.getProperty(
         'backgroundColor',
         this.selectedMenuType,
-        this.selectedElements,
+        htmlElements,
       ),
-      color: this.htmlPTCollectorService.getProperty(
-        'color',
-        this.selectedMenuType,
-        this.selectedElements,
-      ),
+      color: this.htmlPTCollectorService.getProperty('color', this.selectedMenuType, htmlElements),
     };
     return obj;
   }
@@ -321,6 +313,10 @@ export class ContentEditorComponent
       .subscribe(() => {
         this.facade.cdr.detectChanges();
       });
+
+    this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
+      this.facade.cdr.detectChanges();
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -333,14 +329,10 @@ export class ContentEditorComponent
     this.pushChangesToTitle(this.noteTitleEl.nativeElement.innerText);
   }
 
-  getElementById(id: string): ParentInteraction {
-    return this.elements.find((q) => q.getContentId() === id);
-  }
-
   selectionHandler(secondRect: DOMRect) {
     this.facade.selectionService.selectionHandler(
       secondRect,
-      this.elements,
+      this.elementsQuery,
       this.selectionDirective.isDivTransparent,
     );
   }
@@ -348,7 +340,7 @@ export class ContentEditorComponent
   selectionStartHandler($event: DOMRect): void {
     const isSelectionInZone = this.facade.selectionService.isSelectionInZone(
       $event,
-      this.elements,
+      this.elementsQuery,
       this.noteTitleEl,
     );
     this.selectionDirective.setIsShowDiv(!isSelectionInZone);
@@ -364,16 +356,16 @@ export class ContentEditorComponent
   onScroll($event: Event): void {}
 
   enterHandler(value: EnterEvent) {
-    const curEl = this.elements?.toArray().find((x) => x.getContentId() === value.contentId);
+    const curEl = this.getHTMLElementById(value.contentId);
     curEl.syncHtmlWithLayout();
-    const newTextContent = this.contentEditorTextService.insertNewContent(
+    const newTextContent = this.facade.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
     );
     this.facade.cdr.detectChanges();
     setTimeout(() => {
-      const el = this.elements?.toArray()[newTextContent.index];
+      const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
       const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
       el.updateHTML(contents);
       el.setFocus();
@@ -383,29 +375,30 @@ export class ContentEditorComponent
   deleteRowHandler(id: string) {
     const index = this.contentEditorContentsService.deleteContent(id);
     if (index !== 0) {
-      this.elements?.toArray()[index - 1].setFocusToEnd();
+      this.elements[index - 1].setFocusToEnd();
     }
     this.postAction();
   }
 
-  concatThisWithPrev(id: string) {
+  concatThisWithPrev(el: ParentInteractionHTML) {
+    const id = el.getContentId();
     const data = this.contentEditorContentsService.getContentAndIndexById<BaseText>(id);
     const indexPrev = data.index - 1;
-
     const prevContent = this.contentEditorContentsService.getContentByIndex<BaseText>(indexPrev);
 
-    const currentElement = this.getElementById(id);
-    const prevElement = this.getElementById(prevContent.id);
+    const prevElement = this.getHTMLElementById(prevContent.id);
 
-    const resContent = [...prevElement.getTextBlocks(), ...currentElement.getTextBlocks()];
+    if (!prevElement) {
+      return;
+    }
 
-    const prevRef = this.elements.find((q) => q.getContentId() === prevContent.id);
-    prevRef.updateHTML(resContent);
+    const resContent = [...prevElement.getTextBlocks(), ...el.getTextBlocks()];
+
+    prevElement.updateHTML(resContent);
     this.contentEditorContentsService.deleteById(id, false);
 
     setTimeout(() => {
-      const prevItemHtml = this.elements?.toArray()[indexPrev];
-      prevItemHtml.setFocusToEnd();
+      prevElement.setFocusToEnd();
     });
     this.postAction();
   }
@@ -416,21 +409,23 @@ export class ContentEditorComponent
 
   transformToTypeText(value: TransformContent): void {
     this.unSelectItems();
-    const index = this.contentEditorTextService.transformTextContentTo(value);
-    setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
+    const index = this.facade.contentEditorTextService.transformTextContentTo(value);
+    setTimeout(() => this.elements[index].setFocusToEnd());
     this.postAction();
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
-    for (const id of updates.ids) {
-      const el = this.elements.toArray().find((x) => x.getContent().id === id);
+    const selectMenuType = this.selectedMenuType;
+    const elements = this.getHTMLElementsById(updates.ids);
+    for (const el of elements) {
       if (!el) {
         this.unSelectItems();
         return;
       }
-      const content = el.getContent() as BaseText;
-      const html = DeltaConverter.convertTextBlocksToHTML(content.contents);
-      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative());
+      const blocks = el.getTextBlocks();
+      const html = DeltaConverter.convertTextBlocksToHTML(blocks);
+      if (!html) continue;
+      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative(), selectMenuType);
       let resultDelta: DeltaStatic;
       if (updates.isRemoveStyles) {
         resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);
@@ -462,12 +457,15 @@ export class ContentEditorComponent
     this.facade.selectionService.resetSelectionAndItems();
   }
 
-  getIndexAndLengthForUpdateStyle(el: HTMLElement | Element): { index: number; length: number } {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
+  getIndexAndLengthForUpdateStyle(
+    el: HTMLElement | Element,
+    menuType: TextEditMenuEnum,
+  ): { index: number; length: number } {
+    if (menuType === TextEditMenuEnum.OneRow) {
       const pos = this.facade.apiBrowser.getSelectionCharacterOffsetsWithin(el);
       return { index: pos.start, length: pos.end - pos.start };
     }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+    if (menuType === TextEditMenuEnum.MultiplyRows) {
       return { index: 0, length: el.innerHTML.length };
     }
     return null;
@@ -502,7 +500,7 @@ export class ContentEditorComponent
       }
 
       const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
-      const newTextContent = this.contentEditorTextService.insertNewContent(
+      const newTextContent = this.facade.contentEditorTextService.insertNewContent(
         contentId,
         type,
         true,
@@ -534,17 +532,21 @@ export class ContentEditorComponent
     }
     $event.preventDefault();
     this.postAction();
-    requestAnimationFrame(() => this.elements?.last?.setFocus());
+    requestAnimationFrame(() => {
+      this.last?.setFocus();
+      this.preLast?.mouseLeave($event);
+      this.preLast?.detectChanges();
+    });
   }
 
   mouseEnter($event): void {
-    this.elements?.last?.mouseEnter($event);
-    this.elements?.last?.detectChanges();
+    this.last?.mouseEnter($event);
+    this.last?.detectChanges();
   }
 
   mouseOut($event): void {
-    this.elements?.last?.mouseLeave($event);
-    this.elements?.last?.detectChanges();
+    this.last?.mouseLeave($event);
+    this.last?.detectChanges();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -706,7 +708,7 @@ export class ContentEditorComponent
     this.facade.cdr.detectChanges();
 
     if (newContentId) {
-      const el = this.elements.toArray().find((x) => x.getContentId() === newContentId);
+      const el = this.getElementById(newContentId);
       if (el) {
         el.syncContentWithLayout();
         el.syncContentItems();
@@ -789,7 +791,7 @@ export class ContentEditorComponent
 
   syncCollectionItems(contentId: string): void {
     if (!contentId) return;
-    const curEl = this.elements?.toArray().find((x) => x.getContentId() === contentId);
+    const curEl = this.getElementById(contentId);
     if (curEl) {
       curEl.syncContentItems();
     }

@@ -10,19 +10,14 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  Renderer2,
 } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
-import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
-import { SelectionService } from '../../../content-editor-services/selection.service';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
+import { HtmlComponentsFacadeService } from '../../html-components-services/html-components.facade.service';
 import { BaseTextElementComponent } from '../html-base.component';
 
 @Component({
@@ -33,7 +28,7 @@ import { BaseTextElementComponent } from '../html-base.component';
 })
 export class HtmlNumberListComponent
   extends BaseTextElementComponent
-  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges
 {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -52,13 +47,9 @@ export class HtmlNumberListComponent
   constructor(
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
-    selectionService: SelectionService,
-    clickableService: ClickableContentService,
-    renderer: Renderer2,
-    sanitizer: DomSanitizer,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(cdr, apiBrowserTextService, selectionService, clickableService, renderer, sanitizer);
+    super(cdr, facade);
   }
 
   getHost() {
@@ -111,7 +102,9 @@ export class HtmlNumberListComponent
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.apiBrowser.pressEnterHandler(this.getEditableNative());
+      const breakModel = this.facade.apiBrowserTextService.pressEnterHandler(
+        this.getEditableNative(),
+      );
       const event = super.eventEventFactory(
         breakModel,
         NoteTextTypeENUM.numberList,
@@ -122,6 +115,11 @@ export class HtmlNumberListComponent
   }
 
   setFocusedElement(): void {
-    this.clickableService.setContent(this.content, null, ClickableSelectableEntities.Text, this);
+    this.facade.clickableService.setContent(
+      this.content,
+      null,
+      ClickableSelectableEntities.Text,
+      this,
+    );
   }
 }

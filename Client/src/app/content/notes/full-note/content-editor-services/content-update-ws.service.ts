@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, QueryList } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BaseUpdateFileContent } from 'src/app/core/models/signal-r/innerNote/base-update-file-content-ws';
 import { UpdatePhotosCollectionWS } from 'src/app/core/models/signal-r/innerNote/update-photos-collection-ws';
@@ -32,6 +32,8 @@ export class ContentUpdateWsService implements OnDestroy {
 
   destroy = new Subject<void>();
 
+  public changes$ = new BehaviorSubject<boolean>(false);
+
   constructor(
     private signalRService: SignalRService,
     public contentEditorContentsService: ContentEditorContentsService,
@@ -52,42 +54,54 @@ export class ContentUpdateWsService implements OnDestroy {
     this.signalRService.updateNoteStructureEvent$
       .pipe(takeUntil(this.destroy))
       .subscribe((content) => {
-        if (content) {
-          try {
-            if (content.contentIdsToDelete && content.contentIdsToDelete.length > 0) {
-              this.contentEditorContentsService.deleteByIds(content.contentIdsToDelete, true);
-            }
-            if (content.positions && content.positions.length > 0) {
-              this.contentEditorContentsService.updatePositions(content.positions);
-            }
-            if (content.textContentsToAdd) {
-              for (const item of content.textContentsToAdd) {
-                this.contentEditorContentsService.insertInto(item, item.order, true);
-              }
-            }
-            if (content.photoContentsToAdd) {
-              for (const item of content.photoContentsToAdd) {
-                this.contentEditorContentsService.insertInto(item, item.order, true);
-              }
-            }
-            if (content.audioContentsToAdd) {
-              for (const item of content.audioContentsToAdd) {
-                this.contentEditorContentsService.insertInto(item, item.order, true);
-              }
-            }
-            if (content.videoContentsToAdd) {
-              for (const item of content.videoContentsToAdd) {
-                this.contentEditorContentsService.insertInto(item, item.order, true);
-              }
-            }
-            if (content.documentContentsToAdd) {
-              for (const item of content.documentContentsToAdd) {
-                this.contentEditorContentsService.insertInto(item, item.order, true);
-              }
-            }
-          } catch (e) {
-            console.error(e);
+        if (!content) {
+          return;
+        }
+        let changes = false;
+        try {
+          if (content.contentIdsToDelete && content.contentIdsToDelete.length > 0) {
+            this.contentEditorContentsService.deleteByIds(content.contentIdsToDelete, true);
+            changes = true;
           }
+          if (content.positions && content.positions.length > 0) {
+            this.contentEditorContentsService.updatePositions(content.positions);
+            changes = true;
+          }
+          if (content.textContentsToAdd) {
+            for (const item of content.textContentsToAdd) {
+              this.contentEditorContentsService.insertInto(item, item.order, true);
+              changes = true;
+            }
+          }
+          if (content.photoContentsToAdd) {
+            for (const item of content.photoContentsToAdd) {
+              this.contentEditorContentsService.insertInto(item, item.order, true);
+              changes = true;
+            }
+          }
+          if (content.audioContentsToAdd) {
+            for (const item of content.audioContentsToAdd) {
+              this.contentEditorContentsService.insertInto(item, item.order, true);
+              changes = true;
+            }
+          }
+          if (content.videoContentsToAdd) {
+            for (const item of content.videoContentsToAdd) {
+              this.contentEditorContentsService.insertInto(item, item.order, true);
+              changes = true;
+            }
+          }
+          if (content.documentContentsToAdd) {
+            for (const item of content.documentContentsToAdd) {
+              this.contentEditorContentsService.insertInto(item, item.order, true);
+              changes = true;
+            }
+          }
+          if (changes) {
+            this.changes$.next(true);
+          }
+        } catch (e) {
+          console.error(e);
         }
       });
   }

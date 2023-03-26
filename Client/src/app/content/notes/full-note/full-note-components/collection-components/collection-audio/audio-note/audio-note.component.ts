@@ -9,16 +9,14 @@ import { AudioService } from '../../../../../audio.service';
 import { ExportService } from '../../../../../export.service';
 import { ParentInteraction } from '../../../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
-import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 import {
   AudioModel,
   AudiosCollection,
 } from 'src/app/content/notes/models/editor-models/audios-collection';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { HtmlComponentsFacadeService } from '../../../html-components-services/html-components.facade.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -35,19 +33,11 @@ export class AudioNoteComponent
   constructor(
     private audioService: AudioService,
     private exportService: ExportService,
-    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
-    selectionService: SelectionService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Audio,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Audio, facade);
   }
 
   ngOnInit(): void {}

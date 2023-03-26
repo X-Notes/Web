@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { SelectionService } from '../content-editor-services/selection.service';
+import { HtmlComponentsFacadeService } from './html-components-services/html-components.facade.service';
 
 @Component({
   template: '',
@@ -17,13 +17,12 @@ export abstract class BaseEditorElementComponent {
 
   public isMouseOver = false;
 
-  constructor(public cdr: ChangeDetectorRef, public selectionService: SelectionService) {
+  constructor(public cdr: ChangeDetectorRef, public facade: HtmlComponentsFacadeService) {
     this.cdr = cdr;
-    this.selectionService = selectionService;
   }
 
   get isSelectModeActive(): boolean {
-    return this.selectionService.selectionDivActive$.getValue();
+    return this.facade.selectionService.selectionDivActive$.getValue();
   }
 
   detectChanges(): void {

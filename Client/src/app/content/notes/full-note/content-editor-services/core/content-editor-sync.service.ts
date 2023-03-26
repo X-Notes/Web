@@ -355,7 +355,7 @@ export class ContentEditorSyncService {
         (x) => x.typeId === type && x.id === content.id && !content.isEqualCollectionInfo(x),
       );
       if (isNeedUpdate) {
-        contents.push(content as T);
+        contents.push(content.copy() as T);
       }
     }
     return contents;

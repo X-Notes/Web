@@ -1,14 +1,13 @@
-import { Directive, Input, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { ParentInteraction, ParentInteractionHTML } from '../models/parent-interaction.interface';
 import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
   selector: '[appMenuSelection]',
 })
 export class MenuSelectionDirective implements OnDestroy, OnInit {
-  @Input() appMenuSelection: QueryList<ParentInteraction>;
+  @Input() appMenuSelection: ParentInteractionHTML[];
 
   @Input() isReadonly: boolean;
 
@@ -49,11 +48,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
 
   getCurrentItem(): ParentInteraction {
     for (const item of this.appMenuSelection) {
-      const contentItem = item.getContent();
-      if (
-        contentItem.typeId === ContentTypeENUM.Text &&
-        item.getEditableNative() === document.activeElement
-      ) {
+      if (item.getEditableNative() === document.activeElement) {
         return item;
       }
     }
