@@ -161,44 +161,45 @@ namespace Noots.Storage.Impl.AzureStorage
 
             try
             {
-                if (await sourceBlob.ExistsAsync())
+                if (!await sourceBlob.ExistsAsync())
                 {
-                    // Specifying -1 for the lease interval creates an infinite lease.
-                    await lease.AcquireAsync(TimeSpan.FromMinutes(10));
-
-                    // Get the source blob's properties and display the lease state.
-                    BlobProperties sourceProperties = await sourceBlob.GetPropertiesAsync();
-
-                    // Get a BlobClient representing the destination blob with a unique name.
-                    BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(prefixFolder, contentId, fileName));
-
-                    // Start the copy operation.
-                    await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
-
-                    // Get the destination blob's properties and display the copy status.
-                    BlobProperties destProperties = await destBlob.GetPropertiesAsync();
-
-                    // Update the source blob's properties.
-                    sourceProperties = await sourceBlob.GetPropertiesAsync();
-
-                    if (sourceProperties.LeaseState == LeaseState.Leased)
-                    {
-                        // Break the lease on the source blob.
-                        await lease.BreakAsync();
-
-                        // Update the source blob's properties to check the lease state.
-                        sourceProperties = await sourceBlob.GetPropertiesAsync();
-                    }
-
-                    return destBlob.Name;
+                    throw new Exception("Blob does not exist");
                 }
 
-                throw new Exception("Blob does not exist");
+                // Specifying -1 for the lease interval creates an infinite lease.
+                var resp = await lease.AcquireAsync(TimeSpan.FromSeconds(-1));
+
+                // Get the source blob's properties and display the lease state.
+                BlobProperties sourceProperties = await sourceBlob.GetPropertiesAsync();
+
+                // Get a BlobClient representing the destination blob with a unique name.
+                BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(prefixFolder, contentId, fileName));
+
+                // Start the copy operation.
+                CopyFromUriOperation copyOperation = await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
+                await copyOperation.WaitForCompletionAsync();
+
+                // Get the destination blob's properties and display the copy status.
+                BlobProperties destProperties = await destBlob.GetPropertiesAsync();
+
+                // Update the source blob's properties.
+                sourceProperties = await sourceBlob.GetPropertiesAsync();
+
+                if (sourceProperties.LeaseState == LeaseState.Leased)
+                {
+                    // Break the lease on the source blob.
+                    await lease.BreakAsync();
+
+                    // Update the source blob's properties to check the lease state.
+                    sourceProperties = await sourceBlob.GetPropertiesAsync();
+                }
+
+                return destBlob.Name;      
             }
             catch (RequestFailedException ex)
             {
-                await lease.BreakAsync();
                 logger.LogDebug(ex.ToString());
+                await lease.BreakAsync();
                 throw;
             }
         }
