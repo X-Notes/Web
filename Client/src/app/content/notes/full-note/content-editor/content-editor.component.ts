@@ -286,7 +286,10 @@ export class ContentEditorComponent
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.facade.dc.d$))
-      .subscribe(() => this.facade.contentEditorRestoreService.restorePrev());
+      .subscribe(() => {
+        this.facade.contentEditorRestoreService.restorePrev();
+        this.facade.cdr.detectChanges();
+      });
 
     this.contentEditorElementsListenersService.onPressCtrlSSubject
       .pipe(takeUntil(this.facade.dc.d$))
