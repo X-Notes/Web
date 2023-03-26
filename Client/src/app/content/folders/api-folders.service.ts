@@ -13,7 +13,6 @@ import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-not
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
-import { Diff } from 'diff-match-patch';
 
 @Injectable()
 export class ApiFoldersService {
