@@ -18,6 +18,7 @@ import { ClickableSelectableEntities } from '../../../../content-editor-services
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { Photo, PhotosCollection } from '../../../../../models/editor-models/photos-collection';
 import { HtmlComponentsFacadeService } from '../../../html-components-services/html-components.facade.service';
+import { MutateCollectionInfoAction } from '../../../../content-editor-services/models/undo/mutate-collection-info';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -120,6 +121,11 @@ export class PhotosComponent
   }
 
   setPhotosInRowWrapper(count: number): void {
+    const action = new MutateCollectionInfoAction<PhotosCollection>(
+      this.content.copy(),
+      this.content.id,
+    );
+    this.facade.momentoStateService.saveToStack(action);
     this.setPhotosInRow(count);
     this.someChangesEvent.emit();
   }
@@ -157,8 +163,6 @@ export class PhotosComponent
   }
 
   setPhotosInRow(count: number): void {
-    console.log('this.uiCountInRow === count: ', this.uiCountInRow === count);
-    if (this.uiCountInRow === count) return;
     this.initCountInRow(count);
     this.reInitPhotosToDefault();
   }
@@ -188,11 +192,12 @@ export class PhotosComponent
     const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.items.slice(j, j + this.uiCountInRow));
+      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.uiCountInRow));
       j += this.uiCountInRow;
     }
     if (this.countLastItems > 0) {
-      this.lastBlock = this.content.items.slice(photoLength - this.countLastItems, photoLength);
+      const start = photoLength - this.countLastItems;
+      this.lastBlock = this.content.orderedItems.slice(start, photoLength);
     }
   }
 

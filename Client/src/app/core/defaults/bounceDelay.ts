@@ -4,3 +4,4 @@ export const updateNoteTitleDelay = 100;
 export const createSnapshotDelay = 100;
 export const updateTitleEntitesDelay = 100;
 export const searchDelay = 350;
+export const updateCollectionTitleDelay = 20;

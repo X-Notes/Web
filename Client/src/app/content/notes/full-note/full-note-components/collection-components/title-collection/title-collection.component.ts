@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { updateCollectionTitleDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-title-collection',
@@ -60,7 +60,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nameCollectionChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .pipe(takeUntil(this.destroy), debounceTime(updateCollectionTitleDelay))
       .subscribe((name) => {
         this.changeTitleEvent.emit(name);
       });

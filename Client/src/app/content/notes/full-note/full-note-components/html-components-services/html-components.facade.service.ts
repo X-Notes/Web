@@ -5,6 +5,7 @@ import { DestroyComponentService } from 'src/app/shared/services/destroy-compone
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { ContentEditorMomentoStateService } from '../../content-editor-services/core/content-editor-momento-state.service';
 import { SelectionService } from '../../content-editor-services/selection.service';
 
 @Injectable()
@@ -18,5 +19,6 @@ export class HtmlComponentsFacadeService {
     public sanitizer: DomSanitizer,
     public store: Store,
     public dc: DestroyComponentService,
+    public momentoStateService: ContentEditorMomentoStateService,
   ) {}
 }

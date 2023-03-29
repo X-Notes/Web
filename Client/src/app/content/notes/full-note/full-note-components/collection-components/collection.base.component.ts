@@ -11,6 +11,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
+import { MutateCollectionInfoAction } from '../../content-editor-services/models/undo/mutate-collection-info';
 import {
   ComponentType,
   ParentInteractionCollection,
@@ -104,7 +105,8 @@ export class CollectionBaseComponent<
   }
 
   onTitleChangeInput(name: string) {
-    console.log('name: ', name);
+    const action = new MutateCollectionInfoAction({ ...this.content }, this.content.id);
+    this.facade.momentoStateService.saveToStack(action);
     this.content.name = name;
     this.someChangesEvent.emit();
   }

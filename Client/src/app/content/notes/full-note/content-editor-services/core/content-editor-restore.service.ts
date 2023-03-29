@@ -5,6 +5,7 @@ import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
 import { ChangePositionAction } from '../models/undo/change-position-action';
+import { MutateCollectionInfoAction } from '../models/undo/mutate-collection-info';
 import { MutateRowAction } from '../models/undo/mutate-row-action';
 import { RemoveCollectionItemsAction } from '../models/undo/remove-collection-items-action';
 import { RestoreCollectionAction } from '../models/undo/restore-collection-action';
@@ -121,6 +122,15 @@ export class ContentEditorRestoreService {
         const content = this.collectionContents.find((x) => x.id === action.contentId);
         if (content) {
           content.addItemsToCollection(action.items);
+        }
+        idsToUpdate.push(content.id);
+        break;
+      }
+      case UndoActionTypeEnum.mutateCollectionInfo: {
+        const action = prev as MutateCollectionInfoAction<BaseCollection<BaseFile>>;
+        const content = this.collectionContents.find((x) => x.id === action.contentId);
+        if (content) {
+          content.updateInfo(action.collection);
         }
         idsToUpdate.push(content.id);
         break;

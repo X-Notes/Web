@@ -8,6 +8,5 @@ export enum UndoActionTypeEnum {
   restoreText,
   restoreCollection,
   restoreCollectionItems,
-  mutateCollectionTitle,
-  mutatePhotosCollection,
+  mutateCollectionInfo,
 }
