@@ -23,10 +23,11 @@ import {
 } from '../../models/editor-models/documents-collection';
 import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Injectable()
 export class ContentUpdateWsService implements OnDestroy {
-  elements: QueryList<ParentInteraction>;
+  elements: QueryList<ParentInteraction<ContentModelBase>>;
 
   noteId: string;
 
@@ -64,7 +65,7 @@ export class ContentUpdateWsService implements OnDestroy {
             changes = true;
           }
           if (content.positions && content.positions.length > 0) {
-            this.contentEditorContentsService.updatePositions(content.positions);
+            this.contentEditorContentsService.updatePositions(content.positions, true);
             changes = true;
           }
           if (content.textContentsToAdd) {
@@ -109,7 +110,7 @@ export class ContentUpdateWsService implements OnDestroy {
   updateUI(contentId: string) {
     const el = this.elements.toArray().find((x) => x.getContentId() === contentId);
     if (el) {
-      el.syncContentWithLayout();
+      el.syncLayoutWithContent(true);
       el.syncContentItems();
     }
   }

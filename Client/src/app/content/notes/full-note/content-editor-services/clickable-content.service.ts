@@ -18,7 +18,7 @@ export class ClickableContentService {
 
   prevType: ClickableSelectableEntities;
 
-  prevItem: ParentInteraction;
+  prevItem: ParentInteraction<ContentModelBase>;
 
   // current
   currentContent: ContentModelBase;
@@ -27,7 +27,7 @@ export class ClickableContentService {
 
   type: ClickableSelectableEntities;
 
-  currentItem: ParentInteraction;
+  currentItem: ParentInteraction<ContentModelBase>;
 
   get isEmptyTextItemFocus(): boolean {
     const isText = this.currentItem.type === ComponentType.HTML;
@@ -57,7 +57,7 @@ export class ClickableContentService {
     content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
-    currentItem: ParentInteraction,
+    currentItem: ParentInteraction<ContentModelBase>,
   ) {
     // PREV
     this.prevContent = this.currentContent;

@@ -52,7 +52,10 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     return null;
   }
 
-  uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+  uploadVideosToCollectionHandler = async (
+    $event: UploadFileToEntity,
+    noteId: string,
+  ): Promise<VideoModel[]> => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {
       return;
@@ -109,6 +112,8 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     collection.addItemsToCollection(videosMapped);
     collection.isLoading = false;
+
+    return videosMapped;
   };
 
   deleteVideoHandler(videoId: string, content: VideosCollection) {

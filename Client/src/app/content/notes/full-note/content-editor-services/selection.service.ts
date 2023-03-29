@@ -69,7 +69,7 @@ export class SelectionService {
 
   selectionHandler(
     secondRect: DOMRect,
-    elements: QueryList<ParentInteraction>,
+    elements: QueryList<ParentInteraction<ContentModelBase>>,
     isInternalSelect: boolean,
   ) {
     let isHasChanges = false;
@@ -154,7 +154,7 @@ export class SelectionService {
 
   isSelectionInZone(
     secondRect: DOMRect,
-    elements: QueryList<ParentInteraction>,
+    elements: QueryList<ParentInteraction<ContentModelBase>>,
     title: ElementRef<HTMLElement>,
   ) {
     if (this.isRectToRect(title.nativeElement.getBoundingClientRect(), secondRect)) {

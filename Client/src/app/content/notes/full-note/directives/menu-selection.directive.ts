@@ -2,6 +2,7 @@ import { Directive, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ParentInteraction, ParentInteractionHTML } from '../models/parent-interaction.interface';
 import { SelectionService } from '../content-editor-services/selection.service';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Directive({
   selector: '[appMenuSelection]',
@@ -46,7 +47,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  getCurrentItem(): ParentInteraction {
+  getCurrentItem(): ParentInteraction<ContentModelBase> {
     for (const item of this.appMenuSelection) {
       if (item.getEditableNative() === document.activeElement) {
         return item;

@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
+import { BaseUndoAction } from '../content-editor-services/models/undo/base-undo-action';
+import { UndoActionTypeEnum } from '../content-editor-services/models/undo/undo-action-type.enum';
 import {
   ComponentType,
   ParentInteraction,
@@ -19,17 +22,19 @@ export class EditorBaseComponent {
   @Input()
   isReadOnlyMode = true;
 
-  protected elementsQuery: QueryList<ParentInteraction>;
+  isOverEmpty = false;
+
+  protected elementsQuery: QueryList<ParentInteraction<ContentModelBase>>;
 
   constructor(public facade: EditorFacadeService) {}
 
-  @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction>) {
+  @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction<ContentModelBase>>) {
     this.elementsQuery = elms;
     this.facade.contentUpdateWsService.elements = elms;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get elements(): ParentInteraction[] {
+  get elements(): ParentInteraction<ContentModelBase>[] {
     return this.elementsQuery?.toArray();
   }
 
@@ -48,12 +53,12 @@ export class EditorBaseComponent {
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get first(): ParentInteraction {
+  get first(): ParentInteraction<ContentModelBase> {
     return this.elementsQuery?.first;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get preLast(): ParentInteraction {
+  get preLast(): ParentInteraction<ContentModelBase> {
     if (this.elements.length >= 2) {
       return this.elements[this.elements.length - 2];
     }
@@ -61,7 +66,7 @@ export class EditorBaseComponent {
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get last(): ParentInteraction {
+  get last(): ParentInteraction<ContentModelBase> {
     return this.elementsQuery?.last;
   }
 
@@ -71,7 +76,7 @@ export class EditorBaseComponent {
     return el.type === ComponentType.HTML;
   }
 
-  getSelectedElements(): ParentInteraction[] {
+  getSelectedElements(): ParentInteraction<ContentModelBase>[] {
     return this.getElements((x) => this.facade.selectionService.isSelectedAll(x.getContentId()));
   }
 
@@ -91,15 +96,17 @@ export class EditorBaseComponent {
     );
   }
 
-  getElementById(contentId: string): ParentInteraction {
+  getElementById(contentId: string): ParentInteraction<ContentModelBase> {
     return this.elements?.find((x) => x.getContentId() === contentId);
   }
 
-  getElements<T extends ParentInteraction>(predicate: (x: ParentInteraction) => boolean): T[] {
+  getElements<T extends ParentInteraction<ContentModelBase>>(
+    predicate: (x: ParentInteraction<ContentModelBase>) => boolean,
+  ): T[] {
     return this.elements?.filter((x) => predicate(x)) as T[];
   }
 
-  getElementByIndex<T extends ParentInteraction>(index: number): T {
+  getElementByIndex<T extends ParentInteraction<ContentModelBase>>(index: number): T {
     return this.elements[index] as T;
   }
 
@@ -122,13 +129,14 @@ export class EditorBaseComponent {
     const empty = this.elements?.length === 0;
     const isCanAppend = empty || this.isCanAddNewItem(this.last);
     if (isCanAppend) {
-      this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
+      const content = this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
+      const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, content.id);
+      this.facade.momentoStateService.saveToStack(action);
     }
     this.facade.contentEditorSyncService.change();
-    this.facade.contentEditorRestoreService.save();
   }
 
-  isCanAddNewItem(el: ParentInteraction) {
+  isCanAddNewItem(el: ParentInteraction<ContentModelBase>) {
     if (!el || el.type === ComponentType.Collection) return true;
     const htmlComponent = el as ParentInteractionHTML;
     const content = htmlComponent.getContent();

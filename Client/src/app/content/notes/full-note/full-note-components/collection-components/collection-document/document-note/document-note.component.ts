@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ExportService } from '../../../../../export.service';
-import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { ParentInteractionCollection } from '../../../../models/parent-interaction.interface';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
@@ -25,7 +25,7 @@ import { HtmlComponentsFacadeService } from '../../../html-components-services/h
 })
 export class DocumentNoteComponent
   extends CollectionBaseComponent<DocumentsCollection>
-  implements OnInit, ParentInteraction
+  implements OnInit, ParentInteractionCollection
 {
   formats = TypeUploadFormats.documents;
 

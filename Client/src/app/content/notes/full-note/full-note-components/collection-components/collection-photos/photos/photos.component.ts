@@ -12,7 +12,7 @@ import {
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ExportService } from '../../../../../export.service';
-import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { ParentInteractionCollection } from '../../../../models/parent-interaction.interface';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionBaseComponent } from '../../collection.base.component';
@@ -26,7 +26,7 @@ import { HtmlComponentsFacadeService } from '../../../html-components-services/h
 })
 export class PhotosComponent
   extends CollectionBaseComponent<PhotosCollection>
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteractionCollection
 {
   @ViewChild('album') albumChild: ElementRef;
 
@@ -157,6 +157,7 @@ export class PhotosComponent
   }
 
   setPhotosInRow(count: number): void {
+    console.log('this.uiCountInRow === count: ', this.uiCountInRow === count);
     if (this.uiCountInRow === count) return;
     this.initCountInRow(count);
     this.reInitPhotosToDefault();

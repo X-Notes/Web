@@ -53,7 +53,7 @@ export class MobileTransformMenuComponent implements OnInit {
     if (!contentId) return;
     $event.preventDefault();
     this.transformTo.emit({
-      id: contentId,
+      contentId,
       textType: contentType,
       headingType: heading,
       setFocusToEnd: true,

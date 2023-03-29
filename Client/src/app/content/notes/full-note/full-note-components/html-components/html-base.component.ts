@@ -18,11 +18,7 @@ import { BreakEnterModel } from '../../content-editor-services/models/break-ente
 import { DeltaConverter } from '../../content-editor/converter/delta-converter';
 import { DeltaListEnum } from '../../content-editor/converter/entities/delta-list.enum';
 import { EnterEvent } from '../../models/enter-event.model';
-import {
-  ComponentType,
-  ParentInteraction,
-  ParentInteractionHTML,
-} from '../../models/parent-interaction.interface';
+import { ComponentType, ParentInteractionHTML } from '../../models/parent-interaction.interface';
 import { SetFocus } from '../../models/set-focus';
 import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
@@ -51,7 +47,7 @@ export abstract class BaseTextElementComponent
   transformTo = new EventEmitter<TransformContent>();
 
   @Output()
-  concatThisWithPrev = new EventEmitter<ParentInteraction>();
+  concatThisWithPrev = new EventEmitter<ParentInteractionHTML>();
 
   @Output()
   pasteEvent = new EventEmitter<PasteEvent>();
@@ -126,17 +122,19 @@ export abstract class BaseTextElementComponent
     this.transformTo.emit({
       textType: contentType,
       headingType: heading,
-      id: this.content.id,
+      contentId: this.content.id,
       setFocusToEnd: true,
     });
   }
 
-  updateHTML(contents: TextBlock[]): void {
+  updateHTML(contents: TextBlock[], emitChanges: boolean): void {
     // TODO TEST IT
     this.transformOnUpdate(contents);
     const html = DeltaConverter.convertTextBlocksToHTML(contents);
     this.updateNativeHTML(html);
-    this.syncHtmlWithLayout();
+    if (emitChanges) {
+      this.syncHtmlWithLayout();
+    }
   }
 
   transformOnUpdate(contents: TextBlock[]): void {
@@ -170,10 +168,10 @@ export abstract class BaseTextElementComponent
     return HeadingTypeENUM.H1;
   }
 
-  syncContentWithLayout() {
+  syncLayoutWithContent(emitChanges: boolean) {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
-    this.updateHTML(this.content.contents);
+    this.updateHTML(this.content.contents, emitChanges);
     this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
   }
 
@@ -271,7 +269,7 @@ export abstract class BaseTextElementComponent
     this.facade.apiBrowserTextService.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
     const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
     const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
-    this.updateHTML(resTextBlocks);
+    this.updateHTML(resTextBlocks, true);
     htmlElements.shift(); // remove first element
 
     if (htmlElements.length > 0) {
@@ -294,7 +292,7 @@ export abstract class BaseTextElementComponent
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
     const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
     const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
-    this.updateHTML(resTextBlocks);
+    this.updateHTML(resTextBlocks, true);
   }
 
   checkForDeleteOrConcatWithPrev($event) {

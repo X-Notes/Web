@@ -11,7 +11,10 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
-import { ComponentType, ParentInteraction } from '../../models/parent-interaction.interface';
+import {
+  ComponentType,
+  ParentInteractionCollection,
+} from '../../models/parent-interaction.interface';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { HtmlComponentsFacadeService } from '../html-components-services/html-components.facade.service';
@@ -79,7 +82,7 @@ export class CollectionBaseComponent<
     this.uploadRef.nativeElement.click();
   };
 
-  syncContentWithLayout() {
+  syncLayoutWithContent(): void {
     const el = this.titleComponent.titleHtml.nativeElement;
     const data = this.facade.apiBrowserTextService.saveRangePositionTextOnly(el);
     this.updateInternal();
@@ -131,7 +134,7 @@ export class CollectionBaseComponent<
       this.content,
       itemId,
       this.selectType,
-      this as any as ParentInteraction,
+      this as any as ParentInteractionCollection,
     );
     if (itemId) {
       const item = document.getElementById(itemId);

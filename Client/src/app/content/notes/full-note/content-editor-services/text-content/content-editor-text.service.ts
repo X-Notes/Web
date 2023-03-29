@@ -36,7 +36,7 @@ export class ContentEditorTextService {
   }
 
   transformTextContentTo(value: TransformContent) {
-    const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
+    const item = this.contentsService.getContentAndIndexById<BaseText>(value.contentId);
     item.content.updateNoteTextTypeId(value.textType);
     if (value.headingType) {
       item.content.updateHeadingTypeId(value.headingType);
@@ -50,11 +50,15 @@ export class ContentEditorTextService {
     return nContent;
   };
 
-  appendNewEmptyContentToEnd(): void {
-    this.contentsService.insertToEnd(this.getNewTextContent());
+  appendNewEmptyContentToEnd(): BaseText {
+    const content = this.getNewTextContent();
+    this.contentsService.insertToEnd(content);
+    return content;
   }
 
   appendNewEmptyContentToStart() {
-    this.contentsService.insertToStart(this.getNewTextContent());
+    const content = this.getNewTextContent();
+    this.contentsService.insertToStart(content);
+    return content;
   }
 }

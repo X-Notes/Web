@@ -28,12 +28,15 @@
       <div
         id="title-element"
         #noteTitle
-        [attr.contenteditable]="!isReadOnlyMode && facade.selectionService.selectionDivActive === false"
+        [attr.contenteditable]="
+          !isReadOnlyMode && facade.selectionService.selectionDivActive === false
+        "
         (paste)="pasteCommandHandler($event)"
-        [textContent]="uiTitle"
+        (selectstart)="startTitleSelection($event)"
         class="title"
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"
+        (click)="onTitleClick()"
       ></div>
       <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>
@@ -233,7 +236,9 @@
   #textEditMenu
   [style.top.px]="textEditMenuTop"
   [style.left.px]="textEditMenuLeft"
-  [style.visibility]="(isTextMenuActive && (isMobileMenuActive$ | async) === false) ? 'visible' : 'hidden'"
+  [style.visibility]="
+    isTextMenuActive && (isMobileMenuActive$ | async) === false ? 'visible' : 'hidden'
+  "
   [options]="options"
   [theme]="editorTheme"
   (eventTransform)="transformToTypeText($event)"

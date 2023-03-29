@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { AudioService } from '../../../../../audio.service';
 import { ExportService } from '../../../../../export.service';
-import { ParentInteraction } from '../../../../models/parent-interaction.interface';
+import { ParentInteractionCollection } from '../../../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { CollectionBaseComponent } from '../../collection.base.component';
@@ -26,7 +26,7 @@ import { HtmlComponentsFacadeService } from '../../../html-components-services/h
 })
 export class AudioNoteComponent
   extends CollectionBaseComponent<AudiosCollection>
-  implements ParentInteraction, OnInit
+  implements ParentInteractionCollection, OnInit
 {
   formats = TypeUploadFormats.audios;
 

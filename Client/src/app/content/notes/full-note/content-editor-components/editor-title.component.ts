@@ -5,6 +5,9 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateNoteTitle } from '../../state/notes-actions';
 import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
+import { BaseUndoAction } from '../content-editor-services/models/undo/base-undo-action';
+import { UndoActionTypeEnum } from '../content-editor-services/models/undo/undo-action-type.enum';
+import { UpdateTitleAction } from '../content-editor-services/models/undo/update-title-action';
 import { EditorBaseComponent } from './editor-base.component';
 
 @Component({
@@ -18,7 +21,9 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
-  uiTitle: string;
+  prevTitle: string;
+
+  inited = false;
 
   intervalEvents = interval(updateNoteTitleDelay);
 
@@ -35,17 +40,23 @@ export class EditorTitleComponent extends EditorBaseComponent {
     }
   }
 
+  // WS && INTERNAL
   private subscribeUpdates() {
     this.title$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
-      .subscribe((title) => this.updateTitle(title));
+      .subscribe((title) => {
+        this.updateTitle(title);
+        if (!this.inited) {
+          this.prevTitle = title;
+        }
+      });
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   subscribeOnEditUI(): void {
     this.noteTitleChanged$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
-      .subscribe((title) => {
+      .subscribe(async (title) => {
         this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, null, false));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
@@ -58,10 +69,10 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   pasteCommandHandler(e) {
     this.facade.apiBrowser.pasteOnlyTextHandler(e);
-    this.pushChangesToTitle(this.noteTitleEl.nativeElement.innerText);
+    this.pushChangesToTitle(this.noteTitleEl.nativeElement.innerText, true);
   }
 
-  updateTitle(updateTitle: string) {
+  private updateTitle(updateTitle: string) {
     if (
       this.noteTitleEl?.nativeElement &&
       updateTitle !== this.noteTitleEl?.nativeElement.textContent
@@ -69,17 +80,17 @@ export class EditorTitleComponent extends EditorBaseComponent {
       const el = this.noteTitleEl.nativeElement;
       const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
 
-      this.uiTitle = updateTitle;
+      this.setTitle(updateTitle);
 
       requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
 
-      this.facade.htmlTitleService.setCustomOrDefault(this.uiTitle, 'titles.note');
+      this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
       this.facade.cdr.detectChanges();
     }
   }
 
   onTitleInput($event) {
-    this.pushChangesToTitle($event.target.innerText);
+    this.pushChangesToTitle($event.target.innerText, true);
   }
 
   onTitleClick(): void {
@@ -88,14 +99,29 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   handlerTitleEnter($event: KeyboardEvent) {
     $event.preventDefault();
-    this.facade.contentEditorTextService.appendNewEmptyContentToStart();
+    const content = this.facade.contentEditorTextService.appendNewEmptyContentToStart();
+    const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, content.id);
+    this.facade.momentoStateService.saveToStack(action);
     setTimeout(() => this.first?.setFocus());
     this.postAction();
   }
 
-  pushChangesToTitle(title: string): void {
+  setTitle(title: string) {
+    this.noteTitleEl.nativeElement.innerText = title;
+  }
+
+  pushChangesToTitle(title: string, handleUndo: boolean): void {
+    if (handleUndo) {
+      this.handleUndoTitle(title);
+    }
     this.noteTitleChanged$.next(title);
     this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
+  }
+
+  handleUndoTitle(title: string): void {
+    const action = new UpdateTitleAction(this.prevTitle);
+    this.facade.momentoStateService.saveToStack(action);
+    this.prevTitle = title;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

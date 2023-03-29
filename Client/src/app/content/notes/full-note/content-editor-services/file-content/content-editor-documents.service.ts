@@ -59,7 +59,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     return null;
   }
 
-  uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+  uploadDocumentsToCollectionHandler = async (
+    $event: UploadFileToEntity,
+    noteId: string,
+  ): Promise<DocumentModel[]> => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {
       return;
@@ -115,6 +118,8 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
     collection.addItemsToCollection(documentsMapped);
     collection.isLoading = false;
+
+    return documentsMapped;
   };
 
   deleteDocumentHandler(documentId: string, content: DocumentsCollection) {
