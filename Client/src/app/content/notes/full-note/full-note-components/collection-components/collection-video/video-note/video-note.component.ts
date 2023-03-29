@@ -7,6 +7,7 @@ import {
   HostListener,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  OnInit,
 } from '@angular/core';
 
 import { TypeUploadFormats } from '../../../../models/enums/type-upload-formats.enum';
@@ -29,7 +30,7 @@ import { HtmlComponentsFacadeService } from '../../../html-components-services/h
 })
 export class VideoNoteComponent
   extends CollectionBaseComponent<VideosCollection>
-  implements ParentInteractionCollection, AfterViewInit, OnDestroy
+  implements ParentInteractionCollection, AfterViewInit, OnDestroy, OnInit
 {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
@@ -115,6 +116,12 @@ export class VideoNoteComponent
     }
     this.translate = width;
   };
+
+  ngOnInit(): void {
+    if (this.content.items.length > 0) {
+      this.currentVideo = this.content.items[0];
+    }
+  }
 
   ngAfterViewInit(): void {}
 
