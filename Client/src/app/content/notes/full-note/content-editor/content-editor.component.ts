@@ -269,9 +269,28 @@ export class ContentEditorComponent
 
   ngOnInit(): void {
     this.initTitle();
-
+    this.subscribeOnButtons();
     this.facade.contentUpdateWsService.noteId = this.noteId;
 
+    this.ngForSubject.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
+      this.facade.cdr.detectChanges();
+    });
+
+    this.facade.contentsService.onProgressiveAdding
+      .pipe(takeUntil(this.facade.dc.d$))
+      .subscribe(() => {
+        this.facade.cdr.detectChanges();
+      });
+
+    this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
+      this.facade.cdr.detectChanges();
+    });
+  }
+
+  subscribeOnButtons(): void {
+    if (this.isReadOnlyMode) {
+      return;
+    }
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
@@ -322,20 +341,6 @@ export class ContentEditorComponent
           });
         }
       });
-
-    this.ngForSubject.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
-      this.facade.cdr.detectChanges();
-    });
-
-    this.facade.contentsService.onProgressiveAdding
-      .pipe(takeUntil(this.facade.dc.d$))
-      .subscribe(() => {
-        this.facade.cdr.detectChanges();
-      });
-
-    this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
-      this.facade.cdr.detectChanges();
-    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -19,7 +19,6 @@ export interface ParentInteraction<T> {
   setFocus(entity?: SetFocus);
   setFocusToEnd();
   syncLayoutWithContent(emitChanges: boolean);
-  syncContentItems();
   getHost(): ElementRef<HTMLElement>;
   getContent(): T;
   getContentId(): string;
@@ -35,6 +34,7 @@ export interface ParentInteraction<T> {
 export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
   syncHtmlWithLayout();
   updateHTML(contents: TextBlock[], emitChanges: boolean);
+  updateWS(): void;
   getEditableNative(): HTMLElement | Element;
   getTextBlocks(): TextBlock[];
   getText(): string;
@@ -42,4 +42,6 @@ export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ParentInteractionCollection extends ParentInteraction<ContentModelBase> {}
+export interface ParentInteractionCollection extends ParentInteraction<ContentModelBase> {
+  syncCollectionItems();
+}

@@ -127,6 +127,7 @@ export abstract class BaseTextElementComponent
     });
   }
 
+  // emits changes for (ctrl + z)
   updateHTML(contents: TextBlock[], emitChanges: boolean): void {
     // TODO TEST IT
     this.transformOnUpdate(contents);
@@ -173,6 +174,15 @@ export abstract class BaseTextElementComponent
     const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
     this.updateHTML(this.content.contents, emitChanges);
     this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
+  }
+
+  updateWS(): void {
+    const el = this.contentHtml.nativeElement;
+    const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
+    const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    this.updateNativeHTML(html);
+    this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
+    this.detectChanges();
   }
 
   getContent(): BaseText {
@@ -385,8 +395,6 @@ export abstract class BaseTextElementComponent
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart(e) {}
-
-  syncContentItems() {}
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;

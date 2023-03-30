@@ -144,4 +144,6 @@ export class CollectionBaseComponent<
     }
     this.facade.clickableService.prevItem?.detectChanges();
   }
+
+  syncCollectionItems(): void {}
 }

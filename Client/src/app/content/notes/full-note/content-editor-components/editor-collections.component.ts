@@ -126,9 +126,9 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
 
   syncCollectionItems(contentId: string): void {
     if (!contentId) return;
-    const curEl = this.getElementById(contentId);
+    const curEl = this.getCollectionElementById(contentId);
     if (curEl) {
-      curEl.syncContentItems();
+      curEl.syncCollectionItems();
     }
   }
 
@@ -174,6 +174,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
           this.noteId,
         );
         this.syncCollectionItems(cont.content.id);
+        this.handleDeleteCollection(cont.content.id);
         this.postAction();
       });
   }
@@ -196,6 +197,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
           this.noteId,
         );
         this.syncCollectionItems(cont.content.id);
+        this.handleDeleteCollection(cont.content.id);
         this.postAction();
       });
   }
@@ -218,6 +220,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
           this.noteId,
         );
         this.syncCollectionItems(cont.content.id);
+        this.handleDeleteCollection(cont.content.id);
         this.postAction();
       });
   }
@@ -240,6 +243,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
           this.noteId,
         );
         this.syncCollectionItems(cont.content.id);
+        this.handleDeleteCollection(cont.content.id);
         this.postAction();
       });
   }
@@ -291,15 +295,19 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
     this.facade.cdr.detectChanges();
 
     if (newContentId) {
-      const el = this.getElementById(newContentId);
+      const el = this.getCollectionElementById(newContentId);
       if (el) {
         el.syncLayoutWithContent(true);
-        el.syncContentItems();
+        el.syncCollectionItems();
       }
-      const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, newContentId);
-      this.facade.momentoStateService.saveToStack(action);
+      this.handleDeleteCollection(newContentId);
     }
     this.postAction();
+  }
+
+  handleDeleteCollection(contentId: string): void {
+    const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, contentId);
+    this.facade.momentoStateService.saveToStack(action);
   }
 
   handleRestoreCollection(contentId: string) {

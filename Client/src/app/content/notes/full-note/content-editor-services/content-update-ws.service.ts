@@ -11,7 +11,12 @@ import { BaseFile } from '../../models/editor-models/base-file';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { Photo, PhotosCollection } from '../../models/editor-models/photos-collection';
 import { BaseGetNoteFilesByIdsQuery } from '../models/api/base-get-note-files-byIds-query';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import {
+  ComponentType,
+  ParentInteraction,
+  ParentInteractionCollection,
+  ParentInteractionHTML,
+} from '../models/parent-interaction.interface';
 import { ApiAudiosService } from '../services/api-audios.service';
 import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiPhotosService } from '../services/api-photos.service';
@@ -109,10 +114,25 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updateUI(contentId: string) {
     const el = this.elements.toArray().find((x) => x.getContentId() === contentId);
-    if (el) {
-      el.syncLayoutWithContent(true);
-      el.syncContentItems();
+    if (!el) {
+      return;
     }
+    switch (el.type) {
+      case ComponentType.HTML: {
+        const htmlEl = el as ParentInteractionHTML;
+        htmlEl.updateWS();
+        break;
+      }
+      case ComponentType.Collection: {
+        const collectionEl = el as ParentInteractionCollection;
+        collectionEl.syncCollectionItems();
+        break;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+    this.changes$.next(true);
   }
 
   updateText() {

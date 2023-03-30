@@ -60,29 +60,29 @@ import { UserStore } from './stateUser/user-state';
 export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
-  public updateTextContentEvent$ = new BehaviorSubject<UpdateNoteTextWS>(null);
+  public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
-  public updateNoteStructureEvent$ = new BehaviorSubject<UpdateNoteStructureWS>(null);
+  public updateNoteStructureEvent$ = new Subject<UpdateNoteStructureWS>();
 
-  public updatePhotosCollectionEvent$ = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
+  public updatePhotosCollectionEvent$ = new Subject<UpdatePhotosCollectionWS>();
 
-  public updateVideosCollectionEvent$ = new BehaviorSubject<UpdateVideosCollectionWS>(null);
+  public updateVideosCollectionEvent$ = new Subject<UpdateVideosCollectionWS>();
 
-  public updateAudiosCollectionEvent$ = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
+  public updateAudiosCollectionEvent$ = new Subject<UpdateAudiosCollectionWS>();
 
-  public updateDocumentsCollectionEvent$ = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
+  public updateDocumentsCollectionEvent$ = new Subject<UpdateDocumentsCollectionWS>();
 
-  public updateRelationNotes$ = new BehaviorSubject<UpdateRelatedNotesWS>(null);
+  public updateRelationNotes$ = new Subject<UpdateRelatedNotesWS>();
 
-  public updateFolder$ = new BehaviorSubject<UpdateFolderWS>(null);
+  public updateFolder$ = new Subject<UpdateFolderWS>();
 
-  public setAsJoinedToNote$ = new BehaviorSubject(null);
+  public setAsJoinedToNote$ = new Subject();
 
-  public setAsJoinedToFolder$ = new BehaviorSubject(null);
+  public setAsJoinedToFolder$ = new Subject();
 
-  public addNotesToSharedEvent$ = new BehaviorSubject<SmallNote[]>(null);
+  public addNotesToSharedEvent$ = new Subject<SmallNote[]>();
 
-  public addFoldersToSharedEvent$ = new BehaviorSubject<SmallFolder[]>(null);
+  public addFoldersToSharedEvent$ = new Subject<SmallFolder[]>();
 
   public wsConnectionClosed$ = new Subject<boolean>();
 

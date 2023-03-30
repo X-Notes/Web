@@ -152,7 +152,7 @@ export class PhotosComponent
   }
 
   // UPDATING
-  syncContentItems() {
+  syncCollectionItems(): void {
     this.syncPhotos();
     super.syncContentItems();
   }
