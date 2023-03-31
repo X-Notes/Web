@@ -37,7 +37,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
     });
   }
 
-  updatePositions(): void {
+  syncPositions(): void {
     if (!this.isCanEdit) return;
     const command = new UpdatePositionsRelatedNotes(this.murriService.getPositions(), this.noteId);
     this.store.dispatch(command);

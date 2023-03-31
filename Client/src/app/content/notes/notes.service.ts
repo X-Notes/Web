@@ -153,8 +153,10 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     await this.murriService.setOpacityFlagAsync(0);
   }
 
-  updatePositions(): void {
-    this.store.dispatch(new UpdatePositionsNotes(this.murriService.getPositions()));
+  syncPositions(): void {
+    if (!this.isNeedUpdatePositions) return;
+    const positions = this.murriService.getPositions();
+    this.store.dispatch(new UpdatePositionsNotes(positions));
   }
 
   getIsDraggable(noteType: NoteTypeENUM) {
@@ -162,8 +164,9 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      const isFirstInit = this.getIsFirstInit(q);
+      if (isFirstInit) {
         await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
         await this.setInitMurriFlagShowLayout();
         await this.loadNotesWithUpdates();

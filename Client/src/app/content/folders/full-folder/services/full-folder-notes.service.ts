@@ -45,8 +45,8 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   murriInitialize(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (this.getIsFirstInit(q)) {
         await this.murriService.initFolderNotesAsync();
         await this.setInitMurriFlagShowLayout();
       }
@@ -75,14 +75,14 @@ export class FullFolderNotesService extends NoteEntitiesService {
     }
   }
 
-  updatePositions() {}
+  async syncPositions() {
+    if (!this.folderId) return;
+    if (!this.isNeedUpdatePositions) return;
+    const positions = this.murriService.getPositions();
+    await this.apiFullFolder.orderNotesInFolder(positions, this.folderId).toPromise();
+  }
 
   updateOrder(): void {
-    const sorted = this.entities.sort(
-      (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-    );
-    let order = 1;
-    sorted.forEach((item) => (item.order = order++));
     setTimeout(() => this.murriService.sortByHtml(), 100);
   }
 
@@ -97,7 +97,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   private async initializeEntitiesGeneric(notes: SmallNote[], folderId: string) {
     this.folderId = folderId;
     let tempNotes = this.transformSpread(notes);
-    tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
+    tempNotes = this.orderBy(tempNotes, SortedByENUM.CustomOrder);
 
     this.entities = tempNotes;
 

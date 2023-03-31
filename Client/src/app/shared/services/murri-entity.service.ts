@@ -3,6 +3,7 @@ import { SmallFolder } from 'src/app/content/folders/models/folder.model';
 import { Label } from 'src/app/content/labels/models/label.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { MurriService } from './murri.service';
+import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 
 export abstract class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> {
   public entities: Entity[] = [];
@@ -33,13 +34,10 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
   async synchronizeState(refElements: QueryList<ElementRef>, isAddToEnd: boolean) {
     if (this.firstInitedMurri) {
       const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-      const isHasNewItem = this.newItemChecker(elements, isAddToEnd);
-      const isDeleteItem = await this.deleteItemChecker(elements);
-      const isNeedUpdatePositions = isHasNewItem || isDeleteItem;
-      if (isNeedUpdatePositions) {
-        this.updatePositions();
-      }
+      this.newItemChecker(elements, isAddToEnd);
+      await this.deleteItemChecker(elements);
     }
+    this.syncPositions();
   }
 
   async setInitMurriFlagShowLayout() {
@@ -52,9 +50,9 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     this.murriService.muuriDestroy();
   }
 
-  getIsFirstInit(z: any): boolean {
+  getIsFirstInit(q: any): boolean {
     return (
-      z.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
+      q.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
     );
   }
 
@@ -114,5 +112,19 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     return isHasUpdates;
   }
 
-  abstract updatePositions();
+  abstract syncPositions();
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get isNeedUpdatePositions(): boolean {
+    const positions = this.murriService.getPositions();
+    const statePositions = this.entities.map(
+      (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
+    );
+    if (positions.length !== statePositions.length) return true;
+    const same = positions.every(
+      (x, i) =>
+        x.entityId === statePositions[i].entityId && x.position === statePositions[i].position,
+    );
+    return !same;
+  }
 }
