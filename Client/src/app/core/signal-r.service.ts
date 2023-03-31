@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { SmallFolder } from '../content/folders/models/folder.model';
