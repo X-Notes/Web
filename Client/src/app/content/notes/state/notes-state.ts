@@ -51,6 +51,7 @@ import {
   LoadNoteHistories,
   RemoveOnlineUsersOnNote,
   UpdateNoteTitleWS,
+  CreateNoteCompleted,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -429,14 +430,19 @@ export class NoteStore {
   }
 
   @Action(CreateNote)
-  async newNote({ getState, dispatch }: StateContext<NoteState>) {
+  async newNote({ getState, dispatch }: StateContext<NoteState>, { navigateToNote }: CreateNote) {
     const res = await this.api.new().toPromise();
     if (res.success) {
       const note = res.data;
       const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
-      const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
-      await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-      this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      if (notes) {
+        const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
+        await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
+      }
+      if (navigateToNote) {
+        this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      }
+      dispatch(new CreateNoteCompleted(note));
       return;
     }
     if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
@@ -1163,7 +1169,7 @@ export class NoteStore {
     getState().notes.forEach((notes) => {
       for (const x of notes.notes) {
         const note = { ...x };
-        if (ids.some((z) => z === note.id)) {
+        if (ids.some((q) => q === note.id)) {
           result.push(note);
         }
       }
@@ -1171,8 +1177,8 @@ export class NoteStore {
     return result;
   };
 
-  getNotesByType = (getState: () => NoteState, type: NoteTypeENUM) => {
-    return getState().notes.find((z) => z.typeNotes === type).notes;
+  getNotesByType = (getState: () => NoteState, type: NoteTypeENUM): SmallNote[] => {
+    return getState().notes?.find((q) => q.typeNotes === type)?.notes;
   };
 
   itemNoFromFilterArray = (ids: string[], note: SmallNote) => {

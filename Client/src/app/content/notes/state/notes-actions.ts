@@ -33,6 +33,14 @@ export class SetFolderNotes {
 
 export class CreateNote {
   static type = '[Notes] Create note';
+
+  constructor(public navigateToNote: boolean) {}
+}
+
+export class CreateNoteCompleted {
+  static type = '[Notes] Create note completed';
+
+  constructor(public note: SmallNote) {}
 }
 
 export class AddNotes {
