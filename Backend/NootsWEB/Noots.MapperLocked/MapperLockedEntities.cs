@@ -63,7 +63,19 @@ namespace Noots.MapperLocked
         {
             return notes.Select(note =>
             {
-                var m = noteMapper.MapNoteToSmallNoteDTO(note, noteMapper.IsCanEdit(note, callerId));
+                var m = noteMapper.MapNoteToSmallNoteDTO(note, noteMapper.IsCanEdit(note, callerId), note.Order);
+                m = SetLockedState(m, note);
+                m = noteMapper.SetContent(m);
+                return m;
+            }).ToList();
+        }
+
+        public List<SmallNote> MapFolderNotesToSmallNotesDTO(IEnumerable<Note> notes, Guid callerId, Dictionary<Guid, int> orders)
+        {
+            return notes.Select(note =>
+            {
+                var order = orders.ContainsKey(note.Id) ? orders[note.Id] : 0;
+                var m = noteMapper.MapNoteToSmallNoteDTO(note, noteMapper.IsCanEdit(note, callerId), order);
                 m = SetLockedState(m, note);
                 m = noteMapper.SetContent(m);
                 return m;

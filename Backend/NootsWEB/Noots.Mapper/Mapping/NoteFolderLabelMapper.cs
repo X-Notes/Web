@@ -201,14 +201,14 @@ namespace Noots.Mapper.Mapping
         }
 
 
-        public SmallNote MapNoteToSmallNoteDTO(Note note, bool isCanEdit)
+        public SmallNote MapNoteToSmallNoteDTO(Note note, bool isCanEdit, int order)
         {
             return new SmallNote()
             {
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Order = note.Order,
+                Order = order,
                 UserId = note.UserId,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,

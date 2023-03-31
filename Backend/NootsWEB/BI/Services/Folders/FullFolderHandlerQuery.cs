@@ -57,7 +57,8 @@ namespace BI.Services.Folders
 
                 var notesIds = foldersNotes.Select(x => x.NoteId);
                 var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
-                return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
+                var orders = foldersNotes.ToDictionary(x => x.NoteId, x => x.Order);
+                return mapperLockedEntities.MapFolderNotesToSmallNotesDTO(notes, request.UserId, orders);
             }
 
             return new List<SmallNote>();
