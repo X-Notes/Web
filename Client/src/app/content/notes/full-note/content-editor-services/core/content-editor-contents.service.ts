@@ -53,22 +53,22 @@ export class ContentEditorContentsService {
 
   initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
     if (progressiveLoading) {
-      this.initContentProgressively(contents);
+      this.initContentProgressively(contents, () => this.initSyncContent(contents));
       return;
     }
-    this.initContent(contents);
+    this.contents = contents;
+    this.initSyncContent(contents);
   }
 
   initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
     if (progressiveLoading) {
-      this.initContentProgressively(contents);
+      this.initContentProgressively(contents, () => this.initSyncContent(contents));
       return;
     }
     this.contents = contents;
   }
 
-  private initContent(contents: ContentModelBase[]): void {
-    this.contents = contents;
+  private initSyncContent(contents: ContentModelBase[]): void {
     this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());

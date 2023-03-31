@@ -13,7 +13,6 @@ import { UpdateTextTypeAction } from '../models/undo/update-text-type-action';
 import { UpdateTitleAction } from '../models/undo/update-title-action';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
-import { ContentEditorSyncService } from './content-editor-sync.service';
 
 export interface IsNeedUpdate {
   isNeedUpdate: boolean;
@@ -22,7 +21,6 @@ export interface IsNeedUpdate {
 export class ContentEditorRestoreService {
   constructor(
     private contentEditorContentsService: ContentEditorContentsService,
-    private contentEditorSyncService: ContentEditorSyncService,
     private ceMomentoStateService: ContentEditorMomentoStateService,
   ) {}
 

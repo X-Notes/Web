@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, QueryList } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Injectable, QueryList } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BaseUpdateFileContent } from 'src/app/core/models/signal-r/innerNote/base-update-file-content-ws';
 import { UpdatePhotosCollectionWS } from 'src/app/core/models/signal-r/innerNote/update-photos-collection-ws';
@@ -29,14 +29,13 @@ import {
 import { VideoModel, VideosCollection } from '../../models/editor-models/videos-collection';
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Injectable()
-export class ContentUpdateWsService implements OnDestroy {
+export class ContentUpdateWsService {
   elements: QueryList<ParentInteraction<ContentModelBase>>;
 
   noteId: string;
-
-  destroy = new Subject<void>();
 
   public changes$ = new BehaviorSubject<boolean>(false);
 
@@ -47,6 +46,7 @@ export class ContentUpdateWsService implements OnDestroy {
     private apiAudios: ApiAudiosService,
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
+    private d: DestroyComponentService,
   ) {
     this.updateStructure();
     this.updateText();
@@ -58,7 +58,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updateStructure(): void {
     this.signalRService.updateNoteStructureEvent$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe((content) => {
         if (!content) {
           return;
@@ -136,17 +136,15 @@ export class ContentUpdateWsService implements OnDestroy {
   }
 
   updateText() {
-    this.signalRService.updateTextContentEvent$
-      .pipe(takeUntil(this.destroy))
-      .subscribe((content) => {
-        if (content) {
-          try {
-            this.handleTextUpdates(content);
-          } catch (e) {
-            console.error(e);
-          }
+    this.signalRService.updateTextContentEvent$.pipe(takeUntil(this.d.d$)).subscribe((content) => {
+      if (content) {
+        try {
+          this.handleTextUpdates(content);
+        } catch (e) {
+          console.error(e);
         }
-      });
+      }
+    });
   }
 
   handleTextUpdates(content: UpdateNoteTextWS) {
@@ -156,7 +154,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updateVideoCollections() {
     this.signalRService.updateVideosCollectionEvent$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe(async (content) => {
         if (content) {
           try {
@@ -177,7 +175,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updateDocumentCollections() {
     this.signalRService.updateDocumentsCollectionEvent$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe(async (content) => {
         if (content) {
           try {
@@ -198,7 +196,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updatePhotoCollections() {
     this.signalRService.updatePhotosCollectionEvent$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe(async (content) => {
         if (content) {
           try {
@@ -219,7 +217,7 @@ export class ContentUpdateWsService implements OnDestroy {
 
   updateAudioCollections() {
     this.signalRService.updateAudiosCollectionEvent$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe(async (content) => {
         if (content) {
           try {
@@ -317,12 +315,6 @@ export class ContentUpdateWsService implements OnDestroy {
       );
       this.updateUI(content.contentId);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-    console.log('ng destroy');
   }
 
   private handleTransform<T extends BaseCollection<BaseFile>>(
