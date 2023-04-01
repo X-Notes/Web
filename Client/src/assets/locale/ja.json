@@ -264,7 +264,8 @@
     "notificationAll": "通知がない",
     "history": "メモにはまだ履歴がありません",
     "noAccessViewNote": "メモを表示する権限がありません",
-    "noAccessViewFolder": "フォルダを表示する権限がありません"
+    "noAccessViewFolder": "フォルダを表示する権限がありません",
+    "noNotes": "フォルダにノートは入っていません"
   },
   "notification": {
     "title": "通知",

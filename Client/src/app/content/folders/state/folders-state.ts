@@ -52,6 +52,7 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 interface FolderState {
   folders: Folders[];
   fullFolder: FullFolder;
+  isCanViewFullFolder: boolean;
   selectedIds: string[];
   removeFromMurriEvent: string[];
   updateFolderEvent: UpdateFolderUI[];
@@ -64,6 +65,7 @@ interface FolderState {
   defaults: {
     folders: [],
     fullFolder: null,
+    isCanViewFullFolder: false,
     selectedIds: [],
     removeFromMurriEvent: [],
     updateFolderEvent: [],
@@ -97,6 +99,11 @@ export class FolderStore {
   @Selector()
   static full(state: FolderState) {
     return state.fullFolder;
+  }
+
+  @Selector()
+  static isCanViewFullFolder(state: FolderState) {
+    return state.isCanViewFullFolder;
   }
 
   @Selector()
@@ -637,6 +644,7 @@ export class FolderStore {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullFolder: request.data,
+      isCanViewFullFolder: request.success
     });
   }
 

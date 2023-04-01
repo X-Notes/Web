@@ -31,6 +31,14 @@ namespace Noots.DatabaseContext.Repositories.Folders
             return entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
         }
 
+        public Task<List<FoldersNotes>> GetByNoteIdsIncludeFolderAndUsers(params Guid[] noteIds)
+        {
+            return entities.Where(ent => noteIds.Contains(ent.NoteId))
+                    .Include(x => x.Folder)
+                    .ThenInclude(x => x.UsersOnPrivateFolders)
+                    .ToListAsync();
+        }
+
         public Task<List<string>> GetNotesTitle(Guid folderId)
         {
             return entities

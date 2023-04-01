@@ -264,7 +264,8 @@
     "notificationAll": "No tienes notificaciones",
     "history": "Todavía no hay historia en la nota",
     "noAccessViewNote": "No tiene permiso para ver la nota",
-    "noAccessViewFolder": "No tiene permiso para ver la carpeta"
+    "noAccessViewFolder": "No tiene permiso para ver la carpeta",
+    "noNotes": "La carpeta no contiene notas"
   },
   "notification": {
     "title": "Notificación",

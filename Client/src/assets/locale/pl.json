@@ -264,7 +264,8 @@
     "notificationAll": "Nie masz żadnych powiadomień",
     "history": "W notatce nie ma jeszcze historii",
     "noAccessViewNote": "Nie masz uprawnień do wyświetlania notatki",
-    "noAccessViewFolder": "Nie masz uprawnień do wyświetlania folderu"
+    "noAccessViewFolder": "Nie masz uprawnień do wyświetlania folderu",
+    "noNotes": "Folder nie zawiera notatek"
   },
   "notification": {
     "title": "Powiadomienie",

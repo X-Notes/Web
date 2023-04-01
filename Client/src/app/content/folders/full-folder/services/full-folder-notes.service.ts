@@ -11,6 +11,9 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import { ApiFullFolderService } from './api-full-folder.service';
+import { SignalRService } from 'src/app/core/signal-r.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { SetFolderNotes } from 'src/app/content/notes/state/notes-actions';
 
 @Injectable()
 export class FullFolderNotesService extends NoteEntitiesService {
@@ -24,8 +27,23 @@ export class FullFolderNotesService extends NoteEntitiesService {
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     router: Router,
+    public signalR: SignalRService,
+    public readonly pService: PersonalizationService,
   ) {
     super(dialogsManageService, store, murriService, apiNoteService, router);
+
+    // WS UPDATES
+    this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(async (x) => {
+      await this.handlerUpdates(x);
+      this.updateState();
+    });
+  }
+
+  updateState(): void {
+    const isHasEntities = this.entities?.length > 0;
+    this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
+    const mappedNotes = this.entities.map((x) => ({ ...x }));
+    this.store.dispatch(new SetFolderNotes(mappedNotes));
   }
 
   onDestroy(): void {

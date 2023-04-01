@@ -264,7 +264,8 @@
     "notificationAll": "Vous n’avez aucune notification",
     "history": "Il n’y a pas encore d’historique dans la note",
     "noAccessViewNote": "Vous n’êtes pas autorisé à afficher la note",
-    "noAccessViewFolder": "Vous n’êtes pas autorisé à afficher le dossier"
+    "noAccessViewFolder": "Vous n’êtes pas autorisé à afficher le dossier",
+    "noNotes": "Le dossier ne contient pas de notes"
   },
   "notification": {
     "title": "Notification",

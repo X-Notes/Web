@@ -264,7 +264,8 @@
     "notificationAll": "Sie haben keine Benachrichtigungen",
     "history": "Es gibt noch keine Historie in der Notiz",
     "noAccessViewNote": "Sie haben keine Berechtigung zum Anzeigen der Notiz",
-    "noAccessViewFolder": "Sie haben keine Berechtigung zum Anzeigen des Ordners"
+    "noAccessViewFolder": "Sie haben keine Berechtigung zum Anzeigen des Ordners",
+    "noNotes": "Der Ordner enthält keine Notizen"
   },
   "notification": {
     "title": "Benachrichtigung",

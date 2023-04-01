@@ -264,7 +264,8 @@
     "notificationAll": "您没有通知",
     "history": "注释中尚无历史记录",
     "noAccessViewNote": "您没有查看注释的权限",
-    "noAccessViewFolder": "您没有查看文件夹的权限"
+    "noAccessViewFolder": "您没有查看文件夹的权限",
+    "noNotes": "该文件夹不包含注释"
   },
   "notification": {
     "title": "通知",
