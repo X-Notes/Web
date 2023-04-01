@@ -435,9 +435,11 @@ export class ContentEditorContentsService {
       if (content) {
         content.order = pos.order;
       }
-      const contentSync = this.contentsSync.find((x) => x.id === pos.contentId);
-      if (contentSync) {
-        contentSync.order = pos.order;
+      if (syncContent) {
+        const contentSync = this.contentsSync.find((x) => x.id === pos.contentId);
+        if (contentSync) {
+          contentSync.order = pos.order;
+        }
       }
     }
     this.contents = this.contents.sort((a, b) => a.order - b.order);
