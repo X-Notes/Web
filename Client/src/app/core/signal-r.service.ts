@@ -53,6 +53,7 @@ import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
+import { pingWSDelay } from './defaults/bounceDelay';
 
 @Injectable({
   providedIn: 'root',
@@ -99,6 +100,18 @@ export class SignalRService {
     await this.startConnection();
   }
 
+  private ping(): void {
+    setInterval(() => this.invoke('UpdateUpdateStatus'), pingWSDelay);
+  }
+
+  private invoke(methodName: string, arg?: any): void {
+    if (arg) {
+      this.hubConnection.invoke(methodName, arg);
+      return;
+    }
+    this.hubConnection.invoke(methodName);
+  }
+
   private startConnection = async () => {
     const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -109,7 +122,10 @@ export class SignalRService {
 
     this.hubConnection
       .start()
-      .then(() => console.log('Connection started'))
+      .then(() => {
+        console.log('Connection started');
+        this.ping();
+      })
       .catch((err) => console.log(`Error while starting connection: ${err}`));
 
     this.hubConnection.onclose(() => {

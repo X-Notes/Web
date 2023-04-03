@@ -20,8 +20,7 @@ public class NoteConnectionRepository : Repository<NoteConnection, int>
 
     public Task<List<string>> GetConnectionsById(Guid noteId, Guid exceptUserId)
     {
-        return entities.Include(x => x.UserIdentifierConnectionId)
-                       .Where(x => x.NoteId == noteId && x.UserId != exceptUserId)
+        return entities.Where(x => x.NoteId == noteId && x.UserId != exceptUserId)
                        .Select(x => x.ConnectionId).ToListAsync();
     }
 }

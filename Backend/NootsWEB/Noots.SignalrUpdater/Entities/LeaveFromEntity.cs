@@ -1,4 +1,4 @@
-﻿namespace Noots.SignalrUpdater.Models
+﻿namespace Noots.SignalrUpdater.Entities
 {
     public class LeaveFromEntity
     {

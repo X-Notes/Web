@@ -21,7 +21,7 @@ namespace Common.DatabaseModels.Models.WS
 
         public string UserAgent { get; set; }
 
-        public bool Connected { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
 
         public DateTimeOffset ConnectedAt { set; get; }
 

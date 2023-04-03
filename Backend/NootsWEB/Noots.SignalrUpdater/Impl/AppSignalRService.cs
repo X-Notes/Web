@@ -5,7 +5,7 @@ using Common.DTO.WebSockets.Permissions;
 using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
 using Noots.DatabaseContext.Repositories.WS;
-using Noots.SignalrUpdater.Models;
+using Noots.SignalrUpdater.Entities;
 
 namespace Noots.SignalrUpdater.Impl
 {

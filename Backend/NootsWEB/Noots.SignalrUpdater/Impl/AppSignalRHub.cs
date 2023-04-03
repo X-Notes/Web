@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
+using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Interfaces;
-using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
@@ -33,6 +33,16 @@ namespace Noots.SignalrUpdater.Impl
         {
             IReadOnlyList<string> list = new List<string>() { Context.ConnectionId };
             await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
+        }
+
+        public async Task UpdateUpdateStatus() {
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if (ent == null)
+            {
+                return;
+            }
+            ent.UpdatedAt = DateTimeProvider.Time;
+            await userIdentifierConnectionIdRepository.UpdateAsync(ent);
         }
 
         private Guid? GetUserId()
@@ -145,8 +155,8 @@ namespace Noots.SignalrUpdater.Impl
                         UserId = userId.Value, 
                         ConnectionId = Context.ConnectionId,
                         UserAgent = userAgent,
-                        Connected = true,
-                        ConnectedAt = DateTimeProvider.Time 
+                        ConnectedAt = DateTimeProvider.Time,
+                        UpdatedAt = DateTimeProvider.Time
                     };
                 }
             }
@@ -155,8 +165,8 @@ namespace Noots.SignalrUpdater.Impl
                 entity = new UserIdentifierConnectionId { 
                     ConnectionId = Context.ConnectionId,
                     UserAgent = userAgent,
-                    Connected = true,
                     ConnectedAt = DateTimeProvider.Time,
+                    UpdatedAt = DateTimeProvider.Time,
                     UnauthorizedId = Guid.NewGuid()
                 };
             }
@@ -169,7 +179,6 @@ namespace Noots.SignalrUpdater.Impl
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await RemoveConnectionAsync();
             await base.OnDisconnectedAsync(exception);
         }
 
