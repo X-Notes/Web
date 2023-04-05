@@ -76,7 +76,8 @@ namespace BI.Services.Notes
                 await UpdateNoteTitle(request.Title);
 
                 // WS UPDATES
-                await noteWSUpdateService.UpdateNote(new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true }, permissions.GetAllUsers(), request.UserId);
+                var update = new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true };
+                await noteWSUpdateService.UpdateNote(update, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

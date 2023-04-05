@@ -66,7 +66,8 @@ namespace BI.Services.Folders
                 await UpdateFolderTitle(request.Title);
 
                 // WS UPDATES
-                await folderWSUpdateService.UpdateFolder(new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id }, permissions.GetAllUsers(), Guid.Empty);
+                var update = new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id };
+                await folderWSUpdateService.UpdateFolder(update, permissions.GetAllUsers(), request.UserId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
