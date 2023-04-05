@@ -11,6 +11,9 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import { ApiFullFolderService } from './api-full-folder.service';
+import { SignalRService } from 'src/app/core/signal-r.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { SetFolderNotes } from 'src/app/content/notes/state/notes-actions';
 
 @Injectable()
 export class FullFolderNotesService extends NoteEntitiesService {
@@ -24,8 +27,23 @@ export class FullFolderNotesService extends NoteEntitiesService {
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     router: Router,
+    public signalR: SignalRService,
+    public readonly pService: PersonalizationService,
   ) {
     super(dialogsManageService, store, murriService, apiNoteService, router);
+
+    // WS UPDATES
+    this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(async (x) => {
+      await this.handlerUpdates(x);
+      this.updateState();
+    });
+  }
+
+  updateState(): void {
+    const isHasEntities = this.entities?.length > 0;
+    this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
+    const mappedNotes = this.entities.map((x) => ({ ...x }));
+    this.store.dispatch(new SetFolderNotes(mappedNotes));
   }
 
   onDestroy(): void {
@@ -45,8 +63,8 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   murriInitialize(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (this.getIsFirstInit(q)) {
         await this.murriService.initFolderNotesAsync();
         await this.setInitMurriFlagShowLayout();
       }
@@ -75,14 +93,14 @@ export class FullFolderNotesService extends NoteEntitiesService {
     }
   }
 
-  updatePositions() {}
+  async syncPositions() {
+    if (!this.folderId) return;
+    if (!this.isNeedUpdatePositions) return;
+    const positions = this.murriService.getPositions();
+    await this.apiFullFolder.orderNotesInFolder(positions, this.folderId).toPromise();
+  }
 
   updateOrder(): void {
-    const sorted = this.entities.sort(
-      (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-    );
-    let order = 1;
-    sorted.forEach((item) => (item.order = order++));
     setTimeout(() => this.murriService.sortByHtml(), 100);
   }
 
@@ -97,7 +115,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   private async initializeEntitiesGeneric(notes: SmallNote[], folderId: string) {
     this.folderId = folderId;
     let tempNotes = this.transformSpread(notes);
-    tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
+    tempNotes = this.orderBy(tempNotes, SortedByENUM.CustomOrder);
 
     this.entities = tempNotes;
 

@@ -31,17 +31,20 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
         public async Task AddAsync(Guid noteId, UserIdentifierConnectionId userIdentity)
         {
             var isExist = await noteConnectionRepository.GetAnyAsync(x => x.NoteId == noteId && x.UserIdentifierConnectionIdId == userIdentity.Id);
-
+            var userId = userIdentity.GetUserId();
+            if(userId == null)
+            {
+                throw new Exception("user id cannot be NULL");
+            }
             if (!isExist)
             {
-                var userId = userIdentity.GetUserId();
-                await noteConnectionRepository.AddAsync(NoteConnection.Init(userIdentity.Id, noteId, userIdentity.ConnectionId, userId));
+                await noteConnectionRepository.AddAsync(NoteConnection.Init(userIdentity.Id, noteId, userIdentity.ConnectionId, userId.Value));
             }
         }
 
-        public async Task RemoveAsync(Guid noteId, string connectionId)
+        public async Task RemoveAsync(Guid noteId, Guid identifierId)
         {
-            var entity = await noteConnectionRepository.FirstOrDefaultAsync(x => x.NoteId == noteId && x.ConnectionId == connectionId);
+            var entity = await noteConnectionRepository.FirstOrDefaultAsync(x => x.NoteId == noteId && x.UserIdentifierConnectionIdId == identifierId);
 
             if(entity != null)
             {

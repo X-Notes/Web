@@ -21,7 +21,7 @@ namespace Common.DatabaseModels.Models.WS
 
         public string UserAgent { get; set; }
 
-        public bool Connected { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
 
         public DateTimeOffset ConnectedAt { set; get; }
 
@@ -29,10 +29,9 @@ namespace Common.DatabaseModels.Models.WS
 
         public List<NoteConnection> NoteConnections { set; get; }
 
-        public Guid GetUserId()
+        public Guid? GetUserId()
         {
-            var id = UserId ?? UnauthorizedId;
-            return id.Value;
+            return UserId ?? UnauthorizedId;
         }
     }
 }

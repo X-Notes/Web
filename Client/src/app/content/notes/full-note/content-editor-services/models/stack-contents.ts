@@ -1,5 +1,5 @@
-import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
+import { BaseUndoAction } from './undo/base-undo-action';
 
 export interface IStack<T> {
   push(item: T): void;
@@ -8,7 +8,7 @@ export interface IStack<T> {
   size(): number;
 }
 
-export class Stack<T extends ContentModelBase[]> implements IStack<T> {
+export class Stack<T extends BaseUndoAction> implements IStack<T> {
   private storage: T[] = [];
 
   constructor(private capacity: number = Infinity) {}
@@ -42,11 +42,10 @@ export class Stack<T extends ContentModelBase[]> implements IStack<T> {
 
   updateIds(updateIds: NoteUpdateIds[]): void {
     for (const update of updateIds) {
-      for (const contents of this.storage) {
-        const prevContent = contents.find((x) => x.id === update.prevId);
-        if (prevContent) {
-          prevContent.prevId = update.prevId;
-          prevContent.id = update.id;
+      for (const action of this.storage) {
+        const isNeedUpdateId = action.contentId === update.prevId;
+        if (isNeedUpdateId) {
+          action.contentId = update.id;
         }
       }
     }

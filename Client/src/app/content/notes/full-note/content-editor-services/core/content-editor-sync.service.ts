@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, interval } from 'rxjs';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import {
   updateNoteContentAutoTimerDelay,
   updateNoteContentDelay,
@@ -31,6 +31,7 @@ import { ApiTextService } from '../../services/api-text.service';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { StructureDiffs } from '../models/structure-diffs';
 import { ContentEditorContentsService } from './content-editor-contents.service';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -72,12 +73,17 @@ export class ContentEditorSyncService {
     private apiPhotos: ApiPhotosService,
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
+    public dc: DestroyComponentService,
   ) {
     this.initTimer();
   }
 
+  get isCanBeProcessed(): boolean {
+    return !this.isEdit && !this.contentService.isRendering;
+  }
+
   initTimer(): void {
-    this.intervalSyncer.subscribe(() => this.change());
+    this.intervalSyncer.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
   }
 
   initEdit(noteId: string): void {
@@ -88,6 +94,7 @@ export class ContentEditorSyncService {
 
     this.updateSubject
       .pipe(
+        takeUntil(this.dc.d$),
         filter((x) => x === true && !this.isSync),
         debounceTime(updateNoteContentDelay),
       )
@@ -96,7 +103,10 @@ export class ContentEditorSyncService {
       });
     //
     this.updateImmediatelySubject
-      .pipe(filter((x) => x === true && !this.isSync))
+      .pipe(
+        takeUntil(this.dc.d$),
+        filter((x) => x === true && !this.isSync),
+      )
       .subscribe(async () => {
         await this.processChanges();
         this.snackService.buildNotification(this.translateService.instant('snackBar.saved'), null);
@@ -106,7 +116,7 @@ export class ContentEditorSyncService {
   initProcessChangesAutoTimer(): void {}
 
   change() {
-    if (!this.isEdit) return;
+    if (this.isCanBeProcessed) return;
     this.updateSubject?.next(true);
   }
 
@@ -138,7 +148,6 @@ export class ContentEditorSyncService {
       const resp = await this.apiContent
         .syncContentsStructure(this.noteId, structureDiffs)
         .toPromise();
-
       if (resp.success) {
         this.updateIds(structureDiffs, resp.data.updateIds);
         this.contentService.patchStructuralChangesNew(structureDiffs, resp.data.removedIds);
@@ -355,7 +364,7 @@ export class ContentEditorSyncService {
         (x) => x.typeId === type && x.id === content.id && !content.isEqualCollectionInfo(x),
       );
       if (isNeedUpdate) {
-        contents.push(content as T);
+        contents.push(content.copy() as T);
       }
     }
     return contents;

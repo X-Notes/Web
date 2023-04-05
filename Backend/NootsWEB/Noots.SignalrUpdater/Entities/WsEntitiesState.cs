@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.WS;
 using System.Collections.Concurrent;
 
-namespace Noots.SignalrUpdater.Models
+namespace Noots.SignalrUpdater.Entities
 {
     public class WsEntitiesState
     {

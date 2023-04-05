@@ -13,7 +13,6 @@ import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-not
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
-import { Diff } from 'diff-match-patch';
 
 @Injectable()
 export class ApiFoldersService {
@@ -201,9 +200,8 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(diffs: Diff[], title: string, id: string) {
+  updateTitle(title: string, id: string) {
     const obj = {
-      diffs,
       title,
       id,
     };

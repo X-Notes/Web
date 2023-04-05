@@ -58,7 +58,10 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     return null;
   }
 
-  uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+  uploadAudiosToCollectionHandler = async (
+    $event: UploadFileToEntity,
+    noteId: string,
+  ): Promise<AudioModel[]> => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {
       return;
@@ -115,6 +118,8 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     collection.addItemsToCollection(audiosMapped);
     collection.isLoading = false;
+
+    return audiosMapped;
   };
 
   deleteAudioHandler(audioId: string, content: AudiosCollection) {

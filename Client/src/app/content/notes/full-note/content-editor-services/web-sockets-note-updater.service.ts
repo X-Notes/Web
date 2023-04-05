@@ -1,14 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnectionState } from '@microsoft/signalr';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Injectable()
 export class WebSocketsNoteUpdaterService implements OnDestroy {
   isJoined = false;
-
-  destroy = new Subject<void>();
 
   interval: NodeJS.Timeout;
 
@@ -16,9 +14,9 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
 
   attempts = 5;
 
-  constructor(private signalRService: SignalRService) {
+  constructor(private signalRService: SignalRService, private d: DestroyComponentService) {
     this.signalRService.setAsJoinedToNote$
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.d.d$))
       .subscribe((noteId: string) => {
         if (this.noteId === noteId) {
           clearInterval(this.interval);
@@ -54,7 +52,5 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
     }
     this.noteId = null;
     this.isJoined = false;
-    this.destroy.next();
-    this.destroy.complete();
   }
 }

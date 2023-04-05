@@ -13,5 +13,7 @@
         public int MakeSnapshotAfterNMinutes { set; get; }
 
         public int DeleteUnlinkedFilesAfterMinutes { set; get; }
+        
+        public int DeleteDeadConnectionsMinutes { set; get; }
     }
 }

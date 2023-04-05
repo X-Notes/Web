@@ -21,7 +21,7 @@ namespace Noots.Permissions.Entities
 
         public bool CanWrite { set; get; }
 
-        public bool UserNotFound { set; get; }
+        public bool ContainsPublicFolders { set; get; }
 
         public bool NoteNotFound => Note == null;
 
@@ -38,7 +38,7 @@ namespace Noots.Permissions.Entities
         {
             get
             {
-                return Note.IsShared() || Note.UsersOnPrivateNotes.Any();
+                return Note.IsShared() || Note.UsersOnPrivateNotes.Any() || ContainsPublicFolders;
             }
         }
 
@@ -50,38 +50,36 @@ namespace Noots.Permissions.Entities
             }
         }
 
-        public UserPermissionsForNote SetFullAccess(User user, Note note)
+        public UserPermissionsForNote SetFullAccess(User user, Note note, bool containsPublicFolders)
         {
             Caller = user;
             Note = note;
             CanRead = true;
             CanWrite = true;
+            ContainsPublicFolders = containsPublicFolders;
             return this;
         }
 
-        public UserPermissionsForNote SetOnlyRead(User user, Note note)
+        public UserPermissionsForNote SetOnlyRead(User user, Note note, bool containsPublicFolders)
         {
             Caller = user;
             Note = note;
             CanRead = true;
             CanWrite = false;
+            ContainsPublicFolders = containsPublicFolders;
             return this;
         }
 
-        public UserPermissionsForNote SetNoAccessRights(User user, Note note)
+        public UserPermissionsForNote SetNoAccessRights(User user, Note note, bool containsPublicFolders)
         {
             Caller = user;
             Note = note;
             CanRead = false;
             CanWrite = false;
+            ContainsPublicFolders = containsPublicFolders;
             return this;
         }
 
-        public UserPermissionsForNote SetUserNotFounded()
-        {
-            UserNotFound = true;
-            return this;
-        }
 
         public UserPermissionsForNote SetNoteNotFounded()
         {

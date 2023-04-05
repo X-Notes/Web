@@ -48,6 +48,12 @@ namespace NootsWorkersWEB.Hosted
             RecurringJob.AddOrUpdate<UnlinkedFilesDeleteJobHandler>(JobNames.UnlinkedFilesDelete, x => x.DeleteUnLinkedFiles(), Delay);
         }
 
+        public void RemoveDeadWSConnections()
+        {
+            BackgroundJob.Enqueue<RemoveDeadWSConnectionsHandler>(x => x.Handle());
+            RecurringJob.AddOrUpdate<RemoveDeadWSConnectionsHandler>(JobNames.RemoveDeadWSConnections, x => x.Handle(), Delay);
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             DeleteLabels();
@@ -56,6 +62,7 @@ namespace NootsWorkersWEB.Hosted
             DeleteHistory();
             MakeHistory();
             UnLinkedFilesDelete();
+            RemoveDeadWSConnections();
 
             return Task.CompletedTask;
         }

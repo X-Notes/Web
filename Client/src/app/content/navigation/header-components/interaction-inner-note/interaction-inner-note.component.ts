@@ -3,7 +3,6 @@ import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/full-note.model';
-import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
@@ -26,9 +25,6 @@ export class InteractionInnerNoteComponent {
 
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
-
-  @Select(NoteStore.getOnlineUsersOnNote)
-  onlineUsers$: Observable<OnlineUsersNote[]>;
 
   @ViewChild('heightPeople') heightPeople: ElementRef;
 

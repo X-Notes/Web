@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { AuthService } from './auth.service';
-import { from, Observable, throwError } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 import { mergeMap, retryWhen, switchMap, take } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
-  constructor(private readonly auth: AuthService) {}
+  publicRoutes: string[] = ['/folder/', '/note/'];
+
+  constructor(private readonly auth: AuthService, private router: Router) {}
+
+  isPublicRoute(route: string): boolean {
+    return this.publicRoutes.some((x) => route.includes(x));
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const isPublicRoute = this.isPublicRoute(this.router.url);
     return from(this.auth.getToken()).pipe(
       switchMap((token) => {
         const headers = request.headers.set('Authorization', 'Bearer ' + token);
@@ -20,6 +28,9 @@ export class TokenInterceptorService implements HttpInterceptor {
       retryWhen((errors: Observable<any>) =>
         errors.pipe(
           mergeMap((error, index) => {
+            if (isPublicRoute) {
+              return of(null);
+            }
             if (error.status !== 401) {
               return throwError(error);
             }

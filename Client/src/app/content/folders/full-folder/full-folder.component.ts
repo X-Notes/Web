@@ -9,7 +9,7 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -30,8 +30,13 @@ import { SmallFolder } from '../models/folder.model';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
-import { ApiServiceNotes } from '../../notes/api-notes.service';
-import { SelectIdNote, SetFolderNotes, UnSelectAllNote } from '../../notes/state/notes-actions';
+import {
+  CreateNote,
+  CreateNoteCompleted,
+  SelectIdNote,
+  SetFolderNotes,
+  UnSelectAllNote,
+} from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
@@ -41,11 +46,7 @@ import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { DiffCheckerService } from '../../notes/full-note/content-editor/diffs/diff-checker.service';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
-import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
-import { TranslateService } from '@ngx-translate/core';
-import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -103,16 +104,13 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
     public menuButtonService: MenuButtonsService,
-    public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntitiesService,
     private htmlTitleService: HtmlTitleService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
     public pB: PermissionsButtonsService,
     private signalR: SignalRService,
-    private diffCheckerService: DiffCheckerService,
     private apiBrowserFunctions: ApiBrowserTextService,
-    private snackbarService: SnackbarService,
-    private translate: TranslateService,
+    private actions$: Actions,
   ) {}
 
   initTitle() {
@@ -138,8 +136,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleChange$
       .pipe(takeUntil(this.ffnService.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        const diffs = this.diffCheckerService.getDiffs(this.title, title);
-        this.store.dispatch(new UpdateFolderTitle(diffs, title, this.folderId, true, null, false));
+        this.store.dispatch(new UpdateFolderTitle(title, this.folderId, true, null, false));
         this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
       });
@@ -215,23 +212,19 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initHeaderButtonSubscribe() {
-    this.pService.newButtonSubject
-      .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe(async (flag) => {
-        if (flag) {
-          const res = await this.noteApiService.new().toPromise();
-          if (res.success) {
-            const newNote = res.data;
-            await this.apiFullFolder.addNotesToFolder([newNote.id], this.folderId).toPromise();
-            this.ffnService.addToDom([newNote]);
-            this.updateState();
-            return;
-          }
-          if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
-            const message = this.translate.instant('snackBar.subscriptionCreationError');
-            this.snackbarService.openSnackBar(message, null, null, 5000);
-          }
-        }
+    this.pService.newButtonSubject.pipe(takeUntil(this.ffnService.destroy)).subscribe((flag) => {
+      if (flag) {
+        this.store.dispatch(new CreateNote(false));
+      }
+    });
+
+    this.actions$
+      .pipe(ofActionDispatched(CreateNoteCompleted), takeUntil(this.ffnService.destroy))
+      .subscribe(async (payload: CreateNoteCompleted) => {
+        const note = payload.note;
+        await this.apiFullFolder.addNotesToFolder([note.id], this.folderId).toPromise();
+        this.ffnService.addToDom([note]);
+        this.updateState();
       });
 
     this.pService.selectAllButton

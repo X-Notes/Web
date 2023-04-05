@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import {
+  ComponentType,
+  ParentInteraction,
+  ParentInteractionHTML,
+} from '../models/parent-interaction.interface';
 import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
 
 @Injectable()
@@ -14,7 +18,7 @@ export class ClickableContentService {
 
   prevType: ClickableSelectableEntities;
 
-  prevItem: ParentInteraction;
+  prevItem: ParentInteraction<ContentModelBase>;
 
   // current
   currentContent: ContentModelBase;
@@ -23,10 +27,14 @@ export class ClickableContentService {
 
   type: ClickableSelectableEntities;
 
-  currentItem: ParentInteraction;
+  currentItem: ParentInteraction<ContentModelBase>;
 
   get isEmptyTextItemFocus(): boolean {
-    return this.currentItem?.isActiveState;
+    const isText = this.currentItem.type === ComponentType.HTML;
+    if (isText) {
+      return (this.currentItem as ParentInteractionHTML).isActiveState;
+    }
+    return false;
   }
 
   get isPhoto(): boolean {
@@ -49,7 +57,7 @@ export class ClickableContentService {
     content: ContentModelBase,
     itemId: string,
     type: ClickableSelectableEntities,
-    currentItem: ParentInteraction,
+    currentItem: ParentInteraction<ContentModelBase>,
   ) {
     // PREV
     this.prevContent = this.currentContent;

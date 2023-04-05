@@ -36,8 +36,8 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (this.getIsFirstInit(q)) {
         this.murriService.initMurriLabel();
         await this.setInitMurriFlagShowLayout();
       }
@@ -45,8 +45,10 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
     });
   }
 
-  updatePositions(): void {
-    this.store.dispatch(new UpdatePositionsLabels(this.murriService.getPositions()));
+  syncPositions(): void {
+    if (!this.isNeedUpdatePositions) return;
+    const positions = this.murriService.getPositions();
+    this.store.dispatch(new UpdatePositionsLabels(positions));
   }
 
   async initializeEntities(labels: Label[]) {

@@ -2,10 +2,8 @@ import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 
 export interface TransformContent {
-  id: string;
+  contentId: string;
   textType?: NoteTextTypeENUM;
   headingType?: HeadingTypeENUM;
   setFocusToEnd: boolean;
-  isBold?: boolean;
-  isItalic?: boolean;
 }

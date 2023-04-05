@@ -1,4 +1,4 @@
-import { Directive, Input, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BaseText } from '../../models/editor-models/base-text';
 import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
@@ -8,13 +8,13 @@ import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-te
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { ParentInteractionHTML } from '../models/parent-interaction.interface';
 
 @Directive({
   selector: '[appCopy]',
 })
 export class CopyDirective implements OnDestroy, OnInit {
-  @Input() appCopy: QueryList<ParentInteraction>;
+  @Input() appCopy: ParentInteractionHTML[];
 
   copyListener;
 
@@ -52,7 +52,7 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   getHTMLContents(selectedItemsIds: string[]): string {
-    let elements = this.appCopy.toArray();
+    let elements = this.appCopy;
     elements = elements.filter((x) => selectedItemsIds.some((q) => q === x.getContentId()));
     const htmls = elements.map((x) => this.processRawHTML(x)).filter((x) => x);
     if (htmls.length > 0) {
@@ -61,7 +61,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     return '';
   }
 
-  processRawHTML(content: ParentInteraction): string {
+  processRawHTML(content: ParentInteractionHTML): string {
     const typeId = content.getContent().typeId;
     if (typeId !== ContentTypeENUM.Text) return;
     const text = content.getContent() as BaseText;

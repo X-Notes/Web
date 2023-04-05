@@ -10,6 +10,7 @@ import {
   GetInvitedUsersToFolder,
   TransformTypeFolders,
   UpdateOneFolder,
+  UnSelectAllFolder,
 } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
@@ -20,6 +21,7 @@ import {
   GetInvitedUsersToNote,
   TransformTypeNotes,
   UpdateOneNote,
+  UnSelectAllNote,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
@@ -249,6 +251,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
 
     this.store.dispatch([...commandsNotes, ...commandsFolders]);
+    this.store.dispatch([UnSelectAllNote, UnSelectAllFolder]);
   }
 
   ngOnInit(): void {

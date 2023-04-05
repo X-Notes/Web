@@ -264,7 +264,8 @@
     "notificationAll": "You have no notifications",
     "history": "There is no history in the note yet",
     "noAccessViewNote": "You do not have permission to view the note",
-    "noAccessViewFolder": "You do not have permission to view the folder"
+    "noAccessViewFolder": "You do not have permission to view the folder",
+    "noNotes": "The folder does not contain notes"
   },
   "notification": {
     "title": "Notification",

@@ -50,7 +50,7 @@ public class NewPrivateNoteCommandHandler : IRequestHandler<NewPrivateNoteComman
         await noteRepository.AddAsync(note);
         note.LabelsNotes = new List<LabelsNotes>();
 
-        var mappedNote = appCustomMapper.MapNoteToSmallNoteDTO(note, true);
+        var mappedNote = appCustomMapper.MapNoteToSmallNoteDTO(note, true, note.Order);
         return new OperationResult<SmallNote>(true, mappedNote);
     }
 }

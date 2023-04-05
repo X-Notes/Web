@@ -1,12 +1,13 @@
 ﻿using Common;
+using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
+using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Interfaces;
-using Noots.SignalrUpdater.Models;
 
 namespace Noots.SignalrUpdater.Impl
 {
@@ -35,6 +36,16 @@ namespace Noots.SignalrUpdater.Impl
             await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
         }
 
+        public async Task UpdateUpdateStatus() {
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if (ent == null)
+            {
+                return;
+            }
+            ent.UpdatedAt = DateTimeProvider.Time;
+            await userIdentifierConnectionIdRepository.UpdateAsync(ent);
+        }
+
         private Guid? GetUserId()
         {
             var isParsed = Guid.TryParse(Context.UserIdentifier, out var parsedId);
@@ -53,33 +64,32 @@ namespace Noots.SignalrUpdater.Impl
 
             await noteServiceStorage.AddAsync(noteId, ent);
 
-            var groupId = GetNoteGroupName(noteId);
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
+            var groupId = WsNameHelper.GetNoteGroupName(noteId);
             await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
             await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId); // TODO change on userId that can be added to ui list
         }
 
         public async Task LeaveNote(Guid noteId)
         {
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if (ent == null) return;
 
-            await noteServiceStorage.RemoveAsync(noteId, Context.ConnectionId);
+            await noteServiceStorage.RemoveAsync(noteId, ent.Id);
 
             var userId = ent.UserId ?? ent.UnauthorizedId;
-            if (userId != null && !userId.HasValue)
+            if (userId.HasValue)
             {
-                await RemoveOnlineUsersNoteAsync(noteId, userId.Value);
+                await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId.Value);
             }
         }
 
-        private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier)
+        private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId)
         {
-            var groupId = GetNoteGroupName(noteId);
+            var groupId = WsNameHelper.GetNoteGroupName(noteId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity { EntityId = noteId, UserIdentifier = userIdentifier });
+            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
         }
-
-        public static string GetNoteGroupName(Guid id) => "N-" + id.ToString();
 
         // FOLDERS
         public async Task JoinFolder(Guid folderId)
@@ -102,21 +112,22 @@ namespace Noots.SignalrUpdater.Impl
         public async Task LeaveFolder(Guid folderId)
         {
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+            if (ent == null) return;
 
-            await folderServiceStorage.RemoveAsync(folderId, Context.ConnectionId);
+            await folderServiceStorage.RemoveAsync(folderId, ent.Id);
 
             var userId = ent.UserId ?? ent.UnauthorizedId;
-            if (userId != null && !userId.HasValue)
+            if (userId.HasValue)
             {
-                await RemoveOnlineUsersFolderAsync(folderId, userId.Value);
+                await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId.Value);
             }
         }
 
-        private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier)
+        private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId)
         {
             var groupId = GetFolderGroupName(folderId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity { EntityId = folderId, UserIdentifier = userIdentifier });
+            await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity(folderId, userIdentifier, userId));
         }
 
         public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
@@ -145,8 +156,8 @@ namespace Noots.SignalrUpdater.Impl
                         UserId = userId.Value, 
                         ConnectionId = Context.ConnectionId,
                         UserAgent = userAgent,
-                        Connected = true,
-                        ConnectedAt = DateTimeProvider.Time 
+                        ConnectedAt = DateTimeProvider.Time,
+                        UpdatedAt = DateTimeProvider.Time
                     };
                 }
             }
@@ -155,8 +166,8 @@ namespace Noots.SignalrUpdater.Impl
                 entity = new UserIdentifierConnectionId { 
                     ConnectionId = Context.ConnectionId,
                     UserAgent = userAgent,
-                    Connected = true,
                     ConnectedAt = DateTimeProvider.Time,
+                    UpdatedAt = DateTimeProvider.Time,
                     UnauthorizedId = Guid.NewGuid()
                 };
             }
@@ -169,8 +180,8 @@ namespace Noots.SignalrUpdater.Impl
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await RemoveConnectionAsync();
             await base.OnDisconnectedAsync(exception);
+            await RemoveConnectionAsync();
         }
 
         private async Task RemoveConnectionAsync()

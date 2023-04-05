@@ -1,5 +1,6 @@
 import { Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
 import { Subject } from 'rxjs';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class ContentEditorElementsListenerService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  setHandlers(elements: QueryList<ParentInteraction>) {
+  setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
       this.onPressDeleteOrBackSpaceSubject.next();

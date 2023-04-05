@@ -22,7 +22,7 @@ export class ApiFullFolderService {
     };
     return this.httpClient
       .post<SmallNote[]>(`${this.controllerApi}`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   getAllPreviewNotes(folderId: string, search: string, settings: PersonalizationSetting) {
@@ -33,7 +33,7 @@ export class ApiFullFolderService {
     };
     return this.httpClient
       .post<SmallNote[]>(`${this.controllerApi}/preview`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   addNotesToFolder(noteIds: string[], folderId: string) {
@@ -53,7 +53,6 @@ export class ApiFullFolderService {
   }
 
   orderNotesInFolder(positions: PositionEntityModel[], folderId: string) {
-    // TODO
     const obj = {
       positions,
       folderId,

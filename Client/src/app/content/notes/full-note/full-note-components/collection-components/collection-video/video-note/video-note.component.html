@@ -7,7 +7,9 @@
     appTheme
     appDrop="drop-active"
     (fileDropped)="uploadFiles($event)"
-    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+    [ngStyle]="{
+      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+    }"
   >
     <app-title-collection
       [isSelectionStart]="isSelectModeActive"
@@ -25,6 +27,7 @@
       (fullscreenchange)="onFullscreenChange()"
       class="video-wrapper"
     >
+      <p>sss: {{ currentVideo?.videoPath }}</p>
       <video
         [id]="currentVideo?.fileId"
         (click)="clickItemHandler(currentVideo?.fileId)"
@@ -70,8 +73,10 @@
                 [classes]="'light-static'"
                 [button]="volumeIcon"
                 [tooltip]="
-                  (videoElement?.nativeElement?.volume === 0 ? 'innerNote.audio.turnOnSound' : 'innerNote.audio.mute')
-                    | translate
+                  (videoElement?.nativeElement?.volume === 0
+                    ? 'innerNote.audio.turnOnSound'
+                    : 'innerNote.audio.mute'
+                  ) | translate
                 "
                 (clickEvent)="mute()"
               ></app-button-collection>
@@ -120,7 +125,7 @@
           *ngFor="let item of content.orderedItems; let i = index"
           (click)="openThumbVideo(item)"
         >
-          <div class="thumb-video" [ngClass]="[isClicked(item.fileId) ? 'is-selected': '']">
+          <div class="thumb-video" [ngClass]="[isClicked(item.fileId) ? 'is-selected' : '']">
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
               *ngIf="!isReadOnlyMode && !isSelectModeActive"

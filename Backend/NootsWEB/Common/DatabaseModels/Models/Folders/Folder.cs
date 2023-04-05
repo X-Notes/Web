@@ -41,5 +41,7 @@ namespace Common.DatabaseModels.Models.Folders
         }
 
         public bool IsShared() => FolderTypeId == FolderTypeENUM.Shared;
+
+        public bool ContainsPrivateUsers() => UsersOnPrivateFolders != null && UsersOnPrivateFolders.Count > 0;
     }
 }

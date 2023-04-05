@@ -52,47 +52,23 @@ export class ContentEditorContentsService {
   //
 
   initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
-    const setInStack = () => {
-      this.contentEditorMomentoStateService.clear();
-      this.contentEditorMomentoStateService.saveToStack(contents);
-    };
     if (progressiveLoading) {
-      this.initContentProgressively(contents, setInStack);
+      this.initContentProgressively(contents, () => this.initSyncContent(contents));
       return;
     }
-    this.initContent(contents);
-    setInStack();
-  }
-
-  saveToStack(): void {
-    const isContentEqual = this.isContentsEquals();
-    if (!isContentEqual) {
-      this.contentEditorMomentoStateService.saveToStack(this.contents);
-    }
-  }
-
-  isSaveStackEmpty(): boolean {
-    return this.contentEditorMomentoStateService.isEmpty();
-  }
-
-  getPrevFromStack(): ContentModelBase[] {
-    return this.contentEditorMomentoStateService.getPrev();
-  }
-
-  clearPrevInStack(): void {
-    this.contentEditorMomentoStateService.clearPrev();
+    this.contents = contents;
+    this.initSyncContent(contents);
   }
 
   initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
     if (progressiveLoading) {
-      this.initContentProgressively(contents);
+      this.initContentProgressively(contents, () => this.initSyncContent(contents));
       return;
     }
     this.contents = contents;
   }
 
-  private initContent(contents: ContentModelBase[]): void {
-    this.contents = contents;
+  private initSyncContent(contents: ContentModelBase[]): void {
     this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());
@@ -209,17 +185,13 @@ export class ContentEditorContentsService {
   }
 
   getStructureDiffsPrev(prev: ContentModelBase[]): [StructureDiffs, SyncResult] {
-    return this.getStructureDiffs(this.contents, prev);
+    const uiContents = this.contents.map((x) => x.copy());
+    return this.getStructureDiffs(uiContents, prev);
   }
 
   patchStructuralChangesNew(diffs: StructureDiffs, removedIds: string[]): void {
     const contentToUpdate = this.patchStructuralChanges(this.getSyncContents, diffs, removedIds);
     this.updateSyncContent(contentToUpdate);
-  }
-
-  patchStructuralChangesPrev(diffs: StructureDiffs, removedIds: string[]): void {
-    const contentToUpdate = this.patchStructuralChanges(this.contents, diffs, removedIds, true);
-    this.updateContent(contentToUpdate);
   }
 
   private patchStructuralChanges(
@@ -293,12 +265,12 @@ export class ContentEditorContentsService {
     }
 
     for (let i = 0; i < newContents.length; i += 1) {
-      const content = newContents[i];
-      if (!oldContents.some((x) => x.id === content.id)) {
-        content.order = i;
-        diffs.push(content.copy());
+      const newContent = newContents[i];
+      if (!oldContents.some((x) => x.id === newContent.id)) {
+        newContent.order = i;
+        diffs.push(newContent.copy());
       }
-      const oldContent = oldContents.find((x) => x.id === content.id);
+      const oldContent = oldContents.find((x) => x.id === newContent.id);
       if (oldContent && oldContent.order !== i) {
         diffs.positions.push(new PositionDiff(i, newContents[i].id));
       }
@@ -307,21 +279,17 @@ export class ContentEditorContentsService {
     return [diffs, res];
   }
 
-  isContentsEquals() {
-    const f = this.getContents;
-    const s = this.getSyncContents;
-    for (const content of f) {
-      const itemForCompare = s.find((x) => x.id === content.id);
-      if (!itemForCompare || !content.isEqual(itemForCompare)) {
-        return false;
-      }
+  isContentsEquals(contents: ContentModelBase[]) {
+    const uiContents = this.getContents;
+
+    if (uiContents.length !== contents.length) return false;
+
+    for (let i = 0; i < uiContents.length; i += 1) {
+      const uiContent = uiContents[i];
+      const content = contents[i];
+      if (!uiContent.isEqual(content)) return false;
     }
-    for (const content of s) {
-      const itemForCompare = f.find((x) => x.id === content.id);
-      if (!itemForCompare || !content.isEqual(itemForCompare)) {
-        return false;
-      }
-    }
+
     return true;
   }
 
@@ -461,19 +429,23 @@ export class ContentEditorContentsService {
   }
 
   // UPDATE & PATCH
-  updatePositions(positions: UpdateContentPosition[]): void {
+  updatePositions(positions: UpdateContentPosition[], syncContent: boolean): void {
     for (const pos of positions) {
       const content = this.getContentById(pos.contentId);
       if (content) {
         content.order = pos.order;
       }
-      const contentSync = this.contentsSync.find((x) => x.id === pos.contentId);
-      if (contentSync) {
-        contentSync.order = pos.order;
+      if (syncContent) {
+        const contentSync = this.contentsSync.find((x) => x.id === pos.contentId);
+        if (contentSync) {
+          contentSync.order = pos.order;
+        }
       }
     }
     this.contents = this.contents.sort((a, b) => a.order - b.order);
-    this.contentsSync = this.contentsSync.sort((a, b) => a.order - b.order);
+    if (syncContent) {
+      this.contentsSync = this.contentsSync.sort((a, b) => a.order - b.order);
+    }
   }
 
   transformTo(collection: BaseCollection<BaseFile>, idsToDelete: string[]) {

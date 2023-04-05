@@ -8,7 +8,6 @@ import { PositionEntityModel } from '../models/position-note.model';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { FullNote } from '../models/full-note.model';
 import { AddNotesToDom } from './add-notes-to-dom.model';
-import { Diff } from 'diff-match-patch';
 
 export class LoadNoteHistories {
   static type = '[Notes] Load note histories';
@@ -34,6 +33,14 @@ export class SetFolderNotes {
 
 export class CreateNote {
   static type = '[Notes] Create note';
+
+  constructor(public navigateToNote: boolean) {}
+}
+
+export class CreateNoteCompleted {
+  static type = '[Notes] Create note completed';
+
+  constructor(public note: SmallNote) {}
 }
 
 export class AddNotes {
@@ -183,7 +190,7 @@ export class LoadOnlineUsersOnNote {
 export class RemoveOnlineUsersOnNote {
   static type = '[Notes] Remove Online Users On Note';
 
-  constructor(public entityId: string, public userIdentifier: string) {}
+  constructor(public entityId: string, public userIdentifier: string, public userId: string) {}
 }
 
 // SELECTION
@@ -248,7 +255,6 @@ export class UpdateNoteTitle {
   static type = '[Notes] update title';
 
   constructor(
-    public diffs: Diff[],
     public newTitle: string,
     public noteId: string,
     public isCallApi = true,
@@ -256,6 +262,17 @@ export class UpdateNoteTitle {
     public isUpdateFullNote = true,
   ) {}
 }
+
+export class UpdateNoteTitleWS {
+  static type = '[Notes] update note title ws';
+
+  constructor(
+    public title: string,
+    public noteId: string,
+    public errorPermissionMessage?: string,
+  ) {}
+}
+
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';
 

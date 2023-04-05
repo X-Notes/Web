@@ -14,7 +14,6 @@ import { FullFolderNotesService } from '../../../../content/folders/full-folder/
 import { FullFolder } from '../../../../content/folders/models/full-folder.model';
 import { LoadFullFolder } from '../../../../content/folders/state/folders-actions';
 import { FolderStore } from '../../../../content/folders/state/folders-state';
-import { SetFolderNotes } from '../../../../content/notes/state/notes-actions';
 import { EntitiesSizeENUM } from '../../../../shared/enums/font-size.enum';
 import { PersonalizationService } from '../../../../shared/services/personalization.service';
 import { OnDestroy } from '@angular/core';
@@ -23,6 +22,8 @@ import { PublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { UpdaterEntitiesService } from '../../../../core/entities-updater.service';
+import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
+import { AppInitializerService } from 'src/app/core/app-initializer.service';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -35,6 +36,9 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
 
   @Select(FolderStore.full)
   folder$: Observable<FullFolder>;
+
+  @Select(FolderStore.isCanViewFullFolder)
+  isCanView$: Observable<boolean>;
 
   @Select(PublicStore.owner)
   owner$: Observable<ShortUserPublic>;
@@ -55,11 +59,15 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     private readonly apiFullFolder: ApiFullFolderService,
     private readonly router: Router,
     private readonly updateNoteService: UpdaterEntitiesService,
+    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
+    private appInitializerService: AppInitializerService,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.appInitializerService.init();
     this.pService.setSpinnerState(true);
     this.routeSubscription = this.route.params.subscribe(async (params) => {
+      this.loaded = false;
       // lOAD FOLDER
       this.folderId = params.id;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
@@ -71,12 +79,14 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
         // INIT FOLDER NOTES
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
         await this.ffnService.initializePublicEntities(notes, this.folderId);
-        this.updateState();
+        this.ffnService.updateState();
       }
 
       await this.pService.waitPreloading();
       this.pService.setSpinnerState(false);
       this.loaded = true;
+
+      this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
     });
   }
 
@@ -88,13 +98,6 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     this.ffnService.onDestroy();
     this.updateNoteService.addFolderToUpdate(this.folderId);
     this.routeSubscription.unsubscribe();
-  }
-
-  updateState(): void {
-    const isHasEntities = this.ffnService.entities?.length > 0;
-    this.pService.isInnerFolderSelectAllActive$.next(isHasEntities);
-    const mappedNotes = this.ffnService.entities.map((x) => ({ ...x }));
-    this.store.dispatch(new SetFolderNotes(mappedNotes));
   }
 
   toPublicNote(note: SmallNote) {

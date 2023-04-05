@@ -34,11 +34,11 @@ namespace Noots.SignalrUpdater.Impl
 
         public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await WSNoteServiceStorage.GetConnectionsByIdAsync(update.NoteId, exceptUserId);
+            var connections = await WSNoteServiceStorage.GetConnectionsByIdAsync(update.NoteId, exceptUserId); // unathorized && authorized connections
 
             if (userIds != null && userIds.Any())
             {
-                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId); // private users on note, the can not be presented on full note at moment but anyway need to send them updates.
                 connections.AddRange(additionalConnections);
             }
 

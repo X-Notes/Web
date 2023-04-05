@@ -50,6 +50,8 @@ import {
   SetFolderNotes,
   LoadNoteHistories,
   RemoveOnlineUsersOnNote,
+  UpdateNoteTitleWS,
+  CreateNoteCompleted,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -128,7 +130,7 @@ export class NoteStore {
     private apiRelated: ApiRelatedNotesService,
     private zone: NgZone,
     private snackbarService: SnackbarService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -428,17 +430,22 @@ export class NoteStore {
   }
 
   @Action(CreateNote)
-  async newNote({ getState, dispatch }: StateContext<NoteState>) {
+  async newNote({ getState, dispatch }: StateContext<NoteState>, { navigateToNote }: CreateNote) {
     const res = await this.api.new().toPromise();
-    if(res.success) {
+    if (res.success) {
       const note = res.data;
       const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
-      const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
-      await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
-      this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      if (notes) {
+        const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
+        await dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private)).toPromise();
+      }
+      if (navigateToNote) {
+        this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
+      }
+      dispatch(new CreateNoteCompleted(note));
       return;
     }
-    if(!res.success && res.status === OperationResultAdditionalInfo.BillingError){
+    if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
@@ -688,7 +695,10 @@ export class NoteStore {
       const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
       dispatch(new AddToDomNotes(obj));
     }
-    if(!resp.eventBody.success && resp.eventBody.status === OperationResultAdditionalInfo.BillingError){
+    if (
+      !resp.eventBody.success &&
+      resp.eventBody.status === OperationResultAdditionalInfo.BillingError
+    ) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
@@ -860,7 +870,10 @@ export class NoteStore {
   }
 
   @Action(UpdateOneNote)
-  updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, noteId }: UpdateOneNote) {
+  updateOneSmallNote(
+    { dispatch, getState }: StateContext<NoteState>,
+    { note, noteId }: UpdateOneNote,
+  ) {
     for (const noteState of getState().notes) {
       let isUpdate = false;
       let noteType: NoteTypeENUM = null;
@@ -944,18 +957,11 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    {
-      diffs,
-      newTitle,
-      isCallApi,
-      noteId,
-      errorPermissionMessage,
-      isUpdateFullNote,
-    }: UpdateNoteTitle,
+    { newTitle, isCallApi, noteId, errorPermissionMessage, isUpdateFullNote }: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.apiText.updateTitle(diffs, newTitle, noteId).toPromise();
+      resp = await this.apiText.updateTitle(newTitle, noteId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -980,6 +986,14 @@ export class NoteStore {
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
+  }
+
+  @Action(UpdateNoteTitleWS)
+  async updateNoteTitleWS(
+    { dispatch }: StateContext<NoteState>,
+    { title, noteId }: UpdateNoteTitleWS,
+  ) {
+    await dispatch(new UpdateNoteTitle(title, noteId, false, null, true));
   }
 
   @Action(UpdateFullNote)
@@ -1018,14 +1032,23 @@ export class NoteStore {
 
   @Action(RemoveOnlineUsersOnNote)
   async removeOnlineUsersOnNote(
-    { patchState, getState }: StateContext<NoteState>,
-    { entityId, userIdentifier }: RemoveOnlineUsersOnNote,
+    { patchState, getState, setState }: StateContext<NoteState>,
+    { entityId, userIdentifier, userId }: RemoveOnlineUsersOnNote,
   ) {
-    if (getState().fullNoteState?.note?.id === entityId) {
-      patchState({
-        onlineUsers: getState().onlineUsers.filter((x) => x.userIdentifier !== userIdentifier),
-      });
+    if (getState().fullNoteState?.note?.id !== entityId) {
+      return;
     }
+    const entity = getState().onlineUsers.find((x) => x.userId === userId);
+    if (!entity) return;
+    const userIdentifiers = entity.userIdentifiers.filter(id => id !== userIdentifier);
+    setState(
+      patch({
+        onlineUsers: updateItem<OnlineUsersNote>((user) => user.userId === userId, {...entity, userIdentifiers}),
+      }),
+    );
+    patchState({
+      onlineUsers: getState().onlineUsers.filter((x) => x.userIdentifiers?.length > 0),
+    });
   }
   // LOADING SMALL
 
@@ -1155,7 +1178,7 @@ export class NoteStore {
     getState().notes.forEach((notes) => {
       for (const x of notes.notes) {
         const note = { ...x };
-        if (ids.some((z) => z === note.id)) {
+        if (ids.some((q) => q === note.id)) {
           result.push(note);
         }
       }
@@ -1163,8 +1186,8 @@ export class NoteStore {
     return result;
   };
 
-  getNotesByType = (getState: () => NoteState, type: NoteTypeENUM) => {
-    return getState().notes.find((z) => z.typeNotes === type).notes;
+  getNotesByType = (getState: () => NoteState, type: NoteTypeENUM): SmallNote[] => {
+    return getState().notes?.find((q) => q.typeNotes === type)?.notes;
   };
 
   itemNoFromFilterArray = (ids: string[], note: SmallNote) => {

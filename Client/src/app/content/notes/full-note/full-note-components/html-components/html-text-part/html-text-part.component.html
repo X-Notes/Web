@@ -23,7 +23,7 @@
     <div *ngIf="isActiveState && !isSelectModeActive" class="no-content">
       <p>{{'innerNote.text' | translate}}</p>
       <div
-        *ngIf="(pS.isTransformMenuMobile$ | async) === false"
+        *ngIf="(facade.pS.isTransformMenuMobile$ | async) === false"
         class="buttons"
         (mousedown)="preventClick($event)"
       >

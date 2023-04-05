@@ -1,5 +1,6 @@
 import { ElementRef, Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { FocusDirection } from '../models/set-focus';
 import { ClickableContentService } from './clickable-content.service';
@@ -21,7 +22,7 @@ export class ContentEditorListenerService {
   }
 
   setHandlers(
-    elements: QueryList<ParentInteraction>,
+    elements: QueryList<ParentInteraction<ContentModelBase>>,
     noteTitleEl: ElementRef,
     contentSection: ElementRef<HTMLElement>,
   ) {

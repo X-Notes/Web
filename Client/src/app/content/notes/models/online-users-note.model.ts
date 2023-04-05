@@ -1,5 +1,5 @@
 export interface OnlineUsersNote {
-  userIdentifier: string;
+  userIdentifiers: string[];
   userId: string;
   name: string;
   photoId?: string;

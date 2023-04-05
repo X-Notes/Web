@@ -45,7 +45,7 @@ export class TextEditMenuComponent {
     if (!this.options) return;
     if (this.options.textType === type && this.options.headingType === heading) {
       this.eventTransform.emit({
-        id: this.options.ids[0],
+        contentId: this.options.ids[0],
         textType: NoteTextTypeENUM.default,
         setFocusToEnd: true,
       });
@@ -55,7 +55,7 @@ export class TextEditMenuComponent {
           ? NoteTextTypeENUM.default
           : type;
       this.eventTransform.emit({
-        id: this.options.ids[0],
+        contentId: this.options.ids[0],
         textType,
         headingType: heading,
         setFocusToEnd: true,

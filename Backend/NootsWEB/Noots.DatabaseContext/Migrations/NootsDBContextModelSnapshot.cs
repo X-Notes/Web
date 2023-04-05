@@ -1188,9 +1188,6 @@ namespace Noots.DatabaseContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Connected")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTimeOffset>("ConnectedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -1200,6 +1197,9 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Property<Guid?>("UnauthorizedId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserAgent")
                         .HasColumnType("text");

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { SmallFolder } from '../content/folders/models/folder.model';
@@ -29,7 +29,7 @@ import {
   RemoveLabelFromNote,
   RemoveOnlineUsersOnNote,
   UpdateFullNote,
-  UpdateNoteTitle,
+  UpdateNoteTitleWS,
   UpdateOneNote,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
@@ -53,6 +53,7 @@ import { UpdateNoteWS } from './models/signal-r/update-note-ws';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
+import { pingWSDelay } from './defaults/bounceDelay';
 
 @Injectable({
   providedIn: 'root',
@@ -60,29 +61,29 @@ import { UserStore } from './stateUser/user-state';
 export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
-  public updateTextContentEvent$ = new BehaviorSubject<UpdateNoteTextWS>(null);
+  public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
-  public updateNoteStructureEvent$ = new BehaviorSubject<UpdateNoteStructureWS>(null);
+  public updateNoteStructureEvent$ = new Subject<UpdateNoteStructureWS>();
 
-  public updatePhotosCollectionEvent$ = new BehaviorSubject<UpdatePhotosCollectionWS>(null);
+  public updatePhotosCollectionEvent$ = new Subject<UpdatePhotosCollectionWS>();
 
-  public updateVideosCollectionEvent$ = new BehaviorSubject<UpdateVideosCollectionWS>(null);
+  public updateVideosCollectionEvent$ = new Subject<UpdateVideosCollectionWS>();
 
-  public updateAudiosCollectionEvent$ = new BehaviorSubject<UpdateAudiosCollectionWS>(null);
+  public updateAudiosCollectionEvent$ = new Subject<UpdateAudiosCollectionWS>();
 
-  public updateDocumentsCollectionEvent$ = new BehaviorSubject<UpdateDocumentsCollectionWS>(null);
+  public updateDocumentsCollectionEvent$ = new Subject<UpdateDocumentsCollectionWS>();
 
-  public updateRelationNotes$ = new BehaviorSubject<UpdateRelatedNotesWS>(null);
+  public updateRelationNotes$ = new Subject<UpdateRelatedNotesWS>();
 
-  public updateFolder$ = new BehaviorSubject<UpdateFolderWS>(null);
+  public updateFolder$ = new Subject<UpdateFolderWS>();
 
-  public setAsJoinedToNote$ = new BehaviorSubject(null);
+  public setAsJoinedToNote$ = new Subject();
 
-  public setAsJoinedToFolder$ = new BehaviorSubject(null);
+  public setAsJoinedToFolder$ = new Subject();
 
-  public addNotesToSharedEvent$ = new BehaviorSubject<SmallNote[]>(null);
+  public addNotesToSharedEvent$ = new Subject<SmallNote[]>();
 
-  public addFoldersToSharedEvent$ = new BehaviorSubject<SmallFolder[]>(null);
+  public addFoldersToSharedEvent$ = new Subject<SmallFolder[]>();
 
   public wsConnectionClosed$ = new Subject<boolean>();
 
@@ -99,6 +100,24 @@ export class SignalRService {
     await this.startConnection();
   }
 
+  private ping(): void {
+    setInterval(() => {
+      try {
+        this.invoke('UpdateUpdateStatus');
+      } catch (e) {
+        console.error(e);
+      }
+    }, pingWSDelay);
+  }
+
+  private invoke(methodName: string, arg?: any): void {
+    if (arg) {
+      this.hubConnection.invoke(methodName, arg);
+      return;
+    }
+    this.hubConnection.invoke(methodName);
+  }
+
   private startConnection = async () => {
     const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -109,7 +128,10 @@ export class SignalRService {
 
     this.hubConnection
       .start()
-      .then(() => console.log('Connection started'))
+      .then(() => {
+        console.log('Connection started');
+        this.ping();
+      })
       .catch((err) => console.log(`Error while starting connection: ${err}`));
 
     this.hubConnection.onclose(() => {
@@ -132,8 +154,9 @@ export class SignalRService {
     // REMOVE ONLINE
     this.hubConnection.on(
       'removeOnlineUsersNote',
-      (obj: { entityId: string; userIdentifier: string }) => {
-        this.store.dispatch(new RemoveOnlineUsersOnNote(obj.entityId, obj.userIdentifier));
+      (obj: { entityId: string; userIdentifier: string; userId: string }) => {
+        const action = new RemoveOnlineUsersOnNote(obj.entityId, obj.userIdentifier, obj.userId);
+        this.store.dispatch(action);
       },
     );
 
@@ -150,7 +173,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorNote(updates.color, [updates.noteId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateNoteTitle(null, updates.title, updates.noteId, false));
+        this.store.dispatch(new UpdateNoteTitleWS(updates.title, updates.noteId));
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {
@@ -169,7 +192,7 @@ export class SignalRService {
         this.store.dispatch(new ChangeColorFolder(updates.color, [updates.folderId], false));
       }
       if (updates.isUpdateTitle) {
-        this.store.dispatch(new UpdateFolderTitle(null, updates.title, updates.folderId, false));
+        this.store.dispatch(new UpdateFolderTitle(updates.title, updates.folderId, false));
       }
       this.updateFolder$.next(updates);
     });

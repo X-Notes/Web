@@ -264,7 +264,8 @@
     "notificationAll": "Du har inga aviseringar",
     "history": "Det finns ingen historik i anteckningen ännu",
     "noAccessViewNote": "Du har inte behörighet att visa anteckningen",
-    "noAccessViewFolder": "Du har inte behörighet att visa mappen"
+    "noAccessViewFolder": "Du har inte behörighet att visa mappen",
+    "noNotes": "Mappen innehåller inga anteckningar"
   },
   "notification": {
     "title": "Anmälan",

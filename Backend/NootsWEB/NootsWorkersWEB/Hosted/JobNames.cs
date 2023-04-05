@@ -13,5 +13,7 @@
         public static string HistoryMake = "HistoryMake";
 
         public static string UnlinkedFilesDelete = "UnlinkedFilesDelete";
+
+        public static string RemoveDeadWSConnections = "RemoveDeadWSConnections";
     }
 }

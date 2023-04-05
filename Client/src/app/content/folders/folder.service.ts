@@ -152,8 +152,10 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     }
   }
 
-  updatePositions(): void {
-    this.store.dispatch(new UpdatePositionsFolders(this.murriService.getPositions()));
+  syncPositions(): void {
+    if (!this.isNeedUpdatePositions) return;
+    const positions = this.murriService.getPositions();
+    this.store.dispatch(new UpdatePositionsFolders(positions));
   }
 
   ngOnDestroy(): void {

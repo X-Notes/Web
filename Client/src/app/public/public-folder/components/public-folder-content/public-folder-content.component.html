@@ -1,45 +1,56 @@
 <div appTheme class="full-content">
   <app-note-owner
-    *ngIf="loaded && (folder$ | async)"
+    *ngIf="loaded && (isCanView$ | async)"
     class="folder-owner"
     [owner]="owner$ | async"
   ></app-note-owner>
   <div
-    *ngIf="loaded && (folder$ | async)"
+    *ngIf="loaded && (isCanView$ | async)"
     class="folder-color"
     [ngStyle]="{ backgroundColor: (folder$ | async).color }"
   ></div>
   <div class="wrapper">
-    <h1 *ngIf="loaded && (folder$ | async)">{{ (folder$ | async).title }}</h1>
-    <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
-      <div class="content-inner">
-        <div
-          class="grid"
-          [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }"
-        >
+    <ng-container *ngIf="loaded && (isCanView$ | async)">
+      <h1 *ngIf="loaded && (isCanView$ | async)">{{ (folder$ | async).title }}</h1>
+      <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
+        <div class="content-inner">
           <div
-            #item
-            class="grid-item"
-            [id]="item.id"
-            [attr.order]="item.order"
-            *ngFor="let item of ffnService.entities"
-            [ngClass]="[
-              pService.orientationMobile ? 'grid-plus' : '',
-              (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''
-            ]"
+            class="grid"
+            [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }"
           >
-            <app-note
-              [note]="item"
-              isShowWrightRead
-              [highlightCursorActive]="false"
-              [currentFolderId]="(folder$ | async).id"
-              (clickOnNote)="toPublicNote($event)"
-              [ngStyle]="{ backgroundColor: item.color }"
-              class="note"
-            ></app-note>
+            <div
+              #item
+              class="grid-item"
+              [id]="item.id"
+              [attr.order]="item.order"
+              *ngFor="let item of ffnService.entities"
+              [ngClass]="[
+                pService.orientationMobile ? 'grid-plus' : '',
+                (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''
+              ]"
+            >
+              <app-note
+                [note]="item"
+                isShowWrightRead
+                [highlightCursorActive]="false"
+                [currentFolderId]="(folder$ | async).id"
+                (clickOnNote)="toPublicNote($event)"
+                [ngStyle]="{ backgroundColor: item.color }"
+                class="note"
+              ></app-note>
+            </div>
           </div>
         </div>
-      </div>
+        <app-no-results-illustration
+          *ngIf="loaded && !ffnService.isAnyEntityInLayout"
+          [isShow]="loaded && !ffnService.isAnyEntityInLayout"
+          [message]="'noResult.noNotes' | translate"
+          [illustration]="pService.icon.notesInnerFolder"
+          typeClass="type-module"
+        ></app-no-results-illustration>
+      </ng-scrollbar>
+    </ng-container>
+    <ng-container *ngIf="loaded && (isCanView$ | async) === false">
       <app-no-results-illustration
         *ngIf="loaded && !ffnService.isAnyEntityInLayout"
         [isShow]="loaded && !ffnService.isAnyEntityInLayout"
@@ -47,7 +58,7 @@
         [illustration]="pService.icon.notesInnerFolder"
         typeClass="type-module"
       ></app-no-results-illustration>
-    </ng-scrollbar>
+    </ng-container>
     <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
   </div>
 </div>

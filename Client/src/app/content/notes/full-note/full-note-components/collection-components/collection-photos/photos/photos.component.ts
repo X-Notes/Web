@@ -7,20 +7,18 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ExportService } from '../../../../../export.service';
-import { ParentInteraction } from '../../../../models/parent-interaction.interface';
-import { SelectionService } from '../../../../content-editor-services/selection.service';
-import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { ParentInteractionCollection } from '../../../../models/parent-interaction.interface';
 import { FocusDirection, SetFocus } from '../../../../models/set-focus';
 import { ClickableSelectableEntities } from '../../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { CollectionBaseComponent } from '../../collection.base.component';
 import { Photo, PhotosCollection } from '../../../../../models/editor-models/photos-collection';
-import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
+import { HtmlComponentsFacadeService } from '../../../html-components-services/html-components.facade.service';
+import { MutateCollectionInfoAction } from '../../../../content-editor-services/models/undo/mutate-collection-info';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -29,7 +27,7 @@ import { ApiBrowserTextService } from '../../../../../api-browser-text.service';
 })
 export class PhotosComponent
   extends CollectionBaseComponent<PhotosCollection>
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteractionCollection
 {
   @ViewChild('album') albumChild: ElementRef;
 
@@ -48,21 +46,12 @@ export class PhotosComponent
   changeSizeAlbumHandler = combineLatest([this.changeHeightSubject]);
 
   constructor(
-    private renderer: Renderer2,
-    selectionService: SelectionService,
     private exportService: ExportService,
-    clickableContentService: ClickableContentService,
     private host: ElementRef,
     cdr: ChangeDetectorRef,
-    apiBrowserTextService: ApiBrowserTextService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(
-      cdr,
-      clickableContentService,
-      apiBrowserTextService,
-      ClickableSelectableEntities.Photo,
-      selectionService,
-    );
+    super(cdr, ClickableSelectableEntities.Photo, facade);
   }
 
   get countOfBlocks() {
@@ -108,7 +97,7 @@ export class PhotosComponent
 
   saveHeight(isResizingPhoto: boolean) {
     this.startHeight = this.albumChild.nativeElement.offsetHeight;
-    this.selectionService.isResizingPhoto = isResizingPhoto;
+    this.facade.selectionService.isResizingPhoto = isResizingPhoto;
   }
 
   ngOnInit(): void {
@@ -132,6 +121,11 @@ export class PhotosComponent
   }
 
   setPhotosInRowWrapper(count: number): void {
+    const action = new MutateCollectionInfoAction<PhotosCollection>(
+      this.content.copy(),
+      this.content.id,
+    );
+    this.facade.momentoStateService.saveToStack(action);
     this.setPhotosInRow(count);
     this.someChangesEvent.emit();
   }
@@ -158,7 +152,7 @@ export class PhotosComponent
   }
 
   // UPDATING
-  syncContentItems() {
+  syncCollectionItems(): void {
     this.syncPhotos();
     super.syncContentItems();
   }
@@ -169,7 +163,6 @@ export class PhotosComponent
   }
 
   setPhotosInRow(count: number): void {
-    if (this.uiCountInRow === count) return;
     this.initCountInRow(count);
     this.reInitPhotosToDefault();
   }
@@ -199,11 +192,12 @@ export class PhotosComponent
     const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.items.slice(j, j + this.uiCountInRow));
+      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.uiCountInRow));
       j += this.uiCountInRow;
     }
     if (this.countLastItems > 0) {
-      this.lastBlock = this.content.items.slice(photoLength - this.countLastItems, photoLength);
+      const start = photoLength - this.countLastItems;
+      this.lastBlock = this.content.orderedItems.slice(start, photoLength);
     }
   }
 
@@ -290,10 +284,6 @@ export class PhotosComponent
 
   setFocusToEnd = () => {};
 
-  getEditableNative = () => {
-    return null;
-  };
-
   getHost() {
     return this.host;
   }
@@ -321,7 +311,7 @@ export class PhotosComponent
 
   private setHeight(value: string): void {
     value = value ?? 'auto';
-    this.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
+    this.facade.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
     this.changeHeightSubject.next(value);
   }
 }

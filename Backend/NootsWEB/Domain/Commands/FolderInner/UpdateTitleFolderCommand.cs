@@ -9,8 +9,6 @@ namespace Domain.Commands.FolderInner
 {
     public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        public List<List<object>> Diffs { set; get; }
-
         public string Title { set; get; }
 
         [ValidationGuid]

@@ -15,11 +15,11 @@ namespace Noots.Mapper.Mapping
         {
         }
 
-        public OnlineUserOnNote MapToOnlineUserOnNote(User user, Guid userIdentifier)
+        public OnlineUserOnNote MapToOnlineUserOnNote(User user, List<Guid> userIdentifiers)
         {
             return new OnlineUserOnNote
             {
-                UserIdentifier = userIdentifier,
+                UserIdentifiers = userIdentifiers,
                 UserId = user.Id,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto?.AppFileId,
@@ -32,7 +32,7 @@ namespace Noots.Mapper.Mapping
         {
             return new OnlineUserOnNote
             {
-                UserIdentifier = user.Id,
+                UserIdentifiers = new List<Guid> { user.Id },
             };
         }
 

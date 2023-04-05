@@ -17,6 +17,8 @@ export class SelectionService {
 
   selectionDivActive$ = new BehaviorSubject(false);
 
+  disableDiv = false;
+
   private selectionTop = 0;
 
   private selectionLeft = 0;
@@ -61,9 +63,13 @@ export class SelectionService {
     return this.selectionTop;
   }
 
+  get selectionDivActive(): boolean {
+    return !this.disableDiv && this.selectionDivActive$.getValue();
+  }
+
   selectionHandler(
     secondRect: DOMRect,
-    elements: QueryList<ParentInteraction>,
+    elements: QueryList<ParentInteraction<ContentModelBase>>,
     isInternalSelect: boolean,
   ) {
     let isHasChanges = false;
@@ -108,11 +114,11 @@ export class SelectionService {
   }
 
   getSelectedItems(): string[] {
-    return Array.from(this.selectedItemsSet);
+    return Array.from(this.selectedItemsSet).filter((x) => x);
   }
 
   getAllSelectedItems(): string[] {
-    return [...this.getSelectedItems(), this.selectedItemId];
+    return [...this.getSelectedItems(), this.selectedItemId].filter((x) => x);
   }
 
   selectItems(ids: string[]) {
@@ -131,6 +137,7 @@ export class SelectionService {
   }
 
   resetSelectionItems(): void {
+    this.disableDiv = false;
     this.selectedItemId = null;
     this.selectedItemsSet.clear();
     this.onSetChanges();
@@ -147,7 +154,7 @@ export class SelectionService {
 
   isSelectionInZone(
     secondRect: DOMRect,
-    elements: QueryList<ParentInteraction>,
+    elements: QueryList<ParentInteraction<ContentModelBase>>,
     title: ElementRef<HTMLElement>,
   ) {
     if (this.isRectToRect(title.nativeElement.getBoundingClientRect(), secondRect)) {

@@ -8,16 +8,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { BaseCollection } from '../../../models/editor-models/base-collection';
 import { BaseFile } from '../../../models/editor-models/base-file';
-import { TextBlock } from '../../../models/editor-models/text-models/text-block';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/models/clickable-selectable-entities.enum';
-import { SelectionService } from '../../content-editor-services/selection.service';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { MutateCollectionInfoAction } from '../../content-editor-services/models/undo/mutate-collection-info';
+import {
+  ComponentType,
+  ParentInteractionCollection,
+} from '../../models/parent-interaction.interface';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { BaseEditorElementComponent } from '../base-html-components';
+import { HtmlComponentsFacadeService } from '../html-components-services/html-components.facade.service';
 import { TitleCollectionComponent } from './title-collection/title-collection.component';
 
 @Component({
@@ -51,15 +52,15 @@ export class CollectionBaseComponent<
 
   themeE = ThemeENUM;
 
+  type = ComponentType.Collection;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     cdr: ChangeDetectorRef,
-    protected clickableContentService: ClickableContentService,
-    protected apiBrowserTextService: ApiBrowserTextService,
     public selectType: ClickableSelectableEntities,
-    selectionService: SelectionService,
+    facade: HtmlComponentsFacadeService,
   ) {
-    super(cdr, selectionService);
+    super(cdr, facade);
   }
 
   get isDragActive(): boolean {
@@ -82,28 +83,16 @@ export class CollectionBaseComponent<
     this.uploadRef.nativeElement.click();
   };
 
-  syncHtmlWithLayout = () => {
-    // TODO
-  };
-
-  updateHTML = () => {
-    return null;
-  };
-
-  syncContentWithLayout() {
+  syncLayoutWithContent(): void {
     const el = this.titleComponent.titleHtml.nativeElement;
-    const data = this.apiBrowserTextService.saveRangePositionTextOnly(el);
+    const data = this.facade.apiBrowserTextService.saveRangePositionTextOnly(el);
     this.updateInternal();
     this.detectChanges();
-    this.apiBrowserTextService.setCaretFirstChild(el, data);
+    this.facade.apiBrowserTextService.setCaretFirstChild(el, data);
   }
 
-  getTextBlocks = (): TextBlock[] => {
-    return null;
-  };
-
   checkForDelete() {
-    const item = this.content.items.find((x) => this.clickableContentService.isClicked(x.fileId));
+    const item = this.content.items.find((x) => this.facade.clickableService.isClicked(x.fileId));
     if (item) {
       this.deleteContentItemEvent.emit(item.fileId);
     }
@@ -116,6 +105,8 @@ export class CollectionBaseComponent<
   }
 
   onTitleChangeInput(name: string) {
+    const action = new MutateCollectionInfoAction({ ...this.content }, this.content.id);
+    this.facade.momentoStateService.saveToStack(action);
     this.content.name = name;
     this.someChangesEvent.emit();
   }
@@ -141,16 +132,18 @@ export class CollectionBaseComponent<
   }
 
   clickItemHandler(itemId: string) {
-    this.clickableContentService.setContent(
+    this.facade.clickableService.setContent(
       this.content,
       itemId,
       this.selectType,
-      this as any as ParentInteraction,
+      this as any as ParentInteractionCollection,
     );
     if (itemId) {
       const item = document.getElementById(itemId);
       item?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    this.clickableContentService.prevItem?.detectChanges();
+    this.facade.clickableService.prevItem?.detectChanges();
   }
+
+  syncCollectionItems(): void {}
 }
