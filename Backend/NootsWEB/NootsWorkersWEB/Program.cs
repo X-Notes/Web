@@ -47,6 +47,7 @@ builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JOBS();
 
+builder.Services.AddHttpClient();
 builder.Services.HangFireConfig(appDb);
 
 builder.Services.AddHealthChecks();

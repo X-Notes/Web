@@ -8,7 +8,6 @@ export class ContentEditorMomentoStateService {
   private state = new Stack<BaseUndoAction>();
 
   saveToStack(action: BaseUndoAction): void {
-    console.log('action: ', action);
     this.state.push(action);
   }
 

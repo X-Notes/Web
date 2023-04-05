@@ -190,7 +190,7 @@ export class LoadOnlineUsersOnNote {
 export class RemoveOnlineUsersOnNote {
   static type = '[Notes] Remove Online Users On Note';
 
-  constructor(public entityId: string, public userIdentifier: string) {}
+  constructor(public entityId: string, public userIdentifier: string, public userId: string) {}
 }
 
 // SELECTION

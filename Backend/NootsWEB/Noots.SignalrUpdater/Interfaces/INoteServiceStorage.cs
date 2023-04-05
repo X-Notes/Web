@@ -8,5 +8,5 @@ public interface INoteServiceStorage
     Task<List<UserIdentifierConnectionId>> GetEntitiesIdAsync(Guid noteId);
     Task<List<string>> GetConnectionsByIdAsync(Guid noteId, Guid exceptUserId);
     Task AddAsync(Guid noteId, UserIdentifierConnectionId userIdentity);
-    Task RemoveAsync(Guid noteId, string connectionId);
+    Task RemoveAsync(Guid noteId, Guid identifierId);
 }

@@ -22,8 +22,8 @@ import { PublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { UpdaterEntitiesService } from '../../../../core/entities-updater.service';
-import { SignalRService } from 'src/app/core/signal-r.service';
 import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
+import { AppInitializerService } from 'src/app/core/app-initializer.service';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -59,12 +59,12 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     private readonly apiFullFolder: ApiFullFolderService,
     private readonly router: Router,
     private readonly updateNoteService: UpdaterEntitiesService,
-    private signalR: SignalRService,
     private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
+    private appInitializerService: AppInitializerService,
   ) {}
 
   async ngOnInit() {
-    await this.signalR.init();
+    await this.appInitializerService.init();
     this.pService.setSpinnerState(true);
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.loaded = false;

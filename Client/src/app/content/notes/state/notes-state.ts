@@ -1032,14 +1032,23 @@ export class NoteStore {
 
   @Action(RemoveOnlineUsersOnNote)
   async removeOnlineUsersOnNote(
-    { patchState, getState }: StateContext<NoteState>,
-    { entityId, userIdentifier }: RemoveOnlineUsersOnNote,
+    { patchState, getState, setState }: StateContext<NoteState>,
+    { entityId, userIdentifier, userId }: RemoveOnlineUsersOnNote,
   ) {
-    if (getState().fullNoteState?.note?.id === entityId) {
-      patchState({
-        onlineUsers: getState().onlineUsers.filter((x) => x.userIdentifier !== userIdentifier),
-      });
+    if (getState().fullNoteState?.note?.id !== entityId) {
+      return;
     }
+    const entity = getState().onlineUsers.find((x) => x.userId === userId);
+    if (!entity) return;
+    const userIdentifiers = entity.userIdentifiers.filter(id => id !== userIdentifier);
+    setState(
+      patch({
+        onlineUsers: updateItem<OnlineUsersNote>((user) => user.userId === userId, {...entity, userIdentifiers}),
+      }),
+    );
+    patchState({
+      onlineUsers: getState().onlineUsers.filter((x) => x.userIdentifiers?.length > 0),
+    });
   }
   // LOADING SMALL
 

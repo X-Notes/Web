@@ -13,7 +13,6 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
-import { SignalRService } from 'src/app/core/signal-r.service';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FullNote } from '../../notes/models/full-note.model';
 import { FolderStore } from '../../folders/state/folders-state';
@@ -21,6 +20,7 @@ import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
 import { MenuButtonsService } from '../services/menu-buttons.service';
 import { PermissionsButtonsService } from '../services/permissions-buttons.service';
+import { AppInitializerService } from 'src/app/core/app-initializer.service';
 
 @Component({
   selector: 'app-header',
@@ -77,8 +77,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private store: Store,
     public menuButtonService: MenuButtonsService,
-    private signalRService: SignalRService,
     public pB: PermissionsButtonsService,
+    private appInitializerService: AppInitializerService,
   ) {}
 
   ngOnDestroy(): void {
@@ -109,7 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
 
     this.store.dispatch(LoadNotifications);
-    await this.signalRService.init(); // TODO NEED MOVE THIS AND ANOTHER LOGIC THAT MUST TRIGGER ON BEGGING APP LOADING TO 1 service.
+    this.appInitializerService.init();
   }
 
   showUsers() {

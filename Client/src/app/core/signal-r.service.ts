@@ -101,7 +101,13 @@ export class SignalRService {
   }
 
   private ping(): void {
-    setInterval(() => this.invoke('UpdateUpdateStatus'), pingWSDelay);
+    setInterval(() => {
+      try {
+        this.invoke('UpdateUpdateStatus');
+      } catch (e) {
+        console.error(e);
+      }
+    }, pingWSDelay);
   }
 
   private invoke(methodName: string, arg?: any): void {
@@ -148,8 +154,9 @@ export class SignalRService {
     // REMOVE ONLINE
     this.hubConnection.on(
       'removeOnlineUsersNote',
-      (obj: { entityId: string; userIdentifier: string }) => {
-        this.store.dispatch(new RemoveOnlineUsersOnNote(obj.entityId, obj.userIdentifier));
+      (obj: { entityId: string; userIdentifier: string; userId: string }) => {
+        const action = new RemoveOnlineUsersOnNote(obj.entityId, obj.userIdentifier, obj.userId);
+        this.store.dispatch(action);
       },
     );
 

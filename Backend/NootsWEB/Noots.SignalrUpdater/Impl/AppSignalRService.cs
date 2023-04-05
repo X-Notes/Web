@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
@@ -63,44 +65,59 @@ namespace Noots.SignalrUpdater.Impl
         public async Task UpdateRelatedNotes(Guid noteId, Guid userId, UpdateRelatedNotesWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateRelatedNotes, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateRelatedNotes, updates);
         }
 
         public async Task UpdateTextContent(Guid noteId, Guid userId, UpdateTextWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateTextContent, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateTextContent, updates);
         }
 
         public async Task UpdateNoteStructure(Guid noteId, Guid userId, UpdateNoteStructureWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateNoteStructure, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateNoteStructure, updates);
+        }
+
+        // REMOVE USERS
+        public async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId)
+        {
+            var groupId = WsNameHelper.GetNoteGroupName(noteId);
+            var body = new LeaveFromEntity(noteId, userIdentifier, userId);
+            await signalRContext.Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, body);
+        }
+
+        public async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId)
+        {
+            var groupId = WsNameHelper.GetFolderGroupName(folderId);
+            var body = new LeaveFromEntity(folderId, userIdentifier, userId);
+            await signalRContext.Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, body);
         }
 
         // FILE CONTENT
         public async Task UpdateDocumentsCollection(Guid noteId, Guid userId, UpdateDocumentsCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateDocumentsCollection, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateDocumentsCollection, updates);
         }
 
         public async Task UpdatePhotosCollection(Guid noteId, Guid userId, UpdatePhotosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updatePhotosCollection, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updatePhotosCollection, updates);
         }
 
         public async Task UpdateVideosCollection(Guid noteId, Guid userId, UpdateVideosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateVideosCollection, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateVideosCollection, updates);
         }
 
         public async Task UpdateAudiosCollection(Guid noteId, Guid userId, UpdateAudiosCollectionWS updates)
         {
             var connectionsId = await GetAuthorizedConnections(userId);
-            await signalRContext.Clients.GroupExcept(AppSignalRHub.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateAudiosCollection, updates);
+            await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateAudiosCollection, updates);
         }
 
         // Note permissions

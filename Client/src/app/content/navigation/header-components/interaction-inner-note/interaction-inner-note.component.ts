@@ -27,9 +27,6 @@ export class InteractionInnerNoteComponent {
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
 
-  @Select(NoteStore.getOnlineUsersOnNote)
-  onlineUsers$: Observable<OnlineUsersNote[]>;
-
   @ViewChild('heightPeople') heightPeople: ElementRef;
 
   @ViewChild('scrollbar') scrollbar: ElementRef;

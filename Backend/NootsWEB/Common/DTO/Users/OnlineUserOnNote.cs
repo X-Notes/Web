@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Common.DTO.Users
 {
     public class OnlineUserOnNote
     {
-        public Guid UserIdentifier { set; get; }
+        public List<Guid> UserIdentifiers { set; get; }
 
         public Guid UserId { set; get; }
 

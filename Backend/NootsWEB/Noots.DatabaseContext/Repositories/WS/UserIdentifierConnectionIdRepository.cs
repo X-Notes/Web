@@ -15,4 +15,12 @@ public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierCon
         return entities.Where(x => x.UserId != null && x.UserId != exceptUserId && userIds.Contains(x.UserId.Value))
                        .Select(x => x.ConnectionId).ToListAsync();
     }
+
+    public Task<List<UserIdentifierConnectionId>> GetConnectionsByDateIncludeNotesFoldersAsync(DateTimeOffset earliestTimestamp)
+    {
+        return entities.Include(x => x.FolderConnections)
+                       .Include(x => x.NoteConnections)
+                       .Where(x => x.ConnectedAt < earliestTimestamp)
+                       .ToListAsync();
+    }
 }
