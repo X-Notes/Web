@@ -19,7 +19,6 @@ import {
   LongTermOperation,
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
-import { ContentModelBase } from './models/editor-models/content-model-base';
 import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
 
@@ -280,5 +279,4 @@ export class ApiServiceNotes {
       obj,
     );
   }
-
 }
