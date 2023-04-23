@@ -28,6 +28,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
   selectionEndEvent = new EventEmitter<DOMRect>();
 
   @Output()
+  resetEvent = new EventEmitter<void>();
+
+  @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onScrollEvent = new EventEmitter<Event>();
 
@@ -198,6 +201,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setLeft(this.startLeft);
 
     this.clickableService.reset();
+    this.resetEvent.emit();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 

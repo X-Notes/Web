@@ -281,27 +281,4 @@ export class ApiServiceNotes {
     );
   }
 
-  // CONTENTS
-
-  getContents(noteId: string, folderId: string = null): Observable<ContentModelBase[]> {
-    let params = new HttpParams();
-    if (folderId) {
-      params = params.append('folderId', folderId);
-    }
-    return this.httpClient
-      .get<OperationResult<ContentModelBase[]>>(
-        `${environment.writeAPI}/api/note/inner/contents/${noteId}`,
-        {
-          params,
-        },
-      )
-      .pipe(
-        map((x) => {
-          if (x.success) {
-            return TransformNoteUtil.transformContent(x.data);
-          }
-          return [];
-        }),
-      );
-  }
 }

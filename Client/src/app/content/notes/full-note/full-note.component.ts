@@ -12,13 +12,13 @@ import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { ContentModelBase } from '../models/editor-models/content-model-base';
 import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ApiNoteContentService } from './services/api-note-content.service';
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -61,7 +61,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    private api: ApiServiceNotes,
+    private api: ApiNoteContentService,
     private updateNoteService: UpdaterEntitiesService,
     private dialogsManageService: DialogsManageService,
   ) {

@@ -16,6 +16,8 @@
         [isSelectionStart]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         [textContent]="content?.name"
+        [contentId]="content?.id"
+        [cursors$]="cursors$"
         (changeTitleEvent)="onTitleChangeInput($event)"
         (clickInputEvent)="scrollAndFocusToTitle()"
         [menu]="menu"
@@ -32,6 +34,7 @@
             <app-photo
               *ngFor="let item of block"
               [photo]="item"
+              [uiCursors$]="uiCursors$"
               [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
@@ -49,6 +52,7 @@
             <app-photo
               *ngFor="let item of lastBlock"
               [photo]="item"
+              [uiCursors$]="uiCursors$"
               [isSelectModeActive]="isSelectModeActive"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"

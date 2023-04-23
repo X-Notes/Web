@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../../../../models/editor-models/photos-collection';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
+import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-photo',
@@ -28,12 +30,27 @@ export class PhotoComponent implements OnInit {
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  uiCursors$: Observable<CollectionCursorUI[]>;
+
   destroy = new Subject<void>();
 
   constructor(private clickableService: ClickableContentService) {}
 
   get isClicked() {
     return this.clickableService.isClicked(this.photo.fileId);
+  }
+
+  get cursor$(): Observable<CollectionCursorUI> {
+    return this.uiCursors$?.pipe(
+      map((x) => {
+        const array = x.filter((q) => q.itemId === this.photo.fileId);
+        if (array.length > 0) {
+          return array[0];
+        }
+        return null;
+      }),
+    );
   }
 
   ngOnInit(): void {}

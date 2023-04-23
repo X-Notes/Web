@@ -10,7 +10,9 @@
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
-    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+    [ngStyle]="{
+      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+    }"
   >
     <div class="number-container">
       <div class="number">{{ content.listNumber }}.</div>
@@ -24,8 +26,17 @@
         (input)="onInput()"
         (click)="textClick($event)"
       ></p>
+      <div
+        *ngFor="let cursor of uiCursors$ | async"
+        class="collaborative-cursor"
+        [ngStyle]="{
+          top: cursor.cursorTop + 'px',
+          left: cursor.cursorLeft + 'px',
+          backgroundColor: cursor.color
+        }"
+      ></div>
       <p class="no-content-list" *ngIf="isActiveState && !isSelectModeActive">
-        {{'innerNote.text' | translate}}
+        {{ 'innerNote.text' | translate }}
       </p>
     </div>
   </div>

@@ -7,8 +7,8 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText } from '../../../models/editor-models/base-text';
 import { HeadingTypeENUM } from '../../../models/editor-models/text-models/heading-type.enum';
@@ -24,6 +24,14 @@ import { TransformContent } from '../../models/transform-content.model';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { HtmlComponentsFacadeService } from '../html-components-services/html-components.facade.service';
 import { InputHtmlEvent } from './models/input-html-event';
+import { NoteStore } from '../../../state/notes-state';
+import { TextCursor } from '../cursors/text-cursor';
+import { UpdateCursorAction } from '../../../state/editor-actions';
+import { UpdateCursor } from '../../models/cursors/cursor';
+import { CursorTypeENUM } from '../../models/cursors/cursor-type.enum';
+import { SaveSelection } from '../../../models/browser/save-selection';
+import { TextCursorUI } from '../cursors/text-cursor-ui';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 export interface PasteEvent {
   element: BaseTextElementComponent;
@@ -95,8 +103,48 @@ export abstract class BaseTextElementComponent
     return this.getIsActive() && !this.isReadOnlyMode;
   }
 
+  get uiCursors$(): Observable<TextCursorUI[]> {
+    return this.getTextCursors()?.pipe(
+      map((x) => {
+        return x.map((q) => this.mapCursor(q)).filter((q) => q);
+      }),
+    );
+  }
+
+  getSelection(): SaveSelection {
+    const el = this.contentHtml?.nativeElement;
+    if (!el) return null;
+    return this.facade.apiBrowser.getSelectionInfo(el);
+  }
+
+  restoreSelection(pos: SaveSelection): void {
+    const el = this.contentHtml?.nativeElement as HTMLElement;
+    if (!el) return;
+    this.facade.apiBrowser.restoreSelection(el, pos);
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
+  }
+
+  mapCursor(cursor: TextCursor): TextCursorUI {
+    if (!this.contentHtml?.nativeElement) return null;
+    const el = this.contentHtml.nativeElement as HTMLElement;
+    const elRects = el.getBoundingClientRect();
+    const selection: SaveSelection = {
+      start: cursor.startCursor,
+      end: cursor.endCursor,
+    };
+    if (this.isContentEmpty()) {
+      return new TextCursorUI(this.cursorShift.left, this.cursorShift.top, cursor.color);
+    }
+    const range = this.facade.apiBrowser.restoreSelection(el, selection, false);
+    const pos = range.getBoundingClientRect();
+    const cursorLeft = pos.left - elRects.left + this.cursorShift.left;
+    const cursorTop = pos.top - elRects.top + this.cursorShift.top;
+    return new TextCursorUI(cursorLeft, cursorTop, cursor.color);
+  }
+
   onInput() {
     this.syncHtmlWithLayout();
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
   }
 
   syncHtmlWithLayout() {
@@ -105,6 +153,22 @@ export abstract class BaseTextElementComponent
 
   getText(): string {
     return this.getEditableNative<HTMLElement>().textContent;
+  }
+
+  getTextCursors(): Observable<TextCursor[]> {
+    const userId = this.facade.store.selectSnapshot(UserStore.getUser).id;
+    return this.cursors$?.pipe(
+      map((x) => {
+        return x
+          .filter(
+            (q) =>
+              q.userId !== userId &&
+              q.entityId === this.content.id &&
+              q.type === CursorTypeENUM.text,
+          )
+          .map((t) => new TextCursor(t.startCursor, t.endCursor, t.color));
+      }),
+    );
   }
 
   initBaseHTML(): void {
@@ -171,17 +235,17 @@ export abstract class BaseTextElementComponent
 
   syncLayoutWithContent(emitChanges: boolean) {
     const el = this.contentHtml.nativeElement;
-    const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
+    const savedSel = this.getSelection();
     this.updateHTML(this.content.contents, emitChanges);
-    this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
+    this.facade.apiBrowser.restoreSelection(el, savedSel);
   }
 
   updateWS(): void {
     const el = this.contentHtml.nativeElement;
-    const savedSel = this.facade.apiBrowserTextService.saveSelection(el);
+    const savedSel = this.getSelection();
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
     this.updateNativeHTML(html);
-    this.facade.apiBrowserTextService.restoreSelection(el, savedSel);
+    this.facade.apiBrowser.restoreSelection(el, savedSel);
     this.detectChanges();
   }
 
@@ -231,12 +295,14 @@ export abstract class BaseTextElementComponent
     this.contentHtml.nativeElement.focus();
     this.setFocusedElement();
     this.onFocus.emit(this);
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
   }
 
   setFocusToEnd() {
-    this.facade.apiBrowserTextService.setCursor(this.contentHtml.nativeElement, false);
+    this.facade.apiBrowser.setCursor(this.contentHtml.nativeElement, false);
     this.setFocusedElement();
     this.onFocus.emit(this);
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
   }
 
   // LISTENERS
@@ -249,7 +315,14 @@ export abstract class BaseTextElementComponent
     return false;
   }
 
-  async pasteCommandHandler(e: ClipboardEvent) {
+  saveAndRestoreCursor(action: () => void) {
+    const el = this.contentHtml.nativeElement;
+    const savedSel = this.getSelection();
+    action();
+    this.facade.apiBrowser.restoreSelection(el, savedSel);
+  }
+
+  pasteCommandHandler(e: ClipboardEvent) {
     const isLink = this.isPasteLink(e.clipboardData.items);
     e.preventDefault();
     if (isLink) {
@@ -265,7 +338,7 @@ export abstract class BaseTextElementComponent
     }
     const text = e.clipboardData.getData('text/plain');
     if (text) {
-      this.facade.apiBrowserTextService.pasteOnlyTextHandler(e);
+      this.facade.apiBrowser.pasteOnlyTextHandler(e);
       this.textChanged.next();
       return;
     }
@@ -276,7 +349,7 @@ export abstract class BaseTextElementComponent
     if (htmlElements.length === 0) return;
 
     const htmlEl = htmlElements[0];
-    this.facade.apiBrowserTextService.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
+    this.facade.apiBrowser.pasteHTMLHandler(htmlEl); // TODO DONT MUTATE ELEMENT
     const editableEl = this.getEditableNative<HTMLElement>().cloneNode(true) as HTMLElement;
     const resTextBlocks = DeltaConverter.convertHTMLToTextBlocks(editableEl.innerHTML);
     this.updateHTML(resTextBlocks, true);
@@ -296,9 +369,7 @@ export abstract class BaseTextElementComponent
     const data = JSON.parse(json);
     const title = data.title;
     const url = data.url;
-    const pos = this.facade.apiBrowserTextService.getSelectionCharacterOffsetsWithin(
-      this.getEditableNative(),
-    );
+    const pos = this.getSelection();
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
     const resultDelta = DeltaConverter.insertLink(html, pos.start, title, url);
     const resTextBlocks = DeltaConverter.convertDeltaToTextBlocks(resultDelta);
@@ -310,9 +381,9 @@ export abstract class BaseTextElementComponent
       return;
     }
 
-    const selection = this.facade.apiBrowserTextService.getSelection().toString();
+    const selection = this.facade.apiBrowser.getSelection().toString();
     if (
-      this.facade.apiBrowserTextService.isStart(this.getEditableNative()) &&
+      this.facade.apiBrowser.isStart(this.getEditableNative()) &&
       !this.isContentEmpty() &&
       selection === ''
     ) {
@@ -327,12 +398,14 @@ export abstract class BaseTextElementComponent
   }
 
   setHandlers() {
-    const el = this.getEditableNative();
+    const el = this.getEditableNative<HTMLElement>();
     const blur = this.facade.renderer.listen(el, 'blur', (e) => {
       this.onBlur(e);
     });
     const paste = this.facade.renderer.listen(el, 'paste', (e) => {
-      this.pasteCommandHandler(e);
+      const action = () => this.pasteCommandHandler(e);
+      this.saveAndRestoreCursor(action);
+      this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
     });
     const selectStart = this.facade.renderer.listen(el, 'selectstart', (e) => {
       this.onSelectStart(e);
@@ -386,11 +459,28 @@ export abstract class BaseTextElementComponent
   onBlur(e) {}
 
   textClick(e: PointerEvent): void {
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
+    this.cdr.detectChanges();
+    // this.facade.apiBrowser.createCustomRange(this.contentHtml.nativeElement, fC.start);
     const target = e.target as HTMLAnchorElement;
     if (target.localName === 'a' && target.href) {
       e.preventDefault();
       window.open(target.href, '_blank');
     }
+  }
+
+  updateContentEditableCursor(): void {
+    const position = this.getSelection();
+    if (position) {
+      this.updateCursor(position.start, position.end);
+    }
+  }
+
+  updateCursor(start: number, end: number): void {
+    const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
+    const noteId = this.facade.store.selectSnapshot(NoteStore.oneFull).id;
+    const cursor = new UpdateCursor(color).initTextCursor(this.content.id, start, end);
+    this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -409,4 +499,6 @@ export abstract class BaseTextElementComponent
   abstract backspaceUp();
   abstract backspaceDown();
   abstract deleteDown();
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  abstract get cursorShift(): { top: number; left: number };
 }

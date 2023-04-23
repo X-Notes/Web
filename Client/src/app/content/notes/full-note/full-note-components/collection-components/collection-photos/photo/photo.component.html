@@ -1,7 +1,8 @@
 <div
   [id]="photo.fileId"
   (click)="clickEvent.emit(photo.fileId)"
-  [ngClass]="{'is-selected' : isClicked}"
+  [ngClass]="{ 'is-selected': isClicked }"
+  [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
   class="photo"
   appTheme
 >

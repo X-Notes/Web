@@ -10,6 +10,10 @@ import {
   ParentInteractionCollection,
   ParentInteractionHTML,
 } from '../models/parent-interaction.interface';
+import { Observable } from 'rxjs';
+import { Select } from '@ngxs/store';
+import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
+import { NoteStore } from '../../state/notes-state';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -21,6 +25,9 @@ export class EditorBaseComponent {
 
   @Input()
   isReadOnlyMode = true;
+
+  @Select(NoteStore.cursors)
+  cursors$: Observable<NoteUserCursorWS[]>;
 
   isOverEmpty = false;
 

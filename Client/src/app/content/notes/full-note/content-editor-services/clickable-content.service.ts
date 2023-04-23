@@ -6,6 +6,10 @@ import {
   ParentInteractionHTML,
 } from '../models/parent-interaction.interface';
 import { ClickableSelectableEntities } from './models/clickable-selectable-entities.enum';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateCursorDelay } from 'src/app/core/defaults/bounceDelay';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Injectable()
 export class ClickableContentService {
@@ -29,7 +33,18 @@ export class ClickableContentService {
 
   currentItem: ParentInteraction<ContentModelBase>;
 
+  cursorChanged$: Subject<() => void> = new Subject();
+
+  constructor(public dc: DestroyComponentService) {
+    this.cursorChanged$
+      .pipe(takeUntil(dc.d$), debounceTime(updateCursorDelay))
+      .subscribe((action) => {
+        action();
+      });
+  }
+
   get isEmptyTextItemFocus(): boolean {
+    if (!this.currentItem) return false;
     const isText = this.currentItem.type === ComponentType.HTML;
     if (isText) {
       return (this.currentItem as ParentInteractionHTML).isActiveState;

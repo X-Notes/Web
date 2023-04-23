@@ -11,7 +11,7 @@ import { SelectionService } from '../../content-editor-services/selection.servic
 @Injectable()
 export class HtmlComponentsFacadeService {
   constructor(
-    public apiBrowserTextService: ApiBrowserTextService,
+    public apiBrowser: ApiBrowserTextService,
     public pS: PersonalizationService,
     public selectionService: SelectionService,
     public clickableService: ClickableContentService,

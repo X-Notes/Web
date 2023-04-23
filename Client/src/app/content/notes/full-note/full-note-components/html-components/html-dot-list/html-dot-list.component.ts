@@ -43,6 +43,10 @@ export class HtmlDotListComponent
     super(cdr, facade);
   }
 
+  get cursorShift() {
+    return { top: 3, left: -1 };
+  }
+
   getHost() {
     return this.host;
   }
@@ -81,9 +85,7 @@ export class HtmlDotListComponent
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.facade.apiBrowserTextService.pressEnterHandler(
-        this.getEditableNative(),
-      );
+      const breakModel = this.facade.apiBrowser.pressEnterHandler(this.getEditableNative());
       const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.dotList, this.content.id);
       this.enterEvent.emit(event);
     }

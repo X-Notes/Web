@@ -40,6 +40,40 @@ export class HtmlHeadingsComponent
     super(cdr, facade);
   }
 
+  get cursorClass(): string {
+    switch (this.content.headingTypeId) {
+      case HeadingTypeENUM.H1: {
+        return 'cursor-h1';
+      }
+      case HeadingTypeENUM.H2: {
+        return 'cursor-h2';
+      }
+      case HeadingTypeENUM.H3: {
+        return 'cursor-h3';
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
+  get cursorShift() {
+    switch (this.content.headingTypeId) {
+      case HeadingTypeENUM.H1: {
+        return { top: 4, left: 5 };
+      }
+      case HeadingTypeENUM.H2: {
+        return { top: 5, left: 5 };
+      }
+      case HeadingTypeENUM.H3: {
+        return { top: 4, left: 5 };
+      }
+      default: {
+        return { top: 0, left: 0 };
+      }
+    }
+  }
+
   getHost() {
     return this.host;
   }
@@ -71,9 +105,7 @@ export class HtmlHeadingsComponent
 
   enter($event: any) {
     $event.preventDefault();
-    const breakModel = this.facade.apiBrowserTextService.pressEnterHandler(
-      this.getEditableNative(),
-    );
+    const breakModel = this.facade.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
   }

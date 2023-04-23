@@ -4,6 +4,7 @@
   appTheme
   (click)="clickEvent.emit(document.fileId)"
   [ngClass]="{ 'is-selected': isClicked }"
+  [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
 >
   <div class="preview">
     <div class="icon">

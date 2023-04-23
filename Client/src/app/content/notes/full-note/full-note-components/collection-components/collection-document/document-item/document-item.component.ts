@@ -4,6 +4,9 @@ import { GenericFileExtenstionService } from '../../../../../generic-file-extens
 import { DocumentModel } from '../../../../../models/editor-models/documents-collection';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { SelectionService } from '../../../../content-editor-services/selection.service';
+import { Observable } from 'rxjs';
+import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-document-item',
@@ -30,6 +33,9 @@ export class DocumentItemComponent {
   @Input()
   isLoading = false;
 
+  @Input()
+  uiCursors$: Observable<CollectionCursorUI[]>;
+
   constructor(
     private readonly clickableService: ClickableContentService,
     private readonly dialogsManageService: DialogsManageService,
@@ -39,6 +45,18 @@ export class DocumentItemComponent {
 
   get isClicked() {
     return this.clickableService.isClicked(this.document.fileId);
+  }
+
+  get cursor$(): Observable<CollectionCursorUI> {
+    return this.uiCursors$?.pipe(
+      map((x) => {
+        const array = x.filter((q) => q.itemId === this.document.fileId);
+        if (array.length > 0) {
+          return array[0];
+        }
+        return null;
+      }),
+    );
   }
 
   openModal(document: DocumentModel) {

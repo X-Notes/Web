@@ -14,6 +14,8 @@
       [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
+      [contentId]="content?.id"
+      [cursors$]="cursors$"
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="scrollAndFocusToTitle()"
       [menu]="menu"
@@ -24,6 +26,7 @@
       <app-document-item
         *ngFor="let item of content.orderedItems"
         [document]="item"
+        [uiCursors$]="uiCursors$"
         [isSelectModeActive]="isSelectModeActive"
         [isReadOnlyMode]="isReadOnlyMode"
         (deleteDocument)="deleteContentItemEvent.emit($event)"

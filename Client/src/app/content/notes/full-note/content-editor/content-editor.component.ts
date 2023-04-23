@@ -58,6 +58,11 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
 import { UpdateTextTypeAction } from '../content-editor-services/models/undo/update-text-type-action';
 import { RestoreTextAction } from '../content-editor-services/models/undo/restore-text-action';
 import { EditorCollectionsComponent } from '../content-editor-components/editor-collections.component';
+import { NoteStore } from '../../state/notes-state';
+import { SaveSelection } from '../../models/browser/save-selection';
+import { ClearCursorsAction, UpdateCursorAction } from '../../state/editor-actions';
+import { UpdateCursor } from '../models/cursors/cursor';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -78,6 +83,8 @@ import { EditorCollectionsComponent } from '../content-editor-components/editor-
     ContentEditorSyncService,
     ContentEditorRestoreService,
     ContentEditorTextService,
+    ClickableContentService,
+    ContentEditorListenerService,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -265,6 +272,8 @@ export class ContentEditorComponent
     this.webSocketsUpdaterService.leaveNote(this.noteId);
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
+    this.facade.store.dispatch(ClearCursorsAction);
+    this.resetCursor();
   }
 
   ngOnInit(): void {
@@ -435,9 +444,11 @@ export class ContentEditorComponent
     const c = content.getContent();
     const action = new UpdateTextTypeAction(c.id, c.noteTextTypeId, c.headingTypeId);
     this.facade.momentoStateService.saveToStack(action);
+    const selection = content.getSelection();
     this.unSelectItems();
-    const index = this.facade.contentEditorTextService.transformTextContentTo(value);
-    setTimeout(() => this.elements[index].setFocusToEnd());
+    console.log(selection); // bug
+    this.facade.contentEditorTextService.transformTextContentTo(value);
+    requestAnimationFrame(() => content.restoreSelection(selection));
     this.postAction();
   }
 
@@ -468,6 +479,10 @@ export class ContentEditorComponent
       if (el) {
         el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta), true);
       }
+      if (pos.selection) {
+        pos.selection.start = pos.selection.end;
+        requestAnimationFrame(() => el.restoreSelection(pos.selection));
+      }
     }
     this.unSelectItems();
   };
@@ -491,16 +506,27 @@ export class ContentEditorComponent
     this.facade.selectionService.resetSelectionAndItems();
   }
 
+  onReset(): void {
+    this.facade.clickableContentService.cursorChanged$.next(() => this.resetCursor());
+  }
+
+  resetCursor(): void {
+    const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
+    const noteId = this.facade.store.selectSnapshot(NoteStore.oneFull).id;
+    const cursor = new UpdateCursor(color).initNoneCursor();
+    this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
+  }
+
   getIndexAndLengthForUpdateStyle(
     el: HTMLElement | Element,
     menuType: TextEditMenuEnum,
-  ): { index: number; length: number } {
+  ): { index: number; length: number; selection: SaveSelection } {
     if (menuType === TextEditMenuEnum.OneRow) {
-      const pos = this.facade.apiBrowser.getSelectionCharacterOffsetsWithin(el);
-      return { index: pos.start, length: pos.end - pos.start };
+      const selection = this.facade.apiBrowser.getSelectionInfo(el);
+      return { index: selection.start, length: selection.end - selection.start, selection };
     }
     if (menuType === TextEditMenuEnum.MultiplyRows) {
-      return { index: 0, length: el.innerHTML.length };
+      return { index: 0, length: el.innerHTML.length, selection: null };
     }
     return null;
   }

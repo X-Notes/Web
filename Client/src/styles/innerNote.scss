@@ -15,6 +15,25 @@
   padding: 0.125rem 0.375rem;
 }
 
+.collaborative-cursor {
+  position: absolute;
+  height: 18px;
+  width: 2px;
+  z-index: 2;
+}
+
+.cursor-h1 {
+  height: 28px;
+}
+
+.cursor-h2 {
+  height: 20px;
+}
+
+.cursor-h3 {
+  height: 18px;
+}
+
 .block-generic {
   overflow-wrap: anywhere;
   outline: none;

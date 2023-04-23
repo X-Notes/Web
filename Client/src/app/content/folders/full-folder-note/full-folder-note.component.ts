@@ -8,13 +8,13 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { ContentModelBase } from '../../notes/models/editor-models/content-model-base';
 import { FullNote } from '../../notes/models/full-note.model';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { LoadFullNote } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { ApiFullFolderService } from '../full-folder/services/api-full-folder.service';
+import { ApiNoteContentService } from '../../notes/full-note/services/api-note-content.service';
 
 @Component({
   selector: 'app-full-folder-note',
@@ -58,7 +58,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     private apiFullFolder: ApiFullFolderService,
-    private api: ApiServiceNotes,
+    private api: ApiNoteContentService,
     public pService: PersonalizationService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {

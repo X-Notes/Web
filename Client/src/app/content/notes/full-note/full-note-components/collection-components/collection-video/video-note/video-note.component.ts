@@ -21,6 +21,9 @@ import {
   VideosCollection,
 } from 'src/app/content/notes/models/editor-models/videos-collection';
 import { HtmlComponentsFacadeService } from '../../../html-components-services/html-components.facade.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
 
 @Component({
   selector: 'app-video-note',
@@ -132,6 +135,18 @@ export class VideoNoteComponent
       await document.exitPictureInPicture();
     }
   };
+
+  getCursor$(itemId: string): Observable<CollectionCursorUI> {
+    return this.uiCursors$?.pipe(
+      map((x) => {
+        const array = x.filter((q) => q.itemId === itemId);
+        if (array.length > 0) {
+          return array[0];
+        }
+        return null;
+      }),
+    );
+  }
 
   togglePlay() {
     this.isPlaying = this.videoElement?.nativeElement.paused;
@@ -327,6 +342,7 @@ export class VideoNoteComponent
       ClickableSelectableEntities.Video,
       this,
     );
+    this.facade.clickableService.cursorChanged$.next(() => this.updateCursor(video.fileId));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

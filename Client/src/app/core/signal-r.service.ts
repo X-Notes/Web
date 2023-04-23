@@ -54,6 +54,8 @@ import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
 import { pingWSDelay } from './defaults/bounceDelay';
+import { NoteUserCursorWS } from './models/signal-r/innerNote/note-user-cursor';
+import { UpdateCursorWS } from '../content/notes/state/editor-actions';
 
 @Injectable({
   providedIn: 'root',
@@ -211,6 +213,10 @@ export class SignalRService {
     this.hubConnection.on('updateNoteStructure', (updates: UpdateNoteStructureWS) => {
       updates = new UpdateNoteStructureWS(updates);
       this.updateNoteStructureEvent$.next(updates);
+    });
+
+    this.hubConnection.on('updateNoteUserCursor', (updates: NoteUserCursorWS) => {
+      this.store.dispatch(new UpdateCursorWS(updates));
     });
 
     // FILES

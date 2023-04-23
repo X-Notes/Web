@@ -25,9 +25,7 @@ import { RightSectionContentComponent } from './right-section-content/right-sect
 import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
 import { SelectionService } from './content-editor-services/selection.service';
-import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
-import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
 import { DragDropHandlerComponent } from './ui-components/drag-drop-handler/drag-drop-handler.component';
 import { TitleCollectionComponent } from './full-note-components/collection-components/title-collection/title-collection.component';
 import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-handler-container/drag-drop-handler-container.component';
@@ -79,9 +77,7 @@ import { LazyForDirective } from './directives/lazy-for.directive';
   providers: [
     SelectionService,
     HtmlPropertyTagCollectorService,
-    ClickableContentService,
     ContentEditorElementsListenerService,
-    ContentEditorListenerService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

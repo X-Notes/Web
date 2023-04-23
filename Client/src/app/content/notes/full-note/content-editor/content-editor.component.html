@@ -9,6 +9,7 @@
   (selectionStartEvent)="selectionStartHandler($event)"
   (selectionEndEvent)="selectionEndHandler($event)"
   (onScrollEvent)="onScroll($event)"
+  (resetEvent)="onReset()"
   class="main-content"
   [ngClass]="{ 'nope-select': facade.selectionService.selectionDivActive }"
 >
@@ -40,6 +41,15 @@
       ></div>
       <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>
+      <div
+        *ngFor="let cursor of titleCursors$ | async"
+        class="collaborative-cursor"
+        [ngStyle]="{
+          top: cursor.cursorTop + 'px',
+          left: cursor.cursorLeft + 'px',
+          backgroundColor: cursor.color
+        }"
+      ></div>
     </div>
   </div>
 
@@ -64,6 +74,7 @@
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
+              [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
               (enterEvent)="enterHandler($event)"
               (deleteThis)="deleteRowHandler($event)"
@@ -85,6 +96,7 @@
               [prevContent]="getTextContent(i - 1)"
               [prevType]="getTextContent(i - 1)?.noteTextTypeId"
               [content]="item"
+              [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
               (enterEvent)="enterHandler($event)"
               (transformTo)="transformToTypeText($event)"
@@ -103,6 +115,7 @@
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
+              [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
               (enterEvent)="enterHandler($event)"
               (transformTo)="transformToTypeText($event)"
@@ -121,6 +134,7 @@
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
+              [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
               (enterEvent)="enterHandler($event)"
               (transformTo)="transformToTypeText($event)"
@@ -139,6 +153,7 @@
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
               [content]="item"
+              [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
               (enterEvent)="enterHandler($event)"
               (deleteThis)="deleteRowHandler($event)"
@@ -158,6 +173,7 @@
             [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
+            [cursors$]="cursors$"
             [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (uploadEvent)="uploadPhotoToAlbumHandler($event, noteId)"
@@ -172,6 +188,7 @@
             [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
+            [cursors$]="cursors$"
             [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteAudiosCollection($event)"
@@ -186,6 +203,7 @@
             [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
+            [cursors$]="cursors$"
             [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteVideosCollection($event)"
@@ -200,6 +218,7 @@
             [isSelected]="facade.selectionService.isSelected(item.id)"
             [theme]="editorTheme"
             [content]="item"
+            [cursors$]="cursors$"
             [noteId]="noteId"
             [isReadOnlyMode]="isReadOnlyMode"
             (deleteContentEvent)="deleteDocumentsCollection($event)"
