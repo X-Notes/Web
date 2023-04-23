@@ -53,6 +53,11 @@ namespace Noots.SignalrUpdater.Impl
             return userId;
         }
 
+        public async Task<UserIdentifierConnectionId> GetUserIdentifierConnectionAsync()
+        {
+            return await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+        }
+
         // NOTES
         public async Task JoinNote(Guid noteId)
         {

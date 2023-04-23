@@ -1,13 +1,13 @@
 ﻿using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using Common.DatabaseModels.Models.Notes;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
 using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
 using Noots.SignalrUpdater.Entities;
+using Noots.SignalrUpdater.Interfaces;
 
 namespace Noots.SignalrUpdater.Impl
 {
@@ -17,12 +17,21 @@ namespace Noots.SignalrUpdater.Impl
 
         private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
 
+        private readonly ILogger<AppSignalRService> logger;
+
+        private readonly INoteServiceStorage WSNoteServiceStorage;
+
         public AppSignalRService(
             IHubContext<AppSignalRHub> context,
-            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository)
+            UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
+            ILogger<AppSignalRService> logger,
+            INoteServiceStorage wSNoteServiceStorage)
         {
             signalRContext = context;
+
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
+            this.logger = logger;
+            WSNoteServiceStorage = wSNoteServiceStorage;
         }
 
 
@@ -78,6 +87,11 @@ namespace Noots.SignalrUpdater.Impl
         {
             var connectionsId = await GetAuthorizedConnections(userId);
             await signalRContext.Clients.GroupExcept(WsNameHelper.GetNoteGroupName(noteId), connectionsId).SendAsync(ClientMethods.updateNoteStructure, updates);
+        }
+
+        public async Task UpdateUserNoteCursor(Guid noteId, UpdateCursorWS updates)
+        {
+            await signalRContext.Clients.Group(WsNameHelper.GetNoteGroupName(noteId)).SendAsync(ClientMethods.updateNoteUserCursor, updates);
         }
 
         // REMOVE USERS
