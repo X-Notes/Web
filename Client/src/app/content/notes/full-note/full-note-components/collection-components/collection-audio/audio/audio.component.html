@@ -3,6 +3,7 @@
   class="audio-container"
   (click)="clickEvent.emit(audio.fileId)"
   [ngClass]="{'is-selected' : isClicked}"
+  [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
   appTheme
 >
   <div class="preview">

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BI.Services.Notes.Interaction;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
@@ -43,4 +44,10 @@ public class FullNoteContentController : ControllerBase
         return await this._mediator.Send(command);
     }
 
+    [HttpPost("cursor")]
+    public async Task UpdateCursorPosition(UpdateCursorCommand command)
+    {
+        command.UserId = this.GetUserId();
+        await this._mediator.Send(command);
+    }
 }

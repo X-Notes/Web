@@ -68,6 +68,10 @@ export class HtmlTextPartComponent
     return this.contentHtml?.nativeElement?.textContent;
   }
 
+  get cursorShift() {
+    return { top: 5, left: 5 };
+  }
+
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
 
@@ -121,9 +125,7 @@ export class HtmlTextPartComponent
 
   enter($event: any): void {
     $event.preventDefault();
-    const breakModel = this.facade.apiBrowserTextService.pressEnterHandler(
-      this.getEditableNative(),
-    );
+    const breakModel = this.facade.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);
   }

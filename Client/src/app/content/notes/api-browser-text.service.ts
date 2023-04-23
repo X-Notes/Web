@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BreakEnterModel } from './full-note/content-editor-services/models/break-enter.model';
+import { SaveSelection } from './models/browser/save-selection';
 @Injectable({
   providedIn: 'root',
 })
@@ -98,25 +99,32 @@ export class ApiBrowserTextService {
     return el.selectionStart;
   }
 
-  getSelectionCharacterOffsetsWithin = (element) => {
+  getSelectionInfo = (element): SaveSelection => {
     if (!element) return null;
 
     let startOffset = 0;
     let endOffset = 0;
     const selection = this.getSelection();
-
     if (selection.type === 'None') {
       return null;
     }
 
     const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
     const preCaretRange = range.cloneRange();
     preCaretRange.selectNodeContents(element);
     preCaretRange.setEnd(range.startContainer, range.startOffset);
     startOffset = preCaretRange.toString().length;
     endOffset = startOffset + range.toString().length;
-    return { start: startOffset, end: endOffset };
+    return { start: startOffset, end: endOffset, rect };
   };
+
+  saveRangePositionTextOnly(bE: Node): number {
+    const sel = this.getSelection();
+    if (!bE || sel.type === 'None') return null;
+    const range = sel.getRangeAt(0);
+    return range.startOffset;
+  }
 
   pressEnterHandler(e): BreakEnterModel {
     let isFocusToNext = false;
@@ -193,30 +201,7 @@ export class ApiBrowserTextService {
     el.setSelectionRange(startPos, startPos);
   }
 
-  saveRangePositionTextOnly(bE: Node): number {
-    const sel = this.getSelection();
-    if (!bE || sel.type === 'None') return null;
-    const range = sel.getRangeAt(0);
-    return range.startOffset;
-  }
-
-  // SELECTION
-
-  saveSelection(containerEl) {
-    const sel = this.getSelection();
-    if (sel.type === 'None') return;
-    const range = sel.getRangeAt(0);
-    const preSelectionRange = range.cloneRange();
-    preSelectionRange.selectNodeContents(containerEl);
-    preSelectionRange.setEnd(range.startContainer, range.startOffset);
-    const start = preSelectionRange.toString().length;
-    return {
-      start,
-      end: start + range.toString().length,
-    };
-  }
-
-  restoreSelection(containerEl, savedSel) {
+  restoreSelection(containerEl, savedSel: SaveSelection, restore = true): Range {
     if (!savedSel) return;
     let charIndex = 0;
     const range = document.createRange();
@@ -247,10 +232,12 @@ export class ApiBrowserTextService {
       }
     }
 
-    const sel = this.getSelection();
-    this.removeAllRanges(sel);
-
-    sel.addRange(range);
+    if (restore) {
+      const sel = this.getSelection();
+      this.removeAllRanges(sel);
+      sel.addRange(range);
+    }
+    return range;
   }
 
   removeAllRanges(sel: Selection = null): void {

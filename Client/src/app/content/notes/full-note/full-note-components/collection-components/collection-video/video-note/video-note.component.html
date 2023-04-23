@@ -15,6 +15,8 @@
       [isSelectionStart]="isSelectModeActive"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
+      [contentId]="content?.id"
+      [cursors$]="cursors$"
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="scrollAndFocusToTitle()"
       [menu]="menu"
@@ -125,7 +127,11 @@
           *ngFor="let item of content.orderedItems; let i = index"
           (click)="openThumbVideo(item)"
         >
-          <div class="thumb-video" [ngClass]="[isClicked(item.fileId) ? 'is-selected' : '']">
+          <div
+            class="thumb-video"
+            [ngClass]="[isClicked(item.fileId) ? 'is-selected' : '']"
+            [ngStyle]="(getCursor$(item.fileId) | async) && { 'border': '2px solid ' + (getCursor$(item.fileId) | async).color }"
+          >
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
               *ngIf="!isReadOnlyMode && !isSelectModeActive"

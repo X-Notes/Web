@@ -6,7 +6,11 @@
       [CustomTooltip]="item.name ?? ('header.anonymous' | translate)"
       position="Bottom"
     >
-      <div *ngIf="item.photoPath !== null" class="inner-person">
+      <div
+        *ngIf="item.photoPath !== null"
+        class="inner-person"
+        [ngStyle]="{ 'border': '2px solid ' + item.color }"
+      >
         <img [src]="item.photoPath" alt="contributor" />
       </div>
       <div *ngIf="item.photoPath === null" class="inner-person anonymous">

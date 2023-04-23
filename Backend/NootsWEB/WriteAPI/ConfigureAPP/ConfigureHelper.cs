@@ -50,6 +50,7 @@ using Noots.Users;
 using Noots.Sharing;
 using Noots.SignalrUpdater;
 using Common.Redis;
+using BI.Services.Notes.Interaction;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -122,6 +123,9 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE FILES
             services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();
+
+            // FULL NOTE CURSOR
+            services.AddScoped<IRequestHandler<UpdateCursorCommand, OperationResult<Unit>>, UpdateCursorCommandHandler>();
 
             //FOLDERS
             services.ApplyFoldersDI();

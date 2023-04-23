@@ -77,6 +77,10 @@ import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { ApiNoteContentService } from '../full-note/services/api-note-content.service';
+import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
+import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
+import { UpdateCursor } from '../full-note/models/cursors/cursor';
 
 export interface FullNoteState {
   note: FullNote;
@@ -98,6 +102,8 @@ interface NoteState {
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
   onlineUsers: OnlineUsersNote[];
   folderNotes: SmallNote[];
+  cursors: NoteUserCursorWS[];
+  cursorColor: string;
 }
 
 @State<NoteState>({
@@ -116,6 +122,8 @@ interface NoteState {
     InvitedUsersToNote: [],
     onlineUsers: [],
     folderNotes: [],
+    cursors: [],
+    cursorColor: null,
   },
 })
 @Injectable()
@@ -124,6 +132,7 @@ export class NoteStore {
     private api: ApiServiceNotes,
     private apiText: ApiTextService,
     private historyApi: ApiNoteHistoryService,
+    private apiContents: ApiNoteContentService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
     private updaterEntitiesService: UpdaterEntitiesService,
@@ -274,7 +283,11 @@ export class NoteStore {
 
   @Selector()
   static getOnlineUsersOnNote(state: NoteState): OnlineUsersNote[] {
-    return state.onlineUsers;
+    return state.onlineUsers?.map((x) => {
+      const f = { ...x };
+      f.color = state.cursors?.find((q) => x.userId === q.userId)?.color;
+      return f;
+    });
   }
 
   // FULL NOTE
@@ -282,6 +295,11 @@ export class NoteStore {
   @Selector()
   static oneFull(state: NoteState): FullNote {
     return state.fullNoteState?.note;
+  }
+
+  @Selector()
+  static cursorColor(state: NoteState): string {
+    return state.cursorColor;
   }
 
   @Selector()
@@ -302,6 +320,15 @@ export class NoteStore {
   @Selector()
   static fullNoteTitle(state: NoteState): string {
     return state.fullNoteState?.note?.title;
+  }
+
+  @Selector()
+  static cursors(state: NoteState): NoteUserCursorWS[] {
+    const noteId = state.fullNoteState?.note?.id;
+    if (noteId) {
+      return state.cursors.filter((x) => noteId === x.noteId);
+    }
+    return [];
   }
 
   @Selector()
@@ -859,6 +886,30 @@ export class NoteStore {
     }
   }
 
+  @Action(UpdateCursorAction)
+  async updateCursor({}: StateContext<NoteState>, { noteId, cursor }: UpdateCursorAction) {
+    await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
+  }
+
+  @Action(ClearCursorsAction)
+  async clearCursorsAction({ patchState }: StateContext<NoteState>) {
+    patchState({ cursors: [] });
+  }
+
+  @Action(UpdateCursorWS)
+  async updateCursorWS(
+    { getState, patchState }: StateContext<NoteState>,
+    { cursor }: UpdateCursorWS,
+  ) {
+    let cursors = [...getState().cursors];
+    const prev = cursors.find((x) => x.noteId === cursor.noteId && x.userId === cursor.userId);
+    if (prev) {
+      cursors = cursors.filter((x) => x !== prev);
+    }
+    cursors.push(cursor);
+    patchState({ cursors });
+  }
+
   @Action(UpdatePositionsRelatedNotes)
   async updateRelationNotePositions(
     {}: StateContext<NoteState>,
@@ -902,6 +953,7 @@ export class NoteStore {
           isLocked: false,
           isCanView: true,
         },
+        cursorColor: UpdateCursor.getRandomBrightColor(),
       });
     } else if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
       patchState({
@@ -1040,10 +1092,13 @@ export class NoteStore {
     }
     const entity = getState().onlineUsers.find((x) => x.userId === userId);
     if (!entity) return;
-    const userIdentifiers = entity.userIdentifiers.filter(id => id !== userIdentifier);
+    const userIdentifiers = entity.userIdentifiers.filter((id) => id !== userIdentifier);
     setState(
       patch({
-        onlineUsers: updateItem<OnlineUsersNote>((user) => user.userId === userId, {...entity, userIdentifiers}),
+        onlineUsers: updateItem<OnlineUsersNote>((user) => user.userId === userId, {
+          ...entity,
+          userIdentifiers,
+        }),
       }),
     );
     patchState({

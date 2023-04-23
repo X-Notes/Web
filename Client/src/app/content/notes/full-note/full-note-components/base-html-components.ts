@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { HtmlComponentsFacadeService } from './html-components-services/html-components.facade.service';
+import { Observable } from 'rxjs';
+import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
 
 @Component({
   template: '',
@@ -11,6 +13,9 @@ export abstract class BaseEditorElementComponent {
 
   @Input()
   isSelected = false;
+
+  @Input()
+  cursors$: Observable<NoteUserCursorWS[]>;
 
   @Output()
   someChangesEvent = new EventEmitter();

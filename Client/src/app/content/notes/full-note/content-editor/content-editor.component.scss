@@ -59,6 +59,13 @@
         background-color: #7b7b7b;
       }
 
+      .collaborative-cursor {
+        position: absolute;
+        height: 30px;
+        width: 3px;
+        z-index: 2;
+      }
+
       .placeholder {
         display: none;
         position: absolute;
@@ -92,7 +99,7 @@
   }
 }
 
-.file-insert{
+.file-insert {
   display: none;
 }
 
@@ -102,7 +109,7 @@
   }
 }
 
-.custom-placeholder{
+.custom-placeholder {
   min-height: 20px;
   transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
   border-bottom: 5px solid #0887a7;
@@ -112,9 +119,8 @@
   opacity: 0.5;
   box-sizing: border-box;
   border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-              0 8px 10px 1px rgba(0, 0, 0, 0.14),
-              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-drag-animating {
@@ -122,7 +128,7 @@
 }
 
 .cdk-drag-placeholder {
-   opacity: 1;
+  opacity: 1;
 }
 
 .content-section.cdk-drop-list-dragging .item:not(.cdk-drag-placeholder) {

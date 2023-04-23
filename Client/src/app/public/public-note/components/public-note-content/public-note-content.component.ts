@@ -7,12 +7,12 @@ import { ActivatedRoute } from '@angular/router';
 import { DeleteCurrentNoteData, LoadFullNote } from '../../../../content/notes/state/notes-actions';
 import { PersonalizationService } from '../../../../shared/services/personalization.service';
 import { ContentModelBase } from '../../../../content/notes/models/editor-models/content-model-base';
-import { ApiServiceNotes } from '../../../../content/notes/api-notes.service';
 import { PublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { take } from 'rxjs/operators';
+import { ApiNoteContentService } from 'src/app/content/notes/full-note/services/api-note-content.service';
 
 @Component({
   selector: 'app-public-note-content',
@@ -46,7 +46,7 @@ export class PublicNoteContentComponent implements OnDestroy {
     private readonly route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    private apiNotes: ApiServiceNotes,
+    private apiNotes: ApiNoteContentService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       await this.loadMain(params.id);

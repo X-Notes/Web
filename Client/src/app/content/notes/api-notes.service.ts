@@ -19,7 +19,6 @@ import {
   LongTermOperation,
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
-import { ContentModelBase } from './models/editor-models/content-model-base';
 import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
 
@@ -279,29 +278,5 @@ export class ApiServiceNotes {
       `${environment.writeAPI}/api/share/notes/user/permission`,
       obj,
     );
-  }
-
-  // CONTENTS
-
-  getContents(noteId: string, folderId: string = null): Observable<ContentModelBase[]> {
-    let params = new HttpParams();
-    if (folderId) {
-      params = params.append('folderId', folderId);
-    }
-    return this.httpClient
-      .get<OperationResult<ContentModelBase[]>>(
-        `${environment.writeAPI}/api/note/inner/contents/${noteId}`,
-        {
-          params,
-        },
-      )
-      .pipe(
-        map((x) => {
-          if (x.success) {
-            return TransformNoteUtil.transformContent(x.data);
-          }
-          return [];
-        }),
-      );
   }
 }

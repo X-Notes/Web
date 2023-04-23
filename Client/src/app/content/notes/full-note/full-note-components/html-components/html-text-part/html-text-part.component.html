@@ -10,7 +10,9 @@
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
-    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+    [ngStyle]="{
+      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+    }"
   >
     <p
       #contentHtml
@@ -21,7 +23,7 @@
       [innerHTML]="viewHtml"
     ></p>
     <div *ngIf="isActiveState && !isSelectModeActive" class="no-content">
-      <p>{{'innerNote.text' | translate}}</p>
+      <p>{{ 'innerNote.text' | translate }}</p>
       <div
         *ngIf="(facade.pS.isTransformMenuMobile$ | async) === false"
         class="buttons"
@@ -59,6 +61,15 @@
         </div>
       </div>
     </div>
+    <div
+      *ngFor="let cursor of uiCursors$ | async"
+      class="collaborative-cursor"
+      [ngStyle]="{
+        top: cursor.cursorTop + 'px',
+        left: cursor.cursorLeft + 'px',
+        backgroundColor: cursor.color
+      }"
+    ></div>
   </div>
 </div>
 <input

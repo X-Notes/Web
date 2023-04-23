@@ -33,6 +33,8 @@
 
         public const string updateNoteStructure = "updateNoteStructure";
 
+        public const string updateNoteUserCursor = "updateNoteUserCursor";
+
         public const string updateDocumentsCollection = "updateDocumentsCollection";
 
         public const string updatePhotosCollection = "updatePhotosCollection";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { interval, Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
 import { UpdateNoteTitle } from '../../state/notes-actions';
 import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
@@ -9,6 +9,14 @@ import { BaseUndoAction } from '../content-editor-services/models/undo/base-undo
 import { UndoActionTypeEnum } from '../content-editor-services/models/undo/undo-action-type.enum';
 import { UpdateTitleAction } from '../content-editor-services/models/undo/update-title-action';
 import { EditorBaseComponent } from './editor-base.component';
+import { SaveSelection } from '../../models/browser/save-selection';
+import { NoteStore } from '../../state/notes-state';
+import { UpdateCursor } from '../models/cursors/cursor';
+import { UpdateCursorAction } from '../../state/editor-actions';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { TextCursor } from '../full-note-components/cursors/text-cursor';
+import { TextCursorUI } from '../full-note-components/cursors/text-cursor-ui';
+import { CursorTypeENUM } from '../models/cursors/cursor-type.enum';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -50,6 +58,10 @@ export class EditorTitleComponent extends EditorBaseComponent {
           this.prevTitle = title;
         }
       });
+  }
+
+  isContentEmpty() {
+    return this.noteTitleEl?.nativeElement?.textContent.length === 0;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -95,6 +107,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   onTitleClick(): void {
     this.facade.clickableContentService.currentItem?.detectChanges();
+    this.facade.clickableContentService.cursorChanged$.next(() => this.updateTitleCursor());
   }
 
   handlerTitleEnter($event: KeyboardEvent) {
@@ -124,8 +137,73 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.prevTitle = title;
   }
 
+  getSelection(): SaveSelection {
+    const el = this.noteTitleEl?.nativeElement;
+    if (!el) return null;
+    return this.facade.apiBrowser.getSelectionInfo(el);
+  }
+
+  updateTitleCursor(): void {
+    const position = this.getSelection();
+    if (position) {
+      this.updateCursor(position.start, position.end);
+    }
+  }
+
+  updateCursor(start: number, end: number): void {
+    const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
+    const noteId = this.facade.store.selectSnapshot(NoteStore.oneFull).id;
+    const cursor = new UpdateCursor(color).initTitleCursor(start, end);
+    this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(facade: EditorFacadeService) {
     super(facade);
+  }
+
+  // CURSORS
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  get titleCursors$(): Observable<TextCursorUI[]> {
+    return this.getTextCursors()?.pipe(
+      map((x) => {
+        return x.map((q) => this.mapCursor(q)).filter((q) => q);
+      }),
+    );
+  }
+
+  getTextCursors(): Observable<TextCursor[]> {
+    const userId = this.facade.store.selectSnapshot(UserStore.getUser).id;
+    return this.cursors$?.pipe(
+      map((x) => {
+        return x
+          .filter((q) => q.userId !== userId && q.type === CursorTypeENUM.title)
+          .map((t) => new TextCursor(t.startCursor, t.endCursor, t.color));
+      }),
+    );
+  }
+
+  get cursorShift() {
+    return { top: 8, left: -1 };
+  }
+
+  mapCursor(cursor: TextCursor): TextCursorUI {
+    if (!this.noteTitleEl?.nativeElement) return null;
+    const el = this.noteTitleEl.nativeElement as HTMLElement;
+    const elRects = el.getBoundingClientRect();
+    const selection: SaveSelection = {
+      start: cursor.startCursor,
+      end: cursor.endCursor,
+    };
+    if (this.isContentEmpty()) {
+      return new TextCursorUI(this.cursorShift.left, this.cursorShift.top, cursor.color);
+    }
+    const range = this.facade.apiBrowser.restoreSelection(el, selection, false);
+    const pos = range.getBoundingClientRect();
+
+    const cursorLeft = pos.left - elRects.left + this.cursorShift.left;
+    const cursorTop = pos.top - elRects.top + this.cursorShift.top;
+    return new TextCursorUI(cursorLeft, cursorTop, cursor.color);
   }
 }

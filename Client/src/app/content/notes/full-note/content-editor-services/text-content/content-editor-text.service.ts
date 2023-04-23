@@ -3,7 +3,10 @@ import { BaseText } from '../../../models/editor-models/base-text';
 import { NoteTextTypeENUM } from '../../../models/editor-models/text-models/note-text-type.enum';
 import { TextBlock } from '../../../models/editor-models/text-models/text-block';
 import { TransformContent } from '../../models/transform-content.model';
-import { ContentEditorContentsService } from '../core/content-editor-contents.service';
+import {
+  ContentAndIndex,
+  ContentEditorContentsService,
+} from '../core/content-editor-contents.service';
 
 @Injectable()
 export class ContentEditorTextService {
@@ -35,13 +38,13 @@ export class ContentEditorTextService {
     return { index, content: nContent };
   }
 
-  transformTextContentTo(value: TransformContent) {
+  transformTextContentTo(value: TransformContent): ContentAndIndex<BaseText> {
     const item = this.contentsService.getContentAndIndexById<BaseText>(value.contentId);
     item.content.updateNoteTextTypeId(value.textType);
     if (value.headingType) {
       item.content.updateHeadingTypeId(value.headingType);
     }
-    return item.index;
+    return item;
   }
 
   getNewTextContent = (): BaseText => {
