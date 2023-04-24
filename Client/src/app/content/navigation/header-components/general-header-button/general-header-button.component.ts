@@ -25,6 +25,9 @@ export class GeneralHeaderButtonComponent {
   iconClass: string;
 
   @Input()
+  stateIconClass: string;
+
+  @Input()
   isDefault = false;
 
   @Input()

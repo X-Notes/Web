@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -18,6 +18,7 @@ import { UpdatePersonalization } from 'src/app/core/stateUser/user-action';
   selector: 'app-interaction-items',
   templateUrl: './interaction-items.component.html',
   styleUrls: ['./interaction-items.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class InteractionItemsComponent implements OnInit, OnDestroy {
   // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
@@ -65,6 +66,26 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
       );
     }
     return false;
+  }
+
+  get sortStateIcon(): string {
+    const prSettings = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    if (this.store.selectSnapshot(AppStore.isFolder)) {
+      return this.getSortStateIcon(prSettings.sortedFolderByTypeId);
+    }
+    if (this.store.selectSnapshot(AppStore.isNote)) {
+      return this.getSortStateIcon(prSettings.sortedNoteByTypeId);
+    }
+  }
+
+  getSortStateIcon(sortEnum: SortedByENUM): string {
+    if (sortEnum === SortedByENUM.AscDate) {
+      return 'north';
+    }
+    if (sortEnum === SortedByENUM.DescDate) {
+      return 'south';
+    }
+    return null;
   }
 
   ngOnDestroy(): void {
