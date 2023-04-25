@@ -45,6 +45,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     contentId: string,
     files: File[],
   ): Promise<string> {
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles(files);
+    if (!isCan) {
+      return;
+    }
     const collectionResult = await this.apiDocuments.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
@@ -63,11 +67,6 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     $event: UploadFileToEntity,
     noteId: string,
   ): Promise<DocumentModel[]> => {
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
-    if (!isCan) {
-      return;
-    }
-
     const operation = this.longTermOperationsHandler.addNewUploadToNoteOperation(
       'uploader.uploadingDocumentsNoteLong',
       'uploader.uploading',
