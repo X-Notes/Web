@@ -369,7 +369,7 @@ namespace Noots.DatabaseContext
                 {
                     Id = BillingPlanTypeENUM.Standart, 
                     Name = nameof(BillingPlanTypeENUM.Standart), 
-                    MaxSize = 1048576000, // 1000 MB
+                    MaxSize = 104857600, // 100 MB
                     MaxLabels = 500,
                     MaxNotes = 250,
                     MaxFolders = 250,

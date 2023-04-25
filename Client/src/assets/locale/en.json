@@ -368,7 +368,7 @@
     "labels": "labels",
     "related": "related notes for note",
     "memory": "memory",
-    "history-last-15": "Last 15 copies of note",
+    "history-last-15": "Last 15 snapshots of note",
     "history-all": "All note history",
     "personalization": "Personalization settings",
     "per-month": "per month",

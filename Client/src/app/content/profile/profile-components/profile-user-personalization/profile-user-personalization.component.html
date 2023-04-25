@@ -1,4 +1,4 @@
-<div appTheme class="personalization-container" [ngStyle]="{opacity: isStandard ? '0.5' : '1'}">
+<div appTheme class="personalization-container">
   <div class="field">
     <div class="general-row inner-box-list slider-row general-column">
       <div class="field-name field-name-full">
@@ -13,7 +13,6 @@
           min="1"
           max="20"
           thumbLabel
-          [disabled]="isStandard"
           [ngModel]="(pSettings$ | async).contentInNoteCount"
           (ngModelChange)="changePersonalizationSettings($event, pSettings.contentInNoteCount)"
         ></mat-slider>
@@ -41,7 +40,6 @@
           min="1"
           max="20"
           thumbLabel
-          [disabled]="isStandard"
           [ngModel]="(pSettings$ | async).notesInFolderCount"
           (ngModelChange)="changePersonalizationSettings($event, pSettings.notesInFolderCount)"
         ></mat-slider>
@@ -61,7 +59,6 @@
         <p>{{ 'profile.isViewAudioOnNote' | translate }}</p>
       </div>
       <mat-checkbox
-        [disabled]="isStandard"
         [ngModel]="(pSettings$ | async).isViewAudioOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewAudioOnNote)"
       ></mat-checkbox>
@@ -80,7 +77,6 @@
         <p>{{ 'profile.isViewDocumentOnNote' | translate }}</p>
       </div>
       <mat-checkbox
-        [disabled]="isStandard"
         [ngModel]="(pSettings$ | async).isViewDocumentOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewDocumentOnNote)"
       ></mat-checkbox>
@@ -99,7 +95,6 @@
         <p>{{ 'profile.isViewPhotosOnNote' | translate }}</p>
       </div>
       <mat-checkbox
-        [disabled]="isStandard"
         [ngModel]="(pSettings$ | async).isViewPhotosOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewPhotosOnNote)"
       ></mat-checkbox>
@@ -118,7 +113,6 @@
         <p>{{ 'profile.isViewTextOnNote' | translate }}</p>
       </div>
       <mat-checkbox
-        [disabled]="isStandard"
         [ngModel]="(pSettings$ | async).isViewTextOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewTextOnNote)"
       ></mat-checkbox>
@@ -137,7 +131,6 @@
         <p>{{ 'profile.isViewVideoOnNote' | translate }}</p>
       </div>
       <mat-checkbox
-        [disabled]="isStandard"
         [ngModel]="(pSettings$ | async).isViewVideoOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewVideoOnNote)"
       ></mat-checkbox>

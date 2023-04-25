@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from '../enums/theme.enum';
+import { BillingPlan } from 'src/app/core/models/billing/billing-plan';
 @Component({
   selector: 'app-memory-indicator',
   templateUrl: './memory-indicator.component.html',
@@ -16,9 +17,13 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  memory: number;
+  memoryUsedBytes: number;
+
+  memoryUsedM: number;
 
   billing: BillingPlanId;
+
+  plans: BillingPlan[];
 
   constructor(private store: Store) {}
 
@@ -37,25 +42,19 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   }
 
   get procent() {
-    return `${(this.memory / this.userMemory) * 100}%`;
+    return `${(this.memoryUsedBytes / this.userPlan.maxSize) * 100}%`;
   }
 
-  get userMemory() {
-    switch (this.billing) {
-      case BillingPlanId.Standard: {
-        return 1000; // TODO LOAD THIS DATA FROM SERVER
-      }
-      case BillingPlanId.Premium: {
-        return 5000;
-      }
-      default: {
-        return 9999999; // IT`S OK
-      }
-    }
+  get userPlan(): BillingPlan {
+    return this.plans.find((x) => x.id === this.billing);
+  }
+
+  get userMemory(): string {
+    return this.userPlan?.getMemoryMb;
   }
 
   getIndicatorColor(theme: ThemeENUM) {
-    const check = this.memory / this.userMemory;
+    const check = this.memoryUsedBytes / this.userPlan.maxSize;
     if (check < 0.85) {
       return theme === ThemeENUM.Dark ? 'white' : '#404040';
     }
@@ -69,15 +68,27 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store
+      .select(UserStore.getMemoryBytes)
+      .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
+      .subscribe((space) => (this.memoryUsedBytes = space));
+
+    this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
       // eslint-disable-next-line no-return-assign
-      .subscribe((space) => (this.memory = Math.ceil(space)));
+      .subscribe((m) => (this.memoryUsedM = Math.ceil(m)));
 
     this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
       // eslint-disable-next-line no-return-assign
       .subscribe((user) => (this.billing = user.billingPlanId));
+
+    this.store
+      .select(UserStore.getBillingsPlans)
+      .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
+      .subscribe((plans) => (this.plans = plans));
   }
 }

@@ -77,6 +77,11 @@ export class UserStore {
   }
 
   @Selector()
+  static getActiveBillingsPlans(state: UserState): BillingPlan[] {
+    return state.billingPlans.filter((x) => x.id === BillingPlanId.Standard);
+  }
+
+  @Selector()
   static getMemoryBytes(state: UserState): number {
     return state.memory;
   }
