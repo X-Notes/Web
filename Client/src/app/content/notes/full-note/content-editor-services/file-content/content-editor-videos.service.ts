@@ -38,6 +38,10 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToVideosCollection(noteId: string, contentId: string, files: File[]) {
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles(files);
+    if (!isCan) {
+      return;
+    }
     const collectionResult = await this.apiVideos.transformTo(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true;
@@ -56,11 +60,6 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     $event: UploadFileToEntity,
     noteId: string,
   ): Promise<VideoModel[]> => {
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
-    if (!isCan) {
-      return;
-    }
-
     const operation = this.longTermOperationsHandler.addNewUploadToNoteOperation(
       'uploader.uploadingVideosNoteLong',
       'uploader.uploading',

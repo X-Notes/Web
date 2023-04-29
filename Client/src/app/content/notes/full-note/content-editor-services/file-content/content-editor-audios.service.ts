@@ -42,6 +42,10 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     contentId: string,
     files: File[],
   ): Promise<string> {
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles(files);
+    if (!isCan) {
+      return;
+    }
     const collectionResult = await this.apiAudiosCollection
       .transformTo(noteId, contentId)
       .toPromise();
@@ -62,11 +66,6 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     $event: UploadFileToEntity,
     noteId: string,
   ): Promise<AudioModel[]> => {
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
-    if (!isCan) {
-      return;
-    }
-
     const operation = this.longTermOperationsHandler.addNewUploadToNoteOperation(
       'uploader.uploadingAudiosNoteLong',
       'uploader.uploading',

@@ -8,8 +8,7 @@ namespace Common.DatabaseModels.Models.Plan
     public class BillingPlan : BaseEntity<BillingPlanTypeENUM>
     {
         public long MaxSize { set; get; }
-        
-        
+            
         public int MaxNotes { set; get; }
         
         public int MaxFolders { set; get; }

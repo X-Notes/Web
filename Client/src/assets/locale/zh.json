@@ -274,7 +274,12 @@
     "goToNew": "转到新通知",
     "newMessage": "新增功能",
     "readMessage": "阅读留言",
-    "ChangeUserPermissionNote": "更改用户权限说明"
+    "changeUserPermissionNote": "您对该笔记的权限已被改变",
+    "changeUserPermissionFolder": "您对文件夹的权限已被改变",
+    "sentInvitesToFolder":  "文件夹已与你共享",
+    "sendInvitesToNote": "笔记与您共享",
+    "removeUserFromFolder": "您对该文件夹的访问权已被取消",
+    "removeUserFromNote": "你对笔记的访问权已被取消"
   },
   "uploader": {
     "uploading": "上传",

@@ -17,10 +17,12 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 export class ProfileBillingComponent implements OnInit {
   @Input() user: ShortUser;
 
-  @Select(UserStore.getBillingsPlans)
+  @Select(UserStore.getActiveBillingsPlans)
   public billingPlans$: Observable<BillingPlan[]>;
 
   billingPlanId = BillingPlanId;
+
+  featureActive = false;
 
   constructor(private store: Store, private translate: TranslateService) {}
 
@@ -64,14 +66,13 @@ export class ProfileBillingComponent implements OnInit {
 
   getCount(count: number): string {
     if (count >= 1000) {
-      return `${count / 1000}k`;
+      return `${count / 1000}.000`;
     }
     return count.toString();
   }
 
-  getSize = (size: number) => size / Math.pow(1024, 2);
-
   updateBillingPlan(plan: BillingPlanId): void {
+    return;
     this.store.dispatch(new UpdateBillingUserPlan(plan));
   }
 }

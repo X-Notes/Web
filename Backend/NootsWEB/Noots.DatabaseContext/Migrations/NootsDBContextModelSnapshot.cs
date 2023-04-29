@@ -6,6 +6,7 @@ using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -736,7 +737,7 @@ namespace Noots.DatabaseContext.Migrations
                             MaxLabels = 500,
                             MaxNotes = 250,
                             MaxRelatedNotes = 5,
-                            MaxSize = 1048576000L,
+                            MaxSize = 104857600L,
                             Name = "Standart",
                             Price = 0.0
                         },
@@ -919,7 +920,7 @@ namespace Noots.DatabaseContext.Migrations
                     b.ToTable("Background", "user");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notification", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -937,8 +938,13 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<bool>("IsSystemMessage")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("TranslateKeyMessage")
-                        .HasColumnType("text");
+                    b.Property<NotificationMetadata>("Metadata")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("NotificationMessagesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(4);
 
                     b.Property<Guid?>("UserFromId")
                         .HasColumnType("uuid");
@@ -948,6 +954,8 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("NotificationMessagesId");
+
                     b.HasIndex("UserFromId");
 
                     b.HasIndex("UserToId");
@@ -955,21 +963,49 @@ namespace Noots.DatabaseContext.Migrations
                     b.ToTable("Notification", "user");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.NotificationSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("MessageKey")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.ToTable("NotificationMessages", "user");
 
-                    b.ToTable("NotificationSetting", "user");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MessageKey = "notification.changeUserPermissionFolder"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MessageKey = "notification.changeUserPermissionNote"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MessageKey = "notification.sentInvitesToFolder"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MessageKey = "notification.sentInvitesToNote"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MessageKey = "notification.removeUserFromFolder"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            MessageKey = "notification.removeUserFromNote"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.PersonalizationSetting", b =>
@@ -1059,7 +1095,9 @@ namespace Noots.DatabaseContext.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("BillingPlanId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");
@@ -1619,8 +1657,14 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notification", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.Notification", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", "NotificationMessages")
+                        .WithMany("Notifications")
+                        .HasForeignKey("NotificationMessagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "UserFrom")
                         .WithMany("NotificationsFrom")
                         .HasForeignKey("UserFromId")
@@ -1632,20 +1676,11 @@ namespace Noots.DatabaseContext.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("NotificationMessages");
+
                     b.Navigation("UserFrom");
 
                     b.Navigation("UserTo");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.NotificationSetting", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
-                        .WithOne("NotificationSettings")
-                        .HasForeignKey("Common.DatabaseModels.Models.Users.NotificationSetting", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.PersonalizationSetting", b =>
@@ -1961,6 +1996,11 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("CurrentUserBackground");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", b =>
+                {
+                    b.Navigation("Notifications");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.SortedByType", b =>
                 {
                     b.Navigation("PersonalizationSettingsFolders");
@@ -1979,8 +2019,6 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("Labels");
 
                     b.Navigation("Notes");
-
-                    b.Navigation("NotificationSettings");
 
                     b.Navigation("NotificationsFrom");
 

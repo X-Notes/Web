@@ -1,11 +1,10 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Notes;
-using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.Notifications.Services;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
@@ -17,18 +16,18 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
     private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly NotificationRepository notificationRepository;
+    private readonly NotificationService notificationService;
 
     public SendInvitesToUsersNotesHandler(
         UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
         IMediator _mediator,
         AppSignalRService appSignalRHub,
-        NotificationRepository notificationRepository)
+        NotificationService notificationService)
     {
         this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
-        this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
     }
     
     public async Task<OperationResult<Unit>> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
@@ -53,24 +52,16 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
 
             await usersOnPrivateNotesRepository.AddRangeAsync(permissionsRequests);
 
-            var notifications = request.UserIds.Select(userId => new Notification()
-            {
-                UserFromId = permissions.Caller.Id,
-                UserToId = userId,
-                TranslateKeyMessage = $"notification.SentInvitesToNote",
-                AdditionalMessage = request.Message,
-                Date = DateTimeProvider.Time
-            });
-
-            await notificationRepository.AddRangeAsync(notifications);
-
             var updateCommand = new UpdatePermissionNoteWS();
             updateCommand.IdsToAdd.Add(request.NoteId);
-
-            foreach (var notification in notifications)
+            foreach (var userId in request.UserIds)
             {
-                await appSignalRHub.UpdatePermissionUserNote(updateCommand, notification.UserToId);
+                await appSignalRHub.UpdatePermissionUserNote(updateCommand, userId);
             }
+
+            // NOTIFICATIONS
+            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
+            await notificationService.AddNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToNoteV1, metadata, request.Message);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

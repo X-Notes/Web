@@ -274,7 +274,12 @@
     "goToNew": "Vai alle nuove notifiche",
     "newMessage": "Nuovo",
     "readMessage": "Leggi il messaggio",
-    "ChangeUserPermissionNote": "Nota sulle autorizzazioni utente di modifica"
+    "changeUserPermissionNote": "I tuoi permessi per la nota sono stati modificati",
+    "changeUserPermissionFolder": "I permessi per la cartella sono stati modificati",
+    "sentInvitesToFolder": "La cartella è stata condivisa con voi",
+    "sentInvitesToNote": "La nota è stata condivisa con l'utente",
+    "removeUserFromFolder": "L'accesso alla cartella è stato revocato",
+    "removeUserFromNote": "L'accesso alla nota è stato revocato"
   },
   "uploader": {
     "uploading": "Caricamento",

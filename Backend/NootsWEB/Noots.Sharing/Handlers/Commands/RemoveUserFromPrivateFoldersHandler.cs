@@ -1,10 +1,9 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.Notifications.Services;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +14,18 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly NotificationRepository notificationRepository;
+    private readonly NotificationService notificationService;
     private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
 
     public RemoveUserFromPrivateFoldersHandler(
         IMediator mediator, 
         AppSignalRService appSignalRHub,
-        NotificationRepository notificationRepository,
+        NotificationService notificationService,
         UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
     {
         this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
-        this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
         this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
     }
     
@@ -43,20 +42,12 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
             {
                 await usersOnPrivateFoldersRepository.RemoveAsync(access);
 
-                var notification = new Notification()
-                {
-                    UserFromId = permissions.Caller.Id,
-                    UserToId = request.PermissionUserId,
-                    TranslateKeyMessage = "notification.RemoveUserFromFolder",
-                    Date = DateTimeProvider.Time
-                };
-
-                await notificationRepository.AddAsync(notification);
-
                 var updateCommand = new UpdatePermissionFolderWS();
                 updateCommand.RevokeIds.Add(request.FolderId);
-
                 await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
+
+                var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
+                await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata, null);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

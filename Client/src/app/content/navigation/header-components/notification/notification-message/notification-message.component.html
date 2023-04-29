@@ -3,7 +3,7 @@
     <img
       *ngIf="!photoError"
       alt="user image"
-      (error)="photoError = true;"
+      (error)="photoError = true"
       [src]="message.userFromPhotoPath"
     />
     <div *ngIf="photoError" class="photo-error">
@@ -19,14 +19,30 @@
         </p>
       </div>
       <div class="info date">
-        <p>{{ message.date | date : 'd MMM, h:mm' }}</p>
+        <p>{{ message.date | date: 'd MMM, h:mm' }}</p>
       </div>
     </div>
     <div class="username">
-      <p>{{message.userFromName}}</p>
+      <p>{{ message.userFromName }}</p>
     </div>
     <div class="user-message">
-      <p>{{ typeMessage | translate }}</p>
+      <p [innerHtml]="message.message | translate"></p>
+    </div>
+    <div
+      [ngClass]="{ 'entity-title-active': message.isNoteLinkActive }"
+      class="entity-title"
+      (click)="clickNoteLink()"
+      *ngIf="message.getShowNoteTitle()"
+    >
+      {{ title ?? ('placeholder.unnamedNote' | translate) }}
+    </div>
+    <div
+      [ngClass]="{ 'entity-title-active': message.isFolderLinkActive }"
+      class="entity-title"
+      (click)="clickFolderLink()"
+      *ngIf="message.getShowFolderTitle()"
+    >
+      {{ title ?? ('placeholder.unnamedFolder' | translate) }}
     </div>
   </div>
 </div>

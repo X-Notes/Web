@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Common.DTO.Notifications;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
@@ -46,9 +47,9 @@ namespace Noots.SignalrUpdater.Impl
             return connections.Select(x => x.ConnectionId).ToList();
         }
 
-        public async Task SendNewNotification(Guid userId, bool flag)
+        public async Task SendNewNotification(Guid userId, NotificationDTO notification)
         {
-            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, flag);
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, notification);
         }
 
         public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)

@@ -51,6 +51,7 @@ using Noots.Sharing;
 using Noots.SignalrUpdater;
 using Common.Redis;
 using BI.Services.Notes.Interaction;
+using Noots.Notifications;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -161,6 +162,9 @@ namespace WriteAPI.ConfigureAPP
             
             // Billing
             services.ApplyBillingDI();
+
+            // Notifications 
+            services.ApplyNotificationsModule();
         }
 
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)

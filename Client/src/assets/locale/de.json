@@ -274,7 +274,12 @@
     "goToNew": "Zu neuen Benachrichtigungen wechseln",
     "newMessage": "Neu",
     "readMessage": "Nachricht lesen",
-    "ChangeUserPermissionNote": "Hinweis zum Ändern der Benutzerberechtigung"
+    "changeUserPermissionNote": "Ihre Berechtigungen für die Notiz wurden geändert",
+    "changeUserPermissionFolder": "Ihre Berechtigungen für den Ordner wurden geändert",
+    "sentInvitesToFolder": "Der Ordner wurde für Sie freigegeben",
+    "sentInvitesToNote": "Notiz wurde mit Ihnen geteilt",
+    "removeUserFromFolder": "Ihr Zugriff auf den Ordner wurde widerrufen",
+    "removeUserFromNote": "Der Zugriff auf die Notiz wurde Ihnen entzogen"
   },
   "uploader": {
     "uploading": "Hochladen",
@@ -367,7 +372,7 @@
     "folders": "Faltprospekte",
     "labels": "etiketten",
     "related": "Zugehörige Hinweise zur Anmerkung",
-    "memory": "Gedächtnis",
+    "memory": "gedächtnis",
     "history-last-15": "Letzte 15 Exemplare der Notiz",
     "history-all": "Gesamte Notizhistorie",
     "personalization": "Personalisierungseinstellungen",

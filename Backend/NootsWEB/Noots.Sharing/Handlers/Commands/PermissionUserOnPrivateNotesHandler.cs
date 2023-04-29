@@ -1,10 +1,9 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.Notifications.Services;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +14,18 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly NotificationRepository notificationRepository;
+    private readonly NotificationService notificationService;
     private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
 
     public PermissionUserOnPrivateNotesHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
-        NotificationRepository notificationRepository,
+        NotificationService notificationService,
         UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
-        this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
         this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
     }
     
@@ -54,20 +53,12 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
             access.AccessTypeId = request.AccessTypeId;
             await usersOnPrivateNotesRepository.UpdateAsync(access);
 
-            var notification = new Notification()
-            {
-                UserFromId = permissions.Caller.Id,
-                UserToId = request.PermissionUserId,
-                TranslateKeyMessage = "notification.ChangeUserPermissionNote",
-                Date = DateTimeProvider.Time
-            };
-
-            await notificationRepository.AddAsync(notification);
-
             var updateCommand = new UpdatePermissionNoteWS();
             updateCommand.UpdatePermission(new UpdatePermissionEntity(access.NoteId, access.AccessTypeId));
-
             await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
+
+            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
+            await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionNoteV1, metadata, null!);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

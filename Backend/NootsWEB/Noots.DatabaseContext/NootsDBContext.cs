@@ -10,6 +10,7 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DatabaseModels.Models.WS;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +20,6 @@ namespace Noots.DatabaseContext
     {
         // USERS & NOTIFICATIONS
         public DbSet<User> Users { get; set; }
-
-        public DbSet<NotificationSetting> NotificationSettings { get; set; }
 
         public DbSet<PersonalizationSetting> PersonalizationSettings { set; get; }
 
@@ -126,6 +125,7 @@ namespace Noots.DatabaseContext
             // USER
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
+            modelBuilder.Entity<User>().Property(x => x.BillingPlanId).HasDefaultValue(BillingPlanTypeENUM.Standart);
 
             modelBuilder.Entity<User>()
                 .HasOne(x => x.CurrentBackground)
@@ -139,6 +139,9 @@ namespace Noots.DatabaseContext
 
             modelBuilder.Entity<UserProfilePhoto>()
                 .HasKey(x => x.UserId);
+
+            // NOTIFICATIONS 
+            modelBuilder.Entity<Notification>().Property(x => x.NotificationMessagesId).HasDefaultValue(NotificationMessagesEnum.SentInvitesToNoteV1);
 
             // WS
             modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.Id });
@@ -369,7 +372,7 @@ namespace Noots.DatabaseContext
                 {
                     Id = BillingPlanTypeENUM.Standart, 
                     Name = nameof(BillingPlanTypeENUM.Standart), 
-                    MaxSize = 1048576000, // 1000 MB
+                    MaxSize = 104857600, // 100 MB
                     MaxLabels = 500,
                     MaxNotes = 250,
                     MaxFolders = 250,
@@ -420,6 +423,16 @@ namespace Noots.DatabaseContext
 
             modelBuilder.Entity<Storage>().HasData(
                 new Storage { Id = StoragesEnum.DEV, Name = "DEV" }
+             );
+
+
+            modelBuilder.Entity<NotificationMessages>().HasData(
+                new NotificationMessages { Id = NotificationMessagesEnum.ChangeUserPermissionFolderV1, MessageKey = NotificationConstants.ChangeUserPermissionFolder },
+                new NotificationMessages { Id = NotificationMessagesEnum.ChangeUserPermissionNoteV1, MessageKey = NotificationConstants.ChangeUserPermissionNote },
+                new NotificationMessages { Id = NotificationMessagesEnum.SentInvitesToFolderV1, MessageKey = NotificationConstants.SentInvitesToFolder },
+                new NotificationMessages { Id = NotificationMessagesEnum.SentInvitesToNoteV1, MessageKey = NotificationConstants.SentInvitesToNote },
+                new NotificationMessages { Id = NotificationMessagesEnum.RemoveUserFromFolderV1, MessageKey = NotificationConstants.RemoveUserFromFolder },
+                new NotificationMessages { Id = NotificationMessagesEnum.RemoveUserFromNoteV1, MessageKey = NotificationConstants.RemoveUserFromNote }
              );
         }
     }

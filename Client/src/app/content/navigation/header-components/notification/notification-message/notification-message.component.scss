@@ -65,9 +65,21 @@
 
     .user-message {
       display: flex;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       margin-top: 0.25rem;
       font-weight: 300;
+    }
+
+    .entity-title {
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    .entity-title-active {
+      &:hover {
+        color: #00c2ff;
+      }
     }
   }
 }

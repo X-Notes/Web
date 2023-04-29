@@ -1,10 +1,9 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.Notifications.Services;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +14,18 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
 {
     private readonly IMediator mediator;
     private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
-    private readonly NotificationRepository notificationRepository;
+    private readonly NotificationService notificationService;
     private readonly AppSignalRService appSignalRHub;
 
     public SendInvitesToUsersFoldersHandler(
         IMediator _mediator, 
         UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
-        NotificationRepository notificationRepository,
+        NotificationService notificationService,
         AppSignalRService appSignalRHub)
     {
         mediator = _mediator;
         this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
-        this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
         this.appSignalRHub = appSignalRHub;
     }
     
@@ -46,24 +45,16 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
 
             await usersOnPrivateFoldersRepository.AddRangeAsync(permissionsRequests);
 
-            var notifications = request.UserIds.Select(userId => new Notification()
-            {
-                UserFromId = permissions.Caller.Id,
-                UserToId = userId,
-                TranslateKeyMessage = $"notification.SentInvitesToFolder",
-                AdditionalMessage = request.Message,
-                Date = DateTimeProvider.Time
-            });
-
-            await notificationRepository.AddRangeAsync(notifications);
-
             var updateCommand = new UpdatePermissionFolderWS();
             updateCommand.IdsToAdd.Add(request.FolderId);
-
-            foreach (var notification in notifications)
+            foreach (var userId in request.UserIds)
             {
-                await appSignalRHub.UpdatePermissionUserFolder(updateCommand, notification.UserToId);
+                await appSignalRHub.UpdatePermissionUserFolder(updateCommand, userId);
             }
+
+            // NOTIFICATIONS
+            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
+            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToFolderV1, metadata, request.Message);
         }
 
         return Unit.Value;

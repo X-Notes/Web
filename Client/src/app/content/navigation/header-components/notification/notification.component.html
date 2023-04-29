@@ -40,6 +40,8 @@
         *ngFor="let item of notificationsNew$ | async"
         [message]="item"
         [isRead]="false"
+        (clickNoteEvent)="navigateNote($event)"
+        (clickFolderEvent)="navigateFolder($event)"
       ></app-notification-message>
       <div class="notification-action see-all">
         <button
@@ -86,6 +88,8 @@
           *ngFor="let item of notificationsRead$ | async"
           [message]="item"
           [isRead]="true"
+          (clickNoteEvent)="navigateNote($event)"
+          (clickFolderEvent)="navigateFolder($event)"
         ></app-notification-message>
       </div>
       <app-no-results-illustration
