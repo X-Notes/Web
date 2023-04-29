@@ -10,6 +10,7 @@ using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DatabaseModels.Models.WS;
 
 namespace Common.DatabaseModels.Models.Users
@@ -30,8 +31,6 @@ namespace Common.DatabaseModels.Models.Users
 
         public LanguageENUM LanguageId { set; get; }
         public Language Language { set; get; }
-
-        public NotificationSetting NotificationSettings { set; get; }
 
         public PersonalizationSetting PersonalizationSetting { set; get; }
 

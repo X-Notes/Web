@@ -274,7 +274,12 @@
     "goToNew": "Gå till nya aviseringar",
     "newMessage": "Ny",
     "readMessage": "Läs meddelandet",
-    "ChangeUserPermissionNote": "Ändra anteckning om användarbehörighet"
+    "changeUserPermissionNote": "Dina behörigheter till anteckningen har ändrats",
+    "changeUserPermissionFolder": "Dina behörigheter till mappen har ändrats",
+    "sentInvitesToFolder": "Mappen har delats med dig",
+    "sentInvitesToNote": "Note was shared with you",
+    "removeUserFromFolder": "Din tillgång till mappen har återkallats",
+    "removeUserFromNote": "Din åtkomst till anteckningen har återkallats"
   },
   "uploader": {
     "uploading": "Uppladdning",

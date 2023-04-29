@@ -90,7 +90,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   get isAnySelected(): boolean {
-    return this.entities.some((z) => z.isSelected === true);
+    return this.entities.some((q) => q.isSelected === true);
   }
 
   get getByCurrentType() {
@@ -166,8 +166,8 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled: boolean = true) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (this.getIsFirstInit(z)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (this.getIsFirstInit(q)) {
         // eslint-disable-next-line no-param-reassign
         isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(isDragEnabled);
@@ -226,7 +226,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     await this.store.dispatch(new LoadFolders(typeENUM, pr)).toPromise();
 
     const types = Object.values(FolderTypeENUM).filter(
-      (z) => typeof z === 'number' && z !== typeENUM,
+      (q) => typeof q === 'number' && q !== typeENUM,
     );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);

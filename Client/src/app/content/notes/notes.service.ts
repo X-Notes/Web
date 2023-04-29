@@ -204,7 +204,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     await this.store.dispatch(new LoadNotes(typeENUM, pr)).toPromise();
     const types = Object.values(NoteTypeENUM).filter(
-      (z) => typeof z === 'number' && z !== typeENUM,
+      (q) => typeof q === 'number' && q !== typeENUM,
     );
     const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
     this.store.dispatch(actions);

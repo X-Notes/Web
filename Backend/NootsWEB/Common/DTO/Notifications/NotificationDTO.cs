@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.DatabaseModels.Models.Users;
+using Common.DatabaseModels.Models.Users.Notifications;
 
 namespace Common.DTO.Notifications
 {
@@ -14,9 +14,11 @@ namespace Common.DTO.Notifications
 
         public bool IsRead { set; get; }
 
-        public string TranslateKeyMessage { set; get; }
+        public NotificationMessagesEnum NotificationMessagesId { set; get; }
 
         public string AdditionalMessage { set; get; }
+
+        public NotificationMetadata Metadata { set; get; }
 
         public DateTimeOffset Date { set; get; }
 
@@ -27,14 +29,15 @@ namespace Common.DTO.Notifications
             this.IsSystemMessage = notification.IsSystemMessage;
             this.IsRead = notification.IsRead;
             
-            this.TranslateKeyMessage = notification.TranslateKeyMessage;
+            this.NotificationMessagesId = notification.NotificationMessagesId;
             this.AdditionalMessage = notification.AdditionalMessage;
+            this.Metadata = notification.Metadata;
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;
             this.UserFromPhotoPath = userPhotoPath;
 
-            this.Date = Date;
+            this.Date = notification.Date;
         }
     }
 }

@@ -274,7 +274,12 @@
     "goToNew": "Przejdź do nowych powiadomień",
     "newMessage": "Nowy",
     "readMessage": "Przeczytaj wiadomość",
-    "ChangeUserPermissionNote": "Notatka dotycząca zmiany uprawnień użytkownika"
+    "changeUserPermissionNote": "Twoje uprawnienia do notatki zostały zmienione",
+    "changeUserPermissionFolder": "Twoje uprawnienia do folderu zostały zmienione",
+    "sentInvitesToFolder": "Folder został udostępniony użytkownikowi",
+    "sentInvitesToNote": "Note was shared with you",
+    "removeUserFromFolder": "Twój dostęp do folderu został cofnięty",
+    "removeUserFromNote": "Twój dostęp do notatki został cofnięty"
   },
   "uploader": {
     "uploading": "Przesyłanie",

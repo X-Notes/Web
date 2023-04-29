@@ -6,9 +6,9 @@ using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +18,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230427213759_refactor-notifications")]
+    partial class refactornotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -938,7 +939,7 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<bool>("IsSystemMessage")
                         .HasColumnType("boolean");
 
-                    b.Property<NotificationMetadata>("Metadata")
+                    b.Property<string>("Metadata")
                         .HasColumnType("jsonb");
 
                     b.Property<int>("NotificationMessagesId")
@@ -954,7 +955,8 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NotificationMessagesId");
+                    b.HasIndex("NotificationMessagesId")
+                        .IsUnique();
 
                     b.HasIndex("UserFromId");
 
@@ -1660,8 +1662,8 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.Notification", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", "NotificationMessages")
-                        .WithMany("Notifications")
-                        .HasForeignKey("NotificationMessagesId")
+                        .WithOne("Notification")
+                        .HasForeignKey("Common.DatabaseModels.Models.Users.Notifications.Notification", "NotificationMessagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1998,7 +2000,7 @@ namespace Noots.DatabaseContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", b =>
                 {
-                    b.Navigation("Notifications");
+                    b.Navigation("Notification");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.SortedByType", b =>

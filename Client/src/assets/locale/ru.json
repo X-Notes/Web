@@ -276,7 +276,12 @@
     "goToNew": "Перейти к новым уведомлениям",
     "newMessage": "Новое",
     "readMessage": "Прочитанное",
-    "ChangeUserPermissionNote": "Доступ пользователя к заметке изменен"
+    "changeUserPermissionNote": "Доступ к заметке изменен",
+    "changeUserPermissionFolder": "Доступ к папке изменен",
+    "sentInvitesToFolder": "С вами поделились папкой",
+    "sentInvitesToNote": "С вами поделились заметкой",
+    "removeUserFromFolder": "Ваш доступ к папке был отозван",
+    "removeUserFromNote": "Ваш доступ к заметке был отозван"
   },
   "uploader": {
     "uploading": "Загрузка",

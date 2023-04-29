@@ -14,7 +14,7 @@ import {
   ShowSnackNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
-import { AppNotification } from '../models/app-notification.model';
+import { AppNotification } from '../models/notifications/app-notification.model';
 
 interface AppState {
   routing: EntityType;
@@ -41,7 +41,9 @@ export class AppStore {
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {
-    const notifications = state.notifications.filter((notif) => !notif.isRead);
+    const notifications = state.notifications
+      .filter((notif) => !notif.isRead)
+      .sort((a, b) => b.date.getTime() - a.date.getTime());
     return notifications;
   }
 
@@ -59,13 +61,15 @@ export class AppStore {
 
   @Selector()
   static getReadNotifications(state: AppState): AppNotification[] {
-    const notifications = state.notifications.filter((notif) => notif.isRead);
+    const notifications = state.notifications
+      .filter((notif) => notif.isRead)
+      .sort((a, b) => b.date.getTime() - a.date.getTime());
     return notifications;
   }
 
   @Selector()
   static getNotificationsCount(state: AppState): number {
-    return state.notifications.filter((z) => z.isRead === false).length;
+    return state.notifications.filter((q) => q.isRead === false).length;
   }
 
   @Selector()
@@ -298,20 +302,20 @@ export class AppStore {
     await this.notificationService.readAllNotifications().toPromise();
     let { notifications } = getState();
     notifications = [...notifications].map((not) => {
-      return { ...not, isRead: true };
+      return new AppNotification({ ...not, isRead: true });
     });
     patchState({ notifications });
   }
 
   @Action(ReadNotification)
-  async readNotification({ setState }: StateContext<AppState>, { id }: ReadNotification) {
+  async readNotification({ setState, getState }: StateContext<AppState>, { id }: ReadNotification) {
+    let notification = getState().notifications.find((x) => x.id === id && !x.isRead);
+    if (!notification) return;
     await this.notificationService.readNotification(id).toPromise();
+    notification = new AppNotification({ ...notification, isRead: true });
     setState(
       patch({
-        notifications: updateItem<AppNotification>(
-          (notification) => notification.id === id,
-          patch({ isRead: true }),
-        ),
+        notifications: updateItem<AppNotification>((ent) => ent.id === id, notification),
       }),
     );
   }

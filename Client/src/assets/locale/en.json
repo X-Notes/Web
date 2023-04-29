@@ -274,7 +274,12 @@
     "goToNew": "Go to new notifications",
     "newMessage": "New",
     "readMessage": "Read message",
-    "ChangeUserPermissionNote": "Change user permission note"
+    "changeUserPermissionNote": "Your permissions to the note have been changed",
+    "changeUserPermissionFolder": "Your permissions to the folder have been changed",
+    "sentInvitesToFolder": "Folder was shared with you",
+    "sentInvitesToNote": "Note was shared with you",
+    "removeUserFromFolder": "Your access to the folder has been revoked",
+    "removeUserFromNote": "Your access to the note has been revoked"
   },
   "uploader": {
     "uploading": "Uploading",

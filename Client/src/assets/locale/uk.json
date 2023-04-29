@@ -276,7 +276,12 @@
     "goToNew": "Перейти до нових повідомлень",
     "newMessage": "Нове",
     "readMessage": "Прочитане",
-    "ChangeUserPermissionNote": "Доступ користувача до нотатка змінений"
+    "changeUserPermissionNote": "Доступ до нотатка змінений",
+    "changeUserPermissionFolder": "Доступ до папки змінений",
+    "sentInvitesToFolder": "Вам було надано доступ до папки",
+    "sentInvitesToNote": "Вам було надано доступ до нотатка",
+    "removeUserFromFolder": "Ваш доступ до папки було відкликано",
+    "removeUserFromNote": "Ваш доступ до нотатка було відкликано"
   },
   "uploader": {
     "uploading": "Завантаження",

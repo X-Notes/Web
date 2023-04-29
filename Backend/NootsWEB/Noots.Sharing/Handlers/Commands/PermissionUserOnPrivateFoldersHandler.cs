@@ -1,10 +1,9 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.Notifications.Services;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +14,18 @@ public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionU
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly NotificationRepository notificationRepository;
+    private readonly NotificationService notificationService;
     private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
 
     public PermissionUserOnPrivateFoldersHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
-        NotificationRepository notificationRepository,
+        NotificationService notificationService,
         UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
-        this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
         this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
     }
     
@@ -48,20 +47,12 @@ public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionU
             access.AccessTypeId = request.AccessTypeId;
             await usersOnPrivateFoldersRepository.UpdateAsync(access);
 
-            var notification = new Notification() // TODO MOVE TO SERVICE
-            {
-                UserFromId = permissions.Caller.Id,
-                UserToId = request.PermissionUserId,
-                TranslateKeyMessage = "notification.ChangeUserPermissionFolder",
-                Date = DateTimeProvider.Time
-            };
-
-            await notificationRepository.AddAsync(notification);
-
             var updateCommand = new UpdatePermissionFolderWS();
             updateCommand.UpdatePermission(new UpdatePermissionEntity(access.FolderId, access.AccessTypeId));
-
             await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
+
+            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
+            await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionFolderV1, metadata, null);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

@@ -274,7 +274,12 @@
     "goToNew": "新しい通知に移動する",
     "newMessage": "新機能",
     "readMessage": "メッセージを読む",
-    "ChangeUserPermissionNote": "ユーザー権限の変更に関するメモ"
+    "changeUserPermissionNote": "ノートに対するあなたの権限が変更されました",
+    "changeUserPermissionFolder": "フォルダの権限が変更されました",
+    "sentInvitesToFolder": "フォルダが共有されました",
+    "sentInvitesToNote": "ノートが共有された",
+    "removeUserFromFolder": "フォルダへのアクセス権が失効しました",
+    "removeUserFromNote": "ノートへのアクセス権が取り消されました"
   },
   "uploader": {
     "uploading": "アップロード",

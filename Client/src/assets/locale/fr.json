@@ -274,7 +274,12 @@
     "goToNew": "Accéder aux nouvelles notifications",
     "newMessage": "Nouveau",
     "readMessage": "Lire le message",
-    "ChangeUserPermissionNote": "Modifier la note d’autorisation de l’utilisateur"
+    "changeUserPermissionNote" : "Vos autorisations pour la note ont été modifiées",
+    "changeUserPermissionFolder" : "Vos autorisations sur le dossier ont été modifiées",
+    "sentInvitesToFolder" : "Le dossier a été partagé avec vous",
+    "sentInvitesToNote" : "Note a été partagée avec vous",
+    "removeUserFromFolder" : "Votre accès au dossier a été révoqué",
+    "removeUserFromNote" : "Votre accès à la note a été révoqué"
   },
   "uploader": {
     "uploading": "Téléchargement",
