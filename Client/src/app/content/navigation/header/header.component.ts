@@ -119,20 +119,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.appInitializerService.init();
   }
 
-  showUsers() {
-    this.pService.users = !this.pService.users;
-  }
-
   closeNotification() {
     this.isOpenNotification = false;
   }
 
   changeSource() {
     this.photoError = true;
-  }
-
-  hideMenu() {
-    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
   toggleSidebar() {

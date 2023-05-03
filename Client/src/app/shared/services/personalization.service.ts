@@ -165,9 +165,7 @@ export class PersonalizationService {
 
   orientationMobile = false;
 
-  hideInnerMenu = false;
-
-  users = true;
+  innerNoteMenuActive = false;
 
   isCollapseShared = false;
 
@@ -245,15 +243,15 @@ export class PersonalizationService {
 
   onResize(): void {
     if (this.widthMoreThan1024()) {
-      if (!this.hideInnerMenu) {
-        this.hideInnerMenu = true;
+      if (!this.innerNoteMenuActive) {
+        this.innerNoteMenuActive = true;
       }
       if (!this.stateSidebar) {
         this.stateSidebar = true;
       }
     } else {
-      if (this.hideInnerMenu) {
-        this.hideInnerMenu = false;
+      if (this.innerNoteMenuActive) {
+        this.innerNoteMenuActive = false;
       }
       if (this.stateSidebar) {
         this.stateSidebar = false;

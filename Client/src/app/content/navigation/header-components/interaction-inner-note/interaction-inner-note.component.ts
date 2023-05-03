@@ -15,6 +15,7 @@ import { PermissionsButtonsService } from '../../services/permissions-buttons.se
 import { GeneralButtonStyleType } from '../general-header-button/models/general-button-style-type.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-interaction-inner-note',
@@ -38,6 +39,18 @@ export class InteractionInnerNoteComponent {
 
   buttonStyleType = GeneralButtonStyleType;
 
+  public positions = [
+    new ConnectionPositionPair(
+      {
+        originX: 'center',
+        originY: 'top',
+      },
+      { overlayX: 'end', overlayY: 'bottom' },
+      0,
+      0,
+    ),
+  ];
+
   constructor(
     public pService: PersonalizationService,
     public renderer: Renderer2,
@@ -47,22 +60,12 @@ export class InteractionInnerNoteComponent {
     private store: Store,
   ) {}
 
-  closeMenu(): void {
-    if (this.pService.checkWidth()) {
-      this.pService.users = false;
-    }
-
-    if (!this.pService.widthMoreThan1024()) {
-      this.pService.hideInnerMenu = false;
-    }
+  openHideMenu() {
+    this.pService.innerNoteMenuActive = !this.pService.innerNoteMenuActive;
   }
 
   hideMenu() {
-    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
-  }
-
-  showUsers() {
-    this.pService.users = !this.pService.users;
+    this.pService.innerNoteMenuActive = false;
   }
 
   openRelatedNotesPopup() {
