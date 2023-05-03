@@ -63,7 +63,7 @@ export class FolderComponent implements OnInit, OnDestroy {
     this.titleChange$
       .pipe(takeUntil(this.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        this.store.dispatch(new UpdateFolderTitle(title, this.folder.id, true, null, false, false));
+        this.store.dispatch(new UpdateFolderTitle(title, this.folder.id).updateSmallFolder());
         this.folder.title = title;
       });
   }

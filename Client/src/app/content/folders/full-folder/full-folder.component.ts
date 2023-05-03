@@ -136,7 +136,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleChange$
       .pipe(takeUntil(this.ffnService.destroy), debounceTime(updateTitleEntitesDelay))
       .subscribe((title) => {
-        this.store.dispatch(new UpdateFolderTitle(title, this.folderId, true, null, false));
+        const command = new UpdateFolderTitle(title, this.folderId).updateFullFolder();
+        this.store.dispatch(command);
         this.title = title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
       });

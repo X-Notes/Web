@@ -80,7 +80,8 @@ export class FolderStore {
     private router: Router,
     private ngZone: NgZone,
     private snackbarService: SnackbarService,
-    private translate: TranslateService) {}
+    private translate: TranslateService,
+  ) {}
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -223,7 +224,7 @@ export class FolderStore {
 
   @Selector()
   static getOwnerId(state: FolderState): string {
-    return state.fullFolder.userId
+    return state.fullFolder.userId;
   }
 
   @Action(ClearUpdatesUIFolders)
@@ -248,7 +249,7 @@ export class FolderStore {
   ) {
     const resp = await this.api.copyFolders(selectedIds).toPromise();
 
-    if(resp.success && resp.data?.length > 0){
+    if (resp.success && resp.data?.length > 0) {
       const newFolders = resp.data;
       const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
       dispatch(
@@ -263,7 +264,7 @@ export class FolderStore {
         dispatch(new AddToDomFolders([...newFolders]));
       }
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
@@ -529,7 +530,7 @@ export class FolderStore {
   @Action(CreateFolder)
   async newFolder({ getState, dispatch }: StateContext<FolderState>) {
     const resp = await this.api.new().toPromise();
-    if(resp.success){
+    if (resp.success) {
       const newF = resp.data;
       const folders = this.getFoldersByType(getState, FolderTypeENUM.Private);
       const toUpdate = new Folders(FolderTypeENUM.Private, [newF, ...folders]);
@@ -537,7 +538,7 @@ export class FolderStore {
       this.ngZone.run(() => this.router.navigate([`folders/${newF.id}`]));
       return;
     }
-    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError){
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
@@ -579,7 +580,10 @@ export class FolderStore {
   }
 
   @Action(UpdateOneFolder)
-  updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder, folderId }: UpdateOneFolder) {
+  updateOneFolder(
+    { dispatch, getState }: StateContext<FolderState>,
+    { folder, folderId }: UpdateOneFolder,
+  ) {
     for (const foldersState of getState().folders) {
       let isUpdate = false;
       let type: FolderTypeENUM = null;
@@ -608,6 +612,7 @@ export class FolderStore {
       errorPermissionMessage,
       isUpdateFullNote,
       isUpdateSmallFolders,
+      isUpdateUI,
     }: UpdateFolderTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
@@ -629,7 +634,11 @@ export class FolderStore {
         if (folderUpdate) {
           dispatch(new UpdateOneFolder({ ...folderUpdate, title: str }, folderUpdate.id));
         }
-        // UI CHANGES
+      }
+
+      // UI CHANGES
+      if (isUpdateUI) {
+        console.log(1);
         const uiChanges = this.toUpdateFolderUI(folderId, null, str, true);
         patchState({ updateFolderEvent: [uiChanges] });
       }
@@ -644,7 +653,7 @@ export class FolderStore {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullFolder: request.data,
-      isCanViewFullFolder: request.success
+      isCanViewFullFolder: request.success,
     });
   }
 
