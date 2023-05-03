@@ -21,6 +21,8 @@ import { LabelStore } from '../../labels/state/labels-state';
 import { MenuButtonsService } from '../services/menu-buttons.service';
 import { PermissionsButtonsService } from '../services/permissions-buttons.service';
 import { AppInitializerService } from 'src/app/core/app-initializer.service';
+import { GeneralButtonStyleType } from '../header-components/general-header-button/models/general-button-style-type.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-header',
@@ -39,6 +41,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
 
   @Select(AppStore.getMenuSwitch)
   public menuSwitch$: Observable<string>;
@@ -60,6 +65,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isOpenNotification = false;
 
   public photoError = false;
+
+  buttonStyleType = GeneralButtonStyleType;
 
   public positions = [
     new ConnectionPositionPair(

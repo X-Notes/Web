@@ -1,48 +1,69 @@
 <ng-container *ngIf="folder$ | async">
   <app-general-header-button
-    *ngIf="(folder$ | async).userId === (user$ | async).id && (pService.isMenuActive$ | async) === (false)"
+    *ngIf="
+      (folder$ | async).userId === (user$ | async).id && (pService.isMenuActive$ | async) === false
+    "
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"
     [iconClass]="'notes'"
-    [styleClasses]="'generic-unfixed generic-hide-text'"
+    [styleClasses]="'generic-unfixed-150 generic-hide-text'"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(folder$ | async)?.userId === (user$ | async).id && (pService.isMenuActive$ | async) === (false)"
+    [ngStyle]="{
+      display: (isNewButtonActive$ | async) ? 'block' : 'none'
+    }"
     (clickEvent)="newButton()"
-    [message]="'new.' + (route$ | async ) | translate"
+    [message]="'new.' + (route$ | async) | translate"
     [iconClass]="'plus'"
-    [styleClasses]="'generic-2 generic-unfixed generic-create generic-hide-text'"
+    [styleClasses]="'generic-unfixed-150 generic-create generic-hide-text'"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(pService.isInnerFolderSelectAllActive$ | async)"
+    *ngIf="pService.isInnerFolderSelectAllActive$ | async"
     (clickEvent)="selectAll()"
-    [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
+    [isClassOnSize]="
+      (pService.isMenuActive$ | async) === true && (pService.isHideTextOnSmall$ | async) === true
+    "
     [classOnSize]="'hide-tag-text'"
-    [message]="('header.select' | translate)"
+    [message]="'header.select' | translate"
     [iconClass]="'select'"
-    [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
+    [styleClasses]="'generic-unfixed-150 generic-hide-text'"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="(pService.isMenuActive$ | async) === (true)"
+    *ngIf="(pService.isMenuActive$ | async) === true"
     (clickEvent)="unselectAll()"
-    [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
+    [isClassOnSize]="
+      (pService.isMenuActive$ | async) === true && (pService.isHideTextOnSmall$ | async) === true
+    "
     [classOnSize]="'hide-tag-text'"
     [message]="('header.selected' | translate) + ' ' + countSelected"
     [iconClass]="'plus'"
-    [styleClasses]="'generic-2 generic-unfixed rotate'"
+    [styleClasses]="'generic-unfixed-150 rotate'"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <div
     class="interactions menu"
-    *ngIf="(isSelectedNotes$ | async)"
+    *ngIf="isSelectedNotes$ | async"
     [@showMenuLeftRight]
     [@.disabled]="!pService.widthMoreThan1024()"
   >
     <app-menu
-      [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEditFullFolderNotes: pB.IsOwnerFullFolderNotes: pB.isAllFullFolderNotesNoShared"
+      [items]="
+        menuButtonService.items
+          | manageMenuButtons
+            : pB.IsCanEditFullFolderNotes
+            : pB.IsOwnerFullFolderNotes
+            : pB.isAllFullFolderNotesNoShared
+      "
     ></app-menu>
   </div>
 </ng-container>

@@ -1,5 +1,4 @@
 @import 'variables';
-@import 'header-components';
 
 :host {
   position: relative;
@@ -125,7 +124,13 @@ header {
     }
 
     .interactions {
+      display: flex;
+      align-items: center;
+      height: 100%;
       .hamburger {
+        margin-right: 1rem;
+        cursor: pointer;
+        border-radius: 5px;
         position: relative;
         display: none;
         justify-content: center;
@@ -189,6 +194,10 @@ header {
     .interactions {
       .hamburger {
         border-color: transparent;
+        border: 0.8px solid;
+        mat-icon {
+          color: #404040;
+        }
       }
     }
   }

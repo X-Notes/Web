@@ -1,9 +1,10 @@
-<div class="d-flex" appTheme>
+<div class="d-flex">
   <button
     type="button"
     (click)="clickHandler()"
     class="generic"
-    [ngClass]="[styleClasses, isClassOnSize ? classOnSize : '']"
+    [ngStyle]="{ width: width ? width + 'px' : null }"
+    [ngClass]="[styleTypeClass, styleClasses, isClassOnSize ? classOnSize : '']"
     #buttonRipple
     [CustomTooltip]="tooltipMessage"
     [position]="tooltipPosition"

@@ -12,6 +12,9 @@ import {
 import { DialogsManageService } from '../../services/dialogs-manage.service';
 import { MenuButtonsService } from '../../services/menu-buttons.service';
 import { PermissionsButtonsService } from '../../services/permissions-buttons.service';
+import { GeneralButtonStyleType } from '../general-header-button/models/general-button-style-type.enum';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-interaction-inner-note',
@@ -26,9 +29,14 @@ export class InteractionInnerNoteComponent {
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   @ViewChild('heightPeople') heightPeople: ElementRef;
 
   @ViewChild('scrollbar') scrollbar: ElementRef;
+
+  buttonStyleType = GeneralButtonStyleType;
 
   constructor(
     public pService: PersonalizationService,

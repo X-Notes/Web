@@ -13,6 +13,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UpdatePersonalization } from 'src/app/core/stateUser/user-action';
+import { GeneralButtonStyleType } from '../general-header-button/models/general-button-style-type.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-interaction-items',
@@ -40,11 +42,16 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   @Select(UserStore.getPersonalizationSettings)
   public personalizationSetting$: Observable<PersonalizationSetting>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   @ViewChild(MatMenu) menu: MatMenu;
 
   public countSelected: number;
 
   sortedTypes = SortedByENUM;
+
+  buttonStyleType = GeneralButtonStyleType;
 
   destroy = new Subject<void>();
 

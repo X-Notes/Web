@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { FullFolder } from 'src/app/content/folders/models/full-folder.model';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
@@ -16,6 +16,8 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { MenuButtonsService } from '../../services/menu-buttons.service';
 import { PermissionsButtonsService } from '../../services/permissions-buttons.service';
+import { GeneralButtonStyleType } from '../general-header-button/models/general-button-style-type.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-interaction-inner-folder',
@@ -39,16 +41,29 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
   @Select(NoteStore.activeMenu)
   public isSelectedNotes$: Observable<boolean>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   public countSelected: number;
 
+  buttonStyleType = GeneralButtonStyleType;
+
   destroy = new Subject<void>();
+
+  isNewButtonActive$: Observable<boolean>;
 
   constructor(
     private store: Store,
     public pService: PersonalizationService,
     public menuButtonService: MenuButtonsService,
     public pB: PermissionsButtonsService,
-  ) {}
+  ) {
+    this.isNewButtonActive$ = combineLatest([
+      this.folder$,
+      this.user$,
+      pService.isMenuActive$,
+    ]).pipe(map(([folder, user, menuActive]) => folder.userId === user.id && !menuActive));
+  }
 
   ngOnInit(): void {
     this.initCountSelected();
