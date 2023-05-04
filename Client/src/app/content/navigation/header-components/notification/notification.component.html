@@ -28,9 +28,15 @@
   >
     <div class="scroll-inner">
       <div class="notification-action read-all p-sticky" *ngIf="getNewNotificationsLength$ | async">
-        <button name="read all notifications" type="button" class="generic" #readAll>
+        <button
+          (click)="readAllMessages()"
+          name="read all notifications"
+          type="button"
+          class="generic"
+          #readAll
+        >
           <div class="inner-content">
-            <p (click)="readAllMessages()">{{ 'notification.readAll' | translate}}</p>
+            <p>{{ 'notification.readAll' | translate}}</p>
           </div>
           <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
         </button>

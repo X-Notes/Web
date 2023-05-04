@@ -433,8 +433,12 @@
 @media (max-width: 600px) {
   .content-generic-project {
     .content-inner {
-      padding: 2.5rem 3.125vw 0 3.125vw;
+      padding: 1rem 1vw 0 1vw;
     }
+  }
+
+  .grid-item {
+    padding: 0 0.5rem 1rem;
   }
 
   .grid-item,
