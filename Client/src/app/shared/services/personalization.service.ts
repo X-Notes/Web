@@ -167,8 +167,6 @@ export class PersonalizationService {
 
   innerNoteMenuActive = false;
 
-  isCollapseShared = false;
-
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
   isMenuActive$: Observable<boolean> = new Observable<boolean>();
@@ -256,14 +254,6 @@ export class PersonalizationService {
       if (this.stateSidebar) {
         this.stateSidebar = false;
       }
-    }
-
-    if (this.widthMoreThan1024()) {
-      if (!this.isCollapseShared) {
-        this.isCollapseShared = true;
-      }
-    } else if (this.isCollapseShared) {
-      this.isCollapseShared = false;
     }
   }
 

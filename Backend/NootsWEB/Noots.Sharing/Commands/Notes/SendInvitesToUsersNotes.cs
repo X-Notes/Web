@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
@@ -17,10 +16,5 @@ namespace Noots.Sharing.Commands.Notes
 
         [RequiredEnumField(ErrorMessage = "Ref type id is required.")]
         public RefTypeENUM RefTypeId { set; get; }
-
-        [Required]
-        public bool SendMessage { set; get; }
-
-        public string? Message { set; get; }
     }
 }

@@ -143,10 +143,6 @@
 
 @media (max-width: 600px) {
   .content-access {
-    &::after {
-      margin-top: 1rem;
-    }
-
     .link-access-field {
       flex-wrap: wrap;
       margin-top: 1rem;

@@ -24,9 +24,9 @@ public class NotificationService
         this.mapper = mapper;
     }
 
-    public async Task AddAndSendNotification(Guid userFromId, Guid userToId, NotificationMessagesEnum key, NotificationMetadata metadata, string additionalMessage)
+    public async Task AddAndSendNotification(Guid userFromId, Guid userToId, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
-        var notification = await AddNotificationAsync(userFromId, userToId, key, metadata, additionalMessage);
+        var notification = await AddNotificationAsync(userFromId, userToId, key, metadata);
         var notificationDb = await notificationRepository.GetByIdIncludeUser(notification.Id);
 
         var userPhotoPath = mapper.GetUserProfilePhotoPath(notificationDb.UserFrom);
@@ -35,7 +35,7 @@ public class NotificationService
         await appSignalRHub.SendNewNotification(userToId, notificationDTO);
     }
 
-    public async Task<Notification> AddNotificationAsync(Guid userFromId, Guid userToId, NotificationMessagesEnum key, NotificationMetadata metadata, string additionalMessage)
+    public async Task<Notification> AddNotificationAsync(Guid userFromId, Guid userToId, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
         var notification = new Notification()
         {
@@ -43,7 +43,6 @@ public class NotificationService
             UserToId = userToId,
             NotificationMessagesId = key,
             Metadata = metadata,
-            AdditionalMessage = additionalMessage,
             Date = DateTimeProvider.Time
         };
 
@@ -52,9 +51,9 @@ public class NotificationService
         return notification;
     }
 
-    public async Task AddAndSendNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata, string additionalMessage)
+    public async Task AddAndSendNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
-        var notifications = await AddNotificationsAsync(userFromId, userToIds, key, metadata, additionalMessage);
+        var notifications = await AddNotificationsAsync(userFromId, userToIds, key, metadata);
         var notificationIds = notifications.Select(x => x.Id);
         var notificationsDb = await notificationRepository.GetByIdsIncludeUser(notificationIds.ToArray());
 
@@ -70,7 +69,7 @@ public class NotificationService
         }
     }
 
-    public async Task<List<Notification>> AddNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata, string additionalMessage)
+    public async Task<List<Notification>> AddNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
         var notifications = userToIds.Select(userId => new Notification()
         {
@@ -78,7 +77,6 @@ public class NotificationService
             UserToId = userId,
             NotificationMessagesId = key,
             Metadata = metadata,
-            AdditionalMessage = additionalMessage,
             Date = DateTimeProvider.Time
         });
 

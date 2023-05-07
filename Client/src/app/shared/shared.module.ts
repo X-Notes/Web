@@ -87,6 +87,7 @@ import { FullNoteActiveUsersComponent } from './custom-components/full-note-acti
 import { LongTermOperationsHandlerComponent } from '../content/long-term-operations-handler/long-term-operations-handler.component';
 import { LongTermOperationComponent } from '../content/long-term-operations-handler/long-term-operation/long-term-operation.component';
 import { ContentAccessSectionComponent } from './modal_components/share/content-access-section/content-access-section.component';
+import { LeftSectionEntitiesShareComponent } from './modal_components/share/left-section-entities-share/left-section-entities-share.component';
 
 @NgModule({
   declarations: [
@@ -157,6 +158,7 @@ import { ContentAccessSectionComponent } from './modal_components/share/content-
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
     ContentAccessSectionComponent,
+    LeftSectionEntitiesShareComponent,
   ],
   imports: [
     CommonModule,

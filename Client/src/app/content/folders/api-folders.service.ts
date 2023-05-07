@@ -76,19 +76,11 @@ export class ApiFoldersService {
     );
   }
 
-  sendInvitesToFolder(
-    userIds: string[],
-    folderId: string,
-    refTypeId: RefTypeENUM,
-    sendMessage: boolean,
-    message: string,
-  ) {
+  sendInvitesToFolder(userIds: string[], folderId: string, refTypeId: RefTypeENUM) {
     const obj = {
       userIds,
       folderId,
       refTypeId,
-      sendMessage,
-      message,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/folders/user/invites`, obj);
   }

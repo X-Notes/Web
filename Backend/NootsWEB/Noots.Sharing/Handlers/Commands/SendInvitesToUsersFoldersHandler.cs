@@ -54,7 +54,7 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
 
             // NOTIFICATIONS
             var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToFolderV1, metadata, request.Message);
+            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToFolderV1, metadata);
         }
 
         return Unit.Value;

@@ -47,7 +47,7 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
                 await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
 
                 var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-                await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata, null);
+                await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

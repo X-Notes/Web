@@ -13,7 +13,7 @@ export class DialogGenericHeaderComponent {
   isMessage = true;
 
   @Input()
-  icon: string;
+  iconDisabled = false;
 
   @Input()
   message: string;

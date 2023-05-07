@@ -8,9 +8,9 @@
 
 .outer {
   display: flex;
-  width: 650px;
 
   .sharing {
+    width: 640px;
     display: flex;
     flex-direction: column;
     border-radius: 15px;
@@ -63,15 +63,15 @@
         }
 
         .search-container {
-          margin-top: 1.25rem;
+          margin-top: 1rem;
         }
 
         .interaction-container {
           position: relative;
           display: flex;
           flex-direction: column;
-          margin-top: 1.25rem;
-
+          margin-top: 1rem;
+          margin-bottom: 1rem;
           .interaction-inner-container {
             display: flex;
             flex-direction: column;
@@ -121,6 +121,7 @@
                 .email {
                   display: flex;
                   flex-grow: 1;
+                  width: 50%;
                   margin-left: 0.875rem;
                   color: $text-color;
 
@@ -166,6 +167,7 @@
           align-items: center;
           user-select: none;
           p {
+            text-align: center;
             font-size: 0.875rem;
             font-weight: 400;
             color: #808080;
@@ -186,104 +188,13 @@
   }
 }
 
-.many-notes {
-  width: 900px;
-  justify-content: space-between;
-
-  .few-notes {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 0 1 64px;
-    margin-right: 0.3125rem;
-    border-radius: 15px;
-    transition: 0.2s ease;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-
-    .notes-sharing {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      margin: 0.375rem 0 0.5rem 0;
-      flex-grow: 1;
-
-      .note {
-        display: flex;
-        align-items: center;
-        flex-shrink: 1;
-        font-size: 1rem;
-        padding: 0.25rem 0.5rem;
-        margin: 0.875rem 1.125rem 0 1.125rem;
-        color: $text-color;
-        height: 27px;
-        min-width: 27px;
-        border-radius: 50px;
-        cursor: pointer;
-
-        p {
-          @include text-overflow;
-        }
-
-        .empty-placeholder {
-          color: #808080;
-        }
-
-        &:first-child {
-          margin-top: 0;
-        }
-      }
-      .active-note {
-        box-shadow: #0887a7 0px 0px 0px 2px;
-      }
-    }
-  }
-
-  .sharing {
-    flex-grow: 1;
-    margin-left: 0.3125rem;
-  }
-}
-
-.half-helper {
-  .few-notes {
-    flex: 0 1 40%;
-
-    .notes-sharing {
-      .note {
-        border-radius: 5px;
-        p {
-          display: block;
-        }
-      }
-    }
-  }
-
-  .sharing {
-    flex: 0 1 60%;
-  }
-}
-
-.one-note {
-  .sharing {
-    width: 100%;
-  }
-}
-
 .light {
-  .few-notes {
-    background-color: white;
-  }
-
   .sharing {
     background-color: white;
   }
 }
 
 .dark {
-  .few-notes {
-    background-color: $dark-color;
-  }
-
   .sharing {
     background-color: $dark-color;
   }
@@ -291,12 +202,7 @@
 
 @media (max-width: 1024px) {
   .outer {
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow: hidden;
-
     .sharing {
-      height: 100%;
       width: 100%;
       margin-left: 0;
 
@@ -306,77 +212,29 @@
 
           .user-access {
             flex-grow: 1;
-            margin: 1.25rem 1.875rem;
-
-            .content-inner {
-              padding: 0 0.625rem;
-            }
-          }
-
-          .interaction-container {
-            margin: 0 1.875rem 1.25rem 1.875rem;
           }
         }
       }
     }
   }
+}
 
-  .many-notes {
+@media (max-width: 900px) {
+  .outer {
+    width: 100%;
+    flex-direction: column-reverse;
     .sharing {
-      margin-bottom: 0.625rem;
-      order: 1;
-    }
-
-    .few-notes {
-      width: 100%;
-      height: 84px;
-      margin-right: 0;
-      order: 2;
-      transition: none;
-
-      $color-helper: #26282d;
-
-      .notes-sharing {
-        align-content: baseline;
-        flex-direction: row;
-        margin: 0 1.25rem 0 1.25rem;
-
-        .note {
-          height: auto;
-          width: 27px;
-          min-width: 27px;
-          margin: 0 1.125rem 0 0;
-          padding: 0.25rem 0.5rem;
+      flex-grow: 1;
+      border-radius: 0;
+      .tabs {
+        .tab-content {
+          height: 100%;
         }
       }
     }
-  }
-
-  .half-helper {
-    .sharing {
-      height: 0;
-      width: 100%;
-      margin-bottom: 0;
-      overflow: hidden;
-      display: none;
-    }
-
-    .few-notes {
-      height: 80vh;
-      width: 100%;
-      transition: 0.2s ease;
-
-      .notes-sharing {
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        margin: 0 0 0.625rem 0;
-
-        .note {
-          width: 100%;
-          margin: 0.875rem 0 0 0;
-        }
-      }
+    app-left-section-entities-share {
+      border-top: 1px solid #f2f2f2;
+      flex-basis: 35%;
     }
   }
 }
@@ -385,13 +243,7 @@
   .outer {
     .sharing {
       .tabs {
-        padding-top: 1rem;
-
         .tab-content {
-          .user-access {
-            margin: 1rem 1.875rem;
-          }
-
           .interaction-container {
             margin-bottom: 1rem;
 
@@ -420,35 +272,6 @@
   }
 }
 
-@media (max-width: 450px) {
-  .many-notes {
-    .few-notes {
-      height: 83px;
-
-      .notes-sharing {
-        .note {
-          height: 26px;
-          width: 26px;
-          min-width: 26px;
-        }
-      }
-    }
-  }
-
-  .half-helper {
-    .few-notes {
-      width: 100%;
-      height: 100%;
-
-      .notes-sharing {
-        .note {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
 @media (max-width: 330px) {
   .outer {
     .sharing {
@@ -460,28 +283,6 @@
           .interaction-container {
             margin: 0 1.125rem 1rem 1.125rem;
           }
-        }
-      }
-    }
-  }
-
-  .many-notes {
-    .few-notes {
-      .notes-sharing {
-        margin: 0 1.75rem 0 1.25rem;
-      }
-    }
-  }
-
-  .half-helper {
-    .few-notes {
-      .notes-sharing {
-        width: 100%;
-        margin: 0 0 0.625rem 0;
-
-        .note {
-          width: 100%;
-          margin: 0.875rem 0 0 0;
         }
       }
     }
