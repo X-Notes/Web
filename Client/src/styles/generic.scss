@@ -1,16 +1,16 @@
 @import 'variables';
 
 .no-border {
-  mat-dialog-container{
+  mat-dialog-container {
     border-radius: 0 !important;
   }
 }
 
 .nope-select {
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .custom-dialog-class-dark {
@@ -282,7 +282,7 @@
   outline: none;
   user-select: none;
   overflow: hidden;
-  background: linear-gradient(97.88deg, #0083BB 0%, #00AFE7 100%);
+  background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
 
   .icon {
     position: relative;
@@ -296,14 +296,13 @@
   }
 }
 
-.add-mobile-position-default{
+.add-mobile-position-default {
   bottom: calc(5vh + 80px);
 }
 
 .add-mobile-position-audio {
   bottom: calc(5vh + 105px);
 }
-
 
 .separator-buttons {
   height: 20px;
@@ -430,11 +429,27 @@
   }
 }
 
+@media (max-width: 900px) {
+  .sharing-modal {
+    width: 100%;
+    height: 100%;
+    max-width: initial !important;
+    max-height: initial !important;
+    mat-dialog-container {
+      border-radius: 0;
+    }
+  }
+}
+
 @media (max-width: 600px) {
   .content-generic-project {
     .content-inner {
-      padding: 2.5rem 3.125vw 0 3.125vw;
+      padding: 1rem 1vw 0 1vw;
     }
+  }
+
+  .grid-item {
+    padding: 0 0.5rem 1rem;
   }
 
   .grid-item,
@@ -450,7 +465,7 @@
     width: calc(100% / 2);
   }
 
-  .add-mobile-position-default{
+  .add-mobile-position-default {
     bottom: calc(5vh + 70px);
   }
 
@@ -460,7 +475,7 @@
 
   .cdk-overlay-container {
     .cdk-global-overlay-wrapper {
-      pointer-events: auto;
+      // pointer-events: auto;
     }
   }
 }

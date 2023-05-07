@@ -119,6 +119,7 @@
   },
   "modal": {
     "notFound": "見つかりません",
+    "searchingUser": "検索でユーザーを探す",
     "close": "閉める",
     "labelModal": {
       "Labels": "ラベル",
@@ -145,6 +146,7 @@
       "personal": "個人的",
       "shared": "シェアード",
       "selectedNotes": "選択したメモ",
+      "selectedUsers": "選択されたユーザー",
       "search": "捜索。。。",
       "alert": "アラートの送信",
       "Editor": "編集者",

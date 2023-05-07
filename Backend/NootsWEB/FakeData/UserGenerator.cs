@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.Plan;
+using Common.DatabaseModels.Models.Files.Models;
 
 namespace FakeData
 {
@@ -24,7 +25,8 @@ namespace FakeData
                 .RuleFor(u => u.BillingPlanId, (f, u) => BillingPlanTypeENUM.Standart)
                 .RuleFor(u => u.LanguageId, f => LanguageENUM.English)
                 .RuleFor(u => u.ThemeId, f => ThemeENUM.Dark)
-                .RuleFor(u => u.FontSizeId, f => FontSizeENUM.Medium);
+                .RuleFor(u => u.FontSizeId, f => FontSizeENUM.Medium)
+                .RuleFor(u => u.StorageId, f => StoragesEnum.DEV);
         }
 
         public List<User> GetUsers(int count)

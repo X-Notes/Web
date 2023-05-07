@@ -3,7 +3,8 @@
   (clickEvent)="newButton()"
   [message]="'new.' + (route$ | async ) | translate"
   [iconClass]="'plus'"
-  [styleClasses]="'generic-unfixed generic-create generic-hide-text'"
+  [styleClasses]="'generic-unfixed-150 generic-create generic-hide-text'"
+  [theme]="theme$ | async"
 ></app-general-header-button>
 
 <app-general-header-button
@@ -13,7 +14,9 @@
   (clickEvent)="unselectAll()"
   [message]="('header.selected' | translate) + ' ' + countSelected"
   [iconClass]="'plus'"
-  [styleClasses]="'generic-2 generic-unfixed rotate'"
+  [styleClasses]="'generic-unfixed-150 rotate'"
+  [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"
 ></app-general-header-button>
 
 <app-general-header-button
@@ -23,7 +26,9 @@
   [classOnSize]="'hide-tag-text'"
   [message]="('header.select' | translate)"
   [iconClass]="'select'"
-  [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
+  [styleClasses]="'generic-unfixed-150 generic-hide-text'"
+  [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"
 ></app-general-header-button>
 
 <app-general-header-button
@@ -33,7 +38,9 @@
   [tooltipMessage]="('header.filter' | translate)"
   [tooltipPosition]="'Bottom'"
   [iconClass]="'filter'"
-  [styleClasses]="'generic-2 filter'"
+  [styleClasses]="'filter'"
+  [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"
 ></app-general-header-button>
 
 <mat-menu

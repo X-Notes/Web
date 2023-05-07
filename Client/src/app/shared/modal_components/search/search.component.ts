@@ -13,4 +13,8 @@ export class SearchComponent {
   changed(value: any) {
     this.changeOutput.emit(value);
   }
+
+  clear(): void {
+    this.searchStr = '';
+  }
 }

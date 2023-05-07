@@ -7,16 +7,17 @@
       buttonService.getNoteMenuByNoteType(noteType$ | async)
         | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
     "
-    *ngIf="pService.hideInnerMenu"
+    *ngIf="pService.widthMoreThan1024()"
     [@showMenuLeftRight]
-    [@.disabled]="!pService.widthMoreThan1024()"
   ></app-menu>
 
   <app-general-header-button
     class="app-history"
     (clickEvent)="openHistoriesPopup()"
     [message]="'menu.history' | translate"
-    styleClasses="generic-2 history"
+    [styleClasses]="'history'"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -24,8 +25,10 @@
     (clickEvent)="openRelatedNotesPopup()"
     [tooltipMessage]="'modal.relatedNotesPopup.relatedNotes' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2"
+    [styleClasses]="'inner-note-button'"
     iconClass="notes"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
@@ -33,19 +36,43 @@
     (clickEvent)="buttonService.openShareWithNotes()"
     [tooltipMessage]="'menu.share' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2"
+    [styleClasses]="'inner-note-button'"
     iconClass="share"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
   <app-general-header-button
-    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
-    (clickEvent)="hideMenu()"
+    cdk-overlay-origin
+    #origin="cdkOverlayOrigin"
+    [ngStyle]="{ display: (pService.isActiveFullNoteMobileButtons$ | async) ? 'block' : 'none' }"
+    (clickEvent)="openHideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
-    styleClasses="generic-2 more_vert"
+    [styleClasses]="'more_vert'"
     iconClass="more_vert"
     [isDefault]="true"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
   ></app-general-header-button>
 
-  <div class="overlay" (click)="closeMenu()"></div>
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="pService.innerNoteMenuActive"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayPositions]="positions"
+    (backdropClick)="hideMenu()"
+  >
+    <app-menu
+      class="app-menu"
+      [items]="
+        buttonService.getNoteMenuByNoteType(noteType$ | async)
+          | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
+      "
+      [@showMenuLeftRight]
+      [@.disabled]="!pService.widthMoreThan1024()"
+    ></app-menu>
+  </ng-template>
 </div>

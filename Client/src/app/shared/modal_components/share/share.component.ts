@@ -1,8 +1,16 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
 import { SmallFolder } from 'src/app/content/folders/models/folder.model';
 import {
@@ -41,6 +49,9 @@ import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
+import { LeftSectionShareEntity } from './left-section-entities-share/entities/left-section-share-entity';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { SearchComponent } from '../search/search.component';
 
 export interface StartType {
   id: string;
@@ -48,14 +59,22 @@ export interface StartType {
   refType: RefTypeENUM;
 }
 
+export enum TabIndexes {
+  Access = 0,
+  Share = 1,
+}
+
 @Component({
   selector: 'app-share',
   templateUrl: './share.component.html',
   styleUrls: ['./share.component.scss'],
   animations: [showDropdown, smoothOpacity()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShareComponent implements OnInit, OnDestroy {
   @ViewChild('tabs', { static: false }) tabs;
+
+  @ViewChild(SearchComponent) searchComponent!: SearchComponent;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
@@ -86,9 +105,13 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   isLoading = true;
 
+  searchSymbols = 2;
+
   selectedUsers: SearchUserForShareModal[] = [];
 
   startIdsType: StartType[] = [];
+
+  currentTab: TabIndexes;
 
   public positions = [
     new ConnectionPositionPair(
@@ -109,6 +132,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService,
     private updaterEntitiesService: UpdaterEntitiesService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       currentWindowType: EntityPopupType;
@@ -117,13 +141,39 @@ export class ShareComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ShareComponent>,
   ) {}
 
+  get leftSectionEntities(): LeftSectionShareEntity[] {
+    if (this.shareTab) {
+      return this.selectedUsers.map((x) => new LeftSectionShareEntity(x.email, 'white', x.id, x));
+    }
+    return this.entities.map((x) => new LeftSectionShareEntity(x.title, x.color, x.id, x));
+  }
+
+  get leftSectionTitleMessage(): string {
+    if (this.shareTab) {
+      return 'modal.shareModal.selectedUsers';
+    }
+    return 'modal.shareModal.selectedNotes';
+  }
+
+  get leftTabActive(): boolean {
+    if (this.shareTab) {
+      return this.leftSectionEntities.length > 0;
+    }
+    return this.leftSectionEntities.length > 1;
+  }
+
+  get shareTab(): boolean {
+    return this.currentTab === TabIndexes.Share;
+  }
+
   get entities(): SmallFolder[] | SmallNote[] {
     if (this.isNoteWindowType) {
-      return this.notes;
+      return this.notes ?? [];
     }
     if (this.isFolderWindowType) {
-      return this.folders;
+      return this.folders ?? [];
     }
+    return [];
   }
 
   get selectedEntityId(): string {
@@ -206,6 +256,21 @@ export class ShareComponent implements OnInit, OnDestroy {
     throw new Error('Incorrect type');
   }
 
+  get invitedUsersSorted$(): Observable<InvitedUsersToNoteOrFolder[]> {
+    return this.invitedUsers$.pipe(
+      map((x) => x.map((q) => ({ ...q }))),
+      map((x) => x?.sort((a, b) => (a.email ?? '').localeCompare(b.email ?? '')) ?? []),
+    );
+  }
+
+  get isSearchActive(): boolean {
+    return !this.isSearching && this.searchComponent?.searchStr?.length > this.searchSymbols;
+  }
+
+  get isSearchDisabled(): boolean {
+    return !this.isSearching && this.searchComponent?.searchStr?.length <= this.searchSymbols;
+  }
+
   get invitedUsers$(): Observable<InvitedUsersToNoteOrFolder[]> {
     if (this.isNoteWindowType) {
       return this.usersOnPrivateNote$;
@@ -213,7 +278,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     if (this.isFolderWindowType) {
       return this.usersOnPrivateFolder$;
     }
-    return null;
+    return of([]);
   }
 
   ngOnDestroy(): void {
@@ -265,8 +330,9 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.searchStrChanged
       .pipe(debounceTime(searchDelay), distinctUntilChanged())
       .subscribe(async (searchStr) => {
-        if (searchStr?.length > 2) {
+        if (searchStr?.length > this.searchSymbols) {
           this.isSearching = true;
+          this.cdr.detectChanges();
           const users = await this.searchService.searchUsers(searchStr).toPromise();
           this.isSearching = false;
           this.searchUsers = this.userFilters(users);
@@ -274,7 +340,13 @@ export class ShareComponent implements OnInit, OnDestroy {
           this.isSearching = false;
           this.searchUsers = [];
         }
+        this.cdr.detectChanges();
       });
+  }
+
+  tabChanged($event: MatTabChangeEvent) {
+    this.currentTab = $event.index;
+    this.clearUsers();
   }
 
   async clearAll(): Promise<void> {
@@ -403,6 +475,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentNote.refTypeId = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
     this.notesChangeRefId.push(this.currentNote);
+    this.cdr.detectChanges();
   }
 
   async changeRefTypeFolder(refType: RefTypeENUM): Promise<void> {
@@ -410,6 +483,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentFolder.refTypeId = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
     this.folderChangeRefId.push(this.currentFolder);
+    this.cdr.detectChanges();
   }
 
   async sendInvites(model: InvitationFormResult) {
@@ -417,13 +491,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
         await this.apiFolder
-          .sendInvitesToFolder(
-            userIds,
-            this.currentFolder.id,
-            model.refTypeForInvite,
-            model.isSendNotification,
-            model.messageTextArea,
-          )
+          .sendInvitesToFolder(userIds, this.currentFolder.id, model.refTypeForInvite)
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
@@ -431,13 +499,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       }
       case EntityPopupType.Note: {
         await this.apiNote
-          .sendInvitesToNote(
-            userIds,
-            this.currentNote.id,
-            model.refTypeForInvite,
-            model.isSendNotification,
-            model.messageTextArea,
-          )
+          .sendInvitesToNote(userIds, this.currentNote.id, model.refTypeForInvite)
           .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
@@ -447,7 +509,20 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
-    this.selectedUsers = [];
+    this.clearUsers();
+  }
+
+  async onClick(ent: LeftSectionShareEntity) {
+    if (this.shareTab) {
+      return;
+    }
+    if (this.isNoteWindowType) {
+      await this.selectNote(ent.entity);
+    }
+    if (this.isFolderWindowType) {
+      await this.selectFolder(ent.entity);
+    }
+    this.cdr.detectChanges();
   }
 
   async selectNote(note: SmallNote) {
@@ -464,32 +539,32 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  collapseToggle() {
-    this.pService.isCollapseShared = !this.pService.isCollapseShared;
+  reloadTabToggle(): void {
     setTimeout(() => {
       this.tabs.realignInkBar();
     }, 150);
-  }
-
-  disableTooltipUser(): boolean {
-    if (this.pService.isCollapseShared) {
-      return false;
-    }
-    return true;
   }
 
   changed(text: string) {
     this.searchStrChanged.next(text);
   }
 
+  clearUsers(): void {
+    this.selectedUsers = [];
+    this.searchUsers = [];
+    this.searchComponent.clear();
+  }
+
   addUserToInvite(user: SearchUserForShareModal) {
     this.selectedUsers.push(user);
     this.searchUsers = this.searchUsers.filter((q) => q.id !== user.id);
+    requestAnimationFrame(() => this.cdr.detectChanges());
   }
 
   removeUserFromInvites(user: SearchUserForShareModal) {
     this.selectedUsers = this.selectedUsers.filter((q) => q.id !== user.id);
     this.searchUsers.unshift(user);
+    requestAnimationFrame(() => this.cdr.detectChanges());
   }
 
   async removeUserWithPermissions(userId: string) {

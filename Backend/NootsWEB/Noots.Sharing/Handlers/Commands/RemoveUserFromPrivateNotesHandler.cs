@@ -47,7 +47,7 @@ public class RemoveUserFromPrivateNotesHandler : IRequestHandler<RemoveUserFromP
                 await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
 
                 var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-                await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata, null);
+                await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

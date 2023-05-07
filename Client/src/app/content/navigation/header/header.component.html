@@ -56,7 +56,7 @@
     [ngSwitch]="menuSwitch$ | async"
   >
     <div class="interactions">
-      <div class="generic hamburger" (click)="toggleSidebar()" #hamburger>
+      <div class="hamburger" (click)="toggleSidebar()" #hamburger>
         <div class="icon">
           <mat-icon [inline]="true">menu</mat-icon>
         </div>
@@ -81,7 +81,8 @@
       (clickEvent)="newButton()"
       [message]="'new.' + (route$ | async ) | translate"
       [iconClass]="'plus'"
-      [styleClasses]="'generic-unfixed generic-create generic-hide-text'"
+      [styleClasses]="'generic-unfixed-150 generic-create generic-hide-text'"
+      [theme]="theme$ | async"
     ></app-general-header-button>
     <!-- LABEL DEFAULT END -->
 
@@ -92,7 +93,9 @@
         (click)="deleteAllFromBin()"
         [message]="('header.emptyTrash' | translate)"
         [iconClass]="'delete'"
-        [styleClasses]="'generic-2 generic-unfixed generic-hide-text'"
+        [styleClasses]="'generic-unfixed-150 generic-hide-text'"
+        [styleType]="buttonStyleType.Dark"
+        [theme]="theme$ | async"
       ></app-general-header-button>
     </ng-container>
     <!-- LABEL DELETE END -->

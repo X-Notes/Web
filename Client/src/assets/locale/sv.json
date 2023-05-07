@@ -119,6 +119,7 @@
   },
   "modal": {
     "notFound": "Hittades inte",
+    "searchingUser": "Hitta användare via sökning",
     "close": "Stänga",
     "labelModal": {
       "Labels": "Etiketter",
@@ -145,6 +146,7 @@
       "personal": "Personlig",
       "shared": "Delad",
       "selectedNotes": "Anteckningar i urval",
+      "selectedUsers": "Utvalda användare",
       "search": "Söka...",
       "alert": "Skicka avisering",
       "Editor": "Redaktör",

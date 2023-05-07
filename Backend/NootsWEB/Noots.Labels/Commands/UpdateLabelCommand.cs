@@ -10,7 +10,7 @@ namespace Noots.Labels.Commands
         [ValidationGuid]
         public Guid Id { set; get; }
 
-        public string Name { set; get; }
+        public string? Name { set; get; }
 
         [Required]
         public string Color { set; get; }

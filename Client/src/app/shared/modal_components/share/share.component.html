@@ -1,44 +1,20 @@
-<div
-  appTheme
-  class="outer"
-  [ngClass]="[
-    pService.isCollapseShared && entities.length > 1 ? 'half-helper' : '',
-    entities.length > 1 ? 'many-notes' : 'one-note'
-  ]"
->
-  <div class="few-notes" *ngIf="entities.length > 1">
-    <app-dialog-generic-header
-      [message]="'modal.shareModal.selectedNotes' | translate"
-      [isMessage]="pService.isCollapseShared"
-      (clickEvent)="collapseToggle()"
-    >
-    </app-dialog-generic-header>
-
-    <ng-scrollbar
-      class="notes-sharing"
-      [visibility]="'hover'"
-      [track]="'all'"
-      [appearance]="'compact'"
-    >
-      <div
-        class="note"
-        *ngFor="let item of entities"
-        CustomTooltip="{{ item.title }}"
-        position="Top"
-        [ngStyle]="{ backgroundColor: item.color }"
-        labelColor="{{ item.color }}"
-        [ngClass]="{ 'active-note': selectedEntityId === item.id }"
-        (click)="isNoteWindowType ? selectNote(item) : selectFolder(item)"
-        flagDisable="{{ disableTooltipUser() }}"
-      >
-        <p *ngIf="item.title && item.title.length > 0">{{ item.title }}</p>
-        <p *ngIf="!item.title" class="empty-placeholder">
-          {{ (isNoteWindowType ? 'placeholder.unnamedNote' : 'placeholder.unnamedFolder') |
-          translate }}
-        </p>
-      </div>
-    </ng-scrollbar>
-  </div>
+<div appTheme class="outer">
+  <app-left-section-entities-share
+    *ngIf="leftTabActive"
+    [entities]="leftSectionEntities"
+    [unnamedTitle]="isNoteWindowType ? 'placeholder.unnamedNote' : 'placeholder.unnamedFolder'"
+    [selectedEntityId]="selectedEntityId"
+    [isCancelActive]="shareTab"
+    [theme]="theme$ | async"
+    [titleMessage]="leftSectionTitleMessage"
+    (clickEvent)="onClick($event)"
+    (cancelEvent)="removeUserFromInvites($event.entity)"
+  >
+    <app-mail-invitations
+      *ngIf="selectedUsers.length > 0"
+      (applyForm)="sendInvites($event)"
+    ></app-mail-invitations>
+  </app-left-section-entities-share>
   <div class="sharing">
     <app-dialog-generic-header
       [message]="'modal.shareModal.Share' | translate"
@@ -46,7 +22,7 @@
     >
     </app-dialog-generic-header>
 
-    <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
+    <mat-tab-group class="tabs" mat-stretch-tabs #tabs (selectedTabChange)="tabChanged($event)">
       <mat-tab isActive="true" [label]="'modal.shareModal.access' | translate">
         <div class="tab-content">
           <div class="content-padding">
@@ -69,7 +45,7 @@
           </div>
           <ng-container *ngIf="!isLoading">
             <div
-              *ngIf="(invitedUsers$ | async).length !== 0"
+              *ngIf="(invitedUsers$ | async)?.length !== 0"
               class="clear-container content-padding"
             >
               <p (click)="clearAll()">{{ 'modal.shareModal.clearAll' | translate }}</p>
@@ -78,13 +54,13 @@
               <div class="content-inner content-padding">
                 <ng-container>
                   <app-user-on-entity-card
-                    *ngFor="let user of invitedUsers$ | async"
+                    *ngFor="let user of invitedUsersSorted$ | async"
                     [user]="user"
                     (changeUserPermission)="changeUserPermission($event, user.id)"
                     (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
                   ></app-user-on-entity-card>
                   <div
-                    *ngIf="(invitedUsers$ | async).length === 0"
+                    *ngIf="(invitedUsers$ | async)?.length === 0"
                     class="empty-placeholder-container"
                   >
                     <p>
@@ -107,18 +83,17 @@
             <app-search class="search" (changeOutput)="changed($event)"></app-search>
           </div>
           <div
-            *ngIf="searchUsers.length === 0 && selectedUsers.length === 0 && !isSearching"
-            class="empty-placeholder-container"
+            *ngIf="searchUsers.length === 0 && isSearchActive"
+            class="empty-placeholder-container content-padding"
           >
-            <p>{{ 'modal.shareModal.noPeopleNote' | translate }}</p>
+            <p>{{ 'modal.notFound' | translate }}</p>
           </div>
-
-          <app-mail-invitations
-            *ngIf="selectedUsers.length > 0"
-            [selectedUsers]="selectedUsers"
-            (applyForm)="sendInvites($event)"
-            (removeUserFromInvites)="removeUserFromInvites($event)"
-          ></app-mail-invitations>
+          <div
+            *ngIf="searchUsers.length === 0 && isSearchDisabled"
+            class="empty-placeholder-container content-padding"
+          >
+            <p>{{ 'modal.searchingUser' | translate }}</p>
+          </div>
 
           <ng-container *ngIf="!isSearching && searchUsers.length > 0">
             <ng-scrollbar

@@ -48,7 +48,7 @@ public class RemoveAllUsersFromFolderCommandHandler : IRequestHandler<RemoveAllU
             }
 
             var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata, null);
+            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

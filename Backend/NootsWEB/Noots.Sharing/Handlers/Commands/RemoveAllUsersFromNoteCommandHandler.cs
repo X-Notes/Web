@@ -48,7 +48,7 @@ public class RemoveAllUsersFromNoteCommandHandler : IRequestHandler<RemoveAllUse
             }
 
             var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata, null);
+            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

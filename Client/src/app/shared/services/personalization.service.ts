@@ -165,11 +165,7 @@ export class PersonalizationService {
 
   orientationMobile = false;
 
-  hideInnerMenu = false;
-
-  users = true;
-
-  isCollapseShared = false;
+  innerNoteMenuActive = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
@@ -245,27 +241,19 @@ export class PersonalizationService {
 
   onResize(): void {
     if (this.widthMoreThan1024()) {
-      if (!this.hideInnerMenu) {
-        this.hideInnerMenu = true;
+      if (!this.innerNoteMenuActive) {
+        this.innerNoteMenuActive = true;
       }
       if (!this.stateSidebar) {
         this.stateSidebar = true;
       }
     } else {
-      if (this.hideInnerMenu) {
-        this.hideInnerMenu = false;
+      if (this.innerNoteMenuActive) {
+        this.innerNoteMenuActive = false;
       }
       if (this.stateSidebar) {
         this.stateSidebar = false;
       }
-    }
-
-    if (this.widthMoreThan1024()) {
-      if (!this.isCollapseShared) {
-        this.isCollapseShared = true;
-      }
-    } else if (this.isCollapseShared) {
-      this.isCollapseShared = false;
     }
   }
 

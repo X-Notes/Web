@@ -119,6 +119,7 @@
   },
   "modal": {
     "notFound": "未找到",
+    "searchingUser": "通过搜索找到用户",
     "close": "关闭",
     "labelModal": {
       "Labels": "标签",
@@ -145,6 +146,7 @@
       "personal": "个人",
       "shared": "共享",
       "selectedNotes": "选定的注释",
+      "selectedUsers": "选定的用户",
       "search": "搜索。。。",
       "alert": "发送警报",
       "Editor": "编辑 器",

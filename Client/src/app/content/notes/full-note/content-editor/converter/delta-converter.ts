@@ -19,6 +19,8 @@ export class DeltaConverter {
     const id = 'hidden-text-editor';
     const quillDIV = document.createElement('div');
     quillDIV.style.display = 'none';
+    quillDIV.style.position = 'absolute';
+    quillDIV.style.left = '-999999px';
     quillDIV.id = id;
     document.body.appendChild(quillDIV);
     DeltaConverter.quillInstance = new Quill(`#${id}`);

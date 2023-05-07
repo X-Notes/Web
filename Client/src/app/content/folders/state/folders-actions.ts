@@ -137,14 +137,41 @@ export class SelectAllFolder {
 export class UpdateFolderTitle {
   static type = '[Folders] update title';
 
+  public isCallApi = false;
+
+  public isUpdateFullNote = false;
+
+  public isUpdateSmallFolders = false;
+
+  public isUpdateUI = false;
+
   constructor(
     public str: string,
     public folderId: string,
-    public isCallApi = true,
     public errorPermissionMessage?: string,
-    public isUpdateFullNote = true,
-    public isUpdateSmallFolders = true,
   ) {}
+
+  updateSmallFolder(): UpdateFolderTitle {
+    this.isCallApi = true;
+    this.isUpdateSmallFolders = true;
+    this.isUpdateUI = false;
+    return this;
+  }
+
+  updateFullFolder(): UpdateFolderTitle {
+    this.isCallApi = true;
+    this.isUpdateFullNote = false;
+    this.isUpdateSmallFolders = true;
+    this.isUpdateUI = true;
+    return this;
+  }
+
+  updateWS(): UpdateFolderTitle {
+    this.isUpdateFullNote = true;
+    this.isUpdateSmallFolders = true;
+    this.isUpdateUI = true;
+    return this;
+  }
 }
 
 export class UpdateOneFolder {

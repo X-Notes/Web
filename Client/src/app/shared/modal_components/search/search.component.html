@@ -3,7 +3,7 @@
   type="search"
   aria-label="Search"
   placeholder="{{ 'modal.shareModal.search' | translate }}"
-  [ngModel]="searchStr"
+  [(ngModel)]="searchStr"
   (ngModelChange)="changed($event)"
 />
 <button type="button" #search>

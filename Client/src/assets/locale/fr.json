@@ -119,6 +119,7 @@
   },
   "modal": {
     "notFound": "Introuvable",
+    "searchingUser": "Recherche d'utilisateurs",
     "close": "Fermer",
     "labelModal": {
       "Labels": "Étiquettes",
@@ -145,6 +146,7 @@
       "personal": "Personnel",
       "shared": "Partagé",
       "selectedNotes": "Notes sélectionnées",
+      "selectedUsers": "Utilisateurs sélectionnés",
       "search": "Rechercher...",
       "alert": "Envoyer une alerte",
       "Editor": "Éditeur",

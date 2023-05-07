@@ -105,7 +105,6 @@
 
       .help-icons {
         display: flex;
-        font-size: 1.125rem;
 
         .icon {
           height: 18px;
@@ -205,26 +204,37 @@
           }
         }
       }
-
-      .footer {
-        flex-direction: column;
-        justify-content: flex-start;
-        .date {
-          justify-content: flex-end;
-          order: 2;
-        }
-        .help-icons {
-          justify-content: space-between;
-          order: 1;
-          .icon {
-            margin-left: 0;
-          }
-        }
-      }
     }
 
     .big-size {
       width: calc(100% - 25px);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .note-container {
+    border-radius: 14px;
+    .note-inner {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      .header {
+        font-size: 1rem;
+      }
+      .footer {
+        .date {
+          font-size: 0.75rem;
+        }
+        .help-icons {
+          .icon {
+            height: 14px;
+            margin-left: 0.4rem;
+          }
+        }
+      }
+    }
+    .highlighting-note {
+      border-radius: 15px 0 0 15px;
     }
   }
 }

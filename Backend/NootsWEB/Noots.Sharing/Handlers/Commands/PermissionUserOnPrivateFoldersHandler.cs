@@ -52,7 +52,7 @@ public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionU
             await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
 
             var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionFolderV1, metadata, null);
+            await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionFolderV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

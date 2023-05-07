@@ -237,19 +237,11 @@ export class ApiServiceNotes {
     );
   }
 
-  sendInvitesToNote(
-    userIds: string[],
-    noteId: string,
-    refTypeId: RefTypeENUM,
-    sendMessage: boolean,
-    message: string,
-  ) {
+  sendInvitesToNote(userIds: string[], noteId: string, refTypeId: RefTypeENUM) {
     const obj = {
       userIds,
       noteId,
       refTypeId,
-      sendMessage,
-      message,
     };
     return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/share/notes/user/invites`,
