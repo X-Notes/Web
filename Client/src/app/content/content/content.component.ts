@@ -3,7 +3,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Observable, Subject } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { takeUntil } from 'rxjs/operators';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { AudioService } from '../notes/audio.service';
 import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
@@ -13,6 +12,7 @@ import {
   LoadUsedDiskSpace,
 } from '../../core/stateUser/user-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { FolderStore } from '../folders/state/folders-state';
 
 @Component({
   selector: 'app-content',
@@ -26,11 +26,16 @@ export class ContentComponent implements OnInit, OnDestroy {
   @Select(AppStore.getRouting)
   public routing$: Observable<EntityType>;
 
+  @Select(AppStore.getNewButtonActive)
+  public newButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.isFolderInner)
+  public isFolderInner$: Observable<boolean>;
+
+  @Select(FolderStore.isFullFolderOwner)
+  public isFullFolderOwner$: Observable<boolean>;
+
   destroy = new Subject<void>();
-
-  newButtonActive = false;
-
-  newProfile = false;
 
   constructor(
     public pService: PersonalizationService,
@@ -48,25 +53,7 @@ export class ContentComponent implements OnInit, OnDestroy {
     DeltaConverter.initQuill();
     this.htmlTitleService.init();
 
-    this.store
-      .select(AppStore.getNewButtonActive)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((z) => {
-        setTimeout(() => {
-          this.newButtonActive = z;
-        });
-      });
-
     this.store.dispatch([LoadUsedDiskSpace, LoadBillingPlans, LoadPersonalization]);
-
-    this.store
-      .select(AppStore.isProfile)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((z) => {
-        setTimeout(() => {
-          this.newProfile = z;
-        });
-      });
   }
 
   getMessage(type: EntityType): string {

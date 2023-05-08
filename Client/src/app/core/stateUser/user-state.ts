@@ -37,7 +37,7 @@ import { ApiBillingService } from '../api-billing.service';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 
-interface UserState {
+export interface UserState {
   user: ShortUser;
   memory: number;
   personalizationSettings: PersonalizationSetting;

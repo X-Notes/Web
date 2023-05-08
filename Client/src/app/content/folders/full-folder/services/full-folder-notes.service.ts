@@ -13,7 +13,7 @@ import { NoteEntitiesService } from 'src/app/shared/services/note-entities.servi
 import { ApiFullFolderService } from './api-full-folder.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { SetFolderNotes } from 'src/app/content/notes/state/notes-actions';
+import { SetFolderNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 
 @Injectable()
 export class FullFolderNotesService extends NoteEntitiesService {
@@ -75,6 +75,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   async handlerUpdates(updates: UpdateFolderWS) {
     if (!updates) return;
     if (updates.idsToRemove?.length > 0) {
+      this.store.dispatch(UnSelectAllNote);
       this.deleteFromDom(updates.idsToRemove);
     }
     await this.handleAdding(updates.idsToAdd);

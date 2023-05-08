@@ -48,8 +48,10 @@ import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 
-interface FolderState {
+ export interface FolderState {
   folders: Folders[];
   fullFolder: FullFolder;
   isCanViewFullFolder: boolean;
@@ -105,6 +107,12 @@ export class FolderStore {
   @Selector()
   static fullFolderShared(state: FolderState): boolean {
     return state.fullFolder?.folderTypeId === FolderTypeENUM.Shared;
+  }
+
+  @Selector([UserStore.getUser])
+  static isFullFolderOwner(folderState: FolderState, user: ShortUser) {
+    const folderOwnerId = folderState.fullFolder?.userId;
+    return folderOwnerId === user.id;
   }
 
   @Selector()

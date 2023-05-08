@@ -113,6 +113,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private actions$: Actions,
   ) {}
 
+  get isOwner(): boolean {
+    return this.store.selectSnapshot(FolderStore.isFullFolderOwner);
+  }
+
   initTitle() {
     const folder = this.store.selectSnapshot(FolderStore.full);
     // SET
@@ -222,10 +226,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actions$
       .pipe(ofActionDispatched(CreateNoteCompleted), takeUntil(this.ffnService.destroy))
       .subscribe(async (payload: CreateNoteCompleted) => {
+        if (!this.isOwner) return;
         const note = payload.note;
-        await this.apiFullFolder.addNotesToFolder([note.id], this.folderId).toPromise();
-        this.ffnService.addToDom([note]);
-        this.updateState();
+        const resp = await this.apiFullFolder
+          .addNotesToFolder([note.id], this.folderId)
+          .toPromise();
+        if (resp.success) {
+          this.ffnService.addToDom([note]);
+          this.updateState();
+        }
       });
 
     this.pService.selectAllButton

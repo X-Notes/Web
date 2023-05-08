@@ -284,7 +284,7 @@ export class SignalRService {
           noteUI.push(updateUINote);
         }
         this.store.dispatch(new PatchUpdatesUINotes(noteUI));
-        this.store.dispatch(LoadNotifications);
+        this.store.dispatch(LoadNotifications); // TODO REMOVE SHOULD BE UPDATE FROM SERVER
       },
     );
 
@@ -326,7 +326,7 @@ export class SignalRService {
           folderUI.push(updateUIFolder);
         }
         this.store.dispatch(new PatchUpdatesUIFolders(folderUI));
-        this.store.dispatch(LoadNotifications);
+        this.store.dispatch(LoadNotifications); // TODO REMOVE SHOULD BE UPDATE FROM SERVER
       },
     );
   };

@@ -8,7 +8,7 @@
     class="add-mobile"
     #addMobile
     (click)="pService.newButtonSubject.next(true)"
-    *ngIf="newButtonActive && !newProfile"
+    *ngIf="(newButtonActive$ | async) || ((isFolderInner$ | async) && (isFullFolderOwner$ | async))"
     [ngClass]="
       audioService.currentFile ? 'add-mobile-position-audio' : 'add-mobile-position-default'
     "
