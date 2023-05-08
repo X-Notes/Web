@@ -17,6 +17,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { TextCursor } from '../full-note-components/cursors/text-cursor';
 import { TextCursorUI } from '../full-note-components/cursors/text-cursor-ui';
 import { CursorTypeENUM } from '../models/cursors/cursor-type.enum';
+import { ComponentType, ParentInteractionHTML } from '../models/parent-interaction.interface';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -30,8 +31,6 @@ export class EditorTitleComponent extends EditorBaseComponent {
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
   prevTitle: string;
-
-  inited = false;
 
   intervalEvents = interval(updateNoteTitleDelay);
 
@@ -54,8 +53,10 @@ export class EditorTitleComponent extends EditorBaseComponent {
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe((title) => {
         this.updateTitle(title);
-        if (!this.inited) {
-          this.prevTitle = title;
+        this.prevTitle = title;
+        if (!this.titleInited) {
+          this.titleInited = true;
+          requestAnimationFrame(() => this.setStartCursor());
         }
       });
   }
@@ -94,7 +95,9 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
       this.setTitle(updateTitle);
 
-      requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
+      if (this.titleInited) {
+        requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
+      }
 
       this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
       this.facade.cdr.detectChanges();
@@ -205,5 +208,17 @@ export class EditorTitleComponent extends EditorBaseComponent {
     const cursorLeft = pos.left - elRects.left + this.cursorShift.left;
     const cursorTop = pos.top - elRects.top + this.cursorShift.top;
     return new TextCursorUI(cursorLeft, cursorTop, cursor.color);
+  }
+
+  setStartCursor(): void {
+    if (this.titleUI.length === 0) {
+      this.noteTitleEl?.nativeElement?.focus();
+      return;
+    }
+    const first = this.first;
+    const isHtmlFirst = first && first.type === ComponentType.HTML;
+    if (isHtmlFirst && (first as ParentInteractionHTML).getText().length === 0) {
+      first.setFocus();
+    }
   }
 }

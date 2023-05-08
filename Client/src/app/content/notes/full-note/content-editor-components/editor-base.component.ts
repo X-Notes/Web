@@ -21,13 +21,15 @@ import { NoteStore } from '../../state/notes-state';
   template: '',
 })
 export class EditorBaseComponent {
-  @Input() noteId?: string;
+  @Input() noteId: string;
 
   @Input()
   isReadOnlyMode = true;
 
   @Select(NoteStore.cursors)
   cursors$: Observable<NoteUserCursorWS[]>;
+
+  titleInited = false;
 
   isOverEmpty = false;
 
