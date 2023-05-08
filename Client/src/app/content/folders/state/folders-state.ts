@@ -103,6 +103,11 @@ export class FolderStore {
   }
 
   @Selector()
+  static fullFolderShared(state: FolderState): boolean {
+    return state.fullFolder?.folderTypeId === FolderTypeENUM.Shared;
+  }
+
+  @Selector()
   static isCanViewFullFolder(state: FolderState) {
     return state.isCanViewFullFolder;
   }

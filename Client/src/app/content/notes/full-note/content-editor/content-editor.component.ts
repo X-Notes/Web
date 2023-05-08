@@ -8,10 +8,8 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  QueryList,
   SimpleChanges,
   ViewChild,
-  ViewChildren,
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -21,11 +19,7 @@ import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { SelectionDirective } from '../directives/selection.directive';
 import { MenuSelectionDirective } from '../directives/menu-selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
-import {
-  ComponentType,
-  ParentInteraction,
-  ParentInteractionHTML,
-} from '../models/parent-interaction.interface';
+import { ParentInteraction, ParentInteractionHTML } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
@@ -42,10 +36,7 @@ import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from '../content-editor-services/web-sockets-note-updater.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
-import {
-  BaseTextElementComponent,
-  PasteEvent,
-} from '../full-note-components/html-components/html-base.component';
+import { PasteEvent } from '../full-note-components/html-components/html-base.component';
 import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { DeltaStatic } from 'quill';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
@@ -522,10 +513,10 @@ export class ContentEditorComponent
   }
 
   resetCursor(): void {
+    if (!this.noteId) return;
     const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
-    const noteId = this.facade.store.selectSnapshot(NoteStore.oneFull).id;
     const cursor = new UpdateCursor(color).initNoneCursor();
-    this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
+    this.facade.store.dispatch(new UpdateCursorAction(this.noteId, cursor));
   }
 
   getIndexAndLengthForUpdateStyle(

@@ -27,6 +27,9 @@ export class InteractionInnerNoteComponent {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.fullNoteShared)
+  noteShared$: Observable<boolean>;
+
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
 

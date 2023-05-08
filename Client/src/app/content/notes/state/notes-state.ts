@@ -298,6 +298,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static fullNoteShared(state: NoteState): boolean {
+    return state.fullNoteState?.note?.noteTypeId === NoteTypeENUM.Shared;
+  }
+
+  @Selector()
   static cursorColor(state: NoteState): string {
     return state.cursorColor;
   }

@@ -33,7 +33,7 @@ export class NotificationMessageComponent {
 
   clickFolderLink(): void {
     if (this.message.isFolderLinkActive) {
-      this.clickFolderEvent.emit(this.message.metadata.noteId);
+      this.clickFolderEvent.emit(this.message.metadata.folderId);
     }
   }
 }
