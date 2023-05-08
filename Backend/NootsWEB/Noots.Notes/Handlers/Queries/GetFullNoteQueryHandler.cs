@@ -62,6 +62,11 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
                 await usersOnPrivateNotesRepository.AddAsync(new UserOnPrivateNotes { NoteId = note.Id, AccessTypeId = note.RefTypeId, UserId = permissions.Caller.Id });
             }
 
+            if(!permissions.IsOwner)
+            {
+                note.NoteTypeId = NoteTypeENUM.Shared;
+            }
+
             note.LabelsNotes = note.LabelsNotes.OrderBy(x => x.AddedAt).ToList();;
             var ent = mapperLockedEntities.MapNoteToFullNote(note, permissions.CanWrite);
             return new OperationResult<FullNote>(true, ent);

@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Folders;
 using MediatR;
@@ -36,6 +37,11 @@ public class GetFullFolderQueryHandler : IRequestHandler<GetFullFolderQuery, Ope
             if (permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
             {
                 await usersOnPrivateFoldersRepository.AddAsync(new UsersOnPrivateFolders { FolderId = folder.Id, AccessTypeId = folder.RefTypeId, UserId = permissions.Caller.Id });
+            }
+
+            if (!permissions.IsOwner)
+            {
+                folder.FolderTypeId = FolderTypeENUM.Shared;
             }
 
             var ent = appCustomMapper.MapFolderToFullFolder(folder, permissions.CanWrite);
