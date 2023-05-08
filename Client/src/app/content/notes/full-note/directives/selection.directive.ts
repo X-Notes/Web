@@ -201,6 +201,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setLeft(this.startLeft);
 
     this.clickableService.reset();
+
     this.resetEvent.emit();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
