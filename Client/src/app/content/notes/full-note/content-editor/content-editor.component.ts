@@ -448,9 +448,13 @@ export class ContentEditorComponent
     this.facade.momentoStateService.saveToStack(action);
     const selection = content.getSelection();
     this.unSelectItems();
-    console.log(selection); // bug
     this.facade.contentEditorTextService.transformTextContentTo(value);
-    requestAnimationFrame(() => content.restoreSelection(selection));
+    this.facade.cdr.detectChanges();
+    if (selection) {
+      selection.start = selection.end;
+      const el = this.getHTMLElementById(content.getContentId());
+      requestAnimationFrame(() => el.restoreSelection(selection));
+    }
     this.postAction();
   }
 
