@@ -1,4 +1,5 @@
 <div
+  #mainSection
   appTheme
   appSelection
   [isReadonly]="isReadOnlyMode"
@@ -241,9 +242,9 @@
         (dragOverEvent)="isOverEmpty = true"
         (dragLeaveEvent)="isOverEmpty = false"
       ></div>
-      <div id="note-selector" class="full-note-selection"></div>
     </div>
   </div>
+  <div id="note-selector" class="full-note-selection"></div>
 </div>
 <app-mobile-transform-menu
   *ngIf="(isMobileMenuActive$ | async) === true"

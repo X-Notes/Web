@@ -54,6 +54,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   scrollSection: HTMLElement;
 
+  header: HTMLElement;
+
   private div: HTMLElement;
 
   private prevMouseEvent: MouseEvent;
@@ -82,6 +84,13 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return this.isUserStartSelect;
   }
 
+  get headerHeight(): number {
+    if (!this.header) {
+      this.header = document.getElementById('app-header');
+    }
+    return this.header.offsetHeight;
+  }
+
   get isUserStartSelect(): boolean {
     const size = this.div.getBoundingClientRect();
     // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
@@ -89,12 +98,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   processY(y: number): number {
-    return (
-      y +
-      this.scrollSection.scrollTop -
-      this.scrollSection.offsetTop -
-      this.selectionService.menuHeight
-    );
+    return y + this.scrollSection.scrollTop - this.scrollSection.offsetTop - this.headerHeight;
   }
 
   processX(x: number): number {

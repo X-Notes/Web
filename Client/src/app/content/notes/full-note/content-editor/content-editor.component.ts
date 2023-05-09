@@ -99,7 +99,7 @@ export class ContentEditorComponent
   @ViewChild('textEditMenu', { read: ElementRef, static: false })
   textEditMenu: ElementRef<HTMLElement>;
 
-  @ViewChild('contentSection', { read: ElementRef }) contentSection: ElementRef<HTMLElement>;
+  @ViewChild('mainSection', { read: ElementRef }) mainSection: ElementRef<HTMLElement>;
 
   @Input()
   editorTheme: ThemeENUM;
@@ -171,7 +171,7 @@ export class ContentEditorComponent
       return (
         this.facade.selectionService.getCursorTop -
         this.textEditMenu.nativeElement.offsetHeight -
-        this.contentSection.nativeElement.scrollTop
+        this.mainSection.nativeElement.scrollTop
       );
     }
     if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
@@ -235,13 +235,9 @@ export class ContentEditorComponent
 
   ngAfterViewInit(): void {
     this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
-    this.contentEditorListenerService.setHandlers(
-      this.elementsQuery,
-      this.noteTitleEl,
-      this.contentSection,
-    );
+    this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
     this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
-    this.selectionDirective.initSelectionDrawer(this.contentSection.nativeElement);
+    this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
     this.facade.selectionService.onSelectChanges$
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {

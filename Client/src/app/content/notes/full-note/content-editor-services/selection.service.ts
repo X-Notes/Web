@@ -9,8 +9,6 @@ import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 
 @Injectable()
 export class SelectionService {
-  menuHeight = 49;
-
   isResizingPhoto = false;
 
   onSelectChanges$ = new BehaviorSubject<void>(null);

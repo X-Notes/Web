@@ -21,11 +21,7 @@ export class ContentEditorListenerService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  setHandlers(
-    elements: QueryList<ParentInteraction<ContentModelBase>>,
-    noteTitleEl: ElementRef,
-    contentSection: ElementRef<HTMLElement>,
-  ) {
+  setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>, noteTitleEl: ElementRef) {
     // KEY UP NAVIGATION
 
     const keydownArrowUp = this.renderer.listen(
@@ -42,7 +38,6 @@ export class ContentEditorListenerService {
           const index = arr.indexOf(el);
           const { currentItemId: itemId } = this.clickableService;
           const isFocusToNext = el.isFocusToNext({
-            contentSection,
             event,
             itemId,
             status: FocusDirection.Up,
@@ -53,7 +48,7 @@ export class ContentEditorListenerService {
             return;
           }
           if (upEl) {
-            upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Up });
+            upEl.setFocus({ event, itemId, status: FocusDirection.Up });
             el.detectChanges();
           }
         }
@@ -67,7 +62,7 @@ export class ContentEditorListenerService {
         const arr = elements.toArray();
 
         if (document.activeElement === noteTitleEl.nativeElement) {
-          arr[0]?.setFocus({ contentSection, event, itemId: null, status: FocusDirection.Down });
+          arr[0]?.setFocus({ event, itemId: null, status: FocusDirection.Down });
           return;
         }
 
@@ -79,7 +74,6 @@ export class ContentEditorListenerService {
           if (upDown) {
             const { currentItemId: itemId } = this.clickableService;
             const upEl = el.isFocusToNext({
-              contentSection,
               event,
               itemId,
               status: FocusDirection.Down,
@@ -87,7 +81,7 @@ export class ContentEditorListenerService {
               ? arr[index + 1]
               : el;
             if (upEl) {
-              upEl.setFocus({ contentSection, event, itemId, status: FocusDirection.Down });
+              upEl.setFocus({ event, itemId, status: FocusDirection.Down });
               el.detectChanges();
             }
           }
