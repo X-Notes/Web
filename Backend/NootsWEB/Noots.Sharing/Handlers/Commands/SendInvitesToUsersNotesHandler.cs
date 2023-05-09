@@ -61,7 +61,7 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
 
             // NOTIFICATIONS
             var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToNoteV1, metadata);
+            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToNoteV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

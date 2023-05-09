@@ -58,7 +58,7 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
             await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
 
             var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddNotificationAsync(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionNoteV1, metadata);
+            await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionNoteV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }
