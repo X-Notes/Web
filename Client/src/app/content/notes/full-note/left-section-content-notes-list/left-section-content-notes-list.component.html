@@ -5,7 +5,7 @@
         class="note"
         *ngFor="let note of notesLink"
         [ngStyle]="{ backgroundColor: note.color }"
-        (click)="notesService.toNote(note)"
+        (click)="onClickNote(note)"
       >
         <p *ngIf="note.title && note.title.length > 0">{{ note.title }}</p>
         <p *ngIf="!note.title" class="empty-placeholder">

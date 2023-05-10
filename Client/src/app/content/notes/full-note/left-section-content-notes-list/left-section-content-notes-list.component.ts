@@ -14,4 +14,9 @@ export class LeftSectionContentNotesListComponent {
   public notesLink: SmallNote[];
 
   constructor(public pService: PersonalizationService, public notesService: NotesService) {}
+
+  onClickNote(note: SmallNote): void {
+    this.pService.sideBarActive$.next(false);
+    this.notesService.toNote(note);
+  }
 }

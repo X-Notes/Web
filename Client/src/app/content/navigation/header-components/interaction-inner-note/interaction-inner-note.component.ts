@@ -63,8 +63,8 @@ export class InteractionInnerNoteComponent {
     private store: Store,
   ) {}
 
-  openHideMenu() {
-    this.pService.innerNoteMenuActive = !this.pService.innerNoteMenuActive;
+  openMenu() {
+    this.pService.innerNoteMenuActive = true;
   }
 
   hideMenu() {

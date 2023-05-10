@@ -186,7 +186,6 @@ export class PersonalizationService {
   isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
   constructor(public lockEncryptService: LockEncryptService, private store: Store) {
-    this.onResize();
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();
@@ -237,14 +236,6 @@ export class PersonalizationService {
       this.windowWidth$.pipe(map((value) => value < 1180)).pipe(startWith(false)),
       this.isMenuActive$.pipe(startWith(false)),
     ]).pipe(map(([n, f]) => n && f));
-  }
-
-  onResize(): void {
-    if (this.widthMoreThan1024()) {
-      this.innerNoteMenuActive = true;
-    } else {
-      this.innerNoteMenuActive = false;
-    }
   }
 
   setSpinnerState(flag: boolean) {

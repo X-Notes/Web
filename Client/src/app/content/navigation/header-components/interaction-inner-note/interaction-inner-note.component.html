@@ -46,7 +46,7 @@
     cdk-overlay-origin
     #origin="cdkOverlayOrigin"
     [ngStyle]="{ display: (pService.isActiveFullNoteMobileButtons$ | async) ? 'block' : 'none' }"
-    (clickEvent)="openHideMenu()"
+    (clickEvent)="openMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
     [styleClasses]="'more_vert'"
