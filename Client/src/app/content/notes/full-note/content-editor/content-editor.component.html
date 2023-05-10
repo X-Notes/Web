@@ -14,7 +14,6 @@
   [ngClass]="{ 'nope-select': facade.selectionService.selectionDivActive }"
 >
   <div class="top-section">
-    <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
     <div *ngIf="(labels | noDeletedLabels)?.length" class="labels-section">
       <div
         class="label"
@@ -52,7 +51,6 @@
       ></div>
     </div>
   </div>
-
   <div #contentSection cdkDropList class="content-section" (cdkDropListDropped)="drop($event)">
     <div class="content-section-inner">
       <div
@@ -246,6 +244,7 @@
   </div>
   <div id="note-selector" class="full-note-selection"></div>
 </div>
+<div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
 <app-mobile-transform-menu
   *ngIf="(isMobileMenuActive$ | async) === true"
   (transformTo)="transformToTypeText($event)"

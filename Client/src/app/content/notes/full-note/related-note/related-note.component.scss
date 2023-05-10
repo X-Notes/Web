@@ -49,6 +49,11 @@
     padding: 0.75rem 1rem 1rem 1rem;
 
     .note-color {
+      z-index: 52;
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-radius: 0 0 0 40px;
       width: 22px;
       height: 22px;
     }
