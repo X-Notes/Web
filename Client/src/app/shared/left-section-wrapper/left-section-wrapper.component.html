@@ -1,7 +1,7 @@
 <div appTheme class="sub-nav nope-select">
   <div
     class="sub-nav-section"
-    *ngIf="pService.stateSidebar"
+    *ngIf="(pService.sideBarActive$ | async) || pService.widthMoreThan1024()"
     [@sidebarCloseOpen]
     [@.disabled]="pService.widthMoreThan1024()"
   >
@@ -17,6 +17,6 @@
   <div
     class="overlay"
     (click)="pService.cancelSideBar()"
-    [ngClass]="pService.stateSidebar ? 'visible' : ''"
+    [ngClass]="(pService.sideBarActive$ | async) ? 'visible' : ''"
   ></div>
 </div>

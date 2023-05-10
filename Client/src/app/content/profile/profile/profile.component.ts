@@ -111,10 +111,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
-
   logout() {
     this.authService.logout();
   }

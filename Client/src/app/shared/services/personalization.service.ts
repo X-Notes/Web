@@ -161,7 +161,7 @@ export class PersonalizationService {
 
   removeNotesToFolderSubject = new Subject();
 
-  stateSidebar = true;
+  sideBarActive$ = new BehaviorSubject<boolean>(false);
 
   orientationMobile = false;
 
@@ -241,19 +241,9 @@ export class PersonalizationService {
 
   onResize(): void {
     if (this.widthMoreThan1024()) {
-      if (!this.innerNoteMenuActive) {
-        this.innerNoteMenuActive = true;
-      }
-      if (!this.stateSidebar) {
-        this.stateSidebar = true;
-      }
+      this.innerNoteMenuActive = true;
     } else {
-      if (this.innerNoteMenuActive) {
-        this.innerNoteMenuActive = false;
-      }
-      if (this.stateSidebar) {
-        this.stateSidebar = false;
-      }
+      this.innerNoteMenuActive = false;
     }
   }
 
@@ -262,7 +252,7 @@ export class PersonalizationService {
   }
 
   cancelSideBar() {
-    this.stateSidebar = false;
+    this.sideBarActive$.next(false);
   }
 
   isMobile(): boolean {
@@ -273,11 +263,7 @@ export class PersonalizationService {
     return window.innerWidth > 1024;
   };
 
-  checkWidth = () => {
-    return !!(window.innerWidth > 1024 && window.innerWidth <= 1440);
-  };
-
-  isWidth600 = () => {
+  isWidthMoreThan600 = () => {
     return window.innerWidth >= 600;
   };
 

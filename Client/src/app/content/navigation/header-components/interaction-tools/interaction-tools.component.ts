@@ -106,7 +106,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   }
 
   searchData() {
-    if (!this.pService.isWidth600()) {
+    if (!this.pService.isWidthMoreThan600()) {
       this.isInputFocus = !this.isInputFocus;
       setTimeout(() => {
         this.searchInput.nativeElement.focus();

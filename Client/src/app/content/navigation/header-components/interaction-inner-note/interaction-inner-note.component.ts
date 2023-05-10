@@ -81,11 +81,4 @@ export class InteractionInnerNoteComponent {
     const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
     this.dialogsManageService.openNoteHistoriesMobile(noteId);
   }
-
-  disableTooltpUser(): boolean {
-    if (this.pService.checkWidth()) {
-      return true;
-    }
-    return false;
-  }
 }
