@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SelectComponent } from '../custom-components/select/select.component';
+import { SelectComponent } from '../select/select.component';
 
 @Injectable({
   providedIn: 'root',

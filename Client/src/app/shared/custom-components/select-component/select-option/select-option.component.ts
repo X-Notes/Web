@@ -1,6 +1,6 @@
 import { Highlightable } from '@angular/cdk/a11y';
 import { Component, HostBinding, HostListener, Input } from '@angular/core';
-import { SelectService } from '../../services/select.service';
+import { SelectService } from '../services/select.service';
 import { SelectComponent } from '../select/select.component';
 
 @Component({

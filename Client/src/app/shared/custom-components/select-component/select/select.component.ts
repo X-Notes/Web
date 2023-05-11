@@ -16,8 +16,8 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ENTER } from '@angular/cdk/keycodes';
-import { showDropdown } from '../../services/personalization.service';
-import { SelectService } from '../../services/select.service';
+import { showDropdown } from 'src/app/shared/services/personalization.service';
+import { SelectService } from 'src/app/shared/custom-components/select-component/services/select.service';
 import { SelectOptionComponent } from '../select-option/select-option.component';
 
 @Component({
