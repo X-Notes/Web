@@ -5,6 +5,8 @@ import { from, Observable, of, throwError } from 'rxjs';
 import { mergeMap, retryWhen, switchMap, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+export const InterceptorSkipToken = 'X-Skip-Token';
+
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
   publicRoutes: string[] = ['/folder/', '/note/'];
@@ -19,6 +21,10 @@ export class TokenInterceptorService implements HttpInterceptor {
     const isPublicRoute = this.isPublicRoute(this.router.url);
     return from(this.auth.getToken()).pipe(
       switchMap((token) => {
+        if (request.headers.has(InterceptorSkipToken)) {
+          const headers2 = request.headers.delete(InterceptorSkipToken);
+          return next.handle(request.clone({ headers: headers2 }));
+        }
         const headers = request.headers.set('Authorization', 'Bearer ' + token);
         const requestClone = request.clone({
           headers,

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
@@ -21,6 +21,7 @@ import { VideosCollection, VideoModel } from './models/editor-models/videos-coll
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs';
+import { InterceptorSkipToken } from 'src/app/core/token-interceptor.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,8 +44,10 @@ export class ExportService {
   };
 
   getBlobFile(url: string, mini: OperationDetailMini, operation: LongTermOperation) {
+    const headers = new HttpHeaders().set(InterceptorSkipToken, '');
     return this.httpClient
       .get(url, {
+        headers,
         responseType: 'blob',
         reportProgress: true,
         observe: 'events',
