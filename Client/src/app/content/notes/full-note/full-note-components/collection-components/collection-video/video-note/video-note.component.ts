@@ -55,7 +55,7 @@ export class VideoNoteComponent
 
   translate = 0;
 
-  currentVideo: VideoModel;
+  selectVideoId: string;
 
   constructor(
     private exportService: ExportService,
@@ -109,6 +109,13 @@ export class VideoNoteComponent
     return nodes.length;
   }
 
+  get currentVideo(): VideoModel {
+    if (this.selectVideoId) {
+      return this.content.items.find((x) => x.fileId === this.selectVideoId);
+    }
+    return this.content.items[0];
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize = () => {
     const nodes = this.videoPlaylist?.nativeElement?.children;
@@ -120,11 +127,7 @@ export class VideoNoteComponent
     this.translate = width;
   };
 
-  ngOnInit(): void {
-    if (this.content.items.length > 0) {
-      this.currentVideo = this.content.items[0];
-    }
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {}
 
@@ -151,7 +154,9 @@ export class VideoNoteComponent
   togglePlay() {
     this.isPlaying = this.videoElement?.nativeElement.paused;
     const action = this.isPlaying ? 'play' : 'pause';
-    this.videoElement?.nativeElement[action]();
+    if (this.videoElement?.nativeElement) {
+      this.videoElement?.nativeElement[action]();
+    }
   }
 
   toggleWideScreen() {
@@ -335,7 +340,7 @@ export class VideoNoteComponent
     if (!this.videoElement?.nativeElement.paused) {
       this.togglePlay();
     }
-    this.currentVideo = video;
+    this.selectVideoId = video.fileId;
     this.facade.clickableService.setContent(
       this.content,
       video.fileId,
