@@ -23,6 +23,9 @@ import { EntitiesSizeENUM } from '../../enums/font-size.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService } from '../../services/personalization.service';
 import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
+import { EnumConverterService } from '../../services/enum-converter.service';
+import { SelectionOption } from '../../custom-components/select-component/entities/select-option';
+import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
 
 @Component({
   selector: 'app-add-notes-in-folder',
@@ -43,18 +46,36 @@ export class AddNotesInFolderComponent
 
   fontSize = EntitiesSizeENUM;
 
+  optionsState: SelectionOption[];
+
   constructor(
     murriService: MurriService,
     public pService: PersonalizationService,
     private apiFullFolder: ApiFullFolderService,
     public dialogRef: MatDialogRef<AddNotesInFolderComponent>,
     private store: Store,
+    private enumConverter: EnumConverterService,
   ) {
     super(murriService);
   }
 
   get selectedNotesChips() {
     return this.notes.filter((x) => x.isSelected);
+  }
+
+  get options(): SelectionOption[] {
+    if (this.optionsState) {
+      return this.optionsState;
+    }
+    this.optionsState = [
+      SearchNotesTypesEnum.all,
+      SearchNotesTypesEnum.archive,
+      SearchNotesTypesEnum.personal,
+      SearchNotesTypesEnum.shared,
+    ].map((x) =>
+      this.enumConverter.convertEnumToSelectionOption(SearchNotesTypesEnum, x, 'subMenu.'),
+    );
+    return this.optionsState;
   }
 
   ngOnInit(): void {
@@ -83,7 +104,7 @@ export class AddNotesInFolderComponent
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
         await this.murriService.setOpacityFlagAsync(0);
-        this.selectValue = this.selectTypes[0];
+        this.defaultValue = SearchNotesTypesEnum.all;
       });
   }
 

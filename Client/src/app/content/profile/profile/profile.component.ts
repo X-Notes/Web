@@ -32,6 +32,8 @@ import { ResetNotes } from '../../notes/state/notes-actions';
 import { ResetFolders } from '../../folders/state/folders-actions';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { TranslateService } from '@ngx-translate/core';
+import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
+import { EnumConverterService } from 'src/app/shared/services/enum-converter.service';
 
 @Component({
   selector: 'app-profile',
@@ -82,7 +84,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private store: Store,
     private authService: AuthService,
     private translateService: TranslateService,
+    private enumConverterService: EnumConverterService,
   ) {}
+
+  get options(): SelectionOption[] {
+    return Object.values(LanguagesENUM)
+      .filter((x) => typeof x === 'number')
+      .map((x) =>
+        this.enumConverterService.convertEnumToSelectionOption(LanguagesENUM, x, 'languages.'),
+      );
+  }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
@@ -95,8 +106,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(() => this.newBackground());
   }
 
-  setLanguage(language: string): void {
-    this.store.dispatch(new ChangeLanguage(LanguagesENUM[language]));
+  setLanguage(language: LanguagesENUM): void {
+    this.store.dispatch(new ChangeLanguage(language));
   }
 
   setCurrent(id: string) {

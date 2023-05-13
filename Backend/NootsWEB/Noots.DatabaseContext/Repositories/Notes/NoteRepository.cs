@@ -184,11 +184,11 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null).ToListAsync();
         }
 
-        public async Task<List<Note>> GetNotesByUserIdNoLocked(Guid userId, List<Guid> exceptIds, PersonalizationSettingDTO settings)
+        public async Task<List<Note>> GetNotesByUserIdNoLockedWithoutDeleted(Guid userId, List<Guid> exceptIds, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null)
+                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);

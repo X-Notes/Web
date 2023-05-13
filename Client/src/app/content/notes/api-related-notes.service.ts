@@ -32,7 +32,7 @@ export class ApiRelatedNotesService {
   getRelatedNotes(noteId: string) {
     return this.httpClient
       .get<RelatedNote[]>(`${environment.writeAPI}/api/relatedNotes/${noteId}`)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   getAllPreviewNotes(noteId: string, search: string, settings: PersonalizationSetting) {
@@ -43,7 +43,7 @@ export class ApiRelatedNotesService {
     };
     return this.httpClient
       .post<PreviewNote[]>(`${environment.writeAPI}/api/relatedNotes/preview`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   updateState(noteId: string, reletatedNoteInnerNoteId: number, isOpened: boolean) {

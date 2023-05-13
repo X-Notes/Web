@@ -5,13 +5,10 @@
       <div class="dropdown-wrapper" *ngIf="dropdownActive">
         <app-select
           class="dropdown-button"
-          [translate]="'modal.shareModal'"
-          [selectValue]="refTypeSelectedValue"
+          [initialValue]="refTypeSelectedValue"
+          [options]="options"
           (selectValueChange)="changeRefType($event)"
         >
-          <app-select-option *ngFor="let item of refTypes" [value]="item">
-            {{ 'modal.shareModal.' + item | translate }}
-          </app-select-option>
         </app-select>
       </div>
       <div class="copy" #copy (click)="copyInputLink()">

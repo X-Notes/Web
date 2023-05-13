@@ -4,13 +4,10 @@
       <div class="interaction-buttons">
         <app-select
           class="dropdown-button"
-          [translate]="'modal.shareModal'"
-          [selectValue]="refType[defaultRefType]"
+          [initialValue]="defaultRefType"
+          [options]="options"
           (selectValueChange)="refTypeNotification($event)"
         >
-          <app-select-option *ngFor="let item of refTypes" [value]="item">
-            {{ ('modal.shareModal.' + item) | translate }}
-          </app-select-option>
         </app-select>
         <button
           class="send-button"

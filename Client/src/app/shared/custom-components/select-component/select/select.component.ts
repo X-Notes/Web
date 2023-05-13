@@ -1,11 +1,8 @@
-import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import {
   AfterContentInit,
   Component,
-  ContentChildren,
   EventEmitter,
-  forwardRef,
   Input,
   OnChanges,
   OnInit,
@@ -13,52 +10,35 @@ import {
   Output,
   QueryList,
   SimpleChanges,
+  ViewChildren,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ENTER } from '@angular/cdk/keycodes';
 import { showDropdown } from 'src/app/shared/services/personalization.service';
-import { SelectService } from 'src/app/shared/custom-components/select-component/services/select.service';
 import { SelectOptionComponent } from '../select-option/select-option.component';
+import { SelectionOption } from '../entities/select-option';
 
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
   animations: [showDropdown],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      useExisting: forwardRef(() => SelectComponent),
-      multi: true,
-    },
-    SelectService,
-  ],
 })
 export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
-  @ContentChildren(SelectOptionComponent)
-  public options: QueryList<SelectOptionComponent>;
+  @ViewChildren(SelectOptionComponent)
+  public optionsComponents: QueryList<SelectOptionComponent>;
 
   @Input()
   @Optional()
-  translate: string;
+  initialValue: any;
 
   @Input()
-  @Optional()
-  selectValue: any;
-
-  @Input()
-  @Optional()
-  selectObjectProperty: string;
+  options: SelectionOption[];
 
   @Output()
-  selectValueChange = new EventEmitter<string>();
+  selectValueChange = new EventEmitter<SelectionOption>();
+
+  selectValue: any;
 
   isOpen = false;
-
-  selected: string;
-
-  public selectedOption: SelectOptionComponent;
 
   public positions = [
     new ConnectionPositionPair(
@@ -72,63 +52,54 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
     ),
   ];
 
-  private keyManager: ActiveDescendantKeyManager<SelectOptionComponent>;
-
-  constructor(private selectService: SelectService) {
-    this.selectService.register(this);
+  get selectedOption(): SelectionOption {
+    if (this.selectValue) {
+      const selectedValue = this.options.find((x) => x.value === this.selectValue);
+      return selectedValue;
+    }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.initValue(changes.selectValue.currentValue);
-  }
-
-  ngOnInit(): void {}
-
-  ngAfterContentInit(): void {
-    requestAnimationFrame(() => {
-      this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
-      if (!this.selectValue) return;
-      this.initValue(this.selectValue);
-      this.keyManager.setActiveItem(this.options.toArray().indexOf(this.selectedOption));
-    });
-  }
-
-  initValue(value) {
-    if (typeof value === 'object') {
-      this.selectedOption = this.options
+  get selectedOptionComponent(): SelectOptionComponent {
+    if (this.selectValue) {
+      const selectedValue = this.optionsComponents
         .toArray()
-        .find(
-          (option) => option.value[this.selectObjectProperty] === value[this.selectObjectProperty],
-        );
-      this.selected = this.selectedOption
-        ? this.selectedOption.value[this.selectObjectProperty]
-        : '';
-    } else {
-      if (!this.options) return;
-      this.selectedOption = this.options.toArray().find((option) => option.value === value);
-      this.selected = this.selectedOption ? this.selectedOption.value : '';
+        .find((x) => x.value.value === this.selectValue);
+      return selectedValue;
     }
   }
 
-  onKeydown(event) {
-    if (event.keyCode === ENTER && this.keyManager.activeItem?.value !== this.selected) {
-      this.selectOption(this.keyManager.activeItem);
-      this.closeDropdown();
-    } else {
-      this.keyManager.onKeydown(event);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes.initialValue?.previousValue &&
+      changes.initialValue.currentValue !== changes.initialValue.previousValue
+    ) {
+      this.selectValue = this.initialValue;
     }
   }
 
-  public selectOption(option: SelectOptionComponent) {
-    this.keyManager.setActiveItem(option);
-    this.selectedOption = option;
-    if (typeof this.selectedOption.value === 'object') {
-      this.selected = this.selectedOption
-        ? this.selectedOption.value[this.selectObjectProperty]
-        : '';
+  ngOnInit(): void {
+    this.initInitialValue();
+  }
+
+  initInitialValue(): void {
+    if (this.initialValue) {
+      this.selectValue = this.initialValue;
     } else {
-      this.selected = this.selectedOption ? this.selectedOption.value : '';
+      this.selectValue = this.options[0].value;
     }
+  }
+
+  ngAfterContentInit(): void {}
+
+  onSelect(option: SelectionOption): void {
+    this.selectValue = option.value;
+    this.selectValueChange.emit(this.selectedOption.value);
+    this.closeDropdown();
+  }
+
+  public selectOption(optionComponent: SelectOptionComponent) {
+    this.selectValue = optionComponent.value.value;
     this.selectValueChange.emit(this.selectedOption.value);
     this.closeDropdown();
   }

@@ -5,15 +5,11 @@
   #origin="cdkOverlayOrigin"
   #dropdown
   (click)="isOpen = !isOpen"
-  (keyup)="onKeydown($event)"
   appTheme
 >
   <div class="content-button">
-    <p *ngIf="translate; else NotTranslated">{{ (translate + '.' + selected) | translate }}</p>
-    <ng-template #NotTranslated>
-      <p>{{ selected }}</p>
-    </ng-template>
-    <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
+    <p>{{ selectedOption?.title }}</p>
+    <div class="icon" [ngStyle]="{ transform: isOpen ? 'rotate(180deg)' : '' }">
       <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
     </div>
   </div>
@@ -29,6 +25,11 @@
   (backdropClick)="closeDropdown()"
 >
   <div class="dropdown" [@showDropdown] [style.width.px]="dropdown.offsetWidth">
-    <ng-content></ng-content>
+    <app-select-option
+      *ngFor="let item of options"
+      [value]="item"
+      [isSelected]="selectValue === item.value"
+      (selectEvent)="onSelect($event)"
+    ></app-select-option>
   </div>
 </ng-template>

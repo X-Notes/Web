@@ -50,9 +50,8 @@
               </div>
               <app-select
                 class="dropdown-button"
-                [translate]="'languages'"
-                [selectValue]="language[language$ | async]?.toLowerCase()"
-                [selectObjectProperty]="'name'"
+                [initialValue]="language$ | async"
+                [options]="options"
                 (selectValueChange)="setLanguage($event)"
               >
                 <app-select-option *ngFor="let item of languages" [value]="item">

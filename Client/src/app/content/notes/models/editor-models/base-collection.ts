@@ -35,8 +35,8 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     const idsToAdd = ids2.filter((name) => !ids1.includes(name));
 
     if (idsToAdd.length !== 0 || idsToRemove.length !== 0) {
-      const itemsToAdd = this.items.filter((x) => idsToAdd.some((z) => z === x.fileId));
-      const itemsToRemove = content.items.filter((x) => idsToRemove.some((z) => z === x.fileId));
+      const itemsToAdd = this.items.filter((x) => idsToAdd.some((q) => q === x.fileId));
+      const itemsToRemove = content.items.filter((x) => idsToRemove.some((q) => q === x.fileId));
       return [false, itemsToAdd, itemsToRemove];
     }
 

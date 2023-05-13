@@ -197,7 +197,7 @@ export class ApiServiceNotes {
     };
     return this.httpClient
       .post<SmallNote[]>(`${environment.writeAPI}/api/note/all`, obj)
-      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+      .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
   new(): Observable<OperationResult<SmallNote>> {

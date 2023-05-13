@@ -148,7 +148,7 @@ namespace Noots.Search.Impl
 
                 if (string.IsNullOrEmpty(request.Search))
                 {
-                    var notes = await noteRepository.GetNotesByUserIdNoLocked(permissions.Caller.Id, folderNoteIds, request.Settings);
+                    var notes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.Caller.Id, folderNoteIds, request.Settings);
                     return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
                 }
                 else

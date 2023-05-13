@@ -239,7 +239,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
       this.entities = tempNotes.filter((x) =>
-        x.labels.some((label) => ids.some((z) => z === label.id)),
+        x.labels.some((label) => ids.some((q) => q === label.id)),
       );
     }
 
@@ -263,7 +263,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       await this.murriService.destroyGridAsync();
 
       const tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
-        x.labels.some((label) => ids.some((z) => z === label.id)),
+        x.labels.some((label) => ids.some((q) => q === label.id)),
       );
       this.entities = this.orderBy(tempNotes, this.pageSortType);
 
