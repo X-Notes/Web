@@ -96,7 +96,6 @@ export class ApiBrowserTextService {
     const ctx = canvas.getContext('2d');
     const imageEl = this.createImage({ src: imageUrl });
     imageEl.onload = (e: any) => {
-      console.log('e: ', e);
       canvas.width = e.target.width;
       canvas.height = e.target.height;
       ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height);
