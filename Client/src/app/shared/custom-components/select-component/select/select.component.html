@@ -3,8 +3,8 @@
   type="button"
   cdk-overlay-origin
   #origin="cdkOverlayOrigin"
-  #dropdown
-  (click)="isOpen = !isOpen"
+  #dropdownButton
+  (click)="openMenu()"
   appTheme
 >
   <div class="content-button">
@@ -13,7 +13,7 @@
       <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
     </div>
   </div>
-  <div class="ripple-container" matRipple [matRippleTrigger]="dropdown"></div>
+  <div class="ripple-container" matRipple [matRippleTrigger]="dropdownButton"></div>
 </button>
 <ng-template
   cdkConnectedOverlay
@@ -24,7 +24,7 @@
   [cdkConnectedOverlayPositions]="positions"
   (backdropClick)="closeDropdown()"
 >
-  <div class="dropdown" [@showDropdown] [style.width.px]="dropdown.offsetWidth">
+  <div class="dropdown" [@showDropdown] [style.width.px]="dropdownButton.offsetWidth">
     <app-select-option
       *ngFor="let item of options"
       [value]="item"
