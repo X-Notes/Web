@@ -4,7 +4,6 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  HostListener,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   OnInit,
@@ -47,13 +46,9 @@ export class VideoNoteComponent
 
   isWideScreen = false;
 
-  counterSlider = 0;
-
   volumeHelper: number;
 
   formats = TypeUploadFormats.videos;
-
-  translate = 0;
 
   selectVideoId: string;
 
@@ -115,17 +110,6 @@ export class VideoNoteComponent
     }
     return this.content.items[0];
   }
-
-  @HostListener('window:resize', ['$event'])
-  onResize = () => {
-    const nodes = this.videoPlaylist?.nativeElement?.children;
-    if (!nodes) return;
-    let width = 0;
-    for (let i = 0; i < this.counterSlider; i += 1) {
-      width -= nodes[i].getBoundingClientRect().width;
-    }
-    this.translate = width;
-  };
 
   ngOnInit(): void {}
 
@@ -297,42 +281,6 @@ export class VideoNoteComponent
 
   async exportVideo(video: VideoModel) {
     await this.exportService.exportVideo(video);
-  }
-
-  // may is need in further
-
-  // isInViewport(element) {
-  //   const rect = element.getBoundingClientRect();
-  //   return (
-  //     rect.top >= 0 &&
-  //     rect.left >= 0 &&
-  //     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-  //     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  //   );
-  // }
-
-  async toNextElement() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    this.counterSlider += 1;
-    const nextIndex = this.counterSlider + this.visibleItemsCount;
-    if (nodes[nextIndex - 1]) {
-      const { width } = nodes[nextIndex - 1].getBoundingClientRect();
-      this.translate -= width;
-    } else {
-      this.counterSlider -= 1;
-    }
-  }
-
-  async toPrevElement() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    this.counterSlider -= 1;
-    const nextIndex = this.counterSlider + this.visibleItemsCount;
-    if (nextIndex >= this.visibleItemsCount) {
-      const { width } = nodes[nextIndex].getBoundingClientRect();
-      this.translate += width;
-    } else {
-      this.counterSlider += 1;
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

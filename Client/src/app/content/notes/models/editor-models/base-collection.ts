@@ -16,6 +16,14 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     return this.items.sort((a, b) => a.uploadAt.getTime() - b.uploadAt.getTime());
   }
 
+  get orderedThreeItems(): T[] {
+    let items = this.getItems;
+    if (items.length > 3) {
+      items = items.slice(0, 3);
+    }
+    return items.sort((a, b) => a.uploadAt.getTime() - b.uploadAt.getTime());
+  }
+
   isEqual(content: BaseCollection<T>): boolean {
     return this.isEqualCollectionInfo(content) && this.getIsEqualIdsToAddIdsToRemove(content)[0];
   }

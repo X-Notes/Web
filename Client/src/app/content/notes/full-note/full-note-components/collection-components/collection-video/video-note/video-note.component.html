@@ -115,11 +115,7 @@
       </div>
     </div>
     <div class="video-playlist" *ngIf="!isEmpty">
-      <div
-        #videoPlaylist
-        class="video-playlist-wrapper"
-        [ngStyle]="{ transform: 'translateX(' + translate + 'px)' }"
-      >
+      <div #videoPlaylist class="video-playlist-wrapper">
         <div
           [id]="item.fileId"
           class="thumb-video-wrapper"
@@ -168,35 +164,6 @@
           </div>
         </div>
       </div>
-      <button
-        class="prev-button action-button"
-        *ngIf="counterSlider"
-        type="button"
-        name="To prev"
-        #toPrev
-        (click)="toPrevElement()"
-      >
-        <div class="icon">
-          <mat-icon fontSet="material-icons-round" [inline]="true">chevron_left</mat-icon>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="toPrev"></div>
-      </button>
-      <button
-        class="next-button action-button"
-        *ngIf="
-          itemsCount !== counterSlider + visibleItemsCount &&
-          content.items.length > visibleItemsCount
-        "
-        type="button"
-        name="To next"
-        #toNext
-        (click)="toNextElement()"
-      >
-        <div class="icon">
-          <mat-icon fontSet="material-icons-round" [inline]="true">chevron_right</mat-icon>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="toNext"></div>
-      </button>
     </div>
     <app-empty-collection-items-placeholder
       *ngIf="isEmpty"
