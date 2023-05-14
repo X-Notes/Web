@@ -63,6 +63,7 @@
           </div>
         </div>
         <div
+          *ngIf="!facade.pS.isMobile()"
           appChangeSizeAlbumHeight
           (mouseClick)="saveHeight($event)"
           (changeHeight)="changeHeight($event)"
