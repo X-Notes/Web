@@ -67,8 +67,12 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
 
   deleteFromDom(ids: string[]) {
     if (ids.length > 0) {
-      this.entities = this.entities.filter((x) => !ids.some((z) => z === x.id));
+      this.entities = this.entities.filter((x) => !ids.some((q) => q === x.id));
     }
+  }
+
+  setFirstInitedFalse(): void {
+    this.firstInitedMurri = false;
   }
 
   private async deleteItemChecker(elements: HTMLElement[]): Promise<boolean> {

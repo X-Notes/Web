@@ -167,23 +167,27 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     this.store.dispatch(new LoadLabels());
-    this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
     this.routeSubscription = this.route.params
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async (params) => {
         // REINIT LAYOUT
+        this.pService.setSpinnerState(true);
         this.loaded = false;
-        let isReinit = false;
+        this.setSideBarNotesEmpty();
+        this.ffnService.setFirstInitedFalse();
+        this.ffnService.murriService.flagForOpacity = false;
+
         if (this.folderId) {
           await this.ffnService.murriService.destroyGridAsync();
-          isReinit = true;
           this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
         }
+        console.log('params.id: ', params.id);
         // lOAD FOLDER
         this.folderId = params.id;
         await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
+        this.loadSideBar();
         this.setTitle();
 
         // INIT FOLDER NOTES
@@ -191,11 +195,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
         await this.ffnService.initializeEntities(notes, this.folderId);
         this.updateState();
-
-        if (isReinit) {
-          await this.ffnService.murriService.initFolderNotesAsync();
-          await this.ffnService.murriService.setOpacityFlagAsync(0);
-        }
 
         // WS UPDATES
         this.signalR.updateFolder$.pipe(takeUntil(this.ffnService.destroy)).subscribe(async (x) => {
@@ -207,7 +206,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.pService.setSpinnerState(false);
         this.loaded = true;
 
-        this.loadSideBar();
+        await this.ffnService.murriService.setOpacityFlagAsync(0);
 
         const title = this.store.selectSnapshot(FolderStore.full)?.title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
@@ -325,6 +324,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     if (folder) {
       this.setSideBarNotes(folder.folderTypeId);
     }
+  }
+
+  setSideBarNotesEmpty(): void {
+    this.foldersLink = [];
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {

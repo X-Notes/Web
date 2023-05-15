@@ -120,8 +120,8 @@ export class AddNotesInFolderComponent
   }
 
   async ngAfterViewInit(): Promise<void> {
-    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.viewNotes.length && !this.firstInitedMurri) {
+    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (q.length === this.viewNotes.length && !this.firstInitedMurri) {
         this.murriService.initMurriPreviewDialogNote();
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
