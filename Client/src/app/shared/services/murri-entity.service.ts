@@ -117,6 +117,7 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
   // eslint-disable-next-line @typescript-eslint/member-ordering
   get isNeedUpdatePositions(): boolean {
     const positions = this.murriService.getPositions();
+    if (positions.length === 0) return false;
     const statePositions = this.entities.map(
       (x) => ({ entityId: x.id, position: x.order } as PositionEntityModel),
     );

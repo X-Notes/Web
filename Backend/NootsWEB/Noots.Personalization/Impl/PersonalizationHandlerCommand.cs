@@ -12,14 +12,11 @@ namespace Noots.Personalization.Impl
     {
 
         private readonly PersonalizationSettingRepository personalizationSettingRepository;
-        private readonly BillingPermissionService billingPermissionService;
 
         public PersonalizationHandlerCommand(
-            PersonalizationSettingRepository personalizationSettingRepository,
-            BillingPermissionService billingPermissionService)
+            PersonalizationSettingRepository personalizationSettingRepository)
         {
             this.personalizationSettingRepository = personalizationSettingRepository;
-            this.billingPermissionService = billingPermissionService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdatePersonalizationSettingsCommand request, CancellationToken cancellationToken)
@@ -30,19 +27,6 @@ namespace Noots.Personalization.Impl
             }
 
             var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == request.UserId);
-            var isPremiumPlan = await billingPermissionService.IsUserPlanPremiumAsync(request.UserId);
-            if (!isPremiumPlan)
-            {
-                pr.SetUpdateStatus(request.PersonalizationSetting);
-                if (pr.HasUpdates)
-                {
-                    pr.UpdateSortSettings(request.PersonalizationSetting);
-                    await personalizationSettingRepository.UpdateAsync(pr);
-                    return new OperationResult<Unit>(true, Unit.Value);
-                }
-                return new OperationResult<Unit>().SetBillingError();
-            }
-
             pr.SetUpdateStatus(request.PersonalizationSetting);
             if (pr.HasUpdates)
             {
