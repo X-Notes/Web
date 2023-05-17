@@ -1,11 +1,14 @@
 ﻿using Common;
+using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.Parts;
+using MediatR;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
+using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Interfaces;
 
@@ -17,17 +20,20 @@ namespace Noots.SignalrUpdater.Impl
         private readonly INoteServiceStorage noteServiceStorage;
         private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
         private readonly ILogger<AppSignalRHub> logger;
+        private readonly IMediator mediator;
 
         public AppSignalRHub(
             IFolderServiceStorage folderServiceStorage,
             INoteServiceStorage noteServiceStorage,
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
-            ILogger<AppSignalRHub> logger)
+            ILogger<AppSignalRHub> logger,
+            IMediator _mediator)
         {
             this.folderServiceStorage = folderServiceStorage;
             this.noteServiceStorage = noteServiceStorage;
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
             this.logger = logger;
+            mediator = _mediator;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -64,15 +70,36 @@ namespace Noots.SignalrUpdater.Impl
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
             if (ent == null)
             {
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
                 return;
             }
 
-            await noteServiceStorage.AddAsync(noteId, ent);
+            var usersOnNote = await noteServiceStorage.UsersOnNoteAsync(noteId);
+            Console.WriteLine("usersOnNote: " + usersOnNote);
 
-            var groupId = WsNameHelper.GetNoteGroupName(noteId);
-            await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, noteId);
-            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId); // TODO change on userId that can be added to ui list
+            var userId = ent.GetUserId();
+            if (!userId.HasValue)
+            {
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
+                return;
+            }
+
+            var command = new GetUserPermissionsForNoteQuery(noteId, userId.Value);
+            var permission = await mediator.Send(command);
+            var isCanRead = permission.CanRead;
+
+            if (isCanRead)
+            {
+                await noteServiceStorage.AddAsync(noteId, ent);
+
+                var groupId = WsNameHelper.GetNoteGroupName(noteId);
+                await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, true));
+                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
+                return;
+            }
+
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
         }
 
         public async Task LeaveNote(Guid noteId)
@@ -102,15 +129,36 @@ namespace Noots.SignalrUpdater.Impl
             var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
             if (ent == null)
             {
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
                 return;
             }
 
-            await folderServiceStorage.AddAsync(folderId, ent);
+            var usersOnFolder = await folderServiceStorage.UsersOnFolderAsync(folderId);
+            Console.WriteLine("usersOnFolder: " + usersOnFolder);
 
-            var groupId = GetFolderGroupName(folderId);
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, folderId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId); // TODO change on userId that can be added to ui list
+            var userId = ent.GetUserId();
+            if (!userId.HasValue)
+            {
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
+                return;
+            }
+
+            var command = new GetUserPermissionsForFolderQuery(folderId, userId.Value);
+            var permission = await mediator.Send(command);
+            var isCanRead = permission.CanRead;
+
+            if (isCanRead)
+            {
+                await folderServiceStorage.AddAsync(folderId, ent);
+
+                var groupId = GetFolderGroupName(folderId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
+                await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, true));
+                await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId);
+                return;
+            }
+
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
         }
 
 
