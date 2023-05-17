@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HubConnectionState } from '@microsoft/signalr';
 import { takeUntil } from 'rxjs/operators';
+import { JoinEntityStatus } from 'src/app/core/models/signal-r/join-enitity-status';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
@@ -12,29 +13,25 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
 
   noteId: string;
 
-  attempts = 5;
-
   constructor(private signalRService: SignalRService, private d: DestroyComponentService) {
     this.signalRService.setAsJoinedToNote$
       .pipe(takeUntil(this.d.d$))
-      .subscribe((noteId: string) => {
-        if (this.noteId === noteId) {
-          clearInterval(this.interval);
-          this.isJoined = true;
-        }
-      });
+      .subscribe((ent: JoinEntityStatus) => this.handleJoin(ent));
   }
 
   tryJoinToNote(noteId: string) {
     this.noteId = noteId;
+    let attempts = 5;
     this.interval = setInterval(async () => {
-      if (this.signalRService.hubConnection.state === HubConnectionState.Connected) {
-        try {
-          await this.signalRService.hubConnection.invoke('JoinNote', noteId);
-        } catch (err) {
-          console.error(err);
+      if (this.signalRService.hubConnection.state !== HubConnectionState.Connected) return;
+      if (attempts === 0) {
+        if (this.interval) {
+          clearInterval(this.interval);
         }
+        return;
       }
+      attempts--;
+      await this.handleConnect(noteId);
     }, 2000);
   }
 
@@ -52,5 +49,23 @@ export class WebSocketsNoteUpdaterService implements OnDestroy {
     }
     this.noteId = null;
     this.isJoined = false;
+  }
+
+  private async handleConnect(noteId: string): Promise<void> {
+    try {
+      await this.signalRService.hubConnection.invoke('JoinNote', noteId);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  private handleJoin(ent: JoinEntityStatus): void {
+    if (this.noteId !== ent.entityId) return;
+    if (ent.joined) {
+      this.isJoined = true;
+    }
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 }
