@@ -57,6 +57,7 @@ import { pingWSDelay } from './defaults/bounceDelay';
 import { NoteUserCursorWS } from './models/signal-r/innerNote/note-user-cursor';
 import { UpdateCursorWS } from '../content/notes/state/editor-actions';
 import { AppNotification } from './models/notifications/app-notification.model';
+import { JoinEntityStatus } from './models/signal-r/join-enitity-status';
 
 @Injectable({
   providedIn: 'root',
@@ -80,9 +81,9 @@ export class SignalRService {
 
   public updateFolder$ = new Subject<UpdateFolderWS>();
 
-  public setAsJoinedToNote$ = new Subject();
+  public setAsJoinedToNote$ = new Subject<JoinEntityStatus>();
 
-  public setAsJoinedToFolder$ = new Subject();
+  public setAsJoinedToFolder$ = new Subject<JoinEntityStatus>();
 
   public addNotesToSharedEvent$ = new Subject<SmallNote[]>();
 
@@ -241,12 +242,12 @@ export class SignalRService {
     });
 
     // JOINER
-    this.hubConnection.on('setJoinedToNote', (noteId: string) => {
-      this.setAsJoinedToNote$.next(noteId);
+    this.hubConnection.on('setJoinedToNote', (ent: JoinEntityStatus) => {
+      this.setAsJoinedToNote$.next(ent);
     });
 
-    this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
-      this.setAsJoinedToFolder$.next(folderId);
+    this.hubConnection.on('setJoinedToFolder', (ent: JoinEntityStatus) => {
+      this.setAsJoinedToFolder$.next(ent);
     });
 
     // Note permissions
