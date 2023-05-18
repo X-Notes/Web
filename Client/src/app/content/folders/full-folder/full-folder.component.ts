@@ -47,12 +47,14 @@ import { PermissionsButtonsService } from '../../navigation/services/permissions
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { Icons } from 'src/app/shared/enums/icons.enum';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService],
+  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService, DestroyComponentService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -83,7 +85,11 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   foldersLink: SmallFolder[] = [];
 
-  loaded = false;
+  folderLoaded = false;
+
+  folderEntitiesLoaded = false;
+
+  icons = Icons;
 
   theme = ThemeENUM;
 
@@ -173,20 +179,16 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async (params) => {
         // REINIT LAYOUT
-        this.pService.setSpinnerState(true);
-        this.loaded = false;
-        this.setSideBarNotesEmpty();
-        this.ffnService.setFirstInitedFalse();
-        this.ffnService.murriService.flagForOpacity = false;
-
         if (this.folderId) {
-          await this.ffnService.murriService.destroyGridAsync();
           this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
         }
-        console.log('params.id: ', params.id);
+
+        await this.resetToDefault();
+
         // lOAD FOLDER
         this.folderId = params.id;
         await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
+        this.folderLoaded = true;
         this.loadSideBar();
         this.setTitle();
 
@@ -194,6 +196,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
         await this.ffnService.initializeEntities(notes, this.folderId);
+        this.folderEntitiesLoaded = true;
         this.updateState();
 
         // WS UPDATES
@@ -201,12 +204,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           await this.ffnService.handlerUpdates(x);
           this.updateState();
         });
-
-        await this.pService.waitPreloading();
-        this.pService.setSpinnerState(false);
-        this.loaded = true;
-
-        await this.ffnService.murriService.setOpacityFlagAsync(0);
 
         const title = this.store.selectSnapshot(FolderStore.full)?.title;
         this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
@@ -216,6 +213,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
+  }
+
+  async resetToDefault() {
+    await this.ffnService.murriService.muuriDestroyAsync();
+    this.ffnService.setFirstInitedMurri(false);
+    this.ffnService.resetState();
+    this.folderLoaded = false;
+    this.folderEntitiesLoaded = false;
+    this.setSideBarNotesEmpty();
   }
 
   openChangeColorPopup() {

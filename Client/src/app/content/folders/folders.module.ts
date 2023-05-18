@@ -13,7 +13,6 @@ import { FullFolderComponent } from './full-folder/full-folder.component';
 import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
 import { FullNoteModule } from '../notes/full-note/full-note.module';
 import { FullFolderContentComponent } from './full-folder-content/full-folder-content.component';
-import { WebSocketsFolderUpdaterService } from './full-folder/services/web-sockets-folder-updater.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +27,7 @@ import { WebSocketsFolderUpdaterService } from './full-folder/services/web-socke
     FullFolderContentComponent,
   ],
   imports: [CommonModule, FoldersRouting, SharedModule, FullNoteModule],
-  providers: [MurriService, WebSocketsFolderUpdaterService],
+  providers: [MurriService],
   exports: [FullFolderContentComponent],
 })
 export class FoldersModule {}

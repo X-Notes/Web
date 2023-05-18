@@ -47,8 +47,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   onDestroy(): void {
-    console.log('full folder notes destroy');
-    this.destroyLayout();
+    this.murriService.resetToDefaultOpacity();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -63,12 +62,18 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   murriInitialize(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      if (this.getIsFirstInit(q)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async () => {
+      if (this.needFirstInit()) {
+        this.initState();
         await this.murriService.initFolderNotesAsync();
-        await this.setInitMurriFlagShowLayout();
+        this.setFirstInitedMurri();
       }
-      await this.synchronizeState(refElements, false);
+      await this.synchronizeState(refElements.toArray(), false);
+    });
+    this.murriService.layoutEnd$.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (q) {
+        this.murriService.setOpacity1();
+      }
     });
   }
 
@@ -119,7 +124,5 @@ export class FullFolderNotesService extends NoteEntitiesService {
     tempNotes = this.orderBy(tempNotes, SortedByENUM.CustomOrder);
 
     this.entities = tempNotes;
-
-    this.initState();
   }
 }

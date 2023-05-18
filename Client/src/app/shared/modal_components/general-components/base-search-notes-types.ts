@@ -55,11 +55,11 @@ export class BaseSearchNotesTypes {
       }
     }
     if (this.firstInitedMurri) {
-      await this.murriService.destroyGridAsync();
+      await this.murriService.muuriDestroyAsync();
 
       this.viewNotes = tempNotes;
       await this.murriService.initMurriPreviewDialogNoteAsync();
-      await this.murriService.setOpacityFlagAsync(0);
+      this.murriService.setOpacity1();
     }
   };
 

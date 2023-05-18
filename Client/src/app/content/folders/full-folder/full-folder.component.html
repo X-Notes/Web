@@ -1,5 +1,5 @@
 <app-left-section-wrapper [isProfileActive]="true">
-  <ng-container *ngIf="foldersLink?.length > 0">
+  <div class="left-section-folders" *ngIf="foldersLink?.length > 0 && folderEntitiesLoaded">
     <ng-scrollbar visibility="hover" appearance="compact">
       <div
         class="folder"
@@ -13,7 +13,7 @@
         </p>
       </div>
     </ng-scrollbar>
-  </ng-container>
+  </div>
 </app-left-section-wrapper>
 
 <div
@@ -24,7 +24,7 @@
   }"
 >
   <div
-    *ngIf="loaded && (folder$ | async)"
+    *ngIf="folderLoaded && (folder$ | async)"
     class="folder-sub-header"
     [ngClass]="{ 'sub-header-photo': (userBackground$ | async) }"
   >
@@ -96,13 +96,10 @@
     </div>
     <div class="folder-color" [ngStyle]="{ backgroundColor: (folder$ | async).color }"></div>
   </div>
-  <ng-container *ngIf="loaded && (folder$ | async)">
-    <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
-      <div class="content-inner">
-        <div
-          class="grid"
-          [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }"
-        >
+  <ng-scrollbar class="scroll-helper content" visibility="hover" appearance="compact">
+    <div class="content-inner">
+      <div class="grid" [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }">
+        <ng-container>
           <div
             #item
             class="grid-item"
@@ -125,24 +122,26 @@
               class="note"
             ></app-note>
           </div>
-        </div>
+        </ng-container>
       </div>
-      <app-no-results-illustration
-        *ngIf="loaded && !ffnService.isAnyEntityInLayout"
-        [isShow]="loaded && !ffnService.isAnyEntityInLayout"
-        [message]="'noResult.folderNotes' | translate"
-        [illustration]="pService.icon.notesInnerFolder"
-        typeClass="type-module"
-      ></app-no-results-illustration>
-    </ng-scrollbar>
-  </ng-container>
-  <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+    </div>
+    <app-no-results-illustration
+      *ngIf="folderEntitiesLoaded && !ffnService.isAnyEntityInLayout"
+      [isShow]="folderEntitiesLoaded && !ffnService.isAnyEntityInLayout"
+      [message]="'noResult.folderNotes' | translate"
+      [illustration]="icons.notesInnerFolder"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </ng-scrollbar>
+  <app-spinner
+    *ngIf="!folderEntitiesLoaded && !ffnService.murriService.flagForOpacity"
+  ></app-spinner>
 </div>
-<div *ngIf="(folder$ | async) === null && loaded" class="wrapper">
+<div *ngIf="(folder$ | async) === null && folderLoaded" class="wrapper">
   <app-no-results-illustration
     [isShow]="true"
     [message]="'noResult.noAccessViewFolder' | translate"
-    [illustration]="pService.icon.noAccessViewFolder"
+    [illustration]="icons.noAccessViewFolder"
     typeClass="type-module"
   ></app-no-results-illustration>
 </div>

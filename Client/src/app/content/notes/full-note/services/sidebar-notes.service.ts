@@ -45,7 +45,6 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
 
   ngOnDestroy(): void {
     console.log('destroy related');
-    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -56,22 +55,26 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
     this.relatedNotesService.clearRelatedNotes();
     await this.relatedNotesService.loadRelatedNotes(noteId);
     this.entities = this.relatedNotesService.notes;
-    super.initState();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, noteId: string) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      if (this.getIsFirstInit(q)) {
-        await this.murriService.initSidebarNotesAsync(noteId);
-        await this.setInitMurriFlagShowLayout();
-      }
-      await this.synchronizeState(refElements, false);
-    });
+    refElements.changes
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (q: QueryList<ElementRef>) => {
+        if (this.needFirstInit()) {
+          this.initState();
+          await this.murriService.initSidebarNotesAsync(noteId);
+          await this.setFirstInitedMurri();
+          this.murriService.setOpacity1();
+        }
+        await this.synchronizeState(q.toArray(), false);
+      });
   }
 
   async deleteSmallNote(relatedNoteId: string, noteId: string) {
     await this.relatedNotesService.deleteRelatedNote(relatedNoteId, noteId);
-    requestAnimationFrame(() => this.murriService.grid.refreshItems().layout());
+    this.entities = this.relatedNotesService.notes;
+    requestAnimationFrame(() => this.murriService.refreshAndLayout());
   }
 
   openSideModal(noteId: string) {
@@ -84,13 +87,13 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
           const ids = notes.map((x) => x.id);
           await this.relatedNotesService.updateRelatedNotes(noteId, ids);
           this.entities = this.relatedNotesService.notes;
-          requestAnimationFrame(() => this.murriService.grid.refreshItems().layout());
+          requestAnimationFrame(() => this.murriService.refreshAndLayout());
         }
       });
   }
 
   async changeState(note: RelatedNote) {
     await this.relatedNotesService.changeOpenCloseState(note);
-    requestAnimationFrame(() => this.murriService.grid.refreshItems().layout());
+    requestAnimationFrame(() => this.murriService.refreshAndLayout());
   }
 }

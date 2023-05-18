@@ -160,22 +160,26 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
 
   ngOnDestroy(): void {
     console.log('folder destroy');
-    super.destroyLayout();
+    this.murriService.resetToDefaultOpacity();
     this.destroy.next();
     this.destroy.complete();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled: boolean = true) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      if (this.getIsFirstInit(q)) {
-        // eslint-disable-next-line no-param-reassign
-        isDragEnabled = isDragEnabled && this.isSortable;
-        this.murriService.initMurriFolder(isDragEnabled);
-        await this.setInitMurriFlagShowLayout();
-        await this.loadWithUpdates();
-      }
-      await this.synchronizeState(refElements, this.sortFolderType === SortedByENUM.AscDate);
-    });
+    refElements.changes
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (q: QueryList<ElementRef>) => {
+        if (this.needFirstInit()) {
+          this.initState();
+          // eslint-disable-next-line no-param-reassign
+          isDragEnabled = isDragEnabled && this.isSortable;
+          await this.murriService.initMurriFolderAsync(isDragEnabled);
+          await this.setFirstInitedMurri();
+          requestAnimationFrame(() => this.murriService.setOpacity1());
+          await this.loadWithUpdates();
+        }
+        await this.synchronizeState(q.toArray(), this.sortFolderType === SortedByENUM.AscDate);
+      });
   }
 
   async loadWithUpdates() {
@@ -213,12 +217,9 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   async changeOrderTypeHandler(sortType: SortedByENUM) {
-    await this.murriService.destroyGridAsync();
-    this.entities = this.orderBy(this.entities, sortType);
-    const roadType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    const isDraggable = roadType !== FolderTypeENUM.Shared && this.isSortable;
-    this.murriService.initMurriFolderAsync(isDraggable);
-    await this.murriService.setOpacityFlagAsync(0);
+    await this.resetLayoutAsync();
+    const temp = this.transformSpread(this.entities);
+    this.entities = this.orderBy(temp, sortType);
   }
 
   async loadFolders(typeENUM: FolderTypeENUM) {
@@ -235,7 +236,6 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   async initializeEntities(folders: SmallFolder[]) {
     const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);
-    super.initState();
 
     await this.loadAdditionInformation();
   }

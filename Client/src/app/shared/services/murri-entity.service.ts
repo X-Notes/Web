@@ -1,4 +1,4 @@
-import { ElementRef, QueryList } from '@angular/core';
+import { ElementRef } from '@angular/core';
 import { SmallFolder } from 'src/app/content/folders/models/folder.model';
 import { Label } from 'src/app/content/labels/models/label.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
@@ -26,34 +26,33 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     return !this.state[id];
   }
 
-  initState() {
-    // eslint-disable-next-line no-return-assign
+  resetState(): void {
+    this.state = {};
+  }
+
+  initState(): void {
+    this.resetState();
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
   }
 
-  async synchronizeState(refElements: QueryList<ElementRef>, isAddToEnd: boolean) {
-    if (this.firstInitedMurri) {
-      const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-      this.newItemChecker(elements, isAddToEnd);
-      await this.deleteItemChecker(elements);
-    }
+  async synchronizeState(refElements: ElementRef[], isAddToEnd: boolean) {
+    const elements = refElements.map((item) => item.nativeElement as HTMLElement);
+    this.newItemChecker(elements, isAddToEnd);
+    await this.deleteItemChecker(elements);
     this.syncPositions();
   }
 
-  async setInitMurriFlagShowLayout() {
-    await this.murriService.setOpacityFlagAsync();
-    this.firstInitedMurri = true;
+  setFirstInitedMurri(flag: boolean = true): void {
+    this.firstInitedMurri = flag;
   }
 
-  destroyLayout() {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
+  async resetLayoutAsync() {
+    await this.murriService.muuriDestroyAsync();
+    this.setFirstInitedMurri(false);
   }
 
-  getIsFirstInit(q: any): boolean {
-    return (
-      q.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
-    );
+  needFirstInit(): boolean {
+    return !this.firstInitedMurri;
   }
 
   addToDom(ents: Entity[]): boolean {
@@ -69,10 +68,6 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     if (ids.length > 0) {
       this.entities = this.entities.filter((x) => !ids.some((q) => q === x.id));
     }
-  }
-
-  setFirstInitedFalse(): void {
-    this.firstInitedMurri = false;
   }
 
   private async deleteItemChecker(elements: HTMLElement[]): Promise<boolean> {
@@ -95,9 +90,9 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
 
   private removeFromGrid(id: string): void {
     // eslint-disable-next-line no-underscore-dangle
-    const item = this.murriService.grid.getItems().find((x) => x._element.id === id);
+    const item = this.murriService.getItems().find((x) => x._element.id === id);
     if (item) {
-      this.murriService.grid.remove([item], { removeElements: false });
+      this.murriService.removeElements([item], false);
     }
   }
 
@@ -106,10 +101,7 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     for (const el of elements) {
       if (!this.state[el.id]) {
         this.state[el.id] = this.entities.find((x) => x.id === el.id);
-        this.murriService.grid.add(el, {
-          index: isAddToEnd ? -1 : 0,
-          layout: true,
-        });
+        this.murriService.addElement([el], isAddToEnd, true);
         isHasUpdates = true;
       }
     }

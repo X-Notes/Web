@@ -96,14 +96,14 @@ export class AddNotesInFolderComponent
       .subscribe(async (str) => {
         if (!this.loaded) return;
         this.pService.setSpinnerState(true);
-        await this.murriService.destroyGridAsync();
+        await this.murriService.muuriDestroyAsync();
 
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
-        await this.murriService.setOpacityFlagAsync(0);
+        this.murriService.setOpacity1();
         this.defaultValue = SearchNotesTypesEnum.all;
       });
   }
@@ -123,7 +123,7 @@ export class AddNotesInFolderComponent
     this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
       if (q.length === this.viewNotes.length && !this.firstInitedMurri) {
         this.murriService.initMurriPreviewDialogNote();
-        await this.murriService.setOpacityFlagAsync();
+        this.murriService.setOpacity1();
         this.firstInitedMurri = true;
       }
     });
@@ -136,8 +136,6 @@ export class AddNotesInFolderComponent
   unSelectNote = (note: SmallNote) => (note.isSelected = false);
 
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
