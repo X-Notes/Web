@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { FolderStore } from '../../folders/state/folders-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
