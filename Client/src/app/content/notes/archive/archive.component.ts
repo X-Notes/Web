@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ViewChildren,
-  ElementRef,
-  QueryList,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -31,8 +23,6 @@ export class ArchiveComponent
   extends BaseNotesComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
-
   @Select(NoteStore.archiveCount)
   archiveCount$: Observable<number>;
 
@@ -58,7 +48,7 @@ export class ArchiveComponent
   }
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Archive);
+    this.noteService.murriInitialise();
   }
 
   async loadContent(typeENUM = NoteTypeENUM.Archive) {

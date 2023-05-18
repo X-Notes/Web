@@ -30,18 +30,20 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
 
   ngOnDestroy(): void {
     console.log('label destroy');
-    super.destroyLayout();
+    this.murriService.resetToDefaultOpacity();
     this.destroy.next();
     this.destroy.complete();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      if (this.getIsFirstInit(q)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async () => {
+      if (this.needFirstInit()) {
+        this.initState();
         this.murriService.initMurriLabel();
-        await this.setInitMurriFlagShowLayout();
+        await this.setFirstInitedMurri();
+        this.murriService.setOpacity1();
       }
-      await this.synchronizeState(refElements, false);
+      await this.synchronizeState(refElements.toArray(), false);
     });
   }
 
@@ -53,6 +55,5 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
 
   async initializeEntities(labels: Label[]) {
     this.entities = [...labels].map((label) => ({ ...label }));
-    super.initState();
   }
 }

@@ -60,7 +60,7 @@ export class RelatedNotesService {
   async handleUpdates(updates: UpdateRelatedNotesWS, noteId: string): Promise<void> {
     if (!updates) return;
     if (updates.idsToRemove && updates.idsToRemove.length > 0) {
-      this.notes = this.notes.filter((x) => !updates.idsToRemove.some((z) => z === x.id));
+      this.notes = this.notes.filter((x) => !updates.idsToRemove.some((q) => q === x.id));
     }
     if (updates.idsToAdd && updates.idsToAdd.length > 0) {
       const newNotes = await this.apiRelated.getRelatedNotes(noteId).toPromise();

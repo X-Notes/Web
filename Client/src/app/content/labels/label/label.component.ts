@@ -90,7 +90,7 @@ export class LabelComponent implements OnInit, OnDestroy {
           resolve(null);
         }
         if (this.murriService) {
-          this.murriService.grid.refreshItems().layout();
+          this.murriService.refreshAndLayout();
         }
         count += 1;
       }, 10);

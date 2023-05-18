@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ViewChildren,
-  ElementRef,
-  QueryList,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -31,8 +23,6 @@ export class PrivatesComponent
   extends BaseNotesComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
-
   @Select(NoteStore.privateCount)
   privateCount$: Observable<number>;
 
@@ -52,7 +42,7 @@ export class PrivatesComponent
   }
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Private);
+    this.noteService.murriInitialise();
   }
 
   async ngOnInit() {

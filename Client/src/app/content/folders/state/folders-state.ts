@@ -651,7 +651,6 @@ export class FolderStore {
 
       // UI CHANGES
       if (isUpdateUI) {
-        console.log(1);
         const uiChanges = this.toUpdateFolderUI(folderId, null, str, true);
         patchState({ updateFolderEvent: [uiChanges] });
       }
