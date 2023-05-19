@@ -34,7 +34,7 @@
       display: flex;
       font-size: 2.5rem;
       font-weight: 700;
-      min-height: 30px;
+      min-height: 48px;
 
       .title {
         width: 100%;
@@ -161,6 +161,7 @@
     .top-section {
       .title-section {
         font-size: 2rem;
+        min-height: 30px;
       }
     }
   }

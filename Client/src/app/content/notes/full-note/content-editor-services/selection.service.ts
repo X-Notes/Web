@@ -1,11 +1,12 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SelectionService {
@@ -13,9 +14,17 @@ export class SelectionService {
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 
+  disableDiv$ = new BehaviorSubject<boolean>(false);
+
   selectionDivActive$ = new BehaviorSubject(false);
 
-  disableDiv = false;
+  getSelectionDivActive$ = combineLatest([this.disableDiv$, this.selectionDivActive$]).pipe(
+    map(([disableDiv, selectionDivActive]) => !disableDiv && selectionDivActive),
+  );
+
+  getSelectionDivActiveMultiplyRows$ = combineLatest([this.getSelectionDivActive$]).pipe(
+    map(() => this.selectedMenuType === TextEditMenuEnum.MultiplyRows),
+  );
 
   private selectionTop = 0;
 
@@ -61,8 +70,8 @@ export class SelectionService {
     return this.selectionTop;
   }
 
-  get selectionDivActive(): boolean {
-    return !this.disableDiv && this.selectionDivActive$.getValue();
+  updateSelectionValue(flag: boolean): void {
+    this.selectionDivActive$.next(flag);
   }
 
   selectionHandler(
@@ -129,20 +138,15 @@ export class SelectionService {
     this.onSetChanges();
   }
 
-  clearSelection(): void {
-    const selection = this.apiBrowserService.getSelection();
-    selection.removeAllRanges();
-  }
-
   resetSelectionItems(): void {
-    this.disableDiv = false;
+    this.disableDiv$.next(false);
     this.selectedItemId = null;
     this.selectedItemsSet.clear();
     this.onSetChanges();
   }
 
   resetSelectionAndItems(): void {
-    this.clearSelection();
+    this.apiBrowserService.removeAllRanges();
     this.resetSelectionItems();
   }
 
@@ -181,7 +185,7 @@ export class SelectionService {
     this.selectedItemId = id;
 
     const left = (selectionCoords.left + selectionCoords.right) / 2;
-    const top = selectionCoords.top + scrollElement?.scrollTop;
+    const top = selectionCoords.top + scrollElement?.scrollTop - 5;
     this.selectionTop = top;
     this.selectionLeft = left;
 

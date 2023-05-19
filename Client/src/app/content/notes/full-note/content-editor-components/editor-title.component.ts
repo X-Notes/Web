@@ -77,7 +77,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   startTitleSelection($event): void {
-    this.facade.selectionService.disableDiv = true;
+    this.facade.selectionService.disableDiv$.next(true);
   }
 
   pasteCommandHandler(e) {

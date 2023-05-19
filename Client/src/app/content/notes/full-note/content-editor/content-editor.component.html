@@ -4,14 +4,14 @@
   appSelection
   [isReadonly]="isReadOnlyMode"
   [appMenuSelection]="htmlElements"
-  [scrollElement]="contentSection"
+  [scrollElement]="mainSection"
   [appCopy]="htmlElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
   (selectionEndEvent)="selectionEndHandler($event)"
   (onScrollEvent)="onScroll($event)"
   class="main-content"
-  [ngClass]="{ 'nope-select': facade.selectionService.selectionDivActive }"
+  [ngClass]="{ 'nope-select': facade.selectionService.getSelectionDivActive$ | async }"
 >
   <div class="top-section">
     <div *ngIf="(labels | noDeletedLabels)?.length" class="labels-section">
@@ -29,7 +29,7 @@
         id="title-element"
         #noteTitle
         [attr.contenteditable]="
-          !isReadOnlyMode && facade.selectionService.selectionDivActive === false
+          !isReadOnlyMode && (facade.selectionService.getSelectionDivActive$ | async) === false
         "
         (paste)="pasteCommandHandler($event)"
         (selectstart)="startTitleSelection($event)"
@@ -91,8 +91,7 @@
               *ngIf="item.noteTextTypeId === textType.numberList"
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
-              [prevContent]="getTextContent(i - 1)"
-              [prevType]="getTextContent(i - 1)?.noteTextTypeId"
+              [listNumber]="getNumberList(item, i)"
               [content]="item"
               [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"

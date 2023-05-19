@@ -26,8 +26,12 @@ export abstract class BaseEditorElementComponent {
     this.cdr = cdr;
   }
 
-  get isSelectModeActive(): boolean {
-    return this.facade.selectionService.selectionDivActive$.getValue();
+  get isSelectModeActive$(): Observable<boolean> {
+    return this.facade.selectionService.getSelectionDivActive$;
+  }
+
+  get selectionDivActiveMultiplyRows$(): Observable<boolean> {
+    return this.facade.selectionService.getSelectionDivActiveMultiplyRows$;
   }
 
   detectChanges(): void {

@@ -5,6 +5,7 @@ import { ContentModelBase } from '../../models/editor-models/content-model-base'
 import { TextBlock } from '../../models/editor-models/text-models/text-block';
 import { SetFocus } from './set-focus';
 import { SaveSelection } from '../../models/browser/save-selection';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 
 export enum ComponentType {
   HTML = 1,
@@ -38,6 +39,7 @@ export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
   updateWS(): void;
   getEditableNative(): HTMLElement | Element;
   getTextBlocks(): TextBlock[];
+  getTextType(): NoteTextTypeENUM;
   getText(): string;
   getSelection(): SaveSelection;
   restoreSelection(pos: SaveSelection): void;

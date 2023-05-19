@@ -113,6 +113,16 @@ export class DeltaConverter {
     return formatted;
   }
 
+  static textToHtmlElements(texts: string[]): HTMLElement[] {
+    return texts
+      .map((x) => this.convertHTMLToDelta(x))
+      .map((delta) => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = this.convertDeltaToHtml(delta);
+        return tempDiv;
+      });
+  }
+
   static splitDeltaByDividers(html: string): HTMLElement[] {
     const delta = this.convertHTMLToDelta(html);
     if (!delta.ops || delta.ops.length === 0) {
