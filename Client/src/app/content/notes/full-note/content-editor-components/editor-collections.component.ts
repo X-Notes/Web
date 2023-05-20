@@ -297,7 +297,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
     if (newContentId) {
       const el = this.getCollectionElementById(newContentId);
       if (el) {
-        el.syncLayoutWithContent(true);
+        el.syncLayoutWithContent();
         el.syncCollectionItems();
       }
       this.handleDeleteCollection(newContentId);

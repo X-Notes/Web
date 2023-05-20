@@ -20,7 +20,7 @@ export interface ParentInteraction<T> {
   isFocusToNext(entity?: SetFocus): boolean;
   setFocus(entity?: SetFocus);
   setFocusToEnd();
-  syncLayoutWithContent(emitChanges: boolean);
+  syncLayoutWithContent();
   getHost(): ElementRef<HTMLElement>;
   getContent(): T;
   getContentId(): string;
@@ -35,7 +35,7 @@ export interface ParentInteraction<T> {
 
 export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
   syncHtmlWithLayout();
-  updateHTML(contents: TextBlock[], emitChanges: boolean);
+  updateContentsAndSync(contents: TextBlock[]);
   updateWS(): void;
   getEditableNative(): HTMLElement | Element;
   getTextBlocks(): TextBlock[];

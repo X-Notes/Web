@@ -36,8 +36,6 @@ import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from '../content-editor-services/web-sockets-note-updater.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
-import { PasteEvent } from '../full-note-components/html-components/html-base.component';
-import { HeadingTypeENUM } from '../../models/editor-models/text-models/heading-type.enum';
 import { DeltaStatic } from 'quill';
 import { TextEditMenuEnum } from '../text-edit-menu/models/text-edit-menu.enum';
 import { TextEditMenuOptions } from '../text-edit-menu/models/text-edit-menu-options';
@@ -46,8 +44,6 @@ import { DestroyComponentService } from 'src/app/shared/services/destroy-compone
 import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
 import { Label } from 'src/app/content/labels/models/label.model';
 import { HtmlComponentsFacadeService } from '../full-note-components/html-components-services/html-components.facade.service';
-import { MutateRowAction } from '../content-editor-services/models/undo/mutate-row-action';
-import { TextBlock } from '../../models/editor-models/text-models/text-block';
 import { ChangePositionAction } from '../content-editor-services/models/undo/change-position-action';
 import { UpdateContentPosition } from 'src/app/core/models/signal-r/innerNote/update-content-position-ws';
 import { ContentEditorMomentoStateService } from '../content-editor-services/core/content-editor-momento-state.service';
@@ -310,6 +306,7 @@ export class ContentEditorComponent
     this.contentEditorElementsListenersService.onPressCtrlASubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
+        this.facade.apiBrowser.removeAllRanges();
         const ids = this.contents.map((x) => x.id);
         this.facade.selectionService.selectItems(ids);
         this.facade.cdr.detectChanges();
@@ -326,7 +323,7 @@ export class ContentEditorComponent
         for (const id of ids) {
           const el = this.getElementById(id);
           if (el) {
-            el.syncLayoutWithContent(false);
+            el.syncLayoutWithContent();
             el.detectChanges();
           }
         }
@@ -393,7 +390,7 @@ export class ContentEditorComponent
     setTimeout(() => {
       const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
       const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
-      el.updateHTML(contents, true);
+      el.updateContentsAndSync(contents);
       el.setFocus();
     });
   }
@@ -423,7 +420,8 @@ export class ContentEditorComponent
 
     const resContent = [...prevElement.getTextBlocks(), ...el.getTextBlocks()];
 
-    prevElement.updateHTML(resContent, true);
+    prevElement.updateContentsAndSync(resContent);
+    el.syncHtmlWithLayout();
     this.facade.contentsService.deleteById(id, false);
 
     setTimeout(() => {
@@ -434,6 +432,16 @@ export class ContentEditorComponent
 
   getTextContent(index: number): BaseText {
     return this.contents[index] as BaseText;
+  }
+
+  getNumberList(content: BaseText, contentIndex: number): number {
+    const prev = this.getTextContent(contentIndex - 1);
+    if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
+      content.listNumber = 1;
+      return content.listNumber;
+    }
+    content.listNumber = prev.listNumber + 1;
+    return content.listNumber;
   }
 
   transformToTypeText(value: TransformContent): void {
@@ -479,7 +487,8 @@ export class ContentEditorComponent
         );
       }
       if (el) {
-        el.updateHTML(DeltaConverter.convertDeltaToTextBlocks(resultDelta), true);
+        el.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+        el.syncHtmlWithLayout();
       }
       if (pos.selection) {
         pos.selection.start = pos.selection.end;
@@ -490,18 +499,9 @@ export class ContentEditorComponent
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateHtmlHandler(model: InputHtmlEvent) {
-    const contents = DeltaConverter.convertHTMLToTextBlocks(model.html);
-    this.handleUndoTextAction(model.content);
-    model.content.contents = contents;
+  updateHtmlHandler(model: InputHtmlEvent): void {
     this.postAction();
     this.menuSelectionDirective.onSelectionchange(true);
-  }
-
-  handleUndoTextAction(text: BaseText): void {
-    const contents = text.contents?.map((x) => new TextBlock(x)) ?? [];
-    const action = new MutateRowAction(contents, text.id);
-    this.facade.momentoStateService.saveToStack(action);
   }
 
   unSelectItems(): void {
@@ -531,46 +531,6 @@ export class ContentEditorComponent
       return { index: 0, length: el.innerHTML.length, selection: null };
     }
     return null;
-  }
-
-  pasteTextHandler(e: PasteEvent): void {
-    let contentId = e.element.content.id;
-    for (const el of e.htmlElementsToInsert) {
-      let type = NoteTextTypeENUM.default;
-      let heading: HeadingTypeENUM = null;
-      if (el.tagName === 'H1' || el.tagName === 'H2') {
-        type = NoteTextTypeENUM.heading;
-        heading = HeadingTypeENUM.H1;
-      }
-      if (el.tagName === 'H3' || el.tagName === 'H4') {
-        type = NoteTextTypeENUM.heading;
-        heading = HeadingTypeENUM.H2;
-      }
-      if (el.tagName === 'H5' || el.tagName === 'H6') {
-        type = NoteTextTypeENUM.heading;
-        heading = HeadingTypeENUM.H3;
-      }
-      if (el.tagName === 'UL') {
-        type = NoteTextTypeENUM.dotList;
-        if (el.firstElementChild?.textContent?.trimStart().startsWith('[ ]')) {
-          el.firstElementChild.textContent = el.firstElementChild?.textContent.slice(3);
-          type = NoteTextTypeENUM.checkList;
-        }
-      }
-      if (el.tagName === 'OL') {
-        type = NoteTextTypeENUM.numberList;
-      }
-
-      const textBlocks = DeltaConverter.convertHTMLToTextBlocks(el.outerHTML);
-      const newTextContent = this.facade.contentEditorTextService.insertNewContent(
-        contentId,
-        type,
-        true,
-        textBlocks,
-        heading,
-      );
-      contentId = newTextContent.content.id;
-    }
   }
 
   changeDetectionChecker = () => {

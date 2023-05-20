@@ -892,7 +892,9 @@ export class NoteStore {
   }
 
   @Action(UpdateCursorAction)
-  async updateCursor({}: StateContext<NoteState>, { noteId, cursor }: UpdateCursorAction) {
+  async updateCursor({ getState }: StateContext<NoteState>, { noteId, cursor }: UpdateCursorAction) {
+    const note = getState().fullNoteState.note;
+    if(!note || note.id !== noteId || !note.isCanEdit) return;
     await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
   }
 

@@ -11,9 +11,9 @@ namespace Common.DTO.Notes.FullNoteSyncContents
         public List<TextNoteDTO> NewTextItems { set; get; }
 
         // BASE FILE
-        public List<BaseNoteContentDTO> PhotosCollectionItems { set; get; }
-        public List<BaseNoteContentDTO> AudiosCollectionItems { set; get; }
-        public List<BaseNoteContentDTO> VideosCollectionItems { set; get; }
-        public List<BaseNoteContentDTO> DocumentsCollectionItems { set; get; }
+        public List<PhotosCollectionNoteDTO> PhotosCollectionItems { set; get; }
+        public List<AudiosCollectionNoteDTO> AudiosCollectionItems { set; get; }
+        public List<VideosCollectionNoteDTO> VideosCollectionItems { set; get; }
+        public List<DocumentsCollectionNoteDTO> DocumentsCollectionItems { set; get; }
     }
 }
