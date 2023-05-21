@@ -165,7 +165,7 @@ nav {
 }
 @media (max-width: 600px) {
   nav {
-    height: 50px;
+    height: $bottom-mobile-menu;
 
     .module {
       .item {

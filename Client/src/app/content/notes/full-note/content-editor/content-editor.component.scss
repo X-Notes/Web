@@ -105,6 +105,17 @@
   border-radius: 0 0 0 30px;
 }
 
+.player-active-position-transform-menu {
+  bottom: 56px;
+  @media (max-width: 600px) {
+    bottom: 83px;
+  }
+}
+
+.player-active-position {
+  bottom: calc($bottom-mobile-menu + 83px);
+}
+
 .file-insert {
   display: none;
 }

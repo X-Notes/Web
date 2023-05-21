@@ -273,8 +273,8 @@
   display: none;
   justify-content: center;
   align-items: center;
-  width: 90px;
-  height: 90px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   background-color: transparent;
   border: none;
@@ -297,11 +297,11 @@
 }
 
 .add-mobile-position-default {
-  bottom: calc(5vh + 80px);
+  bottom: calc(5vh + 55px);
 }
 
 .add-mobile-position-audio {
-  bottom: calc(5vh + 105px);
+  bottom: calc(5vh + 115px);
 }
 
 .separator-buttons {
@@ -458,14 +458,6 @@
     width: calc(100% / 2);
   }
 
-  .add-mobile-position-default {
-    bottom: calc(5vh + 70px);
-  }
-
-  .add-mobile-position-audio {
-    bottom: calc(5vh + 115px);
-  }
-
   .cdk-overlay-container {
     .cdk-global-overlay-wrapper {
       // pointer-events: auto;
@@ -488,9 +480,6 @@
 
 @media (max-width: 400px) {
   .add-mobile {
-    width: 75px;
-    height: 75px;
-
     .icon {
       font-size: 2.3rem;
     }

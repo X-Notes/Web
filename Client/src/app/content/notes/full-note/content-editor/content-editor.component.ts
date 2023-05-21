@@ -59,6 +59,7 @@ import { SaveSelection } from '../../models/browser/save-selection';
 import { ClearCursorsAction, UpdateCursorAction } from '../../state/editor-actions';
 import { UpdateCursor } from '../models/cursors/cursor';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
+import { AudioService } from '../../audio.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -125,6 +126,7 @@ export class ContentEditorComponent
     public pS: PersonalizationService,
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
     editorApiFacadeService: EditorFacadeService,
+    public audioService: AudioService,
   ) {
     super(editorApiFacadeService);
   }

@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateCursorDelay } from 'src/app/core/defaults/bounceDelay';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
 
 @Injectable()
 export class ClickableContentService {
@@ -35,7 +36,7 @@ export class ClickableContentService {
 
   cursorChanged$: Subject<() => void> = new Subject();
 
-  constructor(public dc: DestroyComponentService) {
+  constructor(public dc: DestroyComponentService, private apiBrowser: ApiBrowserTextService) {
     this.cursorChanged$
       .pipe(takeUntil(dc.d$), debounceTime(updateCursorDelay))
       .subscribe((action) => {
@@ -74,6 +75,9 @@ export class ClickableContentService {
     type: ClickableSelectableEntities,
     currentItem: ParentInteraction<ContentModelBase>,
   ) {
+    if (type !== ClickableSelectableEntities.Text) {
+      this.apiBrowser.removeAllRanges();
+    }
     // PREV
     this.prevContent = this.currentContent;
     this.prevItemId = this.currentItemId;

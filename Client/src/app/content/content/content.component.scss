@@ -33,7 +33,7 @@ main{
     }
   
     @media (max-width: 600px) {
-      bottom: 50px;
+      bottom: $bottom-mobile-menu;
     }
   }
 }
