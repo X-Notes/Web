@@ -26,6 +26,9 @@ import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import { BaseSearchNotesTypes } from '../general-components/base-search-notes-types';
+import { SelectionOption } from '../../custom-components/select-component/entities/select-option';
+import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
+import { EnumConverterService } from '../../services/enum-converter.service';
 
 @Component({
   selector: 'app-open-inner-side',
@@ -47,6 +50,8 @@ export class OpenInnerSideComponent
 
   destroy = new Subject<void>();
 
+  optionsState: SelectionOption[];
+
   constructor(
     private store: Store,
     murriService: MurriService,
@@ -55,6 +60,7 @@ export class OpenInnerSideComponent
     private apiRelatedNotes: ApiRelatedNotesService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
+    private enumConverter: EnumConverterService,
   ) {
     super(murriService);
   }
@@ -75,12 +81,31 @@ export class OpenInnerSideComponent
     return this.notes.filter((x) => x.isSelected);
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.viewNotes.length && !this.firstInitedMurri) {
-        this.murriService.initMurriPreviewDialogNote();
-        await this.murriService.setOpacityFlagAsync();
+  get options(): SelectionOption[] {
+    if (this.optionsState) {
+      return this.optionsState;
+    }
+    this.optionsState = [
+      SearchNotesTypesEnum.all,
+      SearchNotesTypesEnum.archive,
+      SearchNotesTypesEnum.personal,
+      SearchNotesTypesEnum.shared,
+    ].map((x) =>
+      this.enumConverter.convertEnumToSelectionOption(SearchNotesTypesEnum, x, 'subMenu.'),
+    );
+    return this.optionsState;
+  }
+
+  ngAfterViewInit(): void {
+    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (q.length === this.viewNotes.length && !this.firstInitedMurri) {
+        await this.murriService.initMurriPreviewDialogNoteAsync();
         this.firstInitedMurri = true;
+      }
+    });
+    this.murriService.layoutEnd$.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (q) {
+        this.murriService.setOpacity1();
       }
     });
   }
@@ -103,15 +128,15 @@ export class OpenInnerSideComponent
       .subscribe(async (str) => {
         if (!this.loaded) return;
         this.pService.setSpinnerState(true);
-        await this.murriService.destroyGridAsync();
+        await this.murriService.muuriDestroyAsync();
 
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
-        await this.murriService.setOpacityFlagAsync(0);
-        this.selectValue = this.selectTypes[0];
+        this.murriService.setOpacity1();
+        this.defaultValue = SearchNotesTypesEnum.all;
       });
   }
 
@@ -143,9 +168,7 @@ export class OpenInnerSideComponent
     note.isSelected = false;
   }
 
-  ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
+  ngOnDestroy() {
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { InvitationFormResult } from './models/invitation-form-result';
+import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
+import { EnumConverterService } from 'src/app/shared/services/enum-converter.service';
 
 @Component({
   selector: 'app-mail-invitations',
@@ -12,11 +14,15 @@ export class MailInvitationsComponent implements AfterViewInit {
 
   form: InvitationFormResult = new InvitationFormResult();
 
-  refType = RefTypeENUM;
-
   defaultRefType = RefTypeENUM.Viewer;
 
-  refTypes = Object.values(RefTypeENUM).filter((x) => typeof x === 'string');
+  constructor(private enumConverterService: EnumConverterService) {}
+
+  get options(): SelectionOption[] {
+    return [RefTypeENUM.Viewer, RefTypeENUM.Editor].map((x) =>
+      this.enumConverterService.convertEnumToSelectionOption(RefTypeENUM, x, 'modal.shareModal.'),
+    );
+  }
 
   refTypeNotification(refType: RefTypeENUM): void {
     this.form.refTypeForInvite = refType;

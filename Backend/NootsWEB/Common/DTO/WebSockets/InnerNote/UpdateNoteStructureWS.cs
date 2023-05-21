@@ -13,13 +13,13 @@ namespace Common.DTO.WebSockets.InnerNote
         public List<TextNoteDTO> TextContentsToAdd { set; get; }
 
 
-        public List<BaseNoteContentDTO> PhotoContentsToAdd { set; get; }
+        public List<PhotosCollectionNoteDTO> PhotoContentsToAdd { set; get; }
 
-        public List<BaseNoteContentDTO> VideoContentsToAdd { set; get; }
+        public List<VideosCollectionNoteDTO> VideoContentsToAdd { set; get; }
 
-        public List<BaseNoteContentDTO> AudioContentsToAdd { set; get; }
+        public List<AudiosCollectionNoteDTO> AudioContentsToAdd { set; get; }
 
-        public List<BaseNoteContentDTO> DocumentContentsToAdd { set; get; }
+        public List<DocumentsCollectionNoteDTO> DocumentContentsToAdd { set; get; }
 
         public List<UpdateContentPositionWS> Positions { set; get; }
     }

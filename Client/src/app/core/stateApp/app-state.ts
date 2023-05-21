@@ -280,8 +280,7 @@ export class AppStore {
         state.routing === EntityType.FolderArchive ||
         state.routing === EntityType.FolderDeleted ||
         state.routing === EntityType.FolderPrivate ||
-        state.routing === EntityType.FolderShared ||
-        state.routing === EntityType.FolderInner) &&
+        state.routing === EntityType.FolderShared) &&
       state.routing !== null
     );
   }

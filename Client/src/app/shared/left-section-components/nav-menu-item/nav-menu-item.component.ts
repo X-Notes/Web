@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { PersonalizationService } from '../../services/personalization.service';
 
 @Component({
   selector: 'app-nav-menu-item',
@@ -14,4 +15,10 @@ export class NavMenuItemComponent {
 
   @Input()
   count: number;
+
+  constructor(public pService: PersonalizationService) {}
+
+  onClick(): void {
+    this.pService.sideBarActive$.next(false);
+  }
 }

@@ -1,5 +1,5 @@
-<app-header class="header"></app-header>
-<main appTheme (window:resize)="pService.onResize()">
+<app-header id="app-header" class="header"></app-header>
+<main appTheme>
   <app-side-bar class="sidebar nope-select"></app-side-bar>
   <router-outlet></router-outlet>
   <button
@@ -8,7 +8,7 @@
     class="add-mobile"
     #addMobile
     (click)="pService.newButtonSubject.next(true)"
-    *ngIf="newButtonActive && !newProfile"
+    *ngIf="(newButtonActive$ | async) || ((isFolderInner$ | async) && (isFullFolderOwner$ | async))"
     [ngClass]="
       audioService.currentFile ? 'add-mobile-position-audio' : 'add-mobile-position-default'
     "

@@ -16,7 +16,7 @@
           <div class="icon">
             <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
           </div>
-          <p>{{ 'menu.' + item.icon | translate }}</p>
+          <p>{{ getItemName(item) | translate }}</p>
           <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
         </div>
       </button>

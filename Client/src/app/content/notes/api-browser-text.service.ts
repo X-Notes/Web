@@ -42,24 +42,34 @@ export class ApiBrowserTextService {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(textToCopy);
     } else {
-      // Use the 'out of viewport hidden text area' trick
-      const textArea = document.createElement('textarea');
+      this.copyTextThroughTextArea(textToCopy);
+    }
+  }
+
+  copyTextThroughTextArea(textToCopy: string, isText: boolean = true): void {
+    // Use the 'out of viewport hidden text area' trick
+    const textArea = document.createElement('textarea');
+
+    if (isText) {
       textArea.value = textToCopy;
+    } else {
+      textArea.innerHTML = textToCopy;
+    }
 
-      // Move textarea out of the viewport so it's not visible
-      textArea.style.position = 'absolute';
-      textArea.style.left = '-999999px';
+    // Move textarea out of the viewport so it's not visible
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-999999px';
 
-      document.body.prepend(textArea);
-      textArea.select();
+    document.body.prepend(textArea);
+    textArea.select();
 
-      try {
-        document.execCommand('copy');
-      } catch (error) {
-        console.error(error);
-      } finally {
-        textArea.remove();
-      }
+    try {
+      document.execCommand('copy');
+      console.log(1);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      textArea.remove();
     }
   }
 
@@ -96,7 +106,6 @@ export class ApiBrowserTextService {
     const ctx = canvas.getContext('2d');
     const imageEl = this.createImage({ src: imageUrl });
     imageEl.onload = (e: any) => {
-      console.log('e: ', e);
       canvas.width = e.target.width;
       canvas.height = e.target.height;
       ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height);

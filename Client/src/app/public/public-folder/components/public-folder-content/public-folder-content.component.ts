@@ -24,12 +24,13 @@ import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { UpdaterEntitiesService } from '../../../../core/entities-updater.service';
 import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
 import { AppInitializerService } from 'src/app/core/app-initializer.service';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Component({
   selector: 'app-public-folder-content',
   templateUrl: './public-folder-content.component.html',
   styleUrls: ['./public-folder-content.component.scss'],
-  providers: [FullFolderNotesService],
+  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService, DestroyComponentService],
 })
 export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;

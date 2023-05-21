@@ -127,8 +127,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.photoError = true;
   }
 
-  toggleSidebar() {
-    this.pService.stateSidebar = !this.pService.stateSidebar;
+  openSidebar() {
+    this.pService.sideBarActive$.next(true);
   }
 
   routeChangeFullFolder(folder: FullFolder) {

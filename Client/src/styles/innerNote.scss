@@ -73,3 +73,13 @@
     color: $text-color;
   }
 }
+
+
+@media (max-width: 600px) {
+  app-drag-drop-handler-container{
+    display: none;
+  }
+  .main-item {
+    margin: 0.125rem 1rem 0.125rem 0.8rem;
+  }
+}

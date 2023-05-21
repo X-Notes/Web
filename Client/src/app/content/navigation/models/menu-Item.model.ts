@@ -5,6 +5,7 @@ export interface MenuItem {
   isVisible?: Observable<boolean>;
   isActive?: Observable<boolean>;
   class?: string;
+  name?: string;
   operation: () => void;
   isOnlyForAuthor: boolean;
   IsNeedEditRightsToSee: boolean;

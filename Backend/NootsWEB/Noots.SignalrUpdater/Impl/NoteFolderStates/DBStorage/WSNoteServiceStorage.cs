@@ -28,6 +28,11 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return noteConnectionRepository.GetConnectionsById(noteId, exceptUserId);
         }
 
+        public Task<int> UsersOnNoteAsync(Guid noteId)
+        {
+            return noteConnectionRepository.UsersOnNoteAsync(noteId);
+        }
+
         public async Task AddAsync(Guid noteId, UserIdentifierConnectionId userIdentity)
         {
             var isExist = await noteConnectionRepository.GetAnyAsync(x => x.NoteId == noteId && x.UserIdentifierConnectionIdId == userIdentity.Id);

@@ -54,6 +54,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   scrollSection: HTMLElement;
 
+  header: HTMLElement;
+
   private div: HTMLElement;
 
   private prevMouseEvent: MouseEvent;
@@ -82,6 +84,13 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return this.isUserStartSelect;
   }
 
+  get headerHeight(): number {
+    if (!this.header) {
+      this.header = document.getElementById('app-header');
+    }
+    return this.header.offsetHeight;
+  }
+
   get isUserStartSelect(): boolean {
     const size = this.div.getBoundingClientRect();
     // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
@@ -89,12 +98,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   processY(y: number): number {
-    return (
-      y +
-      this.scrollSection.scrollTop -
-      this.scrollSection.offsetTop -
-      this.selectionService.menuHeight
-    );
+    return y + this.scrollSection.scrollTop - this.scrollSection.offsetTop - this.headerHeight;
   }
 
   processX(x: number): number {
@@ -141,7 +145,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.div = document.getElementById('note-selector');
 
     const scrollEventListener = this.renderer.listen(scrollSection, 'scroll', (e) =>
-      this.scrollEvent(e, scrollSection),
+      this.scrollEvent(e),
     );
     this.listeners.push(scrollEventListener);
 
@@ -173,8 +177,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).tagName === 'path' ||
       (evt.target as HTMLElement).localName === 'mat-icon' ||
       evt.target === this.scrollSection || // scroll click
-      this.pS.isMobile() ||
-      this.selectionService.disableDiv
+      this.pS.isMobile()
     ) {
       return;
     }
@@ -201,6 +204,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setLeft(this.startLeft);
 
     this.clickableService.reset();
+
     this.resetEvent.emit();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
@@ -214,7 +218,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.x = 0;
     this.y = 0;
     this.resetDiv();
-    this.selectionService.selectionDivActive$.next(false);
+    this.selectionService.updateSelectionValue(false);
     this.selectionEndEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -222,7 +226,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     if (
       !this.isMouseDown ||
       this.selectionService.isResizingPhoto ||
-      this.selectionService.disableDiv
+      this.selectionService.disableDiv$.getValue()
     ) {
       return;
     }
@@ -257,7 +261,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setWidth(newValueWidth);
     this.setHeight(newValueHeight);
 
-    this.selectionService.selectionDivActive$.next(this.isSelectionActive);
+    this.selectionService.updateSelectionValue(this.isSelectionActive);
     this.selectionEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -285,7 +289,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scrollEvent(e: Event, scrollSection: HTMLElement): void {
+  scrollEvent(e: Event): void {
     this.onScrollEvent.emit(e);
     this.mouseMoveDelay(this.prevMouseEvent);
   }

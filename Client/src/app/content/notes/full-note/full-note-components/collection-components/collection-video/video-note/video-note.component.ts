@@ -4,7 +4,6 @@ import {
   Component,
   ViewChild,
   ElementRef,
-  HostListener,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   OnInit,
@@ -47,15 +46,11 @@ export class VideoNoteComponent
 
   isWideScreen = false;
 
-  counterSlider = 0;
-
   volumeHelper: number;
 
   formats = TypeUploadFormats.videos;
 
-  translate = 0;
-
-  currentVideo: VideoModel;
+  selectVideoId: string;
 
   constructor(
     private exportService: ExportService,
@@ -109,22 +104,14 @@ export class VideoNoteComponent
     return nodes.length;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize = () => {
-    const nodes = this.videoPlaylist?.nativeElement?.children;
-    if (!nodes) return;
-    let width = 0;
-    for (let i = 0; i < this.counterSlider; i += 1) {
-      width -= nodes[i].getBoundingClientRect().width;
+  get currentVideo(): VideoModel {
+    if (this.selectVideoId) {
+      return this.content.items.find((x) => x.fileId === this.selectVideoId);
     }
-    this.translate = width;
-  };
-
-  ngOnInit(): void {
-    if (this.content.items.length > 0) {
-      this.currentVideo = this.content.items[0];
-    }
+    return this.content.items[0];
   }
+
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {}
 
@@ -151,7 +138,9 @@ export class VideoNoteComponent
   togglePlay() {
     this.isPlaying = this.videoElement?.nativeElement.paused;
     const action = this.isPlaying ? 'play' : 'pause';
-    this.videoElement?.nativeElement[action]();
+    if (this.videoElement?.nativeElement) {
+      this.videoElement?.nativeElement[action]();
+    }
   }
 
   toggleWideScreen() {
@@ -294,48 +283,12 @@ export class VideoNoteComponent
     await this.exportService.exportVideo(video);
   }
 
-  // may is need in further
-
-  // isInViewport(element) {
-  //   const rect = element.getBoundingClientRect();
-  //   return (
-  //     rect.top >= 0 &&
-  //     rect.left >= 0 &&
-  //     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-  //     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  //   );
-  // }
-
-  async toNextElement() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    this.counterSlider += 1;
-    const nextIndex = this.counterSlider + this.visibleItemsCount;
-    if (nodes[nextIndex - 1]) {
-      const { width } = nodes[nextIndex - 1].getBoundingClientRect();
-      this.translate -= width;
-    } else {
-      this.counterSlider -= 1;
-    }
-  }
-
-  async toPrevElement() {
-    const nodes = this.videoPlaylist.nativeElement.children;
-    this.counterSlider -= 1;
-    const nextIndex = this.counterSlider + this.visibleItemsCount;
-    if (nextIndex >= this.visibleItemsCount) {
-      const { width } = nodes[nextIndex].getBoundingClientRect();
-      this.translate += width;
-    } else {
-      this.counterSlider += 1;
-    }
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   openThumbVideo(video: VideoModel) {
     if (!this.videoElement?.nativeElement.paused) {
       this.togglePlay();
     }
-    this.currentVideo = video;
+    this.selectVideoId = video.fileId;
     this.facade.clickableService.setContent(
       this.content,
       video.fileId,

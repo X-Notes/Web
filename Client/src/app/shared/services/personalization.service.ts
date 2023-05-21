@@ -10,6 +10,7 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
 import { EntitiesSizeENUM } from '../enums/font-size.enum';
+import { SideBarComponent } from 'src/app/content/navigation/side-bar/side-bar.component';
 
 export const timeSidenavAnimation = 200; // TODO move to constant file
 
@@ -161,7 +162,7 @@ export class PersonalizationService {
 
   removeNotesToFolderSubject = new Subject();
 
-  stateSidebar = true;
+  sideBarActive$ = new BehaviorSubject<boolean>(false);
 
   orientationMobile = false;
 
@@ -186,7 +187,6 @@ export class PersonalizationService {
   isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
   constructor(public lockEncryptService: LockEncryptService, private store: Store) {
-    this.onResize();
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();
@@ -207,6 +207,11 @@ export class PersonalizationService {
 
   get isHideTextOnSmall$() {
     return this.windowWidth$.pipe(map((value) => value < 1380));
+  }
+
+  get navMenuHeight(): number {
+    const height = document.getElementById(SideBarComponent.sideBarId).offsetHeight;
+    return height;
   }
 
   subscribeWindowEvents() {
@@ -239,30 +244,12 @@ export class PersonalizationService {
     ]).pipe(map(([n, f]) => n && f));
   }
 
-  onResize(): void {
-    if (this.widthMoreThan1024()) {
-      if (!this.innerNoteMenuActive) {
-        this.innerNoteMenuActive = true;
-      }
-      if (!this.stateSidebar) {
-        this.stateSidebar = true;
-      }
-    } else {
-      if (this.innerNoteMenuActive) {
-        this.innerNoteMenuActive = false;
-      }
-      if (this.stateSidebar) {
-        this.stateSidebar = false;
-      }
-    }
-  }
-
   setSpinnerState(flag: boolean) {
     this.spinnerActive = flag;
   }
 
   cancelSideBar() {
-    this.stateSidebar = false;
+    this.sideBarActive$.next(false);
   }
 
   isMobile(): boolean {
@@ -273,11 +260,7 @@ export class PersonalizationService {
     return window.innerWidth > 1024;
   };
 
-  checkWidth = () => {
-    return !!(window.innerWidth > 1024 && window.innerWidth <= 1440);
-  };
-
-  isWidth600 = () => {
+  isWidthMoreThan600 = () => {
     return window.innerWidth >= 600;
   };
 

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { FolderStore } from '../../folders/state/folders-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
@@ -35,10 +33,6 @@ export class PermissionsButtonsService {
     return ids && ids.every((x) => x === userId);
   }
 
-  get isFullFolderNoShared(): boolean {
-    return this.store.selectSnapshot(FolderStore.full).folderTypeId !== FolderTypeENUM.Shared;
-  }
-
   get isAllFullFolderNotesNoShared(): boolean {
     return this.store.selectSnapshot(NoteStore.getAllSelectedFullFolderNotesNoShared);
   }
@@ -55,10 +49,6 @@ export class PermissionsButtonsService {
       return note.userId === userId;
     }
     return false;
-  }
-
-  get isFullNoteNoShared(): boolean {
-    return this.store.selectSnapshot(NoteStore.oneFull).noteTypeId !== NoteTypeENUM.Shared;
   }
 
   get IsOwner(): boolean {

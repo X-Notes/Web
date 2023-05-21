@@ -84,7 +84,8 @@
     "private": "Personnel",
     "privateFolder": "Personnel",
     "removeFromFolder": "Supprimer des notes du dossier",
-    "restore": "Restaurer"
+    "restore": "Restaurer",
+    "copyText": "Copier le texte"
   },
   "profile": {
     "sectionProfile": "Profil",

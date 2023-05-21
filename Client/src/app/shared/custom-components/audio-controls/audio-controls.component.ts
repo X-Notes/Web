@@ -6,6 +6,7 @@ import { AudioService } from 'src/app/content/notes/audio.service';
 import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
 import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 
 @Component({
   selector: 'app-audio-controls',
@@ -32,7 +33,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     ),
   ];
 
-  constructor(public audioService: AudioService) {}
+  constructor(public audioService: AudioService, private apiBrowser: ApiBrowserTextService) {}
 
   get isFirstPlaying() {
     return (
@@ -101,6 +102,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   play2(audio: AudioModel) {
+    this.isOpen = false;
     if (this.audioService.currentFile?.fileId !== audio.fileId) {
       this.openFile(audio);
     }
@@ -117,6 +119,11 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   mute() {
     this.audioService.mute();
+  }
+
+  reset(): void {
+    this.apiBrowser.removeAllRanges();
+    this.audioService.resetCurrent();
   }
 
   next() {

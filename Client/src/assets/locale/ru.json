@@ -84,7 +84,8 @@
     "private": "Личные",
     "privateFolder": "Личные",
     "removeFromFolder": "Удалить заметки с папки",
-    "restore": "Восстановить"
+    "restore": "Восстановить",
+    "copyText": "Скопировать текст"
   },
   "profile": {
     "sectionProfile": "Профиль",

@@ -27,6 +27,7 @@ import { EntityMenuEnum } from '../models/entity-menu.enum';
 import { UpdateNoteUI } from '../../notes/state/update-note-ui.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from '../../folders/models/folder.model';
+import { CopyNoteText } from '../menu/actions/copy-note-text-action';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -37,15 +38,19 @@ export class MenuButtonsService {
   public notesItemsPrivate: MenuItem[] = [
     this.getHistoryItem(),
     this.getLabelItem(),
+    this.getCopyNoteText(),
     this.getNoteShareItem(),
     this.getCopyNotesItem(),
-    this.getLockItem(),
-    this.getUnlockItem(),
+    // this.getLockItem(),
+    //this.getUnlockItem(),
     this.getChangeColorNoteItem(),
     this.getArchiveNotesItem(),
     {
       icon: 'delete',
-      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.setDeleteNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -55,16 +60,20 @@ export class MenuButtonsService {
   public notesItemsShared: MenuItem[] = [
     this.getHistoryItem(),
     this.getLabelItem(),
+    this.getCopyNoteText(),
     this.getSetPrivateNotes(),
     this.getNoteShareItem(),
     this.getCopyNotesItem(),
-    this.getLockItem(),
-    this.getUnlockItem(),
+    // this.getLockItem(),
+    //this.getUnlockItem(),
     this.getChangeColorNoteItem(),
     this.getArchiveNotesItem(),
     {
       icon: 'delete',
-      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.setDeleteNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: this.store.select(AppStore.isSharedNote),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
@@ -74,15 +83,19 @@ export class MenuButtonsService {
   public notesItemsDeleted: MenuItem[] = [
     this.getHistoryItem(),
     this.getLabelItem(),
+    this.getCopyNoteText(),
     this.getNoteShareItem(),
     this.getCopyNotesItem(),
-    this.getLockItem(),
-    this.getUnlockItem(),
+    // this.getLockItem(),
+    //this.getUnlockItem(),
     this.getChangeColorNoteItem(),
     this.getArchiveNotesItem(),
     {
       icon: 'delete',
-      operation: () => this.menuButtonsNotesService.openDeletionNoteModal(),
+      operation: () => {
+        this.menuButtonsNotesService.openDeletionNoteModal();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -93,15 +106,19 @@ export class MenuButtonsService {
   public notesItemsArchive: MenuItem[] = [
     this.getHistoryItem(),
     this.getLabelItem(),
+    this.getCopyNoteText(),
     this.getSetPrivateNotes(),
     this.getNoteShareItem(),
     this.getCopyNotesItem(),
-    this.getLockItem(),
-    this.getUnlockItem(),
+    // this.getLockItem(),
+    //this.getUnlockItem(),
     this.getChangeColorNoteItem(),
     {
       icon: 'delete',
-      operation: () => this.menuButtonsNotesService.setDeleteNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.setDeleteNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -298,7 +315,10 @@ export class MenuButtonsService {
   getSetPrivateNotes(icon = 'private'): MenuItem {
     return {
       icon,
-      operation: () => this.menuButtonsNotesService.setPrivateNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.setPrivateNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -308,7 +328,10 @@ export class MenuButtonsService {
   getArchiveNotesItem(): MenuItem {
     return {
       icon: 'archive',
-      operation: () => this.menuButtonsNotesService.archiveNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.archiveNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -328,7 +351,10 @@ export class MenuButtonsService {
   getCopyNotesItem(): MenuItem {
     return {
       icon: 'copy',
-      operation: () => this.menuButtonsNotesService.copyNotes(),
+      operation: () => {
+        this.menuButtonsNotesService.copyNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: this.isVisibleCopy,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
@@ -353,7 +379,10 @@ export class MenuButtonsService {
   getNoteShareItem(): MenuItem {
     return {
       icon: 'share',
-      operation: () => this.openShareWithNotes(),
+      operation: () => {
+        this.openShareWithNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: this.isVisibleShareNote,
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -395,7 +424,10 @@ export class MenuButtonsService {
   getChangeColorNoteItem(): MenuItem {
     return {
       icon: 'color',
-      operation: () => this.openColorWithNotes(),
+      operation: () => {
+        this.openColorWithNotes();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: true,
@@ -405,7 +437,10 @@ export class MenuButtonsService {
   getLabelItem(): MenuItem {
     return {
       icon: 'label',
-      operation: () => this.dialogsService.openChangeLabels(),
+      operation: () => {
+        this.dialogsService.openChangeLabels();
+        this.pService.innerNoteMenuActive = false;
+      },
       isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
@@ -418,10 +453,25 @@ export class MenuButtonsService {
       operation: () => {
         const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
         this.dialogsService.openNoteHistoriesMobile(noteId);
+        this.pService.innerNoteMenuActive = false;
       },
       isVisible: this.pService.isMobileHistoryActive$,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
+    };
+  }
+
+  getCopyNoteText(): MenuItem {
+    return {
+      icon: 'copy',
+      name: 'menu.copyText',
+      operation: () => {
+        this.store.dispatch(CopyNoteText);
+        this.pService.innerNoteMenuActive = false;
+      },
+      isVisible: this.store.select(NoteStore.canView),
+      isOnlyForAuthor: false,
+      IsNeedEditRightsToSee: true,
     };
   }
 

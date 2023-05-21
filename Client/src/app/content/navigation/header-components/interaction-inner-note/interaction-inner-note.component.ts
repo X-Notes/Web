@@ -27,6 +27,9 @@ export class InteractionInnerNoteComponent {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.fullNoteShared)
+  noteShared$: Observable<boolean>;
+
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
 
@@ -60,8 +63,8 @@ export class InteractionInnerNoteComponent {
     private store: Store,
   ) {}
 
-  openHideMenu() {
-    this.pService.innerNoteMenuActive = !this.pService.innerNoteMenuActive;
+  openMenu() {
+    this.pService.innerNoteMenuActive = true;
   }
 
   hideMenu() {
@@ -77,12 +80,5 @@ export class InteractionInnerNoteComponent {
   openHistoriesPopup() {
     const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
     this.dialogsManageService.openNoteHistoriesMobile(noteId);
-  }
-
-  disableTooltpUser(): boolean {
-    if (this.pService.checkWidth()) {
-      return true;
-    }
-    return false;
   }
 }

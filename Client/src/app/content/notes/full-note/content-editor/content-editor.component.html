@@ -1,20 +1,19 @@
 <div
+  #mainSection
   appTheme
   appSelection
   [isReadonly]="isReadOnlyMode"
   [appMenuSelection]="htmlElements"
-  [scrollElement]="contentSection"
+  [scrollElement]="mainSection"
   [appCopy]="htmlElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
   (selectionEndEvent)="selectionEndHandler($event)"
   (onScrollEvent)="onScroll($event)"
-  (resetEvent)="onReset()"
   class="main-content"
-  [ngClass]="{ 'nope-select': facade.selectionService.selectionDivActive }"
+  [ngClass]="{ 'nope-select': facade.selectionService.getSelectionDivActive$ | async }"
 >
   <div class="top-section">
-    <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
     <div *ngIf="(labels | noDeletedLabels)?.length" class="labels-section">
       <div
         class="label"
@@ -30,7 +29,7 @@
         id="title-element"
         #noteTitle
         [attr.contenteditable]="
-          !isReadOnlyMode && facade.selectionService.selectionDivActive === false
+          !isReadOnlyMode && (facade.selectionService.getSelectionDivActive$ | async) === false
         "
         (paste)="pasteCommandHandler($event)"
         (selectstart)="startTitleSelection($event)"
@@ -52,7 +51,6 @@
       ></div>
     </div>
   </div>
-
   <div #contentSection cdkDropList class="content-section" (cdkDropListDropped)="drop($event)">
     <div class="content-section-inner">
       <div
@@ -84,7 +82,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
             </app-html-text-part>
@@ -93,8 +90,7 @@
               *ngIf="item.noteTextTypeId === textType.numberList"
               [isSelected]="facade.selectionService.isSelected(item.id)"
               [theme]="editorTheme"
-              [prevContent]="getTextContent(i - 1)"
-              [prevType]="getTextContent(i - 1)?.noteTextTypeId"
+              [listNumber]="getNumberList(item, i)"
               [content]="item"
               [cursors$]="cursors$"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -105,7 +101,6 @@
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-number-list>
@@ -124,7 +119,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-dot-list>
@@ -143,7 +137,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-check-list>
@@ -161,7 +154,6 @@
               (inputHtmlEvent)="updateHtmlHandler($event)"
               (onFocus)="onFocusHandler($event)"
               (someChangesEvent)="postAction()"
-              (pasteEvent)="pasteTextHandler($event)"
             >
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
             ></app-html-headings>
@@ -242,17 +234,20 @@
         (dragOverEvent)="isOverEmpty = true"
         (dragLeaveEvent)="isOverEmpty = false"
       ></div>
-      <div id="note-selector" class="full-note-selection"></div>
     </div>
   </div>
+  <div id="note-selector" class="full-note-selection"></div>
 </div>
+<div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
 <app-mobile-transform-menu
+  [ngClass]="{'player-active-position-transform-menu': audioService.currentFile}"
   *ngIf="(isMobileMenuActive$ | async) === true"
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
 <app-text-edit-menu
   #textEditMenu
+  [ngClass]="{'player-active-position': audioService.currentFile}"
   [style.top.px]="textEditMenuTop"
   [style.left.px]="textEditMenuLeft"
   [style.visibility]="

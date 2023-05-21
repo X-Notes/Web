@@ -1,6 +1,5 @@
 import { AudiosCollection } from 'src/app/content/notes/models/editor-models/audios-collection';
 import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
-import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
 import { DocumentsCollection } from 'src/app/content/notes/models/editor-models/documents-collection';
 import { PhotosCollection } from 'src/app/content/notes/models/editor-models/photos-collection';
 import { VideosCollection } from 'src/app/content/notes/models/editor-models/videos-collection';
@@ -11,13 +10,13 @@ export class UpdateNoteStructureWS {
 
   textContentsToAdd: BaseText[];
 
-  photoContentsToAdd: ContentModelBase[];
+  photoContentsToAdd: PhotosCollection[];
 
-  videoContentsToAdd: ContentModelBase[];
+  videoContentsToAdd: VideosCollection[];
 
-  audioContentsToAdd: ContentModelBase[];
+  audioContentsToAdd: AudiosCollection[];
 
-  documentContentsToAdd: ContentModelBase[];
+  documentContentsToAdd: DocumentsCollection[];
 
   positions: UpdateContentPosition[];
 

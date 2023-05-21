@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.Models.WS;
+﻿using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.WS;
 using Microsoft.EntityFrameworkCore;
 using Noots.DatabaseContext.GenericRepositories;
 
@@ -22,5 +23,10 @@ public class FolderConnectionRepository : Repository<FolderConnection, int>
     {
         return entities.Where(x => x.FolderId == folderId && x.UserId != exceptUserId)
                        .Select(x => x.ConnectionId).ToListAsync();
+    }
+
+    public Task<int> UsersOnFolderAsync(Guid folderId)
+    {
+        return entities.Where(x => x.FolderId == folderId).GroupBy(x => x.UserId).CountAsync();
     }
 }

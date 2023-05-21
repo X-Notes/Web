@@ -95,10 +95,6 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateSelectLabel(id));
   }
 
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
-
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();

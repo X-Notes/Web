@@ -124,7 +124,6 @@ export class LazyForDirective implements DoCheck {
 
   private changePositionsItemsDOM(changes: IterableChanges<ContentModelBase>): void {
     const getItemsMovedItems = this.getItemsMovedItems(changes);
-    console.log('getItemsMovedItems; ', [...getItemsMovedItems]);
     getItemsMovedItems.forEach((item) => this.removeFromDOM(item));
     this.renderItems(getItemsMovedItems, 0, getItemsMovedItems.length);
   }

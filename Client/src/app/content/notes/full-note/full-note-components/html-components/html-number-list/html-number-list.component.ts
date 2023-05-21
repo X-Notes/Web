@@ -14,7 +14,6 @@ import {
 import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ContentTypeENUM } from '../../../../models/editor-models/content-types.enum';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
 import { TransformContent } from '../../../models/transform-content.model';
 import { HtmlComponentsFacadeService } from '../../html-components-services/html-components.facade.service';
@@ -34,10 +33,7 @@ export class HtmlNumberListComponent
   transformTo = new EventEmitter<TransformContent>();
 
   @Input()
-  prevContent: BaseText;
-
-  @Input()
-  prevType: ContentTypeENUM;
+  listNumber: BaseText;
 
   @Input()
   theme: ThemeENUM;
@@ -60,9 +56,7 @@ export class HtmlNumberListComponent
     return this.host;
   }
 
-  ngOnChanges(): void {
-    this.setNumber();
-  }
+  ngOnChanges(): void {}
 
   ngAfterViewInit(): void {
     this.setHandlers();
@@ -76,14 +70,6 @@ export class HtmlNumberListComponent
 
   ngOnInit(): void {
     this.initBaseHTML();
-  }
-
-  setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.numberList) {
-      this.content.listNumber = this.prevContent.listNumber + 1;
-    } else {
-      this.content.listNumber = 1;
-    }
   }
 
   isFocusToNext = () => true;

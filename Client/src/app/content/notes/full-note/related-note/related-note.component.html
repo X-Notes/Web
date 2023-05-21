@@ -12,7 +12,7 @@
     </button>
   </div>
   <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
-    <div class="note-color"></div>
+    <div class="note-color" [ngStyle]="{ backgroundColor: note.color }"></div>
     <div class="labels-section" *ngIf="note.labels?.length">
       <div
         class="label"

@@ -18,6 +18,11 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return folderConnectionRepository.GetAnyAsync(x => x.FolderId == folderId && x.ConnectionId == connectionId);
         }
 
+        public Task<int> UsersOnFolderAsync(Guid folderId)
+        {
+            return folderConnectionRepository.UsersOnFolderAsync(folderId);
+        }
+
         public Task<List<UserIdentifierConnectionId>> GetEntitiesId(Guid folderId)
         {
             return folderConnectionRepository.GetUserConnectionsById(folderId);

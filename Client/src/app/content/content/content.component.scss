@@ -25,14 +25,15 @@ main{
     bottom: 0;
     right: 0;
     width: calc(100% - 270px);
-  
+
     @media (max-width: 1024px) {
       width: 100%;
       bottom: 80px;
+      border-top: 1px solid #e7e7e7;
     }
   
     @media (max-width: 600px) {
-      bottom: 70px;
+      bottom: $bottom-mobile-menu;
     }
   }
 }

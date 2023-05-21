@@ -23,6 +23,13 @@ export class MenuComponent {
 
   constructor(public pService: PersonalizationService) {}
 
+  getItemName(item: MenuItem): string {
+    if (item.name) {
+      return item.name;
+    }
+    return 'menu.' + item.icon;
+  }
+
   // eslint-disable-next-line consistent-return
   disableTooltpUser = () => {
     if (!this.pService.widthMoreThan1024()) {

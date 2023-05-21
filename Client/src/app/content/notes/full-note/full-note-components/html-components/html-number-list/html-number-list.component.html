@@ -6,7 +6,7 @@
   (mouseleave)="mouseLeave($event)"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && !isSelectModeActive"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
@@ -15,13 +15,13 @@
     }"
   >
     <div class="number-container">
-      <div class="number">{{ content.listNumber }}.</div>
+      <div class="number">{{ listNumber }}.</div>
     </div>
     <div class="text-container">
       <p
         class="block-generic default-text-size default-text-id number-list"
         #contentHtml
-        [attr.contenteditable]="!isReadOnlyMode && !isSelectModeActive"
+        [attr.contenteditable]="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
         [innerHTML]="viewHtml"
         (input)="onInput()"
         (click)="textClick($event)"
@@ -35,7 +35,7 @@
           backgroundColor: cursor.color
         }"
       ></div>
-      <p class="no-content-list" *ngIf="isActiveState && !isSelectModeActive">
+      <p class="no-content-list" *ngIf="isActiveState && (isSelectModeActive$ | async) === false">
         {{ 'innerNote.text' | translate }}
       </p>
     </div>

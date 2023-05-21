@@ -47,12 +47,14 @@ import { PermissionsButtonsService } from '../../navigation/services/permissions
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { Icons } from 'src/app/shared/enums/icons.enum';
+import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService],
+  providers: [FullFolderNotesService, WebSocketsFolderUpdaterService, DestroyComponentService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -76,11 +78,20 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   fontSize = EntitiesSizeENUM;
 
   foldersLink: SmallFolder[] = [];
 
-  loaded = false;
+  folderLoaded = false;
+
+  folderEntitiesLoaded = false;
+
+  icons = Icons;
+
+  theme = ThemeENUM;
 
   // TITLE
   title: string;
@@ -112,6 +123,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
     private actions$: Actions,
   ) {}
+
+  get isOwner(): boolean {
+    return this.store.selectSnapshot(FolderStore.isFullFolderOwner);
+  }
 
   initTitle() {
     const folder = this.store.selectSnapshot(FolderStore.full);
@@ -158,53 +173,55 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ngOnInit() {
     this.store.dispatch(new LoadLabels());
-    this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
-    this.routeSubscription = this.route.params.subscribe(async (params) => {
-      // REINIT LAYOUT
-      let isReinit = false;
-      if (this.folderId) {
-        await this.ffnService.murriService.destroyGridAsync();
-        isReinit = true;
-        this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
-      }
-      // lOAD FOLDER
-      this.folderId = params.id;
-      await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
-      this.setTitle();
+    this.routeSubscription = this.route.params
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(async (params) => {
+        // REINIT LAYOUT
+        if (this.folderId) {
+          this.webSocketsFolderUpdaterService.leaveFolder(this.folderId);
+        }
 
-      // INIT FOLDER NOTES
-      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
-      await this.ffnService.initializeEntities(notes, this.folderId);
-      this.updateState();
+        await this.resetToDefault();
 
-      if (isReinit) {
-        await this.ffnService.murriService.initFolderNotesAsync();
-        await this.ffnService.murriService.setOpacityFlagAsync(0);
-      }
+        // lOAD FOLDER
+        this.folderId = params.id;
+        await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
+        this.folderLoaded = true;
+        this.loadSideBar();
+        this.setTitle();
 
-      // WS UPDATES
-      this.signalR.updateFolder$.pipe(takeUntil(this.ffnService.destroy)).subscribe(async (x) => {
-        await this.ffnService.handlerUpdates(x);
+        // INIT FOLDER NOTES
+        const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+        const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
+        await this.ffnService.initializeEntities(notes, this.folderId);
+        this.folderEntitiesLoaded = true;
         this.updateState();
+
+        // WS UPDATES
+        this.signalR.updateFolder$.pipe(takeUntil(this.ffnService.destroy)).subscribe(async (x) => {
+          await this.ffnService.handlerUpdates(x);
+          this.updateState();
+        });
+
+        const title = this.store.selectSnapshot(FolderStore.full)?.title;
+        this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
+
+        this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
       });
-
-      await this.pService.waitPreloading();
-      this.pService.setSpinnerState(false);
-      this.loaded = true;
-
-      this.loadSideBar();
-
-      const title = this.store.selectSnapshot(FolderStore.full)?.title;
-      this.htmlTitleService.setCustomOrDefault(title, 'titles.folder');
-
-      this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
-    });
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
+  }
+
+  async resetToDefault() {
+    await this.ffnService.murriService.muuriDestroyAsync();
+    this.ffnService.setFirstInitedMurri(false);
+    this.ffnService.resetState();
+    this.folderLoaded = false;
+    this.folderEntitiesLoaded = false;
+    this.setSideBarNotesEmpty();
   }
 
   openChangeColorPopup() {
@@ -222,10 +239,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actions$
       .pipe(ofActionDispatched(CreateNoteCompleted), takeUntil(this.ffnService.destroy))
       .subscribe(async (payload: CreateNoteCompleted) => {
+        if (!this.isOwner) return;
         const note = payload.note;
-        await this.apiFullFolder.addNotesToFolder([note.id], this.folderId).toPromise();
-        this.ffnService.addToDom([note]);
-        this.updateState();
+        const resp = await this.apiFullFolder
+          .addNotesToFolder([note.id], this.folderId)
+          .toPromise();
+        if (resp.success) {
+          this.ffnService.addToDom([note]);
+          this.updateState();
+        }
       });
 
     this.pService.selectAllButton
@@ -237,22 +259,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           notes.forEach((x) => (x.isSelected = true));
           const actions = notes.map((x) => new SelectIdNote(x.id));
           this.store.dispatch(actions);
-        }
-      });
-  }
-
-  initPanelClassStyleSubscribe() {
-    // TODO REMOVE KOSTIL
-    this.store
-      .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.ffnService.destroy))
-      .subscribe((theme) => {
-        if (theme) {
-          if (theme === ThemeENUM.Dark) {
-            this.menu.panelClass = 'dark-menu';
-          } else {
-            this.menu.panelClass = null;
-          }
         }
       });
   }
@@ -300,7 +306,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialize(this.refElements);
-    this.initPanelClassStyleSubscribe();
   }
 
   navigateToFolder(folderId: string): void {
@@ -318,13 +323,17 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadSideBar() {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
+    const types = Object.values(FolderTypeENUM).filter((q) => typeof q === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
     const folder = this.store.selectSnapshot(FolderStore.full);
     if (folder) {
-      await this.setSideBarNotes(folder.folderTypeId);
+      this.setSideBarNotes(folder.folderTypeId);
     }
+  }
+
+  setSideBarNotesEmpty(): void {
+    this.foldersLink = [];
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {
@@ -350,6 +359,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         throw new Error('error');
       }
     }
-    this.foldersLink = folders.filter((z) => z.id !== this.folderId);
+    this.foldersLink = folders.filter((q) => q.id !== this.folderId);
   }
 }

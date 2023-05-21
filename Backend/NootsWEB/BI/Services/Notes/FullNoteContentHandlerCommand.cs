@@ -69,10 +69,10 @@ namespace BI.Services.Notes
 
             NoteStructureResult result = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> audiosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> documentsItemsThatNeedAdd = null;
+            List<PhotosCollectionNoteDTO> photosItemsThatNeedAdd = null;
+            List<VideosCollectionNoteDTO> videosItemsThatNeedAdd = null;
+            List<AudiosCollectionNoteDTO> audiosItemsThatNeedAdd = null;
+            List<DocumentsCollectionNoteDTO> documentsItemsThatNeedAdd = null;
             List<UpdateContentPositionWS> positions = null;
 
             if (permissions.CanWrite)

@@ -9,6 +9,12 @@ import { ClickableContentService } from '../content-editor-services/clickable-co
 import { ContentEditorContentsService } from '../content-editor-services/core/content-editor-contents.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 import { ParentInteractionHTML } from '../models/parent-interaction.interface';
+import { ofActionDispatched } from '@ngxs/store';
+import { EditorFacadeService } from '../content-editor-services/editor-facade.service';
+import { takeUntil } from 'rxjs/operators';
+import { CopyNoteText } from 'src/app/content/navigation/menu/actions/copy-note-text-action';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Directive({
   selector: '[appCopy]',
@@ -24,10 +30,16 @@ export class CopyDirective implements OnDestroy, OnInit {
     private selectionService: SelectionService,
     private contentEditorContentsService: ContentEditorContentsService,
     private clickableContentService: ClickableContentService,
+    private facade: EditorFacadeService,
+    private snackbarService: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
     this.copyListener = this.renderer.listen('body', 'copy', (e) => this.customCopy(e));
+    this.facade.actions$
+      .pipe(ofActionDispatched(CopyNoteText), takeUntil(this.facade.dc.d$))
+      .subscribe(() => this.copyAllTextsItems());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,9 +63,21 @@ export class CopyDirective implements OnDestroy, OnInit {
     }
   }
 
+  async copyAllTextsItems() {
+    // const html = this.processHTMLContents(this.appCopy);
+    const text = this.processTextContents(this.contentEditorContentsService.getTextContents);
+    //await this.apiBrowserFunctions.copyHTMLAsync(html);
+    await this.apiBrowserFunctions.copyTextAsync(text);
+    this.snackbarService.openSnackBar(this.translate.instant('snackBar.copied'));
+  }
+
   getHTMLContents(selectedItemsIds: string[]): string {
     let elements = this.appCopy;
     elements = elements.filter((x) => selectedItemsIds.some((q) => q === x.getContentId()));
+    return this.processHTMLContents(elements);
+  }
+
+  processHTMLContents(elements: ParentInteractionHTML[]): string {
     const htmls = elements.map((x) => this.processRawHTML(x)).filter((x) => x);
     if (htmls.length > 0) {
       return htmls.reduce((pv, cv) => `${pv}\n${cv}`);
@@ -98,15 +122,15 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   getTextContents(selectedItemsIds: string[]): string {
-    const items = this.contentEditorContentsService.getContents
-      .filter(
-        (x) =>
-          selectedItemsIds.some((q) => q === x.id) &&
-          x instanceof BaseText &&
-          (x as BaseText).isHaveText(),
-      )
-      .map((x) => x as BaseText);
-    const texts = items.map((item) => item.getConcatedText());
+    const items = this.contentEditorContentsService.getTextContents.filter((x) =>
+      selectedItemsIds.some((q) => q === x.id),
+    );
+    return this.processTextContents(items);
+  }
+
+  processTextContents(inputTxts: BaseText[]): string {
+    const tmpTexts = inputTxts.filter((x) => x.isHaveText());
+    const texts = tmpTexts.map((item) => item.getConcatedText());
     if (texts.length > 0) {
       return texts.reduce((pv, cv) => `${pv}\n${cv}`);
     }

@@ -1,10 +1,10 @@
-<nav appTheme>
+<nav [id]="idNav" appTheme>
   <div class="module" routerLink="/notes" routerLinkActive="active" #triggerFirst>
     <div class="item">
       <div class="main-icon">
         <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
       </div>
-      <p>{{ 'notes.name' | translate }}</p>
+      <p class="menu-item-name">{{ 'notes.name' | translate }}</p>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="triggerFirst"></div>
   </div>
@@ -13,7 +13,7 @@
       <div class="main-icon">
         <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
       </div>
-      <p>{{ 'folders.name' | translate }}</p>
+      <p class="menu-item-name">{{ 'folders.name' | translate }}</p>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="triggerSecond"></div>
   </div>
@@ -22,7 +22,7 @@
       <div class="main-icon">
         <mat-icon svgIcon="label" [inline]="true"></mat-icon>
       </div>
-      <p>{{ 'labels.name' | translate }}</p>
+      <p class="menu-item-name">{{ 'labels.name' | translate }}</p>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="triggerThird"></div>
   </div>

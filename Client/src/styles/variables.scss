@@ -16,41 +16,41 @@ $dark-search-submit: #363942;
 
 $light-text-color: #404040;
 $light-button: #959595;
-$light-managment: #E2E2E2;
-$light-color: #FAFAFA;
-$light-theme-separator: #F5F5F5;
+$light-managment: #e2e2e2;
+$light-color: #fafafa;
+$light-theme-separator: #f5f5f5;
 $light-nav-backlight: #e7e7e7;
-$light-search: #F3F3F3;
-$light-search-submit: #EBEBEB;
-$light-managment-hover: #7B7B7B;
-$light-cancel-label: #E7E7E7;
-$light-billing-field: #F2F2F2;
-$light-inner-color: #1F2125;
+$light-search: #f3f3f3;
+$light-search-submit: #ebebeb;
+$light-managment-hover: #7b7b7b;
+$light-cancel-label: #e7e7e7;
+$light-billing-field: #f2f2f2;
+$light-inner-color: #1f2125;
 
 //labels color
 
-$red-label: #FFCDCD;
-$orange-label: #FFEBCD;
-$yellow-label: #FFFDCD;
-$light-green-label: #DDFFCD;
-$green-label: #CDFFD8;
-$light-blue-label: #CDFFFC;
-$blue-label: #CDEEFF;
-$dark-blue-label: #CDD5FF;
-$purple-label: #EFCDFF;
-$pink-label: #FFCDF4;
+$red-label: #ffcdcd;
+$orange-label: #ffebcd;
+$yellow-label: #fffdcd;
+$light-green-label: #ddffcd;
+$green-label: #cdffd8;
+$light-blue-label: #cdfffc;
+$blue-label: #cdeeff;
+$dark-blue-label: #cdd5ff;
+$purple-label: #efcdff;
+$pink-label: #ffcdf4;
 
 //notes color
 
-$red-note: #FFEBEB;
-$orange-note: #FFF5EB;
-$yellow-note: #FFFFEB;
-$green-note: #EBFFEC;
-$light-blue-note: #EBFEFF;
-$blue-note: #EBF8FF;
-$purple-note: #F7EBFF;
-$pink-note: #FFEBF9;
-$light-note: #F8F8F8;
+$red-note: #ffebeb;
+$orange-note: #fff5eb;
+$yellow-note: #ffffeb;
+$green-note: #ebffec;
+$light-blue-note: #ebfeff;
+$blue-note: #ebf8ff;
+$purple-note: #f7ebff;
+$pink-note: #ffebf9;
+$light-note: #f8f8f8;
 
 //notes help color
 
@@ -60,10 +60,10 @@ $note-label-color: #606060;
 
 //inner note
 
-$header-small-note: #2A2D32;
-$header-small-note-icon: #D8D8D8;
+$header-small-note: #2a2d32;
+$header-small-note-icon: #d8d8d8;
 $header-small-note-icon-light: #666666;
-$header-small-note-light: #EAEAEA;
+$header-small-note-light: #eaeaea;
 
 //z-index`s
 
@@ -93,23 +93,24 @@ $full-main-menu: 53;
 
 $full-note-margin-left-no-content: 0.225rem;
 
+$bottom-mobile-menu: 54px;
 //convert
 
 @function get-color($name) {
-    @return '$name';
+  @return '$name';
 }
 
-//mixin 
+//mixin
 
 @mixin text-overflow-webkit {
-    width: 100%;
-    white-space: pre-wrap;
-    text-overflow: ellipsis;
+  width: 100%;
+  white-space: pre-wrap;
+  text-overflow: ellipsis;
 }
 
 @mixin text-overflow {
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

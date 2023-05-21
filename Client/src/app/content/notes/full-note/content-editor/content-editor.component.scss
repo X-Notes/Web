@@ -1,6 +1,7 @@
 @import 'variables';
 
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -16,17 +17,13 @@
   padding: 1.25rem 0 0 0;
   transition: 0.2s background-color ease;
   height: 100%;
+  overflow: hidden scroll;
 
   .top-section {
     display: flex;
     flex-direction: column;
     padding: 0 2.25rem;
     margin-bottom: 1rem;
-
-    .note-color {
-      width: 40px;
-      height: 40px;
-    }
 
     .labels-section {
       margin-bottom: 1rem;
@@ -37,7 +34,7 @@
       display: flex;
       font-size: 2.5rem;
       font-weight: 700;
-      min-height: 50px;
+      min-height: 48px;
 
       .title {
         width: 100%;
@@ -83,7 +80,6 @@
     width: 100%;
     height: 100%;
     flex-direction: column;
-    overflow: hidden scroll;
 
     .content-section-inner {
       position: relative;
@@ -97,6 +93,27 @@
       }
     }
   }
+}
+
+.note-color {
+  width: 30px;
+  height: 30px;
+  z-index: 52;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 0 0 0 30px;
+}
+
+.player-active-position-transform-menu {
+  bottom: 56px;
+  @media (max-width: 600px) {
+    bottom: 83px;
+  }
+}
+
+.player-active-position {
+  bottom: calc($bottom-mobile-menu + 83px);
 }
 
 .file-insert {
@@ -149,5 +166,34 @@
 @media (max-width: 1024px) {
   .main-content {
     width: 100%;
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    .top-section {
+      .title-section {
+        font-size: 2rem;
+        min-height: 30px;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 1rem 0 0 0;
+    &::-webkit-scrollbar {
+      width: 2px;
+    }
+    .top-section {
+      padding: 0 0.8rem;
+      .title-section {
+        font-size: 1.875rem;
+      }
+    }
+  }
+  .note-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 0 0 0 15px;
   }
 }

@@ -151,21 +151,18 @@
       }
     }
   }
+  .text-color-menu-container { 
+    max-height: 55vh
+  }
 }
 
 @media (max-width: 600px) {
   :host {
-    bottom: 69px; // mobile menu height
+    bottom: $bottom-mobile-menu;
     .menu-buttons-container {
       .button {
         padding: 0 5px;
       }
     }
-  }
-}
-
-@media (max-width: 320px) {
-  :host {
-    bottom: 65px;
   }
 }

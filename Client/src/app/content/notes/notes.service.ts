@@ -30,9 +30,9 @@ import { NoteComponent } from './note/note.component';
 export class NotesService extends NoteEntitiesService implements OnDestroy {
   viewElements: QueryList<NoteComponent>;
 
-  labelsIds: Subscription;
+  muurriElements: QueryList<ElementRef>;
 
-  firstInitFlag = false;
+  labelsIds: Subscription;
 
   prevSortedNoteByTypeId: SortedByENUM = null;
 
@@ -58,17 +58,11 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x === true) {
-          await this.murriService.destroyGridAsync();
+          await this.resetLayoutAsync();
 
           const tempNotes = this.transformSpread(this.getNotesByCurrentType);
           this.entities = this.orderBy(tempNotes, this.pageSortType);
 
-          const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-
-          const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
-          await this.murriService.initMurriNoteAsync(isDraggable);
-
-          await this.murriService.setOpacityFlagAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
       });
@@ -145,12 +139,9 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
   }
 
   async changeOrderTypeHandler(sortedType: SortedByENUM) {
-    await this.murriService.destroyGridAsync();
-    this.entities = this.orderBy(this.entities, sortedType);
-    const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
-    this.murriService.initMurriNoteAsync(isDraggable);
-    await this.murriService.setOpacityFlagAsync(0);
+    await this.resetLayoutAsync();
+    const tempNotes = this.transformSpread(this.entities);
+    this.entities = this.orderBy(tempNotes, sortedType);
   }
 
   syncPositions(): void {
@@ -163,16 +154,23 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     return !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      const isFirstInit = this.getIsFirstInit(q);
-      if (isFirstInit) {
-        await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
-        await this.setInitMurriFlagShowLayout();
-        await this.loadNotesWithUpdates();
-      }
-      await this.synchronizeState(refElements, this.sortNoteType === SortedByENUM.AscDate);
-    });
+  murriInitialise(): void {
+    this.muurriElements.changes
+      .pipe(takeUntil(this.destroy))
+      .subscribe((q: QueryList<ElementRef>) => this.syncLayoutAsync(q.toArray()));
+  }
+
+  async syncLayoutAsync(q: ElementRef[]) {
+    const isFirstInit = this.needFirstInit();
+    if (isFirstInit) {
+      this.initState();
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
+      await this.setFirstInitedMurri();
+      requestAnimationFrame(() => this.murriService.setOpacity1());
+      this.loadNotesWithUpdates();
+    }
+    await this.synchronizeState(q, this.sortNoteType === SortedByENUM.AscDate);
   }
 
   async loadNotesWithUpdates() {
@@ -224,7 +222,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
 
   ngOnDestroy(): void {
     console.log('note destroy');
-    super.destroyLayout();
+    this.murriService.resetToDefaultOpacity();
     this.destroy.next();
     this.destroy.complete();
     this.labelsIds?.unsubscribe();
@@ -239,11 +237,9 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
       this.entities = tempNotes.filter((x) =>
-        x.labels.some((label) => ids.some((z) => z === label.id)),
+        x.labels.some((label) => ids.some((q) => q === label.id)),
       );
     }
-
-    super.initState();
 
     this.labelsIds = this.store
       .select(NoteStore.getSelectedLabelFilter)
@@ -253,22 +249,19 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
           await this.updateLabelSelected(x);
         }
       });
-    this.firstInitFlag = true;
 
     await super.loadAdditionNoteInformation();
   }
 
   async updateLabelSelected(ids: string[]) {
-    if (ids.length !== 0 && this.firstInitFlag) {
-      await this.murriService.destroyGridAsync();
+    if (ids.length !== 0) {
+      await this.resetLayoutAsync();
 
       const tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
-        x.labels.some((label) => ids.some((z) => z === label.id)),
+        x.labels.some((label) => ids.some((q) => q === label.id)),
       );
-      this.entities = this.orderBy(tempNotes, this.pageSortType);
 
-      await this.murriService.initMurriNoteAsync(false);
-      await this.murriService.setOpacityFlagAsync(0);
+      this.entities = this.orderBy(tempNotes, this.pageSortType);
     }
   }
 

@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ViewChildren,
-  ElementRef,
-  QueryList,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -33,8 +25,6 @@ export class SharedComponent
   extends BaseNotesComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
-
   @Select(NoteStore.sharedCount)
   sharedCount$: Observable<number>;
 
@@ -55,7 +45,7 @@ export class SharedComponent
   }
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Shared);
+    this.noteService.murriInitialise();
   }
 
   async ngOnInit() {

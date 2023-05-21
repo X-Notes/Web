@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-dupe-class-members */
 /* eslint-disable no-underscore-dangle */
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import {
   UpdatePositionsNotes,
@@ -10,18 +11,39 @@ import { UpdatePositionsLabels } from 'src/app/content/labels/state/labels-actio
 import * as Muuri from 'muuri';
 import { PersonalizationService } from './personalization.service';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Injectable()
-export class MurriService {
-  // TODO REFACTOR SERVICE
-  grid; // TODO HIDE GRID
+export class MurriService implements OnDestroy {
+  layoutEnd$: Subject<boolean> = new Subject<boolean>();
 
-  public flagForOpacity = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
+  private layoutUpdate$: Subject<number> = new Subject<number>();
+
+  private _flagForOpacity = false;
+
+  private grid;
 
   constructor(private store: Store, private pService: PersonalizationService) {
-    this.pService.changeOrientationSubject.subscribe(() => {
-      setTimeout(() => this.grid?.refreshItems().layout());
+    this.pService.changeOrientationSubject.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      setTimeout(() => this.refreshAndLayout());
     });
+    this.layoutUpdate$.pipe(takeUntil(this.destroy$), debounceTime(50)).subscribe((x: number) =>
+      setTimeout(() => {
+        this._flagForOpacity = true;
+      }, x),
+    );
+  }
+
+  get flagForOpacity(): boolean {
+    return this._flagForOpacity;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /// FOLDER NOTES
@@ -39,9 +61,12 @@ export class MurriService {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
     this.gridSettings(gridItemName, gridElement, false);
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
+    });
   }
 
   /// SIDE BAR
@@ -59,13 +84,16 @@ export class MurriService {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
 
     this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
       this.store.dispatch(new UpdatePositionsRelatedNotes(this.getPositions(), noteId));
+    });
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
     });
   }
 
@@ -99,12 +127,15 @@ export class MurriService {
     const gridItemName = '.grid-item'; // TODO move to const
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async () => {
       this.store.dispatch(new UpdatePositionsNotes(this.getPositions()));
+    });
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
     });
   }
 
@@ -124,9 +155,12 @@ export class MurriService {
     const gridItem = '.grid-modal-item';
     const gridElement = document.querySelector('.grid-modal') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
     this.gridSettings(gridItem, gridElement, false);
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
+    });
   }
 
   /// ///////////////////////////////////
@@ -146,12 +180,15 @@ export class MurriService {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async () => {
       this.store.dispatch(new UpdatePositionsFolders(this.getPositions()));
+    });
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
     });
   }
   /// ////////////////////////////////
@@ -160,12 +197,15 @@ export class MurriService {
   initMurriLabel() {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
-      return;
+      throw new Error('gridElement == null');
     }
     const gridItemName = '.grid-item';
     this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async () => {
       this.store.dispatch(new UpdatePositionsLabels(this.getPositions()));
+    });
+    this.grid.on('layoutEnd', async () => {
+      this.layoutEnd$.next(true);
     });
   }
 
@@ -183,7 +223,7 @@ export class MurriService {
         horizontal: false,
         alignRight: false,
         alignBottom: false,
-        rounding: true,
+        rounding: false,
       },
       dragContainer: dragHelper,
       dragRelease: {
@@ -220,18 +260,33 @@ export class MurriService {
         safeZone: 0.1,
       },
     });
-    this.grid.layout(() => {
-      console.log('layout done!');
-    });
+    this.grid.layout(() => {});
   }
 
-  setOpacityFlagAsync(delayOpacity: number = 50, flag = true) {
+  setOpacityFlagAsync(time: number = 0): void {
+    this.layoutUpdate$.next(time);
+  }
+
+  refreshLayoutAsync() {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.flagForOpacity = flag;
+        this.refreshAndLayout();
         resolve(true);
-      }, delayOpacity),
+      }),
     );
+  }
+
+  refreshAndLayout(): void {
+    this.grid.refreshItems().layout();
+  }
+
+  async muuriDestroyAsync(waitLayoutDestroy = 100) {
+    this.resetToDefaultOpacity();
+    await this.wait(waitLayoutDestroy);
+    if (this.grid) {
+      const removeElementsInDom = false; // should be changed only if angular renderer cannot delete;
+      this.grid.destroy(removeElementsInDom);
+    }
   }
 
   wait = (delay: number = 0) => {
@@ -242,24 +297,26 @@ export class MurriService {
     );
   };
 
-  refreshLayoutAsync() {
-    return new Promise<boolean>((resolve) =>
-      setTimeout(() => {
-        this.grid?.refreshItems().layout();
-        resolve(true);
-      }),
-    );
+  resetToDefaultOpacity(): void {
+    this._flagForOpacity = false;
   }
 
-  muuriDestroy(flag: boolean = false) {
-    if (this.grid) {
-      this.grid.destroy(flag);
-    }
+  setOpacity1(): void {
+    this._flagForOpacity = true;
   }
 
-  async destroyGridAsync(wait: number = 100) {
-    await this.setOpacityFlagAsync(0, false);
-    await this.wait(wait);
-    this.grid?.destroy(); // TODO INVESTIGATE WHY GRID IS UNDEFINED
+  addElement(elements: HTMLElement[], isAddToEnd: boolean, layout: boolean): void {
+    this.grid.add(elements, {
+      index: isAddToEnd ? -1 : 0,
+      layout,
+    });
+  }
+
+  removeElements(items: any[], removeElements: boolean): void {
+    this.grid.remove(items, { removeElements });
+  }
+
+  getItems(): any[] {
+    return this.grid.getItems();
   }
 }

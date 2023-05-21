@@ -56,10 +56,11 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     this.note$.pipe(takeUntil(this.destroy)).subscribe(async (note) => {
       if (note) {
         if (this.sideBarService.getFirstInitedMurri) {
-          await this.sideBarService.murriService.destroyGridAsync();
+          await this.sideBarService.murriService.muuriDestroyAsync();
           await this.loadData(note.id);
           await this.sideBarService.murriService.initSidebarNotesAsync(note.id);
-          await this.sideBarService.setInitMurriFlagShowLayout();
+          await this.sideBarService.setFirstInitedMurri();
+          requestAnimationFrame(() => this.sideBarService.murriService.setOpacity1());
         } else {
           await this.loadData(note.id);
         }

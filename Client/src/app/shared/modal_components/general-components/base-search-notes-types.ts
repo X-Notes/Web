@@ -2,12 +2,9 @@ import { Subject } from 'rxjs';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
+import { SearchNotesTypesEnum } from './enums/search-notes-types.enum';
 
 export class BaseSearchNotesTypes {
-  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
-
-  selectValue = 'all';
-
   searchStr = '';
 
   loaded = false;
@@ -15,6 +12,8 @@ export class BaseSearchNotesTypes {
   notes: SmallNote[] = [];
 
   viewNotes: SmallNote[] = [];
+
+  defaultValue = SearchNotesTypesEnum.all;
 
   firstInitedMurri = false;
 
@@ -31,29 +30,24 @@ export class BaseSearchNotesTypes {
     return this.isSearchActive && this.notes?.length === 0;
   }
 
-  selectItem = async (item) => {
-    const [all, personal, shared, archive, bin] = this.selectTypes;
+  selectItem = async (item: SearchNotesTypesEnum) => {
     let tempNotes: SmallNote[] = [];
-    this.selectValue = item;
+    this.defaultValue = item;
     switch (item) {
-      case all: {
+      case SearchNotesTypesEnum.all: {
         tempNotes = [...this.notes];
         break;
       }
-      case personal: {
+      case SearchNotesTypesEnum.personal: {
         tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Private);
         break;
       }
-      case shared: {
+      case SearchNotesTypesEnum.shared: {
         tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Shared);
         break;
       }
-      case archive: {
+      case SearchNotesTypesEnum.archive: {
         tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Archive);
-        break;
-      }
-      case bin: {
-        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Deleted);
         break;
       }
       default: {
@@ -61,11 +55,11 @@ export class BaseSearchNotesTypes {
       }
     }
     if (this.firstInitedMurri) {
-      await this.murriService.destroyGridAsync();
+      await this.murriService.muuriDestroyAsync();
 
       this.viewNotes = tempNotes;
       await this.murriService.initMurriPreviewDialogNoteAsync();
-      await this.murriService.setOpacityFlagAsync(0);
+      this.murriService.setOpacity1();
     }
   };
 

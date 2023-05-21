@@ -5,6 +5,7 @@ import { ContentModelBase } from '../../models/editor-models/content-model-base'
 import { TextBlock } from '../../models/editor-models/text-models/text-block';
 import { SetFocus } from './set-focus';
 import { SaveSelection } from '../../models/browser/save-selection';
+import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 
 export enum ComponentType {
   HTML = 1,
@@ -19,7 +20,7 @@ export interface ParentInteraction<T> {
   isFocusToNext(entity?: SetFocus): boolean;
   setFocus(entity?: SetFocus);
   setFocusToEnd();
-  syncLayoutWithContent(emitChanges: boolean);
+  syncLayoutWithContent();
   getHost(): ElementRef<HTMLElement>;
   getContent(): T;
   getContentId(): string;
@@ -34,10 +35,11 @@ export interface ParentInteraction<T> {
 
 export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
   syncHtmlWithLayout();
-  updateHTML(contents: TextBlock[], emitChanges: boolean);
+  updateContentsAndSync(contents: TextBlock[]);
   updateWS(): void;
   getEditableNative(): HTMLElement | Element;
   getTextBlocks(): TextBlock[];
+  getTextType(): NoteTextTypeENUM;
   getText(): string;
   getSelection(): SaveSelection;
   restoreSelection(pos: SaveSelection): void;

@@ -41,6 +41,6 @@
 @media (max-width: 600px) {
   :host {
     width: calc(100%);
-    bottom: 70px;
+    bottom: $bottom-mobile-menu;
   }
 }

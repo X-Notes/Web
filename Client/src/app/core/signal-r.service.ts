@@ -50,13 +50,14 @@ import { UpdatePermissionFolder } from './models/signal-r/permissions/update-per
 import { UpdatePermissionNote } from './models/signal-r/permissions/update-permission-note';
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
-import { LoadNotifications, NewNotification } from './stateApp/app-action';
+import { NewNotification } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
 import { pingWSDelay } from './defaults/bounceDelay';
 import { NoteUserCursorWS } from './models/signal-r/innerNote/note-user-cursor';
 import { UpdateCursorWS } from '../content/notes/state/editor-actions';
 import { AppNotification } from './models/notifications/app-notification.model';
+import { JoinEntityStatus } from './models/signal-r/join-enitity-status';
 
 @Injectable({
   providedIn: 'root',
@@ -80,9 +81,9 @@ export class SignalRService {
 
   public updateFolder$ = new Subject<UpdateFolderWS>();
 
-  public setAsJoinedToNote$ = new Subject();
+  public setAsJoinedToNote$ = new Subject<JoinEntityStatus>();
 
-  public setAsJoinedToFolder$ = new Subject();
+  public setAsJoinedToFolder$ = new Subject<JoinEntityStatus>();
 
   public addNotesToSharedEvent$ = new Subject<SmallNote[]>();
 
@@ -143,9 +144,10 @@ export class SignalRService {
       this.snackbarService.openSnackBar(message, null, null, Infinity);
     });
 
-    this.hubConnection.on('newNotification', (notification: AppNotification) =>
-      this.store.dispatch(new NewNotification(notification)),
-    );
+    this.hubConnection.on('newNotification', (notification: AppNotification) => {
+      const mappedNotification = new AppNotification(notification);
+      this.store.dispatch(new NewNotification(mappedNotification));
+    });
 
     this.hubConnection.on('updateOnlineUsersNote', (noteId: string) => {
       this.store.dispatch(new LoadOnlineUsersOnNote(noteId)); // TODO REFACTOR BY ONE USER
@@ -240,12 +242,12 @@ export class SignalRService {
     });
 
     // JOINER
-    this.hubConnection.on('setJoinedToNote', (noteId: string) => {
-      this.setAsJoinedToNote$.next(noteId);
+    this.hubConnection.on('setJoinedToNote', (ent: JoinEntityStatus) => {
+      this.setAsJoinedToNote$.next(ent);
     });
 
-    this.hubConnection.on('setJoinedToFolder', (folderId: string) => {
-      this.setAsJoinedToFolder$.next(folderId);
+    this.hubConnection.on('setJoinedToFolder', (ent: JoinEntityStatus) => {
+      this.setAsJoinedToFolder$.next(ent);
     });
 
     // Note permissions
@@ -284,7 +286,6 @@ export class SignalRService {
           noteUI.push(updateUINote);
         }
         this.store.dispatch(new PatchUpdatesUINotes(noteUI));
-        this.store.dispatch(LoadNotifications);
       },
     );
 
@@ -326,7 +327,6 @@ export class SignalRService {
           folderUI.push(updateUIFolder);
         }
         this.store.dispatch(new PatchUpdatesUIFolders(folderUI));
-        this.store.dispatch(LoadNotifications);
       },
     );
   };

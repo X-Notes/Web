@@ -298,6 +298,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static fullNoteShared(state: NoteState): boolean {
+    return state.fullNoteState?.note?.noteTypeId === NoteTypeENUM.Shared;
+  }
+
+  @Selector()
   static cursorColor(state: NoteState): string {
     return state.cursorColor;
   }
@@ -887,7 +892,9 @@ export class NoteStore {
   }
 
   @Action(UpdateCursorAction)
-  async updateCursor({}: StateContext<NoteState>, { noteId, cursor }: UpdateCursorAction) {
+  async updateCursor({ getState }: StateContext<NoteState>, { noteId, cursor }: UpdateCursorAction) {
+    const note = getState().fullNoteState.note;
+    if(!note || note.id !== noteId || !note.isCanEdit) return;
     await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
   }
 

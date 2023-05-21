@@ -13,7 +13,7 @@ import { NoteEntitiesService } from 'src/app/shared/services/note-entities.servi
 import { ApiFullFolderService } from './api-full-folder.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { SetFolderNotes } from 'src/app/content/notes/state/notes-actions';
+import { SetFolderNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 
 @Injectable()
 export class FullFolderNotesService extends NoteEntitiesService {
@@ -47,8 +47,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   onDestroy(): void {
-    console.log('full folder notes destroy');
-    this.destroyLayout();
+    this.murriService.resetToDefaultOpacity();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -63,18 +62,25 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   murriInitialize(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
-      if (this.getIsFirstInit(q)) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async () => {
+      if (this.needFirstInit()) {
+        this.initState();
         await this.murriService.initFolderNotesAsync();
-        await this.setInitMurriFlagShowLayout();
+        this.setFirstInitedMurri();
       }
-      await this.synchronizeState(refElements, false);
+      await this.synchronizeState(refElements.toArray(), false);
+    });
+    this.murriService.layoutEnd$.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+      if (q) {
+        this.murriService.setOpacity1();
+      }
     });
   }
 
   async handlerUpdates(updates: UpdateFolderWS) {
     if (!updates) return;
     if (updates.idsToRemove?.length > 0) {
+      this.store.dispatch(UnSelectAllNote);
       this.deleteFromDom(updates.idsToRemove);
     }
     await this.handleAdding(updates.idsToAdd);
@@ -118,7 +124,5 @@ export class FullFolderNotesService extends NoteEntitiesService {
     tempNotes = this.orderBy(tempNotes, SortedByENUM.CustomOrder);
 
     this.entities = tempNotes;
-
-    this.initState();
   }
 }

@@ -367,6 +367,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
+    this.cdr.detectChanges();
   }
 
   userFilters(items: SearchUserForShareModal[]) {
@@ -423,6 +424,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentNote.noteTypeId = type;
     this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = type;
     this.store.dispatch(new UpdateFullNote({ noteTypeId: type }, this.currentNote.id));
+    this.cdr.detectChanges();
   }
 
   async changeFolderType() {
@@ -452,6 +454,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentFolder.folderTypeId = type;
     this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = type;
     this.store.dispatch([new UpdateFullFolder({ folderTypeId: type }, this.currentFolder.id)]);
+    this.cdr.detectChanges();
   }
 
   factoryForCommandNote = (
@@ -530,6 +533,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     await this.store.dispatch(new GetInvitedUsersToNote(note.id)).toPromise();
     this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   async selectFolder(folder: SmallFolder) {
@@ -537,11 +541,13 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     await this.store.dispatch(new GetInvitedUsersToFolder(folder.id)).toPromise();
     this.isLoading = false;
+    this.cdr.detectChanges();
   }
 
   reloadTabToggle(): void {
     setTimeout(() => {
       this.tabs.realignInkBar();
+      this.cdr.detectChanges();
     }, 150);
   }
 
@@ -553,6 +559,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.selectedUsers = [];
     this.searchUsers = [];
     this.searchComponent.clear();
+    this.cdr.detectChanges();
   }
 
   addUserToInvite(user: SearchUserForShareModal) {
@@ -585,6 +592,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
+    this.cdr.detectChanges();
   }
 
   async changeUserPermission(refType: RefTypeENUM, id: string) {
@@ -603,5 +611,6 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('');
       }
     }
+    this.cdr.detectChanges();
   }
 }

@@ -33,8 +33,6 @@ export class PhotosComponent
 
   startHeight;
 
-  uiCountInRow: number;
-
   mainBlocks: Photo[][] = [];
 
   lastBlock: Photo[] = [];
@@ -55,11 +53,11 @@ export class PhotosComponent
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.items.length / this.uiCountInRow);
+    return Math.floor(this.content.items.length / this.content.countInRow);
   }
 
   get countLastItems() {
-    return this.content.items.length % this.uiCountInRow;
+    return this.content.items.length % this.content.countInRow;
   }
 
   get totalRows() {
@@ -170,7 +168,8 @@ export class PhotosComponent
   syncPhotos(): void {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
-    if (photosCount !== currentLength) {
+    const isNeedUpdateCountInRow = this.mainBlocks[0]?.length !== this.content.countInRow;
+    if (photosCount !== currentLength || isNeedUpdateCountInRow) {
       this.reInitPhotosToDefault();
     }
   }
@@ -183,7 +182,6 @@ export class PhotosComponent
 
   initCountInRow(countInRow: number): void {
     this.content.countInRow = countInRow === 0 ? 2 : countInRow;
-    this.uiCountInRow = this.content.countInRow;
   }
 
   initBlocks(): void {
@@ -192,8 +190,8 @@ export class PhotosComponent
     const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.uiCountInRow));
-      j += this.uiCountInRow;
+      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.content.countInRow));
+      j += this.content.countInRow;
     }
     if (this.countLastItems > 0) {
       const start = photoLength - this.countLastItems;

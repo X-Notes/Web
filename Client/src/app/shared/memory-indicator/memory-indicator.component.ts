@@ -42,7 +42,7 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   }
 
   get procent() {
-    return `${(this.memoryUsedBytes / this.userPlan.maxSize) * 100}%`;
+    return `${(this.memoryUsedBytes / this.userPlan?.maxSize) * 100}%`;
   }
 
   get userPlan(): BillingPlan {
@@ -54,7 +54,7 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   }
 
   getIndicatorColor(theme: ThemeENUM) {
-    const check = this.memoryUsedBytes / this.userPlan.maxSize;
+    const check = this.memoryUsedBytes / this.userPlan?.maxSize;
     if (check < 0.85) {
       return theme === ThemeENUM.Dark ? 'white' : '#404040';
     }

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
+import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { EnumConverterService } from 'src/app/shared/services/enum-converter.service';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 
 @Component({
@@ -39,23 +41,27 @@ export class ContentAccessSectionComponent implements OnInit {
 
   refType = RefTypeENUM;
 
-  public refTypes = Object.values(RefTypeENUM).filter((x) => typeof x === 'string');
-
   constructor(
     private apiBrowserFunctions: ApiBrowserTextService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
+    private enumConverterService: EnumConverterService,
   ) {}
 
-  get refTypeSelectedValue(): string {
-    return this.refType[this.refTypeId];
+  get refTypeSelectedValue(): RefTypeENUM {
+    return this.refTypeId;
+  }
+
+  get options(): SelectionOption[] {
+    return [RefTypeENUM.Viewer, RefTypeENUM.Editor].map((x) =>
+      this.enumConverterService.convertEnumToSelectionOption(RefTypeENUM, x, 'modal.shareModal.'),
+    );
   }
 
   ngOnInit(): void {}
 
-  async changeRefType(refTypeId: string): Promise<void> {
-    const refType = this.refType[refTypeId]; // TODO map from string to number;
-    this.changeRefTypeEvent.emit(refType);
+  async changeRefType(refTypeId: RefTypeENUM): Promise<void> {
+    this.changeRefTypeEvent.emit(refTypeId);
   }
 
   async copyInputLink() {

@@ -36,9 +36,8 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { SearchComponent } from './modal_components/search/search.component';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
-import { SelectComponent } from './custom-components/select/select.component';
 import { ChipComponent } from './custom-components/chip/chip.component';
-import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
+import { SelectOptionComponent } from './custom-components/select-component/select-option/select-option.component';
 import { ButtonToggleComponent } from './custom-components/button-toggle/button-toggle.component';
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
 import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
@@ -88,6 +87,7 @@ import { LongTermOperationsHandlerComponent } from '../content/long-term-operati
 import { LongTermOperationComponent } from '../content/long-term-operations-handler/long-term-operation/long-term-operation.component';
 import { ContentAccessSectionComponent } from './modal_components/share/content-access-section/content-access-section.component';
 import { LeftSectionEntitiesShareComponent } from './modal_components/share/left-section-entities-share/left-section-entities-share.component';
+import { SelectComponent } from './custom-components/select-component/select/select.component';
 
 @NgModule({
   declarations: [

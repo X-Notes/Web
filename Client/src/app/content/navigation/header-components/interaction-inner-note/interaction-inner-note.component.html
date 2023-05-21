@@ -5,7 +5,7 @@
     class="app-menu"
     [items]="
       buttonService.getNoteMenuByNoteType(noteType$ | async)
-        | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
+        | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
     "
     *ngIf="pService.widthMoreThan1024()"
     [@showMenuLeftRight]
@@ -46,7 +46,7 @@
     cdk-overlay-origin
     #origin="cdkOverlayOrigin"
     [ngStyle]="{ display: (pService.isActiveFullNoteMobileButtons$ | async) ? 'block' : 'none' }"
-    (clickEvent)="openHideMenu()"
+    (clickEvent)="openMenu()"
     [tooltipMessage]="'header.menu' | translate"
     tooltipPosition="Bottom"
     [styleClasses]="'more_vert'"
@@ -69,7 +69,7 @@
       class="app-menu"
       [items]="
         buttonService.getNoteMenuByNoteType(noteType$ | async)
-          | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote:pB.isFullNoteNoShared
+          | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
       "
       [@showMenuLeftRight]
       [@.disabled]="!pService.widthMoreThan1024()"

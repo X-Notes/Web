@@ -28,6 +28,9 @@ export class ContentEditorElementsListenerService {
   setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
+      if (this.isMatDialogActive()) {
+        return true;
+      }
       this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.backspaceDown();
@@ -35,6 +38,9 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownDelete = this.renderer.listen(document, 'keydown.delete', () => {
+      if (this.isMatDialogActive()) {
+        return true;
+      }
       this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.deleteDown();
@@ -42,6 +48,9 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (this.isMatDialogActive()) {
+        return true;
+      }
       if (e.ctrlKey && e.code === 'KeyZ') {
         e.preventDefault();
         this.onPressCtrlZSubject.next();
@@ -51,6 +60,9 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (this.isMatDialogActive()) {
+        return true;
+      }
       const htmlEl = e.target as HTMLElement;
       const classes = [...(htmlEl.classList as any)];
       if (e.ctrlKey && e.code === 'KeyA') {
@@ -75,6 +87,9 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlS = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (this.isMatDialogActive()) {
+        return true;
+      }
       if (e.ctrlKey && e.code === 'KeyS') {
         e.preventDefault();
         this.onPressCtrlSSubject.next();
@@ -84,6 +99,11 @@ export class ContentEditorElementsListenerService {
     });
 
     this.listeners.push(keydownBackspace, keydownDelete, keydownCtrlZ, keydownCtrlA, keydownCtrlS);
+  }
+
+  isMatDialogActive(): boolean {
+    const els = document.getElementsByTagName('mat-dialog-container');
+    return els && els.length > 0;
   }
 
   destroysListeners() {

@@ -1,7 +1,6 @@
 import { Highlightable } from '@angular/cdk/a11y';
-import { Component, HostBinding, HostListener, Input } from '@angular/core';
-import { SelectService } from '../../services/select.service';
-import { SelectComponent } from '../select/select.component';
+import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { SelectionOption } from '../entities/select-option';
 
 @Component({
   selector: 'app-select-option',
@@ -10,20 +9,20 @@ import { SelectComponent } from '../select/select.component';
 })
 export class SelectOptionComponent implements Highlightable {
   @Input()
-  public value: string;
+  public value: SelectionOption;
+
+  @Input()
+  public isSelected: boolean;
+
+  @Output()
+  public selectEvent = new EventEmitter<SelectionOption>();
 
   @HostBinding('class.active')
   public active = false;
 
-  private select: SelectComponent;
-
-  constructor(private selectService: SelectService) {
-    this.select = this.selectService.getSelect();
-  }
-
   @HostBinding('class.selected')
   public get selected(): boolean {
-    return this.select.selectedOption === this;
+    return this.isSelected;
   }
 
   @HostListener('click', ['$event'])
@@ -31,7 +30,7 @@ export class SelectOptionComponent implements Highlightable {
     event.preventDefault();
     event.stopPropagation();
 
-    this.select.selectOption(this);
+    this.selectEvent.emit(this.value);
   }
 
   public setActiveStyles(): void {
@@ -43,6 +42,7 @@ export class SelectOptionComponent implements Highlightable {
   }
 
   public getLabel(): string {
-    return this.value;
+    // TODO TEST
+    return this.value.value;
   }
 }

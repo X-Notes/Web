@@ -41,7 +41,7 @@ nav {
         transition: 0.2s ease;
       }
 
-      p {
+      .menu-item-name {
         font-size: 0.875rem;
         font-weight: 500;
         transition: 0.2s ease;
@@ -73,7 +73,7 @@ nav {
         color: $light-text-color;
       }
 
-      p {
+      .menu-item-name {
         background: linear-gradient(135deg, #404040 0%, #404040 100%);
         background-clip: text;
         -webkit-background-clip: text;
@@ -108,7 +108,7 @@ nav {
       .main-icon {
         color: white;
       }
-      p {
+      .menu-item-name {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
         background-clip: text;
         -webkit-background-clip: text;
@@ -130,7 +130,7 @@ nav {
 .dark {
   .active {
     .item {
-      p {
+      .menu-item-name {
         background: linear-gradient(112.11deg, #cdeeff -6.16%, #ffcdcd 104.11%);
         background-clip: text;
         -webkit-background-clip: text;
@@ -165,18 +165,18 @@ nav {
 }
 @media (max-width: 600px) {
   nav {
-    height: 70px;
+    height: $bottom-mobile-menu;
 
     .module {
       .item {
         .main-icon {
-          height: 28px;
-          width: 28px;
-          margin-bottom: 0.5;
+          height: 24px;
+          width: 24px;
+          margin-bottom: 0;
         }
 
-        p {
-          font-size: 0.8125rem;
+        .menu-item-name {
+          display: none;
         }
       }
     }
@@ -184,18 +184,12 @@ nav {
 }
 @media (max-width: 320px) {
   nav {
-    height: 65px;
-
     .module {
       .item {
         .main-icon {
           height: 24px;
           width: 24px;
           margin-bottom: 0.375rem;
-        }
-
-        p {
-          font-size: 0.75rem;
         }
       }
     }

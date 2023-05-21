@@ -9,13 +9,10 @@
         <app-search (changeOutput)="onSearch($event)" class="search"></app-search>
         <app-select
           class="select"
-          [translate]="'subMenu'"
-          [selectValue]="selectValue"
+          [initialValue]="defaultValue"
+          [options]="options"
           (selectValueChange)="selectItem($event)"
         >
-          <app-select-option *ngFor="let item of selectTypes" [value]="item">
-            {{ 'subMenu.' + item | translate }}
-          </app-select-option>
         </app-select>
       </div>
       <ng-scrollbar
@@ -50,7 +47,9 @@
               ></app-note>
             </div>
           </div>
-          <app-empty-search-placeholder *ngIf="isNotFound"></app-empty-search-placeholder>
+          <app-empty-search-placeholder
+            *ngIf="isNotFound && !pService.spinnerActive"
+          ></app-empty-search-placeholder>
         </div>
       </ng-scrollbar>
       <div class="fixed-filters" [hidden]="!(selectedNotesChips.length > 0)">
@@ -65,7 +64,7 @@
           </app-chip>
         </div>
       </div>
-      <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+      <app-spinner [size]="25" *ngIf="pService.spinnerActive"></app-spinner>
     </div>
   </div>
   <app-dialog-generic-save

@@ -19,6 +19,8 @@ public class LockController : ControllerBase
 {
     private readonly IMediator _mediator;
 
+    private readonly bool Disabled = true;
+
     private readonly UserNoteEncryptService userNoteEncryptStorage;
 
     public LockController(IMediator _mediator, UserNoteEncryptService userNoteEncryptStorage)
@@ -32,6 +34,8 @@ public class LockController : ControllerBase
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> EncryptNote(EncryptionNoteCommand command)
     {
+        if (Disabled) { return null; }
+
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
     }
@@ -40,6 +44,8 @@ public class LockController : ControllerBase
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> DecryptNote(DecriptionNoteCommand command)
     {
+        if (Disabled) { return null; }
+
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
     }
@@ -48,6 +54,8 @@ public class LockController : ControllerBase
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<bool>> UnlockNote(UnlockNoteQuery query)
     {
+        if (Disabled) { return null; }
+
         query.UserId = this.GetUserId();
         return await _mediator.Send(query);
     }
@@ -55,6 +63,8 @@ public class LockController : ControllerBase
     [HttpGet("force/{noteId}")]
     public async Task<OperationResult<bool>> ForceLockNote(Guid noteId)
     {
+        if (Disabled) { return null; } 
+
         await userNoteEncryptStorage.RemoveUnlockTime(noteId);
         return new OperationResult<bool>(true, true);
     }
