@@ -80,12 +80,14 @@
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
     </div>
-    <div class="button text" [matMenuTriggerFor]="textColorMenu">
-      <div
-        class="text-container"
-        [ngStyle]="{ backgroundColor: options?.backgroundColor, color: options?.color }"
-      >
-        <p>A</p>
+    <div class="button" [matMenuTriggerFor]="textColorMenu">
+      <div class="icon" [ngStyle]="{ color: options?.color }">
+        <mat-icon svgIcon="textColor" [inline]="true"></mat-icon>
+      </div>
+    </div>
+    <div class="button" [matMenuTriggerFor]="backgroundColorMenu">
+      <div class="icon" [ngStyle]="{ color: options?.backgroundColor }">
+        <mat-icon svgIcon="textBackgroundColor" [inline]="true"></mat-icon>
       </div>
     </div>
   </div>
@@ -113,6 +115,17 @@
         (pickColor)="setTextColor(value[1])"
       ></app-color-pick-item>
     </div>
+  </div>
+</mat-menu>
+<mat-menu
+  appLazyTheme
+  themeClass="text-color-menu"
+  attributeName="panelClass"
+  [element]="backgroundColorMenu"
+  class="color-pallete-container"
+  #backgroundColorMenu="matMenu"
+>
+  <div appTheme (mousedown)="preventUnSelection($event)" class="text-color-menu-container">
     <div class="default-item">
       <mat-icon svgIcon="textBackgroundColor" [inline]="true"></mat-icon>
       <span class="default-text">{{ 'innerNote.text-color-menu.background' | translate }}</span>
