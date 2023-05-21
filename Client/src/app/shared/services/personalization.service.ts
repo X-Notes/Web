@@ -10,6 +10,7 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
 import { EntitiesSizeENUM } from '../enums/font-size.enum';
+import { SideBarComponent } from 'src/app/content/navigation/side-bar/side-bar.component';
 
 export const timeSidenavAnimation = 200; // TODO move to constant file
 
@@ -206,6 +207,11 @@ export class PersonalizationService {
 
   get isHideTextOnSmall$() {
     return this.windowWidth$.pipe(map((value) => value < 1380));
+  }
+
+  get navMenuHeight(): number {
+    const height = document.getElementById(SideBarComponent.sideBarId).offsetHeight;
+    return height;
   }
 
   subscribeWindowEvents() {

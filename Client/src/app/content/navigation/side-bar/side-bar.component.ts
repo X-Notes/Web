@@ -12,9 +12,13 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
   styleUrls: ['./side-bar.component.scss'],
 })
 export class SideBarComponent implements OnInit, OnDestroy {
+  static sideBarId = 'sidebar-id';
+
   destroy = new Subject<void>();
 
   billing: BillingPlanId;
+
+  idNav = SideBarComponent.sideBarId;
 
   constructor(private store: Store) {}
 
