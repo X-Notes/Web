@@ -84,7 +84,8 @@
     "private": "個人的",
     "privateFolder": "個人的",
     "removeFromFolder": "フォルダからメモを削除する",
-    "restore": "戻す"
+    "restore": "戻す",
+    "copyText": "コピーテキスト"
   },
   "profile": {
     "sectionProfile": "プロフィール",

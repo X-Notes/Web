@@ -84,7 +84,8 @@
     "private": "Personlig",
     "privateFolder": "Personlig",
     "removeFromFolder": "Ta bort anteckningar från mappen",
-    "restore": "Återställa"
+    "restore": "Återställa",
+    "copyText": "Kopiera text"
   },
   "profile": {
     "sectionProfile": "Profil",

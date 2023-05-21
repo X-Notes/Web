@@ -84,7 +84,8 @@
     "private": "Osobisty",
     "privateFolder": "Osobisty",
     "removeFromFolder": "Usuwanie notatek z folderu",
-    "restore": "Przywrócić"
+    "restore": "Przywrócić",
+    "copyText": "Kopiuj tekst"
   },
   "profile": {
     "sectionProfile": "Profil",

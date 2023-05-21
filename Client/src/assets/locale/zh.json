@@ -84,7 +84,8 @@
     "private": "个人",
     "privateFolder": "个人",
     "removeFromFolder": "从文件夹中删除笔记",
-    "restore": "恢复"
+    "restore": "恢复",
+    "copyText": "复制文本"
   },
   "profile": {
     "sectionProfile": "轮廓",

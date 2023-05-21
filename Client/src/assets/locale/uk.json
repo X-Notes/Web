@@ -84,7 +84,8 @@
     "private": "Особисті",
     "privateFolder": "Особисті",
     "removeFromFolder": "Видалити нотатки з папки",
-    "restore": "Відновити"
+    "restore": "Відновити",
+    "copyText": "Копіювати текст"
   },
   "profile": {
     "sectionProfile": "Профіль",

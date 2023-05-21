@@ -84,7 +84,8 @@
     "private": "Persönlich",
     "privateFolder": "Persönlich",
     "removeFromFolder": "Notizen aus Ordner entfernen",
-    "restore": "Wiederherstellen"
+    "restore": "Wiederherstellen",
+    "copyText": "Text kopieren"
   },
   "profile": {
     "sectionProfile": "Profil",
