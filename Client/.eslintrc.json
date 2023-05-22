@@ -59,7 +59,7 @@
             "tsx": "never",
             "": "never"
           }
-       ],
+        ],
         "arrow-parens": [
           "off",
           "always"
@@ -80,11 +80,22 @@
       "rules": {}
     },
     {
-      "files": ["*.html"],
-      "excludedFiles": ["*inline-template-*.component.html"],
-      "extends": ["plugin:prettier/recommended"],
+      "files": [
+        "*.html"
+      ],
+      "excludedFiles": [
+        "*inline-template-*.component.html"
+      ],
+      "extends": [
+        "plugin:prettier/recommended"
+      ],
       "rules": {
-        "prettier/prettier": ["error", { "parser": "html" }]
+        "prettier/prettier": [
+          "error",
+          {
+            "parser": "html"
+          }
+        ]
       }
     }
   ]
