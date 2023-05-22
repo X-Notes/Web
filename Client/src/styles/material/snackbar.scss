@@ -1,0 +1,12 @@
+@import 'variables';
+
+.snackbar-dark {
+  --mdc-snackbar-container-color: #26282d;
+  --mat-snack-bar-button-color: #5e99cc;
+}
+
+.snackbar-light {
+  --mdc-snackbar-container-color: white;
+  --mat-snack-bar-button-color: #5e99cc;
+  --mdc-snackbar-supporting-text-color: #202020;
+}

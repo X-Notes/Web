@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarHorizontalPosition as MatSnackBarHorizontalPosition } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar, MatSnackBarHorizontalPosition } from '@angular/material/snack-bar';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
