@@ -52,10 +52,7 @@
 
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="theme === themeENUM.Dark ? 'dark-menu' : null"
 >
   <button mat-menu-item type="button" name="Download" (click)="exportAudio.emit(audio)">
     <mat-icon>download</mat-icon>

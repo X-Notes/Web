@@ -60,6 +60,7 @@ import { ClearCursorsAction, UpdateCursorAction } from '../../state/editor-actio
 import { UpdateCursor } from '../models/cursors/cursor';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { AudioService } from '../../audio.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -127,6 +128,7 @@ export class ContentEditorComponent
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
     editorApiFacadeService: EditorFacadeService,
     public audioService: AudioService,
+    private muuriService: MurriService
   ) {
     super(editorApiFacadeService);
   }
@@ -265,6 +267,7 @@ export class ContentEditorComponent
 
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
+    this.muuriService.resetToDefaultOpacity();
     this.webSocketsUpdaterService.leaveNote(this.noteId);
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();

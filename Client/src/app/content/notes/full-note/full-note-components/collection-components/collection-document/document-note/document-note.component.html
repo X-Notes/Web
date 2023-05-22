@@ -26,6 +26,7 @@
       <app-document-item
         *ngFor="let item of content.orderedItems"
         [document]="item"
+        [theme]="theme"
         [uiCursors$]="uiCursors$"
         [isSelectModeActive]="(isSelectModeActive$ | async)"
         [isReadOnlyMode]="isReadOnlyMode"
@@ -54,10 +55,7 @@
 
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="theme === themeE.Dark ? 'dark-menu' : null"
 >
   <button
     *ngIf="!isReadOnlyMode"

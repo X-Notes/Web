@@ -21,10 +21,7 @@
         #dropdown
         class="dropdown"
         [@showDropdown]
-        appLazyTheme
-        themeClass="dropdown"
-        attributeName="className"
-        [element]="dropdown"
+        [class]="(theme$ | async) === themeE.Dark ? 'dark-dropdown' : 'light-dropdown'"
       >
         <app-audio-small
           *ngFor="let item of audioService.playlist; let i = index"

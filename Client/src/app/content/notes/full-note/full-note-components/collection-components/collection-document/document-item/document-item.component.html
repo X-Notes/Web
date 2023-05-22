@@ -40,10 +40,7 @@
 
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="theme === themeENUM.Dark ? 'dark-menu' : null"
 >
   <button mat-menu-item type="button" name="review" (click)="openModal(document)">
     <mat-icon>wysiwyg</mat-icon>

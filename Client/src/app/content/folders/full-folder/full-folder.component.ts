@@ -20,7 +20,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
-import { MatLegacyMenu as MatMenu } from '@angular/material/legacy-menu';
+import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { HtmlTitleService } from 'src/app/core/html-title.service';

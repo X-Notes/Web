@@ -93,10 +93,7 @@
   </div>
 </div>
 <mat-menu
-  appLazyTheme
-  themeClass="text-color-menu"
-  attributeName="panelClass"
-  [element]="textColorMenu"
+  [class]="theme === themeE.Dark ? 'dark-text-color-menu' : null"
   class="color-pallete-container"
   #textColorMenu="matMenu"
 >
@@ -118,10 +115,7 @@
   </div>
 </mat-menu>
 <mat-menu
-  appLazyTheme
-  themeClass="text-color-menu"
-  attributeName="panelClass"
-  [element]="backgroundColorMenu"
+  [class]="theme === themeE.Dark ? 'dark-text-color-menu' : null"
   class="color-pallete-container"
   #backgroundColorMenu="matMenu"
 >

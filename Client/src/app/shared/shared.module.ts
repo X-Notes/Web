@@ -10,7 +10,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider';
 import { RouterModule } from '@angular/router';
@@ -42,7 +42,6 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
-import { LazyThemeDirective } from './directives/lazy-theme.directive';
 import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
@@ -86,7 +85,6 @@ import { ContentAccessSectionComponent } from './modal_components/share/content-
 import { LeftSectionEntitiesShareComponent } from './modal_components/share/left-section-entities-share/left-section-entities-share.component';
 import { SelectComponent } from './custom-components/select-component/select/select.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HammerModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [
@@ -118,7 +116,6 @@ import { HammerModule } from '@angular/platform-browser';
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,
-    LazyThemeDirective,
     LockComponent,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
@@ -164,7 +161,6 @@ import { HammerModule } from '@angular/platform-browser';
     MatRippleModule,
     TranslateModule,
     MatDialogModule,
-    HammerModule,
     FormsModule,
     MatTabsModule,
     OverlayModule,
@@ -184,7 +180,6 @@ import { HammerModule } from '@angular/platform-browser';
     TranslateModule,
     MatRippleModule,
     MatDialogModule,
-    HammerModule,
     FormsModule,
     LabelComponent,
     SearchLabelPipe,
@@ -213,7 +208,6 @@ import { HammerModule } from '@angular/platform-browser';
     MatIconModule,
     MatMenuModule,
     FolderTypePipe,
-    LazyThemeDirective,
     ReactiveFormsModule,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,

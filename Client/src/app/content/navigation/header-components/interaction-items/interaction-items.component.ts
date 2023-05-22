@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { MatLegacyMenu as MatMenu } from '@angular/material/legacy-menu';
+import { MatMenu } from '@angular/material/menu';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
@@ -52,6 +52,8 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   sortedTypes = SortedByENUM;
 
   buttonStyleType = GeneralButtonStyleType;
+
+  theme = ThemeENUM;
 
   destroy = new Subject<void>();
 

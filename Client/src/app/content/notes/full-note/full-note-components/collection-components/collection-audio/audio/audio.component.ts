@@ -6,6 +6,7 @@ import { StreamAudioState } from '../../../../../models/stream-audio-state.model
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { AudioModel } from '../../../../../models/editor-models/audios-collection';
 import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-audio',
@@ -27,6 +28,11 @@ export class AudioComponent implements OnInit, OnDestroy {
   @Input() audio: AudioModel;
 
   @Input() isSelectModeActive = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeENUM = ThemeENUM;
 
   @Input()
   uiCursors$: Observable<CollectionCursorUI[]>;

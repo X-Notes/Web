@@ -18,10 +18,7 @@
       </button>
       <mat-menu
         #menu="matMenu"
-        appLazyTheme
-        themeClass="menu"
-        attributeName="panelClass"
-        [element]="menu"
+        [class]="true ? 'dark-menu' : null"
       >
         <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
           <mat-icon>content_copy</mat-icon>

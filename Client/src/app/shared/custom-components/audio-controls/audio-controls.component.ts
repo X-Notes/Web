@@ -1,12 +1,15 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from 'src/app/content/notes/audio.service';
 import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
 import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from '../../enums/theme.enum';
 
 @Component({
   selector: 'app-audio-controls',
@@ -15,11 +18,16 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
   animations: [showDropdown],
 })
 export class AudioControlsComponent implements OnInit, OnDestroy {
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   destroy = new Subject();
 
   state: StreamAudioState;
 
   isOpen = false;
+
+  themeE = ThemeENUM;
 
   public positions = [
     new ConnectionPositionPair(
