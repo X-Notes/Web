@@ -167,7 +167,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
       await this.setFirstInitedMurri();
-      requestAnimationFrame(() => this.murriService.setOpacity1());
+      setTimeout(() => this.murriService.setOpacity1(), 50);
       this.loadNotesWithUpdates();
     }
     await this.synchronizeState(q, this.sortNoteType === SortedByENUM.AscDate);

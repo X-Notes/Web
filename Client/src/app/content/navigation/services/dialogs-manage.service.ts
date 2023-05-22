@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -100,6 +100,7 @@ export class DialogsManageService {
       panelClass: this.getDefaultPanelClass(),
       data: { labelIds: new Set(labelIds) },
     };
+    console.log('config: ', config);
     return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 

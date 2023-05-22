@@ -46,7 +46,7 @@ import {
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
 import { LeftSectionShareEntity } from './left-section-entities-share/entities/left-section-share-entity';
