@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { Injectable } from '@angular/core';
-import { MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBarRef as MatSnackBarRef, LegacyTextOnlySnackBar as TextOnlySnackBar } from '@angular/material/legacy-snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';

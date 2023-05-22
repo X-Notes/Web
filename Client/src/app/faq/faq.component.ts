@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { Store } from '@ngxs/store';
 import { UserStore } from '../core/stateUser/user-state';
 import { ThemeENUM } from '../shared/enums/theme.enum';

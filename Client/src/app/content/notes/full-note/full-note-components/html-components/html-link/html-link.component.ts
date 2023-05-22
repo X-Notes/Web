@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
+import { MatLegacyMenu as MatMenu } from '@angular/material/legacy-menu';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
