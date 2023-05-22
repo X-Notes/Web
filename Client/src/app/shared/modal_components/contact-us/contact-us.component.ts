@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { shake } from '../../services/personalization.service';
@@ -13,9 +13,9 @@ import { ApiContactUsService } from './services/api-contact-us.service';
   animations: [shake],
 })
 export class ContactUsComponent {
-  form = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    text: new FormControl('', [Validators.required]),
+  form = new UntypedFormGroup({
+    email: new UntypedFormControl('', [Validators.required, Validators.email]),
+    text: new UntypedFormControl('', [Validators.required]),
   });
 
   loading = false;

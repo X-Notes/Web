@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
@@ -16,7 +16,7 @@ export enum LockPopupState {
 }
 
 const CompareValidator = (first: string, second: string) => {
-  return (fg: FormGroup) => {
+  return (fg: UntypedFormGroup) => {
     const firstField = fg.controls[first];
     const secondField = fg.controls[second];
 
@@ -39,7 +39,7 @@ const CompareValidator = (first: string, second: string) => {
   animations: [shake],
 })
 export class LockComponent implements OnInit, OnDestroy {
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   destroy = new Subject<void>();
 
@@ -48,7 +48,7 @@ export class LockComponent implements OnInit, OnDestroy {
   state: LockPopupState;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private store: Store,
     private lockEncryptService: LockEncryptService,
     private snackService: SnackBarWrapperService,
