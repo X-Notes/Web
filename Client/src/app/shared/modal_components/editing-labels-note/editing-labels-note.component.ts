@@ -24,10 +24,10 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   @Select(LabelStore.noDeleted)
-  public labels$: Observable<Label[]>;
+  public labels$?: Observable<Label[]>;
 
   @Select(LabelStore.countNoDeleted)
-  countAll$: Observable<number>;
+  countAll$?: Observable<number>;
 
   destroy = new Subject<void>();
 

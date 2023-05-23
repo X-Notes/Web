@@ -7,6 +7,5 @@ import { Component, Input, Optional } from '@angular/core';
 })
 export class ToggleTextComponent {
   @Input()
-  @Optional()
-  color: string;
+  color?: string;
 }

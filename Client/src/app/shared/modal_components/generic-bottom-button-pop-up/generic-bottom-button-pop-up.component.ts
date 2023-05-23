@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class GenericBottomButtonPopUpComponent implements OnInit {
   @Output() clickEvent = new EventEmitter();
 
-  @Input() title: string;
+  @Input() title?: string;
 
   ngOnInit(): void {}
 }

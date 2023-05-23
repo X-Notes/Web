@@ -100,7 +100,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     }
   }
 
-  highlightNote(note) {
+  highlightNote(note: SmallNote) {
     if (!note.isSelected) {
       this.store.dispatch(new SelectIdNote(note.id));
     } else {

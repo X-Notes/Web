@@ -9,7 +9,7 @@ import { collapse } from '../../../shared/services/personalization.service';
 })
 export class FaqListItemComponent {
   @Input()
-  isMatched: boolean;
+  isMatched?: boolean;
 
   expand = false;
 }

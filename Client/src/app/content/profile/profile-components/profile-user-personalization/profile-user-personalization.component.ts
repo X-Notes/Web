@@ -14,10 +14,10 @@ import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileUserPersonalizationComponent implements OnInit {
-  @Input() user: ShortUser;
+  @Input() user?: ShortUser | null;
 
   @Select(UserStore.getPersonalizationSettings)
-  public pSettings$: Observable<PersonalizationSetting>;
+  public pSettings$?: Observable<PersonalizationSetting>;
 
   pSettings = PersonalizationEnum;
 

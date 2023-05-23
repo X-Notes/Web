@@ -16,7 +16,7 @@ import {
 })
 export class NavProfileItemComponent {
   @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  public user$?: Observable<ShortUser>;
 
   public photoError = false;
 

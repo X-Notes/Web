@@ -21,8 +21,8 @@ export class SnackBarWrapperService {
   ) {
     this.store.select(AppStore.getSnackBarNotification).subscribe((message) => {
       if (message) {
-        this.buildNotification(message, null, null);
-        this.store.dispatch(new ShowSnackNotification(null));
+        this.buildNotification(message, undefined, undefined);
+        this.store.dispatch(new ShowSnackNotification(undefined));
       }
     });
   }
@@ -60,7 +60,7 @@ export class SnackBarWrapperService {
 
   buildNotification(
     message: string,
-    callback: () => void,
+    callback?: () => void,
     undoMessage?: string,
   ): MatSnackBarRef<TextOnlySnackBar> {
     const snackbarRef = this.buildSnackBarRef(message, undoMessage);

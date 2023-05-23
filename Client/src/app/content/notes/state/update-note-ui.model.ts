@@ -3,23 +3,23 @@ import { Label } from '../../labels/models/label.model';
 export class UpdateNoteUI {
   id: string;
 
-  color: string;
+  color?: string;
 
-  title: string;
+  title?: string;
 
-  removeLabelIds: string[];
+  removeLabelIds?: string[];
 
-  isCanEdit: boolean;
+  isCanEdit?: boolean;
 
-  addLabels: Label[];
+  addLabels?: Label[];
 
-  allLabels: Label[];
+  allLabels?: Label[];
 
   isLocked?: boolean;
 
   isLockedNow?: boolean;
 
-  unlockedTime: Date;
+  unlockedTime?: Date;
 
   constructor(id: string) {
     this.id = id;

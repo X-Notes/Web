@@ -26,16 +26,16 @@ import { SelectionOption } from '../entities/select-option';
 })
 export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
   @ViewChildren(SelectOptionComponent)
-  public optionsComponents: QueryList<SelectOptionComponent>;
+  public optionsComponents?: QueryList<SelectOptionComponent>;
 
-  @ViewChild('dropdownButton', { read: ElementRef }) button: ElementRef<HTMLButtonElement>;
+  @ViewChild('dropdownButton', { read: ElementRef }) button?: ElementRef<HTMLButtonElement>;
 
   @Input()
   @Optional()
   initialValue: any;
 
   @Input()
-  options: SelectionOption[];
+  options?: SelectionOption[];
 
   @Output()
   selectValueChange = new EventEmitter<any>();
@@ -80,15 +80,15 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
     ),
   ];
 
-  get selectedOption(): SelectionOption {
-    if (this.selectValue) {
+  get selectedOption(): SelectionOption | undefined {
+    if (this.options && this.selectValue) {
       const selectedValue = this.options.find((x) => x.value === this.selectValue);
       return selectedValue;
     }
   }
 
-  get selectedOptionComponent(): SelectOptionComponent {
-    if (this.selectValue) {
+  get selectedOptionComponent(): SelectOptionComponent | undefined  {
+    if (this.optionsComponents && this.selectValue) {
       const selectedValue = this.optionsComponents
         .toArray()
         .find((x) => x.value.value === this.selectValue);
@@ -127,6 +127,7 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   handlePositions(): void {
+    if(!this.button) return;
     const value = this.getTop(this.button.nativeElement);
     if (value > 70) {
       this.positions = this.positionsTop;

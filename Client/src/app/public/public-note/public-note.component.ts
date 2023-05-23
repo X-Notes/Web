@@ -13,7 +13,7 @@ import { AppInitializerService } from 'src/app/core/app-initializer.service';
 })
 export class PublicNoteComponent implements OnInit {
   @Select(NoteStore.isFullNoteEditor)
-  isFullNoteEditor$: Observable<boolean>;
+  isFullNoteEditor$?: Observable<boolean>;
 
   constructor(
     private appInitializerService: AppInitializerService,

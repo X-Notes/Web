@@ -26,7 +26,7 @@ import { ComponentType, ParentInteractionHTML } from '../models/parent-interacti
 })
 export class EditorTitleComponent extends EditorBaseComponent {
   @Input()
-  title$: Observable<string>;
+  title$?: Observable<string>;
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
@@ -70,7 +70,8 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.noteTitleChanged$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe(async (title) => {
-        this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, null, false));
+        if(!this.noteId) return;
+        this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, undefined, false));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
   }
@@ -140,7 +141,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.prevTitle = title;
   }
 
-  getSelection(): SaveSelection {
+  getSelection(): SaveSelection | null {
     const el = this.noteTitleEl?.nativeElement;
     if (!el) return null;
     return this.facade.apiBrowser.getSelectionInfo(el);

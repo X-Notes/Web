@@ -5,14 +5,14 @@
         <img
           *ngIf="!photoError"
           alt="photo"
-          [src]="(user$ | async).photoPath"
+          [src]="(user$ | async)?.photoPath"
           (error)="changeSource()"
         />
         <div *ngIf="photoError" class="photo-error">
           <mat-icon svgIcon="people" [inline]="true"></mat-icon>
         </div>
       </div>
-      <p>{{ (user$ | async).name }}</p>
+      <p>{{ (user$ | async)?.name }}</p>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
   </div>

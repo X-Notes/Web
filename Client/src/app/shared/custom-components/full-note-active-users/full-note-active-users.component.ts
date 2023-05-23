@@ -12,10 +12,10 @@ import { showMenuLeftRight } from '../../services/personalization.service';
   animations: [showMenuLeftRight],
 })
 export class FullNoteActiveUsersComponent {
-  @ViewChild('heightPeople') heightPeople: ElementRef;
+  @ViewChild('heightPeople') heightPeople?: ElementRef;
 
-  @ViewChild('scrollbar') scrollbar: ElementRef;
+  @ViewChild('scrollbar') scrollbar?: ElementRef;
 
   @Select(NoteStore.getOnlineUsersOnNote)
-  onlineUsers$: Observable<OnlineUsersNote[]>;
+  onlineUsers$?: Observable<OnlineUsersNote[]>;
 }

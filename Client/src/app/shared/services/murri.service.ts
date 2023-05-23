@@ -24,7 +24,7 @@ export class MurriService implements OnDestroy {
 
   private _flagForOpacity = false;
 
-  private grid;
+  private grid: any;
 
   constructor(private store: Store, private pService: PersonalizationService) {
     this.pService.changeOrientationSubject.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -109,14 +109,14 @@ export class MurriService implements OnDestroy {
   }
 
   getPositions(): PositionEntityModel[] {
-    return this.grid.getItems().map((el, index) => {
+    return this.grid.getItems().map((el: any, index: number) => {
       return { entityId: el._element.id, position: index + 1 } as PositionEntityModel;
     });
   }
 
   sortByHtml(attribute: string = 'order') {
     if (!this.grid) return;
-    this.grid.sort((itemA, itemB) => {
+    this.grid.sort((itemA: any, itemB: any) => {
       const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
       const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);
       return aId - bId;

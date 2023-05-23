@@ -3,15 +3,15 @@ import { BaseFile } from 'src/app/content/notes/models/editor-models/base-file';
 import { UpdateOperationWS } from './update-operation-ws.enum';
 
 export class BaseUpdateFileContent<T extends BaseCollection<BaseFile>> {
-  contentId: string;
+  contentId?: string;
 
-  collectionItemIds: string[];
+  collectionItemIds?: string[];
 
-  operation: UpdateOperationWS;
+  operation?: UpdateOperationWS;
 
-  collection: T;
+  collection?: T;
 
-  name: string;
+  name?: string;
 
-  entityTime: Date;
+  entityTime?: Date;
 }

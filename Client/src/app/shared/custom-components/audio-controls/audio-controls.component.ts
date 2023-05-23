@@ -1,10 +1,8 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AudioService } from 'src/app/content/notes/audio.service';
 import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
-import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { Select } from '@ngxs/store';
@@ -19,7 +17,7 @@ import { ThemeENUM } from '../../enums/theme.enum';
 })
 export class AudioControlsComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
-  public theme$: Observable<ThemeENUM>;
+  public theme$?: Observable<ThemeENUM>;
 
   isOpen = false;
 
@@ -57,16 +55,19 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   // eslint-disable-next-line consistent-return
-  get volumeIcon(): string {
-    if (this.audioService.getState()?.currentVolume === 0) {
+  get volumeIcon(): string | null {
+    const volume = this.audioService.getState()?.currentVolume;
+    if(!volume) return null;
+    if (volume === 0) {
       return 'volume_off';
     }
-    if (this.audioService.getState()?.currentVolume < 0.5 && this.audioService.getState()?.currentVolume !== 0) {
+    if (volume < 0.5 && volume !== 0) {
       return 'volume_down';
     }
-    if (this.audioService.getState()?.currentVolume >= 0.5) {
+    if (volume >= 0.5) {
       return 'volume_up';
     }
+    return null;
   }
 
   get audioName() {

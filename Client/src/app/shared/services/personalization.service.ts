@@ -144,7 +144,7 @@ export const uploader = trigger('uploader', [
 })
 export class PersonalizationService {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<EntitiesSizeENUM>;
+  public fontSize$?: Observable<EntitiesSizeENUM>;
 
   spinnerActive = false;
 
@@ -209,8 +209,8 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
-  get navMenuHeight(): number {
-    const height = document.getElementById(SideBarComponent.sideBarId).offsetHeight;
+  get navMenuHeight(): number | undefined {
+    const height = document.getElementById(SideBarComponent.sideBarId)?.offsetHeight;
     return height;
   }
 
@@ -264,7 +264,7 @@ export class PersonalizationService {
     return window.innerWidth >= 600;
   };
 
-  waitPreloading(time: number = null) {
+  waitPreloading(time?: number) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => resolve(false), time ?? this.timeForSpinnerLoading),
     );

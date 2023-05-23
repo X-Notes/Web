@@ -2,9 +2,9 @@ import { PhotosCollection } from 'src/app/content/notes/models/editor-models/pho
 import { BaseUpdateFileContent } from './base-update-file-content-ws';
 
 export class UpdatePhotosCollectionWS extends BaseUpdateFileContent<PhotosCollection> {
-  width: string;
+  width?: string;
 
-  height: string;
+  height?: string;
 
-  countInRow: number;
+  countInRow?: number;
 }

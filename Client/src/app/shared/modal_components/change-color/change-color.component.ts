@@ -21,7 +21,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
 
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
 
-  current;
+  current: any;
 
   date: Date = new Date();
 
@@ -62,7 +62,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  shadeColor = (color, percent) => {
+  shadeColor = (color: string, percent: number) => {
     return `#${color
       .replace(/^#/, '')
       .replace(/../g, (colorN) =>

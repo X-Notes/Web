@@ -2,23 +2,23 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export class BaseFolder {
-  id: string;
+  id!: string;
 
-  title: string;
+  title?: string;
 
-  color: string;
+  color!: string;
 
-  userId: string;
+  userId!: string;
 
-  isCanEdit: boolean;
+  isCanEdit!: boolean;
 
-  refTypeId: RefTypeENUM;
+  refTypeId!: RefTypeENUM;
 
-  folderTypeId: FolderTypeENUM;
+  folderTypeId!: FolderTypeENUM;
 
-  createdAt: Date;
+  createdAt!: Date;
 
-  updatedAt: Date;
+  updatedAt!: Date;
 
-  deletedAt: Date;
+  deletedAt!: Date;
 }

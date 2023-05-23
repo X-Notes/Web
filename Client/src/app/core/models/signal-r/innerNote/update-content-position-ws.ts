@@ -1,5 +1,5 @@
 export class UpdateContentPosition {
-  contentId: string;
+  contentId?: string;
 
-  order: number;
+  order?: number;
 }

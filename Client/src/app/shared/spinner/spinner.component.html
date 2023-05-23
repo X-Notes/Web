@@ -1,6 +1,6 @@
 <div
   class="wrapper"
-  [ngStyle]="{'background-color':  (user$ | async).currentBackground?.photoPath !== null ? 'rgba(0, 0, 0, 0.10)': ''}"
+  [ngStyle]="{'background-color':  (user$ | async)?.currentBackground?.photoPath !== null ? 'rgba(0, 0, 0, 0.10)': ''}"
 >
   <div class="loader" [style.font-size.px]="size">
     <div></div>

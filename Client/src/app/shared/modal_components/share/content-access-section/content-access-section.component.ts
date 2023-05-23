@@ -14,22 +14,22 @@ import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.servi
 })
 export class ContentAccessSectionComponent implements OnInit {
   @Input()
-  refTypeId: RefTypeENUM;
+  refTypeId?: RefTypeENUM;
 
   @Input()
-  isPrivateButtonActive: boolean;
+  isPrivateButtonActive?: boolean;
 
   @Input()
-  link: string;
+  link?: string;
 
   @Input()
-  toggleDescription: string;
+  toggleDescription?: string;
 
   @Input()
-  dropdownActive: boolean;
+  dropdownActive?: boolean;
 
   @Input()
-  currentTheme: ThemeENUM;
+  currentTheme?: ThemeENUM;
 
   @Output()
   changeRefTypeEvent = new EventEmitter<RefTypeENUM>();
@@ -48,7 +48,7 @@ export class ContentAccessSectionComponent implements OnInit {
     private enumConverterService: EnumConverterService,
   ) {}
 
-  get refTypeSelectedValue(): RefTypeENUM {
+  get refTypeSelectedValue(): RefTypeENUM | undefined {
     return this.refTypeId;
   }
 

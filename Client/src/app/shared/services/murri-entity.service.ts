@@ -100,15 +100,18 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     let isHasUpdates = false;
     for (const el of elements) {
       if (!this.state[el.id]) {
-        this.state[el.id] = this.entities.find((x) => x.id === el.id);
-        this.murriService.addElement([el], isAddToEnd, true);
-        isHasUpdates = true;
+        const ent = this.entities.find((x) => x.id === el.id);
+        if (ent) {
+          this.state[el.id] = ent;
+          this.murriService.addElement([el], isAddToEnd, true);
+          isHasUpdates = true;
+        }
       }
     }
     return isHasUpdates;
   }
 
-  abstract syncPositions();
+  abstract syncPositions(): void;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   get isNeedUpdatePositions(): boolean {

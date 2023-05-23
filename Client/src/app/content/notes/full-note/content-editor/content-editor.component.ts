@@ -90,23 +90,23 @@ export class ContentEditorComponent
   extends EditorCollectionsComponent
   implements OnInit, AfterViewInit, OnChanges, OnDestroy
 {
-  @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
+  @ViewChild(SelectionDirective) selectionDirective?: SelectionDirective;
 
-  @ViewChild(MenuSelectionDirective) menuSelectionDirective: MenuSelectionDirective;
+  @ViewChild(MenuSelectionDirective) menuSelectionDirective?: MenuSelectionDirective;
 
   @ViewChild('textEditMenu', { read: ElementRef, static: false })
-  textEditMenu: ElementRef<HTMLElement>;
+  textEditMenu?: ElementRef<HTMLElement>;
 
-  @ViewChild('mainSection', { read: ElementRef }) mainSection: ElementRef<HTMLElement>;
-
-  @Input()
-  editorTheme: ThemeENUM;
+  @ViewChild('mainSection', { read: ElementRef }) mainSection?: ElementRef<HTMLElement>;
 
   @Input()
-  color: string;
+  editorTheme?: ThemeENUM;
 
   @Input()
-  labels: Label[] = [];
+  color?: string;
+
+  @Input()
+  labels?: Label[] = [];
 
   @Input() progressiveLoading = false;
 
@@ -116,7 +116,7 @@ export class ContentEditorComponent
 
   textType = NoteTextTypeENUM;
 
-  options: TextEditMenuOptions;
+  options?: TextEditMenuOptions;
 
   ngForSubject = new Subject<void>(); // for lazy loading
 

@@ -6,16 +6,15 @@ import { Component, EventEmitter, Input, Optional, Output } from '@angular/core'
   styleUrls: ['./button-toggle.component.scss'],
 })
 export class ButtonToggleComponent {
-  @Input() value: boolean;
+  @Input() value?: boolean;
 
   @Input()
-  @Optional()
-  style: string;
+  style?: string;
 
   @Output()
   valueChange = new EventEmitter<boolean>();
 
-  modelChangeFn(value) {
+  modelChangeFn(value: boolean) {
     this.valueChange.emit(value);
   }
 }

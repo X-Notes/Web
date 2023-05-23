@@ -17,9 +17,9 @@ import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
 
 interface AppState {
-  routing: EntityType;
+  routing: EntityType | null;
   notifications: AppNotification[];
-  snackNotification: string;
+  snackNotification: string | null;
 }
 
 @State<AppState>({
@@ -35,7 +35,7 @@ export class AppStore {
   constructor(public notificationService: NotificationServiceAPI) {}
 
   @Selector()
-  static getSnackBarNotification(state: AppState): string {
+  static getSnackBarNotification(state: AppState): string | null {
     return state.snackNotification;
   }
 
@@ -215,13 +215,13 @@ export class AppStore {
   }
 
   @Selector()
-  static getRouting(state: AppState): EntityType {
+  static getRouting(state: AppState): EntityType | null {
     return state.routing;
   }
 
   @Selector()
   // eslint-disable-next-line consistent-return
-  static getTypeNote(state: AppState): NoteTypeENUM {
+  static getTypeNote(state: AppState): NoteTypeENUM | undefined {
     switch (state.routing) {
       case EntityType.NotePrivate: {
         return NoteTypeENUM.Private;
@@ -245,7 +245,7 @@ export class AppStore {
 
   @Selector()
   // eslint-disable-next-line consistent-return
-  static getTypeFolder(state: AppState): FolderTypeENUM {
+  static getTypeFolder(state: AppState): FolderTypeENUM | undefined {
     switch (state.routing) {
       case EntityType.FolderPrivate: {
         return FolderTypeENUM.Private;

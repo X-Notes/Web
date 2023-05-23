@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class DialogGenericSaveComponent {
   @Output() saveOutput = new EventEmitter<string>();
 
-  @Input() buttonText: string;
+  @Input() buttonText?: string;
 
   save() {
     this.saveOutput.emit();

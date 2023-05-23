@@ -13,17 +13,17 @@ import { BillingPlan } from 'src/app/core/models/billing/billing-plan';
 })
 export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
-  theme$: Observable<ThemeENUM>;
+  theme$?: Observable<ThemeENUM>;
 
   destroy = new Subject<void>();
 
-  memoryUsedBytes: number;
+  memoryUsedBytes?: number;
 
-  memoryUsedM: number;
+  memoryUsedM?: number;
 
-  billing: BillingPlanId;
+  billing?: BillingPlanId;
 
-  plans: BillingPlan[];
+  plans?: BillingPlan[];
 
   constructor(private store: Store) {}
 
@@ -41,19 +41,22 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     }
   }
 
-  get procent() {
+  get procent(): string {
+    if(!this.memoryUsedBytes || !this.userPlan?.maxSize) return '';
     return `${(this.memoryUsedBytes / this.userPlan?.maxSize) * 100}%`;
   }
 
-  get userPlan(): BillingPlan {
+  get userPlan(): BillingPlan | undefined {
+    if(!this.plans) return;
     return this.plans.find((x) => x.id === this.billing);
   }
 
-  get userMemory(): string {
+  get userMemory(): string | undefined {
     return this.userPlan?.getMemoryMb;
   }
 
   getIndicatorColor(theme: ThemeENUM) {
+    if(!this.memoryUsedBytes || !this.userPlan?.maxSize) return '';
     const check = this.memoryUsedBytes / this.userPlan?.maxSize;
     if (check < 0.85) {
       return theme === ThemeENUM.Dark ? 'white' : '#404040';
