@@ -10,7 +10,7 @@ export class FileProcessTracker<T> {
 
   eventBody?: T;
 
-  constructor(isUploaded: boolean = false, eventBody?: T) {
+  constructor(isUploaded = false, eventBody?: T) {
     this.isUploaded = isUploaded;
     this.eventBody = eventBody;
   }
@@ -38,13 +38,13 @@ export class SnackBarFileProcessHandlerService {
           }
           case HttpEventType.UploadProgress: {
             operation.status = event.type;
-            operation.procent = Math.round((90 * event.loaded) / event.total!) ?? 0;
+            operation.procent = Math.round((90 * event.loaded) / event.total) ?? 0;
             return new FileProcessTracker<T>();
           }
           case HttpEventType.Response: {
             operation.status = event.type;
             operation.procent = 100;
-            return new FileProcessTracker<T>(true, event.body!);
+            return new FileProcessTracker<T>(true, event.body);
           }
           default: {
             return new FileProcessTracker<T>();

@@ -230,14 +230,14 @@ export class UserStore {
     const result = resp.eventBody;
     const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
       getState().user.languageId,
-      result!,
+      result,
       byteToMB(maxProfilePhotoSize),
     );
     if (isNeedInterrupt) {
       return;
     }
 
-    const newPhoto = result!.data;
+    const newPhoto = result.data;
     patchState({
       user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath }, // todo return link
     });

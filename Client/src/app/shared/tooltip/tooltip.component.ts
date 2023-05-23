@@ -13,7 +13,7 @@ export class TooltipComponent {
 
   @HostBinding('@tooltip') anim = true;
 
-  labelClass: boolean = false;
+  labelClass = false;
 
   labelColor?: string;
 }

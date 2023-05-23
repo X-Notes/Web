@@ -45,7 +45,7 @@ export class AuthService {
     return navigator?.userAgent?.includes('Firefox');
   }
 
-  async authGoogle(navigateToUrl: string = 'notes') {
+  async authGoogle(navigateToUrl = 'notes') {
     try {
       if (this.isFirefox) {
         this.authStatus.next(AuthStatus.InProgress);
@@ -82,7 +82,7 @@ export class AuthService {
     await user?.getIdToken(true);
   }
 
-  async redirectOnSuccessAuth(navigateToUrl: string = 'notes') {
+  async redirectOnSuccessAuth(navigateToUrl = 'notes') {
     try {
       this.authStatus.next(AuthStatus.InProgress);
       const result = await this.afAuth.getRedirectResult();

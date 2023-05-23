@@ -216,6 +216,7 @@ export class PersonalizationService {
 
   subscribeWindowEvents() {
     fromEvent(window, 'resize')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .pipe(map((value) => value as any))
       .subscribe((evt) => {
         this.windowHeight$.next(evt.target.innerHeight);

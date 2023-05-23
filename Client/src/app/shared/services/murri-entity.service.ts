@@ -42,7 +42,7 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     this.syncPositions();
   }
 
-  setFirstInitedMurri(flag: boolean = true): void {
+  setFirstInitedMurri(flag = true): void {
     this.firstInitedMurri = flag;
   }
 

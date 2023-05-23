@@ -32,7 +32,7 @@
       <video
         [id]="currentVideo?.fileId"
         (click)="clickItemHandler(currentVideo?.fileId)"
-        (timeupdate)="updateVideoTime($event)"
+        (timeupdate)="updateVideoTime()"
         #videoplayer
         oncontextmenu="return false"
         preload="metadata"

@@ -72,6 +72,7 @@ export enum TabIndexes {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShareComponent implements OnInit, OnDestroy {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ViewChild('tabs', { static: false }) tabs: any;
 
   @ViewChild(SearchComponent) searchComponent!: SearchComponent;

@@ -160,7 +160,7 @@ export class CollectionBaseComponent<
     this.clickItemHandler(null, true);
   }
 
-  clickItemHandler(itemId: string, keepRanges: boolean = false): void {
+  clickItemHandler(itemId: string, keepRanges = false): void {
     this.facade.clickableService.setContent(
       this.content,
       itemId,

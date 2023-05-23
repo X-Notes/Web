@@ -113,7 +113,7 @@ export class VideoNoteComponent
     return this.content.items[0];
   }
 
-  updateVideoTime($event): void {
+  updateVideoTime(): void {
     this.videoTime = this.videoElement.nativeElement.currentTime;
   }
 
@@ -122,9 +122,7 @@ export class VideoNoteComponent
   ngAfterViewInit(): void {}
 
   ngOnDestroy = async () => {
-    // @ts-ignore
     if (document.pictureInPictureElement) {
-      // @ts-ignore
       await document.exitPictureInPicture();
     }
   };
@@ -193,7 +191,7 @@ export class VideoNoteComponent
   }
 
   mute() {
-    const { volume } = this.videoElement?.nativeElement;
+    const volume = this.videoElement?.nativeElement.volume;
     if (this.videoElement?.nativeElement.muted) {
       this.videoElement.nativeElement.muted = false;
       this.seekVolume(this.volumeHelper);

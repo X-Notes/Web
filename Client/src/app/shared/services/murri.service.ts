@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-dupe-class-members */
 /* eslint-disable no-underscore-dangle */
 import { Injectable, OnDestroy } from '@angular/core';
@@ -114,7 +115,7 @@ export class MurriService implements OnDestroy {
     });
   }
 
-  sortByHtml(attribute: string = 'order') {
+  sortByHtml(attribute = 'order') {
     if (!this.grid) return;
     this.grid.sort((itemA: any, itemB: any) => {
       const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
@@ -176,7 +177,7 @@ export class MurriService implements OnDestroy {
     );
   }
 
-  initMurriFolder(isDragEnabled: boolean = true) {
+  initMurriFolder(isDragEnabled = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -260,10 +261,11 @@ export class MurriService implements OnDestroy {
         safeZone: 0.1,
       },
     });
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.grid.layout(() => {});
   }
 
-  setOpacityFlagAsync(time: number = 0): void {
+  setOpacityFlagAsync(time = 0): void {
     this.layoutUpdate$.next(time);
   }
 
@@ -289,7 +291,7 @@ export class MurriService implements OnDestroy {
     }
   }
 
-  wait = (delay: number = 0) => {
+  wait = (delay = 0) => {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
         resolve(true);

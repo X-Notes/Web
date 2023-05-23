@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AudioService } from '../../../../../audio.service';
-import { StreamAudioState } from '../../../../../models/stream-audio-state.model';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { AudioModel } from '../../../../../models/editor-models/audios-collection';
 import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';

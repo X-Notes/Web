@@ -8,33 +8,13 @@
       "files": [
         "*.ts"
       ],
-      "parserOptions": {
-        "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
-        ],
-        "ecmaVersion": "latest",
-        "createDefaultProgram": true
-      },
-      "env": {
-        "es6": true
-      },
       "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
-        "plugin:@angular-eslint/template/process-inline-templates",
-        "airbnb-typescript/base",
-        "plugin:prettier/recommended"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "app",
-            "style": "kebab-case"
-          }
-        ],
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -43,31 +23,17 @@
             "style": "camelCase"
           }
         ],
-        "@typescript-eslint/explicit-member-accessibility": [
-          "off",
-          {
-            "accessibility": "explicit"
-          }
-        ],
-        "import/extensions": [
+        "@angular-eslint/component-selector": [
           "error",
-          "ignorePackages",
           {
-            "js": "never",
-            "jsx": "never",
-            "ts": "never",
-            "tsx": "never",
-            "": "never"
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
           }
         ],
-        "arrow-parens": [
-          "off",
-          "always"
-        ],
-        "import/prefer-default-export": "off",
-        "max-classes-per-file": "off",
-        "no-restricted-syntax": "off",
-        "import/no-cycle": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "@typescript-eslint/no-empty-function": "off"
       }
     },
     {
@@ -75,28 +41,10 @@
         "*.html"
       ],
       "extends": [
-        "plugin:@angular-eslint/template/recommended"
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:@angular-eslint/template/accessibility"
       ],
       "rules": {}
-    },
-    {
-      "files": [
-        "*.html"
-      ],
-      "excludedFiles": [
-        "*inline-template-*.component.html"
-      ],
-      "extends": [
-        "plugin:prettier/recommended"
-      ],
-      "rules": {
-        "prettier/prettier": [
-          "error",
-          {
-            "parser": "html"
-          }
-        ]
-      }
     }
   ]
 }
