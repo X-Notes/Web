@@ -478,7 +478,7 @@ export abstract class BaseTextElementComponent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur(e) {}
 
-  textClick(e: PointerEvent): void {
+  textClick(e: MouseEvent): void {
     this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
     this.cdr.detectChanges();
     // this.facade.apiBrowser.createCustomRange(this.contentHtml.nativeElement, fC.start);

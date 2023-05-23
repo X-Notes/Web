@@ -86,11 +86,11 @@ export class NoteComponent implements OnInit {
     }) as unknown as ContentModelBase[];
   }
 
-  highlight(note: SmallNote) {
+  highlight(note: SmallNote): void {
     this.highlightNote.emit(note);
   }
 
-  toNote(note: SmallNote) {
+  toNote(note: SmallNote): void {
     this.clickOnNote.emit(note);
   }
 }

@@ -1,5 +1,5 @@
 <div class="user-info generic-section" appTheme>
-  <div class="photo" [appDrop]="'is-active'" (fileDropped)="uploadImageUserPhoto(null, $event)">
+  <div class="photo" [appDrop]="'is-active'" (fileDropped)="uploadImageUserPhoto($event)">
     <img
       *ngIf="!photoError"
       [src]="(user$ | async).photoPath"
@@ -14,7 +14,7 @@
       accept="image/jpeg,image/png"
       name="choose photo"
       id="upl"
-      (change)="uploadImageUserPhoto($event, $event.target.files)"
+      (change)="uploadImageUserPhotoEvent($event)"
     />
     <label for="upl" class="change-photo" #profilePhoto>
       <div class="icon">
@@ -22,7 +22,7 @@
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
     </label>
-    <app-spinner *ngIf="spinnerActive" size="18"></app-spinner>
+    <app-spinner *ngIf="spinnerActive" [size]="18"></app-spinner>
   </div>
   <div class="fields">
     <div class="field">

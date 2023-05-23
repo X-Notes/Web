@@ -33,7 +33,7 @@ export class HtmlNumberListComponent
   transformTo = new EventEmitter<TransformContent>();
 
   @Input()
-  listNumber: BaseText;
+  listNumber: number;
 
   @Input()
   theme: ThemeENUM;

@@ -8,8 +8,6 @@
 
         public string Email { set; get; }
 
-        public Guid? PhotoId { set; get; }
-
         public string PhotoPath { set; get; }
     }
 }

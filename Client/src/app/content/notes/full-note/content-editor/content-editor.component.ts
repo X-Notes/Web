@@ -195,7 +195,7 @@ export class ContentEditorComponent
     return this.contents[this.contents.length - 1].id;
   }
 
-  get contents(): ContentModelBase[] {
+  get contents(): ContentModelBase[] | any[] {
     return this.facade.contentsService.getContents;
   }
 
@@ -439,14 +439,15 @@ export class ContentEditorComponent
     return this.contents[index] as BaseText;
   }
 
-  getNumberList(content: BaseText, contentIndex: number): number {
+  getNumberList(content: ContentModelBase, contentIndex: number): number {
+    const text = content as BaseText;
     const prev = this.getTextContent(contentIndex - 1);
     if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
-      content.listNumber = 1;
-      return content.listNumber;
+      text.listNumber = 1;
+      return text.listNumber;
     }
-    content.listNumber = prev.listNumber + 1;
-    return content.listNumber;
+    text.listNumber = prev.listNumber + 1;
+    return text.listNumber;
   }
 
   transformToTypeText(value: TransformContent): void {

@@ -126,7 +126,8 @@ export class CollectionBaseComponent<
     }
   }
 
-  uploadFiles(files: File[]) {
+  uploadFiles($event) {
+    const files = $event.target?.files;
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
@@ -156,15 +157,16 @@ export class CollectionBaseComponent<
   scrollAndFocusToTitle(): void {
     this.titleComponent.focusOnTitle();
     this.titleComponent.scrollToTitle();
-    this.clickItemHandler(null);
+    this.clickItemHandler(null, true);
   }
 
-  clickItemHandler(itemId: string): void {
+  clickItemHandler(itemId: string, keepRanges: boolean = false): void {
     this.facade.clickableService.setContent(
       this.content,
       itemId,
       this.selectType,
       this as any as ParentInteractionCollection,
+      keepRanges
     );
     if (itemId) {
       const item = document.getElementById(itemId);

@@ -113,7 +113,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.facade.clickableContentService.cursorChanged$.next(() => this.updateTitleCursor());
   }
 
-  handlerTitleEnter($event: KeyboardEvent) {
+  handlerTitleEnter($event: Event): void {
     $event.preventDefault();
     const content = this.facade.contentEditorTextService.appendNewEmptyContentToStart();
     const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, content.id);

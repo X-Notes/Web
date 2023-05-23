@@ -1,7 +1,7 @@
-<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
+<app-note-collection-title [name]="_content.name" *ngIf="_content.name"></app-note-collection-title>
 <div class="documents">
   <app-note-preview-video
-    *ngFor="let item of content.items"
+    *ngFor="let item of _content.items"
     [url]="item.videoPath"
   ></app-note-preview-video>
 </div>

@@ -248,7 +248,7 @@ export class VideoNoteComponent
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickItemHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId, false);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;

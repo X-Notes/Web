@@ -21,7 +21,7 @@ import { Label } from '../models/label.model';
 export class LabelComponent implements OnInit, OnDestroy {
   @Input() label: Label;
 
-  @Input() readonly isSelected: boolean;
+  @Input() isSelected: boolean;
 
   @Output() updateLabel = new EventEmitter<Label>();
 

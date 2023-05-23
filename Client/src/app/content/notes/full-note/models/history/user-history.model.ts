@@ -1,6 +1,6 @@
 export interface UserHistory {
   id: string;
-  photoId?: string;
+  photoPath?: string;
   name: string;
   email: string;
 }

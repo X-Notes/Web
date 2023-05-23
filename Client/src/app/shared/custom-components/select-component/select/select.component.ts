@@ -38,7 +38,7 @@ export class SelectComponent implements OnInit, AfterContentInit, OnChanges {
   options: SelectionOption[];
 
   @Output()
-  selectValueChange = new EventEmitter<SelectionOption>();
+  selectValueChange = new EventEmitter<any>();
 
   selectValue: any;
 

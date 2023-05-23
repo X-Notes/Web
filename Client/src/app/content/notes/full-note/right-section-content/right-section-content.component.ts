@@ -16,9 +16,9 @@ import {
   PersonalizationService,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
-import { SmallNote } from '../../models/small-note.model';
 import { NoteStore } from '../../state/notes-state';
 import { SidebarNotesService } from '../services/sidebar-notes.service';
+import { FullNote } from '../../models/full-note.model';
 
 @Component({
   selector: 'app-right-section-content',
@@ -28,7 +28,7 @@ import { SidebarNotesService } from '../services/sidebar-notes.service';
   providers: [SidebarNotesService],
 })
 export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() note$: Observable<SmallNote>;
+  @Input() note$: Observable<FullNote>;
 
   @Input() noteId: string;
 

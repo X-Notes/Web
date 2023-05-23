@@ -1,5 +1,5 @@
-<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
-<div class="document" *ngFor="let item of content.items">
+<app-note-collection-title [name]="_content.name" *ngIf="_content.name"></app-note-collection-title>
+<div class="document" *ngFor="let item of _content.items">
   <div class="icon">
     <mat-icon
       [svgIcon]="genericFileExtenstionService.documentIcon(item.name)"

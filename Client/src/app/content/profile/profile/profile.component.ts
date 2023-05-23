@@ -73,10 +73,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   billingPlanId = BillingPlanId;
 
-  languages = Object.values(LanguagesENUM)
-    .filter((x) => typeof x === 'string')
-    .map((z: string) => z.toLowerCase());
-
   destroy = new Subject<void>();
 
   constructor(

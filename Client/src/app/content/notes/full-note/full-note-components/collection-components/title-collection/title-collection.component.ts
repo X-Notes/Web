@@ -135,7 +135,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
       });
   }
 
-  onTitleChangeInput($event: InputEvent) {
+  onTitleChangeInput($event: Event) {
     const text = ($event.target as HTMLInputElement).innerText;
     this.nameCollectionChanged.next(text);
   }
@@ -153,7 +153,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
     this.titleHtml.nativeElement.scrollIntoView({ behavior, block });
   }
 
-  preventEnter = ($event: KeyboardEvent): void => {
+  preventEnter = ($event: Event): void => {
     $event.preventDefault();
   };
 
