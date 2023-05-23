@@ -7,7 +7,7 @@ export class FullNote {
 
   title?: string;
 
-  color?: string;
+  color!: string;
 
   labels?: Label[];
 
@@ -15,7 +15,7 @@ export class FullNote {
 
   isCanEdit!: boolean;
 
-  refTypeId?: RefTypeENUM;
+  refTypeId!: RefTypeENUM;
 
   noteTypeId?: NoteTypeENUM;
 

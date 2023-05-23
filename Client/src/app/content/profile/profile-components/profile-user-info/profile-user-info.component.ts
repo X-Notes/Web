@@ -18,7 +18,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 })
 export class ProfileUserInfoComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  public user$?: Observable<ShortUser>;
 
   destroy = new Subject<void>();
 
@@ -26,7 +26,7 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
 
   public photoError = false;
 
-  userName: string;
+  userName?: string;
 
   spinnerActive = false;
 
@@ -46,7 +46,7 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
         if (title) {
           const user = this.store.selectSnapshot(UserStore.getUser);
           if (user.name !== this.userName) {
-            this.store.dispatch(new UpdateUserInfo(this.userName));
+            this.store.dispatch(new UpdateUserInfo(this.userName ?? ''));
           }
         }
       });
@@ -63,7 +63,7 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
     this.nameChanged.next(text);
   }
 
-  async uploadImageUserPhotoEvent($event) {
+  async uploadImageUserPhotoEvent($event: any) {
     const files = $event.target.files;
     await this.uploadImageUserPhoto(files);
     if ($event?.target) {

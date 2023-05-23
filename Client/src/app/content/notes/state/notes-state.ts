@@ -89,20 +89,20 @@ export interface FullNoteState {
 
 interface NoteState {
   notes: Notes[];
-  fullNoteState: FullNoteState;
-  fullNoteHistories: NoteHistory[];
-  snapshotState: NoteSnapshotState;
+  fullNoteState: FullNoteState | null;
+  fullNoteHistories: NoteHistory[] | null;
+  snapshotState: NoteSnapshotState | null;
   selectedIds: string[];
   updateNoteEvent: UpdateNoteUI[];
   removeFromMurriEvent: string[];
-  notesAddingToDom: AddNotesToDom;
+  notesAddingToDom: AddNotesToDom | null;
   selectedLabelsFilter: string[];
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
   onlineUsers: OnlineUsersNote[];
   folderNotes: SmallNote[];
   cursors: NoteUserCursorWS[];
-  cursorColor: string;
+  cursorColor: string | null;
 }
 
 @State<NoteState>({
@@ -244,7 +244,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static notesAddingToDOM(state: NoteState): AddNotesToDom {
+  static notesAddingToDOM(state: NoteState): AddNotesToDom | null {
     return state.notesAddingToDom;
   }
 
@@ -292,7 +292,7 @@ export class NoteStore {
   // FULL NOTE
 
   @Selector()
-  static oneFull(state: NoteState): FullNote {
+  static oneFull(state: NoteState): FullNote | undefined {
     return state.fullNoteState?.note;
   }
 
@@ -302,7 +302,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static cursorColor(state: NoteState): string {
+  static cursorColor(state: NoteState): string | null {
     return state.cursorColor;
   }
 
@@ -317,12 +317,12 @@ export class NoteStore {
   }
 
   @Selector()
-  static histories(state: NoteState): NoteHistory[] {
+  static histories(state: NoteState): NoteHistory[] | null {
     return state.fullNoteHistories;
   }
 
   @Selector()
-  static fullNoteTitle(state: NoteState): string {
+  static fullNoteTitle(state: NoteState): string | undefined {
     return state.fullNoteState?.note?.title;
   }
 

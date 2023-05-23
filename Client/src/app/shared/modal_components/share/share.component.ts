@@ -257,7 +257,8 @@ export class ShareComponent implements OnInit, OnDestroy {
     throw new Error('Incorrect type');
   }
 
-  get invitedUsersSorted$(): Observable<InvitedUsersToNoteOrFolder[]> {
+  get invitedUsersSorted$(): Observable<InvitedUsersToNoteOrFolder[]> | null {
+    if(!this.invitedUsers$) return null;
     return this.invitedUsers$.pipe(
       map((x) => x.map((q) => ({ ...q }))),
       map((x) => x?.sort((a, b) => (a.email ?? '').localeCompare(b.email ?? '')) ?? []),
@@ -353,12 +354,14 @@ export class ShareComponent implements OnInit, OnDestroy {
   async clearAll(): Promise<void> {
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
+        if (!this.currentFolder?.id) return;
         await this.apiFolder.clearAll(this.currentFolder.id).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
       case EntityPopupType.Note: {
+        if (!this.currentNote?.id) return;
         await this.apiNote.clearAll(this.currentNote.id).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
@@ -389,12 +392,12 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   getFolders() {
-    this.folders = this.data.ents.map((folder) => ({ ...folder }));
+    this.folders = this.data.ents.map((folder) => ({ ...folder })) as SmallFolder[];
     this.selectFolder(this.folders[0]);
   }
 
   getNotes() {
-    this.notes = this.data.ents.map((note) => ({ ...note }));
+    this.notes = this.data.ents.map((note) => ({ ...note })) as SmallNote[];
     this.selectNote(this.notes[0]);
   }
 
@@ -475,7 +478,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   };
 
   async changeRefTypeNote(refType: RefTypeENUM): Promise<void> {
-    if(!this.currentNote?.id) return;
+    if (!this.currentNote?.id) return;
     await this.apiNote.makePublic(refType, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refType;
@@ -484,7 +487,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeFolder(refType: RefTypeENUM): Promise<void> {
-    if(!this.currentFolder?.id) return;
+    if (!this.currentFolder?.id) return;
     await this.apiFolder.makePublic(refType, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refType;
@@ -496,7 +499,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     const userIds = this.selectedUsers.map((user) => user.id);
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
-        if(!this.currentFolder?.id) return;
+        if (!this.currentFolder?.id) return;
         await this.apiFolder
           .sendInvitesToFolder(userIds, this.currentFolder.id, model.refTypeForInvite)
           .toPromise();
@@ -505,7 +508,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityPopupType.Note: {
-        if(!this.currentNote?.id) return;
+        if (!this.currentNote?.id) return;
         await this.apiNote
           .sendInvitesToNote(userIds, this.currentNote.id, model.refTypeForInvite)
           .toPromise();
@@ -582,14 +585,14 @@ export class ShareComponent implements OnInit, OnDestroy {
   async removeUserWithPermissions(userId: string) {
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
-        if(!this.currentFolder?.id) return;
+        if (!this.currentFolder?.id) return;
         await this.apiFolder.removeUserFromPrivateFolder(this.currentFolder.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         this.updaterEntitiesService.addFolderToUpdate(this.currentFolder.id);
         break;
       }
       case EntityPopupType.Note: {
-        if(!this.currentNote?.id) return;
+        if (!this.currentNote?.id) return;
         await this.apiNote.removeUserFromPrivateNote(this.currentNote.id, userId).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         this.updaterEntitiesService.addNoteToUpdate(this.currentNote.id);
@@ -605,13 +608,13 @@ export class ShareComponent implements OnInit, OnDestroy {
   async changeUserPermission(refType: RefTypeENUM, id: string) {
     switch (this.data.currentWindowType) {
       case EntityPopupType.Folder: {
-        if(!this.currentFolder?.id) return;
+        if (!this.currentFolder?.id) return;
         await this.apiFolder.changeUserPermission(this.currentFolder.id, id, refType).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         break;
       }
       case EntityPopupType.Note: {
-        if(!this.currentNote?.id) return;
+        if (!this.currentNote?.id) return;
         await this.apiNote.changeUserPermission(this.currentNote.id, id, refType).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;
