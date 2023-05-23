@@ -12,7 +12,7 @@
     }"
   >
     <app-title-collection
-      [isSelectionStart]="(isSelectModeActive$ | async)"
+      [isSelectionStart]="isSelectModeActive$ | async"
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
       [contentId]="content?.id"
@@ -32,7 +32,7 @@
       <video
         [id]="currentVideo?.fileId"
         (click)="clickItemHandler(currentVideo?.fileId)"
-        (timeupdate)="cdr.detectChanges()"
+        (timeupdate)="updateVideoTime($event)"
         #videoplayer
         oncontextmenu="return false"
         preload="metadata"
@@ -47,9 +47,9 @@
             min="0"
             [max]="videoElement?.nativeElement?.duration"
             step="0.01"
-            [value]="videoElement?.nativeElement?.currentTime"
-            (input)="onSliderChangeEnd($event)"
-          ></mat-slider>
+          >
+            <input [value]="videoTime" (valueChange)="onSliderChangeEnd($event)" matSliderThumb />
+          </mat-slider>
         </div>
         <div class="actions">
           <div class="section-actions">
@@ -88,9 +88,9 @@
                   min="0"
                   max="1"
                   step="0.01"
-                  (input)="onSliderVolumeChangeEnd($event)"
-                  [value]="videoElement?.nativeElement?.volume"
-                ></mat-slider>
+                >
+                  <input [value]="videoElement?.nativeElement?.volume" (valueChange)="onSliderVolumeChangeEnd($event)" matSliderThumb />
+                </mat-slider>
               </div>
             </div>
           </div>
@@ -125,7 +125,11 @@
           <div
             class="thumb-video"
             [ngClass]="[isClicked(item.fileId) ? 'is-selected' : '']"
-            [ngStyle]="(getCursor$(item.fileId) | async) && { 'border': '2px solid ' + (getCursor$(item.fileId) | async).color }"
+            [ngStyle]="
+              (getCursor$(item.fileId) | async) && {
+                border: '2px solid ' + (getCursor$(item.fileId) | async).color
+              }
+            "
           >
             <video disablecontrols [src]="item?.videoPath"></video>
             <app-button-collection
@@ -137,10 +141,7 @@
               (clickEvent)="$event?.stopPropagation()"
             ></app-button-collection>
 
-            <mat-menu
-              #menu="matMenu"
-              [class]="theme === themeE.Dark ? 'dark-menu' : null"
-            >
+            <mat-menu #menu="matMenu" [class]="theme === themeE.Dark ? 'dark-menu' : null">
               <button mat-menu-item type="button" name="Download" (click)="exportVideo(item)">
                 <mat-icon>download</mat-icon>
                 <span> {{ 'innerNote.menu.download' | translate }} </span>
@@ -182,10 +183,7 @@
 />
 
 <!-- Collection menu -->
-<mat-menu
-  #menu="matMenu"
-  [class]="theme === themeE.Dark ? 'dark-menu' : null"
->
+<mat-menu #menu="matMenu" [class]="theme === themeE.Dark ? 'dark-menu' : null">
   <button
     *ngIf="!isReadOnlyMode"
     mat-menu-item

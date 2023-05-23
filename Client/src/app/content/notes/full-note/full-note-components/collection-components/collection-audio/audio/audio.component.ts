@@ -45,15 +45,17 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   destroy = new Subject();
 
-  state: StreamAudioState;
-
   constructor(
-    public audioService: AudioService,
+    private audioService: AudioService,
     private clickableService: ClickableContentService,
   ) {}
 
   get isClicked() {
     return this.clickableService.isClicked(this.audio.fileId);
+  }
+
+  get state$() {
+    return this.audioService.stateChange$.pipe(map((x) => (x.id === this.audio.fileId ? x : null)));
   }
 
   get cursor$(): Observable<CollectionCursorUI> {
@@ -68,18 +70,7 @@ export class AudioComponent implements OnInit, OnDestroy {
     );
   }
 
-  async ngOnInit(): Promise<void> {
-    this.audioService
-      .getState()
-      .pipe(takeUntil(this.destroy))
-      .subscribe((state) => {
-        if (this.audioService.currentFile?.fileId === this.audio.fileId) {
-          this.state = state;
-        } else {
-          this.state = null;
-        }
-      });
-
+  ngOnInit(): void {
     this.audioService.tryToUpdateMetaDataIfNeed(this.audio);
   }
 

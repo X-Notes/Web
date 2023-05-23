@@ -21,10 +21,6 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
 
-  destroy = new Subject();
-
-  state: StreamAudioState;
-
   isOpen = false;
 
   themeE = ThemeENUM;
@@ -62,13 +58,13 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   // eslint-disable-next-line consistent-return
   get volumeIcon(): string {
-    if (this.state?.currentVolume === 0) {
+    if (this.audioService.getState()?.currentVolume === 0) {
       return 'volume_off';
     }
-    if (this.state?.currentVolume < 0.5 && this.state?.currentVolume !== 0) {
+    if (this.audioService.getState()?.currentVolume < 0.5 && this.audioService.getState()?.currentVolume !== 0) {
       return 'volume_down';
     }
-    if (this.state?.currentVolume >= 0.5) {
+    if (this.audioService.getState()?.currentVolume >= 0.5) {
       return 'volume_up';
     }
   }
@@ -77,28 +73,13 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     return this.audioService.currentFile?.name;
   }
 
-  ngOnInit(): void {
-    this.audioService
-      .getState()
-      .pipe(takeUntil(this.destroy))
-      .subscribe((state) => {
-        this.state = state;
-      });
-  }
+  ngOnInit(): void {}
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
+  ngOnDestroy(): void {}
 
-  playStream(url, id) {
-    this.audioService.playStream(url, id).subscribe();
-  }
-
-  openFile(item) {
+  openFile(item: AudioModel) {
     this.audioService.currentFile = item;
-    this.audioService.stop();
-    this.playStream(item.audioPath, item.id);
+    this.audioService.runAudio(item.audioPath, item.fileId);
   }
 
   pause() {
@@ -115,10 +96,6 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
       this.openFile(audio);
     }
     this.audioService.play();
-  }
-
-  stop() {
-    this.audioService.stop();
   }
 
   loop() {
@@ -160,11 +137,11 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSliderChangeEnd(change) {
-    this.audioService.seekTo(change.value);
+  onSliderChangeEnd(value: number) {
+    this.audioService.seekTo(value);
   }
 
-  onSliderVolumeChangeEnd(change) {
-    this.audioService.seekToVolume(change.value);
+  onSliderVolumeChangeEnd(value: number) {
+    this.audioService.seekToVolume(value);
   }
 }

@@ -52,6 +52,8 @@ export class VideoNoteComponent
 
   selectVideoId: string;
 
+  videoTime: number;
+
   constructor(
     private exportService: ExportService,
     private host: ElementRef,
@@ -111,6 +113,10 @@ export class VideoNoteComponent
     return this.content.items[0];
   }
 
+  updateVideoTime($event): void {
+    this.videoTime = this.videoElement.nativeElement.currentTime;
+  }
+
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {}
@@ -157,15 +163,11 @@ export class VideoNoteComponent
   }
 
   async togglePictureInPicture() {
-    // @ts-ignore
     if (document.pictureInPictureEnabled) {
-      // @ts-ignore
       if (document.pictureInPictureElement) {
-        // @ts-ignore
         await document.exitPictureInPicture();
       } else {
-        // @ts-ignore
-        await this.video?.requestPictureInPicture();
+        await this.videoElement.nativeElement?.requestPictureInPicture();
       }
     }
   }
@@ -178,12 +180,12 @@ export class VideoNoteComponent
     }
   }
 
-  onSliderChangeEnd(evt) {
-    this.videoElement.nativeElement.currentTime = evt.value;
+  onSliderChangeEnd(value: number) {
+    this.videoElement.nativeElement.currentTime = value;
   }
 
-  onSliderVolumeChangeEnd(evt) {
-    this.videoElement.nativeElement.volume = evt.value;
+  onSliderVolumeChangeEnd(value: number) {
+    this.videoElement.nativeElement.volume = value;
   }
 
   seekVolume(volume) {

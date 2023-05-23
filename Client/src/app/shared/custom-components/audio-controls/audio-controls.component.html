@@ -53,15 +53,15 @@
     ></app-button-collection>
 
     <app-button-collection
-      *ngIf="!state?.playing"
+      *ngIf="!audioService.getState()?.playing"
       button="play_circle_outline"
       [tooltip]="'innerNote.audio.play' | translate"
-      [disabled]="state?.error"
+      [disabled]="audioService.getState()?.error"
       (clickEvent)="play()"
     ></app-button-collection>
 
     <app-button-collection
-      *ngIf="state?.playing"
+      *ngIf="audioService.getState()?.playing"
       button="pause"
       [tooltip]="'innerNote.audio.pause' | translate"
       (clickEvent)="pause()"
@@ -75,18 +75,18 @@
     ></app-button-collection>
   </div>
   <div class="slider-controls">
-    <div class="time" *ngIf="state?.readableCurrentTime">{{ state?.readableCurrentTime }}</div>
+    <div class="time" *ngIf="audioService.getState()?.readableCurrentTime">{{ audioService.getState()?.readableCurrentTime }}</div>
     <mat-slider
       class="slider"
-      min="0"
+      [min]="0"
       [max]="audioService.currentFile?.secondsDuration"
-      step="1"
-      [value]="state?.currentTime"
-      (input)="onSliderChangeEnd($event)"
-      [disabled]="state?.error || audioService.currentFile === undefined"
-    ></mat-slider>
+      [step]="1"
+      [disabled]="audioService.getState()?.error || audioService.currentFile === undefined"
+    >
+      <input [value]="audioService.getState()?.currentTime" (valueChange)="onSliderChangeEnd($event)" matSliderThumb />
+    </mat-slider>
     <div class="time" *ngIf="audioService.currentFile?.secondsDuration">
-      {{ audioService.currentFile.secondsDuration | formatDateMoment: 1000 }}
+      {{ audioService.currentFile.secondsDuration | formatDateMoment : 1000 }}
     </div>
   </div>
   <div class="controls">
@@ -97,13 +97,13 @@
         <mat-slider
           vertical
           class="slider"
-          min="0"
-          max="1"
-          step="0.01"
-          (input)="onSliderVolumeChangeEnd($event)"
-          [value]="state?.currentVolume"
-          [disabled]="state?.error || audioService.currentFile === undefined"
-        ></mat-slider>
+          [min]="0"
+          [max]="1"
+          [step]="0.01"
+          [disabled]="audioService.getState()?.error || audioService.currentFile === undefined"
+        >
+          <input (valueChange)="onSliderVolumeChangeEnd($event)" [value]="audioService.getState()?.currentVolume" matSliderThumb />
+        </mat-slider>
       </div>
     </div>
 
@@ -112,7 +112,7 @@
       activeColor="#0887a7"
       [tooltip]="'innerNote.audio.loop' | translate"
       (clickEvent)="loop()"
-      [isActive]="state?.loop"
+      [isActive]="audioService.getState()?.loop"
     ></app-button-collection>
 
     <app-button-collection

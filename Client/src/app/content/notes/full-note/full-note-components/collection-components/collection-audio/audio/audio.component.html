@@ -11,18 +11,18 @@
     <div *ngIf="!audio.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
     <div class="controls">
       <app-button-collection
-        *ngIf="!state?.playing"
+        *ngIf="!(state$ | async)?.playing"
         [button]="'play_circle_outline'"
-        [disabled]="state?.error"
+        [disabled]="(state$ | async)?.error"
         [tooltip]="'innerNote.audio.play' | translate"
         [position]="'Bottom'"
         (clickEvent)="playMusic()"
       ></app-button-collection>
 
       <app-button-collection
-        *ngIf="state?.playing"
+        *ngIf="(state$ | async)?.playing"
         [button]="'pause'"
-        [disabled]="state?.error"
+        [disabled]="(state$ | async)?.error"
         [tooltip]="'innerNote.audio.pause' | translate"
         [position]="'Bottom'"
         (clickEvent)="pauseMusic()"
@@ -35,8 +35,8 @@
         <p>{{ audio.name | fileName }}</p>
       </div>
       <div class="audio-time">
-        <p>{{ state?.readableCurrentTime }}</p>
-        <span *ngIf="state?.readableCurrentTime && audio.secondsDuration">/</span>
+        <p>{{ (state$ | async)?.readableCurrentTime }}</p>
+        <span *ngIf="(state$ | async)?.readableCurrentTime && audio.secondsDuration">/</span>
         <p *ngIf="audio.secondsDuration">{{ audio.secondsDuration | formatDateMoment: 1000 }}</p>
       </div>
     </div>
