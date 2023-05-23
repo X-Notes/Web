@@ -46,7 +46,7 @@ export class ApiBrowserTextService {
     }
   }
 
-  copyTextThroughTextArea(textToCopy: string, isText: boolean = true): void {
+  copyTextThroughTextArea(textToCopy: string, isText = true): void {
     // Use the 'out of viewport hidden text area' trick
     const textArea = document.createElement('textarea');
 

@@ -3,9 +3,9 @@ import { ContentModelBase } from './editor-models/content-model-base';
 import { FullNote } from './full-note.model';
 
 export class SmallNote extends FullNote {
-  contents: ContentModelBase[];
+  contents?: ContentModelBase[];
 
-  order: number;
+  order!: number;
 
   isSelected?: boolean;
 

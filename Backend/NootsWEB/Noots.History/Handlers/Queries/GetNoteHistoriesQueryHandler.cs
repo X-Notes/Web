@@ -96,7 +96,6 @@ public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuer
             Id = user.Id,
             Email = user.Email,
             Name = user.Name,
-            PhotoId = user.UserProfilePhoto?.AppFileId,
             PhotoPath = noteCustomMapper.GetUserProfilePhotoPath(user)
         };
     }

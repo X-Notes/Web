@@ -8,9 +8,9 @@ import { OperationDetailMini } from 'src/app/content/long-term-operations-handle
 export class FileProcessTracker<T> {
   isUploaded: boolean;
 
-  eventBody: T;
+  eventBody?: T;
 
-  constructor(isUploaded: boolean = false, eventBody?: T) {
+  constructor(isUploaded = false, eventBody?: T) {
     this.isUploaded = isUploaded;
     this.eventBody = eventBody;
   }

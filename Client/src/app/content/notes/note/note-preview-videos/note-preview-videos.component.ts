@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { BaseCollection } from '../../models/editor-models/base-collection';
-import { VideoModel } from '../../models/editor-models/videos-collection';
+import { VideosCollection } from '../../models/editor-models/videos-collection';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-note-preview-videos',
@@ -8,6 +8,10 @@ import { VideoModel } from '../../models/editor-models/videos-collection';
   styleUrls: ['./note-preview-videos.component.scss'],
 })
 export class NotePreviewVideosComponent {
-  @Input()
-  content: BaseCollection<VideoModel>;
+
+  _content: VideosCollection;
+
+  @Input() set content(value: ContentModelBase) {
+    this._content = value as VideosCollection;
+  }
 }

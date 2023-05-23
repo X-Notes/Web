@@ -42,26 +42,26 @@ import { EnumConverterService } from 'src/app/shared/services/enum-converter.ser
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<EntitiesSizeENUM>;
+  public fontSize$?: Observable<EntitiesSizeENUM>;
 
   @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  public user$?: Observable<ShortUser>;
 
   @Select(UserStore.getUserTheme)
-  public theme$: Observable<ThemeENUM>;
+  public theme$?: Observable<ThemeENUM>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<string>;
+  public userBackground$?: Observable<string>;
 
   @Select(UserStore.getUserLanguage)
-  public language$: Observable<LanguagesENUM>;
+  public language$?: Observable<LanguagesENUM>;
 
   @Select(UserStore.getPersonalizationSettings)
-  public pSettings$: Observable<PersonalizationSetting>;
+  public pSettings$?: Observable<PersonalizationSetting>;
 
-  @ViewChild('uploadFile') uploadPhoto: ElementRef;
+  @ViewChild('uploadFile') uploadPhoto?: ElementRef;
 
-  settingsInit: PersonalizationSetting;
+  settingsInit?: PersonalizationSetting;
 
   fontSize = EntitiesSizeENUM;
 
@@ -72,10 +72,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   language = LanguagesENUM;
 
   billingPlanId = BillingPlanId;
-
-  languages = Object.values(LanguagesENUM)
-    .filter((x) => typeof x === 'string')
-    .map((z: string) => z.toLowerCase());
 
   destroy = new Subject<void>();
 
@@ -184,7 +180,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     const lastPs = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-
     if (
       lastPs.contentInNoteCount !== this.settingsInit?.contentInNoteCount ||
       lastPs.isViewAudioOnNote !== this.settingsInit?.isViewAudioOnNote ||

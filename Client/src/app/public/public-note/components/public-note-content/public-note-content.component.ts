@@ -21,22 +21,22 @@ import { ApiNoteContentService } from 'src/app/content/notes/full-note/services/
 })
 export class PublicNoteContentComponent implements OnDestroy {
   @Select(NoteStore.oneFull)
-  note$: Observable<FullNote>;
+  note$?: Observable<FullNote>;
 
   @Select(PublicStore.owner)
-  owner$: Observable<ShortUserPublic>;
+  owner$?: Observable<ShortUserPublic>;
 
   @Select(NoteStore.fullNoteTitle)
-  noteTitle$: Observable<string>;
+  noteTitle$?: Observable<string>;
 
   @Select(NoteStore.canView)
-  public canView$: Observable<boolean>;
+  public canView$?: Observable<boolean>;
 
   destroy = new Subject<void>();
 
   loaded = false;
 
-  contents: ContentModelBase[];
+  contents?: ContentModelBase[];
 
   theme = ThemeENUM;
 
@@ -65,6 +65,7 @@ export class PublicNoteContentComponent implements OnDestroy {
   async loadMain(id: string) {
     const maybeFolderId = await this.tryGetFolderId();
     const folderId = typeof maybeFolderId === 'string' ? maybeFolderId : null;
+    if(!folderId) return;
     await this.store.dispatch(new LoadFullNote(id, folderId)).toPromise();
     const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
     if (!isLocked) {
@@ -79,7 +80,7 @@ export class PublicNoteContentComponent implements OnDestroy {
   }
 
   private tryGetFolderId() {
-    return new Promise((resolve) => {
+    return new Promise<string>((resolve) => {
       this.route.queryParams.pipe(take(1)).subscribe((v) => {
         resolve(v.folderId);
       });

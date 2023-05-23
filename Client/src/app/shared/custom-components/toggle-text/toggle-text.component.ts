@@ -1,4 +1,4 @@
-import { Component, Input, Optional } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-toggle-text',
@@ -7,6 +7,5 @@ import { Component, Input, Optional } from '@angular/core';
 })
 export class ToggleTextComponent {
   @Input()
-  @Optional()
-  color: string;
+  color?: string;
 }

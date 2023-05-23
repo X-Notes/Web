@@ -4,12 +4,12 @@ import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
-import { PreviewNote } from './models/preview-note.model';
 import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
 import { PositionEntityModel } from './models/position-note.model';
 import { UpdateRelatedNotesWS } from 'src/app/core/models/signal-r/innerNote/update-related-notes-ws';
 import { Observable } from 'rxjs';
+import { SmallNote } from './models/small-note.model';
 
 @Injectable()
 export class ApiRelatedNotesService {
@@ -42,7 +42,7 @@ export class ApiRelatedNotesService {
       settings,
     };
     return this.httpClient
-      .post<PreviewNote[]>(`${environment.writeAPI}/api/relatedNotes/preview`, obj)
+      .post<SmallNote[]>(`${environment.writeAPI}/api/relatedNotes/preview`, obj)
       .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 

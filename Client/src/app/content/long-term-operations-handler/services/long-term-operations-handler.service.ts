@@ -66,9 +66,9 @@ export class LongTermOperationsHandlerService {
     operation: LongTermOperation,
     icon: LongTermsIcons,
     name: string,
-    isCancelable: boolean = true,
-    isShowProcents: boolean = true,
-    isStatic: boolean = false,
+    isCancelable = true,
+    isShowProcents = true,
+    isStatic = false,
   ) => {
     const mini: OperationDetailMini = {
       icon,

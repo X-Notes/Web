@@ -34,6 +34,7 @@
             <app-photo
               *ngFor="let item of block"
               [photo]="item"
+              [theme]="theme"
               [uiCursors$]="uiCursors$"
               [isSelectModeActive]="(isSelectModeActive$ | async)"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -52,6 +53,7 @@
             <app-photo
               *ngFor="let item of lastBlock"
               [photo]="item"
+              [theme]="theme"
               [uiCursors$]="uiCursors$"
               [isSelectModeActive]="(isSelectModeActive$ | async) === false"
               [isReadOnlyMode]="isReadOnlyMode"
@@ -88,16 +90,13 @@
   multiple
   accept="image/jpeg,image/png"
   hidden="true"
-  (change)="uploadFiles($event.target.files)"
+  (change)="uploadFiles($event)"
 />
 
 <!-- PHOTO MENU -->
 <mat-menu
   #secondMenu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="secondMenu"
+  [class]="theme === themeE.Dark ? 'dark-menu' : null"
 >
   <button mat-menu-item type="button" name="One row" (click)="setPhotosInRowWrapper(1)">
     {{ 'innerNote.photoMenu.oneRow' | translate }}
@@ -116,10 +115,7 @@
 <!-- ALBUM MENU -->
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="theme === themeE.Dark ? 'dark-menu' : null"
 >
   <button
     *ngIf="!isReadOnlyMode"

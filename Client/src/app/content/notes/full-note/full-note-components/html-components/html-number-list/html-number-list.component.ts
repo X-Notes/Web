@@ -11,7 +11,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
 import { NoteTextTypeENUM } from 'src/app/content/notes/models/editor-models/text-models/note-text-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ClickableSelectableEntities } from '../../../content-editor-services/models/clickable-selectable-entities.enum';
@@ -33,7 +32,7 @@ export class HtmlNumberListComponent
   transformTo = new EventEmitter<TransformContent>();
 
   @Input()
-  listNumber: BaseText;
+  listNumber: number;
 
   @Input()
   theme: ThemeENUM;

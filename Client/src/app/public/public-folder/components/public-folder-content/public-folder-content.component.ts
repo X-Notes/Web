@@ -33,24 +33,24 @@ import { DestroyComponentService } from 'src/app/shared/services/destroy-compone
   providers: [FullFolderNotesService, WebSocketsFolderUpdaterService, DestroyComponentService],
 })
 export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+  @ViewChildren('item', { read: ElementRef }) refElements?: QueryList<ElementRef>;
 
   @Select(FolderStore.full)
-  folder$: Observable<FullFolder>;
+  folder$?: Observable<FullFolder>;
 
   @Select(FolderStore.isCanViewFullFolder)
-  isCanView$: Observable<boolean>;
+  isCanView$?: Observable<boolean>;
 
   @Select(PublicStore.owner)
-  owner$: Observable<ShortUserPublic>;
+  owner$?: Observable<ShortUserPublic>;
 
   fontSize = EntitiesSizeENUM;
 
   loaded = false;
 
-  private routeSubscription: Subscription;
+  private routeSubscription?: Subscription;
 
-  private folderId: string;
+  private folderId?: string;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -71,6 +71,7 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
       this.loaded = false;
       // lOAD FOLDER
       this.folderId = params.id;
+      if(!this.folderId) return;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
       const folder = this.store.selectSnapshot(FolderStore.full);
       if (folder) {
@@ -97,8 +98,10 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
 
   ngOnDestroy(): void {
     this.ffnService.onDestroy();
-    this.updateNoteService.addFolderToUpdate(this.folderId);
-    this.routeSubscription.unsubscribe();
+    if(this.folderId){
+      this.updateNoteService.addFolderToUpdate(this.folderId);
+    }
+    this.routeSubscription?.unsubscribe();
   }
 
   toPublicNote(note: SmallNote) {

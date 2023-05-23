@@ -144,7 +144,7 @@ export const uploader = trigger('uploader', [
 })
 export class PersonalizationService {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<EntitiesSizeENUM>;
+  public fontSize$?: Observable<EntitiesSizeENUM>;
 
   spinnerActive = false;
 
@@ -209,13 +209,14 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
-  get navMenuHeight(): number {
-    const height = document.getElementById(SideBarComponent.sideBarId).offsetHeight;
+  get navMenuHeight(): number | undefined {
+    const height = document.getElementById(SideBarComponent.sideBarId)?.offsetHeight;
     return height;
   }
 
   subscribeWindowEvents() {
     fromEvent(window, 'resize')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .pipe(map((value) => value as any))
       .subscribe((evt) => {
         this.windowHeight$.next(evt.target.innerHeight);
@@ -264,7 +265,7 @@ export class PersonalizationService {
     return window.innerWidth >= 600;
   };
 
-  waitPreloading(time: number = null) {
+  waitPreloading(time?: number) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => resolve(false), time ?? this.timeForSpinnerLoading),
     );

@@ -1,6 +1,6 @@
-<app-note-collection-title [name]="content.name" *ngIf="content.name"></app-note-collection-title>
+<app-note-collection-title [name]="_content.name" *ngIf="_content.name"></app-note-collection-title>
 <div class="photos">
-  <div class="photo" *ngFor="let item of content.items">
+  <div class="photo" *ngFor="let item of _content.items">
     <img alt="note image" [src]="item.photoFromSmall" />
   </div>
 </div>

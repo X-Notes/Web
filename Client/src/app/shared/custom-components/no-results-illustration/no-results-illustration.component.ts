@@ -17,19 +17,19 @@ import { smoothOpacity } from '../../services/personalization.service';
   animations: [smoothOpacity(300)],
 })
 export class NoResultsIllustrationComponent implements AfterViewInit, OnDestroy {
-  @Input() message: string;
+  @Input() message?: string;
 
-  @Input() illustration: string;
+  @Input() illustration?: string;
 
-  @Input() typeClass: string;
+  @Input() typeClass?: string;
 
-  @Input() isShow: boolean;
+  @Input() isShow?: boolean;
 
-  @ViewChild('wrapper') wrapper: ElementRef;
+  @ViewChild('wrapper') wrapper?: ElementRef;
 
-  resizeObservable$: Observable<Event>;
+  resizeObservable$?: Observable<Event>;
 
-  resizeSubscription$: Subscription;
+  resizeSubscription$?: Subscription;
 
   isCheck = false;
 
@@ -42,7 +42,7 @@ export class NoResultsIllustrationComponent implements AfterViewInit, OnDestroy 
   }
 
   ngOnDestroy(): void {
-    this.resizeSubscription$.unsubscribe();
+    this.resizeSubscription$?.unsubscribe();
   }
 
   setSize(): void {

@@ -46,18 +46,11 @@ export class AudioNoteComponent
     return this.host;
   }
 
-  playStream(url, id) {
-    this.audioService.playStream(url, id).subscribe(() => {
-      this.cdr.markForCheck();
-    });
-  }
-
   openFile(audio: AudioModel) {
-    this.audioService.stop();
     if (this.audioService.currentFile?.fileId !== audio.fileId) {
       this.audioService.playlist = this.content.items;
       this.audioService.currentFile = audio;
-      this.playStream(audio.audioPath, audio.fileId);
+      this.audioService.runAudio(audio.audioPath, audio.fileId);
     }
   }
 

@@ -33,6 +33,9 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<ThemeENUM>;
+
   @ViewChild('searchInput') searchInput: ElementRef;
 
   searchStrChanged: Subject<string> = new Subject<string>();
@@ -44,6 +47,8 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   isInputFocus = false;
 
   searchStr: string;
+
+  theme = ThemeENUM;
 
   destroy = new Subject<void>();
 

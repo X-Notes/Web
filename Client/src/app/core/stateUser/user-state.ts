@@ -40,7 +40,7 @@ import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 export interface UserState {
   user: ShortUser;
   memory: number;
-  personalizationSettings: PersonalizationSetting;
+  personalizationSettings: PersonalizationSetting | null;
   billingPlans: BillingPlan[];
 }
 
@@ -67,7 +67,7 @@ export class UserStore {
   ) {}
 
   @Selector()
-  static getPersonalizationSettings(state: UserState): PersonalizationSetting {
+  static getPersonalizationSettings(state: UserState): PersonalizationSetting | null {
     return state.personalizationSettings;
   }
 
@@ -117,7 +117,7 @@ export class UserStore {
   }
 
   @Selector()
-  static getUserBackground(state: UserState): string {
+  static getUserBackground(state: UserState): string | undefined {
     return state.user.currentBackground?.photoPath;
   }
 
@@ -274,7 +274,7 @@ export class UserStore {
       .toPromise();
     if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translateService.instant('snackBar.subscriptionCreationError');
-      this.snackbarService.openSnackBar(message, null, null, 5000);
+      this.snackbarService.openSnackBar(message, undefined, undefined, 5000);
     }
     if (res.success) {
       patchState({ personalizationSettings: settings });

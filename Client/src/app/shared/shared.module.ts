@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
-import { HammerModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -16,7 +14,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { MatSliderModule } from '@angular/material/slider';
 import { RouterModule } from '@angular/router';
-import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
@@ -45,7 +42,6 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
-import { LazyThemeDirective } from './directives/lazy-theme.directive';
 import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
@@ -88,6 +84,7 @@ import { LongTermOperationComponent } from '../content/long-term-operations-hand
 import { ContentAccessSectionComponent } from './modal_components/share/content-access-section/content-access-section.component';
 import { LeftSectionEntitiesShareComponent } from './modal_components/share/left-section-entities-share/left-section-entities-share.component';
 import { SelectComponent } from './custom-components/select-component/select/select.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -119,7 +116,6 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,
-    LazyThemeDirective,
     LockComponent,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
@@ -165,7 +161,6 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     MatRippleModule,
     TranslateModule,
     MatDialogModule,
-    HammerModule,
     FormsModule,
     MatTabsModule,
     OverlayModule,
@@ -179,14 +174,12 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     NgxDocViewerModule,
     MatSliderModule,
     RouterModule,
-    VirtualScrollerModule,
     DragDropModule,
   ],
   exports: [
     TranslateModule,
     MatRippleModule,
     MatDialogModule,
-    HammerModule,
     FormsModule,
     LabelComponent,
     SearchLabelPipe,
@@ -215,7 +208,6 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     MatIconModule,
     MatMenuModule,
     FolderTypePipe,
-    LazyThemeDirective,
     ReactiveFormsModule,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
@@ -228,7 +220,6 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     LeftSectionWrapperComponent,
     NavMenuItemComponent,
     NavProfileItemComponent,
-    VirtualScrollerModule,
     DragDropModule,
     ButtonCollectionComponent,
     DropDirective,
@@ -251,6 +242,5 @@ import { SelectComponent } from './custom-components/select-component/select/sel
     LongTermOperationComponent,
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
-  entryComponents: [TooltipComponent],
 })
 export class SharedModule {}

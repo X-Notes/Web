@@ -52,6 +52,8 @@ export class VideoNoteComponent
 
   selectVideoId: string;
 
+  videoTime: number;
+
   constructor(
     private exportService: ExportService,
     private host: ElementRef,
@@ -111,14 +113,16 @@ export class VideoNoteComponent
     return this.content.items[0];
   }
 
+  updateVideoTime(): void {
+    this.videoTime = this.videoElement.nativeElement.currentTime;
+  }
+
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {}
 
   ngOnDestroy = async () => {
-    // @ts-ignore
     if (document.pictureInPictureElement) {
-      // @ts-ignore
       await document.exitPictureInPicture();
     }
   };
@@ -157,15 +161,11 @@ export class VideoNoteComponent
   }
 
   async togglePictureInPicture() {
-    // @ts-ignore
     if (document.pictureInPictureEnabled) {
-      // @ts-ignore
       if (document.pictureInPictureElement) {
-        // @ts-ignore
         await document.exitPictureInPicture();
       } else {
-        // @ts-ignore
-        await this.video?.requestPictureInPicture();
+        await this.videoElement.nativeElement?.requestPictureInPicture();
       }
     }
   }
@@ -178,12 +178,12 @@ export class VideoNoteComponent
     }
   }
 
-  onSliderChangeEnd(evt) {
-    this.videoElement.nativeElement.currentTime = evt.value;
+  onSliderChangeEnd(value: number) {
+    this.videoElement.nativeElement.currentTime = value;
   }
 
-  onSliderVolumeChangeEnd(evt) {
-    this.videoElement.nativeElement.volume = evt.value;
+  onSliderVolumeChangeEnd(value: number) {
+    this.videoElement.nativeElement.volume = value;
   }
 
   seekVolume(volume) {
@@ -191,7 +191,7 @@ export class VideoNoteComponent
   }
 
   mute() {
-    const { volume } = this.videoElement?.nativeElement;
+    const volume = this.videoElement?.nativeElement.volume;
     if (this.videoElement?.nativeElement.muted) {
       this.videoElement.nativeElement.muted = false;
       this.seekVolume(this.volumeHelper);
@@ -246,7 +246,7 @@ export class VideoNoteComponent
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.items.findIndex((x) => x.fileId === entity.itemId);
-      this.clickItemHandler(this.content.items[index + 1].fileId);
+      this.clickItemHandler(this.content.items[index + 1].fileId, false);
       (document.activeElement as HTMLInputElement).blur();
       this.cdr.detectChanges();
       return;

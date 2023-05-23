@@ -1,9 +1,9 @@
 <div appTheme class="full-content">
   <div *ngIf="(canView$ | async) === true && loaded" class="wrapper-note">
     <app-content-editor
-      [noteId]="(note$ | async).id"
-      [color]="(note$ | async).color"
-      [labels]="(note$ | async).labels"
+      [noteId]="(note$ | async)?.id"
+      [color]="(note$ | async)?.color"
+      [labels]="(note$ | async)?.labels"
       [progressiveLoading]="true"
       [isReadOnlyMode]="true"
       [title$]="noteTitle$"

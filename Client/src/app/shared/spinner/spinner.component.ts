@@ -11,11 +11,11 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 })
 export class SpinnerComponent {
   @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  public user$?: Observable<ShortUser>;
 
-  @Input() size: number;
+  @Input() size?: number;
 
   @HostBinding('style.--target-color')
   @Input()
-  color: string;
+  color?: string;
 }

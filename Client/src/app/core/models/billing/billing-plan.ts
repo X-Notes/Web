@@ -1,21 +1,21 @@
 import { BillingPlanId } from './billing-plan-id.enum';
 
 export class BillingPlan {
-  id: BillingPlanId;
+  id!: BillingPlanId;
 
-  maxSize: number;
+  maxSize!: number;
 
-  maxNotes: number;
+  maxNotes!: number;
 
-  maxFolders: number;
+  maxFolders!: number;
 
-  maxLabels: number;
+  maxLabels!: number;
 
-  maxRelatedNotes: number;
+  maxRelatedNotes!: number;
 
-  name: string;
+  name!: string;
 
-  price: number;
+  price!: number;
 
   constructor(obj: Partial<BillingPlan>) {
     Object.assign(this, obj);

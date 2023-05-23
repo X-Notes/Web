@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef,  MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
 import { Label } from 'src/app/content/labels/models/label.model';
@@ -24,10 +24,10 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   @Select(LabelStore.noDeleted)
-  public labels$: Observable<Label[]>;
+  public labels$?: Observable<Label[]>;
 
   @Select(LabelStore.countNoDeleted)
-  countAll$: Observable<number>;
+  countAll$?: Observable<number>;
 
   destroy = new Subject<void>();
 

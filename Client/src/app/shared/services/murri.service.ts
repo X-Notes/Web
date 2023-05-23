@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-dupe-class-members */
 /* eslint-disable no-underscore-dangle */
 import { Injectable, OnDestroy } from '@angular/core';
@@ -24,7 +25,7 @@ export class MurriService implements OnDestroy {
 
   private _flagForOpacity = false;
 
-  private grid;
+  private grid: any;
 
   constructor(private store: Store, private pService: PersonalizationService) {
     this.pService.changeOrientationSubject.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -109,14 +110,14 @@ export class MurriService implements OnDestroy {
   }
 
   getPositions(): PositionEntityModel[] {
-    return this.grid.getItems().map((el, index) => {
+    return this.grid.getItems().map((el: any, index: number) => {
       return { entityId: el._element.id, position: index + 1 } as PositionEntityModel;
     });
   }
 
-  sortByHtml(attribute: string = 'order') {
+  sortByHtml(attribute = 'order') {
     if (!this.grid) return;
-    this.grid.sort((itemA, itemB) => {
+    this.grid.sort((itemA: any, itemB: any) => {
       const aId = parseInt(itemA.getElement().getAttribute(attribute), 10);
       const bId = parseInt(itemB.getElement().getAttribute(attribute), 10);
       return aId - bId;
@@ -176,7 +177,7 @@ export class MurriService implements OnDestroy {
     );
   }
 
-  initMurriFolder(isDragEnabled: boolean = true) {
+  initMurriFolder(isDragEnabled = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -260,10 +261,11 @@ export class MurriService implements OnDestroy {
         safeZone: 0.1,
       },
     });
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.grid.layout(() => {});
   }
 
-  setOpacityFlagAsync(time: number = 0): void {
+  setOpacityFlagAsync(time = 0): void {
     this.layoutUpdate$.next(time);
   }
 
@@ -289,7 +291,7 @@ export class MurriService implements OnDestroy {
     }
   }
 
-  wait = (delay: number = 0) => {
+  wait = (delay = 0) => {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
         resolve(true);

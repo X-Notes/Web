@@ -1,5 +1,5 @@
 <div class="few-notes" [ngClass]="[themeClass]">
-  <app-dialog-generic-header [iconDisabled]="true" [message]="titleMessage | translate">
+  <app-dialog-generic-header [iconDisabled]="true" [message]="titleMessage! | translate">
   </app-dialog-generic-header>
 
   <ng-scrollbar
@@ -16,7 +16,7 @@
       [ngClass]="{ 'active-note': selectedEntityId === item.id }"
     >
       <p *ngIf="item.title && item.title.length > 0" class="title">{{ item.title }}</p>
-      <p *ngIf="!item.title" class="empty-placeholder">{{ unnamedTitle | translate }}</p>
+      <p *ngIf="!item.title" class="empty-placeholder">{{ unnamedTitle! | translate }}</p>
       <div class="icon-container" (click)="onCancel(item)">
         <div *ngIf="isCancelActive" class="icon black">
           <mat-icon [inline]="true">close</mat-icon>

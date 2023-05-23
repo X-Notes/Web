@@ -21,19 +21,19 @@ import { NoteStore } from '../../state/notes-state';
   template: '',
 })
 export class EditorBaseComponent {
-  @Input() noteId: string;
+  @Input() noteId?: string;
 
   @Input()
   isReadOnlyMode = true;
 
   @Select(NoteStore.cursors)
-  cursors$: Observable<NoteUserCursorWS[]>;
+  cursors$?: Observable<NoteUserCursorWS[]>;
 
   titleInited = false;
 
   isOverEmpty = false;
 
-  protected elementsQuery: QueryList<ParentInteraction<ContentModelBase>>;
+  protected elementsQuery?: QueryList<ParentInteraction<ContentModelBase>>;
 
   constructor(public facade: EditorFacadeService) {}
 
@@ -43,31 +43,32 @@ export class EditorBaseComponent {
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get elements(): ParentInteraction<ContentModelBase>[] {
+  get elements(): ParentInteraction<ContentModelBase>[] | undefined {
     return this.elementsQuery?.toArray();
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get htmlElements(): ParentInteractionHTML[] {
+  get htmlElements(): ParentInteractionHTML[] | undefined {
     return this.elements
       ?.filter((x) => x.type === ComponentType.HTML)
       .map((x) => x as ParentInteractionHTML);
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get collectionElements(): ParentInteractionCollection[] {
+  get collectionElements(): ParentInteractionCollection[] | undefined {
     return this.elements
       ?.filter((x) => x.type === ComponentType.Collection)
       .map((x) => x as ParentInteractionCollection);
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get first(): ParentInteraction<ContentModelBase> {
+  get first(): ParentInteraction<ContentModelBase> | undefined {
     return this.elementsQuery?.first;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get preLast(): ParentInteraction<ContentModelBase> {
+  get preLast(): ParentInteraction<ContentModelBase> | undefined | null {
+    if(!this.elements) return;
     if (this.elements.length >= 2) {
       return this.elements[this.elements.length - 2];
     }
@@ -75,14 +76,14 @@ export class EditorBaseComponent {
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  get last(): ParentInteraction<ContentModelBase> {
+  get last(): ParentInteraction<ContentModelBase> | undefined {
     return this.elementsQuery?.last;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   get lastText(): boolean {
     const el = this.elementsQuery?.last;
-    return el.type === ComponentType.HTML;
+    return el?.type === ComponentType.HTML;
   }
 
   getSelectedElements(): ParentInteraction<ContentModelBase>[] {
@@ -105,7 +106,7 @@ export class EditorBaseComponent {
     );
   }
 
-  getElementById(contentId: string): ParentInteraction<ContentModelBase> {
+  getElementById(contentId: string): ParentInteraction<ContentModelBase> | undefined {
     return this.elements?.find((x) => x.getContentId() === contentId);
   }
 
@@ -115,19 +116,23 @@ export class EditorBaseComponent {
     return this.elements?.filter((x) => predicate(x)) as T[];
   }
 
-  getElementByIndex<T extends ParentInteraction<ContentModelBase>>(index: number): T {
+  getElementByIndex<T extends ParentInteraction<ContentModelBase>>(index: number): T | null {
+    if(!this.elements) return null;
     return this.elements[index] as T;
   }
 
-  getHTMLElementById(contentId: string): ParentInteractionHTML {
+  getHTMLElementById(contentId: string): ParentInteractionHTML | null | undefined {
+    if(!this.htmlElements) return null;
     return this.htmlElements.find((x) => x.getContentId() === contentId);
   }
 
-  getHTMLElementsById(contentIds: string[]): ParentInteractionHTML[] {
+  getHTMLElementsById(contentIds: string[]): ParentInteractionHTML[] | null {
+    if(!this.htmlElements) return null;
     return this.htmlElements.filter((x) => contentIds.some((id) => id === x.getContentId()));
   }
 
-  getCollectionElementById(contentId: string): ParentInteractionCollection {
+  getCollectionElementById(contentId: string): ParentInteractionCollection | undefined | null {
+    if(!this.collectionElements) return null;
     return this.collectionElements.find((x) => x.getContentId() === contentId);
   }
 
@@ -145,7 +150,7 @@ export class EditorBaseComponent {
     this.facade.contentEditorSyncService.change();
   }
 
-  isCanAddNewItem(el: ParentInteraction<ContentModelBase>) {
+  isCanAddNewItem(el?: ParentInteraction<ContentModelBase>) {
     if (!el || el.type === ComponentType.Collection) return true;
     const htmlComponent = el as ParentInteractionHTML;
     const content = htmlComponent.getContent();

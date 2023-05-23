@@ -13,12 +13,12 @@ import { OnlineUsersNote } from '../../../content/notes/models/online-users-note
 })
 export class PublicHeaderComponent implements OnInit, OnDestroy {
   @Input()
-  isEditingMessage = false;
+  isEditingMessage: boolean | null = false;
 
   @Select(NoteStore.getOnlineUsersOnNote)
-  onlineUsers$: Observable<OnlineUsersNote[]>;
+  onlineUsers$?: Observable<OnlineUsersNote[]>;
 
-  subscriptionOnLoadNote$: Observable<FullNoteState>;
+  subscriptionOnLoadNote$?: Observable<FullNoteState>;
 
   destroy$ = new Subject<void>();
 

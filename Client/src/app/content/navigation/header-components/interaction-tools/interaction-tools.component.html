@@ -29,10 +29,7 @@
     <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
     <mat-menu
       #menu="matMenu"
-      appLazyTheme
-      themeClass="menu"
-      attributeName="panelClass"
-      [element]="menu"
+      [class]="(theme$ | async) === theme.Dark ? 'dark-menu' : null"
     >
       <button
         *ngIf="false"

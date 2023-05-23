@@ -16,10 +16,10 @@ export class NotificationComponent {
   @Output() oncloseNotification = new EventEmitter();
 
   @Select(AppStore.getNewNotifications)
-  public notificationsNew$: Observable<AppNotification>;
+  public notificationsNew$: Observable<AppNotification[]>;
 
   @Select(AppStore.getReadNotifications)
-  public notificationsRead$: Observable<AppNotification>;
+  public notificationsRead$: Observable<AppNotification[]>;
 
   @Select(AppStore.getNewNotificationsLength)
   public getNewNotificationsLength$: Observable<number>;

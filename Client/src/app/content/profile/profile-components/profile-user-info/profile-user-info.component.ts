@@ -63,7 +63,15 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
     this.nameChanged.next(text);
   }
 
-  async uploadImageUserPhoto(event, files: File[]) {
+  async uploadImageUserPhotoEvent($event) {
+    const files = $event.target.files;
+    await this.uploadImageUserPhoto(files);
+    if ($event?.target) {
+      $event.target.value = null;
+    }
+  }
+
+  async uploadImageUserPhoto(files: File[]) {
     const file = files[0];
     if (file) {
       if (file.size > maxProfilePhotoSize) {
@@ -78,10 +86,6 @@ export class ProfileUserInfoComponent implements OnInit, OnDestroy {
         await this.store.dispatch(new UpdateUserPhoto(formDate)).toPromise();
         this.spinnerActive = false;
       }
-    }
-    // eslint-disable-next-line no-param-reassign
-    if (event?.target) {
-      event.target.value = null;
     }
   }
 

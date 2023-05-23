@@ -16,7 +16,7 @@ export class DialogGenericHeaderComponent {
   iconDisabled = false;
 
   @Input()
-  message: string;
+  message?: string;
 
   get basicStyles() {
     return this.isMessage ? 'is-message' : 'no-message';

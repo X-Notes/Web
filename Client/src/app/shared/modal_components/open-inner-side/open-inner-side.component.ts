@@ -14,7 +14,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
-import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
@@ -29,6 +28,7 @@ import { BaseSearchNotesTypes } from '../general-components/base-search-notes-ty
 import { SelectionOption } from '../../custom-components/select-component/entities/select-option';
 import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
 import { EnumConverterService } from '../../services/enum-converter.service';
+import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 
 @Component({
   selector: 'app-open-inner-side',
@@ -152,7 +152,7 @@ export class OpenInnerSideComponent
   }
 
   // eslint-disable-next-line class-methods-use-this
-  highlightNote(note: PreviewNote): void {
+  highlightNote(note: SmallNote): void {
     if (this.selectedNotesChips.length >= this.maxCountOfNotes && !note.isSelected) {
       const message = this.translate.instant('snackBar.subscriptionMaxNotesError', {
         count: this.maxCountOfNotes,
@@ -164,7 +164,7 @@ export class OpenInnerSideComponent
   }
 
   // eslint-disable-next-line class-methods-use-this
-  unSelectNote(note: PreviewNote) {
+  unSelectNote(note: SmallNote) {
     note.isSelected = false;
   }
 

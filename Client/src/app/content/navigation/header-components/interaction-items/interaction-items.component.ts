@@ -53,6 +53,8 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   buttonStyleType = GeneralButtonStyleType;
 
+  theme = ThemeENUM;
+
   destroy = new Subject<void>();
 
   constructor(private store: Store, public pService: PersonalizationService) {}

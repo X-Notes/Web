@@ -99,19 +99,20 @@
 .dark {
   border-color: transparent;
   background-color: $dark-button;
-  .button-icon {
-    color: white;
-    .inner {
-      .icon {
-        color: white;
+  .wrap {
+    .button-icon {
+      color: white;
+      .inner {
+        .icon {
+          color: white;
+        }
       }
-    }
-    &::after {
-      background-color: white;
-    }
-
-    &:hover {
-      background-color: #3d4049;
+      &::after {
+        background-color: white;
+      }
+      &:hover {
+        background-color: #3d4049;
+      }
     }
   }
 }

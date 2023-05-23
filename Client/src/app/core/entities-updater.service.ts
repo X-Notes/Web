@@ -54,7 +54,7 @@ export class UpdaterEntitiesService {
     this.store.dispatch(new PatchUpdatesUINotes([obj]));
   }
 
-  lockNoteAfter(noteId: string, minutes: number = 5) {
+  lockNoteAfter(noteId: string, minutes = 5) {
     const date = this.getNote(noteId)?.unlockedTime;
     if (!date) return;
     const time = new Date(date).getTime() + minutes * 60000;

@@ -4,7 +4,7 @@
     <div *ngIf="isLoaded && !data.image" class="photo-error">
       <mat-icon [inline]="true">error_outline</mat-icon>
     </div>
-    <app-spinner size="25" *ngIf="!isLoaded"></app-spinner>
+    <app-spinner [size]="25" *ngIf="!isLoaded"></app-spinner>
   </div>
   <div class="card-body">
     <div class="card-info" (click)="openNewTab()">
@@ -18,10 +18,7 @@
       </button>
       <mat-menu
         #menu="matMenu"
-        appLazyTheme
-        themeClass="menu"
-        attributeName="panelClass"
-        [element]="menu"
+        [class]="true ? 'dark-menu' : null"
       >
         <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
           <mat-icon>content_copy</mat-icon>

@@ -45,10 +45,7 @@
 
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="(theme$ | async) === theme.Dark ? 'dark-menu' : null"
 >
   <button
     (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"

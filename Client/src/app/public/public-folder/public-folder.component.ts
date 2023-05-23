@@ -11,7 +11,7 @@ import { DeltaConverter } from '../../content/notes/full-note/content-editor/con
 })
 export class PublicFolderComponent implements OnInit {
   @Select(FolderStore.isFullFolderEditor)
-  isFullFolderEditor$: Observable<boolean>;
+  isFullFolderEditor$?: Observable<boolean>;
 
   async ngOnInit(): Promise<void> {
     DeltaConverter.initQuill();

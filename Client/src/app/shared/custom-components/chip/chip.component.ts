@@ -7,15 +7,15 @@ import { ThemeENUM } from '../../enums/theme.enum';
   styleUrls: ['./chip.component.scss'],
 })
 export class ChipComponent {
-  @Input() text: string;
+  @Input() text?: string;
 
-  @Input() dark: boolean;
+  @Input() dark?: boolean;
 
-  @Input() color: string;
+  @Input() color?: string;
 
-  @Input() tile: boolean;
+  @Input() tile?: boolean;
 
-  @Input() isRemovable: boolean;
+  @Input() isRemovable?: boolean;
 
   @Output() remove = new EventEmitter<void>();
 

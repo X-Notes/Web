@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import * as mm from 'music-metadata-browser';
 import { generateFormData } from 'src/app/core/defaults/form-data-generator';
@@ -21,32 +20,31 @@ export class AudioService {
 
   playlist: AudioModel[] = [];
 
-  volumeHelper: number;
+  prevVolumeState: number;
 
   private state: StreamAudioState = new StreamAudioState(0.25);
 
-  private stop$ = new Subject();
-
   private audioObj = new Audio();
 
-  private stateChange: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
+  public stateChange$: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
 
   constructor(private store: Store, private apiNoteFilesService: ApiNoteFilesService) {}
 
-  getState(): Observable<StreamAudioState> {
-    return this.stateChange;
+  getState(): StreamAudioState {
+    return this.stateChange$.getValue();
   }
 
   resetCurrent() {
     this.currentFile = null;
     this.playlist = null;
-    this.stop();
+    this.resetAudio();
     this.resetState();
-    this.stateChange.next(this.state);
+    this.stateChange$.next(this.state);
   }
 
-  playStream(url, id) {
-    return this.streamObservable(url, id).pipe(takeUntil(this.stop$));
+  openFileAndPlay(audio: AudioModel) {
+    this.currentFile = audio;
+    this.runAudio(audio.audioPath, audio.fileId);
   }
 
   play() {
@@ -55,10 +53,6 @@ export class AudioService {
 
   pause() {
     this.audioObj.pause();
-  }
-
-  stop() {
-    this.stop$.next();
   }
 
   loop() {
@@ -70,10 +64,10 @@ export class AudioService {
     const { currentVolume } = this.state;
     if (this.audioObj.muted) {
       this.audioObj.muted = false;
-      this.seekToVolume(this.volumeHelper);
+      this.seekToVolume(this.prevVolumeState);
     } else {
       this.audioObj.muted = true;
-      this.volumeHelper = currentVolume;
+      this.prevVolumeState = currentVolume;
       this.seekToVolume(0);
     }
   }
@@ -133,26 +127,25 @@ export class AudioService {
     return [imageBlob, metadata.format.duration];
   }
 
-  private streamObservable(url, id) {
-    return new Observable((observer) => {
-      this.state.id = id;
-      this.audioObj.src = url;
-      this.audioObj.volume = this.state.currentVolume;
-      this.audioObj.load();
+  runAudio(url: string, id: string): void {
+    this.resetAudio();
+    this.audioObj = new Audio();
+    this.state.id = id;
+    this.audioObj.src = url;
+    this.audioObj.volume = this.state.currentVolume;
+    this.audioObj.load();
+    const handler = (event: Event) => this.updateStateEvents(event);
+    this.addEvents(this.audioObj, Object.keys(this.audioEvents), handler);
+  }
 
-      const handler = (event: Event) => {
-        this.updateStateEvents(event);
-        observer.next(event);
-      };
-
-      this.addEvents(this.audioObj, Object.keys(this.audioEvents), handler);
-      return () => {
-        this.audioObj.pause();
-        this.audioObj.currentTime = 0;
-        this.removeEvents(this.audioObj, Object.keys(this.audioEvents), handler);
-        this.resetState();
-      };
-    });
+  resetAudio(): void {
+    if (this.audioObj) {
+      this.audioObj.pause();
+      const handler = (event: Event) => this.updateStateEvents(event);
+      this.removeEvents(this.audioObj, Object.keys(this.audioEvents), handler);
+      this.audioObj = null;
+    }
+    this.resetState();
   }
 
   private addEvents = (obj, events, handler) => {
@@ -168,6 +161,10 @@ export class AudioService {
   };
 
   private updateStateEvents(event: Event): void {
+    if(!this.audioObj) {
+      this.stateChange$.next(this.state);
+      return;
+    }
     switch (event.type) {
       case this.audioEvents.play:
       case this.audioEvents.loadstart:
@@ -208,7 +205,7 @@ export class AudioService {
       default:
         throw new Error('Error in audio player');
     }
-    this.stateChange.next(this.state);
+    this.stateChange$.next(this.state);
   }
 
   private playNextAudio(): void {
@@ -216,11 +213,11 @@ export class AudioService {
     const nextIndex = index + 1;
     if (index !== -1 && nextIndex < this.playlist.length) {
       this.currentFile = this.playlist[nextIndex];
-      this.play();
+      this.openFileAndPlay(this.currentFile);
     }
   }
 
   private resetState() {
-    this.state = new StreamAudioState(0.25);
+    this.state = new StreamAudioState(this.state?.currentVolume ?? 0.25);
   }
 }

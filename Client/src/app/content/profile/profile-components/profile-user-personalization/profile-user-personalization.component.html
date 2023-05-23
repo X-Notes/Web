@@ -8,21 +8,19 @@
         <div class="slider-text">
           {{ ('profile.countCurrent' | translate) + (pSettings$ | async).contentInNoteCount }}
         </div>
-        <mat-slider
-          class="slider-profile"
-          min="1"
-          max="20"
-          thumbLabel
-          [ngModel]="(pSettings$ | async).contentInNoteCount"
-          (ngModelChange)="changePersonalizationSettings($event, pSettings.contentInNoteCount)"
-        ></mat-slider>
+        <mat-slider class="slider-profile" min="1" max="20"  discrete>
+          <input
+            matSliderThumb
+            [ngModel]="(pSettings$ | async).contentInNoteCount"
+            (valueChange)="changePersonalizationSettings($event, pSettings.contentInNoteCount)"
+          />
+        </mat-slider>
       </div>
     </div>
     <div class="help-info help-info-no-margin">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -35,21 +33,19 @@
         <div class="slider-text">
           {{ ('profile.countCurrent' | translate) + (pSettings$ | async).notesInFolderCount }}
         </div>
-        <mat-slider
-          class="slider-profile"
-          min="1"
-          max="20"
-          thumbLabel
-          [ngModel]="(pSettings$ | async).notesInFolderCount"
-          (ngModelChange)="changePersonalizationSettings($event, pSettings.notesInFolderCount)"
-        ></mat-slider>
+        <mat-slider class="slider-profile" min="1" max="20" discrete>
+          <input
+            matSliderThumb
+            [ngModel]="(pSettings$ | async).notesInFolderCount"
+            (valueChange)="changePersonalizationSettings($event, pSettings.notesInFolderCount)"
+          />
+        </mat-slider>
       </div>
     </div>
     <div class="help-info help-info-no-margin">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -65,9 +61,8 @@
     </div>
     <div class="help-info">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -83,9 +78,8 @@
     </div>
     <div class="help-info">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -101,9 +95,8 @@
     </div>
     <div class="help-info">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -119,9 +112,8 @@
     </div>
     <div class="help-info">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>
@@ -137,9 +129,8 @@
     </div>
     <div class="help-info">
       <p>
-        {{ 'profile.genericTooltip' | translate }}<span>
-          {{ 'profile.genericPreview' | translate }}</span
-        >
+        {{ 'profile.genericTooltip' | translate
+        }}<span> {{ 'profile.genericPreview' | translate }}</span>
       </p>
     </div>
   </div>

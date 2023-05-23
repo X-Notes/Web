@@ -10,7 +10,7 @@ export interface ShortUser {
   email: string;
   photoId?: string;
   photoPath: string;
-  currentBackground: Background;
+  currentBackground: Background | null;
   languageId: LanguagesENUM;
   themeId: ThemeENUM;
   fontSizeId: EntitiesSizeENUM;

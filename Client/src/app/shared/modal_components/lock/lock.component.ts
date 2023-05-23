@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
@@ -16,7 +16,7 @@ export enum LockPopupState {
 }
 
 const CompareValidator = (first: string, second: string) => {
-  return (fg: FormGroup) => {
+  return (fg: UntypedFormGroup) => {
     const firstField = fg.controls[first];
     const secondField = fg.controls[second];
 
@@ -39,7 +39,7 @@ const CompareValidator = (first: string, second: string) => {
   animations: [shake],
 })
 export class LockComponent implements OnInit, OnDestroy {
-  form: FormGroup;
+  form?: UntypedFormGroup;
 
   destroy = new Subject<void>();
 
@@ -48,7 +48,7 @@ export class LockComponent implements OnInit, OnDestroy {
   state: LockPopupState;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private store: Store,
     private lockEncryptService: LockEncryptService,
     private snackService: SnackBarWrapperService,
@@ -68,7 +68,7 @@ export class LockComponent implements OnInit, OnDestroy {
   }
 
   get field() {
-    return this.form.controls;
+    return this.form?.controls;
   }
 
   get isDisplayUnlockTime() {
@@ -134,11 +134,11 @@ export class LockComponent implements OnInit, OnDestroy {
 
   async decryptNote(noteId: string) {
     const result = await this.lockEncryptService
-      .decryptNote(noteId, this.form.controls.password.value)
+      .decryptNote(noteId, this.form?.controls.password.value)
       .toPromise();
     if (!result.data) {
       const message = this.translate.instant('modal.lockModal.incorrect');
-      this.snackService.buildNotification(message, null);
+      this.snackService.buildNotification(message, undefined);
       return false;
     }
     return true;
@@ -146,11 +146,11 @@ export class LockComponent implements OnInit, OnDestroy {
 
   async tryUnlockNote(noteId: string): Promise<boolean> {
     const result = await this.lockEncryptService
-      .tryUnlockNote(noteId, this.form.controls.password.value)
+      .tryUnlockNote(noteId, this.form?.controls.password.value)
       .toPromise();
     if (!result.data) {
       const message = this.translate.instant('modal.lockModal.incorrect');
-      this.snackService.buildNotification(message, null);
+      this.snackService.buildNotification(message, undefined);
       return false;
     }
     return true;
@@ -158,14 +158,14 @@ export class LockComponent implements OnInit, OnDestroy {
 
   async encryptNote(noteId: string) {
     const { data } = await this.lockEncryptService
-      .encryptNote(noteId, this.form.controls.password.value, this.form.controls.confirmation.value)
+      .encryptNote(noteId, this.form?.controls.password.value, this.form?.controls.confirmation.value)
       .toPromise();
     return data;
   }
 
   async save() {
     this.isSubmit = true;
-    if (this.form.invalid) {
+    if (this.form?.invalid) {
       return;
     }
 
@@ -184,7 +184,7 @@ export class LockComponent implements OnInit, OnDestroy {
       case LockPopupState.Unlock: {
         const isSuccess = await this.tryUnlockNote(this.data.id);
         if (isSuccess) {
-          await this.updaterEntitiesService.setLockedInState(this.data.id, null, false);
+          await this.updaterEntitiesService.setLockedInState(this.data.id, undefined, false);
           this.updaterEntitiesService.lockNoteAfter(this.data.id);
           if (this.data.callback) {
             await this.data.callback();

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
@@ -12,24 +12,24 @@ import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.servi
   templateUrl: './content-access-section.component.html',
   styleUrls: ['./content-access-section.component.scss'],
 })
-export class ContentAccessSectionComponent implements OnInit {
+export class ContentAccessSectionComponent {
   @Input()
-  refTypeId: RefTypeENUM;
+  refTypeId?: RefTypeENUM;
 
   @Input()
-  isPrivateButtonActive: boolean;
+  isPrivateButtonActive?: boolean;
 
   @Input()
-  link: string;
+  link?: string;
 
   @Input()
-  toggleDescription: string;
+  toggleDescription?: string;
 
   @Input()
-  dropdownActive: boolean;
+  dropdownActive?: boolean;
 
   @Input()
-  currentTheme: ThemeENUM;
+  currentTheme?: ThemeENUM;
 
   @Output()
   changeRefTypeEvent = new EventEmitter<RefTypeENUM>();
@@ -48,7 +48,7 @@ export class ContentAccessSectionComponent implements OnInit {
     private enumConverterService: EnumConverterService,
   ) {}
 
-  get refTypeSelectedValue(): RefTypeENUM {
+  get refTypeSelectedValue(): RefTypeENUM | undefined {
     return this.refTypeId;
   }
 
@@ -57,8 +57,6 @@ export class ContentAccessSectionComponent implements OnInit {
       this.enumConverterService.convertEnumToSelectionOption(RefTypeENUM, x, 'modal.shareModal.'),
     );
   }
-
-  ngOnInit(): void {}
 
   async changeRefType(refTypeId: RefTypeENUM): Promise<void> {
     this.changeRefTypeEvent.emit(refTypeId);

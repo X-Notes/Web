@@ -11,13 +11,13 @@
       aria-label="Type password"
       formControlName="password"
       placeholder="{{ 'modal.lockModal.placeholderPass' | translate }}"
-      [ngClass]="{'has-error': isSubmit && field.password.errors}"
+      [ngClass]="{'has-error': isSubmit && field?.password?.errors}"
     />
-    <div class="details" *ngIf="isSubmit && field.password.errors">
-      <span [@shake] *ngIf="field.password.errors.required"
+    <div class="details" *ngIf="isSubmit && field?.password?.errors">
+      <span [@shake] *ngIf="field?.password?.errors?.required"
         >{{ 'modal.lockModal.required' | translate }}</span
       >
-      <span [@shake] *ngIf="field.password.errors.minlength"
+      <span [@shake] *ngIf="field?.password?.errors?.minlength"
         >{{ 'modal.lockModal.minLength' | translate }}</span
       >
     </div>
@@ -32,13 +32,13 @@
       aria-label="confirm"
       formControlName="confirmation"
       placeholder="{{ 'modal.lockModal.placeholderConfirm' | translate }}"
-      [ngClass]="{'has-error': isSubmit && field.confirmation.errors}"
+      [ngClass]="{'has-error': isSubmit && field?.confirmation?.errors}"
     />
-    <div class="details" *ngIf="isSubmit && field.confirmation.errors">
-      <span [@shake] *ngIf="field.confirmation.errors.required"
+    <div class="details" *ngIf="isSubmit && field?.confirmation?.errors">
+      <span [@shake] *ngIf="field?.confirmation?.errors?.required"
         >{{ 'modal.lockModal.required' | translate }}</span
       >
-      <span [@shake] *ngIf="field.confirmation.errors.isMatch"
+      <span [@shake] *ngIf="field?.confirmation?.errors?.isMatch"
         >{{ 'modal.lockModal.passMatchError' | translate }}</span
       >
     </div>

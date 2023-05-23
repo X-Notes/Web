@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { GenericFileExtenstionService } from '../../generic-file-extenstion.service';
-import { BaseCollection } from '../../models/editor-models/base-collection';
-import { DocumentModel } from '../../models/editor-models/documents-collection';
+import {
+  DocumentsCollection,
+} from '../../models/editor-models/documents-collection';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-note-preview-documents',
@@ -9,8 +11,11 @@ import { DocumentModel } from '../../models/editor-models/documents-collection';
   styleUrls: ['./note-preview-documents.component.scss'],
 })
 export class NotePreviewDocumentsComponent {
-  @Input()
-  content: BaseCollection<DocumentModel>;
+  _content: DocumentsCollection;
+
+  @Input() set content(value: ContentModelBase) {
+    this._content = value as DocumentsCollection;
+  }
 
   constructor(public readonly genericFileExtenstionService: GenericFileExtenstionService) {}
 }

@@ -54,7 +54,7 @@
                 [options]="options"
                 (selectValueChange)="setLanguage($event)"
               >
-                <app-select-option *ngFor="let item of languages" [value]="item">
+                <app-select-option *ngFor="let item of options" [value]="item">
                   {{ 'languages.' + item | translate }}
                 </app-select-option>
               </app-select>

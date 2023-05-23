@@ -19,7 +19,7 @@ export class TooltipDirective implements OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('labelColor') labelColor = '';
 
-  private overlayRef: OverlayRef;
+  private overlayRef?: OverlayRef;
 
   constructor(
     private overlay: Overlay,
@@ -56,7 +56,7 @@ export class TooltipDirective implements OnDestroy {
       tooltipRef.instance.labelColor = this.labelColor;
     } else {
       tooltipRef.instance.labelClass = false;
-      tooltipRef.instance.labelColor = null;
+      tooltipRef.instance.labelColor = undefined;
     }
   }
 

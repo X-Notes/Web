@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
   name: 'formatDateMoment',
 })
 export class FormatDateMomentPipe implements PipeTransform {
-  transform = (time: number, coff: number, format: string = 'mm:ss'): string => {
+  transform = (time: number, coff: number, format = 'mm:ss'): string => {
     return dayjs(time * coff).format(format);
   };
 }

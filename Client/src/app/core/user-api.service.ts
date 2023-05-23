@@ -33,14 +33,14 @@ export class UserAPIService {
     const value: Token = {
       token,
     };
-    return this.httpClient.post<OperationResult<any>>(
+    return this.httpClient.post<OperationResult<void>>(
       `${environment.writeAPI}/api/auth/verify`,
       value,
     );
   }
 
   setTokenClaims() {
-    return this.httpClient.get<OperationResult<any>>(`${environment.writeAPI}/api/auth/set`);
+    return this.httpClient.get<OperationResult<void>>(`${environment.writeAPI}/api/auth/set`);
   }
 
   tryGetFromAuthorize() {

@@ -60,6 +60,7 @@ import { ClearCursorsAction, UpdateCursorAction } from '../../state/editor-actio
 import { UpdateCursor } from '../models/cursors/cursor';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { AudioService } from '../../audio.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -89,23 +90,23 @@ export class ContentEditorComponent
   extends EditorCollectionsComponent
   implements OnInit, AfterViewInit, OnChanges, OnDestroy
 {
-  @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
+  @ViewChild(SelectionDirective) selectionDirective?: SelectionDirective;
 
-  @ViewChild(MenuSelectionDirective) menuSelectionDirective: MenuSelectionDirective;
+  @ViewChild(MenuSelectionDirective) menuSelectionDirective?: MenuSelectionDirective;
 
   @ViewChild('textEditMenu', { read: ElementRef, static: false })
-  textEditMenu: ElementRef<HTMLElement>;
+  textEditMenu?: ElementRef<HTMLElement>;
 
-  @ViewChild('mainSection', { read: ElementRef }) mainSection: ElementRef<HTMLElement>;
-
-  @Input()
-  editorTheme: ThemeENUM;
+  @ViewChild('mainSection', { read: ElementRef }) mainSection?: ElementRef<HTMLElement>;
 
   @Input()
-  color: string;
+  editorTheme?: ThemeENUM;
 
   @Input()
-  labels: Label[] = [];
+  color?: string;
+
+  @Input()
+  labels?: Label[] = [];
 
   @Input() progressiveLoading = false;
 
@@ -115,7 +116,7 @@ export class ContentEditorComponent
 
   textType = NoteTextTypeENUM;
 
-  options: TextEditMenuOptions;
+  options?: TextEditMenuOptions;
 
   ngForSubject = new Subject<void>(); // for lazy loading
 
@@ -127,6 +128,7 @@ export class ContentEditorComponent
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
     editorApiFacadeService: EditorFacadeService,
     public audioService: AudioService,
+    private muuriService: MurriService
   ) {
     super(editorApiFacadeService);
   }
@@ -193,7 +195,7 @@ export class ContentEditorComponent
     return this.contents[this.contents.length - 1].id;
   }
 
-  get contents(): ContentModelBase[] {
+  get contents(): ContentModelBase[] | any[] {
     return this.facade.contentsService.getContents;
   }
 
@@ -265,6 +267,7 @@ export class ContentEditorComponent
 
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
+    this.muuriService.resetToDefaultOpacity();
     this.webSocketsUpdaterService.leaveNote(this.noteId);
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
@@ -436,14 +439,15 @@ export class ContentEditorComponent
     return this.contents[index] as BaseText;
   }
 
-  getNumberList(content: BaseText, contentIndex: number): number {
+  getNumberList(content: ContentModelBase, contentIndex: number): number {
+    const text = content as BaseText;
     const prev = this.getTextContent(contentIndex - 1);
     if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
-      content.listNumber = 1;
-      return content.listNumber;
+      text.listNumber = 1;
+      return text.listNumber;
     }
-    content.listNumber = prev.listNumber + 1;
-    return content.listNumber;
+    text.listNumber = prev.listNumber + 1;
+    return text.listNumber;
   }
 
   transformToTypeText(value: TransformContent): void {

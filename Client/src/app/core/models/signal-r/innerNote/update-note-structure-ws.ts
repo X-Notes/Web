@@ -6,19 +6,19 @@ import { VideosCollection } from 'src/app/content/notes/models/editor-models/vid
 import { UpdateContentPosition } from './update-content-position-ws';
 
 export class UpdateNoteStructureWS {
-  contentIdsToDelete: string[];
+  contentIdsToDelete?: string[];
 
-  textContentsToAdd: BaseText[];
+  textContentsToAdd?: BaseText[];
 
-  photoContentsToAdd: PhotosCollection[];
+  photoContentsToAdd?: PhotosCollection[];
 
-  videoContentsToAdd: VideosCollection[];
+  videoContentsToAdd?: VideosCollection[];
 
-  audioContentsToAdd: AudiosCollection[];
+  audioContentsToAdd?: AudiosCollection[];
 
-  documentContentsToAdd: DocumentsCollection[];
+  documentContentsToAdd?: DocumentsCollection[];
 
-  positions: UpdateContentPosition[];
+  positions?: UpdateContentPosition[];
 
   constructor(data: Partial<UpdateNoteStructureWS>) {
     this.contentIdsToDelete = data.contentIdsToDelete;

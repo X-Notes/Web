@@ -9,7 +9,7 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 })
 export class UserOnEntityCardComponent {
   @Input()
-  user: InvitedUsersToNoteOrFolder;
+  user?: InvitedUsersToNoteOrFolder;
 
   @Output()
   changeUserPermission = new EventEmitter();

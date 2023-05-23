@@ -8,7 +8,7 @@ import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-co
   styleUrls: ['./audio-small.component.scss'],
 })
 export class AudioSmallComponent {
-  @Input() audio: AudioModel;
+  @Input() audio?: AudioModel;
 
   constructor(public audioService: AudioService) {}
 }

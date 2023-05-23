@@ -1,13 +1,11 @@
-export type EnumValue = string | number;
-
 export class EnumUtil {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public static getEnumValueByKey<E extends EnumValue>(e: object, key: string): E {
+  public static getEnumValueByKey<E extends string>(e: object, key: string): E {
     return e[key];
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public static getEnumKeyByValue(e: object, value: EnumValue): string {
+  public static getEnumKeyByValue(e: object, value: string): string {
     return this.getEnumKeys(e).find((key) => e[key] === value);
   }
 
@@ -22,7 +20,7 @@ export class EnumUtil {
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public static getEnumValues(e: object): EnumValue[] {
+  public static getEnumValues(e: object): string[] {
     return this.getEnumKeys(e).map((key) => e[key]);
   }
 }

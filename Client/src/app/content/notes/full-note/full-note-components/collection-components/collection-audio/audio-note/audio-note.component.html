@@ -29,6 +29,7 @@
         [audio]="item"
         [noteId]="noteId"
         [uiCursors$]="uiCursors$"
+        [theme]="theme"
         [isSelectModeActive]="(isSelectModeActive$ | async)"
         [isReadOnlyMode]="isReadOnlyMode"
         (playEvent)="play($event)"
@@ -53,14 +54,11 @@
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadFiles($event.target.files)"
+  (change)="uploadFiles($event)"
 />
 <mat-menu
   #menu="matMenu"
-  appLazyTheme
-  themeClass="menu"
-  attributeName="panelClass"
-  [element]="menu"
+  [class]="theme === themeE.Dark ? 'dark-menu' : null"
 >
   <button
     *ngIf="!isReadOnlyMode"

@@ -17,7 +17,7 @@ import { SetFolderNotes, UnSelectAllNote } from 'src/app/content/notes/state/not
 
 @Injectable()
 export class FullFolderNotesService extends NoteEntitiesService {
-  folderId: string;
+  folderId?: string;
 
   constructor(
     store: Store,
@@ -61,8 +61,8 @@ export class FullFolderNotesService extends NoteEntitiesService {
     this.initializeEntitiesGeneric(notes, folderId);
   }
 
-  murriInitialize(refElements: QueryList<ElementRef>) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async () => {
+  murriInitialize(refElements?: QueryList<ElementRef>) {
+    refElements?.changes.pipe(takeUntil(this.destroy)).subscribe(async () => {
       if (this.needFirstInit()) {
         this.initState();
         await this.murriService.initFolderNotesAsync();
@@ -87,7 +87,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
   }
 
   async handleAdding(idsToAdd: string[]) {
-    if (idsToAdd && idsToAdd.length > 0) {
+    if (this.folderId && idsToAdd && idsToAdd.length > 0) {
       const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
       const newNotes = await this.apiFullFolder
         .getFolderNotes(this.folderId, pr, idsToAdd)

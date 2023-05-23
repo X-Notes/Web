@@ -100,6 +100,7 @@ export class DialogsManageService {
       panelClass: this.getDefaultPanelClass(),
       data: { labelIds: new Set(labelIds) },
     };
+    console.log('config: ', config);
     return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 

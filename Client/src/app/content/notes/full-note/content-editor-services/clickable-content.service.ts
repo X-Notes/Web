@@ -74,8 +74,9 @@ export class ClickableContentService {
     itemId: string,
     type: ClickableSelectableEntities,
     currentItem: ParentInteraction<ContentModelBase>,
+    keepRanges = false
   ) {
-    if (type !== ClickableSelectableEntities.Text) {
+    if (type !== ClickableSelectableEntities.Text && !keepRanges) {
       this.apiBrowser.removeAllRanges();
     }
     // PREV

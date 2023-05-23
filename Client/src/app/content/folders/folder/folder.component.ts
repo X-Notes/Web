@@ -22,7 +22,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
 
-  @Input() date: string;
+  @Input() date: Date;
 
   @Input() isShowWrightRead = false;
 

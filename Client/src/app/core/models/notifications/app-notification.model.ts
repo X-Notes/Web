@@ -6,23 +6,23 @@ import {
 import { NotificationMetadata } from './notification-metadata';
 
 export class AppNotification {
-  id: string;
+  id?: string;
 
-  userFromId: string;
+  userFromId?: string;
 
-  userFromName: string;
+  userFromName?: string;
 
-  userFromPhotoPath: string;
+  userFromPhotoPath?: string;
 
-  isSystemMessage: boolean;
+  isSystemMessage?: boolean;
 
-  isRead: boolean;
+  isRead?: boolean;
 
-  notificationMessagesId: NotificationMessagesEnum;
+  notificationMessagesId?: NotificationMessagesEnum;
 
-  additionalMessage: string;
+  additionalMessage?: string;
 
-  metadata: NotificationMetadata;
+  metadata?: NotificationMetadata;
 
   date: Date;
 
@@ -35,7 +35,7 @@ export class AppNotification {
     return NotificationMessagesStrEnum[NotificationMessagesEnum[this.notificationMessagesId]];
   }
 
-  getShowNoteTitle(): boolean {
+  getShowNoteTitle(): boolean | undefined {
     switch (this.notificationMessagesId) {
       case NotificationMessagesEnum.ChangeUserPermissionNoteV1:
         return this.metadata && !!this.metadata.noteId;
@@ -48,7 +48,7 @@ export class AppNotification {
     }
   }
 
-  getShowFolderTitle(): boolean {
+  getShowFolderTitle(): boolean | undefined {
     switch (this.notificationMessagesId) {
       case NotificationMessagesEnum.ChangeUserPermissionFolderV1:
         return this.metadata && !!this.metadata.folderId;
@@ -61,7 +61,7 @@ export class AppNotification {
     }
   }
 
-  get isNoteLinkActive(): boolean {
+  get isNoteLinkActive(): boolean | undefined {
     switch (this.notificationMessagesId) {
       case NotificationMessagesEnum.ChangeUserPermissionNoteV1:
         return this.metadata && !!this.metadata.noteId;
@@ -72,7 +72,7 @@ export class AppNotification {
     }
   }
 
-  get isFolderLinkActive(): boolean {
+  get isFolderLinkActive(): boolean | undefined {
     switch (this.notificationMessagesId) {
       case NotificationMessagesEnum.ChangeUserPermissionFolderV1:
         return this.metadata && !!this.metadata.folderId;

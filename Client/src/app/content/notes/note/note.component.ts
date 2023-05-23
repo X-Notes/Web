@@ -15,17 +15,17 @@ import { NoteTextTypeENUM } from '../models/editor-models/text-models/note-text-
   styleUrls: ['./note.component.scss'],
 })
 export class NoteComponent implements OnInit {
-  @Input() note: SmallNote;
+  @Input() note?: SmallNote;
 
-  @Input() date: string;
+  @Input() date?: string;
 
   @Input() isShowWrightRead = false;
 
-  @Input() tooltipDateMessage: string;
+  @Input() tooltipDateMessage?: string;
 
-  @Input() currentFolderId: string;
+  @Input() currentFolderId?: string;
 
-  @Input() userId: string;
+  @Input() userId?: string;
 
   @Input() highlightCursorActive = true;
 
@@ -39,22 +39,22 @@ export class NoteComponent implements OnInit {
 
   contentType = ContentTypeENUM;
 
-  contents: ContentModelBase[];
+  contents?: ContentModelBase[];
 
   constructor(public pService: PersonalizationService) {}
 
   get noteFolders() {
-    return this.note.additionalInfo?.noteFolderInfos?.filter(
+    return this.note?.additionalInfo?.noteFolderInfos?.filter(
       (folder) => folder.folderId !== this.currentFolderId,
     );
   }
 
   get isAuthor(): boolean {
-    return this.userId === this.note.userId;
+    return this.userId === this.note?.userId;
   }
 
   get size() {
-    if (this.note.additionalInfo) {
+    if (this.note?.additionalInfo) {
       const size = this.note.additionalInfo.totalSize;
       const mb = Math.ceil(size / Math.pow(1024, 2));
       if (mb) {
@@ -86,11 +86,11 @@ export class NoteComponent implements OnInit {
     }) as unknown as ContentModelBase[];
   }
 
-  highlight(note: SmallNote) {
+  highlight(note: SmallNote): void {
     this.highlightNote.emit(note);
   }
 
-  toNote(note: SmallNote) {
+  toNote(note: SmallNote): void {
     this.clickOnNote.emit(note);
   }
 }

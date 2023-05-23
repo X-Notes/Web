@@ -4,6 +4,7 @@ import { BaseText } from '../../models/editor-models/base-text';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-note-preview-text',
@@ -11,8 +12,11 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./note-preview-text.component.scss'],
 })
 export class NotePreviewTextComponent implements OnInit {
-  @Input()
-  content: BaseText;
+  _content: BaseText;
+
+  @Input() set content(value: ContentModelBase) {
+    this._content = value as BaseText;
+  }
 
   @Input()
   activeTheme: ThemeENUM = ThemeENUM.Light;
@@ -24,8 +28,8 @@ export class NotePreviewTextComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    if (this.content.contents?.length > 0) {
-      const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
+    if (this._content.contents?.length > 0) {
+      const html = DeltaConverter.convertTextBlocksToHTML(this._content.contents);
       this.viewHtml = this.sanitizer.bypassSecurityTrustHtml(html) as string;
     }
   }

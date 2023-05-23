@@ -8,13 +8,13 @@ import { PersonalizationService } from '../../services/personalization.service';
 })
 export class NavMenuItemComponent {
   @Input()
-  routerLink: string;
+  routerLink?: string;
 
   @Input()
-  navName: string;
+  navName?: string;
 
   @Input()
-  count: number;
+  count?: number;
 
   constructor(public pService: PersonalizationService) {}
 

@@ -8,7 +8,7 @@
       <div class="sign-up-button" (click)="login(authType.Google)">
         <span *ngIf="(authService.IsAuthActive | async) === false">Log in with google</span>
         <app-spinner
-          [size]="'15'"
+          [size]="15"
           *ngIf="isLoaded && (authService.IsAuthActive | async) === true"
         ></app-spinner>
       </div>
@@ -27,7 +27,7 @@
             <div class="get-started-button" (click)="login(authType.Google)">
               <span *ngIf="(authService.IsAuthActive | async) === false">Get started</span>
               <app-spinner
-                [size]="'15'"
+                [size]="15"
                 *ngIf="isLoaded && (authService.IsAuthActive | async) === true"
               ></app-spinner>
             </div>

@@ -30,8 +30,8 @@
               [dropdownActive]="dropdownActive"
               [link]="
                 isNoteWindowType
-                  ? (currentNote?.id | sharingLink: data.currentWindowType)
-                  : (currentFolder?.id | sharingLink: data.currentWindowType)
+                  ? (currentNote?.id | sharingLink : data.currentWindowType)
+                  : (currentFolder?.id | sharingLink : data.currentWindowType)
               "
               [refTypeId]="refTypeSelectedValue"
               [toggleDescription]="toggleDescription | translate"
@@ -64,8 +64,12 @@
                     class="empty-placeholder-container"
                   >
                     <p>
-                      {{ (isNoteWindowType ? 'modal.shareModal.noPeopleNote' :
-                      'modal.shareModal.noPeopleFolder' ) | translate }}
+                      {{
+                        (isNoteWindowType
+                          ? 'modal.shareModal.noPeopleNote'
+                          : 'modal.shareModal.noPeopleFolder'
+                        ) | translate
+                      }}
                     </p>
                   </div>
                 </ng-container>
@@ -106,13 +110,8 @@
                 <div *ngIf="searchUsers.length > 0" class="user-suggestions content-padding">
                   <div *ngFor="let user of searchUsers" class="user">
                     <div class="photo">
-                      <img
-                        alt="user image"
-                        *ngIf="!user.noPhoto"
-                        (error)="user.noPhoto = true"
-                        [src]="user.photoPath"
-                      />
-                      <div *ngIf="user.noPhoto" class="no-photo">
+                      <img alt="user image" *ngIf="user.photoPath" [src]="user.photoPath" />
+                      <div *ngIf="!user.photoPath" class="no-photo">
                         <mat-icon svgIcon="people" [inline]="true"></mat-icon>
                       </div>
                     </div>

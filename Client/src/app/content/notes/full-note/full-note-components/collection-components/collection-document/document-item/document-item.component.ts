@@ -7,6 +7,7 @@ import { SelectionService } from '../../../../content-editor-services/selection.
 import { Observable } from 'rxjs';
 import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
 import { map } from 'rxjs/operators';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-document-item',
@@ -32,6 +33,11 @@ export class DocumentItemComponent {
 
   @Input()
   isLoading = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeENUM = ThemeENUM;
 
   @Input()
   uiCursors$: Observable<CollectionCursorUI[]>;

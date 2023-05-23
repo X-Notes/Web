@@ -37,16 +37,16 @@ export class AddNotesInFolderComponent
   extends BaseSearchNotesTypes
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+  @ViewChildren('item', { read: ElementRef }) refElements?: QueryList<ElementRef>;
 
   @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  public user$?: Observable<ShortUser>;
 
   destroy = new Subject<void>();
 
   fontSize = EntitiesSizeENUM;
 
-  optionsState: SelectionOption[];
+  optionsState?: SelectionOption[];
 
   constructor(
     murriService: MurriService,
@@ -99,6 +99,9 @@ export class AddNotesInFolderComponent
         await this.murriService.muuriDestroyAsync();
 
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+        if(!pr) {
+          throw new Error('pr cannot be null');
+        }
         this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
@@ -111,6 +114,9 @@ export class AddNotesInFolderComponent
   async loadContent() {
     const folderId = this.store.selectSnapshot(FolderStore.full).id;
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    if(!pr) {
+      throw new Error('pr cannot be null');
+    }
     this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, '', pr).toPromise();
     this.viewNotes = [...this.notes];
 
@@ -120,7 +126,7 @@ export class AddNotesInFolderComponent
   }
 
   async ngAfterViewInit(): Promise<void> {
-    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
+    this.refElements?.changes.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
       if (q.length === this.viewNotes.length && !this.firstInitedMurri) {
         this.murriService.initMurriPreviewDialogNote();
         this.murriService.setOpacity1();

@@ -5,6 +5,7 @@ import { Photo } from '../../../../../models/editor-models/photos-collection';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
 import { map } from 'rxjs/operators';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-photo',
@@ -30,6 +31,11 @@ export class PhotoComponent implements OnInit {
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
+  
   @Input()
   uiCursors$: Observable<CollectionCursorUI[]>;
 

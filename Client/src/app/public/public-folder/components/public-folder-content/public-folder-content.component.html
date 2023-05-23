@@ -31,7 +31,7 @@
             >
               <app-note
                 [note]="item"
-                isShowWrightRead
+                [isShowWrightRead]="false"
                 [highlightCursorActive]="false"
                 [currentFolderId]="(folder$ | async).id"
                 (clickOnNote)="toPublicNote($event)"

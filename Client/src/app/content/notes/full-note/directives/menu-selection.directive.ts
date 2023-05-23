@@ -31,7 +31,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  onSelectionchange(clearIfEmpty: boolean = false) {
+  onSelectionchange(clearIfEmpty = false) {
     const selection = this.apiBrowserService.getSelection();
     const selectionEmpty = selection.toString() === '';
     if (!selectionEmpty) {

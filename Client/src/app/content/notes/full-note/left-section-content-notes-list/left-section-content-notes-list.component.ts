@@ -11,7 +11,7 @@ import { NotesService } from '../../notes.service';
 })
 export class LeftSectionContentNotesListComponent {
   @Input()
-  public notesLink: SmallNote[];
+  public notesLink?: SmallNote[];
 
   constructor(public pService: PersonalizationService, public notesService: NotesService) {}
 

@@ -15,10 +15,10 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileBillingComponent implements OnInit {
-  @Input() user: ShortUser;
+  @Input() user?: ShortUser | null;
 
   @Select(UserStore.getActiveBillingsPlans)
-  public billingPlans$: Observable<BillingPlan[]>;
+  public billingPlans$?: Observable<BillingPlan[]>;
 
   billingPlanId = BillingPlanId;
 
@@ -27,11 +27,11 @@ export class ProfileBillingComponent implements OnInit {
   constructor(private store: Store, private translate: TranslateService) {}
 
   get hasUserPremium(): boolean {
-    return this.user.billingPlanId === BillingPlanId.Premium;
+    return this.user?.billingPlanId === BillingPlanId.Premium;
   }
 
   get hasUserDefault(): boolean {
-    return this.user.billingPlanId === BillingPlanId.Standard;
+    return this.user?.billingPlanId === BillingPlanId.Standard;
   }
 
   ngOnInit(): void {}

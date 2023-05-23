@@ -3,9 +3,9 @@ import { BottomFolderContent } from './bottom-folder-content.model';
 import { PreviewNotesInFolder } from './preview-notes-in-folder.model';
 
 export class SmallFolder extends BaseFolder {
-  order: number;
+  order!: number;
 
-  previewNotes: PreviewNotesInFolder[];
+  previewNotes?: PreviewNotesInFolder[];
 
   isSelected?: boolean;
 

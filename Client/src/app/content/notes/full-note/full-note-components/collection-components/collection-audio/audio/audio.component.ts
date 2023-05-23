@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AudioService } from '../../../../../audio.service';
-import { StreamAudioState } from '../../../../../models/stream-audio-state.model';
 import { ClickableContentService } from '../../../../content-editor-services/clickable-content.service';
 import { AudioModel } from '../../../../../models/editor-models/audios-collection';
 import { CollectionCursorUI } from '../../../cursors/collection-cursor-ui';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-audio',
@@ -29,6 +29,11 @@ export class AudioComponent implements OnInit, OnDestroy {
   @Input() isSelectModeActive = false;
 
   @Input()
+  theme: ThemeENUM;
+
+  themeENUM = ThemeENUM;
+
+  @Input()
   uiCursors$: Observable<CollectionCursorUI[]>;
 
   @Input()
@@ -39,15 +44,17 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   destroy = new Subject();
 
-  state: StreamAudioState;
-
   constructor(
-    public audioService: AudioService,
+    private audioService: AudioService,
     private clickableService: ClickableContentService,
   ) {}
 
   get isClicked() {
     return this.clickableService.isClicked(this.audio.fileId);
+  }
+
+  get state$() {
+    return this.audioService.stateChange$.pipe(map((x) => (x.id === this.audio.fileId ? x : null)));
   }
 
   get cursor$(): Observable<CollectionCursorUI> {
@@ -62,18 +69,7 @@ export class AudioComponent implements OnInit, OnDestroy {
     );
   }
 
-  async ngOnInit(): Promise<void> {
-    this.audioService
-      .getState()
-      .pipe(takeUntil(this.destroy))
-      .subscribe((state) => {
-        if (this.audioService.currentFile?.fileId === this.audio.fileId) {
-          this.state = state;
-        } else {
-          this.state = null;
-        }
-      });
-
+  ngOnInit(): void {
     this.audioService.tryToUpdateMetaDataIfNeed(this.audio);
   }
 

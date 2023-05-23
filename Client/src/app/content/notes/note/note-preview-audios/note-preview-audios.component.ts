@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AudioModel } from '../../models/editor-models/audios-collection';
-import { BaseCollection } from '../../models/editor-models/base-collection';
+import { AudiosCollection } from '../../models/editor-models/audios-collection';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-note-preview-audios',
@@ -8,9 +8,13 @@ import { BaseCollection } from '../../models/editor-models/base-collection';
   styleUrls: ['./note-preview-audios.component.scss'],
 })
 export class NotePreviewAudiosComponent implements OnInit {
-  @Input()
-  content: BaseCollection<AudioModel>;
 
+  _content: AudiosCollection;
+
+  @Input() set content(value: ContentModelBase) {
+    this._content = value as AudiosCollection;
+  }
+  
   ngOnInit(): void {}
 
   padTo2Digits(val) {

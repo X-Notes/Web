@@ -88,7 +88,7 @@ export class ContentEditorFilesBase {
     try {
       const resp = await forkJoin(uploadsRequests).toPromise();
       return resp.map((x) => x.eventBody);
-    } catch (e) {}
+    } catch (e) { /* empty */ }
     return null;
   }
 }

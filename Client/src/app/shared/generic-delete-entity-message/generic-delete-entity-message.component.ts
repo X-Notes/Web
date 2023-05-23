@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./generic-delete-entity-message.component.scss'],
 })
 export class GenericDeleteEntityMessageComponent {
-  @Input() message: string;
+  @Input() message?: string;
 }

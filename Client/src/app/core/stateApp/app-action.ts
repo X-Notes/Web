@@ -30,5 +30,5 @@ export class NewNotification {
 export class ShowSnackNotification {
   static type = '[App] Show Snack Notification';
 
-  constructor(public notification: string) {}
+  constructor(public notification?: string) {}
 }

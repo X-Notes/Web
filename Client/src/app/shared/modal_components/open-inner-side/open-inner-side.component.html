@@ -39,7 +39,7 @@
             >
               <app-note
                 [note]="item"
-                [userId]="(user$ | async).id"
+                [userId]="(user$ | async)?.id"
                 [highlightCursorActive]="!isMaxNotesSelected"
                 (highlightNote)="highlightNote($event)"
                 (clickOnNote)="highlightNote($event)"

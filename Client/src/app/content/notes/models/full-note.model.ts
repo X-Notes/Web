@@ -3,31 +3,31 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { Label } from '../../labels/models/label.model';
 
 export class FullNote {
-  id: string;
+  id!: string;
 
-  title: string;
+  title?: string;
 
-  color: string;
+  color?: string;
 
-  labels: Label[];
+  labels?: Label[];
 
-  userId: string;
+  userId!: string;
 
-  isCanEdit: boolean;
+  isCanEdit!: boolean;
 
-  refTypeId: RefTypeENUM;
+  refTypeId?: RefTypeENUM;
 
-  noteTypeId: NoteTypeENUM;
+  noteTypeId?: NoteTypeENUM;
 
-  isLocked: boolean;
+  isLocked?: boolean;
 
-  isLockedNow: boolean;
+  isLockedNow?: boolean;
 
   unlockedTime?: Date;
 
-  createdAt: Date;
+  createdAt!: Date;
 
-  updatedAt: Date;
+  updatedAt!: Date;
 
-  deletedAt: Date;
+  deletedAt!: Date;
 }

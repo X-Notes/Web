@@ -165,7 +165,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     this.destroy.complete();
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled: boolean = true) {
+  murriInitialise(refElements: QueryList<ElementRef>, isDragEnabled = true) {
     refElements.changes
       .pipe(takeUntil(this.destroy))
       .subscribe(async (q: QueryList<ElementRef>) => {

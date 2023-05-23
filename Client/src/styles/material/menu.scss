@@ -1,17 +1,27 @@
+.mat-mdc-menu-content {
+  padding: 0 !important;
+}
+
+.mat-mdc-menu-panel {
+  button {
+    background: transparent;
+    span {
+      font-size: 0.875rem;
+    }
+  }
+}
+
 .dark-menu {
   background: $dark-button;
-  .mat-menu-item {
+  button {
     color: white;
-
-    &::after {
+    span {
       color: white;
     }
-
     .mat-icon {
       color: white;
     }
-
-    .mat-menu-submenu-icon{
+    .mat-mdc-menu-submenu-icon {
       color: white;
     }
   }
@@ -21,19 +31,5 @@
   background: $dark-button;
   overflow: hidden !important;
   max-height: initial !important;
-  .mat-menu-item {
-    color: white;
-
-    &::after {
-      color: white;
-    }
-
-    .mat-icon {
-      color: white;
-    }
-
-    .mat-menu-submenu-icon{
-      color: white;
-    }
-  }
+  color: white;
 }

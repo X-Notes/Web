@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { PhotosCollection } from '../../models/editor-models/photos-collection';
+import { ContentModelBase } from '../../models/editor-models/content-model-base';
 
 @Component({
   selector: 'app-note-preview-photos',
@@ -7,6 +8,9 @@ import { PhotosCollection } from '../../models/editor-models/photos-collection';
   styleUrls: ['./note-preview-photos.component.scss'],
 })
 export class NotePreviewPhotosComponent {
-  @Input()
-  content: PhotosCollection;
+  _content: PhotosCollection;
+
+  @Input() set content(value: ContentModelBase) {
+    this._content = value as PhotosCollection;
+  }
 }

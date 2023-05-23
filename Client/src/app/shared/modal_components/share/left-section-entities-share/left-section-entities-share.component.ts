@@ -12,18 +12,18 @@ export class LeftSectionEntitiesShareComponent implements OnInit {
 
   @Output() cancelEvent = new EventEmitter<LeftSectionShareEntity>();
 
-  @Input() unnamedTitle: string;
+  @Input() unnamedTitle?: string;
 
-  @Input() titleMessage: string;
+  @Input() titleMessage?: string;
 
   @Input() entities: LeftSectionShareEntity[] = [];
 
-  @Input() selectedEntityId: string;
+  @Input() selectedEntityId?: string;
 
   @Input() isCancelActive = false;
 
   @Input()
-  theme: ThemeENUM;
+  theme?: ThemeENUM;
 
   get themeClass(): string {
     if (this.theme === ThemeENUM.Light) {

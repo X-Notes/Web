@@ -27,6 +27,8 @@ export class TextEditMenuComponent {
   @Input()
   theme: ThemeENUM;
 
+  themeE = ThemeENUM; 
+
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;

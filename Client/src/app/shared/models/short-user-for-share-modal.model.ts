@@ -1,7 +1,6 @@
 export interface SearchUserForShareModal {
   id: string;
-  photoId?: string;
-  photoPath: boolean;
+  photoPath: string;
   name: string;
   email: string;
 }

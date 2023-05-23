@@ -1,12 +1,13 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AudioService } from 'src/app/content/notes/audio.service';
 import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
-import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from '../../enums/theme.enum';
 
 @Component({
   selector: 'app-audio-controls',
@@ -15,11 +16,12 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
   animations: [showDropdown],
 })
 export class AudioControlsComponent implements OnInit, OnDestroy {
-  destroy = new Subject();
-
-  state: StreamAudioState;
+  @Select(UserStore.getUserTheme)
+  public theme$?: Observable<ThemeENUM>;
 
   isOpen = false;
+
+  themeE = ThemeENUM;
 
   public positions = [
     new ConnectionPositionPair(
@@ -53,44 +55,32 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   // eslint-disable-next-line consistent-return
-  get volumeIcon(): string {
-    if (this.state?.currentVolume === 0) {
+  get volumeIcon(): string | null {
+    const volume = this.audioService.getState()?.currentVolume;
+    if(!volume) return null;
+    if (volume === 0) {
       return 'volume_off';
     }
-    if (this.state?.currentVolume < 0.5 && this.state?.currentVolume !== 0) {
+    if (volume < 0.5 && volume !== 0) {
       return 'volume_down';
     }
-    if (this.state?.currentVolume >= 0.5) {
+    if (volume >= 0.5) {
       return 'volume_up';
     }
+    return null;
   }
 
   get audioName() {
     return this.audioService.currentFile?.name;
   }
 
-  ngOnInit(): void {
-    this.audioService
-      .getState()
-      .pipe(takeUntil(this.destroy))
-      .subscribe((state) => {
-        this.state = state;
-      });
-  }
+  ngOnInit(): void {}
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
+  ngOnDestroy(): void {}
 
-  playStream(url, id) {
-    this.audioService.playStream(url, id).subscribe();
-  }
-
-  openFile(item) {
+  openFile(item: AudioModel) {
     this.audioService.currentFile = item;
-    this.audioService.stop();
-    this.playStream(item.audioPath, item.id);
+    this.audioService.runAudio(item.audioPath, item.fileId);
   }
 
   pause() {
@@ -107,10 +97,6 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
       this.openFile(audio);
     }
     this.audioService.play();
-  }
-
-  stop() {
-    this.audioService.stop();
   }
 
   loop() {
@@ -152,11 +138,11 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSliderChangeEnd(change) {
-    this.audioService.seekTo(change.value);
+  onSliderChangeEnd(value: number) {
+    this.audioService.seekTo(value);
   }
 
-  onSliderVolumeChangeEnd(change) {
-    this.audioService.seekToVolume(change.value);
+  onSliderVolumeChangeEnd(value: number) {
+    this.audioService.seekToVolume(value);
   }
 }

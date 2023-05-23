@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Injectable({
@@ -11,13 +11,8 @@ export class GlobalEventsService implements OnDestroy {
   constructor(private router: Router) {}
 
   init(): void {
-    this.subscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        const browserRefresh = !this.router.navigated;
-        if (browserRefresh) {
-        }
-      }
-    });
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    this.subscription = this.router.events.subscribe(() => {});
   }
 
   ngOnDestroy() {
