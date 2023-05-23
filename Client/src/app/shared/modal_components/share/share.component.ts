@@ -50,7 +50,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EntityPopupType } from '../../models/entity-popup-type.enum';
 import { InvitationFormResult } from './mail-invitations/models/invitation-form-result';
 import { LeftSectionShareEntity } from './left-section-entities-share/entities/left-section-share-entity';
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SearchComponent } from '../search/search.component';
 
 export interface StartType {

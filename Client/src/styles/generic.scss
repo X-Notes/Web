@@ -19,78 +19,10 @@
   }
 }
 
-.mat-menu-default {
-  .mat-menu-content:not(:empty) {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-}
-
 .cdk-global-scrollblock {
   overflow-y: hidden;
 }
 
-.mat-tab-header {
-  border: none !important;
-  padding: 0 2.5rem;
-}
-
-.dark,
-.light {
-  .tabs {
-    .mat-tab-label {
-      font-size: 1.25rem;
-      user-select: none;
-      opacity: 1;
-    }
-    .mat-ink-bar {
-      height: 3px;
-      border-radius: 5px;
-      transition-property: left, right;
-    }
-    .mat-tab-body-wrapper {
-      height: 100%;
-    }
-  }
-}
-
-.light {
-  .tabs {
-    .mat-tab-label {
-      color: #808080;
-    }
-    .mat-tab-label-active {
-      color: #4a85df;
-    }
-
-    .mat-ink-bar {
-      background-color: #4a85df !important;
-    }
-  }
-
-  ng-scrollbar {
-    --scrollbar-thumb-color: rgba(0, 0, 0, 0.3);
-  }
-}
-
-.dark {
-  .tabs {
-    .mat-tab-label {
-      color: white;
-    }
-    .mat-tab-label-active {
-      color: #ddffcd;
-    }
-
-    .mat-ink-bar {
-      background-color: #ddffcd !important;
-    }
-  }
-
-  ng-scrollbar {
-    --scrollbar-thumb-color: rgba(255, 255, 255, 0.3);
-  }
-}
 
 .push {
   position: absolute;
@@ -324,19 +256,6 @@
     &:last-child {
       margin-right: 0;
     }
-  }
-}
-
-.checkbox-notification {
-  .mat-checkbox-checked.mat-accent .mat-ripple-element,
-  .mat-checkbox:active.mat-accent .mat-ripple-element {
-    background-color: #4a85df;
-  }
-  .mat-checkbox-checked
-    .mat-checkbox-layout
-    .mat-checkbox-inner-container
-    .mat-checkbox-background {
-    background-color: #4a85df;
   }
 }
 

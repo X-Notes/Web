@@ -1,4 +1,8 @@
-.mat-mdc-menu-panel{
+.mat-mdc-menu-content {
+  padding: 0 !important;
+}
+
+.mat-mdc-menu-panel {
   button {
     background: transparent;
     span {
