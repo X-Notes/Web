@@ -182,7 +182,9 @@ export abstract class BaseTextElementComponent
     const savedSel = this.getSelection();
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
     this.updateNativeHTML(html);
-    this.facade.apiBrowser.restoreSelection(el, savedSel);
+    if(this.isFocused) {
+      this.facade.apiBrowser.restoreSelection(el, savedSel);
+    }
     this.detectChanges();
   }
 
@@ -219,9 +221,13 @@ export abstract class BaseTextElementComponent
 
   getIsActive() {
     return (
-      (this.isContentEmpty() && document.activeElement === this.contentHtml.nativeElement) ||
+      (this.isContentEmpty() && this.isFocused) ||
       (this.preFocus && this.isContentEmpty())
     );
+  }
+
+  get isFocused(): boolean {
+    return document.activeElement === this.contentHtml.nativeElement;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

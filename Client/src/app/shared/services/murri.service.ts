@@ -279,7 +279,7 @@ export class MurriService implements OnDestroy {
   }
 
   refreshAndLayout(): void {
-    this.grid.refreshItems().layout();
+    this.grid?.refreshItems().layout();
   }
 
   async muuriDestroyAsync(waitLayoutDestroy = 100) {

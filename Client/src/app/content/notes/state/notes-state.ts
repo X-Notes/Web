@@ -80,6 +80,8 @@ import { ApiNoteContentService } from '../full-note/services/api-note-content.se
 import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
 import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
 import { UpdateCursor } from '../full-note/models/cursors/cursor';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 export interface FullNoteState {
   note: FullNote;
@@ -139,6 +141,7 @@ export class NoteStore {
     private zone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
+    public pService: PersonalizationService
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -147,7 +150,7 @@ export class NoteStore {
 
   static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
     return notes.filter((x) =>
-      x.labels.some((label) => selectedLabelsFilter.some((z) => z === label.id)),
+      x.labels.some((label) => selectedLabelsFilter.some((q) => q === label.id)),
     ).length;
   }
 
@@ -159,6 +162,11 @@ export class NoteStore {
       return note.isLockedNow;
     }
     return false;
+  }
+
+  @Selector([AppStore.isNoteInner])
+  static isFullNoteAndCanView(noteState: NoteState, isInnerNote: boolean) {
+    return noteState.fullNoteState?.isCanView === isInnerNote
   }
 
   @Selector()

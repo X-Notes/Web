@@ -153,6 +153,7 @@ export class PhotosComponent
   syncCollectionItems(): void {
     this.syncPhotos();
     super.syncContentItems();
+    this.detectChanges();
   }
 
   updateInternal() {

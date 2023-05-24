@@ -292,6 +292,7 @@ export class ContentEditorComponent
 
     this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
       this.facade.cdr.detectChanges();
+      this.menuSelectionDirective.onSelectionchange();
     });
   }
 
@@ -400,8 +401,9 @@ export class ContentEditorComponent
     });
   }
 
-  deleteRowHandler(id: string) {
+  deleteRowHandler(id: string): void {
     const res = this.facade.contentsService.getContentAndIndexById<BaseText>(id);
+    if(!res) return;
     const action = new RestoreTextAction(res.content, res.index);
     this.facade.momentoStateService.saveToStack(action);
     const index = this.facade.contentsService.deleteContent(id);
@@ -554,10 +556,14 @@ export class ContentEditorComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dragStarted = (event: CdkDragStart) => {};
+  dragStarted = (event: CdkDragStart) => {
+    this.isDragging = true;
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dragEnded = (event: CdkDragEnd) => {};
+  dragEnded = (event: CdkDragEnd) => {
+    this.isDragging = false;
+  };
 
   placeHolderClick($event) {
     if (this.isReadOnlyMode) {

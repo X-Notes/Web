@@ -469,7 +469,7 @@ export class MenuButtonsService {
         this.store.dispatch(CopyNoteText);
         this.pService.innerNoteMenuActive = false;
       },
-      isVisible: this.store.select(NoteStore.canView),
+      isVisible: this.store.select(NoteStore.isFullNoteAndCanView).pipe(map(flag => flag && this.pService.isMobile())),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: true,
     };

@@ -33,6 +33,8 @@ export class EditorBaseComponent {
 
   isOverEmpty = false;
 
+  isDragging = false;
+
   protected elementsQuery?: QueryList<ParentInteraction<ContentModelBase>>;
 
   constructor(public facade: EditorFacadeService) {}

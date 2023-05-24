@@ -183,5 +183,7 @@ export class CollectionBaseComponent<
     this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
   }
 
-  syncCollectionItems(): void {}
+  syncCollectionItems(): void {
+    this.detectChanges();
+  }
 }

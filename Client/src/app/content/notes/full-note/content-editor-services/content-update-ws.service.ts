@@ -30,6 +30,7 @@ import { VideoModel, VideosCollection } from '../../models/editor-models/videos-
 import { AudioModel, AudiosCollection } from '../../models/editor-models/audios-collection';
 import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { SelectionService } from './selection.service';
 
 @Injectable()
 export class ContentUpdateWsService {
@@ -47,6 +48,7 @@ export class ContentUpdateWsService {
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
     private d: DestroyComponentService,
+    private selectionService: SelectionService,
   ) {
     this.updateStructure();
     this.updateText();
@@ -66,10 +68,15 @@ export class ContentUpdateWsService {
         let changes = false;
         try {
           if (content.contentIdsToDelete && content.contentIdsToDelete.length > 0) {
+            this.selectionService.resetSelectionAndItems();
             this.contentEditorContentsService.deleteByIds(content.contentIdsToDelete, true);
             changes = true;
           }
           if (content.positions && content.positions.length > 0) {
+            const posIds = content.positions.map(x => x.contentId);
+            if(posIds && posIds?.length > 0) {
+              this.selectionService.resetSelectionAndItems();
+            }
             this.contentEditorContentsService.updatePositions(content.positions, true);
             changes = true;
           }
@@ -139,7 +146,12 @@ export class ContentUpdateWsService {
     this.signalRService.updateTextContentEvent$.pipe(takeUntil(this.d.d$)).subscribe((content) => {
       if (content) {
         try {
+          const isSelect = this.selectionService.isSelectedAll(content.collection.id);
+          if(isSelect) {
+            this.selectionService.resetSelectionAndItems();
+          }
           this.handleTextUpdates(content);
+          this.changes$.next(true);
         } catch (e) {
           console.error(e);
         }
