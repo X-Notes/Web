@@ -55,7 +55,7 @@
               [photo]="item"
               [theme]="theme"
               [uiCursors$]="uiCursors$"
-              [isSelectModeActive]="(isSelectModeActive$ | async) === false"
+              [isSelectModeActive]="(isSelectModeActive$ | async)"
               [isReadOnlyMode]="isReadOnlyMode"
               (deleteEvent)="deleteContentItemEvent.emit($event)"
               (downloadPhotoEvent)="exportPhoto($event)"

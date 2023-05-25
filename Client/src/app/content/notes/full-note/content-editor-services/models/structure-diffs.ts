@@ -1,7 +1,6 @@
 import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
-import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
 
 export class PositionDiff {
   id: string;
@@ -36,24 +35,6 @@ export class StructureDiffs {
   videosCollectionItems: ContentModelBase[] = [];
 
   documentsCollectionItems: ContentModelBase[] = [];
-
-  updateIdForAll(updateIds: NoteUpdateIds[]): void {
-    for (const update of updateIds) {
-      this.updateId(update.prevId, update.id, this.newTextItems);
-      this.updateId(update.prevId, update.id, this.photosCollectionItems);
-      this.updateId(update.prevId, update.id, this.audiosCollectionItems);
-      this.updateId(update.prevId, update.id, this.videosCollectionItems);
-      this.updateId(update.prevId, update.id, this.documentsCollectionItems);
-    }
-  }
-
-  updateId(prevId: string, newId: string, items: ContentModelBase[]): void {
-    for (const item of items) {
-      if (item.id === prevId) {
-        item.id = newId;
-      }
-    }
-  }
 
   push(content: ContentModelBase): void {
     switch (content.typeId) {

@@ -9,6 +9,7 @@ import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { UpdateCursor } from '../models/cursors/cursor';
+import { UpdateNoteStructureWS } from 'src/app/core/models/signal-r/innerNote/update-note-structure-ws';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,12 @@ export class ApiNoteContentService {
     return this.httpClient.patch<OperationResult<NoteStructureResult>>(
       `${environment.writeAPI}/api/note/inner/contents/sync/structure`,
       obj,
-    );
+    ).pipe(map(x => {
+      if(x.success && x.data) {
+        x.data.updates = new UpdateNoteStructureWS(x.data.updates);
+      }
+      return x;
+    }));
   }
 
   getContents(noteId: string, folderId: string = null): Observable<ContentModelBase[]> {

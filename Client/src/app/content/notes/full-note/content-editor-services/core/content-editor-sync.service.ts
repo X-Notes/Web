@@ -32,6 +32,7 @@ import { ApiVideosService } from '../../services/api-videos.service';
 import { StructureDiffs } from '../models/structure-diffs';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { UpdateNoteStructureWS } from 'src/app/core/models/signal-r/innerNote/update-note-structure-ws';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -42,7 +43,7 @@ export class ItemsDiffs {
     public contentId: string,
     public itemsToAdd: BaseFile[],
     public itemsToRemove: BaseFile[],
-  ) {}
+  ) { }
 }
 
 @Injectable()
@@ -113,7 +114,7 @@ export class ContentEditorSyncService {
       });
   }
 
-  initProcessChangesAutoTimer(): void {}
+  initProcessChangesAutoTimer(): void { }
 
   change() {
     if (this.isCanBeProcessed) return;
@@ -144,24 +145,22 @@ export class ContentEditorSyncService {
 
   private async processStructureChanges(): Promise<void> {
     const [structureDiffs, res] = this.contentService.getStructureDiffsNew();
-    if (structureDiffs.isAnyChanges()) {
-      const resp = await this.apiContent
-        .syncContentsStructure(this.noteId, structureDiffs)
-        .toPromise();
-      if (resp.success) {
-        this.updateIds(structureDiffs, resp.data.updateIds);
-        this.contentService.patchStructuralChangesNew(structureDiffs, resp.data.removedIds);
-        if (res.isNeedLoadMemory) {
-          this.store.dispatch(LoadUsedDiskSpace);
-        }
-        this.onStructureSync$.next(resp.data);
+    if (!structureDiffs.isAnyChanges()) { return; }
+    const resp = await this.apiContent
+      .syncContentsStructure(this.noteId, structureDiffs)
+      .toPromise();
+    if (resp.success) {
+      this.updateIds(resp.data.updateIds);
+      this.contentService.patchStructuralChangesNew(resp.data.updates);
+      if (res.isNeedLoadMemory) {
+        this.store.dispatch(LoadUsedDiskSpace);
       }
+      this.onStructureSync$.next(resp.data);
     }
   }
 
-  private updateIds(structureDiffs: StructureDiffs, updateIds: NoteUpdateIds[]): void {
+  private updateIds(updateIds: NoteUpdateIds[]): void {
     if (!updateIds || updateIds.length === 0) return;
-    structureDiffs.updateIdForAll(updateIds);
     this.contentService.updateIds(updateIds);
   }
 

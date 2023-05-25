@@ -69,10 +69,10 @@ namespace BI.Services.Notes
 
             NoteStructureResult result = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
-            List<PhotosCollectionNoteDTO> photosItemsThatNeedAdd = null;
-            List<VideosCollectionNoteDTO> videosItemsThatNeedAdd = null;
-            List<AudiosCollectionNoteDTO> audiosItemsThatNeedAdd = null;
-            List<DocumentsCollectionNoteDTO> documentsItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> audiosItemsThatNeedAdd = null;
+            List<BaseNoteContentDTO> documentsItemsThatNeedAdd = null;
             List<UpdateContentPositionWS> positions = null;
 
             if (permissions.CanWrite)
@@ -89,13 +89,13 @@ namespace BI.Services.Notes
                     if (fileContents.Any())
                     {
                         var collectionIds = fileContents.Select(x => x.Id);
-                        result.RemovedIds = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
+                        result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
                     }
 
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     if (textIds.Any())
                     {
-                        result.RemovedIds.AddRange(textIds);
+                        result.Updates.ContentIdsToDelete.AddRange(textIds);
                         var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
                         await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
                     }
@@ -219,19 +219,16 @@ namespace BI.Services.Notes
 
                 await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
+                result.Updates.TextContentsToAdd = textItemsThatNeedAdd;
+                result.Updates.PhotoContentsToAdd = photosItemsThatNeedAdd;
+                result.Updates.VideoContentsToAdd = videosItemsThatNeedAdd;
+                result.Updates.DocumentContentsToAdd = documentsItemsThatNeedAdd;
+                result.Updates.AudioContentsToAdd = audiosItemsThatNeedAdd;
+                result.Updates.Positions = positions;
+
                 if (permissions.IsMultiplyUpdate)
                 {
-                    var updates = new UpdateNoteStructureWS()
-                    {
-                        ContentIdsToDelete = result.RemovedIds,
-                        TextContentsToAdd = textItemsThatNeedAdd,
-                        PhotoContentsToAdd = photosItemsThatNeedAdd,
-                        VideoContentsToAdd = videosItemsThatNeedAdd,
-                        DocumentContentsToAdd = documentsItemsThatNeedAdd,
-                        AudioContentsToAdd = audiosItemsThatNeedAdd,
-                        Positions = positions
-                    };
-                    await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, updates);
+                    await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, result.Updates);
                 }
 
                 return new OperationResult<NoteStructureResult>(true, result);

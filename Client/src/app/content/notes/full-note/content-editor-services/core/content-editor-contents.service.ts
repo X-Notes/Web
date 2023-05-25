@@ -19,6 +19,7 @@ import { NoteUpdateIds } from '../../models/api/notes/note-update-ids';
 import { StructureDiffs, PositionDiff, ItemForRemove } from '../models/structure-diffs';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { SyncResult } from './content-editor-sync.service';
+import { UpdateNoteStructureWS } from 'src/app/core/models/signal-r/innerNote/update-note-structure-ws';
 
 export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
@@ -189,63 +190,57 @@ export class ContentEditorContentsService {
     return this.getStructureDiffs(uiContents, prev);
   }
 
-  patchStructuralChangesNew(diffs: StructureDiffs, removedIds: string[]): void {
-    const contentToUpdate = this.patchStructuralChanges(this.getSyncContents, diffs, removedIds);
+  patchStructuralChangesNew(updates: UpdateNoteStructureWS): void {
+    const contentToUpdate = this.patchStructuralChanges(this.getSyncContents, updates);
     this.updateSyncContent(contentToUpdate);
   }
 
   private patchStructuralChanges(
-    content: ContentModelBase[],
-    diffs: StructureDiffs,
-    removedIds: string[],
-    isReloadOrder = false,
+    contents: ContentModelBase[],
+    updates: UpdateNoteStructureWS,
   ): ContentModelBase[] {
-    if (removedIds && removedIds.length > 0) {
-      // HElo
-      content = content.filter((x) => !removedIds.some((id) => id === x.id));
+    if (updates.contentIdsToDelete?.length > 0) {
+      contents = contents.filter((x) => !updates.contentIdsToDelete.some((id) => id === x.id));
     }
-    if (diffs.newTextItems.length > 0) {
-      for (const item of diffs.newTextItems) {
-        content.push(item.copy());
+    if (updates.textContentsToAdd?.length > 0) {
+      for (const item of updates.textContentsToAdd) {
+        contents.push(item.copy());
       }
     }
-    if (diffs.photosCollectionItems.length > 0) {
-      for (const item of diffs.photosCollectionItems) {
+    if (updates.photoContentsToAdd?.length > 0) {
+      for (const item of updates.photoContentsToAdd) {
         const newItem = item.copy() as PhotosCollection;
         newItem.items = [];
-        content.push(newItem);
+        contents.push(newItem);
       }
     }
-    if (diffs.audiosCollectionItems.length > 0) {
-      for (const item of diffs.audiosCollectionItems) {
+    if (updates.audioContentsToAdd?.length > 0) {
+      for (const item of updates.audioContentsToAdd) {
         const newItem = item.copy() as AudiosCollection;
         newItem.items = [];
-        content.push(newItem);
+        contents.push(newItem);
       }
     }
-    if (diffs.videosCollectionItems.length > 0) {
-      for (const item of diffs.videosCollectionItems) {
+    if (updates.videoContentsToAdd?.length > 0) {
+      for (const item of updates.videoContentsToAdd) {
         const newItem = item.copy() as VideosCollection;
         newItem.items = [];
-        content.push(newItem);
+        contents.push(newItem);
       }
     }
-    if (diffs.documentsCollectionItems.length > 0) {
-      for (const item of diffs.documentsCollectionItems) {
+    if (updates.documentContentsToAdd?.length > 0) {
+      for (const item of updates.documentContentsToAdd) {
         const newItem = item.copy() as DocumentsCollection;
         newItem.items = [];
-        content.push(newItem);
+        contents.push(newItem);
       }
     }
-    if (diffs.positions.length > 0) {
-      for (const pos of diffs.positions) {
-        content.find((x) => x.id === pos.id).order = pos.order;
-      }
-      if (isReloadOrder) {
-        this.contents = this.contents.sort((a, b) => a.order - b.order);
+    if (updates.positions?.length > 0) {
+      for (const pos of updates.positions) {
+        contents.find((x) => x.id === pos.contentId).order = pos.order;
       }
     }
-    return content;
+    return contents;
   }
 
   // eslint-disable-next-line class-methods-use-this
