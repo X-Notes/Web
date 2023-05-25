@@ -120,7 +120,7 @@ export abstract class BaseTextElementComponent
   onInput(): void {
     this.handleUndoTextAction(this.content);
     this.initContentFromHTML(this.contentHtml.nativeElement.innerHTML);
-    this.syncHtmlWithLayout();
+    this.textChanged.next();
     this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
   }
 
@@ -130,6 +130,8 @@ export abstract class BaseTextElementComponent
   }
 
   syncHtmlWithLayout() {
+    this.handleUndoTextAction(this.content);
+    this.initContentFromHTML(this.contentHtml.nativeElement.innerHTML);
     this.textChanged.next();
   }
 
@@ -143,7 +145,7 @@ export abstract class BaseTextElementComponent
       this.facade.sanitizer.bypassSecurityTrustHtml(html);
       const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html) ?? '';
       this.viewHtml = convertedHTML as string;
-      this.syncHtmlWithLayout();
+      this.textChanged.next();
     }
   }
 

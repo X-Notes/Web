@@ -95,6 +95,7 @@ namespace BI.Services.Notes
                     var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
                     if (textIds.Any())
                     {
+                        result.Updates.ContentIdsToDelete ??= new List<Guid>();
                         result.Updates.ContentIdsToDelete.AddRange(textIds);
                         var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
                         await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
