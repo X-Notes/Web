@@ -61,6 +61,8 @@ import { UpdateCursor } from '../models/cursors/cursor';
 import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { AudioService } from '../../audio.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { BaseUndoAction } from '../content-editor-services/models/undo/base-undo-action';
+import { UndoActionTypeEnum } from '../content-editor-services/models/undo/undo-action-type.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -392,6 +394,8 @@ export class ContentEditorComponent
       value.nextItemType,
       value.breakModel.isFocusToNext,
     );
+    const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, newTextContent.content.id);
+    this.facade.momentoStateService.saveToStack(action);
     this.facade.cdr.detectChanges();
     setTimeout(() => {
       const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
@@ -427,8 +431,12 @@ export class ContentEditorComponent
 
     const resContent = [...prevElement.getTextBlocks(), ...el.getTextBlocks()];
 
+    const action = new RestoreTextAction(data.content, data.index);
+    this.facade.momentoStateService.saveToStack(action);
+    
     prevElement.updateContentsAndSync(resContent);
     el.syncHtmlWithLayout();
+    
     this.facade.contentsService.deleteById(id, false);
 
     setTimeout(() => {
