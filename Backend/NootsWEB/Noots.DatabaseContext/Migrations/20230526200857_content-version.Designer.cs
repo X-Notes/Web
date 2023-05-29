@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +19,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230526200857_content-version")]
+    partial class contentversion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,9 +431,7 @@ namespace Noots.DatabaseContext.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Version")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
