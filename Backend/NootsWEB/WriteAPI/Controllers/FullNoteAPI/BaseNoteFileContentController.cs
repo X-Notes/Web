@@ -1,6 +1,7 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Domain.Commands.NoteInner.FileContent;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using Domain.Queries.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
 
     [HttpPatch("info")]
     [ValidationRequireUserIdFilter]
-    public virtual async Task<OperationResult<Unit>> UpdateCollectionInfo(I command)
+    public virtual async Task<OperationResult<UpdateBaseContentResult>> UpdateCollectionInfo(I command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
@@ -34,7 +35,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
 
     [HttpPost("remove")]
     [ValidationRequireUserIdFilter]
-    public virtual async Task<OperationResult<Unit>> RemoveItemsFromCollection(Y command)
+    public virtual async Task<OperationResult<UpdateCollectionContentResult>> RemoveItemsFromCollection(Y command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
@@ -42,7 +43,7 @@ public class BaseNoteFileContentController<Y, U, I, O, FileT> : ControllerBase
 
     [HttpPost("add")]
     [ValidationRequireUserIdFilter]
-    public virtual async Task<OperationResult<Unit>> AddItemsToCollection(U command)
+    public virtual async Task<OperationResult<UpdateCollectionContentResult>> AddItemsToCollection(U command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

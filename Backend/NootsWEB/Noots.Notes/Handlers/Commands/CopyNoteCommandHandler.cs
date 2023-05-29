@@ -176,7 +176,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                             {
                                 AppFileId = x.AppFileId
                             }).ToList();
-                            contents.Add(new CollectionNote(collection, dbFiles, noteId));
+                            contents.Add(new CollectionNote(collection, dbFiles, noteId, 1));
                         }
                         else
                         {
@@ -186,7 +186,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                             {
                                 var tasks = copyCommands.Select(x => mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new CollectionNote(collection, copies, noteId));
+                                contents.Add(new CollectionNote(collection, copies, noteId, 1));
                             }
                         }
                         continue;

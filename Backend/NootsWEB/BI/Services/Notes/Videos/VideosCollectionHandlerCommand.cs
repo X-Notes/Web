@@ -10,6 +10,7 @@ using Common.DTO;
 using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -21,25 +22,21 @@ using Noots.SignalrUpdater.Impl;
 namespace BI.Services.Notes.Videos
 {
     public class VideosCollectionHandlerCommand :
-        IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<Unit>>,
+        BaseCollectionHandler,
+        IRequestHandler<RemoveVideosFromCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
-        IRequestHandler<AddVideosToCollectionCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateVideosCollectionInfoCommand, OperationResult<Unit>>
+        IRequestHandler<AddVideosToCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
+        IRequestHandler<UpdateVideosCollectionInfoCommand, OperationResult<UpdateBaseContentResult>>
     {
 
         private readonly IMediator _mediator;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly CollectionNoteRepository collectionNoteRepository;
-
-        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
-
-        private readonly CollectionLinkedService collectionLinkedService;
 
         private readonly ILogger<VideosCollectionHandlerCommand> logger;
 
@@ -51,56 +48,44 @@ namespace BI.Services.Notes.Videos
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
-            ILogger<VideosCollectionHandlerCommand> logger)
+            ILogger<VideosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.collectionNoteRepository = collectionNoteRepository;
-            this.collectionNoteAppFileRepository = collectionNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
-            this.collectionLinkedService = collectionLinkedService;
             this.logger = logger;
         }
 
-        public async Task<OperationResult<Unit>> Handle(RemoveVideosFromCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveVideosFromCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetCollectionItems(request.FileIds, request.ContentId);
-                if (collection != null && collectionItems != null && collectionItems.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
-                    var fileIds = collectionItems.Select(x => x.AppFileId);
-
-                    var data = collectionItems.Select(x => new UnlinkMetaData(x.AppFileId));
-                    var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
-
-                    collection.UpdatedAt = DateTimeProvider.Time;
-                    await collectionNoteRepository.UpdateAsync(collection);
-
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                    if (permissions.IsMultiplyUpdate)
-                    {
-                        var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
-                        {
-                            CollectionItemIds = fileIds
-                        };
-                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
-                    }
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateCollectionContentResult>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            var resp = await RemoveFilesFromCollectionAsync(request.ContentId, request.FileIds);
+            if(resp.collection == null)
+            {
+                return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
+            }
+
+            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+            if (permissions.IsMultiplyUpdate)
+            {
+                var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+                {
+                    CollectionItemIds = resp.deleteFileIds
+                };
+                await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+            }
+
+            var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
+            return new OperationResult<UpdateCollectionContentResult>(success: true, res);
         }
 
         public async Task<OperationResult<VideosCollectionNoteDTO>> Handle(TransformToVideosCollectionCommand request, CancellationToken cancellationToken)
@@ -133,11 +118,11 @@ namespace BI.Services.Notes.Videos
 
                     await transaction.CommitAsync();
 
-                    var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null);
+                    var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt)
+                    var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
@@ -161,7 +146,7 @@ namespace BI.Services.Notes.Videos
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(UpdateVideosCollectionInfoCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateBaseContentResult>> Handle(UpdateVideosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -174,13 +159,13 @@ namespace BI.Services.Notes.Videos
                 {
 
                     videosCollection.Name = request.Name;
-                    videosCollection.UpdatedAt = DateTimeProvider.Time;
+                    videosCollection.SetDateAndVersion();
 
                     await collectionNoteRepository.UpdateAsync(videosCollection);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Update, videosCollection.UpdatedAt)
+                    var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Update, videosCollection.UpdatedAt, videosCollection.Version)
                     {
                         Name = request.Name,
                     };
@@ -190,56 +175,46 @@ namespace BI.Services.Notes.Videos
                         await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
-                    return new OperationResult<Unit>(success: true, Unit.Value);
+                    var res = new UpdateBaseContentResult(videosCollection.Id, videosCollection.Version, videosCollection.UpdatedAt);
+                    return new OperationResult<UpdateBaseContentResult>(success: true, res);
                 }
 
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateBaseContentResult>().SetNotFound();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            return new OperationResult<UpdateBaseContentResult>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(AddVideosToCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(AddVideosToCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                if (collection != null)
-                {
-                    var existCollectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
-                    var existCollectionItemsIds = existCollectionItems.Select(x => x.AppFileId);
-
-                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new CollectionNoteAppFile { AppFileId = id, CollectionNoteId = collection.Id });
-                    await collectionNoteAppFileRepository.AddRangeAsync(collectionItems);
-
-                    var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryLink(idsToLink);
-
-                    collection.UpdatedAt = DateTimeProvider.Time;
-                    await collectionNoteRepository.UpdateAsync(collection);
-
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                    var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
-                    {
-                        CollectionItemIds = idsToLink
-                    };
-
-                    if (permissions.IsMultiplyUpdate)
-                    {
-                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
-                    }
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateCollectionContentResult>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            var resp = await AddFilesToCollectionAsync(request.ContentId, request.FileIds);
+            if(resp.collection == null)
+            {
+                return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
+            }
+
+            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+            var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+            {
+                CollectionItemIds = resp.deleteFileIds
+            };
+
+            if (permissions.IsMultiplyUpdate)
+            {
+                await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+            }
+
+            var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
+            return new OperationResult<UpdateCollectionContentResult>(success: true, res);
         }
 
     }

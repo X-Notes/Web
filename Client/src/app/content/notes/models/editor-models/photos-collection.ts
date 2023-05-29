@@ -11,7 +11,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
   countInRow: number;
 
   constructor(collection: Partial<PhotosCollection>, items: Photo[]) {
-    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt, collection.version);
     this.countInRow = collection.countInRow;
     this.setHeightWidth(collection.height, collection.width);
     this.name = collection.name;
@@ -23,7 +23,6 @@ export class PhotosCollection extends BaseCollection<Photo> {
     const obj: Partial<PhotosCollection> = {
       typeId: ContentTypeENUM.Photos,
       id: uuid.v4(),
-      updatedAt: new Date(),
       countInRow: 2,
     };
     return new PhotosCollection(obj, obj.items);
@@ -31,7 +30,6 @@ export class PhotosCollection extends BaseCollection<Photo> {
 
   updateInfo(entity: PhotosCollection) {
     this.name = entity.name;
-    this.updatedAt = entity.updatedAt;
 
     this.setHeightWidth(entity.height, entity.width);
     this.countInRow = entity.countInRow;

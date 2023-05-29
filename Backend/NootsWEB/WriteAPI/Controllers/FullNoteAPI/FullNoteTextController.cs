@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Texts;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +33,7 @@ public class FullNoteTextController : ControllerBase
 
     [HttpPatch("sync")] // TODO TO WS
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<Unit>> SyncTextContents(UpdateTextContentsCommand command)
+    public async Task<OperationResult<List<UpdateBaseContentResult>>> SyncTextContents(UpdateTextContentsCommand command)
     {
         command.UserId = this.GetUserId();
         return await this._mediator.Send(command);

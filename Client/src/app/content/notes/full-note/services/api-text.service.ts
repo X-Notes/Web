@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { BaseText } from '../../models/editor-models/base-text';
+import { TextUpdateResult } from '../models/api/notes/text-update-result';
 
 @Injectable()
 export class ApiTextService {
@@ -24,7 +25,7 @@ export class ApiTextService {
       noteId,
       texts,
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<TextUpdateResult[]>>(
       `${environment.writeAPI}/api/note/inner/text/sync`,
       obj,
     );

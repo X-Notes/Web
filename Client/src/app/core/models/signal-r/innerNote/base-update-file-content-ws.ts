@@ -14,4 +14,6 @@ export class BaseUpdateFileContent<T extends BaseCollection<BaseFile>> {
   name?: string;
 
   entityTime?: Date;
+
+  version?: number;
 }

@@ -5,6 +5,7 @@ import { BaseAddToCollectionItemsCommand } from '../models/api/base-add-to-colle
 import { BaseGetNoteFilesByIdsQuery } from '../models/api/base-get-note-files-byIds-query';
 import { BaseRemoveFromCollectionItemsCommand } from '../models/api/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../models/api/base-update-collection-info-command';
+import { CollectionUpdateResult } from '../models/api/notes/collection-update-result';
 
 export class BaseNoteFileContentApiService<
   Y extends BaseRemoveFromCollectionItemsCommand,
@@ -15,15 +16,15 @@ export class BaseNoteFileContentApiService<
   constructor(protected httpClient: HttpClient, protected baseApi: string) {}
 
   removeItemsFromCollection(command: Y) {
-    return this.httpClient.post<OperationResult<any>>(`${this.baseApi}/remove`, command);
+    return this.httpClient.post<OperationResult<CollectionUpdateResult>>(`${this.baseApi}/remove`, command);
   }
 
   addItemsToCollection(command: U) {
-    return this.httpClient.post<OperationResult<any>>(`${this.baseApi}/add`, command);
+    return this.httpClient.post<OperationResult<CollectionUpdateResult>>(`${this.baseApi}/add`, command);
   }
 
   updateInfo(command: I) {
-    return this.httpClient.patch<OperationResult<any>>(`${this.baseApi}/info`, command);
+    return this.httpClient.patch<OperationResult<CollectionUpdateResult>>(`${this.baseApi}/info`, command);
   }
 
   getFilesByIds(query: BaseGetNoteFilesByIdsQuery) {

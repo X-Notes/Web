@@ -36,7 +36,7 @@ public class FullNoteContentController : ControllerBase
         return await this._mediator.Send(command);
     }
 
-    [HttpPatch("sync/structure")] // TODO TO WS
+    [HttpPatch("sync/structure")]
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
     {

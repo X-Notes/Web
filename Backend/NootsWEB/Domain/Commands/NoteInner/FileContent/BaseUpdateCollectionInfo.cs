@@ -1,12 +1,13 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using System;
 
 namespace Domain.Commands.NoteInner.FileContent
 {
-    public class BaseUpdateCollectionInfo : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class BaseUpdateCollectionInfo : BaseCommandEntity, IRequest<OperationResult<UpdateBaseContentResult>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

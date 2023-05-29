@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -7,6 +8,7 @@ using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Texts;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
@@ -18,7 +20,7 @@ namespace BI.Services.Notes
 {
     public class FullNoteTextHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>
+        IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>
     {
 
         private readonly IMediator _mediator;
@@ -85,46 +87,48 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<UpdateBaseContentResult>>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
-            {
-                foreach (var text in request.Texts)
-                {
-                    await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate);
-                }
-
-                await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                return new OperationResult<Unit>(success: true, Unit.Value);
+            if (!permissions.CanWrite) { 
+                new OperationResult<Unit>().SetNoPermissions(); 
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            List<UpdateBaseContentResult> results = new();
+
+            foreach (var text in request.Texts)
+            {
+                var res = await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate);
+                results.Add(res);
+            }
+
+            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+            return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-
-        private async Task UpdateOne(TextNoteDTO text, Guid noteId, Guid userId, bool isMultiplyUpdate)
+        private async Task<UpdateBaseContentResult> UpdateOne(TextNoteDTO text, Guid noteId, Guid userId, bool isMultiplyUpdate)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
-            if (textForUpdate != null)
+            if (textForUpdate == null) return null;
+            
+            textForUpdate.SetDateAndVersion();
+            textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
+            textForUpdate.HTypeId = text.HeadingTypeId;
+            textForUpdate.Checked = text.Checked;
+            textForUpdate.Contents = text.Contents;
+
+            await textNotesRepository.UpdateAsync(textForUpdate);
+
+            if (isMultiplyUpdate)
             {
-                textForUpdate.UpdatedAt = DateTimeProvider.Time;
-                textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
-                textForUpdate.HTypeId = text.HeadingTypeId;
-                textForUpdate.Checked = text.Checked;
-                textForUpdate.Contents = text.Contents;
-
-                await textNotesRepository.UpdateAsync(textForUpdate);
-
-                if (isMultiplyUpdate)
-                {
-                    var updates = new UpdateTextWS(text);
-                    await appSignalRService.UpdateTextContent(noteId, userId, updates);
-                }
+                var updates = new UpdateTextWS(text);
+                await appSignalRService.UpdateTextContent(noteId, userId, updates);
             }
+
+            return new UpdateBaseContentResult(textForUpdate.Id, textForUpdate.Version, textForUpdate.UpdatedAt);        
         }
     }
 }

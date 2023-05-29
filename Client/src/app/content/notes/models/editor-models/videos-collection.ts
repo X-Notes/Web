@@ -5,7 +5,7 @@ import { ContentTypeENUM } from './content-types.enum';
 
 export class VideosCollection extends BaseCollection<VideoModel> {
   constructor(collection: Partial<VideosCollection>, items: VideoModel[]) {
-    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt, collection.version);
     this.name = collection.name;
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.items = items ? items.map((q) => new VideoModel(q)) : [];
@@ -14,8 +14,7 @@ export class VideosCollection extends BaseCollection<VideoModel> {
   static getNew(): VideosCollection {
     const obj: Partial<VideosCollection> = {
       typeId: ContentTypeENUM.Videos,
-      id: uuid.v4(),
-      updatedAt: new Date(),
+      id: uuid.v4()
     };
     return new VideosCollection(obj, obj.items);
   }

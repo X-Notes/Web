@@ -60,7 +60,6 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
 
   updateInfo(entity: Partial<BaseCollection<T>>) {
     this.name = entity.name;
-    this.updatedAt = entity.updatedAt;
   }
 
   addItemsToCollection(files: T[]): void {
@@ -70,7 +69,7 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
 
   removeItemsFromCollection(fileIds: string[]): void {
     if (!fileIds || fileIds.length === 0) return;
-    this.items = this.items.filter((x) => !fileIds.some((z) => z === x.fileId));
+    this.items = this.items.filter((x) => !fileIds.some((q) => q === x.fileId));
   }
 
   abstract isEqualCollectionInfo(content: BaseCollection<T>): boolean;

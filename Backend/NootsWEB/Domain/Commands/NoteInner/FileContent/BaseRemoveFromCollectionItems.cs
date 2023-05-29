@@ -1,13 +1,14 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
 
 namespace Domain.Commands.NoteInner.FileContent
 {
-    public class BaseRemoveFromCollectionItems : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class BaseRemoveFromCollectionItems : BaseCommandEntity, IRequest<OperationResult<UpdateCollectionContentResult>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

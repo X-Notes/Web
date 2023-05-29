@@ -5,7 +5,7 @@ import { ContentTypeENUM } from './content-types.enum';
 
 export class DocumentsCollection extends BaseCollection<DocumentModel> {
   constructor(collection: Partial<DocumentsCollection>, items: DocumentModel[]) {
-    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt, collection.version);
     this.name = collection.name;
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     this.items = items && items.length > 0 ? items.map((q) => new DocumentModel(q)) : [];
@@ -14,8 +14,7 @@ export class DocumentsCollection extends BaseCollection<DocumentModel> {
   static getNew(): DocumentsCollection {
     const obj: Partial<DocumentsCollection> = {
       typeId: ContentTypeENUM.Documents,
-      id: uuid.v4(),
-      updatedAt: new Date(),
+      id: uuid.v4()
     };
     return new DocumentsCollection(obj, obj.items);
   }

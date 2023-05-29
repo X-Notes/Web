@@ -11,6 +11,7 @@ using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.Files;
@@ -22,17 +23,14 @@ using Noots.SignalrUpdater.Impl;
 namespace BI.Services.Notes.Documents
 {
     public class DocumentsCollectionHandlerCommand :
-        IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<Unit>>,
+        BaseCollectionHandler,
+        IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
         IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>,
-        IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateDocumentsCollectionInfoCommand, OperationResult<Unit>>
+        IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
+        IRequestHandler<UpdateDocumentsCollectionInfoCommand, OperationResult<UpdateBaseContentResult>>
     {
 
         private readonly IMediator _mediator;
-
-        private readonly CollectionNoteRepository collectionNoteRepository;
-
-        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
@@ -40,72 +38,58 @@ namespace BI.Services.Notes.Documents
 
         private readonly AppSignalRService appSignalRService;
 
-        private readonly CollectionLinkedService collectionLinkedService;
-
         private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
 
         public DocumentsCollectionHandlerCommand(
-                                        IMediator _mediator,
-                                        BaseNoteContentRepository baseNoteContentRepository,
-                                        CollectionNoteRepository documentNoteRepository,
-                                        CollectionAppFileRepository documentNoteAppFileRepository,
-                                        HistoryCacheService historyCacheService,
-                                        AppSignalRService appSignalRService,
-                                        CollectionLinkedService collectionLinkedService,
-                                        ILogger<DocumentsCollectionHandlerCommand> logger)
+                IMediator _mediator,
+                BaseNoteContentRepository baseNoteContentRepository,
+                CollectionNoteRepository documentNoteRepository,
+                CollectionAppFileRepository documentNoteAppFileRepository,
+                HistoryCacheService historyCacheService,
+                AppSignalRService appSignalRService,
+                CollectionLinkedService collectionLinkedService,
+                ILogger<DocumentsCollectionHandlerCommand> logger) : base(documentNoteRepository, documentNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            collectionNoteRepository = documentNoteRepository;
-            collectionNoteAppFileRepository = documentNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
-            this.collectionLinkedService = collectionLinkedService;
             this.logger = logger;
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(RemoveDocumentsFromCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveDocumentsFromCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                var collectionItems = await collectionNoteAppFileRepository.GetCollectionItems(request.FileIds, request.ContentId);
-                if (collection != null && collectionItems != null && collectionItems.Any())
-                {
-                    await collectionNoteAppFileRepository.RemoveRangeAsync(collectionItems);
-                    var fileIds = collectionItems.Select(x => x.AppFileId);
-
-                    var data = collectionItems.Select(x => new UnlinkMetaData(x.AppFileId));
-                    var idsToUnlink = await collectionLinkedService.TryToUnlink(data);
-
-                    collection.UpdatedAt = DateTimeProvider.Time;
-                    await collectionNoteRepository.UpdateAsync(collection); // TODO Maybe need transaction
-
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                    if (permissions.IsMultiplyUpdate)
-                    {
-                        var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, collection.UpdatedAt)
-                        {
-                            CollectionItemIds = fileIds
-                        };
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
-                    }
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateCollectionContentResult>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            var resp = await RemoveFilesFromCollectionAsync(request.ContentId, request.FileIds);
+            if (resp.collection == null)
+            {
+                return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
+            }
+
+            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+            if (permissions.IsMultiplyUpdate)
+            {
+                var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+                {
+                    CollectionItemIds = resp.deleteFileIds
+                };
+                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+            }
+
+            var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
+            return new OperationResult<UpdateCollectionContentResult>(success: true, res);
         }
 
-        public async Task<OperationResult<Unit>> Handle(UpdateDocumentsCollectionInfoCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateBaseContentResult>> Handle(UpdateDocumentsCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -117,13 +101,13 @@ namespace BI.Services.Notes.Documents
                 if (collection != null)
                 {
                     collection.Name = request.Name;
-                    collection.UpdatedAt = DateTimeProvider.Time;
+                    collection.SetDateAndVersion();
 
                     await collectionNoteRepository.UpdateAsync(collection);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt)
+                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
                     {
                         Name = request.Name,
                     };
@@ -133,12 +117,13 @@ namespace BI.Services.Notes.Documents
                         await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
-                    return new OperationResult<Unit>(success: true, Unit.Value);
+                    var res = new UpdateBaseContentResult(collection.Id, collection.Version, collection.UpdatedAt);
+                    return new OperationResult<UpdateBaseContentResult>(success: true, res);
                 }
 
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateBaseContentResult>().SetNotFound();
             }
-            return new OperationResult<Unit>().SetNoPermissions();
+            return new OperationResult<UpdateBaseContentResult>().SetNoPermissions();
         }
 
         public async Task<OperationResult<DocumentsCollectionNoteDTO>> Handle(TransformToDocumentsCollectionCommand request, CancellationToken cancellationToken)
@@ -171,11 +156,11 @@ namespace BI.Services.Notes.Documents
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null);
+                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null, 1);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt)
+                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt, documentNote.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
@@ -198,47 +183,36 @@ namespace BI.Services.Notes.Documents
             return new OperationResult<DocumentsCollectionNoteDTO>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<Unit>> Handle(AddDocumentsToCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(AddDocumentsToCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                if (collection != null)
-                {
-                    var existCollectionItems = await collectionNoteAppFileRepository.GetWhereAsync(x => request.FileIds.Contains(x.AppFileId));
-                    var existCollectionItemsIds = existCollectionItems.Select(x => x.AppFileId);
-
-                    var collectionItems = request.FileIds.Except(existCollectionItemsIds).Select(id => new CollectionNoteAppFile { AppFileId = id, CollectionNoteId = collection.Id });
-                    await collectionNoteAppFileRepository.AddRangeAsync(collectionItems);
-
-                    var idsToLink = collectionItems.Select(x => x.AppFileId);
-                    await collectionLinkedService.TryLink(idsToLink);
-
-                    collection.UpdatedAt = DateTimeProvider.Time;
-                    await collectionNoteRepository.UpdateAsync(collection);
-
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
-
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, collection.UpdatedAt)
-                    {
-                        CollectionItemIds = idsToLink
-                    };
-
-                    if (permissions.IsMultiplyUpdate)
-                    {
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
-                    }
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-
-                return new OperationResult<Unit>().SetNotFound();
+                return new OperationResult<UpdateCollectionContentResult>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            var resp = await AddFilesToCollectionAsync(request.ContentId, request.FileIds);
+            if (resp.collection == null)
+            {
+                return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
+            }
+
+            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+
+            var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+            {
+                CollectionItemIds = resp.deleteFileIds
+            };
+
+            if (permissions.IsMultiplyUpdate)
+            {
+                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+            }
+
+            var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
+            return new OperationResult<UpdateCollectionContentResult>(success: true, res);
         }
     }
 }

@@ -20,7 +20,7 @@ export class BaseText extends ContentModelBase {
   listId?: number;
 
   constructor(text: Partial<BaseText>) {
-    super(text.typeId, text.id, text.order, text.updatedAt);
+    super(text.typeId, text.id, text.order, text.updatedAt, text.version);
     this.contents = text.contents?.map((x) => new TextBlock(x));
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
@@ -34,7 +34,6 @@ export class BaseText extends ContentModelBase {
 
   updateContent(contents: TextBlock[]) {
     this.contents = contents;
-    this.updateDate();
   }
 
   resetToDefault(): void {
@@ -47,25 +46,21 @@ export class BaseText extends ContentModelBase {
 
   updateHeadingTypeId(headingTypeId?: HeadingTypeENUM) {
     this.headingTypeId = headingTypeId;
-    this.updateDate();
   }
 
   updateNoteTextTypeId(noteTextTypeId: NoteTextTypeENUM) {
     this.noteTextTypeId = noteTextTypeId;
-    this.updateDate();
   }
 
   updateChecked(_checked?: boolean) {
     this.checked = _checked;
-    this.updateDate(); // TODO BUG SPACE, AFTER ENTER TEXT IS DISSPEAR
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   static getNew(): BaseText {
     const obj: Partial<BaseText> = {
       typeId: ContentTypeENUM.Text,
-      id: uuid.v4(),
-      updatedAt: new Date(),
+      id: uuid.v4()
     };
     return new BaseText(obj);
   }
@@ -116,16 +111,12 @@ export class BaseText extends ContentModelBase {
 
   getConcatedText(): string {
     return this.contents
-      .map((z) => z.text)
+      .map((q) => q.text)
       .filter((x) => x.length > 0)
       .reduce((pv, cv) => pv + cv);
   }
 
   isHaveText(): boolean {
     return this.contents?.some((z) => z.text.length > 0);
-  }
-
-  private updateDate() {
-    this.updatedAt = new Date();
   }
 }

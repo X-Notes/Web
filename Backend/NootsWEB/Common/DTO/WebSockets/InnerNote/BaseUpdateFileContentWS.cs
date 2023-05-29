@@ -18,11 +18,14 @@ namespace Common.DTO.WebSockets.InnerNote
 
         public DateTimeOffset EntityTime { set; get; }
 
-        public BaseUpdateFileContentWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset entityTime)
+        public int Version { set; get; }
+
+        public BaseUpdateFileContentWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset entityTime, int version)
         {
             ContentId = contentId;
             Operation = operation;
             EntityTime = entityTime;
+            Version = version;
         }
     }
 }

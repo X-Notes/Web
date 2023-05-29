@@ -29,8 +29,9 @@ namespace Common.DTO.Notes.FullNoteContent
             HTypeENUM? headingTypeId, 
             bool? @checked,
             int listId,
-            DateTimeOffset updatedAt)
-            :base(id, order, ContentTypeEnumDTO.Text, updatedAt)
+            DateTimeOffset updatedAt,
+            int version)
+            :base(id, order, ContentTypeEnumDTO.Text, updatedAt, version)
         {
             this.Contents = contents;
             this.HeadingTypeId = headingTypeId;

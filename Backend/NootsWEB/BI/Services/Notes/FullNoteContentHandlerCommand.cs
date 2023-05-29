@@ -18,6 +18,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.NoteContent;
+using Common;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BI.Services.Notes
 {
@@ -208,12 +210,13 @@ namespace BI.Services.Notes
                        if(content != null)
                        {
                             content.Order = item.Order;
+                            content.SetDateAndVersion();
                             updateItems.Add(content);
                        }
                     }
                     if (updateItems.Any())
                     {
-                        positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order)).ToList();
+                        positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
                         await baseNoteContentRepository.UpdateRangeAsync(updateItems);
                     }
                 }
@@ -259,7 +262,7 @@ namespace BI.Services.Notes
             // UPDATE BASE
             textDb.PrevId = textDto.Id;
             textDb.Order = textDto.Order;
-            textDb.UpdatedAt = textDto.UpdatedAt;
+            textDb.SetDateAndVersion();
 
             textDb.NoteId = noteId;
 
@@ -280,7 +283,7 @@ namespace BI.Services.Notes
             // UPDATE BASE
             content.PrevId = baseContent.Id;
             content.Order = baseContent.Order;
-            content.UpdatedAt = baseContent.UpdatedAt;
+            content.SetDateAndVersion();
 
             content.NoteId = noteId;
 

@@ -29,10 +29,8 @@ import { ApiNoteContentService } from '../../services/api-note-content.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ApiTextService } from '../../services/api-text.service';
 import { ApiVideosService } from '../../services/api-videos.service';
-import { StructureDiffs } from '../models/structure-diffs';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
-import { UpdateNoteStructureWS } from 'src/app/core/models/signal-r/innerNote/update-note-structure-ws';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -138,9 +136,14 @@ export class ContentEditorSyncService {
 
   private async processChanges() {
     this.isSync = true;
-    await this.processStructureChanges();
-    await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
-    this.isSync = false;
+    try {
+      await this.processStructureChanges();
+      await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
+    } catch (e) {
+      console.error('e: ', e);
+    } finally {
+      this.isSync = false;
+    }
   }
 
   private async processStructureChanges(): Promise<void> {
@@ -333,10 +336,12 @@ export class ContentEditorSyncService {
   private async processTextsChanges() {
     const textDiffs = this.getTextDiffs();
     if (textDiffs.length > 0) {
-      await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
+      const results = await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
+        const v = results.data.find(x => x.contentId === text.id);
         item.patch(text);
+        item.updateDateAndVersion(v.version, v.updatedDate);
       }
     }
   }

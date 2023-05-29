@@ -71,7 +71,7 @@ namespace Noots.Mapper.Mapping
                     case TextNote tN:
                         {
                             var tNDTO = new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId,
-                                tN.Checked, tN.ListId, tN.UpdatedAt);
+                                tN.Checked, tN.ListId, tN.UpdatedAt, tN.Version);
                             resultList.Add(tNDTO);
                             break;
                         }
@@ -82,28 +82,28 @@ namespace Noots.Mapper.Mapping
                                 case FileTypeEnum.Audio:
                                     {
                                         var audiosDTO = aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO);
+                                        var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Photo:
                                     {
                                         var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt);
+                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt, aN.Version);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Video:
                                     {
                                         var videosDTO = aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO);
+                                        var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }
                                 case FileTypeEnum.Document:
                                     {
                                         var documentsDTO = aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO);
+                                        var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
                                         resultList.Add(collectionDTO);
                                         break;
                                     }

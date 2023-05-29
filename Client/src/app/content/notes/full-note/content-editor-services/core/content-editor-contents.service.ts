@@ -237,7 +237,11 @@ export class ContentEditorContentsService {
     }
     if (updates.positions?.length > 0) {
       for (const pos of updates.positions) {
-        contents.find((x) => x.id === pos.contentId).order = pos.order;
+        const contentToUpdate = contents.find((x) => x.id === pos.contentId);
+        if(contentToUpdate){
+          contentToUpdate.order = pos.order;
+          contentToUpdate.version = pos.version;
+        }
       }
     }
     return contents;
@@ -463,32 +467,38 @@ export class ContentEditorContentsService {
     const content = this.getContentById<BaseCollection<BaseFile>>(data.id);
     if (content) {
       content.updateInfo(data);
+      content.updateDateAndVersion(data.version, data.updatedAt);
     }
     const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(data.id);
     if (contentSync && isSync) {
       contentSync.updateInfo(data);
+      content.updateDateAndVersion(data.version, data.updatedAt);
     }
   }
 
-  addItemsToCollections<T extends BaseFile>(files: T[], contentId: string, isSync = false): void {
+  addItemsToCollections<T extends BaseFile>(files: T[], contentId: string, updateDate: Date, version: number, isSync = false): void {
     const content = this.getContentById<BaseCollection<T>>(contentId);
     if (content) {
       content.addItemsToCollection(files);
+      content.updateDateAndVersion(version, updateDate);
     }
     const contentSync = this.getSyncContentById<BaseCollection<T>>(contentId);
     if (contentSync && isSync) {
       contentSync.addItemsToCollection(files);
+      content.updateDateAndVersion(version, updateDate);
     }
   }
 
-  removeItemsFromCollections(fileIds: string[], contentId: string, isSync = false): void {
+  removeItemsFromCollections(fileIds: string[], contentId: string, updateDate: Date, version: number, isSync = false): void {
     const content = this.getContentById<BaseCollection<BaseFile>>(contentId);
     if (content) {
       content.removeItemsFromCollection(fileIds);
+      content.updateDateAndVersion(version, updateDate);
     }
     const contentSync = this.getSyncContentById<BaseCollection<BaseFile>>(contentId);
     if (contentSync && isSync) {
       contentSync.removeItemsFromCollection(fileIds);
+      content.updateDateAndVersion(version, updateDate);
     }
   }
 }

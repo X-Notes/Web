@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
 
 namespace Common.DTO.Notes.FullNoteContent
@@ -17,8 +16,8 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public int CountInRow { set; get; }
 
-        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int? countInRow, DateTimeOffset updatedAt)
-            : base(id, order, ContentTypeEnumDTO.Photos, updatedAt)
+        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int? countInRow, DateTimeOffset updatedAt, int version)
+            : base(id, order, ContentTypeEnumDTO.Photos, updatedAt, version)
         {
             this.Photos = files;
             this.Name = name;

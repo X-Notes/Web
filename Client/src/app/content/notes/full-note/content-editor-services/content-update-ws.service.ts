@@ -257,6 +257,7 @@ export class ContentUpdateWsService {
         width: content.width,
         height: content.height,
         countInRow: content.countInRow,
+        version: content.version
       };
       this.contentEditorContentsService.patchCollectionInfo(obj, true);
       this.updateUI(content.contentId);
@@ -269,6 +270,7 @@ export class ContentUpdateWsService {
         id: content.contentId,
         name: content.name,
         updatedAt: content.entityTime,
+        version: content.version
       };
       this.contentEditorContentsService.patchCollectionInfo(obj, true);
       this.updateUI(content.contentId);
@@ -311,7 +313,7 @@ export class ContentUpdateWsService {
       }
 
       if (files && files.length > 0) {
-        this.contentEditorContentsService.addItemsToCollections(files, content.contentId, true);
+        this.contentEditorContentsService.addItemsToCollections(files, content.contentId, content.entityTime, content.version, true);
       }
 
       this.updateUI(content.contentId);
@@ -323,6 +325,8 @@ export class ContentUpdateWsService {
       this.contentEditorContentsService.removeItemsFromCollections(
         content.collectionItemIds,
         content.contentId,
+        content.entityTime, 
+        content.version, 
         true,
       );
       this.updateUI(content.contentId);
