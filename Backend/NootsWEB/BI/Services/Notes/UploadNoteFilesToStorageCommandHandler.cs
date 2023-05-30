@@ -14,15 +14,15 @@ using Noots.DatabaseContext.Repositories.Files;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteFilesCollectionHandlerCommand : 
-        IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>
+    public class UploadNoteFilesToStorageCommandHandler : 
+        IRequestHandler<UploadNoteFilesToStorageCommand, OperationResult<List<AppFile>>>
     {
 
         private readonly IMediator _mediator;
 
         private readonly FileRepository fileRepository;
 
-        public FullNoteFilesCollectionHandlerCommand(
+        public UploadNoteFilesToStorageCommandHandler(
             IMediator _mediator, 
             FileRepository fileRepository)
         {
@@ -30,7 +30,7 @@ namespace BI.Services.Notes
             this.fileRepository = fileRepository;
         }
 
-        public async Task<OperationResult<List<AppFile>>> Handle(UploadNoteFilesToStorageAndSaveCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<AppFile>>> Handle(UploadNoteFilesToStorageCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);

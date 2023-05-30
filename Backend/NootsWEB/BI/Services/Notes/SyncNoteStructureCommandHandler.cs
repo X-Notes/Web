@@ -24,7 +24,7 @@ using Noots.Mapper.Mapping;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteContentHandlerCommand : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
+    public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
     {
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
@@ -41,11 +41,11 @@ namespace BI.Services.Notes
 
         private readonly CollectionLinkedService collectionLinkedService;
 
-        private readonly ILogger<FullNoteContentHandlerCommand> logger;
+        private readonly ILogger<SyncNoteStructureCommandHandler> logger;
 
         private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
-        public FullNoteContentHandlerCommand(
+        public SyncNoteStructureCommandHandler(
             BaseNoteContentRepository baseNoteContentRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
@@ -53,7 +53,7 @@ namespace BI.Services.Notes
             CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,
             CollectionLinkedService collectionLinkedService,
-            ILogger<FullNoteContentHandlerCommand> logger,
+            ILogger<SyncNoteStructureCommandHandler> logger,
             NoteFolderLabelMapper noteFolderLabelMapper)
         {
 

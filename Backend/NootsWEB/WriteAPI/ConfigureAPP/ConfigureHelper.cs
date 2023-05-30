@@ -84,7 +84,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>, FullNoteTextHandlerCommand>();
 
             // FULL NOTE CONTENT
-            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>, SyncNoteStructureCommandHandler>();
 
 
             // FULL NOTE PHOTOS
@@ -124,7 +124,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNoteFilesByIdsQuery<DocumentNoteDTO>, List<DocumentNoteDTO>>, DocumentsCollectionHandlerQuery>();
 
             // FULL NOTE FILES
-            services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadNoteFilesToStorageCommand, OperationResult<List<AppFile>>>, UploadNoteFilesToStorageCommandHandler>();
 
             // FULL NOTE CURSOR
             services.AddScoped<IRequestHandler<UpdateCursorCommand, OperationResult<Unit>>, UpdateCursorCommandHandler>();

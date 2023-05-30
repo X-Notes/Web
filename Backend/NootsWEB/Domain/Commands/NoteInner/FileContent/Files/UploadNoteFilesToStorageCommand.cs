@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Domain.Commands.NoteInner.FileContent.Files
 {
-    public class UploadNoteFilesToStorageAndSaveCommand : BaseCommandEntity, IRequest<OperationResult<List<AppFile>>>
+    public class UploadNoteFilesToStorageCommand : BaseCommandEntity, IRequest<OperationResult<List<AppFile>>>
     {
         public FileTypeEnum FileType { set; get; }
 
@@ -16,7 +16,7 @@ namespace Domain.Commands.NoteInner.FileContent.Files
 
         public Guid NoteId { set; get; }
 
-        public UploadNoteFilesToStorageAndSaveCommand(FileTypeEnum fileType, List<IFormFile> files, Guid noteId)
+        public UploadNoteFilesToStorageCommand(FileTypeEnum fileType, List<IFormFile> files, Guid noteId)
         {
             FileType = fileType;
             Files = files;

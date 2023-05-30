@@ -83,7 +83,7 @@ public class FullNoteFilesController : ControllerBase
             return new OperationResult<List<FileDTO>>().SetNoSupportExtension();
         }
 
-        var command = new UploadNoteFilesToStorageAndSaveCommand(fileType, noteFiles, noteId);
+        var command = new UploadNoteFilesToStorageCommand(fileType, noteFiles, noteId);
         command.UserId = this.GetUserId();
         var resp = await _mediator.Send(command, cancellationToken);
 
