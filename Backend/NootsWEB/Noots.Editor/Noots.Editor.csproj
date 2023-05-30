@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
+    <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
   </ItemGroup>
 
 </Project>

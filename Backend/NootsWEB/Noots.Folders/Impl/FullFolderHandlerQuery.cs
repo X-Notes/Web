@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Notes;
-using Domain.Queries.InnerFolder;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.Folders.Queries;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
 

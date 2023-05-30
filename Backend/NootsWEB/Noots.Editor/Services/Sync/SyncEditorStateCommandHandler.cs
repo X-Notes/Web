@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Common.DatabaseModels.Models.NoteContent;
+﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;

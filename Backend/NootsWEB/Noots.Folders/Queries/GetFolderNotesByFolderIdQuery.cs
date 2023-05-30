@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.CQRS;
+﻿using Common.CQRS;
 using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Domain.Queries.InnerFolder
+namespace Noots.Folders.Queries
 {
     public class GetFolderNotesByFolderIdQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
@@ -18,10 +16,10 @@ namespace Domain.Queries.InnerFolder
 
         public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, PersonalizationSettingDTO settings, List<Guid> noteIds)
         {
-            this.FolderId = folderId;
-            this.UserId = userId;
-            this.Settings = settings;
-            NoteIds = noteIds;  
+            FolderId = folderId;
+            UserId = userId;
+            Settings = settings;
+            NoteIds = noteIds;
         }
     }
 }

@@ -2,11 +2,10 @@
 using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
 using Common.DTO.Notes;
-using Domain.Commands.FolderInner;
-using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Noots.Folders.Commands;
+using Noots.Folders.Commands.FolderInner;
 using Noots.Folders.Handlers.Commands;
 using Noots.Folders.Handlers.Queries;
 using Noots.Folders.Impl;

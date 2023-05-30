@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes;
-using Domain.Commands.FolderInner;
-using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Folders.Commands.FolderInner;
+using Noots.Folders.Queries;
 using Noots.Search.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;

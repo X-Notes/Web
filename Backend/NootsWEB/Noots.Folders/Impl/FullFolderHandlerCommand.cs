@@ -3,10 +3,10 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.WebSockets;
-using Domain.Commands.FolderInner;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.Folders.Commands.FolderInner;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
