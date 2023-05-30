@@ -20,6 +20,9 @@ using Noots.Editor.Services.Interaction;
 using Noots.Editor.Services.Photos;
 using Noots.Editor.Services.Videos;
 using Noots.Editor.Services;
+using Noots.Editor.Commands.Sync;
+using Noots.Editor.Services.Sync.Entities;
+using Noots.Editor.Services.Sync;
 
 namespace Noots.Editor;
 
@@ -76,5 +79,8 @@ public static class EditorModules
 
         // FULL NOTE CURSOR
         services.AddScoped<IRequestHandler<UpdateCursorCommand, OperationResult<Unit>>, UpdateCursorCommandHandler>();
+
+        // DIFFS
+        services.AddScoped<IRequestHandler<SyncEditorStateCommand, OperationResult<SyncStateResult>>, SyncEditorStateCommandHandler>();
     }
 }
