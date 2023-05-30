@@ -4,9 +4,9 @@ import { map } from 'rxjs/operators';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { environment } from 'src/environments/environment';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { NoteHistory } from '../models/history/note-history.model';
 import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 
 @Injectable()
 export class ApiNoteHistoryService {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BreakEnterModel } from './full-note/content-editor-services/models/break-enter.model';
-import { SaveSelection } from './models/browser/save-selection';
+import { BreakEnterModel } from 'src/app/editor/entities-ui/break-enter.model';
+import { SaveSelection } from 'src/app/editor/entities-ui/save-selection';
 @Injectable({
   providedIn: 'root',
 })

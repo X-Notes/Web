@@ -6,9 +6,9 @@ import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { StreamAudioState } from './models/stream-audio-state.model';
 import { AudioEvents } from './models/enums/audio-events.enum';
 import { NoteStore } from './state/notes-state';
-import { AudioModel } from './models/editor-models/audios-collection';
-import { ApiNoteFilesService } from './full-note/services/api-note-files.service';
-import { FileNoteTypes } from './full-note/models/file-note-types.enum';
+import { ApiNoteFilesService } from 'src/app/editor/api/api-note-files.service';
+import { AudioModel } from 'src/app/editor/entities/contents/audios-collection';
+import { FileNoteTypes } from 'src/app/editor/entities/files/file-note-types.enum';
 
 @Injectable({
   providedIn: 'root',

@@ -5,7 +5,6 @@ import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { HtmlTitleService } from 'src/app/core/html-title.service';
 import { AudioService } from '../notes/audio.service';
-import { DeltaConverter } from '../notes/full-note/content-editor/converter/delta-converter';
 import {
   LoadBillingPlans,
   LoadPersonalization,
@@ -13,6 +12,7 @@ import {
 } from '../../core/stateUser/user-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { FolderStore } from '../folders/state/folders-state';
+import { DeltaConverter } from 'src/app/editor/converter/delta-converter';
 
 @Component({
   selector: 'app-content',

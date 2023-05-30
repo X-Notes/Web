@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { AudioService } from 'src/app/content/notes/audio.service';
-import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
+import { AudioModel } from 'src/app/editor/entities/contents/audios-collection';
 
 @Component({
   selector: 'app-audio-small',

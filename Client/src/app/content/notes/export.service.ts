@@ -14,14 +14,14 @@ import {
   LongTermOperation,
   OperationDetailMini,
 } from '../long-term-operations-handler/models/long-term-operation';
-import { Photo, PhotosCollection } from './models/editor-models/photos-collection';
-import { AudioModel, AudiosCollection } from './models/editor-models/audios-collection';
-import { DocumentsCollection, DocumentModel } from './models/editor-models/documents-collection';
-import { VideosCollection, VideoModel } from './models/editor-models/videos-collection';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs';
 import { InterceptorSkipToken } from 'src/app/core/token-interceptor.service';
+import { AudiosCollection, AudioModel } from 'src/app/editor/entities/contents/audios-collection';
+import { DocumentsCollection, DocumentModel } from 'src/app/editor/entities/contents/documents-collection';
+import { PhotosCollection, Photo } from 'src/app/editor/entities/contents/photos-collection';
+import { VideosCollection, VideoModel } from 'src/app/editor/entities/contents/videos-collection';
 
 @Injectable({
   providedIn: 'root',

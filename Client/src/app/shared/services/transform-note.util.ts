@@ -1,23 +1,11 @@
-import {
-  ApiAudiosCollection,
-  AudiosCollection,
-} from 'src/app/content/notes/models/editor-models/audios-collection';
-import { BaseText } from 'src/app/content/notes/models/editor-models/base-text';
-import { ContentModelBase } from 'src/app/content/notes/models/editor-models/content-model-base';
-import { ContentTypeENUM } from 'src/app/content/notes/models/editor-models/content-types.enum';
-import {
-  ApiDocumentsCollection,
-  DocumentsCollection,
-} from 'src/app/content/notes/models/editor-models/documents-collection';
-import {
-  ApiPhotosCollection,
-  PhotosCollection,
-} from 'src/app/content/notes/models/editor-models/photos-collection';
-import {
-  ApiVideosCollection,
-  VideosCollection,
-} from 'src/app/content/notes/models/editor-models/videos-collection';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { ApiAudiosCollection, AudiosCollection } from 'src/app/editor/entities/contents/audios-collection';
+import { BaseText } from 'src/app/editor/entities/contents/base-text';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
+import { ApiDocumentsCollection, DocumentsCollection } from 'src/app/editor/entities/contents/documents-collection';
+import { ApiPhotosCollection, PhotosCollection } from 'src/app/editor/entities/contents/photos-collection';
+import { ApiVideosCollection, VideosCollection } from 'src/app/editor/entities/contents/videos-collection';
 
 export class TransformNoteUtil {
   // eslint-disable-next-line class-methods-use-this

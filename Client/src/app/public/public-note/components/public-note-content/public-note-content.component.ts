@@ -6,13 +6,13 @@ import { FullNote } from '../../../../content/notes/models/full-note.model';
 import { ActivatedRoute } from '@angular/router';
 import { DeleteCurrentNoteData, LoadFullNote } from '../../../../content/notes/state/notes-actions';
 import { PersonalizationService } from '../../../../shared/services/personalization.service';
-import { ContentModelBase } from '../../../../content/notes/models/editor-models/content-model-base';
 import { PublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { take } from 'rxjs/operators';
-import { ApiNoteContentService } from 'src/app/content/notes/full-note/services/api-note-content.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.service';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 
 @Component({
   selector: 'app-public-note-content',

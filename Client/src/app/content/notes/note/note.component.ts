@@ -2,12 +2,12 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
-import { ContentTypeENUM } from '../models/editor-models/content-types.enum';
-import { BaseText } from '../models/editor-models/base-text';
-import { ContentModelBase } from '../models/editor-models/content-model-base';
 import dayjs from 'dayjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { NoteTextTypeENUM } from '../models/editor-models/text-models/note-text-type.enum';
+import { BaseText } from 'src/app/editor/entities/contents/base-text';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
+import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
 
 @Component({
   selector: 'app-note',

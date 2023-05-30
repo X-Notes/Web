@@ -1,9 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { GenericFileExtenstionService } from '../../generic-file-extenstion.service';
-import {
-  DocumentsCollection,
-} from '../../models/editor-models/documents-collection';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { Component, Input } from "@angular/core";
+import { ContentModelBase } from "src/app/editor/entities/contents/content-model-base";
+import { DocumentsCollection } from "src/app/editor/entities/contents/documents-collection";
+import { GenericFileExtenstionService } from "src/app/editor/ui-services/generic-file-extenstion.service";
+
 
 @Component({
   selector: 'app-note-preview-documents',

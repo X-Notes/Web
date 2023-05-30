@@ -62,7 +62,6 @@ import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.mode
 import { OnlineUsersNote } from '../models/online-users-note.model';
 import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
 import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
-import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { Router } from '@angular/router';
@@ -76,12 +75,13 @@ import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { ApiNoteContentService } from '../full-note/services/api-note-content.service';
 import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
-import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
-import { UpdateCursor } from '../full-note/models/cursors/cursor';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.service';
+import { ApiTextService } from 'src/app/editor/api/api-text.service';
+import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
+import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 
 export interface FullNoteState {
   note: FullNote;

@@ -7,12 +7,12 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
 import { LoadSnapshotNote } from '../../state/notes-actions';
 import { NoteStore } from '../../state/notes-state';
 import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 
 @Component({
   selector: 'app-note-snapshot',

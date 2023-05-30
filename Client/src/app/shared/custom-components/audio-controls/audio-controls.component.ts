@@ -2,12 +2,12 @@ import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AudioService } from 'src/app/content/notes/audio.service';
-import { AudioModel } from 'src/app/content/notes/models/editor-models/audios-collection';
 import { showDropdown } from '../../services/personalization.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from '../../enums/theme.enum';
+import { AudioModel } from 'src/app/editor/entities/contents/audios-collection';
 
 @Component({
   selector: 'app-audio-controls',
