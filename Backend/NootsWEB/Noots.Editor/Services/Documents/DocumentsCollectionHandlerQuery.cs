@@ -3,32 +3,25 @@ using Domain.Queries.NoteInner;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.NoteContent;
 
-namespace BI.Services.Notes.Audios
+namespace Noots.Editor.Services.Documents
 {
-    public class AudiosCollectionHandlerQuery :
-        IRequestHandler<GetNoteFilesByIdsQuery<AudioNoteDTO>, List<AudioNoteDTO>>
+    public class DocumentsCollectionHandlerQuery :
+        IRequestHandler<GetNoteFilesByIdsQuery<DocumentNoteDTO>, List<DocumentNoteDTO>>
     {
         private readonly IMediator mediator;
-
         private readonly CollectionAppFileRepository collectionAppFileRepository;
-
         private readonly NoteFolderLabelMapper mapper;
 
-        public AudiosCollectionHandlerQuery(IMediator _mediator, CollectionAppFileRepository collectionAppFileRepository, NoteFolderLabelMapper mapper)
+        public DocumentsCollectionHandlerQuery(IMediator _mediator, CollectionAppFileRepository collectionAppFileRepository, NoteFolderLabelMapper mapper)
         {
             mediator = _mediator;
             this.collectionAppFileRepository = collectionAppFileRepository;
             this.mapper = mapper;
         }
 
-        public async Task<List<AudioNoteDTO>> Handle(GetNoteFilesByIdsQuery<AudioNoteDTO> request, CancellationToken cancellationToken)
+        public async Task<List<DocumentNoteDTO>> Handle(GetNoteFilesByIdsQuery<DocumentNoteDTO> request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await mediator.Send(command);
@@ -37,10 +30,10 @@ namespace BI.Services.Notes.Audios
             {
                 var colectionFiles = await collectionAppFileRepository.GetAppFilesByContentIds(new List<Guid> { request.CollectionId });
                 var files = colectionFiles.Where(x => request.FileIds.Contains(x.AppFileId)).Select(x => x.AppFile);
-                return files.Select(x => mapper.MapToAudioDTO(x, permissions.Author.Id)).ToList();
+                return files.Select(x => mapper.MapToDocumentDTO(x, permissions.Author.Id)).ToList();
             }
 
-            return new List<AudioNoteDTO>();
+            return new List<DocumentNoteDTO>();
         }
     }
 }

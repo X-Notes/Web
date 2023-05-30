@@ -1,5 +1,4 @@
-﻿using BI.Services.Notes;
-using Common.DTO;
+﻿using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Notes.FullNoteContent;

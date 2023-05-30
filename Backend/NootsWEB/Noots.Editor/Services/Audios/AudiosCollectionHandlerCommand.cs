@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common;
-using Common.DatabaseModels.Models.Files;
+﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
-using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
-using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
-namespace BI.Services.Notes.Documents
+namespace Noots.Editor.Services.Audios
 {
-    public class DocumentsCollectionHandlerCommand :
-        BaseCollectionHandler,
-        IRequestHandler<RemoveDocumentsFromCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
-        IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>,
-        IRequestHandler<AddDocumentsToCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
-        IRequestHandler<UpdateDocumentsCollectionInfoCommand, OperationResult<UpdateBaseContentResult>>
+    public class AudiosCollectionHandlerCommand :
+                BaseCollectionHandler,
+                IRequestHandler<RemoveAudiosFromCollectionCommand, OperationResult<UpdateCollectionContentResult>>,
+                IRequestHandler<UpdateAudiosCollectionInfoCommand, OperationResult<UpdateBaseContentResult>>,
+                IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
+                IRequestHandler<AddAudiosToCollectionCommand, OperationResult<UpdateCollectionContentResult>>
     {
 
         private readonly IMediator _mediator;
@@ -38,17 +30,17 @@ namespace BI.Services.Notes.Documents
 
         private readonly AppSignalRService appSignalRService;
 
-        private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
+        private readonly ILogger<AudiosCollectionHandlerCommand> logger;
 
-        public DocumentsCollectionHandlerCommand(
-                IMediator _mediator,
-                BaseNoteContentRepository baseNoteContentRepository,
-                CollectionNoteRepository documentNoteRepository,
-                CollectionAppFileRepository documentNoteAppFileRepository,
-                HistoryCacheService historyCacheService,
-                AppSignalRService appSignalRService,
-                CollectionLinkedService collectionLinkedService,
-                ILogger<DocumentsCollectionHandlerCommand> logger) : base(documentNoteRepository, documentNoteAppFileRepository, collectionLinkedService)
+        public AudiosCollectionHandlerCommand(
+            IMediator _mediator,
+            BaseNoteContentRepository baseNoteContentRepository,
+            CollectionNoteRepository collectionNoteRepository,
+            CollectionAppFileRepository collectionNoteAppFileRepository,
+            HistoryCacheService historyCacheService,
+            AppSignalRService appSignalRService,
+            CollectionLinkedService collectionLinkedService,
+            ILogger<AudiosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -57,8 +49,7 @@ namespace BI.Services.Notes.Documents
             this.logger = logger;
         }
 
-
-        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveDocumentsFromCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -78,55 +69,57 @@ namespace BI.Services.Notes.Documents
 
             if (permissions.IsMultiplyUpdate)
             {
-                var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+                var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
             return new OperationResult<UpdateCollectionContentResult>(success: true, res);
         }
 
-        public async Task<OperationResult<UpdateBaseContentResult>> Handle(UpdateDocumentsCollectionInfoCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateBaseContentResult>> Handle(UpdateAudiosCollectionInfoCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var audiosCollection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
-                if (collection != null)
+                if (audiosCollection != null)
                 {
-                    collection.Name = request.Name;
-                    collection.SetDateAndVersion();
+                    audiosCollection.Name = request.Name;
+                    audiosCollection.SetDateAndVersion();
 
-                    await collectionNoteRepository.UpdateAsync(collection);
+                    await collectionNoteRepository.UpdateAsync(audiosCollection);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
+                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt, audiosCollection.Version)
                     {
                         Name = request.Name,
                     };
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
-                    var res = new UpdateBaseContentResult(collection.Id, collection.Version, collection.UpdatedAt);
+                    var res = new UpdateBaseContentResult(audiosCollection.Id, audiosCollection.Version, audiosCollection.UpdatedAt);
                     return new OperationResult<UpdateBaseContentResult>(success: true, res);
                 }
 
                 return new OperationResult<UpdateBaseContentResult>().SetNotFound();
             }
+
             return new OperationResult<UpdateBaseContentResult>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<DocumentsCollectionNoteDTO>> Handle(TransformToDocumentsCollectionCommand request, CancellationToken cancellationToken)
+
+        public async Task<OperationResult<AudiosCollectionNoteDTO>> Handle(TransformToAudiosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -137,7 +130,7 @@ namespace BI.Services.Notes.Documents
 
                 if (contentForRemove == null)
                 {
-                    return new OperationResult<DocumentsCollectionNoteDTO>().SetNotFound();
+                    return new OperationResult<AudiosCollectionNoteDTO>().SetNotFound();
                 }
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -146,21 +139,21 @@ namespace BI.Services.Notes.Documents
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var documentNote = new CollectionNote(FileTypeEnum.Document)
+                    var collection = new CollectionNote(FileTypeEnum.Audio)
                     {
                         NoteId = request.NoteId,
                         Order = contentForRemove.Order,
                     };
 
-                    await collectionNoteRepository.AddAsync(documentNote);
+                    await collectionNoteRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null, 1);
+                    var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
                     await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-                    var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt, documentNote.Version)
+                    var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
@@ -168,10 +161,10 @@ namespace BI.Services.Notes.Documents
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
                     }
 
-                    return new OperationResult<DocumentsCollectionNoteDTO>(success: true, result);
+                    return new OperationResult<AudiosCollectionNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -180,10 +173,10 @@ namespace BI.Services.Notes.Documents
                 }
             }
 
-            return new OperationResult<DocumentsCollectionNoteDTO>().SetNoPermissions();
+            return new OperationResult<AudiosCollectionNoteDTO>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(AddDocumentsToCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<UpdateCollectionContentResult>> Handle(AddAudiosToCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
@@ -201,14 +194,14 @@ namespace BI.Services.Notes.Documents
 
             await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
 
-            var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
+            var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
                 CollectionItemIds = resp.deleteFileIds
             };
 
             if (permissions.IsMultiplyUpdate)
             {
-                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);

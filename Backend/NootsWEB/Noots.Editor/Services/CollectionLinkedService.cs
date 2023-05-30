@@ -8,7 +8,7 @@ using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 
-namespace BI.Services.Notes
+namespace Noots.Editor.Services
 {
     public sealed class CollectionLinkedService
     {

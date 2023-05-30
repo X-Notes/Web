@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BI\BI.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
     <ProjectReference Include="..\Noots.Notifications\Noots.Notifications.csproj" />

@@ -1,9 +1,9 @@
-﻿using BI.Services.Notes;
-using Common.DTO;
+﻿using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.Editor.Services;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
 

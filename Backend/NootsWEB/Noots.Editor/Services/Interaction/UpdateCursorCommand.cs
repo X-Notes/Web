@@ -1,11 +1,10 @@
-﻿using BI.Services.Notes.Interaction.Entities;
-using Common.Attributes;
+﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using System;
+using Noots.Editor.Services.Interaction.Entities;
 
-namespace BI.Services.Notes.Interaction;
+namespace Noots.Editor.Services.Interaction;
 
 public class UpdateCursorCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
 {

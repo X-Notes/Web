@@ -5,16 +5,11 @@ using Domain.Commands.NoteInner.FileContent.Files;
 using MediatR;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.Files;
 
-namespace BI.Services.Notes
+namespace Noots.Editor.Services
 {
-    public class UploadNoteFilesToStorageCommandHandler : 
+    public class UploadNoteFilesToStorageCommandHandler :
         IRequestHandler<UploadNoteFilesToStorageCommand, OperationResult<List<AppFile>>>
     {
 
@@ -23,7 +18,7 @@ namespace BI.Services.Notes
         private readonly FileRepository fileRepository;
 
         public UploadNoteFilesToStorageCommandHandler(
-            IMediator _mediator, 
+            IMediator _mediator,
             FileRepository fileRepository)
         {
             this._mediator = _mediator;
@@ -87,10 +82,11 @@ namespace BI.Services.Notes
                     return new OperationResult<List<AppFile>>().SetRequestCancelled();
                 }
 
-                try  
+                try
                 {
-                   await fileRepository.AddRangeAsync(dbFiles);
-                } catch (Exception e)
+                    await fileRepository.AddRangeAsync(dbFiles);
+                }
+                catch (Exception e)
                 {
                     await removeFilesFromStorage();
                     return new OperationResult<List<AppFile>>(false, null, OperationResultAdditionalInfo.AnotherError, e.Message);

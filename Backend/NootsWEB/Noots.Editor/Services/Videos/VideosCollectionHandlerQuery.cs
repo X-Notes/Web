@@ -3,14 +3,9 @@ using Domain.Queries.NoteInner;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.NoteContent;
 
-namespace BI.Services.Notes.Videos
+namespace Noots.Editor.Services.Videos
 {
     public class VideosCollectionHandlerQuery :
         IRequestHandler<GetNoteFilesByIdsQuery<VideoNoteDTO>, List<VideoNoteDTO>>

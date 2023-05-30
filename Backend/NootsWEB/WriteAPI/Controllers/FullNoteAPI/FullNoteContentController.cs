@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BI.Services.Notes.Interaction;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
@@ -9,6 +8,7 @@ using Domain.Commands.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Services.Interaction;
 using Noots.Notes.Queries;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;

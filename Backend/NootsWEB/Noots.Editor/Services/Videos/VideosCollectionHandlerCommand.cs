@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common;
-using Common.DatabaseModels.Models.Files;
+﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
-using Common.DTO.Notes.Collection;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Texts.Entities;
@@ -19,7 +12,7 @@ using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
-namespace BI.Services.Notes.Videos
+namespace Noots.Editor.Services.Videos
 {
     public class VideosCollectionHandlerCommand :
         BaseCollectionHandler,
@@ -68,7 +61,7 @@ namespace BI.Services.Notes.Videos
             }
 
             var resp = await RemoveFilesFromCollectionAsync(request.ContentId, request.FileIds);
-            if(resp.collection == null)
+            if (resp.collection == null)
             {
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
@@ -196,7 +189,7 @@ namespace BI.Services.Notes.Videos
             }
 
             var resp = await AddFilesToCollectionAsync(request.ContentId, request.FileIds);
-            if(resp.collection == null)
+            if (resp.collection == null)
             {
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }

@@ -1,5 +1,4 @@
-﻿using BI.Services.Notes;
-using Common.Azure;
+﻿using Common.Azure;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
@@ -7,6 +6,7 @@ using Domain.Commands.NoteInner.FileContent.Files;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Services;
 using Noots.Storage.Commands;
 using System;
 using System.Collections.Generic;

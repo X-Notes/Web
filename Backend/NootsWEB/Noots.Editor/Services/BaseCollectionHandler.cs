@@ -1,14 +1,8 @@
-﻿using Azure.Core;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
+﻿using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO.Notes.Collection;
-using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace BI.Services.Notes;
+namespace Noots.Editor.Services;
 
 public class BaseCollectionHandler
 {
@@ -51,7 +45,7 @@ public class BaseCollectionHandler
         return (fileIds, collection);
     }
 
-    public async Task<(List<Guid> deleteFileIds, CollectionNote collection)> AddFilesToCollectionAsync(Guid collectionId, List<Guid> fileIdsToAdd) 
+    public async Task<(List<Guid> deleteFileIds, CollectionNote collection)> AddFilesToCollectionAsync(Guid collectionId, List<Guid> fileIdsToAdd)
     {
         var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == collectionId);
         if (collection == null || fileIdsToAdd == null || fileIdsToAdd.Count == 0) return (null, null);

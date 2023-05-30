@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.DTO;
-using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
@@ -18,9 +17,9 @@ using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
-namespace BI.Services.Notes
+namespace Noots.Editor.Services
 {
-    public class FullNoteTextHandlerCommand :
+    public class NoteTitleAndTextContentHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
         IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>
     {
@@ -39,7 +38,7 @@ namespace BI.Services.Notes
 
         private readonly NoteFolderLabelMapper mapper;
 
-        public FullNoteTextHandlerCommand(
+        public NoteTitleAndTextContentHandlerCommand(
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
@@ -62,7 +61,7 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await _mediator.Send(command);
 
-           if (permissions.CanWrite)
+            if (permissions.CanWrite)
             {
                 var note = permissions.Note;
 
@@ -98,8 +97,9 @@ namespace BI.Services.Notes
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (!permissions.CanWrite) { 
-                new OperationResult<Unit>().SetNoPermissions(); 
+            if (!permissions.CanWrite)
+            {
+                new OperationResult<Unit>().SetNoPermissions();
             }
 
             List<UpdateBaseContentResult> results = new();
@@ -119,7 +119,7 @@ namespace BI.Services.Notes
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate == null) return null;
-            
+
             textForUpdate.SetDateAndVersion();
             textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
             textForUpdate.HTypeId = text.HeadingTypeId;
@@ -134,7 +134,7 @@ namespace BI.Services.Notes
                 await appSignalRService.UpdateTextContent(noteId, userId, updates);
             }
 
-            return new UpdateBaseContentResult(textForUpdate.Id, textForUpdate.Version, textForUpdate.UpdatedAt);        
+            return new UpdateBaseContentResult(textForUpdate.Id, textForUpdate.Version, textForUpdate.UpdatedAt);
         }
     }
 }

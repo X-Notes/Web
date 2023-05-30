@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common.DatabaseModels.Models.Folders;
+﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Notes;
 using Domain.Queries.InnerFolder;
 using MediatR;
@@ -11,7 +7,7 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
 
-namespace BI.Services.Folders
+namespace Noots.Folders.Impl
 {
     public class FullFolderHandlerQuery : IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>
     {
@@ -46,7 +42,7 @@ namespace BI.Services.Folders
             {
                 List<FoldersNotes> foldersNotes = new();
 
-                if(request.NoteIds != null && request.NoteIds.Any())
+                if (request.NoteIds != null && request.NoteIds.Any())
                 {
                     foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId && request.NoteIds.Contains(x.NoteId));
                 }

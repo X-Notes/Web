@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BI.Services.Notes.Interaction.Entities;
+﻿namespace Noots.Editor.Services.Interaction.Entities;
 
 public class Cursor
 {

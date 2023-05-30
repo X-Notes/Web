@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Common;
+﻿using Common;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
@@ -14,7 +10,7 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
-namespace BI.Services.Folders
+namespace Noots.Folders.Impl
 {
     public class FullFolderHandlerCommand :
         IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>,

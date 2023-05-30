@@ -3,10 +3,8 @@ using MediatR;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Impl;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace BI.Services.Notes.Interaction;
+namespace Noots.Editor.Services.Interaction;
 
 public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, OperationResult<Unit>>
 {
@@ -21,7 +19,7 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 
     public async Task<OperationResult<Unit>> Handle(UpdateCursorCommand request, CancellationToken cancellationToken)
     {
-        if(request.Cursor == null) return new OperationResult<Unit>().SetAnotherError();
+        if (request.Cursor == null) return new OperationResult<Unit>().SetAnotherError();
 
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
@@ -30,10 +28,10 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 
         var cursor = request.Cursor;
         var updates = new UpdateCursorWS(
-            cursor.EntityId, 
-            (CursorTypeWS)cursor.Type, 
-            cursor.StartCursor, 
-            cursor.EndCursor, 
+            cursor.EntityId,
+            (CursorTypeWS)cursor.Type,
+            cursor.StartCursor,
+            cursor.EndCursor,
             cursor.Color,
             cursor.ItemId,
             request.NoteId,
