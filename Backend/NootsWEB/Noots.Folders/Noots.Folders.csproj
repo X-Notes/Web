@@ -17,6 +17,7 @@
       <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
       <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
       <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+      <ProjectReference Include="..\Noots.Search\Noots.Search.csproj" />
       <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
     </ItemGroup>
 
