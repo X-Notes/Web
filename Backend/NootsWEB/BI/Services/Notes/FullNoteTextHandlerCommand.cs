@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Domain.Commands.NoteInner.FileContent.Texts;
@@ -13,6 +14,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
+using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
@@ -35,13 +37,16 @@ namespace BI.Services.Notes
 
         private readonly NoteWSUpdateService noteWSUpdateService;
 
+        private readonly NoteFolderLabelMapper mapper;
+
         public FullNoteTextHandlerCommand(
             IMediator _mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             TextNotesRepository textNotesRepository,
-            NoteWSUpdateService noteWSUpdateService)
+            NoteWSUpdateService noteWSUpdateService,
+            NoteFolderLabelMapper mapper)
         {
             this._mediator = _mediator;
             this.noteRepository = noteRepository;
@@ -49,6 +54,7 @@ namespace BI.Services.Notes
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
             this.noteWSUpdateService = noteWSUpdateService;
+            this.mapper = mapper;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -109,7 +115,7 @@ namespace BI.Services.Notes
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-        private async Task<UpdateBaseContentResult> UpdateOne(TextNoteDTO text, Guid noteId, Guid userId, bool isMultiplyUpdate)
+        private async Task<UpdateBaseContentResult> UpdateOne(UpdateTextContent text, Guid noteId, Guid userId, bool isMultiplyUpdate)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate == null) return null;
@@ -124,7 +130,7 @@ namespace BI.Services.Notes
 
             if (isMultiplyUpdate)
             {
-                var updates = new UpdateTextWS(text);
+                var updates = new UpdateTextWS(mapper.ToTextDTO(textForUpdate));
                 await appSignalRService.UpdateTextContent(noteId, userId, updates);
             }
 

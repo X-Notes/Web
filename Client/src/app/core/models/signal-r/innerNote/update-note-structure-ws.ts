@@ -32,22 +32,22 @@ export class UpdateNoteStructureWS {
     }
     if (data.photoContentsToAdd && data.photoContentsToAdd.length > 0) {
       this.photoContentsToAdd = data.photoContentsToAdd.map(
-        (q) => new PhotosCollection(q as PhotosCollection, []),
+        (q) => new PhotosCollection(q, []),
       );
     }
     if (data.videoContentsToAdd && data.videoContentsToAdd.length > 0) {
       this.videoContentsToAdd = data.videoContentsToAdd.map(
-        (q) => new VideosCollection(q as VideosCollection, []),
+        (q) => new VideosCollection(q, []),
       );
     }
     if (data.audioContentsToAdd && data.audioContentsToAdd.length > 0) {
       this.audioContentsToAdd = data.audioContentsToAdd.map(
-        (q) => new AudiosCollection(q as AudiosCollection, []),
+        (q) => new AudiosCollection(q, []),
       );
     }
     if (data.documentContentsToAdd && data.documentContentsToAdd.length > 0) {
       this.documentContentsToAdd = data.documentContentsToAdd.map(
-        (q) => new DocumentsCollection(q as DocumentsCollection, []),
+        (q) => new DocumentsCollection(q, []),
       );
     }
   }

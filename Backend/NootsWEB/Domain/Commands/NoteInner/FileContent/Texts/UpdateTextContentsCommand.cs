@@ -2,6 +2,7 @@
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteSyncContents;
 using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using System;
@@ -15,6 +16,6 @@ namespace Domain.Commands.NoteInner.FileContent.Texts
         public Guid NoteId { set; get; }
 
         [RequiredListNotEmptyAttribute]
-        public List<TextNoteDTO> Texts { set; get; } = new List<TextNoteDTO>();
+        public List<TextDiff> Texts { set; get; } = new List<TextDiff>();
     }
 }

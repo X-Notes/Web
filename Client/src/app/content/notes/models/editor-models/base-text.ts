@@ -102,11 +102,12 @@ export class BaseText extends ContentModelBase {
     return true;
   };
 
-  patch(text: BaseText) {
-    this.contents = text.contents;
-    this.headingTypeId = text.headingTypeId;
-    this.noteTextTypeId = text.noteTextTypeId;
-    this.checked = text.checked;
+  patch(blocks: TextBlock[], headingType: HeadingTypeENUM, textType: NoteTextTypeENUM, checked: boolean, version: number, updateDate: Date) {
+    this.contents = blocks;
+    this.headingTypeId = headingType;
+    this.noteTextTypeId = textType;
+    this.checked = checked;
+    this.updateDateAndVersion(version, updateDate);
   }
 
   getConcatedText(): string {

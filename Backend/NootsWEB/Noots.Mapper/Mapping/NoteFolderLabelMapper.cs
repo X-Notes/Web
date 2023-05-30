@@ -70,9 +70,7 @@ namespace Noots.Mapper.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId,
-                                tN.Checked, tN.ListId, tN.UpdatedAt, tN.Version);
-                            resultList.Add(tNDTO);
+                            resultList.Add(ToTextDTO(tN));
                             break;
                         }
                     case CollectionNote aN:
@@ -81,30 +79,22 @@ namespace Noots.Mapper.Mapping
                             {
                                 case FileTypeEnum.Audio:
                                     {
-                                        var audiosDTO = aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
-                                        resultList.Add(collectionDTO);
+                                        resultList.Add(ToAudiosCollection(aN, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Photo:
                                     {
-                                        var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt, aN.Version);
-                                        resultList.Add(collectionDTO);
+                                        resultList.Add(ToPhotosCollection(aN, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Video:
                                     {
-                                        var videosDTO = aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
-                                        resultList.Add(collectionDTO);
+                                        resultList.Add(ToVideosCollection(aN, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Document:
                                     {
-                                        var documentsDTO = aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList();
-                                        var collectionDTO = new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
-                                        resultList.Add(collectionDTO);
+                                        resultList.Add(ToDocumentsCollection(aN, ownerId));
                                         break;
                                     }
                             }
@@ -117,6 +107,35 @@ namespace Noots.Mapper.Mapping
                 }
             }
             return resultList;
+        }
+
+        public TextNoteDTO ToTextDTO(TextNote tN)
+        {
+            return new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.ListId, tN.UpdatedAt, tN.Version);
+        }
+
+        public AudiosCollectionNoteDTO ToAudiosCollection(CollectionNote aN, Guid ownerId)
+        {
+            var audiosDTO = aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList();
+            return new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
+        }
+
+        public PhotosCollectionNoteDTO ToPhotosCollection(CollectionNote aN, Guid ownerId)
+        {
+            var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
+            return new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt, aN.Version);
+        }
+
+        public VideosCollectionNoteDTO ToVideosCollection(CollectionNote aN, Guid ownerId)
+        {
+            var videosDTO = aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList();
+            return new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
+        }
+
+        public DocumentsCollectionNoteDTO ToDocumentsCollection(CollectionNote aN, Guid ownerId)
+        {
+            var documentsDTO = aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList();
+            return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
         }
 
         // TYPES

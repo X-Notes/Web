@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 

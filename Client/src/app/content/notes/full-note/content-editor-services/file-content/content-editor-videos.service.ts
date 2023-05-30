@@ -109,7 +109,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     );
 
     collection = this.contentsService.getContentById<VideosCollection>($event.contentId);
-    collection.addItemsToCollection(videosMapped);
+    collection.addItemsToCollection(videosMapped, collection.version, collection.updatedAt);
     collection.isLoading = false;
 
     return videosMapped;

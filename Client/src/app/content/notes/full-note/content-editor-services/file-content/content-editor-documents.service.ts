@@ -115,7 +115,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     );
 
     collection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
-    collection.addItemsToCollection(documentsMapped);
+    collection.addItemsToCollection(documentsMapped, collection.version, collection.updatedAt);
     collection.isLoading = false;
 
     return documentsMapped;

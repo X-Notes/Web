@@ -94,7 +94,7 @@ export class ContentEditorRestoreService {
         const action = prev as RemoveCollectionItemsAction;
         const content = this.collectionContents.find((x) => x.id === action.contentId);
         if (content) {
-          content.removeItemsFromCollection(action.ids);
+          content.removeItemsFromCollection(action.ids, content.version, content.updatedAt);
         }
         idsToUpdate.push(content.id);
         break;
@@ -113,7 +113,7 @@ export class ContentEditorRestoreService {
         const action = prev as RestoreCollectionItemsAction;
         const content = this.collectionContents.find((x) => x.id === action.contentId);
         if (content) {
-          content.addItemsToCollection(action.items);
+          content.addItemsToCollection(action.items, content.version, content.updatedAt);
         }
         idsToUpdate.push(content.id);
         break;
@@ -122,7 +122,7 @@ export class ContentEditorRestoreService {
         const action = prev as MutateCollectionInfoAction<BaseCollection<BaseFile>>;
         const content = this.collectionContents.find((x) => x.id === action.contentId);
         if (content) {
-          content.updateInfo(action.collection);
+          content.updateInfo(action.collection, content.version, content.updatedAt);
         }
         idsToUpdate.push(content.id);
         break;

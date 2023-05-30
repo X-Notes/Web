@@ -58,18 +58,21 @@ export abstract class BaseCollection<T extends BaseFile> extends ContentModelBas
     return [true, null, null];
   }
 
-  updateInfo(entity: Partial<BaseCollection<T>>) {
+  updateInfo(entity: Partial<BaseCollection<T>>, version: number, updateDate: Date) {
     this.name = entity.name;
+    this.updateDateAndVersion(version, updateDate);
   }
 
-  addItemsToCollection(files: T[]): void {
+  addItemsToCollection(files: T[], version: number, updateDate: Date): void {
     if (!files || files.length === 0) return;
     this.items.push(...files);
+    this.updateDateAndVersion(version, updateDate);
   }
 
-  removeItemsFromCollection(fileIds: string[]): void {
+  removeItemsFromCollection(fileIds: string[], version: number, updateDate: Date): void {
     if (!fileIds || fileIds.length === 0) return;
     this.items = this.items.filter((x) => !fileIds.some((q) => q === x.fileId));
+    this.updateDateAndVersion(version, updateDate);
   }
 
   abstract isEqualCollectionInfo(content: BaseCollection<T>): boolean;

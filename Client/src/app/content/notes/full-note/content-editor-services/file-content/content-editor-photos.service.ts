@@ -115,7 +115,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
 
     collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
-    collection.addItemsToCollection(photosMapped);
+    collection.addItemsToCollection(photosMapped, collection.version, collection.updatedAt);
     collection.isLoading = false;
 
     return photosMapped;

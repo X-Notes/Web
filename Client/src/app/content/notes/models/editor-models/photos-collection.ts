@@ -28,11 +28,13 @@ export class PhotosCollection extends BaseCollection<Photo> {
     return new PhotosCollection(obj, obj.items);
   }
 
-  updateInfo(entity: PhotosCollection) {
+  updateInfo(entity: PhotosCollection, version: number, updateDate: Date) {
     this.name = entity.name;
 
     this.setHeightWidth(entity.height, entity.width);
     this.countInRow = entity.countInRow;
+
+    this.updateDateAndVersion(version, updateDate);
   }
 
   isEqualCollectionInfo(content: PhotosCollection): boolean {

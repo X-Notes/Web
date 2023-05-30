@@ -115,7 +115,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     );
 
     collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
-    collection.addItemsToCollection(audiosMapped);
+    collection.addItemsToCollection(audiosMapped, collection.version, collection.updatedAt);
     collection.isLoading = false;
 
     return audiosMapped;
