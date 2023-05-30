@@ -2,10 +2,10 @@
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
-using Domain.Commands.NoteInner.FileContent.Files;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands.Files;
 using Noots.Editor.Services;
 using Noots.Storage.Commands;
 using System;

@@ -1,10 +1,9 @@
 ﻿using Common.DTO.Notes.FullNoteContent.Files;
-using Domain.Queries.NoteInner;
 using MediatR;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.DatabaseContext.Repositories.NoteContent;
-
+using Noots.Editor.Queries;
 
 namespace Noots.Editor.Services.Photos
 {

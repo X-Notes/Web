@@ -1,11 +1,11 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
-using Domain.Commands.NoteInner.FileContent.Files;
 using MediatR;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 using Noots.DatabaseContext.Repositories.Files;
+using Noots.Editor.Commands.Files;
 
 namespace Noots.Editor.Services
 {

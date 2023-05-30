@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO;
-using Domain.Commands.NoteInner.FileContent.Texts;
-using Domain.Commands.NoteInner.FileContent.Texts.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands.Text;
+using Noots.Editor.Commands.Title;
+using Noots.Editor.Entities;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 

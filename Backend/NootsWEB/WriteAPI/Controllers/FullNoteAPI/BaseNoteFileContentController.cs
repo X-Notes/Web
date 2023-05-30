@@ -1,10 +1,10 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes.FullNoteContent.Files;
-using Domain.Commands.NoteInner.FileContent;
-using Domain.Commands.NoteInner.FileContent.Texts.Entities;
-using Domain.Queries.NoteInner;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands;
+using Noots.Editor.Entities;
+using Noots.Editor.Queries;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WriteAPI.ControllerConfig;
