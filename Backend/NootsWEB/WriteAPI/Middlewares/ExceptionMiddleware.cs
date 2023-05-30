@@ -3,9 +3,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using WriteAPI.ConfigureAPP;
 
-namespace WriteAPI.Middlewares
+namespace Noots.API.Middlewares
 {
     public class ExceptionMiddleware
     {

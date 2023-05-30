@@ -1,10 +1,10 @@
 ﻿using Common;
 using MediatR;
+using Noots.API.Workers.Models.Config;
 using Noots.History.Commands;
 using Noots.History.Impl;
-using NootsWorkersWEB.Models.Config;
 
-namespace NootsWorkersWEB.BI
+namespace Noots.API.Workers.BI
 {
     public class HistoryJobHandler
     {

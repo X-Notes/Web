@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace NootsWorkersWEB.Database.Models
+namespace Noots.API.Workers.Database.Models
 {
     public class UserRole : IdentityUserRole<int>
     {

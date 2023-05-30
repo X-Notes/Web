@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace NootsWorkersWEB.Database.Models
+namespace Noots.API.Workers.Database.Models
 {
     public class User : IdentityUser<int>
     {

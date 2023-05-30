@@ -1,7 +1,4 @@
-using NootsWorkersWEB.Database.Models;
-using NootsWorkersWEB.Database;
 using Microsoft.EntityFrameworkCore;
-using NootsWorkersWEB.ConfigureAPP;
 using Hangfire;
 using Noots.Storage;
 using Common.Azure;
@@ -9,7 +6,10 @@ using Noots.Mapper;
 using Noots.History;
 using MediatR;
 using Noots.DatabaseContext;
-using NootsWorkersWEB.Filters;
+using Noots.API.Workers.ConfigureAPP;
+using Noots.API.Workers.Database;
+using Noots.API.Workers.Database.Models;
+using Noots.API.Workers.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 

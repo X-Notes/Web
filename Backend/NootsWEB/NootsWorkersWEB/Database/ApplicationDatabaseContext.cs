@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using NootsWorkersWEB.Database.Models;
-using NootsWorkersWEB.Database.Seed;
+using Noots.API.Workers.Database.Models;
+using Noots.API.Workers.Database.Seed;
 
-namespace NootsWorkersWEB.Database
+namespace Noots.API.Workers.Database
 {
     public class ApplicationDatabaseContext : IdentityDbContext<User, Role, int>
     {

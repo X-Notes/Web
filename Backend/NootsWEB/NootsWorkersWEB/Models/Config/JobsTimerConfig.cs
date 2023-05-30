@@ -1,4 +1,4 @@
-﻿namespace NootsWorkersWEB.Models.Config
+﻿namespace Noots.API.Workers.Models.Config
 {
     public class JobsTimerConfig
     {
@@ -13,7 +13,7 @@
         public int MakeSnapshotAfterNMinutes { set; get; }
 
         public int DeleteUnlinkedFilesAfterMinutes { set; get; }
-        
+
         public int DeleteDeadConnectionsMinutes { set; get; }
     }
 }

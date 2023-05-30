@@ -7,7 +7,7 @@ using Noots.DatabaseContext.Repositories.Users;
 using Common;
 using Common.ConstraintsUploadFiles;
 
-namespace WriteAPI.Controllers;
+namespace Noots.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -35,13 +35,14 @@ public class FileController : ControllerBase
     {
         var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
 
-        if(user != null)
+        if (user != null)
         {
-            if (!SupportFileContentTypes.IsFileSupport(model.Types)) {
+            if (!SupportFileContentTypes.IsFileSupport(model.Types))
+            {
                 return new OperationResult<bool>().SetNoSupportExtension();
             }
 
-            if(await _mediator.Send(new GetPermissionUploadFileQuery(model.Size, user.Id)) == PermissionUploadFileEnum.NoCanUpload)
+            if (await _mediator.Send(new GetPermissionUploadFileQuery(model.Size, user.Id)) == PermissionUploadFileEnum.NoCanUpload)
             {
                 return new OperationResult<bool>().SetNoEnougnMemory();
             }

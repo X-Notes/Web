@@ -1,10 +1,10 @@
 ﻿using Hangfire;
 using Hangfire.PostgreSql;
-using NootsWorkersWEB.BI;
-using NootsWorkersWEB.Hosted;
-using NootsWorkersWEB.Models.Config;
+using Noots.API.Workers.BI;
+using Noots.API.Workers.Hosted;
+using Noots.API.Workers.Models.Config;
 
-namespace NootsWorkersWEB.ConfigureAPP
+namespace Noots.API.Workers.ConfigureAPP
 {
     public static class ConfigureHelper
     {

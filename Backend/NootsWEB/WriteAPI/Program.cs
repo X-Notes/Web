@@ -19,12 +19,12 @@ using Serilog;
 using System;
 using System.IO;
 using Noots.DatabaseContext;
-using WriteAPI.ConfigureAPP;
-using WriteAPI.Hosted;
-using WriteAPI.Middlewares;
 using Common.Redis;
 using Common.ConstraintsUploadFiles;
 using Common.Filters;
+using Noots.API.ConfigureAPP;
+using Noots.API.Hosted;
+using Noots.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 

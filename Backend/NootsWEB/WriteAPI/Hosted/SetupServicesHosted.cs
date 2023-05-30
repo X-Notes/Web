@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WriteAPI.Hosted
+namespace Noots.API.Hosted
 {
     public class SetupServicesHosted : BackgroundService
     {
@@ -24,7 +24,7 @@ namespace WriteAPI.Hosted
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            foreach(var storage in azureConfig.GetAll())
+            foreach (var storage in azureConfig.GetAll())
             {
                 var blobServiceClient = new BlobServiceClient(storage.Connection);
                 var props = await blobServiceClient.GetPropertiesAsync();
@@ -76,7 +76,8 @@ namespace WriteAPI.Hosted
                     using var ms = new MemoryStream(file);
                     await blobClient.UploadAsync(ms, new BlobHttpHeaders { ContentType = "text/plain" });
                 }
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 logger.LogError(e.ToString());
             }
@@ -85,11 +86,11 @@ namespace WriteAPI.Hosted
         private byte[] GetEmptyFile()
         {
             using var ms = new MemoryStream();
-            using TextWriter tw = new StreamWriter(ms);    
+            using TextWriter tw = new StreamWriter(ms);
             tw.Write("HI");
             tw.Flush();
             ms.Position = 0;
-            return ms.ToArray();             
+            return ms.ToArray();
         }
     }
 }

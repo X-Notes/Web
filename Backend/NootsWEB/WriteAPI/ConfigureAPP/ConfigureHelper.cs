@@ -11,7 +11,6 @@ using Noots.Backgrounds;
 using Noots.Billing;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
-using WriteAPI.Models;
 using Noots.Encryption.Entities;
 using Noots.Permissions;
 using Noots.Storage;
@@ -31,7 +30,7 @@ using Noots.Notifications;
 using Noots.Editor.Services;
 using Noots.Editor;
 
-namespace WriteAPI.ConfigureAPP
+namespace Noots.API.ConfigureAPP
 {
     public static class ConfigureHelper
     {
@@ -45,14 +44,14 @@ namespace WriteAPI.ConfigureAPP
 
             // Backgrounds
             services.ApplyBackgroundsDI();
-            
+
             //Labels
             services.ApplyLabelsDI();
 
             //Notes
             services.ApplyNotesDI();
 
-            
+
             // RELATED NOTES
             services.ApplyRelatedNotesDI();
 
@@ -81,7 +80,7 @@ namespace WriteAPI.ConfigureAPP
 
             // Personalizations
             services.ApplyPersonalizationDI();
-            
+
             // Billing
             services.ApplyBillingDI();
 
@@ -115,9 +114,6 @@ namespace WriteAPI.ConfigureAPP
 
         public static void TimersConfig(this IServiceCollection services, IConfiguration Configuration)
         {
-            var configService = Configuration.GetSection("Timers").Get<TimersConfig>();
-            services.AddSingleton(x => configService);
-
             var unlockConfig = Configuration.GetSection("UnlockConfig").Get<UnlockConfig>();
             services.AddSingleton(x => unlockConfig);
         }
@@ -146,7 +142,7 @@ namespace WriteAPI.ConfigureAPP
 
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) &&
-                                (path.StartsWithSegments(HubSettings.endPoint)))
+                                path.StartsWithSegments(HubSettings.endPoint))
                             {
                                 context.Token = accessToken;
                             }
@@ -168,9 +164,9 @@ namespace WriteAPI.ConfigureAPP
         {
             var signalR = services.AddSignalR();
 
-            if(config.Active)
+            if (config.Active)
             {
-                signalR.AddStackExchangeRedis(config.Connection, options => 
+                signalR.AddStackExchangeRedis(config.Connection, options =>
                     {
                         options.Configuration.ChannelPrefix = "Noots-";
                     });

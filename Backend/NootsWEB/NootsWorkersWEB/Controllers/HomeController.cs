@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NootsWorkersWEB.Models;
+using Noots.API.Workers.Models;
 using System.Diagnostics;
 
-namespace NootsWorkersWEB.Controllers
+namespace Noots.API.Workers.Controllers
 {
     public class HomeController : Controller
     {

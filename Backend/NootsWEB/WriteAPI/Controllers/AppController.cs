@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Common.DTO.App;
 using System.Linq;
 using Noots.DatabaseContext.Repositories;
-using WriteAPI.Models;
 using Noots.Mapper.Mapping;
 
-namespace WriteAPI.Controllers;
+namespace Noots.API.Controllers;
 
 [Authorize]
 [Route("api/[controller]")]
@@ -16,23 +15,14 @@ namespace WriteAPI.Controllers;
 public class AppController : ControllerBase
 {
     private readonly AppRepository appRepository;
-    private readonly TimersConfig timersConfig;
     private readonly AppTypesMapper appTypesMapper;
 
     public AppController(
         AppRepository appRepository,
-        TimersConfig timersConfig,
         AppTypesMapper appTypesMapper)
     {
         this.appRepository = appRepository;
-        this.timersConfig = timersConfig;
         this.appTypesMapper = appTypesMapper;
-    }
-
-    [HttpGet("config")]
-    public TimersConfig GetConfigForDelete()
-    {
-        return timersConfig;
     }
 
     [HttpGet("languages")]

@@ -1,4 +1,4 @@
-namespace NootsWorkersWEB.Models
+namespace Noots.API.Workers.Models
 {
     public class ErrorViewModel
     {

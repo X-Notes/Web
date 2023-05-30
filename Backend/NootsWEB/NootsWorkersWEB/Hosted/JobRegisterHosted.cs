@@ -1,11 +1,11 @@
 ﻿using Hangfire;
-using NootsWorkersWEB.BI;
+using Noots.API.Workers.BI;
 
-namespace NootsWorkersWEB.Hosted
+namespace Noots.API.Workers.Hosted
 {
     public class JobRegisterHosted : IHostedService
     {
-        string Delay;  
+        string Delay;
 
         public JobRegisterHosted()
         {

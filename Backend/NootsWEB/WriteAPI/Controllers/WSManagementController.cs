@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace WriteAPI.Controllers.WS
+namespace Noots.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -24,11 +24,11 @@ namespace WriteAPI.Controllers.WS
         [HttpPost("connections")]
         public async Task HandleDeadConnections(List<DeadConnectionDTO> connections)
         {
-            foreach(var con in connections)
+            foreach (var con in connections)
             {
-                if(con.NoteIds != null)
+                if (con.NoteIds != null)
                 {
-                    foreach(var noteId in con.NoteIds)
+                    foreach (var noteId in con.NoteIds)
                     {
                         await appSignalRService.RemoveOnlineUsersNoteAsync(noteId, con.UserIdentifierConnectionId, con.UserId);
                     }

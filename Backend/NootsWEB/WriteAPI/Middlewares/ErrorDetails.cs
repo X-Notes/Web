@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace WriteAPI.Middlewares
+namespace Noots.API.Middlewares
 {
     public class ErrorDetails
     {

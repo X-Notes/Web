@@ -1,11 +1,11 @@
 ﻿using Common;
+using Noots.API.Workers.Models.Config;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
-using NootsWorkersWEB.Models.Config;
 
-namespace NootsWorkersWEB.BI
+namespace Noots.API.Workers.BI
 {
 
     public class EntitiesDeleteJobHandler
@@ -33,7 +33,7 @@ namespace NootsWorkersWEB.BI
             this.labelRepostory = labelRepostory;
             this.noteRepository = noteRepository;
             this.folderRepository = folderRepository;
-            this.jobsTimerConfig = timersConfig;
+            jobsTimerConfig = timersConfig;
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.logger = logger;
         }

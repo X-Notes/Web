@@ -1,10 +1,10 @@
 ﻿using Common;
 using MediatR;
+using Noots.API.Workers.Models.Config;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.Storage.Commands;
-using NootsWorkersWEB.Models.Config;
 
-namespace NootsWorkersWEB.BI
+namespace Noots.API.Workers.BI
 {
 
     public class UnlinkedFilesDeleteJobHandler
