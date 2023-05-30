@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Common;
 using static System.Net.Mime.MediaTypeNames;
+using Noots.Mapper.Mapping;
 
 namespace BI.Services.Notes
 {
@@ -39,7 +40,10 @@ namespace BI.Services.Notes
         private readonly IMediator _mediator;
 
         private readonly CollectionLinkedService collectionLinkedService;
+
         private readonly ILogger<FullNoteContentHandlerCommand> logger;
+
+        private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         public FullNoteContentHandlerCommand(
             BaseNoteContentRepository baseNoteContentRepository,
@@ -49,7 +53,8 @@ namespace BI.Services.Notes
             CollectionNoteRepository collectionNoteRepository,
             IMediator _mediator,
             CollectionLinkedService collectionLinkedService,
-            ILogger<FullNoteContentHandlerCommand> logger)
+            ILogger<FullNoteContentHandlerCommand> logger,
+            NoteFolderLabelMapper noteFolderLabelMapper)
         {
 
             this.historyCacheService = historyCacheService;
@@ -60,6 +65,7 @@ namespace BI.Services.Notes
             this._mediator = _mediator;
             this.collectionLinkedService = collectionLinkedService;
             this.logger = logger;
+            this.noteFolderLabelMapper = noteFolderLabelMapper;
         }
 
 
@@ -71,10 +77,10 @@ namespace BI.Services.Notes
 
             NoteStructureResult result = new();
             List<TextNoteDTO> textItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> photosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> videosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> audiosItemsThatNeedAdd = null;
-            List<BaseNoteContentDTO> documentsItemsThatNeedAdd = null;
+            List<PhotosCollectionNoteDTO> photosItemsThatNeedAdd = null;
+            List<VideosCollectionNoteDTO> videosItemsThatNeedAdd = null;
+            List<AudiosCollectionNoteDTO> audiosItemsThatNeedAdd = null;
+            List<DocumentsCollectionNoteDTO> documentsItemsThatNeedAdd = null;
             List<UpdateContentPositionWS> positions = null;
 
             if (permissions.CanWrite)
@@ -105,15 +111,16 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
                 {
-                    textItemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var newItemsToAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
-                    if (textItemsThatNeedAdd.Any())
+                    if (newItemsToAdd.Any())
                     {
-                        var items = textItemsThatNeedAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
+                        var items = newItemsToAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
                         await textNotesRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds {  PrevId = x.PrevId, Id = x.Id}));
+                        textItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
                         SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -125,12 +132,12 @@ namespace BI.Services.Notes
                 // FILES
                 if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
                 {
-                    photosItemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
-                    if (photosItemsThatNeedAdd.Any())
+                    if (newCollectionItemsToAdd.Any())
                     {
-                        var items = photosItemsThatNeedAdd.Select(x =>
+                        var items = newCollectionItemsToAdd.Select(x =>
                         {
                             var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
                             cont.SetMetaDataPhotos("100%", "auto", 2);
@@ -139,6 +146,7 @@ namespace BI.Services.Notes
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        photosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
                         SetNewIds(result.UpdateIds, photosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -148,15 +156,16 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
                 {
-                    audiosItemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
-                    if (audiosItemsThatNeedAdd.Any())
+                    if (newCollectionItemsToAdd.Any())
                     {
-                        var items = audiosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
+                        var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        audiosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
                         SetNewIds(result.UpdateIds, audiosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -166,15 +175,16 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
                 {
-                    videosItemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
-                    if (videosItemsThatNeedAdd.Any())
+                    if (newCollectionItemsToAdd.Any())
                     {
-                        var items = videosItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
+                        var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        videosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
                         SetNewIds(result.UpdateIds, videosItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -184,15 +194,16 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
                 {
-                    documentsItemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
                     var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
-                    if (documentsItemsThatNeedAdd.Any())
+                    if (newCollectionItemsToAdd.Any())
                     {
-                        var items = documentsItemsThatNeedAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
+                        var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
                         await collectionNoteRepository.AddRangeAsync(items);
 
                         result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                        documentsItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
                         SetNewIds(result.UpdateIds, documentsItemsThatNeedAdd);
                     }
                     if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
@@ -255,7 +266,7 @@ namespace BI.Services.Notes
         }
 
 
-        private TextNote GetNewTextContent(TextNoteDTO textDto, Guid noteId)
+        private TextNote GetNewTextContent(NewTextContent textDto, Guid noteId)
         {
             var textDb = new TextNote();
 
@@ -268,15 +279,13 @@ namespace BI.Services.Notes
 
             // UPDATE TEXT
             textDb.NoteTextTypeId = textDto.NoteTextTypeId;
-            textDb.HTypeId = textDto.HeadingTypeId;
-            textDb.Checked = textDto.Checked;
             textDb.Contents = textDto.Contents;
 
             return textDb;
         }
 
         // FILES
-        private CollectionNote GetCollectionContent(BaseNoteContentDTO baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
+        private CollectionNote GetCollectionContent(NewCollectionContent baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
         {
             var content = new CollectionNote(fileTypeEnum);
 

@@ -1,6 +1,8 @@
 import { BaseText } from '../../../models/editor-models/base-text';
 import { ContentModelBase } from '../../../models/editor-models/content-model-base';
 import { ContentTypeENUM } from '../../../models/editor-models/content-types.enum';
+import { NewCollection } from '../../models/api/editor/new-collection';
+import { NewText } from '../../models/api/editor/new-text';
 
 export class PositionDiff {
   id: string;
@@ -26,36 +28,59 @@ export class StructureDiffs {
 
   removedItems: ItemForRemove[] = [];
 
-  newTextItems: BaseText[] = [];
+  newTextItems: NewText[] = [];
 
-  photosCollectionItems: ContentModelBase[] = [];
+  photosCollectionItems: NewCollection[] = [];
 
-  audiosCollectionItems: ContentModelBase[] = [];
+  audiosCollectionItems: NewCollection[] = [];
 
-  videosCollectionItems: ContentModelBase[] = [];
+  videosCollectionItems: NewCollection[] = [];
 
-  documentsCollectionItems: ContentModelBase[] = [];
+  documentsCollectionItems: NewCollection[] = [];
 
   push(content: ContentModelBase): void {
     switch (content.typeId) {
       case ContentTypeENUM.Text: {
-        this.newTextItems.push(content as BaseText);
+        const text = content as BaseText;
+        this.newTextItems.push({
+          id: text.id,
+          typeId: text.typeId,
+          noteTextTypeId: text.noteTextTypeId,
+          order: text.order,
+          contents: text.contents
+        });
         break;
       }
       case ContentTypeENUM.Photos: {
-        this.photosCollectionItems.push(content);
+        this.photosCollectionItems.push({
+          id: content.id,
+          typeId: content.typeId,
+          order: content.order
+        });
         break;
       }
       case ContentTypeENUM.Documents: {
-        this.documentsCollectionItems.push(content);
+        this.documentsCollectionItems.push({
+          id: content.id,
+          typeId: content.typeId,
+          order: content.order
+        });
         break;
       }
       case ContentTypeENUM.Videos: {
-        this.videosCollectionItems.push(content);
+        this.videosCollectionItems.push({
+          id: content.id,
+          typeId: content.typeId,
+          order: content.order
+        });
         break;
       }
       case ContentTypeENUM.Audios: {
-        this.audiosCollectionItems.push(content);
+        this.audiosCollectionItems.push({
+          id: content.id,
+          typeId: content.typeId,
+          order: content.order
+        });
         break;
       }
       default: {

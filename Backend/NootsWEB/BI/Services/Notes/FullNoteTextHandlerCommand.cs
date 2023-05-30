@@ -115,7 +115,7 @@ namespace BI.Services.Notes
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-        private async Task<UpdateBaseContentResult> UpdateOne(UpdateTextContent text, Guid noteId, Guid userId, bool isMultiplyUpdate)
+        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, Guid noteId, Guid userId, bool isMultiplyUpdate)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate == null) return null;

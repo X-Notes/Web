@@ -31,6 +31,7 @@ import { ApiTextService } from '../../services/api-text.service';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorContentsService } from './content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { TextDiff } from '../../models/api/editor/text-diff';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -192,9 +193,11 @@ export class ContentEditorSyncService {
         collection.width,
         collection.height,
       );
-      await this.apiPhotos.updateInfo(command).toPromise();
-      const item = this.contentService.getSyncContentById<PhotosCollection>(collection.id);
-      item?.updateInfo(collection);
+      const resp = await this.apiPhotos.updateInfo(command).toPromise();
+      if(resp.success) {
+        const item = this.contentService.getSyncContentById<PhotosCollection>(collection.id);
+        item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
+      }
     }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
@@ -202,17 +205,24 @@ export class ContentEditorSyncService {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiPhotos.addItemsToCollection(command).toPromise();
-        this.syncAddingNewItems(diff.contentId, diff.itemsToAdd);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiPhotos.addItemsToCollection(command).toPromise();
+        if(resp.success) {
+          const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
+          if(itemsToAdd?.length > 0){
+            this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
+            result.isNeedLoadMemory = true;
+          }
+        }
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiPhotos.removeItemsFromCollection(command).toPromise();
-        const item = this.contentService.getSyncContentById<PhotosCollection>(diff.contentId);
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiPhotos.removeItemsFromCollection(command).toPromise();
+        if(resp.success) {
+          const item = this.contentService.getSyncContentById<PhotosCollection>(diff.contentId);
+          item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
+          result.isNeedLoadMemory = true;
+        }
       }
     }
     return result;
@@ -229,9 +239,11 @@ export class ContentEditorSyncService {
         collection.id,
         collection.name,
       );
-      await this.apiAudios.updateInfo(command).toPromise();
-      const item = this.contentService.getSyncContentById<AudiosCollection>(collection.id);
-      item?.updateInfo(collection);
+      const resp = await this.apiAudios.updateInfo(command).toPromise();
+      if(resp.success) {
+        const item = this.contentService.getSyncContentById<AudiosCollection>(collection.id);
+        item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
+      }
     }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
@@ -239,17 +251,24 @@ export class ContentEditorSyncService {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiAudios.addItemsToCollection(command).toPromise();
-        this.syncAddingNewItems(diff.contentId, diff.itemsToAdd);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiAudios.addItemsToCollection(command).toPromise();
+        if(resp.success) {
+          const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
+          if(itemsToAdd?.length > 0){
+            this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
+            result.isNeedLoadMemory = true;
+          }
+        }
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiAudios.removeItemsFromCollection(command).toPromise();
-        const item = this.contentService.getSyncContentById<AudiosCollection>(diff.contentId);
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiAudios.removeItemsFromCollection(command).toPromise();
+        if(resp.success) {
+          const item = this.contentService.getSyncContentById<AudiosCollection>(diff.contentId);
+          item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
+          result.isNeedLoadMemory = true;
+        }
       }
     }
     return result;
@@ -266,9 +285,11 @@ export class ContentEditorSyncService {
         collection.id,
         collection.name,
       );
-      await this.apiDocuments.updateInfo(command).toPromise();
-      const item = this.contentService.getSyncContentById<DocumentsCollection>(collection.id);
-      item?.updateInfo(collection);
+      const resp = await this.apiDocuments.updateInfo(command).toPromise();
+      if(resp.success) {
+        const item = this.contentService.getSyncContentById<DocumentsCollection>(collection.id);
+        item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
+      }
     }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
@@ -276,17 +297,24 @@ export class ContentEditorSyncService {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiDocuments.addItemsToCollection(command).toPromise();
-        this.syncAddingNewItems(diff.contentId, diff.itemsToAdd);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiDocuments.addItemsToCollection(command).toPromise();
+        if(resp.success) {
+          const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
+          if(itemsToAdd?.length > 0){
+            this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
+            result.isNeedLoadMemory = true;
+          }
+        }
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiDocuments.removeItemsFromCollection(command).toPromise();
-        const item = this.contentService.getSyncContentById<DocumentsCollection>(diff.contentId);
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiDocuments.removeItemsFromCollection(command).toPromise();
+        if(resp.success){
+          const item = this.contentService.getSyncContentById<DocumentsCollection>(diff.contentId);
+          item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
+          result.isNeedLoadMemory = true;
+        }
       }
     }
     return result;
@@ -302,9 +330,11 @@ export class ContentEditorSyncService {
         collection.id,
         collection.name,
       );
-      await this.apiVideos.updateInfo(command).toPromise();
-      const item = this.contentService.getSyncContentById<VideosCollection>(collection.id);
-      item?.updateInfo(collection);
+      const resp = await this.apiVideos.updateInfo(command).toPromise();
+      if(resp.success) {
+        const item = this.contentService.getSyncContentById<VideosCollection>(collection.id);
+        item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
+      }
     }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
@@ -312,25 +342,32 @@ export class ContentEditorSyncService {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiVideos.addItemsToCollection(command).toPromise();
-        this.syncAddingNewItems(diff.contentId, diff.itemsToAdd);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiVideos.addItemsToCollection(command).toPromise();
+        if(resp.success) {
+          const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
+          if(itemsToAdd?.length > 0){
+            this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
+            result.isNeedLoadMemory = true;
+          }
+        }
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
-        await this.apiVideos.removeItemsFromCollection(command).toPromise();
-        const item = this.contentService.getSyncContentById<VideosCollection>(diff.contentId);
-        item?.removeItemsFromCollection(ids);
-        result.isNeedLoadMemory = true;
+        const resp = await this.apiVideos.removeItemsFromCollection(command).toPromise();
+        if(resp.success) {
+          const item = this.contentService.getSyncContentById<VideosCollection>(diff.contentId);
+          item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
+          result.isNeedLoadMemory = true;
+        }
       }
     }
     return result;
   }
 
-  private syncAddingNewItems(contentId: string, files: BaseFile[]): void {
+  private syncAddingNewItems(contentId: string, files: BaseFile[], version: number, updateDate: Date): void {
     const item = this.contentService.getSyncContentById<BaseCollection<BaseFile>>(contentId);
-    item?.addItemsToCollection(files);
+    item?.addItemsToCollection(files, version, updateDate);
   }
 
   private async processTextsChanges() {
@@ -340,20 +377,20 @@ export class ContentEditorSyncService {
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
         const v = results.data.find(x => x.contentId === text.id);
-        item.patch(text);
+        item.patch(text.contents, text.headingTypeId, text.noteTextTypeId, text.checked, v.version, v.updatedDate);
         item.updateDateAndVersion(v.version, v.updatedDate);
       }
     }
   }
 
-  private getTextDiffs(): BaseText[] {
+  private getTextDiffs(): TextDiff[] {
     const oldContents = this.contentService.getTextSyncContents;
     const newContents = this.contentService.getTextContents;
-    const contents: BaseText[] = [];
+    const contents: TextDiff[] = [];
     for (const content of newContents) {
       const isNeedUpdate = oldContents.some((x) => x.id === content.id && !content.isEqual(x));
       if (isNeedUpdate) {
-        contents.push(content.copy());
+        contents.push(new TextDiff().initFrom(content.copy()));
       }
     }
     return contents;
