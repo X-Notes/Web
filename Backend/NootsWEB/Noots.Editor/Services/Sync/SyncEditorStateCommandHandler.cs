@@ -64,7 +64,7 @@ public class SyncEditorStateCommandHandler : IRequestHandler<SyncEditorStateComm
         }
 
         var dbContentsDict = dbContents.ToDictionary(x => x.Id);
-        var idsToUpdate = uiState.Where(ui => dbContentsDict.ContainsKey(ui.ContentId) && dbContentsDict[ui.ContentId].Version < ui.Version)
+        var idsToUpdate = uiState.Where(ui => dbContentsDict.ContainsKey(ui.ContentId) && dbContentsDict[ui.ContentId].Version > ui.Version)
                                  .Select(x => x.ContentId).ToList();
 
         if (idsToUpdate.Count > 0)
