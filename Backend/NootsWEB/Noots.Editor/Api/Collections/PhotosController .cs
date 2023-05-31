@@ -12,7 +12,7 @@ using Noots.Editor.Queries;
 namespace Noots.Editor.Api.Collections;
 
 [Authorize]
-[Route("api/note/inner/photos")]
+[Route("api/editor/photos")]
 [ApiController]
 public class PhotosController : BaseCollectionsController
 <

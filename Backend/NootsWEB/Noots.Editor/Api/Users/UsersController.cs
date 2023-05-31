@@ -8,7 +8,7 @@ using Noots.Notes.Queries;
 namespace Noots.Editor.Api.Users;
 
 [Authorize]
-[Route("api/note/inner")]
+[Route("api/editor")]
 [ApiController]
 public class UsersController : ControllerBase
 {

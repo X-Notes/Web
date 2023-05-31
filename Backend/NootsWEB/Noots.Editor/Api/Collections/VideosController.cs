@@ -12,7 +12,7 @@ using Noots.Editor.Queries;
 namespace Noots.Editor.Api.Collections;
 
 [Authorize]
-[Route("api/note/inner/videos")]
+[Route("api/editor/videos")]
 [ApiController]
 public class VideosController : BaseCollectionsController
 <

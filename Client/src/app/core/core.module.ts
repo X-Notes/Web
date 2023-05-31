@@ -30,6 +30,7 @@ import { ApiDocumentsService } from '../editor/api/api-documents.service';
 import { ApiPhotosService } from '../editor/api/api-photos.service';
 import { ApiTextService } from '../editor/api/api-text.service';
 import { ApiVideosService } from '../editor/api/api-videos.service';
+import { ApiEditorUsersService } from '../editor/api/api-editor-users.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -82,6 +83,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiAudiosService,
     ApiPhotosService,
     ApiDocumentsService,
+    ApiEditorUsersService,
     ApiVideosService,
     ApiTextService,
   ],

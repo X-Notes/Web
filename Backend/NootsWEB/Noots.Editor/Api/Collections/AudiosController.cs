@@ -12,7 +12,7 @@ using Noots.Editor.Queries;
 namespace Noots.Editor.Api.Collections;
 
 [Authorize]
-[Route("api/note/inner/audios")]
+[Route("api/editor/audios")]
 [ApiController]
 public class AudiosController : BaseCollectionsController
 <

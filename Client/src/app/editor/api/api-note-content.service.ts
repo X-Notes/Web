@@ -23,7 +23,7 @@ export class ApiNoteContentService {
       noteId,
     };
     return this.httpClient.patch<OperationResult<NoteStructureResult>>(
-      `${environment.writeAPI}/api/note/inner/contents/sync/structure`,
+      `${environment.writeAPI}/api/editor/contents/sync/structure`,
       obj,
     ).pipe(map(x => {
       if(x.success && x.data) {
@@ -40,7 +40,7 @@ export class ApiNoteContentService {
     }
     return this.httpClient
       .get<OperationResult<ContentModelBase[]>>(
-        `${environment.writeAPI}/api/note/inner/contents/${noteId}`,
+        `${environment.writeAPI}/api/editor/contents/${noteId}`,
         {
           params,
         },
@@ -61,7 +61,7 @@ export class ApiNoteContentService {
       noteId,
     };
     return this.httpClient.post<OperationResult<void>>(
-      `${environment.writeAPI}/api/note/inner/contents/cursor`,
+      `${environment.writeAPI}/api/editor/contents/cursor`,
       obj,
     );
   }

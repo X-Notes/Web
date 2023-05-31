@@ -82,6 +82,7 @@ import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.servi
 import { ApiTextService } from 'src/app/editor/api/api-text.service';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
+import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
 
 export interface FullNoteState {
   note: FullNote;
@@ -131,6 +132,7 @@ interface NoteState {
 export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
+    private apiEditorUsers: ApiEditorUsersService,
     private apiText: ApiTextService,
     private historyApi: ApiNoteHistoryService,
     private apiContents: ApiNoteContentService,
@@ -1092,7 +1094,7 @@ export class NoteStore {
     { noteId }: LoadOnlineUsersOnNote,
   ) {
     patchState({ onlineUsers: [] });
-    const onlineUsers = await this.api.getOnlineUsersOnNote(noteId).toPromise();
+    const onlineUsers = await this.apiEditorUsers.getOnlineUsersOnNote(noteId).toPromise();
     patchState({ onlineUsers });
   }
 

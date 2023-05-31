@@ -16,7 +16,7 @@ export class ApiPhotosService extends BaseNoteFileContentApiService<
   UpdatePhotosCollectionInfoCommand,
   Photo
 > {
-  static baseApi = `${environment.writeAPI}/api/note/inner/photos`;
+  static baseApi = `${environment.writeAPI}/api/editor/photos`;
 
   constructor(httpClient: HttpClient) {
     super(httpClient, ApiPhotosService.baseApi);

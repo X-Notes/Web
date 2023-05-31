@@ -14,7 +14,7 @@ using Noots.Editor.Services.Interaction;
 namespace Noots.Editor.Api;
 
 [Authorize]
-[Route("api/note/inner/contents")]
+[Route("api/editor/contents")]
 [ApiController]
 public class ContentController : ControllerBase
 {

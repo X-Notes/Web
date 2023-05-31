@@ -14,7 +14,7 @@ using Noots.Storage.Commands;
 
 namespace Noots.Editor.Api.Files;
 
-[Route("api/note/inner/files")]
+[Route("api/editor/files")]
 [ApiController]
 public class EditorFilesController : ControllerBase
 {

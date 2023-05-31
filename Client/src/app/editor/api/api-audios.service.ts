@@ -16,7 +16,7 @@ export class ApiAudiosService extends BaseNoteFileContentApiService<
   BaseUpdateCollectionInfoCommand,
   AudioModel
 > {
-  static baseApi = `${environment.writeAPI}/api/note/inner/audios`;
+  static baseApi = `${environment.writeAPI}/api/editor/audios`;
 
   constructor(httpClient: HttpClient) {
     super(httpClient, ApiAudiosService.baseApi);

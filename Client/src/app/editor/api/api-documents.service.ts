@@ -16,7 +16,7 @@ export class ApiDocumentsService extends BaseNoteFileContentApiService<
   BaseUpdateCollectionInfoCommand,
   DocumentModel
 > {
-  static baseApi = `${environment.writeAPI}/api/note/inner/documents`;
+  static baseApi = `${environment.writeAPI}/api/editor/documents`;
 
   constructor(httpClient: HttpClient) {
     super(httpClient, ApiDocumentsService.baseApi);

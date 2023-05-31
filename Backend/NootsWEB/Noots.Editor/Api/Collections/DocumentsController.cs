@@ -12,7 +12,7 @@ using Noots.Editor.Queries;
 namespace Noots.Editor.Api.Collections;
 
 [Authorize]
-[Route("api/note/inner/documents")]
+[Route("api/editor/documents")]
 [ApiController]
 public class DocumentsController : BaseCollectionsController
 <

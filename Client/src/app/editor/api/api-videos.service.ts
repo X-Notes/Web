@@ -17,7 +17,7 @@ export class ApiVideosService extends BaseNoteFileContentApiService<
   BaseUpdateCollectionInfoCommand,
   VideoModel
 > {
-  static baseApi = `${environment.writeAPI}/api/note/inner/videos`;
+  static baseApi = `${environment.writeAPI}/api/editor/videos`;
 
   constructor(httpClient: HttpClient) {
     super(httpClient, ApiVideosService.baseApi);

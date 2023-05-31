@@ -12,7 +12,7 @@ export class ApiNoteFilesService {
 
   uploadFilesToNote(data: FormData, noteId: string, fileType: FileNoteTypes) {
     return this.httpClient.post<OperationResult<FileNote[]>>(
-      `${environment.writeAPI}/api/note/inner/files/upload/${noteId}/${fileType}`,
+      `${environment.writeAPI}/api/editor/files/upload/${noteId}/${fileType}`,
       data,
       { reportProgress: true, observe: 'events' },
     );
@@ -20,7 +20,7 @@ export class ApiNoteFilesService {
 
   uploadFilesToNoteNoProgressReport(data: FormData, noteId: string, fileType: FileNoteTypes) {
     return this.httpClient.post<OperationResult<FileNote[]>>(
-      `${environment.writeAPI}/api/note/inner/files/upload/${noteId}/${fileType}`,
+      `${environment.writeAPI}/api/editor/files/upload/${noteId}/${fileType}`,
       data,
     );
   }
@@ -32,7 +32,7 @@ export class ApiNoteFilesService {
       imageFileId,
     };
     return this.httpClient.patch<OperationResult<FileNote>>(
-      `${environment.writeAPI}/api/note/inner/files/metadata`,
+      `${environment.writeAPI}/api/editor/files/metadata`,
       obj,
     );
   }

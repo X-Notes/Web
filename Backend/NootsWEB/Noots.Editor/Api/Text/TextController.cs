@@ -12,7 +12,7 @@ using Noots.Editor.Entities;
 namespace Noots.Editor.Api.Text;
 
 [Authorize]
-[Route("api/note/inner/text")]
+[Route("api/editor/text")]
 [ApiController]
 public class TextController : ControllerBase
 {

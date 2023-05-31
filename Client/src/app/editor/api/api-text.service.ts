@@ -15,7 +15,7 @@ export class ApiTextService {
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/text/title`,
+      `${environment.writeAPI}/api/editor/text/title`,
       obj,
     );
   }
@@ -26,7 +26,7 @@ export class ApiTextService {
       texts,
     };
     return this.httpClient.patch<OperationResult<TextUpdateResult[]>>(
-      `${environment.writeAPI}/api/note/inner/text/sync`,
+      `${environment.writeAPI}/api/editor/text/sync`,
       obj,
     );
   }
