@@ -118,6 +118,6 @@ export class BaseText extends ContentModelBase {
   }
 
   isHaveText(): boolean {
-    return this.contents?.some((z) => z.text.length > 0);
+    return this.contents?.some((q) => q.text.length > 0);
   }
 }

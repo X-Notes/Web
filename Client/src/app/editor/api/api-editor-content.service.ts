@@ -10,7 +10,7 @@ import { UpdateCursor } from '../entities/cursors/cursor';
 import { EditorStructureResult } from '../entities/structure/editor-structure-result';
 import { EditorStructureDiffs } from '../entities/structure/editor-structure-diffs';
 import { UpdateEditorStructureWS } from '../entities/ws/update-note-structure-ws';
-import { EditorStateDiffs } from '../entities/state/editor-state-diffs';
+import { ContentState } from '../entities/state/content-state';
 import { EditorStateResult } from '../entities/state/editor-state-result';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class ApiNoteContentService {
     }));
   }
 
-  syncEditorState(noteId: string, syncState: EditorStateDiffs[], folderId?: string) {
+  syncEditorState(noteId: string, syncState: ContentState[], folderId?: string) {
     const obj = {
       syncState,
       noteId,

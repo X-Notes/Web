@@ -20,6 +20,7 @@ import { UpdateContentPosition } from '../../entities/ws/update-content-position
 import { UpdateEditorStructureWS } from '../../entities/ws/update-note-structure-ws';
 import { SyncResult } from '../../services/content-editor-sync.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
+import { ContentState } from '../../entities/state/content-state';
 
 export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
@@ -185,9 +186,8 @@ export class ContentEditorContentsService {
     return this.getStructureDiffs(this.contentsSync, this.getContents);
   }
 
-  getStructureDiffsPrev(prev: ContentModelBase[]): [EditorStructureDiffs, SyncResult] {
-    const uiContents = this.contents.map((x) => x.copy());
-    return this.getStructureDiffs(uiContents, prev);
+  getEditorStateDiffs(): ContentState[] {
+    return this.contentsSync.map((x) => ({contentId : x.id, version: x.version}))
   }
 
   patchStructuralChangesNew(updates: UpdateEditorStructureWS): void {
@@ -323,16 +323,6 @@ export class ContentEditorContentsService {
     return null;
   }
 
-  getContentByPrevId<T extends ContentModelBase>(contentId: string): T {
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.contents.length; i += 1) {
-      if (this.contents[i].prevId === contentId) {
-        return this.contents[i] as T;
-      }
-    }
-    return null;
-  }
-
   findContentAndIndexById<T extends ContentModelBase>(
     contents: ContentModelBase[],
     contentId: string,
@@ -383,18 +373,9 @@ export class ContentEditorContentsService {
     }
   }
 
-  // INSERT, UPDATE
-  setUnsafe(data: ContentModelBase, index: number): void {
-    this.contents[index] = data;
-  }
+  // UPDATE
 
-  setSafe(data: ContentModelBase, contentId: string): number {
-    const obj = this.getContentAndIndexById(contentId);
-    this.contents[obj.index] = data;
-    return obj.index;
-  }
-
-  setSafeContentsAndSyncContents(data: ContentModelBase, contentId: string): void {
+  updateContents(data: ContentModelBase, contentId: string): void {
     const obj = this.getContentAndIndexById(contentId);
     const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
     if (obj) {
@@ -441,6 +422,10 @@ export class ContentEditorContentsService {
         }
       }
     }
+    this.sortByOrder(syncContent);
+  }
+
+  sortByOrder(syncContent: boolean): void {
     this.contents = this.contents.sort((a, b) => a.order - b.order);
     if (syncContent) {
       this.contentsSync = this.contentsSync.sort((a, b) => a.order - b.order);

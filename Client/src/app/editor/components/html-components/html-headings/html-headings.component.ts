@@ -18,7 +18,7 @@ import { BaseTextElementComponent } from '../html-base.component';
 @Component({
   selector: 'app-html-headings',
   templateUrl: './html-headings.component.html',
-  styleUrls: ['./html-headings.component.scss', '../../../../../../styles/innerNote.scss'],
+  styleUrls: ['./html-headings.component.scss', '../../../../../styles/innerNote.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlHeadingsComponent

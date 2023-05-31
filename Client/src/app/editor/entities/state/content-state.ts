@@ -1,4 +1,4 @@
-export interface EditorStateDiffs { 
+export interface ContentState { 
     contentId: string;
     version: number;
 }
