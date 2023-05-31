@@ -10,9 +10,9 @@ namespace Noots.Folders.Queries
 
         public Guid FolderId { set; get; }
 
-        public PersonalizationSettingDTO Settings { set; get; }
+        public PersonalizationSettingDTO? Settings { set; get; }
 
-        public List<Guid> NoteIds { set; get; }
+        public List<Guid>? NoteIds { set; get; }
 
         public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, PersonalizationSettingDTO settings, List<Guid> noteIds)
         {

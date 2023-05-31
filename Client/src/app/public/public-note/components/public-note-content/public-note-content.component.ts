@@ -65,7 +65,6 @@ export class PublicNoteContentComponent implements OnDestroy {
   async loadMain(id: string) {
     const maybeFolderId = await this.tryGetFolderId();
     const folderId = typeof maybeFolderId === 'string' ? maybeFolderId : null;
-    if(!folderId) return;
     await this.store.dispatch(new LoadFullNote(id, folderId)).toPromise();
     const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
     if (!isLocked) {
