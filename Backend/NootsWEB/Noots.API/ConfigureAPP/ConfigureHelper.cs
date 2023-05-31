@@ -37,7 +37,7 @@ namespace Noots.API.ConfigureAPP
 
         public static void Mediatr(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(Program));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
             // USER
             services.ApplyUsersDI();
