@@ -78,7 +78,7 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ApiTextService } from 'src/app/editor/api/api-text.service';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';

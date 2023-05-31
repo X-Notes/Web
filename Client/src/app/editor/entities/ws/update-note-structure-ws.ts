@@ -5,7 +5,7 @@ import { PhotosCollection } from 'src/app/editor/entities/contents/photos-collec
 import { VideosCollection } from 'src/app/editor/entities/contents/videos-collection';
 import { UpdateContentPosition } from './update-content-position-ws';
 
-export class UpdateNoteStructureWS {
+export class UpdateEditorStructureWS {
   contentIdsToDelete?: string[];
 
   textContentsToAdd?: BaseText[];
@@ -20,13 +20,13 @@ export class UpdateNoteStructureWS {
 
   positions?: UpdateContentPosition[];
 
-  constructor(data: Partial<UpdateNoteStructureWS>) {
+  constructor(data: Partial<UpdateEditorStructureWS>) {
     this.contentIdsToDelete = data.contentIdsToDelete;
     this.positions = data.positions;
     this.mapCollections(data);
   }
 
-  private mapCollections(data: Partial<UpdateNoteStructureWS>) {
+  private mapCollections(data: Partial<UpdateEditorStructureWS>) {
     if (data.textContentsToAdd && data.textContentsToAdd.length > 0) {
       this.textContentsToAdd = data.textContentsToAdd.map((q) => new BaseText(q));
     }

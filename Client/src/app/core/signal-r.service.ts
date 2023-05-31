@@ -55,7 +55,7 @@ import { BaseText } from '../editor/entities/contents/base-text';
 import { NoteUserCursorWS } from '../editor/entities/ws/note-user-cursor';
 import { UpdateAudiosCollectionWS } from '../editor/entities/ws/update-audios-collection-ws';
 import { UpdateDocumentsCollectionWS } from '../editor/entities/ws/update-documents-collection-ws';
-import { UpdateNoteStructureWS } from '../editor/entities/ws/update-note-structure-ws';
+import { UpdateEditorStructureWS } from '../editor/entities/ws/update-note-structure-ws';
 import { UpdateNoteTextWS } from '../editor/entities/ws/update-note-text-ws';
 import { UpdatePhotosCollectionWS } from '../editor/entities/ws/update-photos-collection-ws';
 
@@ -67,7 +67,7 @@ export class SignalRService {
 
   public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
-  public updateNoteStructureEvent$ = new Subject<UpdateNoteStructureWS>();
+  public updateNoteStructureEvent$ = new Subject<UpdateEditorStructureWS>();
 
   public updatePhotosCollectionEvent$ = new Subject<UpdatePhotosCollectionWS>();
 
@@ -215,8 +215,8 @@ export class SignalRService {
       this.updateTextContentEvent$.next(updates);
     });
 
-    this.hubConnection.on('updateNoteStructure', (updates: UpdateNoteStructureWS) => {
-      updates = new UpdateNoteStructureWS(updates);
+    this.hubConnection.on('updateNoteStructure', (updates: UpdateEditorStructureWS) => {
+      updates = new UpdateEditorStructureWS(updates);
       this.updateNoteStructureEvent$.next(updates);
     });
 

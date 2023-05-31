@@ -7,7 +7,7 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
-import { ApiNoteFilesService } from '../../api/api-note-files.service';
+import { ApiNoteFilesService } from '../../api/api-editor-files.service';
 import { ApiPhotosService } from '../../api/api-photos.service';
 import { UploadFileToEntity } from '../../entities-ui/upload-files-to-entity';
 import { Photo, PhotosCollection } from '../../entities/contents/photos-collection';

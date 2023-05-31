@@ -7,9 +7,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Editor.Commands.Structure;
+using Noots.Editor.Commands.Sync;
 using Noots.Editor.Queries;
 using Noots.Editor.Services.Interaction;
-
+using Noots.Editor.Services.Sync.Entities;
 
 namespace Noots.Editor.Api;
 
@@ -36,6 +37,14 @@ public class ContentController : ControllerBase
     [HttpPatch("sync/structure")]
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<NoteStructureResult>> SyncNoteStructure(SyncNoteStructureCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
+
+    [HttpPatch("sync/state")]
+    [ValidationRequireUserIdFilter]
+    public async Task<OperationResult<SyncStateResult>> SyncEditorState(SyncEditorStateCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

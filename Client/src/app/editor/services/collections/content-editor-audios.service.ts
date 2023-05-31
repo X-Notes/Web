@@ -11,7 +11,7 @@ import { UploadFileToEntity } from '../../entities-ui/upload-files-to-entity';
 import { ApiAudiosService } from '../../api/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../../ui-services/contents/content-editor-contents.service';
-import { ApiNoteFilesService } from '../../api/api-note-files.service';
+import { ApiNoteFilesService } from '../../api/api-editor-files.service';
 import { AudioModel, AudiosCollection } from '../../entities/contents/audios-collection';
 import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
 

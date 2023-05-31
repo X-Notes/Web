@@ -9,8 +9,8 @@ import {
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
-import { NoteStructureResult } from '../entities/structure/note-structure-result';
-import { NoteUpdateIds } from '../entities/structure/note-update-ids';
+import { EditorStructureResult } from '../entities/structure/editor-structure-result';
+import { EditorUpdateIds } from '../entities/structure/editor-update-ids';
 import { UpdatePhotosCollectionInfoCommand } from '../entities/collections/update-photos-collection-info-command';
 import { ApiAudiosService } from '../api/api-audios.service';
 import { ApiPhotosService } from '../api/api-photos.service';
@@ -19,7 +19,7 @@ import { ApiVideosService } from '../api/api-videos.service';
 import { ContentEditorContentsService } from '../ui-services/contents/content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { ApiDocumentsService } from '../api/api-documents.service';
-import { ApiNoteContentService } from '../api/api-note-content.service';
+import { ApiNoteContentService } from '../api/api-editor-content.service';
 import { BaseAddToCollectionItemsCommand } from '../entities/collections/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../entities/collections/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../entities/collections/base-update-collection-info-command';
@@ -47,7 +47,7 @@ export class ItemsDiffs {
 
 @Injectable()
 export class ContentEditorSyncService {
-  intervalSyncer = interval(updateNoteContentAutoTimerDelay);
+  intervalSync = interval(updateNoteContentAutoTimerDelay);
 
   private noteId: string;
 
@@ -58,9 +58,9 @@ export class ContentEditorSyncService {
   private updateImmediatelySubject: BehaviorSubject<boolean>;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public onStructureSync$: BehaviorSubject<NoteStructureResult>;
+  public onStructureSync$: BehaviorSubject<EditorStructureResult>;
 
-  private isSync = false;
+  private isProcessChanges = false;
 
   constructor(
     private contentService: ContentEditorContentsService,
@@ -83,7 +83,7 @@ export class ContentEditorSyncService {
   }
 
   initTimer(): void {
-    this.intervalSyncer.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
+    this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
   }
 
   initEdit(noteId: string): void {
@@ -95,7 +95,7 @@ export class ContentEditorSyncService {
     this.updateSubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isSync),
+        filter((x) => x === true && !this.isProcessChanges),
         debounceTime(updateNoteContentDelay),
       )
       .subscribe(async () => {
@@ -105,7 +105,7 @@ export class ContentEditorSyncService {
     this.updateImmediatelySubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isSync),
+        filter((x) => x === true && !this.isProcessChanges),
       )
       .subscribe(async () => {
         await this.processChanges();
@@ -132,18 +132,18 @@ export class ContentEditorSyncService {
     this.updateImmediatelySubject = new BehaviorSubject<boolean>(false);
 
     this.onStructureSync$?.complete();
-    this.onStructureSync$ = new BehaviorSubject<NoteStructureResult>(null);
+    this.onStructureSync$ = new BehaviorSubject<EditorStructureResult>(null);
   }
 
   private async processChanges() {
-    this.isSync = true;
+    this.isProcessChanges = true;
     try {
       await this.processStructureChanges();
       await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
     } catch (e) {
       console.error('e: ', e);
     } finally {
-      this.isSync = false;
+      this.isProcessChanges = false;
     }
   }
 
@@ -163,7 +163,7 @@ export class ContentEditorSyncService {
     }
   }
 
-  private updateIds(updateIds: NoteUpdateIds[]): void {
+  private updateIds(updateIds: EditorUpdateIds[]): void {
     if (!updateIds || updateIds.length === 0) return;
     this.contentService.updateIds(updateIds);
   }

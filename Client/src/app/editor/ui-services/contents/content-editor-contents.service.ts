@@ -14,10 +14,10 @@ import { ContentTypeENUM } from '../../entities/contents/content-types.enum';
 import { DocumentsCollection } from '../../entities/contents/documents-collection';
 import { PhotosCollection } from '../../entities/contents/photos-collection';
 import { VideosCollection } from '../../entities/contents/videos-collection';
-import { NoteUpdateIds } from '../../entities/structure/note-update-ids';
-import { StructureDiffs, ItemForRemove, PositionDiff } from '../../entities/structure/structure-diffs';
+import { EditorUpdateIds } from '../../entities/structure/editor-update-ids';
+import { EditorStructureDiffs, ItemForRemove, PositionDiff } from '../../entities/structure/editor-structure-diffs';
 import { UpdateContentPosition } from '../../entities/ws/update-content-position-ws';
-import { UpdateNoteStructureWS } from '../../entities/ws/update-note-structure-ws';
+import { UpdateEditorStructureWS } from '../../entities/ws/update-note-structure-ws';
 import { SyncResult } from '../../services/content-editor-sync.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 
@@ -147,7 +147,7 @@ export class ContentEditorContentsService {
       .map((x) => x as BaseCollection<BaseFile>);
   }
 
-  updateIds(updateIds: NoteUpdateIds[]): void {
+  updateIds(updateIds: EditorUpdateIds[]): void {
     if (!updateIds || updateIds.length === 0) return;
 
     for (const update of updateIds) {
@@ -181,23 +181,23 @@ export class ContentEditorContentsService {
     return index;
   }
 
-  getStructureDiffsNew(): [StructureDiffs, SyncResult] {
+  getStructureDiffsNew(): [EditorStructureDiffs, SyncResult] {
     return this.getStructureDiffs(this.contentsSync, this.getContents);
   }
 
-  getStructureDiffsPrev(prev: ContentModelBase[]): [StructureDiffs, SyncResult] {
+  getStructureDiffsPrev(prev: ContentModelBase[]): [EditorStructureDiffs, SyncResult] {
     const uiContents = this.contents.map((x) => x.copy());
     return this.getStructureDiffs(uiContents, prev);
   }
 
-  patchStructuralChangesNew(updates: UpdateNoteStructureWS): void {
+  patchStructuralChangesNew(updates: UpdateEditorStructureWS): void {
     const contentToUpdate = this.patchStructuralChanges(this.getSyncContents, updates);
     this.updateSyncContent(contentToUpdate);
   }
 
   private patchStructuralChanges(
     contents: ContentModelBase[],
-    updates: UpdateNoteStructureWS,
+    updates: UpdateEditorStructureWS,
   ): ContentModelBase[] {
     if (updates.contentIdsToDelete?.length > 0) {
       contents = contents.filter((x) => !updates.contentIdsToDelete.some((id) => id === x.id));
@@ -251,8 +251,8 @@ export class ContentEditorContentsService {
   private getStructureDiffs(
     oldContents: ContentModelBase[],
     newContents: ContentModelBase[],
-  ): [StructureDiffs, SyncResult] {
-    const diffs: StructureDiffs = new StructureDiffs();
+  ): [EditorStructureDiffs, SyncResult] {
+    const diffs: EditorStructureDiffs = new EditorStructureDiffs();
     const res: SyncResult = { isNeedLoadMemory: false };
     for (const contentSync of oldContents) {
       if (!newContents.some((x) => x.id === contentSync.id)) {

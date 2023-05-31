@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Stack } from '../../entities-ui/stack-contents';
 import { BaseUndoAction } from '../../entities-ui/undo/base-undo-action';
-import { NoteUpdateIds } from '../../entities/structure/note-update-ids';
+import { EditorUpdateIds } from '../../entities/structure/editor-update-ids';
 
 @Injectable()
 export class ContentEditorMomentoStateService {
@@ -30,7 +30,7 @@ export class ContentEditorMomentoStateService {
     this.state.clear();
   }
 
-  updateIds(updateIds: NoteUpdateIds[]): void {
+  updateIds(updateIds: EditorUpdateIds[]): void {
     this.state.updateIds(updateIds);
   }
 

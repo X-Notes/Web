@@ -23,7 +23,7 @@ export class ItemForRemove {
   }
 }
 
-export class StructureDiffs {
+export class EditorStructureDiffs {
   positions: PositionDiff[] = [];
 
   removedItems: ItemForRemove[] = [];

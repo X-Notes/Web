@@ -7,9 +7,11 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { UpdateCursor } from '../entities/cursors/cursor';
-import { NoteStructureResult } from '../entities/structure/note-structure-result';
-import { StructureDiffs } from '../entities/structure/structure-diffs';
-import { UpdateNoteStructureWS } from '../entities/ws/update-note-structure-ws';
+import { EditorStructureResult } from '../entities/structure/editor-structure-result';
+import { EditorStructureDiffs } from '../entities/structure/editor-structure-diffs';
+import { UpdateEditorStructureWS } from '../entities/ws/update-note-structure-ws';
+import { EditorStateDiffs } from '../entities/state/editor-state-diffs';
+import { EditorStateResult } from '../entities/state/editor-state-result';
 
 @Injectable({
   providedIn: 'root',
@@ -17,17 +19,35 @@ import { UpdateNoteStructureWS } from '../entities/ws/update-note-structure-ws';
 export class ApiNoteContentService {
   constructor(private httpClient: HttpClient) {}
 
-  syncContentsStructure(noteId: string, diffs: StructureDiffs) {
+  syncContentsStructure(noteId: string, diffs: EditorStructureDiffs) {
     const obj = {
       diffs,
       noteId,
     };
-    return this.httpClient.patch<OperationResult<NoteStructureResult>>(
+    return this.httpClient.patch<OperationResult<EditorStructureResult>>(
       `${environment.writeAPI}/api/editor/contents/sync/structure`,
       obj,
     ).pipe(map(x => {
       if(x.success && x.data) {
-        x.data.updates = new UpdateNoteStructureWS(x.data.updates);
+        x.data.updates = new UpdateEditorStructureWS(x.data.updates);
+      }
+      return x;
+    }));
+  }
+
+  syncEditorState(noteId: string, syncState: EditorStateDiffs[], folderId?: string) {
+    const obj = {
+      syncState,
+      noteId,
+      folderId
+    };
+    return this.httpClient.patch<OperationResult<EditorStateResult>>(
+      `${environment.writeAPI}/api/editor/contents/sync/state`,
+      obj,
+    ).pipe(map(x => {
+      if(x.success && x.data) {
+        x.data.contentsToAdd = TransformNoteUtil.transformContent(x.data.contentsToAdd);
+        x.data.contentsToUpdate = TransformNoteUtil.transformContent(x.data.contentsToUpdate);
       }
       return x;
     }));

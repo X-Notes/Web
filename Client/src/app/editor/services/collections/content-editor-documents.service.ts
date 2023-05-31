@@ -8,7 +8,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { ApiDocumentsService } from '../../api/api-documents.service';
-import { ApiNoteFilesService } from '../../api/api-note-files.service';
+import { ApiNoteFilesService } from '../../api/api-editor-files.service';
 import { UploadFileToEntity } from '../../entities-ui/upload-files-to-entity';
 import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
 import { ContentEditorContentsService } from '../../ui-services/contents/content-editor-contents.service';

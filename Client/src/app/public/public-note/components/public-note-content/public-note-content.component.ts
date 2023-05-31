@@ -11,7 +11,7 @@ import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { take } from 'rxjs/operators';
-import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 
 @Component({

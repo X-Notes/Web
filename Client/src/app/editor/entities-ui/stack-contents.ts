@@ -1,4 +1,4 @@
-import { NoteUpdateIds } from "../entities/structure/note-update-ids";
+import { EditorUpdateIds } from "../entities/structure/editor-update-ids";
 import { BaseUndoAction } from "./undo/base-undo-action";
 
 
@@ -41,7 +41,7 @@ export class Stack<T extends BaseUndoAction> implements IStack<T> {
     console.log(this.storage);
   }
 
-  updateIds(updateIds: NoteUpdateIds[]): void {
+  updateIds(updateIds: EditorUpdateIds[]): void {
     for (const update of updateIds) {
       for (const action of this.storage) {
         const isNeedUpdateId = action.contentId === update.prevId;

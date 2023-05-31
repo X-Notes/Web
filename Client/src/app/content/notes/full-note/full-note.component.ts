@@ -17,7 +17,7 @@ import { DialogsManageService } from '../../navigation/services/dialogs-manage.s
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ApiNoteContentService } from 'src/app/editor/api/api-note-content.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 @Component({
   selector: 'app-full-note',
