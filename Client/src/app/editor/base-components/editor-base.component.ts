@@ -23,6 +23,8 @@ import { EditorFacadeService } from '../services/editor-facade.service';
 export class EditorBaseComponent {
   @Input() noteId?: string;
 
+  @Input() folderId?: string;
+
   @Input()
   isReadOnlyMode = true;
 
@@ -42,6 +44,7 @@ export class EditorBaseComponent {
   @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction<ContentModelBase>>) {
     this.elementsQuery = elms;
     this.facade.contentUpdateWsService.elements = elms;
+    this.facade.contentEditorSyncService.elements = elms;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering

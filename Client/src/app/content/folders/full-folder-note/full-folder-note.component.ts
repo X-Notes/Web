@@ -48,9 +48,9 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   contents: ContentModelBase[];
 
-  private folderId: string;
+  folderId: string;
 
-  private noteId: string;
+  noteId: string;
 
   private routeSubscription: Subscription;
 

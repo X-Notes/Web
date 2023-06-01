@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, QueryList } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, interval } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import {
-  updateNoteContentAutoTimerDelay,
-  updateNoteContentDelay,
+  syncEditorIntervalDelay,
+  processSyncEditorIntervalDelay,
+  syncEditorStateIntervalDelay,
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
@@ -32,6 +33,9 @@ import { DocumentsCollection } from '../entities/contents/documents-collection';
 import { PhotosCollection } from '../entities/contents/photos-collection';
 import { VideosCollection } from '../entities/contents/videos-collection';
 import { TextDiff } from '../entities/text/text-diff';
+import { ParentInteraction, ParentInteractionCollection, ParentInteractionHTML } from '../components/parent-interaction.interface';
+import { ContentModelBase } from '../entities/contents/content-model-base';
+import { SelectionService } from '../ui-services/selection.service';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -47,9 +51,16 @@ export class ItemsDiffs {
 
 @Injectable()
 export class ContentEditorSyncService {
-  intervalSync = interval(updateNoteContentAutoTimerDelay);
+
+  elements: QueryList<ParentInteraction<ContentModelBase>>;
+
+  intervalSync = interval(syncEditorIntervalDelay);
+
+  intervalSyncState = interval(syncEditorStateIntervalDelay);
 
   private noteId: string;
+
+  private folderId: string;
 
   private isEdit = false;
 
@@ -74,21 +85,89 @@ export class ContentEditorSyncService {
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
     public dc: DestroyComponentService,
+    private selectionService: SelectionService,
   ) {
-    this.initTimer();
+    this.initTimers();
   }
 
   get isCanBeProcessed(): boolean {
     return !this.isEdit && !this.contentService.isRendering;
   }
 
-  initTimer(): void {
+  initTimers(): void {
     this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges)).subscribe(async () => {
+      const state = this.contentService.getEditorStateDiffs();
+      try {
+        const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
+        if (!stateUpdates.success) return;
+        if (stateUpdates.data.idsToDelete?.length > 0) {
+          this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
+        }
+        let isStructureUpdate = false;
+        if (stateUpdates.data?.contentsToUpdate?.length > 0) {
+          for (const content of stateUpdates.data.contentsToUpdate) {
+            if (content.typeId === ContentTypeENUM.Text) {
+              this.updateText(content as BaseText);
+            } else {
+              this.updateCollection(content as BaseCollection<BaseFile>);
+            }
+          }
+          isStructureUpdate = true;
+        }
+        if (stateUpdates.data?.contentsToAdd?.length > 0) {
+          for (const content of stateUpdates.data.contentsToAdd) {
+            this.contentService.insertInto(content, content.order, true);
+          }
+          isStructureUpdate = true;
+        }
+        if (isStructureUpdate) {
+          this.contentService.sortByOrder(true);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
   }
 
-  initEdit(noteId: string): void {
+  updateText(text: BaseText): void {
+    const isSelect = this.selectionService.isSelectedAll(text.id);
+    if (isSelect) {
+      this.selectionService.resetSelectionAndItems();
+    }
+    this.contentService.updateContents(text, text.id)
+    this.updateUI(text.id, true);
+  }
+
+  updateCollection(collection: BaseCollection<BaseFile>): void {
+    this.contentService.updateContents(collection, collection.id)
+    this.updateUI(collection.id, false);
+  }
+
+
+  updateUI(contentId: string, isText: boolean) {
+    const el = this.elements.toArray().find((x) => x.getContentId() === contentId);
+    if (!el) {
+      return;
+    }
+    if (isText) {
+      const htmlEl = el as ParentInteractionHTML;
+      htmlEl.updateWS();
+    } else {
+      const collectionEl = el as ParentInteractionCollection;
+      collectionEl.syncCollectionItems();
+    }
+  }
+
+  initRead(noteId: string, folderId: string): void {
+    this.noteId = noteId;
+    this.folderId = folderId;
+  }
+
+  initEdit(noteId: string, folderId: string): void {
     this.isEdit = true;
     this.noteId = noteId;
+    this.folderId = folderId;
 
     this.destroyAndInitSubject();
 
@@ -96,7 +175,7 @@ export class ContentEditorSyncService {
       .pipe(
         takeUntil(this.dc.d$),
         filter((x) => x === true && !this.isProcessChanges),
-        debounceTime(updateNoteContentDelay),
+        debounceTime(processSyncEditorIntervalDelay),
       )
       .subscribe(async () => {
         await this.processChanges();
@@ -194,7 +273,7 @@ export class ContentEditorSyncService {
         collection.height,
       );
       const resp = await this.apiPhotos.updateInfo(command).toPromise();
-      if(resp.success) {
+      if (resp.success) {
         const item = this.contentService.getSyncContentById<PhotosCollection>(collection.id);
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
@@ -206,9 +285,9 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiPhotos.addItemsToCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
-          if(itemsToAdd?.length > 0){
+          if (itemsToAdd?.length > 0) {
             this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
             result.isNeedLoadMemory = true;
           }
@@ -218,7 +297,7 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiPhotos.removeItemsFromCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const item = this.contentService.getSyncContentById<PhotosCollection>(diff.contentId);
           item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
           result.isNeedLoadMemory = true;
@@ -240,7 +319,7 @@ export class ContentEditorSyncService {
         collection.name,
       );
       const resp = await this.apiAudios.updateInfo(command).toPromise();
-      if(resp.success) {
+      if (resp.success) {
         const item = this.contentService.getSyncContentById<AudiosCollection>(collection.id);
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
@@ -252,9 +331,9 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiAudios.addItemsToCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
-          if(itemsToAdd?.length > 0){
+          if (itemsToAdd?.length > 0) {
             this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
             result.isNeedLoadMemory = true;
           }
@@ -264,7 +343,7 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiAudios.removeItemsFromCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const item = this.contentService.getSyncContentById<AudiosCollection>(diff.contentId);
           item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
           result.isNeedLoadMemory = true;
@@ -286,7 +365,7 @@ export class ContentEditorSyncService {
         collection.name,
       );
       const resp = await this.apiDocuments.updateInfo(command).toPromise();
-      if(resp.success) {
+      if (resp.success) {
         const item = this.contentService.getSyncContentById<DocumentsCollection>(collection.id);
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
@@ -298,9 +377,9 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiDocuments.addItemsToCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
-          if(itemsToAdd?.length > 0){
+          if (itemsToAdd?.length > 0) {
             this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
             result.isNeedLoadMemory = true;
           }
@@ -310,7 +389,7 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiDocuments.removeItemsFromCollection(command).toPromise();
-        if(resp.success){
+        if (resp.success) {
           const item = this.contentService.getSyncContentById<DocumentsCollection>(diff.contentId);
           item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
           result.isNeedLoadMemory = true;
@@ -331,7 +410,7 @@ export class ContentEditorSyncService {
         collection.name,
       );
       const resp = await this.apiVideos.updateInfo(command).toPromise();
-      if(resp.success) {
+      if (resp.success) {
         const item = this.contentService.getSyncContentById<VideosCollection>(collection.id);
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
@@ -343,9 +422,9 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
         const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiVideos.addItemsToCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
-          if(itemsToAdd?.length > 0){
+          if (itemsToAdd?.length > 0) {
             this.syncAddingNewItems(diff.contentId, itemsToAdd, resp.data.version, resp.data.updatedDate);
             result.isNeedLoadMemory = true;
           }
@@ -355,7 +434,7 @@ export class ContentEditorSyncService {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
         const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
         const resp = await this.apiVideos.removeItemsFromCollection(command).toPromise();
-        if(resp.success) {
+        if (resp.success) {
           const item = this.contentService.getSyncContentById<VideosCollection>(diff.contentId);
           item?.removeItemsFromCollection(resp.data.fileIds, resp.data.version, resp.data.updatedDate);
           result.isNeedLoadMemory = true;
