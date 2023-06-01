@@ -51,6 +51,7 @@ import {
   RemoveOnlineUsersOnNote,
   UpdateNoteTitleWS,
   CreateNoteCompleted,
+  UpdateFolderNotes,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -144,7 +145,7 @@ export class NoteStore {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     public pService: PersonalizationService
-  ) {}
+  ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
     return state.notes.find((x) => x.typeNotes === type);
@@ -509,6 +510,16 @@ export class NoteStore {
     );
   }
 
+  @Action(UpdateFolderNotes)
+  // eslint-disable-next-line class-methods-use-this
+  updateFolderNotes({ setState }: StateContext<NoteState>, { updateNote }: UpdateFolderNotes) {
+    setState(
+      patch({
+        folderNotes: updateItem<SmallNote>((note) => note.id === updateNote.id, updateNote),
+      }),
+    );
+  }
+
   @Action(ClearUpdatesUINotes)
   // eslint-disable-next-line class-methods-use-this
   clearUpdatesNotes({ patchState }: StateContext<NoteState>) {
@@ -551,10 +562,22 @@ export class NoteStore {
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId, deleteIds }: TransformTypeNotes,
   ) {
-    const typeFrom = getState()
-      .notes.map((x) => x.notes)
-      .flat()
-      .find((q) => selectedIds.some((x) => x === q.id)).noteTypeId;
+
+    let folderNotes = getState().folderNotes.filter(q => selectedIds.some((x) => x === q.id));
+    folderNotes = folderNotes.map((x, index) => {
+      const note = { ...x };
+      note.noteTypeId = typeTo;
+      note.refTypeId = refTypeId ?? note.refTypeId;
+      note.updatedAt = new Date();
+      return note;
+    });
+    
+    folderNotes.forEach(x => dispatch(new UpdateFolderNotes(x)));
+
+    const notes = getState().notes.map((x) => x.notes).flat();
+    if (notes?.length <= 0) { return; }
+
+    const typeFrom = notes.find((q) => selectedIds.some((x) => x === q.id))?.noteTypeId;
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));

@@ -55,6 +55,13 @@ export class UpdateNotes {
   constructor(public notes: Notes, public typeNote: NoteTypeENUM) {}
 }
 
+export class UpdateFolderNotes {
+  static type = '[Notes] Update folder notes';
+
+  constructor(public updateNote: SmallNote) {}
+}
+
+
 // UPPER MENU FUNCTIONS
 
 export class ChangeColorNote {
