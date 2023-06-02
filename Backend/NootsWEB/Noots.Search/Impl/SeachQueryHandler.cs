@@ -1,7 +1,9 @@
-﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
+﻿using Common.DatabaseModels.DapperEntities.Search;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
 using MediatR;
+using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.Repositories;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
@@ -36,6 +38,8 @@ namespace Noots.Search.Impl
 
         private readonly FoldersNotesRepository foldersNotesRepository;
 
+        private readonly DapperSearchRepository dapperSearchRepository;
+
         public SeachQueryHandler(
             UserRepository userRepository,
             SearchRepository searchRepository,
@@ -44,7 +48,8 @@ namespace Noots.Search.Impl
             RelatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
             MapperLockedEntities mapperLockedEntities,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            DapperSearchRepository dapperSearchRepository)
         {
             this.userRepository = userRepository;
             this.searchRepository = searchRepository;
@@ -54,6 +59,7 @@ namespace Noots.Search.Impl
             this.noteRepository = noteRepository;
             this.mapperLockedEntities = mapperLockedEntities;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.dapperSearchRepository = dapperSearchRepository;
         }
 
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
@@ -76,22 +82,25 @@ namespace Noots.Search.Impl
 
         public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearchQuery request, CancellationToken cancellationToken)
         {
-            var allNotes = await searchRepository.GetNotesByUserIdSearch(request.UserId);
+            var noteIds = await dapperSearchRepository.GetUserNotesIds(request.UserId);
+            var folderIds = await dapperSearchRepository.GetUserFoldersIds(request.UserId);
 
-            allNotes = allNotes.Where(x =>
-                    SearchHelper.IsMatchContent(x.Title, request.SearchString)
-                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.SearchString))
-                    || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => SearchHelper.IsMatchContent(label.Name, request.SearchString))).ToList();
-
-            var folders = await searchRepository.GetFolderByUserIdAndString(request.UserId, request.SearchString);
-
-            var searchedNotes = allNotes.Take(5).Select(note => new NoteSearch()
+            List<NoteSearch> noteSearches = new();
+            if (noteIds.Any())
             {
-                Id = note.Id,
-                Name = note.Title
-            }).ToList();
+                var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds.ToArray(), request.SearchString);
+                noteSearches.AddRange(noteTitlesRes.Select(x => new NoteSearch(x.Id, x.Title)));
+                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.SearchString);
+                noteSearches.AddRange(noteContentsRes.Select(x => new NoteSearch(x.NoteId, x.Content)));
+            }
 
-            var searchedFolders = folders.Take(5).Select(note => new FolderSearch()
+            IEnumerable<FolderTitle>? folderTitles = null;
+            if (folderIds.Any())
+            {
+                folderTitles = await dapperSearchRepository.SearchByFolderTitle(folderIds.ToArray(), request.SearchString);
+            }
+
+            var searchedFolders = folderTitles?.Select(note => new FolderSearch()
             {
                 Id = note.Id,
                 Name = note.Title
@@ -100,7 +109,7 @@ namespace Noots.Search.Impl
             return new SearchNoteFolderResult()
             {
                 FolderSearchs = searchedFolders,
-                NoteSearchs = searchedNotes
+                NoteSearchs = noteSearches
             };
         }
 

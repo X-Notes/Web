@@ -95,6 +95,7 @@ builder.Services.AddSingleton<IUserIdProvider, IdProvider>();
 builder.Services.Mediatr();
 
 builder.Services.ApplyDataBaseDI(dbConn);
+builder.Services.DapperDI(dbConn);
 
 builder.Services.BI();
 builder.Services.ApplySignalRDI();

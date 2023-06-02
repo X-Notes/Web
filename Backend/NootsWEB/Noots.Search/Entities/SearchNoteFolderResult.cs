@@ -2,8 +2,8 @@
 {
     public class SearchNoteFolderResult
     {
-        public List<NoteSearch> NoteSearchs { set; get; }
+        public List<NoteSearch>? NoteSearchs { set; get; }
 
-        public List<FolderSearch> FolderSearchs { set; get; }
+        public List<FolderSearch>? FolderSearchs { set; get; }
     }
 }

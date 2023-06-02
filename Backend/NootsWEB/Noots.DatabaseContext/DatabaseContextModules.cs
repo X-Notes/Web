@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Noots.DatabaseContext.Dapper;
+using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.GenericRepositories;
 using Noots.DatabaseContext.Repositories;
 using Noots.DatabaseContext.Repositories.Billing;
@@ -17,6 +19,13 @@ namespace Noots.DatabaseContext
 {
     public static class DatabaseContextModules
     {
+        public static void DapperDI(this IServiceCollection services, string dbConnection)
+        {
+            services.AddSingleton(x => new DapperContext(dbConnection));
+
+            services.AddScoped<DapperSearchRepository>();
+        }
+
         public static void ApplyDataBaseDI(this IServiceCollection services, string dbConnection)
         {
             services.AddDbContext<NootsDBContext>(options => options.UseNpgsql(dbConnection));
