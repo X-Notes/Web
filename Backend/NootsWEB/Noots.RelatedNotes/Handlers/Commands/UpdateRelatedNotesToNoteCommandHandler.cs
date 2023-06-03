@@ -34,46 +34,51 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
 
-        if (permissions.CanWrite)
+        if (!permissions.CanWrite)
         {
-            var userPlan = await billingPermissionService.GetUserPlanAsync(request.UserId);
-            if (request.RelatedNoteIds.Count > userPlan.MaxRelatedNotes)
-            {
-                return new OperationResult<UpdateRelatedNotesWS>().SetBillingError();
-            }
-            
-            var dbValues = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-            
-            // REMOVE 
-            var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId));
-            if (valuesToRemove.Any())
-            {
-                await relatedRepository.RemoveRangeAsync(valuesToRemove);
-            }
-            
-            // ADD
-            var dbRelatedIds = dbValues.Select(x => x.RelatedNoteId).ToHashSet();
-            var idsToAdd = request.RelatedNoteIds.Where(id => !dbRelatedIds.Contains(id)).ToList();
-            var valuesToAdd = idsToAdd.Select(relatedId => new RelatedNoteToInnerNote()
-            {
-                NoteId = request.NoteId,
-                RelatedNoteId = relatedId,
-            });
-            if (valuesToAdd.Any())
-            {
-                await relatedRepository.AddRangeAsync(valuesToAdd);
-            }
-            
-            // WS
-            var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
-            var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
-            if (permissions.IsMultiplyUpdate)
-            {
-                await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
-            }
-
-            return new OperationResult<UpdateRelatedNotesWS>(true, updates);
+            return new OperationResult<UpdateRelatedNotesWS>().SetNoPermissions();
         }
-        return new OperationResult<UpdateRelatedNotesWS>(false, null);
+
+        var commandNotePermissions = new GetUserPermissionsForNotesManyQuery(request.RelatedNoteIds, request.UserId);
+        var notesPermissions = await mediator.Send(commandNotePermissions);
+        var noteIdsRead = notesPermissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+
+        var userPlan = await billingPermissionService.GetUserPlanAsync(request.UserId);
+        if (noteIdsRead.Count > userPlan.MaxRelatedNotes)
+        {
+            return new OperationResult<UpdateRelatedNotesWS>().SetBillingError();
+        }
+            
+        var dbValues = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+            
+        // REMOVE 
+        var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId));
+        if (valuesToRemove.Any())
+        {
+            await relatedRepository.RemoveRangeAsync(valuesToRemove);
+        }
+            
+        // ADD
+        var dbRelatedIds = dbValues.Select(x => x.RelatedNoteId).ToHashSet();
+        var idsToAdd = noteIdsRead.Where(id => !dbRelatedIds.Contains(id)).ToList();
+        var valuesToAdd = idsToAdd.Select(relatedId => new RelatedNoteToInnerNote()
+        {
+            NoteId = request.NoteId,
+            RelatedNoteId = relatedId,
+        });
+        if (valuesToAdd.Any())
+        {
+            await relatedRepository.AddRangeAsync(valuesToAdd);
+        }
+            
+        // WS
+        var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
+        var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
+        if (permissions.IsMultiplyUpdate)
+        {
+            await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+        }
+
+        return new OperationResult<UpdateRelatedNotesWS>(true, updates);    
     }
 }

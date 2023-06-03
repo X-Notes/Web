@@ -187,16 +187,23 @@ namespace Noots.DatabaseContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
-        public Task<List<Guid>> GetNoteIdsWithoutLockedAndDeleted(Guid userId, Guid noteId)
+        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, Guid noteId)
         {
            return entities.Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
 
-        public Task<List<Guid>> GetNoteIdsWithoutLockedAndDeleted(Guid userId, List<Guid> exceptIds)
+        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, List<Guid> exceptIds)
         {
             return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+                .Select(x => x.Id)
+                .ToListAsync();
+        }
+
+        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(List<Guid> noteIds)
+        {
+            return entities.Where(x => noteIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }

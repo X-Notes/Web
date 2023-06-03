@@ -77,35 +77,43 @@ namespace Noots.Folders.Impl
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if (permissions.IsOwner && request.NoteIds.Any())
+            if (!permissions.IsOwner)
             {
-                var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
-                var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
-
-                var noLockedNotes = await noteRepository.GetWhereAsync(x => request.NoteIds.Contains(x.Id) && x.Password == null);
-                var noLockedNoteIds = noLockedNotes.Select(x => x.Id).ToList();
-
-                var newFoldersNotes = noLockedNoteIds.Except(foldersNoteIds)
-                                                     .Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
-
-                if (newFoldersNotes.Any())
-                {
-                    folder.UpdatedAt = DateTimeProvider.Time;
-
-                    await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
-                    await folderRepository.UpdateAsync(folder);
-
-                    // WS UPDATES
-                    var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
-                    var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
-                    updates.IdsToAdd.AddRange(noLockedNoteIds);
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
-                }
-
-                return new OperationResult<Unit>(true, Unit.Value);
+                return new OperationResult<Unit>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            if (!request.NoteIds.Any())
+            {
+                return new OperationResult<Unit>().SetAnotherError();
+            }
+
+            var commandNotePermissions = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
+            var notesPermissions = await _mediator.Send(commandNotePermissions);
+            var noteIdsRead = notesPermissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
+
+            var idsToAdd = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(noteIdsRead);
+
+            var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
+            var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
+
+            var newFoldersNotes = idsToAdd.Except(foldersNoteIds)
+                                                 .Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
+
+            if (newFoldersNotes.Any())
+            {
+                folder.UpdatedAt = DateTimeProvider.Time;
+
+                await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
+                await folderRepository.UpdateAsync(folder);
+
+                // WS UPDATES
+                var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
+                updates.IdsToAdd.AddRange(idsToAdd);
+                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.UserId);
+            }
+
+            return new OperationResult<Unit>(true, Unit.Value);
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveNotesFromFolderCommand request, CancellationToken cancellationToken)

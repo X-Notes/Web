@@ -128,7 +128,7 @@ namespace Noots.Search.Impl
   
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var noteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(request.UserId, request.NoteId);
+                var noteIds = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(request.UserId, request.NoteId);
                 if (!noteIds.Any())
                 {
                     return null;
@@ -149,7 +149,7 @@ namespace Noots.Search.Impl
                 return mapperLockedEntities.MapNotesToPreviewNotesDTO(notes, relatedNotesIds);
             }
 
-            var userNoteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(request.UserId, request.NoteId);
+            var userNoteIds = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(request.UserId, request.NoteId);
             var allNoteIdsToView = userNoteIds.Concat(relatedNotesIds).ToHashSet();
             var allNotesToView = await noteRepository.GetNotesByNoteIdsIdWithContent(allNoteIdsToView, request.Settings);
             return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotesToView, relatedNotesIds);
@@ -169,7 +169,7 @@ namespace Noots.Search.Impl
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var noteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(permissions.Caller.Id, folderNoteIds);
+                var noteIds = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(permissions.Caller.Id, folderNoteIds);
                 if (!noteIds.Any())
                 {
                     return null;
