@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Users;
+using Common.Filters;
 
 namespace FakeData.Api;
 
 [Route("api/[controller]")]
 [ApiController]
+[ServiceFilter(typeof(DisableInProductionFilter))]
 public class FakeDataController : ControllerBase
 {
     private readonly UserGenerator userGenerator;

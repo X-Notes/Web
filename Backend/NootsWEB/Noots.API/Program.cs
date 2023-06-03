@@ -25,6 +25,7 @@ using Common.Filters;
 using Noots.API.ConfigureAPP;
 using Noots.API.Hosted;
 using Noots.API.Middlewares;
+using Common.App;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,9 @@ var dbConn = builder.Configuration.GetSection("WriteDB").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
 
+var controllersConfig = builder.Configuration.GetSection("Controllers").Get<ControllersActiveConfig>();
+builder.Services.AddSingleton(x => controllersConfig);
+
 Console.WriteLine("REDIS ACTIVE: " + redisConfig.Active);
 Console.WriteLine("REDIS STR: "+ redisConfig.Connection);
 
@@ -82,6 +86,7 @@ builder.Services.ApplyMapperLockedDI();
 
 builder.Services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddNewtonsoftJson();
+builder.Services.AddScoped<DisableInProductionFilter>();
 
 builder.Services.AddHealthChecks();
 
