@@ -155,8 +155,6 @@ namespace Noots.API.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<FirebaseAuthService>();
-            services.AddScoped<UserGenerator>();
-            services.AddScoped<DatabaseFakeDataBridge>();
             services.AddScoped<CollectionLinkedService>();
         }
 

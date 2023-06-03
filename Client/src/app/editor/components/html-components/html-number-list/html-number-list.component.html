@@ -21,7 +21,7 @@
       <p
         class="block-generic default-text-size default-text-id number-list"
         #contentHtml
-        [attr.contenteditable]="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
+        [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false"
         [innerHTML]="viewHtml"
         (input)="onInput()"
         (click)="textClick($event)"

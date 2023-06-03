@@ -22,7 +22,7 @@
     <p
       #contentHtml
       class="block-generic default-text-id heading-block"
-      [attr.contenteditable]="!isReadOnlyMode && (isSelectModeActive$ | async) === false"
+      [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false"
       [innerHTML]="viewHtml"
       (input)="onInput()"
       (click)="textClick($event)"
