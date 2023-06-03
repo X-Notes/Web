@@ -82,8 +82,7 @@ namespace Noots.Search.Impl
 
         public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearchQuery request, CancellationToken cancellationToken)
         {
-            var noteIds = await dapperSearchRepository.GetUserNotesIds(request.UserId);
-            var folderIds = await dapperSearchRepository.GetUserFoldersIds(request.UserId);
+            var noteIds = await dapperSearchRepository.GetUserNotesAndSharedIds(request.UserId);
 
             List<NoteSearch> noteSearches = new();
             if (noteIds.Any())
@@ -94,6 +93,7 @@ namespace Noots.Search.Impl
                 noteSearches.AddRange(noteContentsRes.Select(x => new NoteSearch(x.NoteId, x.Content)));
             }
 
+            var folderIds = await dapperSearchRepository.GetUserFoldersIds(request.UserId);
             IEnumerable<FolderTitle>? folderTitles = null;
             if (folderIds.Any())
             {
@@ -118,31 +118,41 @@ namespace Noots.Search.Impl
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var relatedNotes = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-                var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var relNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(relatedNotesIds, request.Settings);
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(permissions.Caller.Id, request.NoteId, request.Settings);
-                allNotes.AddRange(relNotes);
-                allNotes = allNotes.DistinctBy(x => x.Id).ToList();
+                return null;
+            }
+            
+            var relatedNotes = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+            var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
+  
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                var noteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(request.UserId, request.NoteId);
+                if (!noteIds.Any())
+                {
+                    return null;
+                }
 
-                if (string.IsNullOrEmpty(request.Search))
+                HashSet<Guid> noteSearchesIds = new();
+                var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds, request.Search);
+                noteSearchesIds.UnionWith(noteTitlesRes.Select(x => x.Id));
+                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.Search);
+                noteSearchesIds.UnionWith(noteContentsRes.Select(x => x.NoteId));
+
+                if (!noteSearchesIds.Any())
                 {
-                    return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
+                    return null;
                 }
-                else
-                {
-                    allNotes = allNotes.Where(x =>
-                    SearchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
-                    || relatedNotesIds.Contains(x.Id)
-                    ).ToList();
-                    return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
-                }
+
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.Settings);
+                return mapperLockedEntities.MapNotesToPreviewNotesDTO(notes, relatedNotesIds);
             }
 
-            return new List<PreviewNoteForSelection>();
+            var userNoteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(request.UserId, request.NoteId);
+            var allNoteIdsToView = userNoteIds.Concat(relatedNotesIds).ToHashSet();
+            var allNotesToView = await noteRepository.GetNotesByNoteIdsIdWithContent(allNoteIdsToView, request.Settings);
+            return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotesToView, relatedNotesIds);
         }
 
         public async Task<List<SmallNote>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
@@ -150,33 +160,38 @@ namespace Noots.Search.Impl
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
 
-            if (permissions.CanRead)
+            if (!permissions.CanWrite)
             {
-                var folderNoteIds = await foldersNotesRepository.GetNoteIdsByFolderId(request.FolderId);
-
-                if (string.IsNullOrEmpty(request.Search))
-                {
-                    var notes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.Caller.Id, folderNoteIds, request.Settings);
-                    return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
-                }
-                else
-                {
-                    var notes = await noteRepository.GetNotesByUserIdWithContentNoLocked(permissions.Caller.Id, folderNoteIds);
-
-                    var noteIds = notes.Where(x =>
-                                    SearchHelper.IsMatchContent(x.Title, request.Search) ||
-                                    x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Contents, request.Search))
-                                    ).Select(x => x.Id);
-
-                    if (noteIds.Any())
-                    {
-                        notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteIds, request.Settings);
-                        return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
-                    }
-                }
+                return null;
             }
 
-            return new List<SmallNote>();
+            var folderNoteIds = await foldersNotesRepository.GetNoteIdsByFolderId(request.FolderId);
+
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                var noteIds = await noteRepository.GetNoteIdsWithoutLockedAndDeleted(permissions.Caller.Id, folderNoteIds);
+                if (!noteIds.Any())
+                {
+                    return null;
+                }
+
+                HashSet<Guid> noteSearchesIds = new();
+                var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds, request.Search);
+                noteSearchesIds.UnionWith(noteTitlesRes.Select(x => x.Id));
+                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.Search);
+                noteSearchesIds.UnionWith(noteContentsRes.Select(x => x.NoteId));
+
+                if (!noteSearchesIds.Any())
+                {
+                    return null;
+                }
+
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.Settings);
+                return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
+            }
+
+            var nonFolderNotes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.Caller.Id, folderNoteIds, request.Settings);
+            return mapperLockedEntities.MapNotesToSmallNotesDTO(nonFolderNotes, request.UserId);
         }
     }
 }

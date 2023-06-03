@@ -70,11 +70,11 @@ namespace Noots.DatabaseContext.Repositories.Notes
 
             var types = GetFilterTypes(settings);
 
-            var notesIds = notes.Select(z => z.Id).ToHashSet();
+            var notesIds = notes.Select(q => q.Id).ToHashSet();
 
             var contents = await context.BaseNoteContents
-                .Include(z => (z as CollectionNote).Files)
-                .Where(z => types.Contains(z.ContentTypeId) && notesIds.Contains(z.NoteId))
+                .Include(q => (q as CollectionNote).Files)
+                .Where(q => types.Contains(q.ContentTypeId) && notesIds.Contains(q.NoteId))
                 .AsSplitQuery().AsNoTracking().ToListAsync();
 
             contents = FilterFileContents(contents, settings);
@@ -84,7 +84,7 @@ namespace Noots.DatabaseContext.Repositories.Notes
             {
                 SetListIdIfNeed(contentLookUp[note.Id]);
                 var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents?.Count > 0));
-                var content = baseContent.OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList();
+                var content = baseContent.OrderBy(q => q.Order).Take(settings.ContentInNoteCount).ToList();
                 note.Contents = content;
             });
 
@@ -146,7 +146,7 @@ namespace Noots.DatabaseContext.Repositories.Notes
             Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
-                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
                     .Where(x => x.UserId == userId && x.NoteTypeId == typeId)
                     .ToListAsync();
 
@@ -169,19 +169,12 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserId(Guid userId, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
-        }
-
-        public Task<List<Note>> GetNotesByUserIdWithContentNoLocked(Guid userId, List<Guid> exceptIds)
-        {
-            return entities  // TODO OPTIMIZATION
-                .Include(x => x.Contents)
-                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null).ToListAsync();
         }
 
         public async Task<List<Note>> GetNotesByUserIdNoLockedWithoutDeleted(Guid userId, List<Guid> exceptIds, PersonalizationSettingDTO settings)
@@ -194,17 +187,19 @@ namespace Noots.DatabaseContext.Repositories.Notes
             return await GetWithFilteredContent(notes, settings);
         }
 
-
-        public async Task<List<Note>> GetNotesByUserIdWithoutNoteNoLockedWithoutDeleted(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
+        public Task<List<Guid>> GetNoteIdsWithoutLockedAndDeleted(Guid userId, Guid noteId)
         {
-            var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
-                .Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+           return entities.Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+                .Select(x => x.Id)
                 .ToListAsync();
-
-            return await GetWithFilteredContent(notes, settings);
         }
 
+        public Task<List<Guid>> GetNoteIdsWithoutLockedAndDeleted(Guid userId, List<Guid> exceptIds)
+        {
+            return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+                .Select(x => x.Id)
+                .ToListAsync();
+        }
 
         public Task<List<Note>> GetNotesWithContent(List<Guid> noteIds)
         { 

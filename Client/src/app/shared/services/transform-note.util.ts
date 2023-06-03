@@ -10,6 +10,7 @@ import { ApiVideosCollection, VideosCollection } from 'src/app/editor/entities/c
 export class TransformNoteUtil {
   // eslint-disable-next-line class-methods-use-this
   public static transformNotes<T extends SmallNote>(notes: T[]) {
+    if(!notes) return [];
     return notes.map((note) => {
       // eslint-disable-next-line no-param-reassign
       note.contents = this.transformContent(note.contents);

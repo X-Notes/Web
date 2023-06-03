@@ -26,7 +26,7 @@ public class DapperSearchRepository : IDisposable
 
     private IDbConnection Connection => _connection;
 
-    public async Task<IEnumerable<NoteTitle>> SearchByNoteTitle(Guid[] noteIds, string str)
+    public async Task<IEnumerable<NoteTitle>> SearchByNoteTitle(IEnumerable<Guid> noteIds, string str)
     {
         string query = $"SELECT \"{nameof(Note.Id)}\", \"{nameof(Note.Title)}\" FROM {SchemeConfig.Note}.\"{nameof(Note)}\" " +
             $"WHERE \"{nameof(Note.Id)}\" = ANY(@ids)" +
@@ -57,7 +57,7 @@ public class DapperSearchRepository : IDisposable
         return await Connection.QueryAsync<NoteContent>(query, new { noteIds = noteIds, str = "%" + str + "%" });
     }
 
-    public async Task<IEnumerable<Guid>> GetUserNotesIds(Guid userId)
+    public async Task<IEnumerable<Guid>> GetUserNotesAndSharedIds(Guid userId)
     {
         string query = $"SELECT \"{nameof(Note.Id)}\" FROM {SchemeConfig.Note}.\"{nameof(Note)}\" WHERE \"{nameof(Note.UserId)}\" = @userId OR \"{nameof(Note.Id)}\" IN (SELECT \"{nameof(UserOnPrivateNotes.NoteId)}\" FROM {SchemeConfig.Note}.\"{nameof(UserOnPrivateNotes)}\" as UPN WHERE UPN.\"{nameof(UserOnPrivateNotes.UserId)}\" = @userId)";
         return await Connection.QueryAsync<Guid>(query, new { userId = userId });
