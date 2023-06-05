@@ -1,4 +1,5 @@
 export interface SearchNotes {
-  id: string;
+  noteId: string;
   name: string;
+  contents: string[];
 }

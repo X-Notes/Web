@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +19,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230603192021_add-text-note-index")]
+    partial class addtextnoteindex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -560,15 +562,10 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
                     b.HasKey("TextNoteId");
-
-                    b.HasIndex("NoteId");
 
                     b.ToTable("TextNoteIndex", "note_content");
                 });
@@ -1576,19 +1573,11 @@ namespace Noots.DatabaseContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
-                        .WithMany("TextNoteIndexs")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", "TextNote")
                         .WithOne("TextNoteIndex")
                         .HasForeignKey("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", "TextNoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Note");
 
                     b.Navigation("TextNote");
                 });
@@ -1991,8 +1980,6 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("ReletatedNoteToInnerNotesFrom");
 
                     b.Navigation("ReletatedNoteToInnerNotesTo");
-
-                    b.Navigation("TextNoteIndexs");
 
                     b.Navigation("UsersOnPrivateNotes");
                 });

@@ -1,11 +1,10 @@
 ﻿using Common.DatabaseModels.DapperEntities.Search;
-using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.Repositories;
 using Noots.DatabaseContext.Repositories.Folders;
+using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
@@ -16,14 +15,12 @@ using Noots.Search.Queries;
 
 namespace Noots.Search.Impl
 {
-    public class SeachQueryHandler
+    public class SearchQueryHandler
         : IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>,
           IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>,
           IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>,
           IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<SmallNote>>
     {
-        private readonly SearchRepository searchRepository;
-
         private readonly UserBackgroundMapper userBackgroundMapper;
 
         private readonly UserRepository userRepository;
@@ -40,19 +37,20 @@ namespace Noots.Search.Impl
 
         private readonly DapperSearchRepository dapperSearchRepository;
 
-        public SeachQueryHandler(
+        private readonly TextNoteIndexRepository textNoteIndexRepository;
+
+        public SearchQueryHandler(
             UserRepository userRepository,
-            SearchRepository searchRepository,
             UserBackgroundMapper userBackgroundMapper,
             IMediator mediator,
             RelatedNoteToInnerNoteRepository relatedRepository,
             NoteRepository noteRepository,
             MapperLockedEntities mapperLockedEntities,
             FoldersNotesRepository foldersNotesRepository,
-            DapperSearchRepository dapperSearchRepository)
+            DapperSearchRepository dapperSearchRepository,
+            TextNoteIndexRepository textNoteIndexRepository)
         {
             this.userRepository = userRepository;
-            this.searchRepository = searchRepository;
             this.userBackgroundMapper = userBackgroundMapper;
             _mediator = mediator;
             this.relatedRepository = relatedRepository;
@@ -60,6 +58,7 @@ namespace Noots.Search.Impl
             this.mapperLockedEntities = mapperLockedEntities;
             this.foldersNotesRepository = foldersNotesRepository;
             this.dapperSearchRepository = dapperSearchRepository;
+            this.textNoteIndexRepository = textNoteIndexRepository;
         }
 
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
@@ -88,9 +87,20 @@ namespace Noots.Search.Impl
             if (noteIds.Any())
             {
                 var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds.ToArray(), request.SearchString);
-                noteSearches.AddRange(noteTitlesRes.Select(x => new NoteSearch(x.Id, x.Title)));
-                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.SearchString);
-                noteSearches.AddRange(noteContentsRes.Select(x => new NoteSearch(x.NoteId, x.Content)));
+                var noteResultDict = noteTitlesRes.Select(x => new NoteSearch(x.Id, x.Title, null)).ToDictionary(x => x.NoteId);
+
+                var noteContentsRes = await textNoteIndexRepository.GetTextsNotesAsync(noteIds, request.SearchString);
+                foreach(var item in noteContentsRes)
+                {
+                    if(noteResultDict.ContainsKey(item.NoteId))
+                    {
+                        noteResultDict[item.NoteId].Contents.Add(item.Content);
+                        continue;
+                    }
+                    noteResultDict.Add(item.NoteId, new NoteSearch(item.NoteId, null, item.Content));
+                }
+
+                noteSearches = noteResultDict.Values.ToList();
             }
 
             var folderIds = await dapperSearchRepository.GetUserFoldersIds(request.UserId);
@@ -108,8 +118,8 @@ namespace Noots.Search.Impl
 
             return new SearchNoteFolderResult()
             {
-                FolderSearchs = searchedFolders,
-                NoteSearchs = noteSearches
+                FoldersResult = searchedFolders,
+                NotesResult = noteSearches
             };
         }
 
@@ -137,7 +147,7 @@ namespace Noots.Search.Impl
                 HashSet<Guid> noteSearchesIds = new();
                 var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds, request.Search);
                 noteSearchesIds.UnionWith(noteTitlesRes.Select(x => x.Id));
-                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.Search);
+                var noteContentsRes = await textNoteIndexRepository.GetTextsNotesAsync(noteIds, request.Search);
                 noteSearchesIds.UnionWith(noteContentsRes.Select(x => x.NoteId));
 
                 if (!noteSearchesIds.Any())
@@ -178,7 +188,7 @@ namespace Noots.Search.Impl
                 HashSet<Guid> noteSearchesIds = new();
                 var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds, request.Search);
                 noteSearchesIds.UnionWith(noteTitlesRes.Select(x => x.Id));
-                var noteContentsRes = await dapperSearchRepository.SearchNotesContents(noteIds, request.Search);
+                var noteContentsRes = await textNoteIndexRepository.GetTextsNotesAsync(noteIds, request.Search);
                 noteSearchesIds.UnionWith(noteContentsRes.Select(x => x.NoteId));
 
                 if (!noteSearchesIds.Any())

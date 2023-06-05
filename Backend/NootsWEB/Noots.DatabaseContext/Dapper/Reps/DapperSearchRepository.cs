@@ -47,9 +47,9 @@ public class DapperSearchRepository : IDisposable
     public async Task<IEnumerable<NoteContent>> SearchNotesContents(IEnumerable<Guid> noteIds, string str)
     {
         var elKey = "element";
-        var noteIdKey = "NoteId";
+        var noteIdKey = nameof(NoteContent.NoteId);
         var baseNoteIdKey = $"{SchemeConfig.NoteContent}.\"{nameof(BaseNoteContent)}\".\"{nameof(BaseNoteContent.NoteId)}\"";
-        string query = $"SELECT {baseNoteIdKey} AS \"{noteIdKey}\", STRING_AGG(\"{elKey}\"->>'Text', ' ') AS \"ConcatedText\"" +
+        string query = $"SELECT {baseNoteIdKey} AS \"{noteIdKey}\", STRING_AGG(\"{elKey}\"->>'Text', ' ') AS \"{nameof(NoteContent.Content)}\"" +
             $"FROM {SchemeConfig.NoteContent}.\"{nameof(BaseNoteContent)}\" JOIN {SchemeConfig.NoteContent}.\"{nameof(TextNote)}\" ON {SchemeConfig.NoteContent}.\"{nameof(BaseNoteContent)}\".\"{nameof(BaseNoteContent.Id)}\" = {SchemeConfig.NoteContent}.\"{nameof(TextNote)}\".\"{nameof(TextNote.Id)}\", " +
             $"LATERAL jsonb_array_elements({SchemeConfig.NoteContent}.\"{nameof(TextNote)}\".\"{nameof(TextNote.Contents)}\") AS \"{elKey}\" WHERE \"{noteIdKey}\" = ANY(@noteIds) " +
             $"GROUP BY {baseNoteIdKey} HAVING STRING_AGG(\"{elKey}\"->>'{nameof(TextBlock.Text)}', ' ') ILIKE @str";

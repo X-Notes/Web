@@ -15,5 +15,7 @@
         public static string UnlinkedFilesDelete = "UnlinkedFilesDelete";
 
         public static string RemoveDeadWSConnections = "RemoveDeadWSConnections";
+
+        public static string IndexTexts = "IndexTexts";
     }
 }

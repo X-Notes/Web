@@ -2,14 +2,17 @@
 {
     public class NoteSearch
     {
-        public Guid Id { set; get; }
+        public Guid NoteId { set; get; }
 
-        public string Name { set; get; }
+        public string NoteTitle { set; get; }
 
-        public NoteSearch(Guid id, string name)
+        public List<string> Contents { set; get; } = new List<string>();
+
+        public NoteSearch(Guid noteId, string noteTitle, string content)
         {
-            Id = id;
-            Name = name;
+            NoteId = noteId;
+            NoteTitle = noteTitle;
+            Contents.Add(content);
         }
     }
 }

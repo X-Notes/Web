@@ -123,6 +123,9 @@ namespace Noots.DatabaseContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BaseNoteContent>().Property(x => x.Version).HasDefaultValue(1);
+
+            modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.TextNoteId);
+
             // USER
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();

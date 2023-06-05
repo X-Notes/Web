@@ -54,6 +54,12 @@ namespace Noots.API.Workers.Hosted
             RecurringJob.AddOrUpdate<RemoveDeadWSConnectionsHandler>(JobNames.RemoveDeadWSConnections, x => x.Handle(), Delay);
         }
 
+        public void IndexTextContent()
+        {
+            BackgroundJob.Enqueue<IndexTextNoteContentJobHandler>(x => x.Handle());
+            RecurringJob.AddOrUpdate<IndexTextNoteContentJobHandler>(JobNames.IndexTexts, x => x.Handle(), Delay);
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             DeleteLabels();
@@ -63,6 +69,7 @@ namespace Noots.API.Workers.Hosted
             MakeHistory();
             UnLinkedFilesDelete();
             RemoveDeadWSConnections();
+            IndexTextContent();
 
             return Task.CompletedTask;
         }

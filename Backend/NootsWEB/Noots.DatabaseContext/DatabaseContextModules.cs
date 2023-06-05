@@ -70,8 +70,8 @@ namespace Noots.DatabaseContext
             services.AddScoped<CollectionAppFileRepository>();
 
             services.AddScoped<TextNotesRepository>();
+            services.AddScoped<TextNoteIndexRepository>();
             services.AddScoped<BaseNoteContentRepository>();
-            services.AddScoped<SearchRepository>();
 
             // History
             services.AddScoped<NoteSnapshotRepository>();

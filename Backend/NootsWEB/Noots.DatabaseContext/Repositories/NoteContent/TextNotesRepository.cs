@@ -12,12 +12,11 @@ namespace Noots.DatabaseContext.Repositories.NoteContent
 
         }
 
-        public Task<List<TextNote>> GetAllTextContentByNoteIdOrdered(Guid id)
+        public Task<List<TextNote>> GetUnsyncedTexts(int take)
         {
-            return entities
-                .Where(x => x.NoteId == id)
-                .OrderBy(x => x.Order)
-                .ToListAsync();
+            return entities.Include(x => x.TextNoteIndex)
+                           .Where(x => x.TextNoteIndex == null || x.TextNoteIndex.Version != x.Version)
+                           .Take(take).ToListAsync();
         }
     }
 }

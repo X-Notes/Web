@@ -41,7 +41,7 @@ builder.Services.ApplyDataBaseDI(dbConn);
 
 // MAYBE ADD DI LOCK
 
-builder.Services.AddMediatR(typeof(Program));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);
