@@ -28,9 +28,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
   selectionEndEvent = new EventEmitter<DOMRect>();
 
   @Output()
-  resetEvent = new EventEmitter<void>();
-
-  @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onScrollEvent = new EventEmitter<Event>();
 
@@ -177,7 +174,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).tagName === 'path' ||
       (evt.target as HTMLElement).localName === 'mat-icon' ||
       evt.target === this.scrollSection || // scroll click
-      this.pS.isMobile()
+      this.pS.isMobile() ||
+      this.pS.isDialogActive$.getValue()
     ) {
       return;
     }
@@ -205,7 +203,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
     this.clickableService.reset();
 
-    this.resetEvent.emit();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 
@@ -226,7 +223,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
     if (
       !this.isMouseDown ||
       this.selectionService.isResizingPhoto ||
-      this.selectionService.disableDiv$.getValue()
+      this.selectionService.disableDiv$.getValue() ||
+      this.pS.isDialogActive$.getValue()
     ) {
       return;
     }

@@ -87,18 +87,27 @@ namespace Noots.Search.Impl
             if (noteIds.Any())
             {
                 var noteTitlesRes = await dapperSearchRepository.SearchByNoteTitle(noteIds.ToArray(), request.SearchString);
-                var noteResultDict = noteTitlesRes.Select(x => new NoteSearch(x.Id, x.Title, null)).ToDictionary(x => x.NoteId);
+                var noteResultDict = noteTitlesRes.Select(x => new NoteSearch(x.Id, x.Title)).ToDictionary(x => x.NoteId);
 
                 var noteContentsRes = await textNoteIndexRepository.GetTextsNotesAsync(noteIds, request.SearchString);
-                foreach(var item in noteContentsRes)
+
+                foreach(var item in noteContentsRes.Where(x => noteResultDict.ContainsKey(x.NoteId)))
                 {
-                    if(noteResultDict.ContainsKey(item.NoteId))
-                    {
-                        noteResultDict[item.NoteId].Contents.Add(item.Content);
-                        continue;
-                    }
-                    noteResultDict.Add(item.NoteId, new NoteSearch(item.NoteId, null, item.Content));
+                    noteResultDict[item.NoteId].Contents.Add(item.Content);
                 }
+
+                var noteWithoutTitle = noteContentsRes.Where(x => !noteResultDict.ContainsKey(x.NoteId));
+                var lookNoteContent = noteWithoutTitle.ToLookup(x => x.NoteId);
+
+                var noteIdsWithoutTitle = noteWithoutTitle.Select(x => x.NoteId).Distinct();
+
+                var notes = await noteRepository.GetManyAsync(noteIdsWithoutTitle);
+
+                foreach(var note in notes)
+                {
+                    noteResultDict.Add(note.Id, new NoteSearch(note.Id, note.Title) { Contents = lookNoteContent[note.Id].Select(x => x.Content).ToList() });
+                }
+
 
                 noteSearches = noteResultDict.Values.ToList();
             }
@@ -113,7 +122,7 @@ namespace Noots.Search.Impl
             var searchedFolders = folderTitles?.Select(note => new FolderSearch()
             {
                 Id = note.Id,
-                Name = note.Title
+                Title = note.Title
             }).ToList();
 
             return new SearchNoteFolderResult()

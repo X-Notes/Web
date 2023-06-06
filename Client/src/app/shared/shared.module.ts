@@ -85,6 +85,7 @@ import { LeftSectionEntitiesShareComponent } from './modal_components/share/left
 import { SelectComponent } from './custom-components/select-component/select/select.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonCollectionComponent } from '../editor/components/button-collection/button-collection.component';
+import { SearchDialogComponent } from './modal_components/search-dialog/search-dialog.component';
 
 @NgModule({
   declarations: [
@@ -155,6 +156,7 @@ import { ButtonCollectionComponent } from '../editor/components/button-collectio
     LongTermOperationComponent,
     ContentAccessSectionComponent,
     LeftSectionEntitiesShareComponent,
+    SearchDialogComponent,
   ],
   imports: [
     CommonModule,

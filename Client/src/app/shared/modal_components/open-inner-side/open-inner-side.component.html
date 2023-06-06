@@ -3,7 +3,7 @@
     [message]="'notes.name' | translate"
     (clickEvent)="dialogRef.close()"
   ></app-dialog-generic-header>
-  <div class="dialog-content" mat-dialog-content>
+  <div class="dialog-content">
     <div class="tab-content">
       <div class="filter-row">
         <app-search (changeOutput)="onSearch($event)" class="search"></app-search>

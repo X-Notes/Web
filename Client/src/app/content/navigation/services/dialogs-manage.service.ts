@@ -20,6 +20,8 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { SmallFolder } from '../../folders/models/folder.model';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { NoteStore } from '../../notes/state/notes-state';
+import { SearchDialogComponent } from 'src/app/shared/modal_components/search-dialog/search-dialog.component';
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +38,7 @@ export class DialogsManageService {
     const panelClass = isMobile
       ? [this.getDefaultPanelClass(), 'no-border']
       : this.getDefaultPanelClass();
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: isMobile ? '100vh' : '90vh',
       maxWidth: isMobile ? '100vw' : '90vw',
@@ -44,7 +47,11 @@ export class DialogsManageService {
       autoFocus: false,
       panelClass,
     };
-    return this.dialogService.openDialog(OpenInnerSideComponent, config);
+    const instance = this.dialogService.openDialog(OpenInnerSideComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openNoteHistoriesMobile(noteId: string) {
@@ -52,6 +59,7 @@ export class DialogsManageService {
     const panelClass = isMobile
       ? [this.getDefaultPanelClass(), 'no-border']
       : this.getDefaultPanelClass();
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       height: isMobile ? '100vh' : '670px',
       width: isMobile ? '100vw' : '750px',
@@ -60,20 +68,30 @@ export class DialogsManageService {
       panelClass,
       data: { noteId },
     };
-    return this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
+    const instance = this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openAddNotesToFolder() {
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass: this.getDefaultPanelClass(),
     };
-    return this.dialogService.openDialog(AddNotesInFolderComponent, config);
+    const instance =  this.dialogService.openDialog(AddNotesInFolderComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openRelatedNotes(noteId: string, canEdit: boolean) {
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       height: '100vh',
       width: '100vw',
@@ -82,7 +100,11 @@ export class DialogsManageService {
       panelClass: [this.getDefaultPanelClass(), 'no-border'],
       data: { canEdit, noteId },
     };
-    return this.dialogService.openDialog(RelatedNotesPopUpComponent, config);
+    const instance = this.dialogService.openDialog(RelatedNotesPopUpComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openChangeLabels() {
@@ -92,7 +114,7 @@ export class DialogsManageService {
     } else {
       labelIds = this.store.selectSnapshot(NoteStore.labelsIds);
     }
-
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -100,53 +122,91 @@ export class DialogsManageService {
       panelClass: this.getDefaultPanelClass(),
       data: { labelIds: new Set(labelIds) },
     };
-    console.log('config: ', config);
-    return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
+    const instance = this.dialogService.openDialog(EditingLabelsNoteComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openChangeColorDialog(currentWindowType: EntityPopupType, ids: string[]) {
     this.validateIds(ids);
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       panelClass: this.getDefaultPanelClass(),
       data: { currentWindowType, ids },
     };
-    return this.dialogService.openDialog(ChangeColorComponent, config);
+    const instance = this.dialogService.openDialog(ChangeColorComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
+  }
+
+  openSearchDialog() {
+    this.pS.isDialogActive$.next(true);
+    const config: MatDialogConfig = {
+      maxHeight: '100%',
+      maxWidth: '90vw',
+      panelClass: this.getDefaultPanelClass(),
+    };
+    const instance = this.dialogService.openDialog(SearchDialogComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openDeletionPopup(message: string, additionalMessage: string) {
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       panelClass: this.getDefaultPanelClass(),
       data: { message, additionalMessage },
     };
-    return this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
+    const instance = this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openLockDialog(id: string, state: LockPopupState, callback: () => Promise<any>) {
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       panelClass: this.getDefaultPanelClass(),
       data: { id, state, callback },
     };
-    return this.dialogService.openDialog(LockComponent, config);
+    const instance = this.dialogService.openDialog(LockComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   viewDock(id: string) {
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       panelClass: this.getDefaultPanelClass(),
       data: id,
     };
-    return this.dialogService.openDialog(ViewDocComponent, config);
+    const instance =  this.dialogService.openDialog(ViewDocComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   openShareEntity(currentWindowType: EntityPopupType, ents: SmallNote[] | SmallFolder[]) {
     this.validateIds(ents);
+    this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
@@ -157,7 +217,11 @@ export class DialogsManageService {
           : ['custom-dialog-class-dark', 'sharing-modal'],
       data: { currentWindowType, ents },
     };
-    return this.dialogService.openDialog(ShareComponent, config);
+    const instance = this.dialogService.openDialog(ShareComponent, config);
+    instance.afterClosed().pipe(take(1)).subscribe(() => {
+      this.pS.isDialogActive$.next(false);
+    });
+    return instance;
   }
 
   getDefaultPanelClass(): string {

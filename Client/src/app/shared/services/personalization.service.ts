@@ -186,6 +186,8 @@ export class PersonalizationService {
 
   isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
+  isDialogActive$ = new BehaviorSubject<boolean>(false);
+
   constructor(public lockEncryptService: LockEncryptService, private store: Store) {
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
