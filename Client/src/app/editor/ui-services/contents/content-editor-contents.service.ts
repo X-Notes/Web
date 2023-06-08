@@ -35,8 +35,8 @@ export class ContentEditorContentsService {
 
   private progressiveLoadOptions = {
     firstLoadCount: 30,
-    stepCount: 4,
-    renderInterval: 10,
+    stepCount: 2,
+    renderInterval: 1,
   };
 
   onProgressiveAdding = new Subject<void>();

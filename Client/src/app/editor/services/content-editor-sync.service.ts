@@ -91,12 +91,12 @@ export class ContentEditorSyncService {
   }
 
   get isCanBeProcessed(): boolean {
-    return !this.isEdit && !this.contentService.isRendering;
+    return this.isEdit && !this.contentService.isRendering;
   }
 
   initTimers(): void {
     this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges)).subscribe(async () => {
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.isCanBeProcessed)).subscribe(async () => {
       const state = this.contentService.getEditorStateDiffs();
       try {
         const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
@@ -174,7 +174,7 @@ export class ContentEditorSyncService {
     this.updateSubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isProcessChanges),
+        filter((x) => x === true && !this.isProcessChanges && this.isCanBeProcessed),
         debounceTime(processSyncEditorIntervalDelay),
       )
       .subscribe(async () => {
@@ -184,7 +184,7 @@ export class ContentEditorSyncService {
     this.updateImmediatelySubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isProcessChanges),
+        filter((x) => x === true && !this.isProcessChanges && this.isCanBeProcessed),
       )
       .subscribe(async () => {
         await this.processChanges();
@@ -195,7 +195,6 @@ export class ContentEditorSyncService {
   initProcessChangesAutoTimer(): void { }
 
   change() {
-    if (this.isCanBeProcessed) return;
     this.updateSubject?.next(true);
   }
 
