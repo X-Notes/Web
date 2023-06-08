@@ -1,11 +1,13 @@
-﻿using BI.Services.Notes;
-using Common.DTO;
+﻿using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Noots.Editor.Queries;
+using Noots.Editor.Services;
+using Noots.Editor.Services.Users;
 using Noots.Notes.Commands;
 using Noots.Notes.Handlers.Commands;
 using Noots.Notes.Handlers.Queries;

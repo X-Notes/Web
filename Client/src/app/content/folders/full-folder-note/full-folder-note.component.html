@@ -6,7 +6,8 @@
 >
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
-      [noteId]="(note$ | async).id"
+      [noteId]="noteId"
+      [folderId]="folderId"
       [color]="(note$ | async).color"
       [labels]="(note$ | async).labels"
       [progressiveLoading]="true"
@@ -17,7 +18,7 @@
     ></app-content-editor>
     <app-right-section-content
       [note$]="note$"
-      [noteId]="(note$ | async).id"
+      [noteId]="noteId"
     ></app-right-section-content>
   </div>
   <div *ngIf="(canView$ | async) === false && loaded" class="wrapper">

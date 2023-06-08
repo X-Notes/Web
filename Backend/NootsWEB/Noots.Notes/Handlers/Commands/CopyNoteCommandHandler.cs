@@ -1,5 +1,4 @@
-﻿using BI.Services.Notes;
-using Common;
+﻿using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
@@ -15,6 +14,7 @@ using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
+using Noots.Editor.Services;
 using Noots.Encryption.Impl;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
@@ -176,7 +176,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                             {
                                 AppFileId = x.AppFileId
                             }).ToList();
-                            contents.Add(new CollectionNote(collection, dbFiles, noteId));
+                            contents.Add(new CollectionNote(collection, dbFiles, noteId, 1));
                         }
                         else
                         {
@@ -186,7 +186,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
                             {
                                 var tasks = copyCommands.Select(x => mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new CollectionNote(collection, copies, noteId));
+                                contents.Add(new CollectionNote(collection, copies, noteId, 1));
                             }
                         }
                         continue;

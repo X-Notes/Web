@@ -3,6 +3,7 @@ using Common.Interfaces.Note;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
@@ -17,6 +18,8 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
 
         public HTypeENUM? HTypeId { set; get; }
         public HType HType { set; get; }
+
+        public TextNoteIndex TextNoteIndex { set; get; }
 
         public bool? Checked { set; get; }
 
@@ -40,6 +43,12 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             Checked = text.Checked;
 
             ContentTypeId = ContentTypeENUM.Text;
+        }
+
+        public string GetContentString()
+        {
+            if (Contents == null) return null;
+            return string.Join("", Contents.Select(x => x.Text));
         }
     }
 }

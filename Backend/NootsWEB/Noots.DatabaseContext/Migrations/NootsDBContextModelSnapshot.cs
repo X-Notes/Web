@@ -428,6 +428,11 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContentTypeId");
@@ -545,6 +550,27 @@ namespace Noots.DatabaseContext.Migrations
                             Id = 5,
                             Name = "Checklist"
                         });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", b =>
+                {
+                    b.Property<Guid>("TextNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TextNoteId");
+
+                    b.HasIndex("NoteId");
+
+                    b.ToTable("TextNoteIndex", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
@@ -1548,6 +1574,25 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("CollectionNote");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithMany("TextNoteIndexs")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", "TextNote")
+                        .WithOne("TextNoteIndex")
+                        .HasForeignKey("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", "TextNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("TextNote");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.NoteType", "NoteType")
@@ -1947,6 +1992,8 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Navigation("ReletatedNoteToInnerNotesTo");
 
+                    b.Navigation("TextNoteIndexs");
+
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
@@ -2049,6 +2096,11 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.Navigation("CollectionNoteAppFiles");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", b =>
+                {
+                    b.Navigation("TextNoteIndex");
                 });
 #pragma warning restore 612, 618
         }

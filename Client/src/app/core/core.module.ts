@@ -23,13 +23,14 @@ import { ApiNoteHistoryService } from '../content/notes/full-note/services/api-n
 import { ApiPersonalizationSettingsService } from './api-personalization-settings.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { FileApiService } from './file-api.service';
-import { ApiAudiosService } from '../content/notes/full-note/services/api-audios.service';
-import { ApiPhotosService } from '../content/notes/full-note/services/api-photos.service';
-import { ApiDocumentsService } from '../content/notes/full-note/services/api-documents.service';
-import { ApiVideosService } from '../content/notes/full-note/services/api-videos.service';
-import { ApiTextService } from '../content/notes/full-note/services/api-text.service';
 import { AuthService } from './auth.service';
 import { ApiBillingService } from './api-billing.service';
+import { ApiAudiosService } from '../editor/api/api-audios.service';
+import { ApiDocumentsService } from '../editor/api/api-documents.service';
+import { ApiPhotosService } from '../editor/api/api-photos.service';
+import { ApiTextService } from '../editor/api/api-text.service';
+import { ApiVideosService } from '../editor/api/api-videos.service';
+import { ApiEditorUsersService } from '../editor/api/api-editor-users.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -82,6 +83,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiAudiosService,
     ApiPhotosService,
     ApiDocumentsService,
+    ApiEditorUsersService,
     ApiVideosService,
     ApiTextService,
   ],

@@ -1,7 +1,6 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO.Notifications;
-using MediatR;
 using Noots.DatabaseContext.Repositories.Notifications;
 using Noots.Mapper.Mapping;
 using Noots.SignalrUpdater.Impl;

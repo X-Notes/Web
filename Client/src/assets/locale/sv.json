@@ -166,6 +166,10 @@
     "folderManage": {
       "notes": "Lägga till anteckningar i mappen"
     },
+    "searchModal": {
+      "title": "Sök",
+      "trySearch": "Hitta anteckningar och mappar via sökning"
+    },
     "lockModal": {
       "lock": "Lås anteckning",
       "unLock": "Lås upp anteckning",

@@ -6,7 +6,7 @@ namespace Common.DTO.WebSockets.InnerNote
 {
     public class UpdateAudiosCollectionWS : BaseUpdateFileContentWS<AudiosCollectionNoteDTO>
     {
-        public UpdateAudiosCollectionWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset time) : base(contentId, operation, time)
+        public UpdateAudiosCollectionWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset time, int version) : base(contentId, operation, time, version)
         {
         }
     }

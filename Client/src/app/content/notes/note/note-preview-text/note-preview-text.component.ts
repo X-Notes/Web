@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DeltaConverter } from '../../full-note/content-editor/converter/delta-converter';
-import { BaseText } from '../../models/editor-models/base-text';
-import { ThemeENUM } from '../../../../shared/enums/theme.enum';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { DeltaConverter } from 'src/app/editor/converter/delta-converter';
+import { BaseText } from 'src/app/editor/entities/contents/base-text';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-note-preview-text',

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { VideosCollection } from '../../models/editor-models/videos-collection';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { VideosCollection } from 'src/app/editor/entities/contents/videos-collection';
 
 @Component({
   selector: 'app-note-preview-videos',

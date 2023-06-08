@@ -49,12 +49,13 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
   async updateNotes(updates: UpdateNoteUI[]) {
     for (const value of updates) {
       const note = this.entities.find((x) => x.id === value.id) as SmallNote;
-      if (note !== undefined) {
-        if (value.removeLabelIds && value.removeLabelIds.length > 0) {
-          note.labels = note.labels.filter((x) => !value.removeLabelIds.some((id) => x.id === id));
+      if (note) {
+        if (value?.removeLabelIds && value.removeLabelIds?.length > 0) {
+          note.labels = note.labels?.filter((x) => !value.removeLabelIds?.some((id) => x.id === id));
         }
         if (value.addLabels && value.addLabels.length > 0) {
-          note.labels = [...note.labels, ...value.addLabels];
+          const noteLabels = note.labels ?? [];
+          note.labels = [...noteLabels, ...value.addLabels];
         }
         if (value.allLabels) {
           note.labels = value.allLabels;
@@ -108,7 +109,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     }
   }
 
-  abstract toNote(note: SmallNote);
+  abstract toNote(note: SmallNote): void;
 
   abstract navigateFunc(note: SmallNote): Promise<boolean>;
 }

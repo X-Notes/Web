@@ -2,7 +2,7 @@
   <div class="photo" [appDrop]="'is-active'" (fileDropped)="uploadImageUserPhoto($event)">
     <img
       *ngIf="!photoError"
-      [src]="(user$ | async).photoPath"
+      [src]="(user$ | async)?.photoPath"
       alt="User photo"
       (error)="changeSource()"
     />
@@ -40,7 +40,7 @@
       <div class="field-name">
         <p>{{ 'profile.email' | translate }}</p>
       </div>
-      <input type="text" placeholder="Your name" disabled value="{{(user$ | async).email}}" />
+      <input type="text" placeholder="Your name" disabled [value]="(user$ | async)?.email" />
       <div class="help-info">
         <p>{{ 'profile.descriptionEmail' | translate }}</p>
       </div>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="9.0.0" />
+      <PackageReference Include="MediatR" Version="12.0.1" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
@@ -16,6 +16,7 @@
       <ProjectReference Include="..\Noots.Billing\Noots.Billing.csproj" />
       <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
       <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
+      <ProjectReference Include="..\Noots.Search\Noots.Search.csproj" />
       <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
     </ItemGroup>
 

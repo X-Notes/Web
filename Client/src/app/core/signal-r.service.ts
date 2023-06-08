@@ -17,7 +17,6 @@ import {
 } from '../content/folders/state/folders-actions';
 import { UpdateFolderUI } from '../content/folders/state/update-folder-ui.model';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
-import { BaseText } from '../content/notes/models/editor-models/base-text';
 import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
@@ -39,13 +38,8 @@ import { NoteTypeENUM } from '../shared/enums/note-types.enum';
 import { RefTypeENUM } from '../shared/enums/ref-type.enum';
 import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
 import { AuthService } from './auth.service';
-import { UpdateAudiosCollectionWS } from './models/signal-r/innerNote/update-audios-collection-ws';
-import { UpdateDocumentsCollectionWS } from './models/signal-r/innerNote/update-documents-collection-ws';
-import { UpdateNoteStructureWS } from './models/signal-r/innerNote/update-note-structure-ws';
-import { UpdateNoteTextWS } from './models/signal-r/innerNote/update-note-text-ws';
-import { UpdatePhotosCollectionWS } from './models/signal-r/innerNote/update-photos-collection-ws';
 import { UpdateRelatedNotesWS } from './models/signal-r/innerNote/update-related-notes-ws';
-import { UpdateVideosCollectionWS } from './models/signal-r/innerNote/update-videos-collection-ws';
+import { UpdateVideosCollectionWS } from '../editor/entities/ws/update-videos-collection-ws';
 import { UpdatePermissionFolder } from './models/signal-r/permissions/update-permission-folder';
 import { UpdatePermissionNote } from './models/signal-r/permissions/update-permission-note';
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
@@ -54,10 +48,16 @@ import { NewNotification } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
 import { pingWSDelay } from './defaults/bounceDelay';
-import { NoteUserCursorWS } from './models/signal-r/innerNote/note-user-cursor';
 import { UpdateCursorWS } from '../content/notes/state/editor-actions';
 import { AppNotification } from './models/notifications/app-notification.model';
 import { JoinEntityStatus } from './models/signal-r/join-enitity-status';
+import { BaseText } from '../editor/entities/contents/base-text';
+import { NoteUserCursorWS } from '../editor/entities/ws/note-user-cursor';
+import { UpdateAudiosCollectionWS } from '../editor/entities/ws/update-audios-collection-ws';
+import { UpdateDocumentsCollectionWS } from '../editor/entities/ws/update-documents-collection-ws';
+import { UpdateEditorStructureWS } from '../editor/entities/ws/update-note-structure-ws';
+import { UpdateNoteTextWS } from '../editor/entities/ws/update-note-text-ws';
+import { UpdatePhotosCollectionWS } from '../editor/entities/ws/update-photos-collection-ws';
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +67,7 @@ export class SignalRService {
 
   public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
-  public updateNoteStructureEvent$ = new Subject<UpdateNoteStructureWS>();
+  public updateNoteStructureEvent$ = new Subject<UpdateEditorStructureWS>();
 
   public updatePhotosCollectionEvent$ = new Subject<UpdatePhotosCollectionWS>();
 
@@ -215,8 +215,8 @@ export class SignalRService {
       this.updateTextContentEvent$.next(updates);
     });
 
-    this.hubConnection.on('updateNoteStructure', (updates: UpdateNoteStructureWS) => {
-      updates = new UpdateNoteStructureWS(updates);
+    this.hubConnection.on('updateNoteStructure', (updates: UpdateEditorStructureWS) => {
+      updates = new UpdateEditorStructureWS(updates);
       this.updateNoteStructureEvent$.next(updates);
     });
 

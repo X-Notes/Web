@@ -19,9 +19,32 @@
   }
 }
 
-.sharing-modal {
-  mat-dialog-container {
-    --mdc-dialog-container-color: transparent
-    box-shadow: none;
+@media (max-width: 900px) {
+  .dialog-full-screen-mobile {
+    width: 100%;
+    height: 100%;
+    max-width: initial !important;
+    max-height: initial !important;
+  }
+
+  .custom-dialog-no-border {
+    mat-dialog-container {
+      border-radius: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .dialog-full-screen-600 {
+    width: 100%;
+    height: 100%;
+    max-width: initial !important;
+    max-height: initial !important;
+  }
+
+  .custom-dialog-no-border-600 {
+    mat-dialog-container {
+      border-radius: 0;
+    }
   }
 }

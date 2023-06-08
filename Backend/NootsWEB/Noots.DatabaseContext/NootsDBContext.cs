@@ -122,6 +122,10 @@ namespace Noots.DatabaseContext
                 .WithMany(x => x.Contents)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<BaseNoteContent>().Property(x => x.Version).HasDefaultValue(1);
+
+            modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.TextNoteId);
+
             // USER
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
@@ -129,12 +133,12 @@ namespace Noots.DatabaseContext
 
             modelBuilder.Entity<User>()
                 .HasOne(x => x.CurrentBackground)
-                .WithOne(z => z.CurrentUserBackground)
+                .WithOne(q => q.CurrentUserBackground)
                 .HasForeignKey<User>(h => h.CurrentBackgroundId);
 
             modelBuilder.Entity<User>()
                 .HasOne(x => x.UserProfilePhoto)
-                .WithOne(z => z.User)
+                .WithOne(q => q.User)
                 .HasForeignKey<UserProfilePhoto>(h => h.UserId);
 
             modelBuilder.Entity<UserProfilePhoto>()

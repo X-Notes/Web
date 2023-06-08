@@ -72,7 +72,7 @@ export class AuthService {
     return user;
   }
 
-  async getToken(refresh = false): Promise<string> {
+  async getToken(refresh = false): Promise<string | undefined> {
     const user = await this.afAuth.currentUser;
     return user?.getIdToken(refresh);
   }
@@ -94,24 +94,26 @@ export class AuthService {
     }
   }
 
-  async handlerAuth(user: firebase.User, navigateToUrl: string) {
+  async handlerAuth(user: firebase.User | null, navigateToUrl: string) {
     if (user) {
       const token = await this.getToken();
-      const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
-      if (isValidToken.success) {
-        await this.store
-          .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
-          .toPromise();
-        await this.apiAuth.setTokenClaims().toPromise();
-        await this.refreshToken();
-        this.authStatus.next(AuthStatus.Successful);
-        this.router.navigate([navigateToUrl]);
-        return;
+      if (token) {
+        const isValidToken = await this.apiAuth.verifyToken(token).toPromise();
+        if (isValidToken.success) {
+          await this.store
+            .dispatch(new Auth({ name: user.displayName, photoURL: user.photoURL }))
+            .toPromise();
+          await this.apiAuth.setTokenClaims().toPromise();
+          await this.refreshToken();
+          this.authStatus.next(AuthStatus.Successful);
+          this.router.navigate([navigateToUrl]);
+          return;
+        }
       }
     }
     this.authStatus.next(AuthStatus.Failed);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private async configureAuthState(user: firebase.User) {}
+  private async configureAuthState(user: firebase.User | null) {}
 }

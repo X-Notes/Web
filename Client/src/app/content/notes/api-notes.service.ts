@@ -210,12 +210,6 @@ export class ApiServiceNotes {
     );
   }
 
-  getOnlineUsersOnNote(id: string) {
-    return this.httpClient.get<OnlineUsersNote[]>(
-      `${environment.writeAPI}/api/note/inner/users/${id}`,
-    );
-  }
-
   clearAll(noteId: string) {
     const obj = {
       noteId,

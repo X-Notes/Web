@@ -166,6 +166,10 @@
     "folderManage": {
       "notes": "Ajouter des notes au dossier"
     },
+    "searchModal": {
+      "title": "Recherche",
+      "trySearch": "Recherche de notes et de dossiers"
+    },
     "lockModal": {
       "lock": "Note de verrouillage",
       "unLock": "Déverrouiller la note",

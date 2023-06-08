@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ContentTypeENUM } from '../../models/editor-models/content-types.enum';
 import { RelatedNote } from '../../models/related-note.model';
 import { Select } from '@ngxs/store';
 import { UserStore } from '../../../../core/stateUser/user-state';
 import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 import { Observable } from 'rxjs';
-import { NoteTextTypeENUM } from '../../models/editor-models/text-models/note-text-type.enum';
+import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
+import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',

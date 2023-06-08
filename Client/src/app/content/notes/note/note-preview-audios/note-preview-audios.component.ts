@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AudiosCollection } from '../../models/editor-models/audios-collection';
-import { ContentModelBase } from '../../models/editor-models/content-model-base';
+import { AudiosCollection } from 'src/app/editor/entities/contents/audios-collection';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 
 @Component({
   selector: 'app-note-preview-audios',

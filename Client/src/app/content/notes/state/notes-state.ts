@@ -51,6 +51,7 @@ import {
   RemoveOnlineUsersOnNote,
   UpdateNoteTitleWS,
   CreateNoteCompleted,
+  UpdateFolderNotes,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -62,7 +63,6 @@ import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.mode
 import { OnlineUsersNote } from '../models/online-users-note.model';
 import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
 import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
-import { ApiTextService } from '../full-note/services/api-text.service';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { Router } from '@angular/router';
@@ -76,10 +76,14 @@ import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { ApiNoteContentService } from '../full-note/services/api-note-content.service';
 import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
-import { NoteUserCursorWS } from 'src/app/core/models/signal-r/innerNote/note-user-cursor';
-import { UpdateCursor } from '../full-note/models/cursors/cursor';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
+import { ApiTextService } from 'src/app/editor/api/api-text.service';
+import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
+import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
+import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
 
 export interface FullNoteState {
   note: FullNote;
@@ -89,20 +93,20 @@ export interface FullNoteState {
 
 interface NoteState {
   notes: Notes[];
-  fullNoteState: FullNoteState;
-  fullNoteHistories: NoteHistory[];
-  snapshotState: NoteSnapshotState;
+  fullNoteState: FullNoteState | null;
+  fullNoteHistories: NoteHistory[] | null;
+  snapshotState: NoteSnapshotState | null;
   selectedIds: string[];
   updateNoteEvent: UpdateNoteUI[];
   removeFromMurriEvent: string[];
-  notesAddingToDom: AddNotesToDom;
+  notesAddingToDom: AddNotesToDom | null;
   selectedLabelsFilter: string[];
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
   onlineUsers: OnlineUsersNote[];
   folderNotes: SmallNote[];
   cursors: NoteUserCursorWS[];
-  cursorColor: string;
+  cursorColor: string | null;
 }
 
 @State<NoteState>({
@@ -129,6 +133,7 @@ interface NoteState {
 export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
+    private apiEditorUsers: ApiEditorUsersService,
     private apiText: ApiTextService,
     private historyApi: ApiNoteHistoryService,
     private apiContents: ApiNoteContentService,
@@ -139,7 +144,8 @@ export class NoteStore {
     private zone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-  ) {}
+    public pService: PersonalizationService
+  ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
     return state.notes.find((x) => x.typeNotes === type);
@@ -147,7 +153,7 @@ export class NoteStore {
 
   static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
     return notes.filter((x) =>
-      x.labels.some((label) => selectedLabelsFilter.some((z) => z === label.id)),
+      x.labels.some((label) => selectedLabelsFilter.some((q) => q === label.id)),
     ).length;
   }
 
@@ -159,6 +165,11 @@ export class NoteStore {
       return note.isLockedNow;
     }
     return false;
+  }
+
+  @Selector([AppStore.isNoteInner])
+  static isFullNoteAndCanView(noteState: NoteState, isInnerNote: boolean) {
+    return noteState.fullNoteState?.isCanView === isInnerNote
   }
 
   @Selector()
@@ -244,7 +255,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static notesAddingToDOM(state: NoteState): AddNotesToDom {
+  static notesAddingToDOM(state: NoteState): AddNotesToDom | null {
     return state.notesAddingToDom;
   }
 
@@ -292,7 +303,7 @@ export class NoteStore {
   // FULL NOTE
 
   @Selector()
-  static oneFull(state: NoteState): FullNote {
+  static oneFull(state: NoteState): FullNote | undefined {
     return state.fullNoteState?.note;
   }
 
@@ -302,7 +313,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static cursorColor(state: NoteState): string {
+  static cursorColor(state: NoteState): string | null {
     return state.cursorColor;
   }
 
@@ -317,12 +328,12 @@ export class NoteStore {
   }
 
   @Selector()
-  static histories(state: NoteState): NoteHistory[] {
+  static histories(state: NoteState): NoteHistory[] | null {
     return state.fullNoteHistories;
   }
 
   @Selector()
-  static fullNoteTitle(state: NoteState): string {
+  static fullNoteTitle(state: NoteState): string | undefined {
     return state.fullNoteState?.note?.title;
   }
 
@@ -499,6 +510,16 @@ export class NoteStore {
     );
   }
 
+  @Action(UpdateFolderNotes)
+  // eslint-disable-next-line class-methods-use-this
+  updateFolderNotes({ setState }: StateContext<NoteState>, { updateNote }: UpdateFolderNotes) {
+    setState(
+      patch({
+        folderNotes: updateItem<SmallNote>((note) => note.id === updateNote.id, updateNote),
+      }),
+    );
+  }
+
   @Action(ClearUpdatesUINotes)
   // eslint-disable-next-line class-methods-use-this
   clearUpdatesNotes({ patchState }: StateContext<NoteState>) {
@@ -541,10 +562,22 @@ export class NoteStore {
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId, deleteIds }: TransformTypeNotes,
   ) {
-    const typeFrom = getState()
-      .notes.map((x) => x.notes)
-      .flat()
-      .find((q) => selectedIds.some((x) => x === q.id)).noteTypeId;
+
+    let folderNotes = getState().folderNotes.filter(q => selectedIds.some((x) => x === q.id));
+    folderNotes = folderNotes.map((x, index) => {
+      const note = { ...x };
+      note.noteTypeId = typeTo;
+      note.refTypeId = refTypeId ?? note.refTypeId;
+      note.updatedAt = new Date();
+      return note;
+    });
+    
+    folderNotes.forEach(x => dispatch(new UpdateFolderNotes(x)));
+
+    const notes = getState().notes.map((x) => x.notes).flat();
+    if (notes?.length <= 0) { return; }
+
+    const typeFrom = notes.find((q) => selectedIds.some((x) => x === q.id))?.noteTypeId;
 
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
@@ -1084,7 +1117,7 @@ export class NoteStore {
     { noteId }: LoadOnlineUsersOnNote,
   ) {
     patchState({ onlineUsers: [] });
-    const onlineUsers = await this.api.getOnlineUsersOnNote(noteId).toPromise();
+    const onlineUsers = await this.apiEditorUsers.getOnlineUsersOnNote(noteId).toPromise();
     patchState({ onlineUsers });
   }
 

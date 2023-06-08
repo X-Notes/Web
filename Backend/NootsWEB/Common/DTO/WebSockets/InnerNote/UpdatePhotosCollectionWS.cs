@@ -9,7 +9,7 @@ namespace Common.DTO.WebSockets.InnerNote
         public string Height { set; get; }
         public int CountInRow { set; get; }
 
-        public UpdatePhotosCollectionWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset time) : base(contentId, operation, time)
+        public UpdatePhotosCollectionWS(Guid contentId, UpdateOperationEnum operation, DateTimeOffset time, int version) : base(contentId, operation, time, version)
         {
         }
     }

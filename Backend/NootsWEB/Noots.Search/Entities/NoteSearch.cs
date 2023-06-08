@@ -2,8 +2,16 @@
 {
     public class NoteSearch
     {
-        public Guid Id { set; get; }
+        public Guid NoteId { set; get; }
 
-        public string Name { set; get; }
+        public string NoteTitle { set; get; }
+
+        public List<string> Contents { set; get; } = new List<string>();
+
+        public NoteSearch(Guid noteId, string noteTitle)
+        {
+            NoteId = noteId;
+            NoteTitle = noteTitle;
+        }
     }
 }

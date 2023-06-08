@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { DeltaConverter } from '../../content/notes/full-note/content-editor/converter/delta-converter';
+import { DeltaConverter } from 'src/app/editor/converter/delta-converter';
 
 @Component({
   selector: 'app-public-folder',

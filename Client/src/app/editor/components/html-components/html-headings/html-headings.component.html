@@ -1,0 +1,43 @@
+<div
+  appTheme
+  class="main-container"
+  (click)="setFocus($event)"
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseLeave($event)"
+  [ngClass]="{
+    h1: content.headingTypeId === hType.H1,
+    h2: content.headingTypeId === hType.H2,
+    h3: content.headingTypeId === hType.H3
+  }"
+>
+  <app-drag-drop-handler-container [isShow]="isMouseOver"
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
+  ></app-drag-drop-handler-container>
+  <div
+    class="main-item"
+    [ngStyle]="{
+      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+    }"
+  >
+    <p
+      #contentHtml
+      class="block-generic default-text-id heading-block"
+      [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false"
+      [innerHTML]="viewHtml"
+      (input)="onInput()"
+      (click)="textClick($event)"
+    ></p>
+    <p class="no-content" *ngIf="isActiveState && (isSelectModeActive$ | async) === false">
+      {{ 'innerNote.heading' | translate }}
+    </p>
+    <div
+      *ngFor="let cursor of uiCursors$ | async"
+      [ngClass]="['collaborative-cursor', cursorClass]"
+      [ngStyle]="{
+        top: cursor.cursorTop + 'px',
+        left: cursor.cursorLeft + 'px',
+        backgroundColor: cursor.color
+      }"
+    ></div>
+  </div>
+</div>

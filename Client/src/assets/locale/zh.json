@@ -166,6 +166,10 @@
     "folderManage": {
       "notes": "向文件夹添加备注"
     },
+    "searchModal": {
+      "title": "搜索",
+      "trySearch": "通过搜索查找笔记和文件夹"
+    },
     "lockModal": {
       "lock": "锁定备注",
       "unLock": "解锁笔记",

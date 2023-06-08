@@ -53,7 +53,6 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section-wrapper.component';
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
-import { ButtonCollectionComponent } from '../content/notes/full-note/ui-components/button-collection/button-collection.component';
 import { DropDirective } from '../content/profile/drop/drop.directive';
 import { ContactUsComponent } from './modal_components/contact-us/contact-us.component';
 import { AutosizeDirective } from './directives/autosize.directive';
@@ -85,6 +84,9 @@ import { ContentAccessSectionComponent } from './modal_components/share/content-
 import { LeftSectionEntitiesShareComponent } from './modal_components/share/left-section-entities-share/left-section-entities-share.component';
 import { SelectComponent } from './custom-components/select-component/select/select.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ButtonCollectionComponent } from '../editor/components/button-collection/button-collection.component';
+import { SearchDialogComponent } from './modal_components/search-dialog/search-dialog.component';
+import { HighlightSearchPipe } from './directives/highlight-search.pipe';
 
 @NgModule({
   declarations: [
@@ -155,6 +157,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LongTermOperationComponent,
     ContentAccessSectionComponent,
     LeftSectionEntitiesShareComponent,
+    SearchDialogComponent,
+    HighlightSearchPipe,
   ],
   imports: [
     CommonModule,
@@ -240,6 +244,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FullNoteActiveUsersComponent,
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
+    HighlightSearchPipe
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
 })

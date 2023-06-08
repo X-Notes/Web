@@ -166,6 +166,10 @@
     "folderManage": {
       "notes": "Hinzufügen von Notizen zum Ordner"
     },
+    "searchModal": {
+      "title": "Suche",
+      "trySearch": "Notizen und Ordner über die Suche finden"
+    },
     "lockModal": {
       "lock": "Lock-Notiz",
       "unLock": "Notiz entsperren",
