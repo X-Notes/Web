@@ -167,7 +167,8 @@
       "notes": "フォルダにメモを追加する"
     },
     "searchModal": {
-      "title": "検索"
+      "title": "検索",
+      "trySearch": "検索でノートやフォルダーを探す"
     },
     "lockModal": {
       "lock": "ロックノート",

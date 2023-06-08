@@ -167,7 +167,8 @@
       "notes": "Add notes to folder"
     },
     "searchModal": {
-      "title": "Search"
+      "title": "Search",
+      "trySearch": "Find notes and folders via search"
     },
     "lockModal": {
       "lock": "Lock note",

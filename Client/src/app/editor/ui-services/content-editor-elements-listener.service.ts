@@ -2,6 +2,7 @@ import { Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/cor
 import { Subject } from 'rxjs';
 import { ParentInteraction } from '../components/parent-interaction.interface';
 import { ContentModelBase } from '../entities/contents/content-model-base';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Injectable()
 export class ContentEditorElementsListenerService {
@@ -21,14 +22,14 @@ export class ContentEditorElementsListenerService {
 
   private renderer: Renderer2;
 
-  constructor(rendererFactory: RendererFactory2) {
+  constructor(rendererFactory: RendererFactory2, private pS: PersonalizationService) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
   setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
-      if (this.isMatDialogActive()) {
+      if (this.pS.isDialogActive$.getValue()) {
         return true;
       }
       this.onPressDeleteOrBackSpaceSubject.next();
@@ -38,7 +39,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownDelete = this.renderer.listen(document, 'keydown.delete', () => {
-      if (this.isMatDialogActive()) {
+      if (this.pS.isDialogActive$.getValue()) {
         return true;
       }
       this.onPressDeleteOrBackSpaceSubject.next();
@@ -48,7 +49,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.isMatDialogActive()) {
+      if (this.pS.isDialogActive$.getValue()) {
         return true;
       }
       if (e.ctrlKey && e.code === 'KeyZ') {
@@ -60,7 +61,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.isMatDialogActive()) {
+      if (this.pS.isDialogActive$.getValue()) {
         return true;
       }
       const htmlEl = e.target as HTMLElement;
@@ -87,7 +88,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlS = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.isMatDialogActive()) {
+      if (this.pS.isDialogActive$.getValue()) {
         return true;
       }
       if (e.ctrlKey && e.code === 'KeyS') {
@@ -99,11 +100,6 @@ export class ContentEditorElementsListenerService {
     });
 
     this.listeners.push(keydownBackspace, keydownDelete, keydownCtrlZ, keydownCtrlA, keydownCtrlS);
-  }
-
-  isMatDialogActive(): boolean {
-    const els = document.getElementsByTagName('mat-dialog-container');
-    return els && els.length > 0;
   }
 
   destroysListeners() {

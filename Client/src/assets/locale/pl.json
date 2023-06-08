@@ -167,7 +167,8 @@
       "notes": "Dodawanie notatek do folderu"
     },
     "searchModal": {
-      "title": "Wyszukiwanie"
+      "title": "Wyszukiwanie",
+      "trySearch": "Znajdowanie notatek i folderów za pomocą wyszukiwania"
     },
     "lockModal": {
       "lock": "Zablokuj notatkę",

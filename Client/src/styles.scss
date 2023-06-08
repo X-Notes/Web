@@ -104,3 +104,17 @@ textarea {
   position: absolute;
   background-color: rgba(41, 151, 255, 0.5);
 }
+
+.light {
+  .highlight {
+    background-color: #e7e7e7;
+    font-weight: bold;
+  }
+}
+
+.dark {
+  .highlight {
+    background-color: #0887a7;
+    font-weight: bold;
+  }
+}

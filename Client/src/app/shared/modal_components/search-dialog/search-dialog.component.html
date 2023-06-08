@@ -1,0 +1,41 @@
+<app-dialog-generic-header [message]="'modal.searchModal.title' | translate"
+  (clickEvent)="dialogRef.close()"></app-dialog-generic-header>
+<div appTheme class="search-dialog-container">
+  <div class="search-container dialog-container-padding">
+    <app-search (changeOutput)="onSearch($event)" class="search"></app-search>
+  </div>
+  <div class="search-results">
+    <div class="results-container">
+      <div *ngFor="let noteItem of notesView" class="note-result-card dialog-container-padding">
+        <div class="result-card-icon">
+          <div class="icon-container" (click)="goToNote(noteItem.noteId)">
+            <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+          </div>
+        </div>
+        <div class="note-result-card-content">
+          <b [innerHTML]="noteItem.noteTitle | highlightSearch: searchChanged$.getValue()"></b>
+          <div *ngFor="let content of noteItem.contents" class="note-result-contents">
+            <p [innerHTML]="content | highlightSearch: searchChanged$.getValue()"></p>
+          </div>
+        </div>
+      </div>
+      <div *ngFor="let folderItem of foldersView" class="folder-result-card dialog-container-padding">
+        <div class="result-card-icon">
+          <div class="icon-container" (click)="goToFolder(folderItem.id)">
+            <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
+          </div>
+        </div>
+        <div class="folder-result-card-content">
+          <b [innerHTML]="folderItem.title | highlightSearch: searchChanged$.getValue()"></b>
+        </div>
+      </div>
+      <app-spinner [size]="25" *ngIf="isSearching"></app-spinner>
+      <div *ngIf="isEmpty && isSearchDisabled" class="empty-placeholder-container">
+        <p>{{ 'modal.searchModal.trySearch' | translate }}</p>
+      </div>
+      <div *ngIf="isEmpty && isSearchActive" class="empty-placeholder-container">
+        <p>{{ 'modal.notFound' | translate }}</p>
+      </div>
+    </div>
+  </div>
+</div>

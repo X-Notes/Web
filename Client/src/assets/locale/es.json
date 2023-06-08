@@ -167,7 +167,8 @@
       "notes": "Agregar notas a la carpeta"
     },
     "searchModal": {
-      "title": "Buscar en"
+      "title": "Buscar en",
+      "trySearch": "Búsqueda de notas y carpetas"
     },
     "lockModal": {
       "lock": "Nota de bloqueo",

@@ -167,7 +167,8 @@
       "notes": "Lägga till anteckningar i mappen"
     },
     "searchModal": {
-      "title": "Sök"
+      "title": "Sök",
+      "trySearch": "Hitta anteckningar och mappar via sökning"
     },
     "lockModal": {
       "lock": "Lås anteckning",

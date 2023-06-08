@@ -167,7 +167,8 @@
       "notes": "Hinzufügen von Notizen zum Ordner"
     },
     "searchModal": {
-      "title": "Suche"
+      "title": "Suche",
+      "trySearch": "Notizen und Ordner über die Suche finden"
     },
     "lockModal": {
       "lock": "Lock-Notiz",

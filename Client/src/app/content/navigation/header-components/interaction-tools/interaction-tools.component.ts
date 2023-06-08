@@ -1,11 +1,9 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -14,8 +12,8 @@ import {
   notification,
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
-import { SearchService } from 'src/app/shared/services/search.service';
 import { ContactUsComponent } from '../../../../shared/modal_components/contact-us/contact-us.component';
+import { DialogsManageService } from '../../services/dialogs-manage.service';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -36,15 +34,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
 
-  @ViewChild('searchInput') searchInput: ElementRef;
-
-  searchStrChanged: Subject<string> = new Subject<string>();
-
-  searchResult = [];
-
   isOpenNotification = false;
-
-  isInputFocus = false;
 
   searchStr: string;
 
@@ -68,8 +58,8 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     public readonly pService: PersonalizationService,
     private readonly store: Store,
     private readonly router: Router,
-    private readonly searchService: SearchService,
     private readonly dialog: MatDialog,
+    private readonly dialogsManageService: DialogsManageService,
   ) {}
 
   ngOnDestroy() {
@@ -77,20 +67,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit() {
-    this.searchStrChanged
-      .pipe(debounceTime(searchDelay), distinctUntilChanged())
-      .subscribe(async (searchStr) => {
-        if (searchStr?.length > 2) {
-          const items = await this.searchService.searchNotesAndFolder(searchStr).toPromise();
-          const notes = items.noteSearchs.map((x) => ({ ...x, type: 'notes' }));
-          const folders = items.folderSearchs.map((x) => ({ ...x, type: 'folders' }));
-          this.searchResult = [...notes, ...folders];
-        } else {
-          this.searchResult = [];
-        }
-      });
-  }
+  ngOnInit(): void {}
 
   closeNotification() {
     this.isOpenNotification = false;
@@ -110,15 +87,6 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     }
   }
 
-  searchData() {
-    if (!this.pService.isWidthMoreThan600()) {
-      this.isInputFocus = !this.isInputFocus;
-      setTimeout(() => {
-        this.searchInput.nativeElement.focus();
-      });
-    }
-  }
-
   contactUs() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig = {
@@ -131,10 +99,8 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     this.dialog.open(ContactUsComponent, config);
   }
 
-  unFocusSearch() {
-    setTimeout(() => {
-      this.isInputFocus = false;
-    }, 200);
+  openSearch(): void {
+    this.dialogsManageService.openSearchDialog();
   }
 
   goTo(id: string, type: string) {

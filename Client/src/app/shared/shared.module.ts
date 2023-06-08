@@ -86,6 +86,7 @@ import { SelectComponent } from './custom-components/select-component/select/sel
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonCollectionComponent } from '../editor/components/button-collection/button-collection.component';
 import { SearchDialogComponent } from './modal_components/search-dialog/search-dialog.component';
+import { HighlightSearchPipe } from './directives/highlight-search.pipe';
 
 @NgModule({
   declarations: [
@@ -157,6 +158,7 @@ import { SearchDialogComponent } from './modal_components/search-dialog/search-d
     ContentAccessSectionComponent,
     LeftSectionEntitiesShareComponent,
     SearchDialogComponent,
+    HighlightSearchPipe,
   ],
   imports: [
     CommonModule,
@@ -242,6 +244,7 @@ import { SearchDialogComponent } from './modal_components/search-dialog/search-d
     FullNoteActiveUsersComponent,
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
+    HighlightSearchPipe
   ],
   providers: [DialogService, BackgroundService, ApiContactUsService],
 })

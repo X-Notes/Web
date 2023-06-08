@@ -14,6 +14,6 @@ public class TextNoteIndexRepository : Repository<TextNoteIndex, Guid>
 
     public Task<List<TextNoteIndex>> GetTextsNotesAsync(IEnumerable<Guid> noteIds, string searchStr)
     {
-        return entities.Where(x => noteIds.Contains(x.NoteId) && x.Content != null && x.Content.ToLower().Contains(searchStr)).ToListAsync();
+        return entities.Where(x => noteIds.Contains(x.NoteId) && x.Content != null && x.Content.ToLower().Contains(searchStr.ToLower())).ToListAsync();
     }
 }
