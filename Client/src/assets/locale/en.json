@@ -166,6 +166,9 @@
     "folderManage": {
       "notes": "Add notes to folder"
     },
+    "searchModal": {
+      "title": "Search"
+    },
     "lockModal": {
       "lock": "Lock note",
       "unLock": "Unlock note",

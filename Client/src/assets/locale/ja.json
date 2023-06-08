@@ -166,6 +166,9 @@
     "folderManage": {
       "notes": "フォルダにメモを追加する"
     },
+    "searchModal": {
+      "title": "検索"
+    },
     "lockModal": {
       "lock": "ロックノート",
       "unLock": "メモのロック解除",

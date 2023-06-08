@@ -166,6 +166,9 @@
     "folderManage": {
       "notes": "Agregar notas a la carpeta"
     },
+    "searchModal": {
+      "title": "Buscar en"
+    },
     "lockModal": {
       "lock": "Nota de bloqueo",
       "unLock": "Nota de desbloqueo",

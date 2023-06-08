@@ -166,6 +166,9 @@
     "folderManage": {
       "notes": "Додати нотаток в папку"
     },
+    "searchModal": {
+      "title": "Пошук"
+    },
     "lockModal": {
       "lock": "Заблокувати нотаток",
       "unLock": "Розблокувати нотаток",

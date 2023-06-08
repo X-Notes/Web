@@ -166,6 +166,9 @@
     "folderManage": {
       "notes": "Dodawanie notatek do folderu"
     },
+    "searchModal": {
+      "title": "Wyszukiwanie"
+    },
     "lockModal": {
       "lock": "Zablokuj notatkę",
       "unLock": "Odblokuj notatkę",
