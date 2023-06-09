@@ -174,7 +174,7 @@ export class ContentEditorSyncService {
     this.updateSubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isProcessChanges && this.isCanBeProcessed),
+        filter((x) => x === true && !this.isProcessChanges),
         debounceTime(processSyncEditorIntervalDelay),
       )
       .subscribe(async () => {
@@ -184,7 +184,7 @@ export class ContentEditorSyncService {
     this.updateImmediatelySubject
       .pipe(
         takeUntil(this.dc.d$),
-        filter((x) => x === true && !this.isProcessChanges && this.isCanBeProcessed),
+        filter((x) => x === true && !this.isProcessChanges),
       )
       .subscribe(async () => {
         await this.processChanges();
@@ -216,7 +216,9 @@ export class ContentEditorSyncService {
   private async processChanges() {
     this.isProcessChanges = true;
     try {
-      await this.processStructureChanges();
+      if(this.isCanBeProcessed){
+        await this.processStructureChanges();
+      }
       await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
     } catch (e) {
       console.error('e: ', e);

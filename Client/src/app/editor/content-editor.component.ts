@@ -141,13 +141,6 @@ export class ContentEditorComponent
     return isAnySelect || divActive;
   }
 
-  get isHideMenu(): boolean {
-    const top = this.textEditMenuTop;
-    if (top < 80 && !this.pS.isMobile()) {
-      return true;
-    }
-    return false;
-  }
 
   get selectedMenuType(): TextEditMenuEnum {
     return this.facade.selectionService.selectedMenuType;
@@ -156,7 +149,6 @@ export class ContentEditorComponent
   get isTextMenuActive(): boolean {
     return (
       this.selectedMenuType !== null &&
-      !this.isHideMenu &&
       !!this.options &&
       this.options.ids?.length > 0
     );
@@ -178,7 +170,8 @@ export class ContentEditorComponent
     }
     if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
-      return top - this.textEditMenu.nativeElement.offsetHeight;
+      const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
+      return resTop < 52 ? 52 : resTop; // to stick menu while select couple of elements and scroll down
     }
     return 0;
   }
@@ -504,8 +497,10 @@ export class ContentEditorComponent
         );
       }
       if (el) {
-        el.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
-        el.syncHtmlWithLayout();
+        setTimeout(() => { // need when to many elements updating at the same time and page is freezing
+          const elLock = el;
+          elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+        }, 5);
       }
       if (pos.selection) {
         pos.selection.start = pos.selection.end;
