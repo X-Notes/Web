@@ -39,9 +39,10 @@
             >
               <app-note
                 [note]="item"
+                [isSelected]="item.isSelected"
                 [userId]="(user$ | async)?.id"
                 [highlightCursorActive]="!isMaxNotesSelected"
-                (highlightNote)="highlightNote($event)"
+                (highlightNote)="highlightNote($event.note)"
                 (clickOnNote)="highlightNote($event)"
                 class="note"
               ></app-note>

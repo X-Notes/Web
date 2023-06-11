@@ -43,7 +43,7 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
         await this.setFirstInitedMurri();
         this.murriService.setOpacity1();
       }
-      await this.synchronizeState(refElements.toArray(), false);
+      await this.synchronizeState(refElements.toArray());
     });
   }
 

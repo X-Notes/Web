@@ -52,7 +52,7 @@ export class MenuButtonsNotesService {
     } else {
       const folderId = isInnerFolder ? this.store.selectSnapshot(FolderStore.full).id : null;
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(ids, pr, folderId));
+      this.store.dispatch(new CopyNotes([...ids], pr, folderId));
     }
   }
 
@@ -202,12 +202,12 @@ export class MenuButtonsNotesService {
       );
     }
     const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-    await this.store.dispatch(new DeleteNotesPermanently(idsOuter)).toPromise();
+    await this.store.dispatch(new DeleteNotesPermanently([...idsOuter])).toPromise();
 
     this.store.dispatch(LoadUsedDiskSpace);
 
     const message =
-      idsOuter.length > 1
+      idsOuter.size > 1
         ? this.apiTranslate.instant('snackBar.notesPermDeleted')
         : this.apiTranslate.instant('snackBar.notePermDeleted');
     return this.sbws.buildNotification(message, null);

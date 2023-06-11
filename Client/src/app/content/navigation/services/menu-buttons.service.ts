@@ -285,7 +285,7 @@ export class MenuButtonsService {
     }
     return this.dialogsService.openChangeColorDialog(
       EntityPopupType.Note,
-      this.store.selectSnapshot(NoteStore.selectedIds),
+      [...this.store.selectSnapshot(NoteStore.selectedIds)],
     );
   }
 
@@ -296,7 +296,7 @@ export class MenuButtonsService {
     }
     return this.dialogsService.openChangeColorDialog(
       EntityPopupType.Folder,
-      this.store.selectSnapshot(FolderStore.selectedIds),
+      [...this.store.selectSnapshot(FolderStore.selectedIds)],
     );
   }
 

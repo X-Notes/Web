@@ -33,7 +33,7 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import {
   CreateNote,
   CreateNoteCompleted,
-  SelectIdNote,
+  SelectIdsNote,
   SetFolderNotes,
   UnSelectAllNote,
 } from '../../notes/state/notes-actions';
@@ -257,8 +257,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           const notes = this.ffnService.entities.filter((x) => !x.isSelected);
           // eslint-disable-next-line no-param-reassign
           notes.forEach((x) => (x.isSelected = true));
-          const actions = notes.map((x) => new SelectIdNote(x.id));
-          this.store.dispatch(actions);
+          const noteIds = notes.map((x) => x.id);
+          this.store.dispatch(new SelectIdsNote(noteIds));
         }
       });
   }
@@ -283,9 +283,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async () => {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const res = await this.apiFullFolder.removeNotesFromFolder(ids, this.folderId).toPromise();
+        const res = await this.apiFullFolder.removeNotesFromFolder([...ids], this.folderId).toPromise();
         if (res.success) {
-          this.ffnService.deleteFromDom(ids);
+          this.ffnService.deleteFromDom([...ids]);
           this.updateState();
         }
         this.store.dispatch(UnSelectAllNote);

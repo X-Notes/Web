@@ -62,10 +62,10 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     return this.isSearchActive && this.filterMetadata.count === 0;
   }
 
-  private get selectedIds(): string[] {
+  private get selectedIds(): Set<string> {
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-      return [this.store.selectSnapshot(NoteStore.oneFull).id];
+      return new Set([this.store.selectSnapshot(NoteStore.oneFull).id]);
     }
     return this.store.selectSnapshot(NoteStore.selectedIds);
   }
@@ -104,11 +104,11 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   async onSelectLabel(isSelected: boolean, label: Label): Promise<void> {
     const lId = label.id;
     if (isSelected) {
-      const command = new AddLabelOnNote(label, this.selectedIds, true, this.errorMessage());
+      const command = new AddLabelOnNote(label, [...this.selectedIds], true, this.errorMessage());
       this.store.dispatch(command);
       this.data.labelIds.add(lId);
     } else {
-      const command = new RemoveLabelFromNote(lId, this.selectedIds, true, this.errorMessage());
+      const command = new RemoveLabelFromNote(lId, [...this.selectedIds], true, this.errorMessage());
       this.store.dispatch(command);
       this.data.labelIds.delete(lId);
     }

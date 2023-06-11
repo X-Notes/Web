@@ -54,7 +54,7 @@ import { ShortUser } from 'src/app/core/models/user/short-user.model';
   folders: Folders[];
   fullFolder: FullFolder;
   isCanViewFullFolder: boolean;
-  selectedIds: string[];
+  selectedIds: Set<string>;
   removeFromMurriEvent: string[];
   updateFolderEvent: UpdateFolderUI[];
   foldersAddToDOM: SmallFolder[];
@@ -67,7 +67,7 @@ import { ShortUser } from 'src/app/core/models/user/short-user.model';
     folders: [],
     fullFolder: null,
     isCanViewFullFolder: false,
-    selectedIds: [],
+    selectedIds: new Set(),
     removeFromMurriEvent: [],
     updateFolderEvent: [],
     foldersAddToDOM: [],
@@ -141,12 +141,12 @@ export class FolderStore {
 
   @Selector()
   static selectedCount(state: FolderState): number {
-    return state.selectedIds.length;
+    return state.selectedIds?.size;
   }
 
   @Selector()
   static activeMenu(state: FolderState): boolean {
-    return state.selectedIds?.length > 0;
+    return state.selectedIds?.size > 0;
   }
 
   // Get folders
@@ -199,7 +199,7 @@ export class FolderStore {
   static getSelectedFolders(state: FolderState): SmallFolder[] {
     return state.folders
       .flatMap((x) => x.folders)
-      .filter((folder) => state.selectedIds.some((z) => z === folder.id));
+      .filter((folder) => state.selectedIds.has(folder.id));
   }
 
   @Selector()
@@ -215,7 +215,7 @@ export class FolderStore {
   // Get selected Ids
 
   @Selector()
-  static selectedIds(state: FolderState): string[] {
+  static selectedIds(state: FolderState): Set<string> {
     return state.selectedIds;
   }
 
@@ -481,28 +481,28 @@ export class FolderStore {
   @Action(SelectIdFolder)
   // eslint-disable-next-line class-methods-use-this
   select({ patchState }: StateContext<FolderState>, { id, selectedIds }: SelectIdFolder) {
-    patchState({ selectedIds: [id, ...selectedIds] });
+    patchState({ selectedIds: new Set([id, ...selectedIds]) });
   }
 
   @Action(UnSelectIdFolder)
   // eslint-disable-next-line class-methods-use-this
   unSelect({ patchState }: StateContext<FolderState>, { id, selectedIds }: UnSelectIdFolder) {
     const ids = selectedIds.filter((x) => x !== id);
-    patchState({ selectedIds: [...ids] });
+    patchState({ selectedIds: new Set([...ids]) });
   }
 
   @Action(UnSelectAllFolder)
   // eslint-disable-next-line class-methods-use-this
   unselectAll({ patchState }: StateContext<FolderState>) {
-    patchState({ selectedIds: [] });
+    patchState({ selectedIds: new Set() });
   }
 
   @Action(SelectAllFolder)
   selectAll({ patchState, getState }: StateContext<FolderState>, { typeFolder }: SelectAllFolder) {
     const folders = this.getFoldersByType(getState, typeFolder);
-    const ids = folders.map((z) => z.id);
+    const ids = folders.map((q) => q.id);
 
-    patchState({ selectedIds: [...ids] });
+    patchState({ selectedIds: new Set([...ids]) });
   }
 
   // LOAD CONTENT

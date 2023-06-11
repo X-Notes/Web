@@ -102,7 +102,7 @@ export class LabelStore {
         id,
         isDeleted: false,
         countNotes: 0,
-        order: 1,
+        order: 0,
       });
       patchState({ labels: [newLabel, ...getState().labels] });
       dispatch(new AddToDomLabels([newLabel]));

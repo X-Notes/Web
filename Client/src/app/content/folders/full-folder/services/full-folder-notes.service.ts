@@ -68,7 +68,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
         await this.murriService.initFolderNotesAsync();
         this.setFirstInitedMurri();
       }
-      await this.synchronizeState(refElements.toArray(), false);
+      await this.synchronizeState(refElements.toArray());
     });
     this.murriService.layoutEnd$.pipe(takeUntil(this.destroy)).subscribe(async (q) => {
       if (q) {

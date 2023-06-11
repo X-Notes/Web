@@ -1,9 +1,9 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionDispatched } from '@ngxs/store';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,6 +15,8 @@ import {
   CancelAllSelectedLabels,
   ClearAddToDomNotes,
   LoadNotes,
+  SelectAllNote,
+  SelectIdsNote,
   UpdateOneNote,
   UpdatePositionsNotes,
 } from './state/notes-actions';
@@ -44,9 +46,18 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
+    public actions$: Actions,
     private updateService: UpdaterEntitiesService,
   ) {
     super(dialogsManageService, store, murriService, apiService, router);
+
+    this.actions$
+    .pipe(ofActionDispatched(SelectAllNote), takeUntil(this.destroy))
+    .subscribe(() => {
+      const notes = this.getNotesToRender();
+      const noteIds = notes.map(x => x.id);
+      this.store.dispatch(new SelectIdsNote(noteIds));
+    });
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
@@ -58,11 +69,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x === true) {
-          await this.resetLayoutAsync();
-
-          const tempNotes = this.transformSpread(this.getNotesByCurrentType);
-          this.entities = this.orderBy(tempNotes, this.pageSortType);
-
+          this.resetAndInitLayout();
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
       });
@@ -73,7 +80,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .subscribe(async (pr) => {
         if (this.prevSortedNoteByTypeId && this.prevSortedNoteByTypeId !== pr.sortedNoteByTypeId) {
           this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
-          await this.changeOrderTypeHandler(this.pageSortType);
+          this.resetAndInitLayout();
         } else {
           this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
         }
@@ -118,7 +125,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     return this.sortNoteType === SortedByENUM.CustomOrder;
   }
 
-  get isFiltedMode() {
+  get isFilteredMode() {
     return this.store.selectSnapshot(NoteStore.getSelectedLabelFilter).length > 0;
   }
 
@@ -138,20 +145,20 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     return this.sortNoteType;
   }
 
-  async changeOrderTypeHandler(sortedType: SortedByENUM) {
-    await this.resetLayoutAsync();
-    const tempNotes = this.transformSpread(this.entities);
-    this.entities = this.orderBy(tempNotes, sortedType);
-  }
-
   syncPositions(): void {
     if (!this.isNeedUpdatePositions) return;
     const positions = this.murriService.getPositions();
     this.store.dispatch(new UpdatePositionsNotes(positions));
   }
 
+  async resetAndInitLayout(): Promise<void> {
+    await this.resetLayoutAsync();
+    const entities = this.getNotesToRender();
+    this.initContentProgressively(entities);
+  }
+
   getIsDraggable(noteType: NoteTypeENUM) {
-    return !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
+    return !this.isFilteredMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
   }
 
   murriInitialise(): void {
@@ -164,13 +171,24 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     const isFirstInit = this.needFirstInit();
     if (isFirstInit) {
       this.initState();
+      const ids = this.entities.map(x => x.id);
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
       await this.setFirstInitedMurri();
-      setTimeout(() => this.murriService.setOpacity1(), 50);
+      this.murriService.layoutEnd$.pipe(take(1)).subscribe(() => this.murriService.setOpacity1());
+      this.showItems(ids);
       this.loadNotesWithUpdates();
     }
-    await this.synchronizeState(q, this.sortNoteType === SortedByENUM.AscDate);
+    const res = await this.synchronizeState(q);
+    this.showItems(res.idsToAdd);
+  }
+
+  private showItems(ids: string[]): void {
+    if (!ids || ids.length === 0) return;
+    const itemsToShow = this.entities.filter(x => ids.some(q => q === x.id));
+    for (const item of itemsToShow) {
+      this.onDisplayItems$.next(item);
+    }
   }
 
   async loadNotesWithUpdates() {
@@ -228,18 +246,10 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     this.labelsIds?.unsubscribe();
   }
 
-  async initializeEntities(notes: SmallNote[]) {
-    let tempNotes = this.transformSpread(notes);
-    tempNotes = this.orderBy(tempNotes, this.pageSortType);
+  async initializeEntities() {
 
-    if (!this.isFiltedMode) {
-      this.entities = tempNotes;
-    } else {
-      const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
-      this.entities = tempNotes.filter((x) =>
-        x.labels.some((label) => ids.some((q) => q === label.id)),
-      );
-    }
+    const entities = this.getNotesToRender();
+    this.initContentProgressively(entities);
 
     this.labelsIds = this.store
       .select(NoteStore.getSelectedLabelFilter)
@@ -253,19 +263,27 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     await super.loadAdditionNoteInformation();
   }
 
+  getNotesToRender(): SmallNote[] {
+    let tempNotes = this.transformSpread(this.getNotesByCurrentType);
+    tempNotes = this.orderBy(tempNotes, this.pageSortType);
+
+    if (!this.isFilteredMode) {
+      return tempNotes;
+    }
+
+    const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
+    return tempNotes.filter((x) =>
+      x.labels.some((label) => ids.some((q) => q === label.id)),
+    );
+  }
+
   async updateLabelSelected(ids: string[]) {
     if (ids.length !== 0) {
-      await this.resetLayoutAsync();
-
-      const tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
-        x.labels.some((label) => ids.some((q) => q === label.id)),
-      );
-
-      this.entities = this.orderBy(tempNotes, this.pageSortType);
+      await this.resetAndInitLayout();
     }
   }
 
-  loadNoteAndAddToDom(notes: SmallNote[]) {
+  loadNoteAndAddToDom(notes: SmallNote[]) { 
     if (notes && notes.length > 0) {
       const m = notes.map((x) => ({ ...x }));
       this.entities.unshift(...m);

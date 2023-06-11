@@ -307,9 +307,9 @@ export class MurriService implements OnDestroy {
     this._flagForOpacity = true;
   }
 
-  addElement(elements: HTMLElement[], isAddToEnd: boolean, layout: boolean): void {
-    this.grid.add(elements, {
-      index: isAddToEnd ? -1 : 0,
+  addElement(element: HTMLElement, index: number, layout: boolean): void {
+    this.grid.add(element, {
+      index: index,
       layout,
     });
   }

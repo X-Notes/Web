@@ -11,5 +11,7 @@ export class SmallFolder extends BaseFolder {
 
   lockRedirect?: boolean;
 
+  isDisplay?: boolean;
+
   additionalInfo?: BottomFolderContent;
 }

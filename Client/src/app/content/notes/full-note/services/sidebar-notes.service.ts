@@ -67,7 +67,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
           await this.setFirstInitedMurri();
           this.murriService.setOpacity1();
         }
-        await this.synchronizeState(q.toArray(), false);
+        await this.synchronizeState(q.toArray());
       });
   }
 

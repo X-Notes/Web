@@ -127,8 +127,7 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   selectAll() {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      this.store.dispatch(new SelectAllNote(noteType));
+      this.store.dispatch(new SelectAllNote());
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {

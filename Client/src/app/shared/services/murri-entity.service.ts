@@ -4,6 +4,13 @@ import { Label } from 'src/app/content/labels/models/label.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { MurriService } from './murri.service';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { bufferTime } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export interface MurriSyncResult {
+  idsToAdd: string[];
+}
 
 export abstract class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> {
   public entities: Entity[] = [];
@@ -12,7 +19,28 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
 
   private firstInitedMurri = false;
 
-  constructor(public murriService: MurriService) {}
+  private progressiveLoadOptions = {
+    firstLoadCount: 5,
+    stepCount: 1,
+    renderInterval: 20,
+  };
+
+  onProgressiveAdding$ = new Subject<void>();
+
+  onCancelRendering$ = new BehaviorSubject<boolean>(false);
+
+  protected onDisplayItems$ = new BehaviorSubject<Entity>(null);
+
+  isRendering = false;
+
+  constructor(public murriService: MurriService) {
+    this.onDisplayItems$
+      .pipe(takeUntilDestroyed(), bufferTime(200))
+      .subscribe((entities: Entity[]) => {
+        if (!entities || entities.length === 0) return;
+        setTimeout(() => entities.filter(x => x).forEach(x => x.isDisplay = true), 150);
+      });
+  }
 
   get isAnyEntityInLayout(): boolean {
     return this.entities.length > 0;
@@ -35,11 +63,14 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
   }
 
-  async synchronizeState(refElements: ElementRef[], isAddToEnd: boolean) {
+  async synchronizeState(refElements: ElementRef[]): Promise<MurriSyncResult> {
     const elements = refElements.map((item) => item.nativeElement as HTMLElement);
-    this.newItemChecker(elements, isAddToEnd);
+    const res = this.newItemChecker(elements);
     await this.deleteItemChecker(elements);
-    this.syncPositions();
+    if(!this.isRendering) {
+      this.syncPositions();
+    }
+    return { idsToAdd: res };
   }
 
   setFirstInitedMurri(flag = true): void {
@@ -47,6 +78,7 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
   }
 
   async resetLayoutAsync() {
+    this.onCancelRendering$.next(true);
     await this.murriService.muuriDestroyAsync();
     this.setFirstInitedMurri(false);
   }
@@ -96,19 +128,73 @@ export abstract class MurriEntityService<Entity extends Label | SmallNote | Smal
     }
   }
 
-  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean): boolean {
-    let isHasUpdates = false;
-    for (const el of elements) {
+  private newItemChecker(elements: HTMLElement[]): string[] {
+    const resIds: string[] = [];
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
       if (!this.state[el.id]) {
         const ent = this.entities.find((x) => x.id === el.id);
         if (ent) {
           this.state[el.id] = ent;
-          this.murriService.addElement([el], isAddToEnd, true);
-          isHasUpdates = true;
+          this.murriService.addElement(el, i, true);
+          resIds.push(el.id);
         }
       }
     }
-    return isHasUpdates;
+    return resIds;
+  }
+
+  protected initContentProgressively(
+    items: Entity[],
+    onRenderCallback?: () => void,
+  ): void {
+    items.forEach(x => x.isDisplay = false);
+    this.isRendering = true;
+    this.onCancelRendering$.next(false);
+    let end = this.progressiveLoadOptions.firstLoadCount;
+    if (end > items.length) {
+      end = items.length;
+    }
+
+    const itemsToInit = items.slice(0, end);
+    this.entities = itemsToInit;
+
+    this.onProgressiveAdding$.next();
+
+    if (this.entities.length === items.length) {
+      if (onRenderCallback) {
+        onRenderCallback();
+      }
+      this.isRendering = false;
+      return;
+    }
+
+    const interval = setInterval(() => {
+
+      if (this.onCancelRendering$.getValue()) {
+        clearInterval(interval);
+        this.onCancelRendering$.next(false);
+      }
+
+      const start = this.entities.length;
+      end = start + this.progressiveLoadOptions.stepCount;
+
+      if (end > items.length) {
+        end = items.length;
+      }
+
+      const itemsToPush = items.slice(start, end);
+      this.entities.push(...itemsToPush);
+
+      this.onProgressiveAdding$.next();
+      if (start >= items.length) {
+        this.isRendering = false;
+        if (onRenderCallback) {
+          onRenderCallback();
+        }
+        clearInterval(interval);
+      }
+    }, this.progressiveLoadOptions.renderInterval);
   }
 
   abstract syncPositions(): void;

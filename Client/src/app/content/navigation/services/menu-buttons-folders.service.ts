@@ -93,7 +93,7 @@ export class MenuButtonsFoldersService {
     } else {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
       const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      this.store.dispatch(new CopyFolders(folderType, ids));
+      this.store.dispatch(new CopyFolders(folderType, [...ids]));
     }
   }
 
@@ -114,9 +114,9 @@ export class MenuButtonsFoldersService {
 
   private async deleteFolders(): Promise<MatSnackBarRef<TextOnlySnackBar>> {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    await this.store.dispatch(new DeleteFoldersPermanently(ids)).toPromise();
+    await this.store.dispatch(new DeleteFoldersPermanently([...ids])).toPromise();
     const message =
-      ids.length > 1
+      ids.size > 1
         ? this.apiTranslate.instant('snackBar.foldersPermDeleted')
         : this.apiTranslate.instant('snackBar.folderPermDeleted');
     return this.sbws.buildNotification(message, null);

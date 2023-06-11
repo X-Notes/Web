@@ -62,6 +62,6 @@
       <router-outlet></router-outlet>
     </div>
   </ng-scrollbar>
-  <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+  <app-spinner [size]="30" *ngIf="pService.spinnerActive"></app-spinner>
 </div>
 <div class="drag-helper main-helper"></div>
