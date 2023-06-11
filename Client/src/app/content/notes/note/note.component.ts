@@ -8,6 +8,7 @@ import { BaseText } from 'src/app/editor/entities/contents/base-text';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
+import { SelectNoteEvent } from './entities/select-note.event';
 
 @Component({
   selector: 'app-note',
@@ -27,9 +28,11 @@ export class NoteComponent implements OnInit {
 
   @Input() userId?: string;
 
+  @Input() isSelected?: boolean;
+
   @Input() highlightCursorActive = true;
 
-  @Output() highlightNote = new EventEmitter<SmallNote>();
+  @Output() highlightNote = new EventEmitter<SelectNoteEvent>();
 
   @Output() clickOnNote = new EventEmitter<SmallNote>();
 
@@ -41,7 +44,7 @@ export class NoteComponent implements OnInit {
 
   contents?: ContentModelBase[];
 
-  constructor(public pService: PersonalizationService) {}
+  constructor(public pService: PersonalizationService) { }
 
   get noteFolders() {
     return this.note?.additionalInfo?.noteFolderInfos?.filter(
@@ -86,8 +89,8 @@ export class NoteComponent implements OnInit {
     }) as unknown as ContentModelBase[];
   }
 
-  highlight(note: SmallNote): void {
-    this.highlightNote.emit(note);
+  highlight(): void {
+    this.highlightNote.emit({ isSelected: this.isSelected, note: this.note });
   }
 
   toNote(note: SmallNote): void {

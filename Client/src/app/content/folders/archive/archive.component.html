@@ -12,6 +12,7 @@
   >
     <app-folder
       [userId]="(user$ | async).id"
+      [isSelected]="folderService.getIsSelected(item.id)"
       [folder]="item"
       [isSelectedMode]="folderService.isAnySelected"
     ></app-folder>

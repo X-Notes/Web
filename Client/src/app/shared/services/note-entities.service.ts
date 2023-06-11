@@ -7,17 +7,20 @@ import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import {
   ClearUpdatesUINotes,
-  SelectIdNote,
-  UnSelectIdNote,
+  SelectIdsNote,
+  UnSelectIdsNote,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { LockPopupState } from '../modal_components/lock/lock.component';
 import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
+import { SelectNoteEvent } from 'src/app/content/notes/note/entities/select-note.event';
 
 export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallNote> {
   destroy = new Subject<void>();
+
+  selectedIds: Set<string>;
 
   constructor(
     private dialogsManageService: DialogsManageService,
@@ -31,7 +34,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     this.store
       .select(NoteStore.selectedIds)
       .pipe(takeUntil(this.destroy))
-      .subscribe((ids) => this.handleSelectEntities(ids));
+      .subscribe((ids) => this.selectedIds = ids);
 
     this.store
       .select(NoteStore.selectedCount)
@@ -77,7 +80,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
   baseToNote(note: SmallNote, navigateFunc: () => Promise<boolean>) {
     const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0;
     if (isSelectedMode) {
-      this.highlightNote(note);
+      this.highlightNote({ isSelected: this.getIsSelected(note.id), note });
     } else {
       if (note.isLockedNow) {
         const callback = () => this.router.navigate([`notes/${note.id}`]);
@@ -101,11 +104,18 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     }
   }
 
-  highlightNote(note: SmallNote) {
-    if (!note.isSelected) {
-      this.store.dispatch(new SelectIdNote(note.id));
+  getIsSelected(id: string): boolean {
+    if (this.selectedIds) {
+      return this.selectedIds.has(id);
+    }
+    return false;
+  }
+
+  highlightNote(ent: SelectNoteEvent) {
+    if (!ent.isSelected) {
+      this.store.dispatch(new SelectIdsNote([ent.note.id]));
     } else {
-      this.store.dispatch(new UnSelectIdNote(note.id));
+      this.store.dispatch(new UnSelectIdsNote([ent.note.id]));
     }
   }
 
