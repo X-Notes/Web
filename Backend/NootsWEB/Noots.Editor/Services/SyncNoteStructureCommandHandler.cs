@@ -225,7 +225,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 }
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             result.Updates.TextContentsToAdd = textItemsThatNeedAdd;
             result.Updates.PhotoContentsToAdd = photosItemsThatNeedAdd;

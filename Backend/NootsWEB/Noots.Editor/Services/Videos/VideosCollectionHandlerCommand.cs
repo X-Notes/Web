@@ -66,7 +66,7 @@ namespace Noots.Editor.Services.Videos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             if (permissions.IsMultiplyUpdate)
             {
@@ -113,7 +113,7 @@ namespace Noots.Editor.Services.Videos
 
                     var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
@@ -156,7 +156,7 @@ namespace Noots.Editor.Services.Videos
 
                     await collectionNoteRepository.UpdateAsync(videosCollection);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Update, videosCollection.UpdatedAt, videosCollection.Version)
                     {
@@ -194,7 +194,7 @@ namespace Noots.Editor.Services.Videos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {

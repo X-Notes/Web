@@ -68,7 +68,7 @@ namespace Noots.Editor.Services
                     note.UpdatedAt = DateTimeProvider.Time;
                     await noteRepository.UpdateAsync(note);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
                 }
 
                 if (permissions.IsSingleUpdate)
@@ -107,7 +107,7 @@ namespace Noots.Editor.Services
                 results.Add(res);
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }

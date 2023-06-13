@@ -54,7 +54,7 @@ public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFrom
 
                 foreach (var perm in permissions)
                 {
-                    await historyCacheService.UpdateNote(perm.perm.Note.Id, perm.perm.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(perm.perm.Note.Id, perm.perm.Caller.Id);
                 }
 
                 // WS UPDATES

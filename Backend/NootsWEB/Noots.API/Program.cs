@@ -116,6 +116,7 @@ builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection
 builder.Services.AddInMemoryRateLimiting();
 
 builder.Services.AddHostedService<SetupServicesHosted>();
+builder.Services.AddHostedService<HistoryProcessingHosted>();
 
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 

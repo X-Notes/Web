@@ -66,7 +66,7 @@ namespace Noots.Editor.Services.Documents
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             if (permissions.IsMultiplyUpdate)
             {
@@ -97,7 +97,7 @@ namespace Noots.Editor.Services.Documents
 
                     await collectionNoteRepository.UpdateAsync(collection);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
                     {
@@ -150,7 +150,7 @@ namespace Noots.Editor.Services.Documents
 
                     var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null, 1);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt, documentNote.Version)
                     {
@@ -191,7 +191,7 @@ namespace Noots.Editor.Services.Documents
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
