@@ -105,7 +105,7 @@
     <div class="text-color-container">
       <app-color-pick-item
         *ngFor="let value of textColorPalete"
-        [name]="value[0]"
+        [name]="'innerNote.text' | translate"
         [color]="value[1]"
         [isBackground]="false"
         [theme]="theme"
@@ -127,7 +127,7 @@
     <div class="text-color-container">
       <app-color-pick-item
         *ngFor="let value of textBackgroundPalete"
-        [name]="value[0]"
+        [name]="'innerNote.text' | translate"
         [color]="value[1]"
         [isBackground]="true"
         [theme]="theme"

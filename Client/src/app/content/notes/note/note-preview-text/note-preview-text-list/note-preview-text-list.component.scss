@@ -9,6 +9,7 @@
   width: 100%;
 
   .text {
+    width: calc(100% - 5px);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
