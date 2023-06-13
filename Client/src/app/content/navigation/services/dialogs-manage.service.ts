@@ -36,7 +36,7 @@ export class DialogsManageService {
   openAddRemoveRelatedNotesModal() {
     const isMobile = this.pS.isMobile();
     const panelClass = isMobile
-      ? [this.getDefaultPanelClass(), 'custom-dialog-no-border']
+      ? [this.getDefaultPanelClass(), 'custom-dialog-no-border-900']
       : this.getDefaultPanelClass();
     this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
@@ -55,17 +55,12 @@ export class DialogsManageService {
   }
 
   openNoteHistoriesMobile(noteId: string) {
-    const isMobile = this.pS.isMobile();
-    const panelClass = isMobile
-      ? [this.getDefaultPanelClass(), 'custom-dialog-no-border']
-      : this.getDefaultPanelClass();
     this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
-      height: isMobile ? '100vh' : '670px',
-      width: isMobile ? '100vw' : '750px',
-      maxWidth: '100vw',
+      maxHeight: '100%',
+      maxWidth: '100%',
       autoFocus: false,
-      panelClass,
+      panelClass: [this.getDefaultPanelClass(), 'custom-dialog-no-border-600', 'dialog-full-screen-600'],
       data: { noteId },
     };
     const instance = this.dialogService.openDialog(NoteHistoryPopUpComponent, config);
@@ -97,7 +92,7 @@ export class DialogsManageService {
       width: '100vw',
       maxWidth: '100vw',
       autoFocus: false,
-      panelClass: [this.getDefaultPanelClass(), 'custom-dialog-no-border'],
+      panelClass: [this.getDefaultPanelClass(), 'custom-dialog-no-border-900'],
       data: { canEdit, noteId },
     };
     const instance = this.dialogService.openDialog(RelatedNotesPopUpComponent, config);
@@ -150,7 +145,7 @@ export class DialogsManageService {
     const config: MatDialogConfig = {
       maxHeight: '100vh',
       maxWidth: '100vw',
-      panelClass: [this.getDefaultPanelClass(), 'custom-dialog-no-border', 'dialog-full-screen-mobile'],
+      panelClass: [this.getDefaultPanelClass(), 'custom-dialog-no-border-900', 'dialog-full-screen-900'],
     };
     const instance = this.dialogService.openDialog(SearchDialogComponent, config);
     instance.afterClosed().pipe(take(1)).subscribe(() => {
@@ -213,8 +208,8 @@ export class DialogsManageService {
       autoFocus: false,
       panelClass:
         this.getTheme() === ThemeENUM.Light
-          ? ['custom-dialog-class-light', 'custom-dialog-no-border', 'dialog-full-screen-mobile']
-          : ['custom-dialog-class-dark',  'custom-dialog-no-border', 'dialog-full-screen-mobile'],
+          ? ['custom-dialog-class-light', 'custom-dialog-no-border-900', 'dialog-full-screen-900']
+          : ['custom-dialog-class-dark',  'custom-dialog-no-border-900', 'dialog-full-screen-900'],
       data: { currentWindowType, ents },
     };
     const instance = this.dialogService.openDialog(ShareComponent, config);

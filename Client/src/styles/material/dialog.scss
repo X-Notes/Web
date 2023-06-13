@@ -20,14 +20,14 @@
 }
 
 @media (max-width: 900px) {
-  .dialog-full-screen-mobile {
+  .dialog-full-screen-900 {
     width: 100%;
     height: 100%;
     max-width: initial !important;
     max-height: initial !important;
   }
 
-  .custom-dialog-no-border {
+  .custom-dialog-no-border-900 {
     mat-dialog-container {
       border-radius: 0;
     }
