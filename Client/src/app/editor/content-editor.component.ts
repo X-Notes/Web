@@ -272,6 +272,9 @@ export class ContentEditorComponent
   }
 
   ngOnInit(): void {
+    
+    this.facade.clickableContentService.cursorUpdatingActive = this.cursorActive;
+
     this.initTitle();
     this.subscribeOnButtons();
     this.facade.contentUpdateWsService.noteId = this.noteId;

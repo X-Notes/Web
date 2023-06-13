@@ -69,7 +69,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.noteTitleChanged$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe(async (title) => {
-        if(!this.noteId) return;
+        if (!this.noteId) return;
         this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, undefined, false));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });

@@ -26,6 +26,9 @@ export class EditorBaseComponent {
   @Input() folderId?: string;
 
   @Input()
+  cursorActive = true;
+  
+  @Input()
   isReadOnlyMode = true;
 
   @Select(NoteStore.cursors)

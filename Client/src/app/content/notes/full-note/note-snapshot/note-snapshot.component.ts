@@ -37,7 +37,7 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  contents: ContentModelBase[];
+  contents: ContentModelBase[] = [];
 
   isLoading = true;
 

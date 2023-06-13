@@ -23,6 +23,7 @@ import { SaveSelection } from 'src/app/editor/entities-ui/save-selection';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { CursorTypeENUM } from 'src/app/editor/entities/cursors/cursor-type.enum';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
+import { ClickableContentService } from 'src/app/editor/ui-services/clickable-content.service';
 
 @Component({
   selector: 'app-title-collection',
@@ -67,7 +68,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
-  constructor(public store: Store, private apiBrowser: ApiBrowserTextService) {}
+  constructor(public store: Store, private apiBrowser: ApiBrowserTextService, public clickableService: ClickableContentService) { }
 
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
@@ -159,7 +160,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   onClick(): void {
     this.clickInputEvent.emit();
-    this.updateContentEditableCursor();
+    this.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
   }
 
   getSelection(): SaveSelection {
