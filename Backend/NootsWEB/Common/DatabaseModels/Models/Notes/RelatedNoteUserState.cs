@@ -10,7 +10,7 @@ namespace Common.DatabaseModels.Models.Notes
         [NotMapped]
         override public int Id { set; get; }
 
-        public int ReletatedNoteInnerNoteId { set; get; }
+        public int RelatedNoteInnerNoteId { set; get; }
         public RelatedNoteToInnerNote RelatedNoteInnerNote { set; get; }
 
         public Guid UserId { get; set; }

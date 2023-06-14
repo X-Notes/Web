@@ -95,7 +95,9 @@ export class MurriService implements OnDestroy {
     });
     this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
-      this.store.dispatch(new UpdatePositionsRelatedNotes(this.getPositions(), noteId));
+      const positions = this.getPositions();
+      const command = new UpdatePositionsRelatedNotes(positions, noteId);
+      this.store.dispatch(command);
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);

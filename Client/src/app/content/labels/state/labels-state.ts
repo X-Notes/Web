@@ -253,7 +253,7 @@ export class LabelStore {
     const result: Label[] = [];
     getState().labels.forEach((x) => {
       const label = { ...x };
-      if (ids.some((z) => z === label.id)) {
+      if (ids.some((q) => q === label.id)) {
         result.push(label);
       }
     });

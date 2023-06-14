@@ -245,7 +245,7 @@ namespace Noots.DatabaseContext
             // RELATION NOTES
 
             modelBuilder.Entity<RelatedNoteUserState>()
-                .HasKey(bc => new { bc.UserId, bc.ReletatedNoteInnerNoteId });
+                .HasKey(bc => new { bc.UserId, bc.RelatedNoteInnerNoteId });
 
             modelBuilder.Entity<RelatedNoteToInnerNote>()
                 .HasOne(bc => bc.Note)

@@ -511,7 +511,7 @@ export class FolderStore {
     { getState, patchState }: StateContext<FolderState>,
     { type, pr }: LoadFolders,
   ) {
-    if (!getState().folders.find((z) => z.typeFolders === type)) {
+    if (!getState().folders.find((q) => q.typeFolders === type)) {
       const folders = await this.api.getFolders(type, pr).toPromise();
       patchState({
         folders: [...getState().folders, folders],
@@ -717,7 +717,7 @@ export class FolderStore {
     getState().folders.forEach((folders) => {
       for (const x of folders.folders) {
         const folder = { ...x };
-        if (ids.some((z) => z === folder.id)) {
+        if (ids.some((q) => q === folder.id)) {
           result.push(folder);
         }
       }
@@ -726,7 +726,7 @@ export class FolderStore {
   };
 
   getFoldersByType = (getState: () => FolderState, type: FolderTypeENUM) => {
-    return getState().folders.find((z) => z.typeFolders === type).folders;
+    return getState().folders.find((q) => q.typeFolders === type).folders;
   };
 
   itemNoFromFilterArray = (ids: string[], folder: SmallFolder) => {

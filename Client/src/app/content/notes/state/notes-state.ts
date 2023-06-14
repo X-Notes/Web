@@ -854,7 +854,7 @@ export class NoteStore {
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       const notesUpdate = notes.notes.map((x) => {
         let note = { ...x };
-        if (note.labels.some((z) => z.id === label.id)) {
+        if (note.labels.some((q) => q.id === label.id)) {
           note = this.updateLabel(note, label);
           updateNoteEvent = [
             this.toUpdateNoteUI(note.id, null, null, null, note.labels, null),
@@ -952,7 +952,8 @@ export class NoteStore {
   }
 
   @Action(UpdatePositionsRelatedNotes)
-  async updateRelationNotePositions({ positions, noteId }: UpdatePositionsRelatedNotes) {
+  // eslint-disable-next-line no-empty-pattern
+  async updateRelationNotePositions({ }: StateContext<NoteState>, { positions, noteId }: UpdatePositionsRelatedNotes) {
     if (noteId && positions && positions.length > 0) {
       await this.apiRelated.updateOrder(noteId, positions).toPromise();
     }

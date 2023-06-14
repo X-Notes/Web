@@ -31,7 +31,7 @@ public class UpdateRelatedNoteStateCommandHandler : IRequestHandler<UpdateRelate
 
         if (permissions.CanRead)
         {
-            var relatedNote = await relatedNoteUserStateRepository.FirstOrDefaultAsync(x => x.ReletatedNoteInnerNoteId == request.ReletatedNoteInnerNoteId 
+            var relatedNote = await relatedNoteUserStateRepository.FirstOrDefaultAsync(x => x.RelatedNoteInnerNoteId == request.ReletatedNoteInnerNoteId 
                 && x.UserId == request.UserId);
                 
             if(relatedNote != null)
@@ -50,7 +50,7 @@ public class UpdateRelatedNoteStateCommandHandler : IRequestHandler<UpdateRelate
                 var state = new RelatedNoteUserState 
                 { 
                     UserId = request.UserId, 
-                    ReletatedNoteInnerNoteId = request.ReletatedNoteInnerNoteId, 
+                    RelatedNoteInnerNoteId = request.ReletatedNoteInnerNoteId, 
                     IsOpened = request.IsOpened 
                 };
                 await relatedNoteUserStateRepository.AddAsync(state);
