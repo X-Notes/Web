@@ -41,11 +41,13 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
 
   destroy = new Subject<void>();
 
+  loading = true;
+
   constructor(
     public pService: PersonalizationService,
     public sideBarService: SidebarNotesService,
     private store: Store,
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -69,8 +71,14 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
   }
 
   async loadData(noteId: string): Promise<void> {
-    const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
-    await this.sideBarService.initializeEntities(noteId, isCanEdit);
+    try {
+      this.loading = true;
+      const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
+      await this.sideBarService.initializeEntities(noteId, isCanEdit);
+      this.loading = false;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   ngAfterViewInit(): void {

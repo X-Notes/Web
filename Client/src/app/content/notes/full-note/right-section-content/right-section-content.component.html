@@ -1,31 +1,23 @@
 <div appTheme class="secondary-content">
   <div *ngIf="canEdit$ | async" class="open" #open (click)="sideBarService.openSideModal(noteId)">
-    <div class="icon">
-      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-    </div>
-    <p>{{ 'innerNote.openNoteOrFile' | translate }}</p>
+    <ng-container *ngIf="!loading">
+      <div class="icon">
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
+      <p>{{ 'innerNote.openNoteOrFile' | translate }}</p>
+    </ng-container>
     <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
+    <app-spinner [size]="15" *ngIf="loading"></app-spinner>
   </div>
   <ng-container>
     <ng-scrollbar class="scroll-helper small-notes" visibility="hover" appearance="compact">
       <div class="content-inner-small">
-        <div
-          class="grid"
-          [ngStyle]="{ opacity: sideBarService.murriService.flagForOpacity ? '1' : '0' }"
-        >
-          <div
-            #relatedItem
-            [id]="item.id"
-            [attr.order]="item.order"
-            class="grid-item-small"
-            *ngFor="let item of sideBarService.entities"
-          >
-            <app-related-note
-              [note]="item"
-              [isCanEdit]="canEdit$ | async"
+        <div class="grid" [ngStyle]="{ opacity: sideBarService.murriService.flagForOpacity ? '1' : '0' }">
+          <div #relatedItem [id]="item.id" [attr.order]="item.order" class="grid-item-small"
+            *ngFor="let item of sideBarService.entities">
+            <app-related-note [note]="item" [isCanEdit]="canEdit$ | async"
               (deleteNote)="sideBarService.deleteSmallNote($event, noteId)"
-              (changeState)="sideBarService.changeState($event)"
-            ></app-related-note>
+              (changeState)="sideBarService.changeState($event)"></app-related-note>
           </div>
         </div>
       </div>
