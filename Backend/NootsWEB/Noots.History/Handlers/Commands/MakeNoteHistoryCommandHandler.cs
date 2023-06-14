@@ -31,6 +31,13 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 		var noteForCopy = await noteRepository.GetNoteWithContent(request.Id);
 		var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(q => new SnapshotNoteLabel { Name = q.Name, Color = q.Color }).ToList();
 
+        var noteText = string.Join("", noteForCopy.GetTextContents().Select(x => x.GetContentString()));
+
+        if(string.IsNullOrEmpty(noteForCopy.Title) && string.IsNullOrWhiteSpace(noteText) && !noteForCopy.GetCollectionContents().Any())
+        {
+            return Unit.Value;
+        }
+
 		var snapshot = new NoteSnapshot()
 		{
 			NoteTypeId = noteForCopy.NoteTypeId,

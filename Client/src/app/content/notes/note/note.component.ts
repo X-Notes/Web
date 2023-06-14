@@ -72,6 +72,10 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.syncContent();
+  }
+
+  syncContent(): void {
     this.contents = this.note.contents.map(x => ({ ...x } as ContentModelBase));
   }
 

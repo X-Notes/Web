@@ -507,7 +507,7 @@ export class ContentEditorComponent
       }
       if (pos.selection) {
         pos.selection.start = pos.selection.end;
-        requestAnimationFrame(() => el.restoreSelection(pos.selection));
+        setTimeout(() => el.restoreSelection(pos.selection), 20);
       }
     }
     this.unSelectItems();
