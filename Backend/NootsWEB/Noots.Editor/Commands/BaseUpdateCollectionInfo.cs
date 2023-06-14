@@ -14,7 +14,7 @@ namespace Noots.Editor.Commands
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public string Name { set; get; }
+        public string? Name { set; get; }
 
         public BaseUpdateCollectionInfo(Guid noteId, Guid contentId, string name)
         {
