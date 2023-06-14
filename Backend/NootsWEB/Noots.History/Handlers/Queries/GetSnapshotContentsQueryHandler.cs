@@ -68,7 +68,7 @@ namespace Noots.History.Handlers.Queries
         {
             var resultList = new List<BaseNoteContentDTO>();
 
-            resultList.AddRange(contents.TextNoteSnapshots.Select(text => new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, 0, text.UpdatedAt, 1)));
+            resultList.AddRange(contents.TextNoteSnapshots.Select(text => new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt, 1)));
 
             var ids = contents.GetFileIdsFromAllContent();
             if (ids.Any())

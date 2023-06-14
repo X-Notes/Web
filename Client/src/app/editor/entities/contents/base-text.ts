@@ -17,15 +17,12 @@ export class BaseText extends ContentModelBase {
 
   contents: TextBlock[];
 
-  listId?: number;
-
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt, text.version);
     this.contents = text.contents?.map((x) => new TextBlock(x));
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
     this.checked = text.checked;
-    this.listId = text.listId;
   }
 
   get getItems(): BaseFile[] {

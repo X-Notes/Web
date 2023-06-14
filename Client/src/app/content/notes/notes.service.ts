@@ -204,10 +204,6 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
           if (entity) {
             entity.contents = note.contents;
           }
-          const uiNote = this.viewElements.toArray().find((x) => x.note.id === note.id);
-          if (uiNote) {
-            uiNote.syncContent();
-          }
         });
         super.loadAdditionNoteInformation(ids);
         await this.murriService.refreshLayoutAsync();

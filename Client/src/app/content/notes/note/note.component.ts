@@ -72,21 +72,22 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.syncContent();
+    this.contents = this.note.contents.map(x => ({ ...x } as ContentModelBase));
   }
 
-  syncContent(): void {
-    let num = 1;
-    this.contents = this.note.contents.map((item, index, array) => {
-      const prev = array[index - 1];
-      if (item instanceof BaseText && item.noteTextTypeId === NoteTextTypeENUM.numberList) {
-        return {
-          ...item,
-          listNumber: item.listId === (prev as BaseText)?.listId ? (num += 1) : (num = 1),
-        };
-      }
-      return item;
-    }) as unknown as ContentModelBase[];
+  getTextContent(index: number): BaseText {
+    return this.contents[index] as BaseText;
+  }
+
+  getNumberList(content: ContentModelBase, contentIndex: number): number {
+    const text = content as BaseText;
+    const prev = this.getTextContent(contentIndex - 1);
+    if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
+      text.listNumber = 1;
+      return text.listNumber;
+    }
+    text.listNumber = prev.listNumber + 1;
+    return text.listNumber;
   }
 
   highlight(): void {
