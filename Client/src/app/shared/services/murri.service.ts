@@ -14,6 +14,7 @@ import { PersonalizationService } from './personalization.service';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 
 @Injectable()
 export class MurriService implements OnDestroy {
@@ -27,7 +28,7 @@ export class MurriService implements OnDestroy {
 
   private grid: any;
 
-  constructor(private store: Store, private pService: PersonalizationService) {
+  constructor(private store: Store, private pService: PersonalizationService, private apiBrowser: ApiBrowserTextService) {
     this.pService.changeOrientationSubject.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => this.refreshAndLayout());
     });
@@ -72,16 +73,16 @@ export class MurriService implements OnDestroy {
 
   /// SIDE BAR
 
-  initSidebarNotesAsync(noteId: string, delay = 0) {
+  initRelatedNotesAsync(noteId: string, delay = 0) {
     return new Promise<boolean>((resolve) =>
       setTimeout(async () => {
-        this.initSidebarNotes(noteId);
+        this.initRelatedNotes(noteId);
         resolve(true);
       }, delay),
     );
   }
 
-  initSidebarNotes(noteId: string) {
+  initRelatedNotes(noteId: string) {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -89,6 +90,9 @@ export class MurriService implements OnDestroy {
     }
 
     this.gridSettings(gridItemName, gridElement, true);
+    this.grid.on('dragStart', async () => {
+      this.apiBrowser.removeAllRanges();
+    });
     this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
       this.store.dispatch(new UpdatePositionsRelatedNotes(this.getPositions(), noteId));
