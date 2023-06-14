@@ -16,28 +16,66 @@
 
   .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     height: 25px;
     width: 100%;
-    padding: 0 0.625rem;
+    padding: 0 0.425rem;
     border-radius: 5px 5px 0px 0px;
     transition: 0.2s ease;
 
     button {
+      padding: 0 8px;
+      height: 100%;
       display: flex;
+      align-items: center;
+      justify-content: center;
       background-color: transparent;
       border: 0;
-      padding: 0;
       outline: none;
       user-select: none;
       cursor: pointer;
 
       .icon {
         display: flex;
-        height: 12px;
-        width: 12px;
+        align-items: center;
+        justify-content: center;
         transition: 0.2s ease;
+
+        mat-icon {
+          height: 12px;
+          width: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .redirect {
+      padding: 0 6px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      border: 0;
+      outline: none;
+      user-select: none;
+      cursor: pointer;
+      text-decoration: none;
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s ease;
+
+        mat-icon {
+          height: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
   }
@@ -73,11 +111,11 @@
       }
     }
 
-    .title:empty + .placeholder {
+    .title:empty+.placeholder {
       display: block;
     }
 
-    .title:empty ~ .left-border {
+    .title:empty~.left-border {
       width: 0;
       background-color: #7b7b7b;
     }
@@ -99,7 +137,7 @@
     }
   }
 
-  .turn-up-note > div:not(.title-section) {
+  .turn-up-note>div:not(.title-section) {
     display: none;
   }
 
@@ -121,6 +159,9 @@
         color: $header-small-note-icon;
       }
     }
+    .redirect {
+      color: $header-small-note-icon;
+    }
   }
 }
 
@@ -136,6 +177,9 @@
       .icon {
         color: $header-small-note-icon-light;
       }
+    }
+    .redirect {
+      color: $header-small-note-icon-light;
     }
   }
 }
