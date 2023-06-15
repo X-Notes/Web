@@ -65,7 +65,7 @@ namespace Noots.Editor.Services.Photos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             if (permissions.IsMultiplyUpdate)
             {
@@ -98,7 +98,7 @@ namespace Noots.Editor.Services.Photos
                     collection.SetDateAndVersion();
                     await baseNoteContentRepository.UpdateAsync(collection);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
                     {
@@ -158,7 +158,7 @@ namespace Noots.Editor.Services.Photos
                     var result = new PhotosCollectionNoteDTO(null, collection.Name, collection.MetaData.Width, collection.MetaData.Height,
                                         collection.Id, collection.Order, collection.MetaData.CountInRow, collection.UpdatedAt, 1);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
@@ -202,7 +202,7 @@ namespace Noots.Editor.Services.Photos
 
             await collectionNoteRepository.UpdateAsync(resp.collection);
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {

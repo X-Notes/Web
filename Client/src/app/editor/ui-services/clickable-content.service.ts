@@ -6,7 +6,7 @@ import {
 } from '../components/parent-interaction.interface';
 import { ClickableSelectableEntities } from '../entities-ui/clickable-selectable-entities.enum';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { updateCursorDelay } from 'src/app/core/defaults/bounceDelay';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
@@ -36,11 +36,17 @@ export class ClickableContentService {
 
   cursorChanged$: Subject<() => void> = new Subject();
 
+  cursorUpdatingActive = true;
+
   constructor(public dc: DestroyComponentService, private apiBrowser: ApiBrowserTextService) {
     this.cursorChanged$
-      .pipe(takeUntil(dc.d$), debounceTime(updateCursorDelay))
+      .pipe(takeUntil(dc.d$), filter(() => this.cursorUpdatingActive), debounceTime(updateCursorDelay))
       .subscribe((action) => {
-        action();
+        try {
+          action();
+        } catch (e) {
+          console.error(e);
+        }
       });
   }
 

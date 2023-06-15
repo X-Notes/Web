@@ -57,7 +57,7 @@ export class SharedComponent
   async loadContent(typeENUM = NoteTypeENUM.Shared) {
     await this.noteService.loadNotes(typeENUM);
 
-    await this.noteService.initializeEntities(this.noteService.getNotesByCurrentType);
+    await this.noteService.initializeEntities();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

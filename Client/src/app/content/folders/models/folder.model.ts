@@ -7,9 +7,9 @@ export class SmallFolder extends BaseFolder {
 
   previewNotes?: PreviewNotesInFolder[];
 
-  isSelected?: boolean;
-
   lockRedirect?: boolean;
+
+  isDisplay?: boolean;
 
   additionalInfo?: BottomFolderContent;
 }

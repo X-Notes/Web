@@ -55,9 +55,9 @@ export class ApiFoldersService {
     return this.httpClient
       .post<OperationResult<SmallFolder[]>>(`${environment.writeAPI}/api/folder/many`, obj)
       .pipe(
-        map((z) => {
-          if (z.success) {
-            return z.data;
+        map((q) => {
+          if (q.success) {
+            return q.data;
           }
           return [];
         }),

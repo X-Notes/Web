@@ -102,7 +102,7 @@ export class LabelStore {
         id,
         isDeleted: false,
         countNotes: 0,
-        order: 1,
+        order: 0,
       });
       patchState({ labels: [newLabel, ...getState().labels] });
       dispatch(new AddToDomLabels([newLabel]));
@@ -253,7 +253,7 @@ export class LabelStore {
     const result: Label[] = [];
     getState().labels.forEach((x) => {
       const label = { ...x };
-      if (ids.some((z) => z === label.id)) {
+      if (ids.some((q) => q === label.id)) {
         result.push(label);
       }
     });

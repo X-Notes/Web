@@ -40,18 +40,6 @@ export abstract class FeaturesEntitiesService<
     });
   };
 
-  handleSelectEntities(ids: string[]) {
-    if (ids) {
-      for (const ent of this.entities) {
-        if (ids.some((x) => x === ent.id)) {
-          ent.isSelected = true;
-        } else {
-          ent.isSelected = false;
-        }
-      }
-    }
-  }
-
   handleLockRedirect(count: number) {
     if (count > 0) {
       for (const note of this.entities) {

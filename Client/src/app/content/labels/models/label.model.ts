@@ -11,6 +11,8 @@ export class Label {
 
   countNotes: number;
 
+  isDisplay?: boolean;
+  
   createdAt?: Date;
 
   updatedAt?: Date;

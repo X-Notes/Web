@@ -8,6 +8,7 @@ import { BaseText } from 'src/app/editor/entities/contents/base-text';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
+import { SelectNoteEvent } from './entities/select-note.event';
 
 @Component({
   selector: 'app-note',
@@ -27,9 +28,11 @@ export class NoteComponent implements OnInit {
 
   @Input() userId?: string;
 
+  @Input() isSelected?: boolean;
+
   @Input() highlightCursorActive = true;
 
-  @Output() highlightNote = new EventEmitter<SmallNote>();
+  @Output() highlightNote = new EventEmitter<SelectNoteEvent>();
 
   @Output() clickOnNote = new EventEmitter<SmallNote>();
 
@@ -41,7 +44,7 @@ export class NoteComponent implements OnInit {
 
   contents?: ContentModelBase[];
 
-  constructor(public pService: PersonalizationService) {}
+  constructor(public pService: PersonalizationService) { }
 
   get noteFolders() {
     return this.note?.additionalInfo?.noteFolderInfos?.filter(
@@ -73,21 +76,26 @@ export class NoteComponent implements OnInit {
   }
 
   syncContent(): void {
-    let num = 1;
-    this.contents = this.note.contents.map((item, index, array) => {
-      const prev = array[index - 1];
-      if (item instanceof BaseText && item.noteTextTypeId === NoteTextTypeENUM.numberList) {
-        return {
-          ...item,
-          listNumber: item.listId === (prev as BaseText)?.listId ? (num += 1) : (num = 1),
-        };
-      }
-      return item;
-    }) as unknown as ContentModelBase[];
+    this.contents = this.note.contents.map(x => ({ ...x } as ContentModelBase));
   }
 
-  highlight(note: SmallNote): void {
-    this.highlightNote.emit(note);
+  getTextContent(index: number): BaseText {
+    return this.contents[index] as BaseText;
+  }
+
+  getNumberList(content: ContentModelBase, contentIndex: number): number {
+    const text = content as BaseText;
+    const prev = this.getTextContent(contentIndex - 1);
+    if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
+      text.listNumber = 1;
+      return text.listNumber;
+    }
+    text.listNumber = prev.listNumber + 1;
+    return text.listNumber;
+  }
+
+  highlight(): void {
+    this.highlightNote.emit({ isSelected: this.isSelected, note: this.note });
   }
 
   toNote(note: SmallNote): void {

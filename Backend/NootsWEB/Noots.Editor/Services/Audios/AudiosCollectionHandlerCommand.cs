@@ -65,7 +65,7 @@ namespace Noots.Editor.Services.Audios
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             if (permissions.IsMultiplyUpdate)
             {
@@ -96,7 +96,7 @@ namespace Noots.Editor.Services.Audios
 
                     await collectionNoteRepository.UpdateAsync(audiosCollection);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt, audiosCollection.Version)
                     {
@@ -151,7 +151,7 @@ namespace Noots.Editor.Services.Audios
 
                     var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
-                    await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
@@ -192,7 +192,7 @@ namespace Noots.Editor.Services.Audios
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNote(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
             var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {

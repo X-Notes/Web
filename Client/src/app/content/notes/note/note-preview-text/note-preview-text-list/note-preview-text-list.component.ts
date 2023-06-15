@@ -20,6 +20,9 @@ export class NotePreviewTextListComponent {
 
   listType = NoteTextTypeENUM;
 
+  @Input()
+  listNumber: number;
+
   get dotColor(): string {
     return this.activeTheme === ThemeENUM.Dark ? 'white' : 'black';
   }

@@ -201,16 +201,16 @@ export class RemoveOnlineUsersOnNote {
 }
 
 // SELECTION
-export class SelectIdNote {
+export class SelectIdsNote {
   static type = '[Notes] Select note';
 
-  constructor(public id: string) {}
+  constructor(public ids: string[]) {}
 }
 
-export class UnSelectIdNote {
+export class UnSelectIdsNote {
   static type = '[Notes] Unselect note';
 
-  constructor(public id: string) {}
+  constructor(public ids: string[]) {}
 }
 
 export class UnSelectAllNote {
@@ -219,8 +219,6 @@ export class UnSelectAllNote {
 
 export class SelectAllNote {
   static type = '[Notes] Select all';
-
-  constructor(public typeNote: NoteTypeENUM) {}
 }
 
 export class UpdateOneNote {

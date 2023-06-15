@@ -2,8 +2,8 @@
   <div
     #highlightNote
     class="highlighting-note"
-    (click)="highlight(note)"
-    [ngStyle]="{ backgroundColor: note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '', cursor: highlightCursorActive ? 'pointer' : 'initial' }"
+    (click)="highlight()"
+    [ngStyle]="{ backgroundColor: isSelected ? 'rgba(101, 226, 113, 0.65)' : '', cursor: highlightCursorActive ? 'pointer' : 'initial' }"
     [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''"
   >
     <div
@@ -40,10 +40,11 @@
         <h4 class="not-named">{{ 'placeholder.noteSmall' | translate }}</h4>
       </ng-template>
     </div>
-    <ng-container *ngFor="let content of contents" [ngSwitch]="content.typeId">
+    <ng-container *ngFor="let content of contents ?? []; let i = index" [ngSwitch]="content.typeId">
       <app-note-preview-text
         *ngSwitchCase="contentType.Text"
         [content]="content"
+        [listNumber]="getNumberList(content, i)"
       ></app-note-preview-text>
       <app-note-preview-photos
         *ngSwitchCase="contentType.Photos"

@@ -86,13 +86,13 @@ export class NotesComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line no-param-reassign
       label.selected = false;
     });
-    this.store.dispatch(new CancelAllSelectedLabels(true));
+    setTimeout(() => this.store.dispatch(new CancelAllSelectedLabels(true)), 150);
   }
 
   filterNotes(id: string) {
-    const label = this.labelsFilters.find((z) => z.label.id === id);
+    const label = this.labelsFilters.find((q) => q.label.id === id);
     label.selected = !label.selected;
-    this.store.dispatch(new UpdateSelectLabel(id));
+    setTimeout(() => this.store.dispatch(new UpdateSelectLabel(id)), 150);
   }
 
   ngOnDestroy(): void {

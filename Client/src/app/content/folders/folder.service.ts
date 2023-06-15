@@ -32,6 +32,8 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
 
   prevSortedFolderByTypeId: SortedByENUM = null;
 
+  selectedIds: Set<string>;
+
   constructor(
     store: Store,
     public pService: PersonalizationService,
@@ -56,7 +58,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
     this.store
       .select(FolderStore.selectedIds)
       .pipe(takeUntil(this.destroy))
-      .subscribe((ids) => this.handleSelectEntities(ids));
+      .subscribe((ids) => this.selectedIds = ids);
 
     this.store
       .select(FolderStore.selectedCount)
@@ -90,7 +92,14 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   }
 
   get isAnySelected(): boolean {
-    return this.entities.some((q) => q.isSelected === true);
+    return this.selectedIds.size > 0;
+  }
+
+  getIsSelected(id: string): boolean {
+    if (this.selectedIds) {
+      return this.selectedIds.has(id);
+    }
+    return false;
   }
 
   get getByCurrentType() {
@@ -178,7 +187,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
           requestAnimationFrame(() => this.murriService.setOpacity1());
           await this.loadWithUpdates();
         }
-        await this.synchronizeState(q.toArray(), this.sortFolderType === SortedByENUM.AscDate);
+        await this.synchronizeState(q.toArray());
       });
   }
 

@@ -54,7 +54,7 @@ export class ArchiveComponent
   async loadContent(typeENUM = NoteTypeENUM.Archive) {
     await this.noteService.loadNotes(typeENUM);
 
-    await this.noteService.initializeEntities(this.noteService.getNotesByCurrentType);
+    await this.noteService.initializeEntities();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

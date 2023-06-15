@@ -1,4 +1,5 @@
 ﻿using Common.DTO.Notes;
+using Common.DTO.Personalization;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
@@ -26,7 +27,7 @@ public class GetRelatedNotesQueryHandler : IRequestHandler<GetRelatedNotesQuery,
     {
         var relatedNotes = await relatedRepository.GetByNoteId(request.NoteId);
         var ids = relatedNotes.Select(x => x.RelatedNoteId);
-        var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, null);
+        var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, new PersonalizationSettingDTO().GetRelated());
         var lookUp = notes.ToDictionary(x => x.Id);
         relatedNotes.ForEach(x => x.RelatedNote = lookUp.ContainsKey(x.RelatedNoteId) ? lookUp[x.RelatedNoteId] : null);
         return mapperLockedEntities.MapNotesToRelatedNotes(relatedNotes, request.UserId);

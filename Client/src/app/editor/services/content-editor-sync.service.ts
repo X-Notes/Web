@@ -91,12 +91,12 @@ export class ContentEditorSyncService {
   }
 
   get isCanBeProcessed(): boolean {
-    return !this.isEdit && !this.contentService.isRendering;
+    return this.isEdit && !this.contentService.isRendering;
   }
 
   initTimers(): void {
     this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges)).subscribe(async () => {
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.isCanBeProcessed)).subscribe(async () => {
       const state = this.contentService.getEditorStateDiffs();
       try {
         const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
@@ -195,7 +195,6 @@ export class ContentEditorSyncService {
   initProcessChangesAutoTimer(): void { }
 
   change() {
-    if (this.isCanBeProcessed) return;
     this.updateSubject?.next(true);
   }
 
@@ -217,7 +216,9 @@ export class ContentEditorSyncService {
   private async processChanges() {
     this.isProcessChanges = true;
     try {
-      await this.processStructureChanges();
+      if(this.isCanBeProcessed){
+        await this.processStructureChanges();
+      }
       await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
     } catch (e) {
       console.error('e: ', e);

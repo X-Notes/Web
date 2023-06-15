@@ -15,10 +15,9 @@ import {
   LoadNotes,
   CreateNote,
   ChangeColorNote,
-  SelectIdNote,
-  UnSelectIdNote,
+  SelectIdsNote,
+  UnSelectIdsNote,
   UnSelectAllNote,
-  SelectAllNote,
   UpdateNotes,
   ClearUpdatesUINotes,
   DeleteNotesPermanently,
@@ -96,7 +95,7 @@ interface NoteState {
   fullNoteState: FullNoteState | null;
   fullNoteHistories: NoteHistory[] | null;
   snapshotState: NoteSnapshotState | null;
-  selectedIds: string[];
+  selectedIds: Set<string>;
   updateNoteEvent: UpdateNoteUI[];
   removeFromMurriEvent: string[];
   notesAddingToDom: AddNotesToDom | null;
@@ -116,7 +115,7 @@ interface NoteState {
     fullNoteState: null,
     fullNoteHistories: null,
     snapshotState: null,
-    selectedIds: [],
+    selectedIds: new Set(),
     updateNoteEvent: [],
     removeFromMurriEvent: [],
     notesAddingToDom: null,
@@ -159,8 +158,8 @@ export class NoteStore {
 
   @Selector()
   static isRemoveLock(state: NoteState) {
-    if (state.selectedIds.length === 1) {
-      const { 0: id } = state.selectedIds;
+    if (state.selectedIds.size === 1) {
+      const id = state.selectedIds[0];
       const note = state.notes.flatMap((x) => x.notes).find((n) => n.id === id);
       return note.isLockedNow;
     }
@@ -174,8 +173,8 @@ export class NoteStore {
 
   @Selector()
   static isCanBeForceLockNotes(state: NoteState) {
-    if (state.selectedIds.length === 1) {
-      const { 0: id } = state.selectedIds;
+    if (state.selectedIds?.size === 1) {
+      const id = state.selectedIds[0];
       const note = state.notes.flatMap((x) => x.notes).find((n) => n.id === id);
       return !note?.isLockedNow && note?.isLocked;
     }
@@ -184,7 +183,7 @@ export class NoteStore {
 
   @Selector()
   static selectedCount(state: NoteState): number {
-    return state.selectedIds.length;
+    return state.selectedIds?.size;
   }
 
   @Selector()
@@ -196,12 +195,12 @@ export class NoteStore {
   static getSelectedNotes(state: NoteState): SmallNote[] {
     return state.notes
       .flatMap((x) => x.notes)
-      .filter((note) => state.selectedIds.some((q) => q === note.id));
+      .filter((note) => state.selectedIds?.has(note.id));
   }
 
   @Selector()
   static getSelectedFolderNotes(state: NoteState): SmallNote[] {
-    return state.folderNotes.filter((note) => state.selectedIds.some((q) => q === note.id));
+    return state.folderNotes.filter((note) => state.selectedIds?.has(note.id));
   }
 
   @Selector()
@@ -251,7 +250,7 @@ export class NoteStore {
 
   @Selector()
   static activeMenu(state: NoteState): boolean {
-    return state.selectedIds?.length > 0;
+    return state.selectedIds?.size > 0;
   }
 
   @Selector()
@@ -270,7 +269,7 @@ export class NoteStore {
   }
 
   @Selector()
-  static selectedIds(state: NoteState): string[] {
+  static selectedIds(state: NoteState): Set<string> {
     return state.selectedIds;
   }
 
@@ -571,7 +570,7 @@ export class NoteStore {
       note.updatedAt = new Date();
       return note;
     });
-    
+
     folderNotes.forEach(x => dispatch(new UpdateFolderNotes(x)));
 
     const notes = getState().notes.map((x) => x.notes).flat();
@@ -855,7 +854,7 @@ export class NoteStore {
       // eslint-disable-next-line @typescript-eslint/no-loop-func
       const notesUpdate = notes.notes.map((x) => {
         let note = { ...x };
-        if (note.labels.some((z) => z.id === label.id)) {
+        if (note.labels.some((q) => q.id === label.id)) {
           note = this.updateLabel(note, label);
           updateNoteEvent = [
             this.toUpdateNoteUI(note.id, null, null, null, note.labels, null),
@@ -953,7 +952,8 @@ export class NoteStore {
   }
 
   @Action(UpdatePositionsRelatedNotes)
-  async updateRelationNotePositions({ positions, noteId }: UpdatePositionsRelatedNotes) {
+  // eslint-disable-next-line no-empty-pattern
+  async updateRelationNotePositions({ }: StateContext<NoteState>, { positions, noteId }: UpdatePositionsRelatedNotes) {
     if (noteId && positions && positions.length > 0) {
       await this.apiRelated.updateOrder(noteId, positions).toPromise();
     }
@@ -1180,34 +1180,27 @@ export class NoteStore {
 
   // NOTES SELECTION
 
-  @Action(SelectIdNote)
+  @Action(SelectIdsNote)
   // eslint-disable-next-line class-methods-use-this
-  select({ patchState, getState }: StateContext<NoteState>, { id }: SelectIdNote) {
-    const ids = getState().selectedIds;
+  select({ patchState, getState }: StateContext<NoteState>, { ids }: SelectIdsNote) {
+    const stateIds = getState().selectedIds;
     patchState({
-      selectedIds: [id, ...ids],
+      selectedIds: new Set([...ids, ...stateIds]),
     });
   }
 
-  @Action(UnSelectIdNote)
+  @Action(UnSelectIdsNote)
   // eslint-disable-next-line class-methods-use-this
-  unSelect({ getState, patchState }: StateContext<NoteState>, { id }: UnSelectIdNote) {
-    let ids = getState().selectedIds;
-    ids = ids.filter((x) => x !== id);
-    patchState({ selectedIds: [...ids] });
+  unSelect({ getState, patchState }: StateContext<NoteState>, { ids }: UnSelectIdsNote) {
+    const stateIds = getState().selectedIds;
+    ids.forEach(id => stateIds.delete(id));
+    patchState({ selectedIds: new Set([...stateIds]) });
   }
 
   @Action(UnSelectAllNote)
   // eslint-disable-next-line class-methods-use-this
   unselectAll({ patchState }: StateContext<NoteState>) {
-    patchState({ selectedIds: [] });
-  }
-
-  @Action(SelectAllNote)
-  selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
-    const notes = this.getNotesByType(getState, typeNote);
-    const ids = notes.map((z) => z.id);
-    patchState({ selectedIds: [...ids] });
+    patchState({ selectedIds: new Set() });
   }
 
   @Action(CancelAllSelectedLabels)

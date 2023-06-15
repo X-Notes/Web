@@ -35,7 +35,7 @@ export class ContentEditorContentsService {
 
   private progressiveLoadOptions = {
     firstLoadCount: 30,
-    stepCount: 4,
+    stepCount: 5,
     renderInterval: 10,
   };
 
@@ -55,7 +55,7 @@ export class ContentEditorContentsService {
 
   initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
     if (progressiveLoading) {
-      this.initContentProgressively(contents, () => this.initSyncContent(contents));
+      this.initContentProgressively(contents);
       return;
     }
     this.contents = contents;
@@ -64,7 +64,7 @@ export class ContentEditorContentsService {
 
   initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
     if (progressiveLoading) {
-      this.initContentProgressively(contents, () => this.initSyncContent(contents));
+      this.initContentProgressively(contents);
       return;
     }
     this.contents = contents;
@@ -86,7 +86,11 @@ export class ContentEditorContentsService {
     if (end > contents.length) {
       end = contents.length;
     }
-    this.contents = contents.slice(0, end);
+
+    const contentsToInit = contents.slice(0, end);
+    this.contents = contentsToInit;
+    this.contentsSync.push(...contentsToInit.map(x => x.copy()));
+
     this.onProgressiveAdding.next();
 
     if (this.contents.length === contents.length) {
@@ -105,6 +109,8 @@ export class ContentEditorContentsService {
       }
       const contentsToPush = contents.slice(start, end);
       this.contents.push(...contentsToPush);
+      this.contentsSync.push(...contentsToPush.map(x => x.copy()));
+
       this.onProgressiveAdding.next();
       if (start >= contents.length) {
         this.isRendering = false;

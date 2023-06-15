@@ -30,6 +30,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   @Input() isSelectedMode: boolean;
 
+  @Input() isSelected?: boolean;
+
   @Input() userId: string;
 
   fontSize = EntitiesSizeENUM;
@@ -84,8 +86,8 @@ export class FolderComponent implements OnInit, OnDestroy {
     this.setTitle();
   }
 
-  tryFind(z: string[]): boolean {
-    const exist = z.find((id) => id === this.folder.id);
+  tryFind(q: string[]): boolean {
+    const exist = q.find((id) => id === this.folder.id);
     return exist !== undefined;
   }
 
@@ -97,10 +99,10 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   highlight(id: string) {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    if (!this.folder.isSelected) {
-      this.store.dispatch(new SelectIdFolder(id, ids));
+    if (!this.isSelected) {
+      this.store.dispatch(new SelectIdFolder(id, [...ids]));
     } else {
-      this.store.dispatch(new UnSelectIdFolder(id, ids));
+      this.store.dispatch(new UnSelectIdFolder(id, [...ids]));
     }
   }
 

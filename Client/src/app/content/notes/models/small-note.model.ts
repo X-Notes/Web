@@ -11,5 +11,7 @@ export class SmallNote extends FullNote {
 
   lockRedirect?: boolean;
 
+  isDisplay?: boolean;
+  
   additionalInfo?: BottomNoteContent;
 }

@@ -1,9 +1,10 @@
 .button {
   position: relative;
   cursor: pointer;
-  border-radius: 6px;
-  width: 100px;
-  height: 30px;
+  border-radius: 5px;
+  min-width: 100px;
+  height: 32px;
+  padding: 0 10px 0 10px;
   display: flex;
   justify-content: center;
   align-items: center;

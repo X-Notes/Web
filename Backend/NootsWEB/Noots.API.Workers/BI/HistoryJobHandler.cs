@@ -41,7 +41,7 @@ namespace Noots.API.Workers.BI
                     try
                     {
                         using var scope = serviceScopeFactory.CreateScope();
-                        var _mediator = scope.ServiceProvider.GetService<IMediator>();
+                        var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                         foreach (var history in histories)
                         {
                             var command = new MakeNoteHistoryCommand(history.NoteId, history.UsersThatEditIds);

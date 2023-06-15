@@ -8,10 +8,12 @@
     class="grid-item"
     [id]="item.id"
     *ngFor="let item of noteService.entities"
+    [ngStyle]="{'opacity': item.isDisplay ? '1' : '0', 'z-index': item.isDisplay ? '1' : '0'}"
     [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
   >
     <app-note
       [note]="item"
+      [isSelected]="noteService.getIsSelected(item.id)"
       [userId]="(user$ | async).id"
       (highlightNote)="noteService.highlightNote($event)"
       (clickOnNote)="noteService.toNote($event)"

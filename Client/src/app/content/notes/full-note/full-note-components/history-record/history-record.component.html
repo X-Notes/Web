@@ -4,7 +4,7 @@
   </div>
   <div class="users">
     <div
-      *ngFor="let user of history.users"
+      *ngFor="let user of history.users | slice:0:5"
       class="user"
       CustomTooltip="{{user.name}}"
       position="Bottom"
@@ -40,12 +40,15 @@
           [visibility]="'hover'"
           [appearance]="'compact'"
         >
-          <div class="content-inner" #userHeight>
+          <div class="popup-content-inner" #userHeight>
             <div *ngFor="let user of history.users" class="user">
               <div class="user-image">
                 <img [src]="user.photoPath" />
               </div>
-              <p>{{user.name}}</p>
+              <div class="user-info">
+                <p class="name">{{user.name}}</p>
+                <b class="email">{{user.email}}</b>
+              </div>
             </div>
           </div>
         </ng-scrollbar>

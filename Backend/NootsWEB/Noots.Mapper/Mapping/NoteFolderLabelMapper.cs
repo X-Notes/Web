@@ -111,7 +111,7 @@ namespace Noots.Mapper.Mapping
 
         public TextNoteDTO ToTextDTO(TextNote tN)
         {
-            return new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.ListId, tN.UpdatedAt, tN.Version);
+            return new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt, tN.Version);
         }
 
         public AudiosCollectionNoteDTO ToAudiosCollection(CollectionNote aN, Guid ownerId)

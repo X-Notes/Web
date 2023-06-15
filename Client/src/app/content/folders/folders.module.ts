@@ -11,7 +11,6 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
 import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
-import { FullFolderContentComponent } from './full-folder-content/full-folder-content.component';
 import { EditorModule } from 'src/app/editor/editor.module';
 import { FullNoteModule } from '../notes/full-note/full-note.module';
 
@@ -25,10 +24,9 @@ import { FullNoteModule } from '../notes/full-note/full-note.module';
     ArchiveComponent,
     FullFolderComponent,
     FullFolderNoteComponent,
-    FullFolderContentComponent,
   ],
   imports: [CommonModule, FoldersRouting, SharedModule, EditorModule, FullNoteModule],
   providers: [MurriService],
-  exports: [FullFolderContentComponent],
+  exports: [],
 })
 export class FoldersModule {}

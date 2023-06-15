@@ -13,6 +13,7 @@
     <app-folder
       [userId]="(user$ | async).id"
       [folder]="item"
+      [isSelected]="folderService.getIsSelected(item.id)"
       [isSelectedMode]="folderService.isAnySelected"
     ></app-folder>
   </div>

@@ -49,7 +49,7 @@ public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteComm
             // HISTORY
             foreach(var perm in permissions)
             {
-                await historyCacheService.UpdateNote(perm.noteId, perm.perm.Caller.Id);
+                await historyCacheService.UpdateNoteAsync(perm.noteId, perm.perm.Caller.Id);
             }
 
             // WS UPDATES

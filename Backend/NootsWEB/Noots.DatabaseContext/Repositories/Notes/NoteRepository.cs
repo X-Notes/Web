@@ -69,78 +69,28 @@ namespace Noots.DatabaseContext.Repositories.Notes
             settings = settings ?? new PersonalizationSettingDTO().GetDefault();
 
             var types = GetFilterTypes(settings);
+            var collectionTypes = settings.GetFileTypes();
 
             var notesIds = notes.Select(q => q.Id).ToHashSet();
 
-            var contents = await context.BaseNoteContents
+            var query = context.BaseNoteContents
                 .Include(q => (q as CollectionNote).Files)
-                .Where(q => types.Contains(q.ContentTypeId) && notesIds.Contains(q.NoteId))
-                .AsSplitQuery().AsNoTracking().ToListAsync();
+                .Where(q => notesIds.Contains(q.NoteId) && q.ContentTypeId == ContentTypeENUM.Collection ? collectionTypes.Contains((q as CollectionNote).FileTypeId) : true)
+                .AsSplitQuery().GroupBy(x => x.NoteId).Select(x => new { noteId = x.Key, contents = x.OrderBy(q => q.Order).Take(settings.ContentInNoteCount).ToList() });
 
-            contents = FilterFileContents(contents, settings);
-            var contentLookUp = contents.ToLookup(x => x.NoteId);
+ 
+            var contentsDict = await query.ToDictionaryAsync(x => x.noteId);
 
             notes.ForEach(note =>
             {
-                SetListIdIfNeed(contentLookUp[note.Id]);
-                var baseContent = contentLookUp[note.Id].Where(x => x.ContentTypeId != ContentTypeENUM.Text || (x.ContentTypeId == ContentTypeENUM.Text && (x as TextNote).Contents?.Count > 0));
-                var content = baseContent.OrderBy(q => q.Order).Take(settings.ContentInNoteCount).ToList();
-                note.Contents = content;
+                if (contentsDict.ContainsKey(note.Id)) {
+                    note.Contents = contentsDict[note.Id].contents;
+                }
             });
 
             return notes;
         }
 
-        private List<BaseNoteContent> FilterFileContents(List<BaseNoteContent> contents, PersonalizationSettingDTO settings)
-        {
-            var result = new List<BaseNoteContent>();
-            foreach(var content in contents)
-            {
-                if (content.ContentTypeId == ContentTypeENUM.Collection)
-                {
-                    var fileContent = content as CollectionNote;
-                    if (!settings.IsViewAudioOnNote && fileContent.FileTypeId == FileTypeEnum.Audio)
-                    {
-                        continue;
-                    }
-                    if (!settings.IsViewDocumentOnNote && fileContent.FileTypeId == FileTypeEnum.Document)
-                    {
-                        continue;
-                    }
-                    if (!settings.IsViewPhotosOnNote && fileContent.FileTypeId == FileTypeEnum.Photo)
-                    {
-                        continue;
-                    }
-                    if (!settings.IsViewVideoOnNote && fileContent.FileTypeId == FileTypeEnum.Video)
-                    {
-                        continue;
-                    }
-                }
-                result.Add(content);
-            }
-
-            return result;
-        }
-
-        private void SetListIdIfNeed(IEnumerable<BaseNoteContent> contents)
-        {
-            var listId = 1;
-            foreach(var content in contents.OrderBy(z => z.Order).ToList())
-            {
-                if(content.ContentTypeId == ContentTypeENUM.Text)
-                {
-                    var text = content as TextNote;
-                    if(text.NoteTextTypeId == NoteTextTypeENUM.Numberlist)
-                    {
-                        text.ListId = listId;
-                    }
-                    else
-                    {
-                        listId++;
-                    }
-                }
-            }
-        }
 
         public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(
             Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)

@@ -1,4 +1,6 @@
-﻿using Common.DatabaseModels.Models.Users;
+﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Users;
+using System.Collections.Generic;
 
 namespace Common.DTO.Personalization;
 
@@ -33,6 +35,44 @@ public class PersonalizationSettingDTO
     {
         NotesInFolderCount = PersonalizationConstants.defaultNotesInFolderCount;
         ContentInNoteCount = PersonalizationConstants.defaultContentInNoteCount;
+
+        IsViewVideoOnNote = true;
+        IsViewAudioOnNote = true;
+        IsViewDocumentOnNote = true;
+        IsViewPhotosOnNote = true;
+        IsViewTextOnNote = true;
+
+        return this;
+    }
+
+    public List<FileTypeEnum> GetFileTypes()
+    {
+        var list = new List<FileTypeEnum>();
+
+        if (IsViewAudioOnNote)
+        {
+            list.Add(FileTypeEnum.Audio);
+        }
+        if (IsViewDocumentOnNote)
+        {
+            list.Add(FileTypeEnum.Document);
+        }
+        if (IsViewPhotosOnNote)
+        {
+            list.Add(FileTypeEnum.Photo);
+        }
+        if (IsViewVideoOnNote)
+        {
+            list.Add(FileTypeEnum.Video);
+        }
+
+        return list;
+    }
+
+    public PersonalizationSettingDTO GetRelated()
+    {
+        NotesInFolderCount = PersonalizationConstants.defaultNotesInFolderCount;
+        ContentInNoteCount = PersonalizationConstants.defaultContentsInRelatedNoteCount;
 
         IsViewVideoOnNote = true;
         IsViewAudioOnNote = true;

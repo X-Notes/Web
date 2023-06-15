@@ -21,6 +21,9 @@ export class NotePreviewTextComponent implements OnInit {
   @Input()
   activeTheme: ThemeENUM = ThemeENUM.Light;
 
+  @Input()
+  listNumber: number;
+  
   textType = NoteTextTypeENUM;
 
   viewHtml: string;

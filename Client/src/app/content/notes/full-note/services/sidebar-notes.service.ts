@@ -63,11 +63,11 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
       .subscribe(async (q: QueryList<ElementRef>) => {
         if (this.needFirstInit()) {
           this.initState();
-          await this.murriService.initSidebarNotesAsync(noteId);
+          await this.murriService.initRelatedNotesAsync(noteId);
           await this.setFirstInitedMurri();
           this.murriService.setOpacity1();
         }
-        await this.synchronizeState(q.toArray(), false);
+        await this.synchronizeState(q.toArray());
       });
   }
 

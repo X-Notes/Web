@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
@@ -54,6 +56,16 @@ namespace Common.DatabaseModels.Models.Notes
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public  DateTimeOffset CreatedAt { get; set; }
+
+        public IEnumerable<TextNote> GetTextContents()
+        {
+            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x as TextNote);
+        }
+
+        public IEnumerable<CollectionNote> GetCollectionContents()
+        {
+            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Select(x => x as CollectionNote);
+        }
 
         public void ToType(NoteTypeENUM noteTypeId, DateTimeOffset? deletedAt = null)
         {
