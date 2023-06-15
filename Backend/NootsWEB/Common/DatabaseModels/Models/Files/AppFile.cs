@@ -139,11 +139,11 @@ namespace Common.DatabaseModels.Models.Files
         }
 
         [NotMapped]
-        public string GetFromBigPath
+        public string GetFromDefaultPath
         {
             get
             {
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromBigPath();
+                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromDefaultPath();
             }
         }
 

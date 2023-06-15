@@ -68,7 +68,7 @@ namespace Noots.Mapper.Mapping
             {
                 Id = background.Id,
                 PhotoId = background.FileId,
-                PhotoPath = BuildFilePath(background.File.StorageId, background.UserId, background.File.GetFromBigPath)
+                PhotoPath = BuildFilePath(background.File.StorageId, background.UserId, background.File.GetFromDefaultPath)
             };
         }
 

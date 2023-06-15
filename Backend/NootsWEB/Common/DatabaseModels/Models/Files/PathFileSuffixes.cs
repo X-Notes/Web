@@ -20,11 +20,6 @@ namespace Common.DatabaseModels.Models.Files
             return Small ?? Medium ?? Large ?? Default;
         }
 
-        public string GetFromBigPath()
-        {
-            return Large ?? Medium ?? Small;
-        }
-
         public string GetFromDefaultPath()
         {
             return Default ?? Large ?? Medium ?? Small;
