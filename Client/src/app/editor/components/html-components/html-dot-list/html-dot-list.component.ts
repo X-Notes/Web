@@ -5,7 +5,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -13,7 +12,6 @@ import {
 import { ClickableSelectableEntities } from 'src/app/editor/entities-ui/clickable-selectable-entities.enum';
 import { TransformContent } from 'src/app/editor/entities-ui/transform-content.model';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
 import { BaseTextElementComponent } from '../html-base.component';
 
@@ -30,11 +28,6 @@ export class HtmlDotListComponent
 {
   @Output()
   transformTo = new EventEmitter<TransformContent>();
-
-  @Input()
-  theme: ThemeENUM;
-
-  themeE = ThemeENUM;
 
   constructor(
     private host: ElementRef,
@@ -97,7 +90,7 @@ export class HtmlDotListComponent
       this.content,
       null,
       ClickableSelectableEntities.Text,
-      this,
+      this
     );
   }
 }

@@ -15,7 +15,6 @@ import { BaseTextElementComponent } from '../html-base.component';
 import { ClickableSelectableEntities } from 'src/app/editor/entities-ui/clickable-selectable-entities.enum';
 import { TransformContent } from 'src/app/editor/entities-ui/transform-content.model';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
 
 @Component({
@@ -33,11 +32,6 @@ export class HtmlNumberListComponent
 
   @Input()
   listNumber: number;
-
-  @Input()
-  theme: ThemeENUM;
-
-  themeE = ThemeENUM;
 
   constructor(
     private host: ElementRef,
