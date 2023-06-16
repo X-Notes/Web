@@ -7,5 +7,6 @@
         Dotlist = 3,
         Numberlist = 4,
         Checklist = 5,
+        Code = 6
     }
 }
