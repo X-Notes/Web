@@ -549,11 +549,6 @@ namespace Noots.DatabaseContext.Migrations
                         {
                             Id = 5,
                             Name = "Checklist"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Code"
                         });
                 });
 

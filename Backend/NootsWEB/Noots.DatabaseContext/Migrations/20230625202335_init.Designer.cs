@@ -6,6 +6,7 @@ using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -18,8 +19,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    [Migration("20230425141652_init-max-size-billing-standart")]
-    partial class initmaxsizebillingstandart
+    [Migration("20230625202335_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -429,6 +430,11 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContentTypeId");
@@ -548,6 +554,27 @@ namespace Noots.DatabaseContext.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", b =>
+                {
+                    b.Property<Guid>("TextNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TextNoteId");
+
+                    b.HasIndex("NoteId");
+
+                    b.ToTable("TextNoteIndex", "note_content");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
                 {
                     b.Property<Guid>("Id")
@@ -664,16 +691,13 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ReletatedNoteInnerNoteId")
+                    b.Property<int>("RelatedNoteInnerNoteId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsOpened")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("RelatedNoteInnerNoteId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("UserId", "ReletatedNoteInnerNoteId");
+                    b.HasKey("UserId", "RelatedNoteInnerNoteId");
 
                     b.HasIndex("RelatedNoteInnerNoteId");
 
@@ -921,7 +945,7 @@ namespace Noots.DatabaseContext.Migrations
                     b.ToTable("Background", "user");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notification", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -939,8 +963,13 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<bool>("IsSystemMessage")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("TranslateKeyMessage")
-                        .HasColumnType("text");
+                    b.Property<NotificationMetadata>("Metadata")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("NotificationMessagesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(4);
 
                     b.Property<Guid?>("UserFromId")
                         .HasColumnType("uuid");
@@ -950,6 +979,8 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("NotificationMessagesId");
+
                     b.HasIndex("UserFromId");
 
                     b.HasIndex("UserToId");
@@ -957,21 +988,49 @@ namespace Noots.DatabaseContext.Migrations
                     b.ToTable("Notification", "user");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.NotificationSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("MessageKey")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.ToTable("NotificationMessages", "user");
 
-                    b.ToTable("NotificationSetting", "user");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MessageKey = "notification.changeUserPermissionFolder"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MessageKey = "notification.changeUserPermissionNote"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MessageKey = "notification.sentInvitesToFolder"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MessageKey = "notification.sentInvitesToNote"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MessageKey = "notification.removeUserFromFolder"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            MessageKey = "notification.removeUserFromNote"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.PersonalizationSetting", b =>
@@ -1061,7 +1120,9 @@ namespace Noots.DatabaseContext.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("BillingPlanId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
 
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");
@@ -1512,6 +1573,25 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("CollectionNote");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
+                        .WithMany("TextNoteIndexs")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", "TextNote")
+                        .WithOne("TextNoteIndex")
+                        .HasForeignKey("Common.DatabaseModels.Models.NoteContent.TextContent.TextNoteIndex", "TextNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("TextNote");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.NoteType", "NoteType")
@@ -1562,7 +1642,9 @@ namespace Noots.DatabaseContext.Migrations
                 {
                     b.HasOne("Common.DatabaseModels.Models.Notes.RelatedNoteToInnerNote", "RelatedNoteInnerNote")
                         .WithMany("RelatedNoteUserStates")
-                        .HasForeignKey("RelatedNoteInnerNoteId");
+                        .HasForeignKey("RelatedNoteInnerNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
                         .WithMany("RelatedNoteUserStates")
@@ -1621,8 +1703,14 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notification", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.Notification", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", "NotificationMessages")
+                        .WithMany("Notifications")
+                        .HasForeignKey("NotificationMessagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.Models.Users.User", "UserFrom")
                         .WithMany("NotificationsFrom")
                         .HasForeignKey("UserFromId")
@@ -1634,20 +1722,11 @@ namespace Noots.DatabaseContext.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("NotificationMessages");
+
                     b.Navigation("UserFrom");
 
                     b.Navigation("UserTo");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Users.NotificationSetting", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
-                        .WithOne("NotificationSettings")
-                        .HasForeignKey("Common.DatabaseModels.Models.Users.NotificationSetting", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.PersonalizationSetting", b =>
@@ -1914,6 +1993,8 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Navigation("ReletatedNoteToInnerNotesTo");
 
+                    b.Navigation("TextNoteIndexs");
+
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
@@ -1963,6 +2044,11 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("CurrentUserBackground");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Users.Notifications.NotificationMessages", b =>
+                {
+                    b.Navigation("Notifications");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.SortedByType", b =>
                 {
                     b.Navigation("PersonalizationSettingsFolders");
@@ -1981,8 +2067,6 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("Labels");
 
                     b.Navigation("Notes");
-
-                    b.Navigation("NotificationSettings");
 
                     b.Navigation("NotificationsFrom");
 
@@ -2013,6 +2097,11 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNote", b =>
                 {
                     b.Navigation("CollectionNoteAppFiles");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", b =>
+                {
+                    b.Navigation("TextNoteIndex");
                 });
 #pragma warning restore 612, 618
         }

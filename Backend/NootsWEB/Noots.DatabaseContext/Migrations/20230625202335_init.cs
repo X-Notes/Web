@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Noots.DatabaseContext.Migrations
 {
-    public partial class Initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,6 +33,9 @@ namespace Noots.DatabaseContext.Migrations
                 name: "folder");
 
             migrationBuilder.EnsureSchema(
+                name: "ws");
+
+            migrationBuilder.EnsureSchema(
                 name: "noots_systems");
 
             migrationBuilder.EnsureSchema(
@@ -39,9 +43,6 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.EnsureSchema(
                 name: "note");
-
-            migrationBuilder.EnsureSchema(
-                name: "ws");
 
             migrationBuilder.CreateTable(
                 name: "BillingPlan",
@@ -54,7 +55,8 @@ namespace Noots.DatabaseContext.Migrations
                     MaxFolders = table.Column<int>(type: "integer", nullable: false),
                     MaxLabels = table.Column<int>(type: "integer", nullable: false),
                     MaxRelatedNotes = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -166,6 +168,19 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationMessages",
+                schema: "user",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    MessageKey = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RefType",
                 schema: "noots_systems",
                 columns: table => new
@@ -192,6 +207,19 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Storage",
+                schema: "file",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Storage", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Theme",
                 schema: "noots_systems",
                 columns: table => new
@@ -210,16 +238,16 @@ namespace Noots.DatabaseContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PathPhotoSmall = table.Column<string>(type: "text", nullable: true),
-                    PathPhotoMedium = table.Column<string>(type: "text", nullable: true),
-                    PathPhotoBig = table.Column<string>(type: "text", nullable: true),
+                    PathPrefix = table.Column<string>(type: "text", nullable: true),
+                    PathFileId = table.Column<string>(type: "text", nullable: true),
+                    PathSuffixes = table.Column<PathFileSuffixes>(type: "jsonb", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    PathNonPhotoContent = table.Column<string>(type: "text", nullable: true),
                     ContentType = table.Column<string>(type: "text", nullable: true),
                     FileTypeId = table.Column<int>(type: "integer", nullable: false),
                     MetaData = table.Column<AppFileMetaData>(type: "jsonb", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StorageId = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -230,6 +258,13 @@ namespace Noots.DatabaseContext.Migrations
                         column: x => x.FileTypeId,
                         principalSchema: "file",
                         principalTable: "FileType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppFile_Storage_StorageId",
+                        column: x => x.StorageId,
+                        principalSchema: "file",
+                        principalTable: "Storage",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -289,7 +324,8 @@ namespace Noots.DatabaseContext.Migrations
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true),
                     ThemeId = table.Column<int>(type: "integer", nullable: false),
                     FontSizeId = table.Column<int>(type: "integer", nullable: false),
-                    BillingPlanId = table.Column<int>(type: "integer", nullable: false)
+                    BillingPlanId = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    StorageId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -319,6 +355,13 @@ namespace Noots.DatabaseContext.Migrations
                         column: x => x.LanguageId,
                         principalSchema: "noots_systems",
                         principalTable: "Language",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Storage_StorageId",
+                        column: x => x.StorageId,
+                        principalSchema: "file",
+                        principalTable: "Storage",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -453,13 +496,21 @@ namespace Noots.DatabaseContext.Migrations
                     UserToId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsSystemMessage = table.Column<bool>(type: "boolean", nullable: false),
                     IsRead = table.Column<bool>(type: "boolean", nullable: false),
-                    TranslateKeyMessage = table.Column<string>(type: "text", nullable: true),
+                    NotificationMessagesId = table.Column<int>(type: "integer", nullable: false, defaultValue: 4),
                     AdditionalMessage = table.Column<string>(type: "text", nullable: true),
-                    Date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    Date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Metadata = table.Column<NotificationMetadata>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notification_NotificationMessages_NotificationMessagesId",
+                        column: x => x.NotificationMessagesId,
+                        principalSchema: "user",
+                        principalTable: "NotificationMessages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Notification_User_UserFromId",
                         column: x => x.UserFromId,
@@ -474,26 +525,6 @@ namespace Noots.DatabaseContext.Migrations
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NotificationSetting",
-                schema: "user",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NotificationSetting", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_NotificationSetting_User_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "user",
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -546,7 +577,10 @@ namespace Noots.DatabaseContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ConnectionId = table.Column<string>(type: "text", nullable: true),
+                    UnauthorizedId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ConnectionId = table.Column<string>(type: "text", nullable: false),
+                    UserAgent = table.Column<string>(type: "text", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ConnectedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -630,6 +664,7 @@ namespace Noots.DatabaseContext.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
+                    Version = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     ContentTypeId = table.Column<int>(type: "integer", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -836,6 +871,68 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FolderConnection",
+                schema: "ws",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserIdentifierConnectionIdId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FolderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConnectionId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FolderConnection", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FolderConnection_Folder_FolderId",
+                        column: x => x.FolderId,
+                        principalSchema: "folder",
+                        principalTable: "Folder",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FolderConnection_UserIdentifierConnectionId_UserIdentifierC~",
+                        column: x => x.UserIdentifierConnectionIdId,
+                        principalSchema: "ws",
+                        principalTable: "UserIdentifierConnectionId",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteConnection",
+                schema: "ws",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserIdentifierConnectionIdId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConnectionId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteConnection", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NoteConnection_Note_NoteId",
+                        column: x => x.NoteId,
+                        principalSchema: "note",
+                        principalTable: "Note",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NoteConnection_UserIdentifierConnectionId_UserIdentifierCon~",
+                        column: x => x.UserIdentifierConnectionIdId,
+                        principalSchema: "ws",
+                        principalTable: "UserIdentifierConnectionId",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CollectionNote",
                 schema: "note_content",
                 columns: table => new
@@ -959,20 +1056,20 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "note",
                 columns: table => new
                 {
-                    ReletatedNoteInnerNoteId = table.Column<int>(type: "integer", nullable: false),
+                    RelatedNoteInnerNoteId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RelatedNoteInnerNoteId = table.Column<int>(type: "integer", nullable: true),
                     IsOpened = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RelatedNoteUserState", x => new { x.UserId, x.ReletatedNoteInnerNoteId });
+                    table.PrimaryKey("PK_RelatedNoteUserState", x => new { x.UserId, x.RelatedNoteInnerNoteId });
                     table.ForeignKey(
                         name: "FK_RelatedNoteUserState_RelatedNoteToInnerNote_RelatedNoteInne~",
                         column: x => x.RelatedNoteInnerNoteId,
                         principalSchema: "note",
                         principalTable: "RelatedNoteToInnerNote",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RelatedNoteUserState_User_UserId",
                         column: x => x.UserId,
@@ -1009,14 +1106,43 @@ namespace Noots.DatabaseContext.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TextNoteIndex",
+                schema: "note_content",
+                columns: table => new
+                {
+                    TextNoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Version = table.Column<int>(type: "integer", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TextNoteIndex", x => x.TextNoteId);
+                    table.ForeignKey(
+                        name: "FK_TextNoteIndex_Note_NoteId",
+                        column: x => x.NoteId,
+                        principalSchema: "note",
+                        principalTable: "Note",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TextNoteIndex_TextNote_TextNoteId",
+                        column: x => x.TextNoteId,
+                        principalSchema: "note_content",
+                        principalTable: "TextNote",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 schema: "user",
                 table: "BillingPlan",
-                columns: new[] { "Id", "MaxFolders", "MaxLabels", "MaxNotes", "MaxRelatedNotes", "MaxSize", "Name" },
+                columns: new[] { "Id", "MaxFolders", "MaxLabels", "MaxNotes", "MaxRelatedNotes", "MaxSize", "Name", "Price" },
                 values: new object[,]
                 {
-                    { 1, 250, 500, 250, 5, 1048576000L, "Free" },
-                    { 2, 10000, 10000, 10000, 30, 5242880000L, "Standart" }
+                    { 1, 250, 500, 250, 5, 104857600L, "Standart", 0.0 },
+                    { 2, 10000, 10000, 10000, 30, 5242880000L, "Premium", 1.5 }
                 });
 
             migrationBuilder.InsertData(
@@ -1119,6 +1245,20 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.InsertData(
+                schema: "user",
+                table: "NotificationMessages",
+                columns: new[] { "Id", "MessageKey" },
+                values: new object[,]
+                {
+                    { 1, "notification.changeUserPermissionFolder" },
+                    { 2, "notification.changeUserPermissionNote" },
+                    { 3, "notification.sentInvitesToFolder" },
+                    { 4, "notification.sentInvitesToNote" },
+                    { 5, "notification.removeUserFromFolder" },
+                    { 6, "notification.removeUserFromNote" }
+                });
+
+            migrationBuilder.InsertData(
                 schema: "noots_systems",
                 table: "RefType",
                 columns: new[] { "Id", "Name" },
@@ -1140,6 +1280,12 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.InsertData(
+                schema: "file",
+                table: "Storage",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 9000, "DEV" });
+
+            migrationBuilder.InsertData(
                 schema: "noots_systems",
                 table: "Theme",
                 columns: new[] { "Id", "Name" },
@@ -1154,6 +1300,12 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "file",
                 table: "AppFile",
                 column: "FileTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppFile_StorageId",
+                schema: "file",
+                table: "AppFile",
+                column: "StorageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppFile_UserId",
@@ -1216,6 +1368,18 @@ namespace Noots.DatabaseContext.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FolderConnection_FolderId",
+                schema: "ws",
+                table: "FolderConnection",
+                column: "FolderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FolderConnection_UserIdentifierConnectionIdId",
+                schema: "ws",
+                table: "FolderConnection",
+                column: "UserIdentifierConnectionIdId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FoldersNotes_FolderId",
                 schema: "folder",
                 table: "FoldersNotes",
@@ -1252,6 +1416,18 @@ namespace Noots.DatabaseContext.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NoteConnection_NoteId",
+                schema: "ws",
+                table: "NoteConnection",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NoteConnection_UserIdentifierConnectionIdId",
+                schema: "ws",
+                table: "NoteConnection",
+                column: "UserIdentifierConnectionIdId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NoteSnapshot_NoteId",
                 schema: "note_history",
                 table: "NoteSnapshot",
@@ -1270,6 +1446,12 @@ namespace Noots.DatabaseContext.Migrations
                 column: "RefTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notification_NotificationMessagesId",
+                schema: "user",
+                table: "Notification",
+                column: "NotificationMessagesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notification_UserFromId",
                 schema: "user",
                 table: "Notification",
@@ -1280,13 +1462,6 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "user",
                 table: "Notification",
                 column: "UserToId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_NotificationSetting_UserId",
-                schema: "user",
-                table: "NotificationSetting",
-                column: "UserId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonalizationSetting_SortedFolderByTypeId",
@@ -1344,6 +1519,12 @@ namespace Noots.DatabaseContext.Migrations
                 column: "NoteTextTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TextNoteIndex_NoteId",
+                schema: "note_content",
+                table: "TextNoteIndex",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_BillingPlanId",
                 schema: "user",
                 table: "User",
@@ -1374,6 +1555,12 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "user",
                 table: "User",
                 column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_StorageId",
+                schema: "user",
+                table: "User",
+                column: "StorageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_ThemeId",
@@ -1452,6 +1639,16 @@ namespace Noots.DatabaseContext.Migrations
                 table: "AppFile");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_AppFile_Storage_StorageId",
+                schema: "file",
+                table: "AppFile");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_User_Storage_StorageId",
+                schema: "user",
+                table: "User");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_AppFile_User_UserId",
                 schema: "file",
                 table: "AppFile");
@@ -1474,6 +1671,10 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "note_content");
 
             migrationBuilder.DropTable(
+                name: "FolderConnection",
+                schema: "ws");
+
+            migrationBuilder.DropTable(
                 name: "FoldersNotes",
                 schema: "folder");
 
@@ -1482,11 +1683,11 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "label");
 
             migrationBuilder.DropTable(
-                name: "Notification",
-                schema: "user");
+                name: "NoteConnection",
+                schema: "ws");
 
             migrationBuilder.DropTable(
-                name: "NotificationSetting",
+                name: "Notification",
                 schema: "user");
 
             migrationBuilder.DropTable(
@@ -1502,12 +1703,8 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "note_history");
 
             migrationBuilder.DropTable(
-                name: "TextNote",
+                name: "TextNoteIndex",
                 schema: "note_content");
-
-            migrationBuilder.DropTable(
-                name: "UserIdentifierConnectionId",
-                schema: "ws");
 
             migrationBuilder.DropTable(
                 name: "UserNoteSnapshotManyToMany",
@@ -1534,6 +1731,14 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "label");
 
             migrationBuilder.DropTable(
+                name: "UserIdentifierConnectionId",
+                schema: "ws");
+
+            migrationBuilder.DropTable(
+                name: "NotificationMessages",
+                schema: "user");
+
+            migrationBuilder.DropTable(
                 name: "SortedByType",
                 schema: "user");
 
@@ -1542,11 +1747,7 @@ namespace Noots.DatabaseContext.Migrations
                 schema: "note");
 
             migrationBuilder.DropTable(
-                name: "HType",
-                schema: "note_content");
-
-            migrationBuilder.DropTable(
-                name: "NoteTextType",
+                name: "TextNote",
                 schema: "note_content");
 
             migrationBuilder.DropTable(
@@ -1559,6 +1760,14 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "BaseNoteContent",
+                schema: "note_content");
+
+            migrationBuilder.DropTable(
+                name: "HType",
+                schema: "note_content");
+
+            migrationBuilder.DropTable(
+                name: "NoteTextType",
                 schema: "note_content");
 
             migrationBuilder.DropTable(
@@ -1583,6 +1792,10 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "FileType",
+                schema: "file");
+
+            migrationBuilder.DropTable(
+                name: "Storage",
                 schema: "file");
 
             migrationBuilder.DropTable(

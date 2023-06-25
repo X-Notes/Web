@@ -417,8 +417,7 @@ namespace Noots.DatabaseContext
                 new NoteTextType { Id = NoteTextTypeENUM.Heading, Name = nameof(NoteTextTypeENUM.Heading) },
                 new NoteTextType { Id = NoteTextTypeENUM.Dotlist, Name = nameof(NoteTextTypeENUM.Dotlist) },
                 new NoteTextType { Id = NoteTextTypeENUM.Numberlist, Name = nameof(NoteTextTypeENUM.Numberlist) },
-                new NoteTextType { Id = NoteTextTypeENUM.Checklist, Name = nameof(NoteTextTypeENUM.Checklist) },
-                new NoteTextType { Id = NoteTextTypeENUM.Code, Name = nameof(NoteTextTypeENUM.Code) }
+                new NoteTextType { Id = NoteTextTypeENUM.Checklist, Name = nameof(NoteTextTypeENUM.Checklist) }
             );
 
             modelBuilder.Entity<ContentType>().HasData(
