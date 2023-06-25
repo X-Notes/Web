@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 import { HtmlComponentsFacadeService } from './html-components.facade.service';
 import { Observable } from 'rxjs';
 import { NoteUserCursorWS } from '../entities/ws/note-user-cursor';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   template: '',
@@ -14,6 +15,11 @@ export abstract class BaseEditorElementComponent {
   @Input()
   isSelected = false;
 
+  @Input()
+  theme: ThemeENUM;
+  
+  themeE = ThemeENUM;
+  
   @Input()
   cursors$: Observable<NoteUserCursorWS[]>;
 

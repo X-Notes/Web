@@ -5,7 +5,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -17,7 +16,6 @@ import { TypeUploadFormats } from 'src/app/editor/entities-ui/files-enums/type-u
 import { TransformToFileContent } from 'src/app/editor/entities-ui/transform-file-content.model';
 import { HeadingTypeENUM } from 'src/app/editor/entities/contents/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { isValidURL } from 'src/app/shared/utils/is-valid-url.util';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
 import { BaseTextElementComponent } from '../html-base.component';
@@ -36,11 +34,6 @@ export class HtmlTextPartComponent
   transformToFile = new EventEmitter<TransformToFileContent>();
 
   @ViewChild('uploadFile') uploadFile: ElementRef;
-
-  @Input()
-  theme: ThemeENUM;
-
-  themeE = ThemeENUM;
 
   textType = NoteTextTypeENUM;
 

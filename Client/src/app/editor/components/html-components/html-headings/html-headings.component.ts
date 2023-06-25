@@ -4,14 +4,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
 } from '@angular/core';
 import { ClickableSelectableEntities } from 'src/app/editor/entities-ui/clickable-selectable-entities.enum';
 import { HeadingTypeENUM } from 'src/app/editor/entities/contents/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
 import { BaseTextElementComponent } from '../html-base.component';
 
@@ -25,11 +23,6 @@ export class HtmlHeadingsComponent
   extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @Input()
-  theme: ThemeENUM;
-
-  themeE = ThemeENUM;
-
   hType = HeadingTypeENUM;
 
   constructor(
