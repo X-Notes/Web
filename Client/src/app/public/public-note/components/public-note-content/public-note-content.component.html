@@ -6,7 +6,7 @@
       [labels]="(note$ | async)?.labels"
       [progressiveLoading]="true"
       [isReadOnlyMode]="true"
-      [title$]="noteTitle$"
+      [title]="(noteTitle$ | async)"
       [contents]="contents"
       [editorTheme]="theme.Dark"
     >

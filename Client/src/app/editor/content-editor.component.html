@@ -37,6 +37,7 @@
         (input)="onTitleInput($event)"
         (keydown.enter)="handlerTitleEnter($event)"
         (click)="onTitleClick()"
+        [innerText]="viewTitle"
       ></div>
       <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>

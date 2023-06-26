@@ -11,7 +11,7 @@
       [labels]="(note$ | async).labels"
       [progressiveLoading]="true"
       [isReadOnlyMode]="(canEdit$ | async) === false"
-      [title$]="noteTitle$"
+      [title]="(noteTitle$ | async)"
       [contents]="contents"
       [editorTheme]="theme$ | async"
     ></app-content-editor>

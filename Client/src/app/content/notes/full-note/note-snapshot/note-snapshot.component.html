@@ -11,7 +11,7 @@
       [noteId]="(snapshotNote$ | async).noteId"
       [color]="(snapshotNote$ | async).color"
       [labels]="(snapshotNote$ | async).labels"
-      [title$]="snapshotNoteTitle$"
+      [title]="(snapshotNoteTitle$ | async)"
       [progressiveLoading]="true"
       [contents]="contents"
       [isReadOnlyMode]="true"

@@ -263,8 +263,7 @@ export class UpdateNoteTitle {
     public newTitle: string,
     public noteId: string,
     public isCallApi = true,
-    public errorPermissionMessage?: string,
-    public isUpdateFullNote = true,
+    public errorPermissionMessage?: string
   ) {}
 }
 

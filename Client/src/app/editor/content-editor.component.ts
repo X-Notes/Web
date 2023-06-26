@@ -225,6 +225,8 @@ export class ContentEditorComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.noteId && changes.noteId.currentValue !== changes.noteId.previousValue) {
+      this.initTitle(this.title);
+      this.facade.momentoStateService.clear();
       this.titleInited = false;
     }
   }
@@ -275,7 +277,8 @@ export class ContentEditorComponent
     
     this.facade.clickableContentService.cursorUpdatingActive = this.cursorActive;
 
-    this.initTitle();
+    this.iniTitle(this.title);
+    this.initTitleSubscription();
     this.subscribeOnButtons();
     this.facade.contentUpdateWsService.noteId = this.noteId;
 

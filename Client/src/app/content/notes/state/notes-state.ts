@@ -1048,7 +1048,7 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { newTitle, isCallApi, noteId, errorPermissionMessage, isUpdateFullNote }: UpdateNoteTitle,
+    { newTitle, isCallApi, noteId, errorPermissionMessage }: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -1056,13 +1056,11 @@ export class NoteStore {
     }
     if (resp.success) {
       // UPDATE FULL NOTE
-      if (isUpdateFullNote) {
-        const fullNote = getState().fullNoteState?.note;
-        if (fullNote && fullNote.id === noteId) {
-          patchState({
-            fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
-          });
-        }
+      const fullNote = getState().fullNoteState?.note;
+      if (fullNote && fullNote.id === noteId) {
+        patchState({
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
+        });
       }
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
@@ -1084,7 +1082,7 @@ export class NoteStore {
     { dispatch }: StateContext<NoteState>,
     { title, noteId }: UpdateNoteTitleWS,
   ) {
-    await dispatch(new UpdateNoteTitle(title, noteId, false, null, true));
+    await dispatch(new UpdateNoteTitle(title, noteId, false, null));
   }
 
   @Action(UpdateFullNote)

@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { interval, Observable, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { UpdateCursorAction } from 'src/app/content/notes/state/editor-actions';
-import { UpdateNoteTitle } from 'src/app/content/notes/state/notes-actions';
+import { UpdateNoteTitle, UpdateNoteTitleWS } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -17,6 +17,7 @@ import { UpdateCursor } from '../entities/cursors/cursor';
 import { CursorTypeENUM } from '../entities/cursors/cursor-type.enum';
 import { EditorFacadeService } from '../services/editor-facade.service';
 import { EditorBaseComponent } from './editor-base.component';
+import { ofActionDispatched } from '@ngxs/store';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -25,11 +26,13 @@ import { EditorBaseComponent } from './editor-base.component';
 })
 export class EditorTitleComponent extends EditorBaseComponent {
   @Input()
-  title$?: Observable<string>;
+  title?: string;
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef<HTMLElement>;
 
   prevTitle: string;
+
+  viewTitle: string;
 
   intervalEvents = interval(updateNoteTitleDelay);
 
@@ -39,25 +42,39 @@ export class EditorTitleComponent extends EditorBaseComponent {
     return this.noteTitleEl.nativeElement.textContent;
   }
 
-  initTitle() {
-    this.subscribeUpdates();
+  iniTitle(title: string): void {
+    this.viewTitle = title;
+  }
+
+  initTitleSubscription() {
+    this.subscribeWSUpdates();
     if (!this.isReadOnlyMode) {
       this.subscribeOnEditUI();
     }
   }
 
+  setTitle(title: string) {
+    if(this.noteTitleEl?.nativeElement) {
+      this.noteTitleEl.nativeElement.innerText = title;
+    }
+  }
+
+
+  initTitle(title: string) {
+    this.setTitle(title);
+    this.prevTitle = title;
+    if (!this.titleInited) {
+      this.titleInited = true;
+      requestAnimationFrame(() => this.setStartCursor());
+    }
+    this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
+    this.facade.cdr.detectChanges();
+  }
+
   // WS && INTERNAL
-  private subscribeUpdates() {
-    this.title$
-      .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
-      .subscribe((title) => {
-        this.updateTitle(title);
-        this.prevTitle = title;
-        if (!this.titleInited) {
-          this.titleInited = true;
-          requestAnimationFrame(() => this.setStartCursor());
-        }
-      });
+  private subscribeWSUpdates() {
+    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleWS), takeUntil(this.facade.dc.d$))
+      .subscribe((updates) => this.updateTitle(updates.title));
   }
 
   isContentEmpty() {
@@ -70,7 +87,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe(async (title) => {
         if (!this.noteId) return;
-        this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, undefined, false));
+        this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, undefined));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
   }
@@ -86,10 +103,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
   }
 
   private updateTitle(updateTitle: string) {
-    if (
-      this.noteTitleEl?.nativeElement &&
-      updateTitle !== this.noteTitleEl?.nativeElement.textContent
-    ) {
+    if (this.noteTitleEl?.nativeElement) {
       const el = this.noteTitleEl.nativeElement;
       const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
 
@@ -99,6 +113,10 @@ export class EditorTitleComponent extends EditorBaseComponent {
         requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
       }
 
+      this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
+      this.facade.cdr.detectChanges();
+    } else {
+      this.setTitle(updateTitle);
       this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
       this.facade.cdr.detectChanges();
     }
@@ -120,10 +138,6 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.facade.momentoStateService.saveToStack(action);
     setTimeout(() => this.first?.setFocus());
     this.postAction();
-  }
-
-  setTitle(title: string) {
-    this.noteTitleEl.nativeElement.innerText = title;
   }
 
   pushChangesToTitle(title: string, handleUndo: boolean): void {
@@ -210,7 +224,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     return new TextCursorUI(cursorLeft, cursorTop, cursor.color);
   }
 
-  setStartCursor(): void {
+  private setStartCursor(): void {
     if (this.titleUI.length === 0) {
       this.noteTitleEl?.nativeElement?.focus();
       return;
