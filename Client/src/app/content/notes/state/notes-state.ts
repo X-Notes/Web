@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
-import { State, Selector, StateContext, Action } from '@ngxs/store';
+import { State, Selector, StateContext, Action, Store } from '@ngxs/store';
 import { Injectable, NgZone } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -83,6 +83,7 @@ import { ApiTextService } from 'src/app/editor/api/api-text.service';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 export interface FullNoteState {
   note: FullNote;
@@ -143,7 +144,8 @@ export class NoteStore {
     private zone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-    public pService: PersonalizationService
+    public pService: PersonalizationService,
+    private store: Store,
   ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -927,8 +929,10 @@ export class NoteStore {
     { getState }: StateContext<NoteState>,
     { noteId, cursor }: UpdateCursorAction,
   ) {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    if(!user?.id) return;
     const note = getState().fullNoteState.note;
-    if (!note || note.id !== noteId || !note.isCanEdit) return;
+    if (!note || note.id !== noteId) return;
     await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
   }
 
