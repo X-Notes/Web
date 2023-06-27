@@ -7,6 +7,7 @@
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
       [noteId]="noteId"
+      [userId]="(user$ | async)?.id"
       [folderId]="folderId"
       [color]="(note$ | async).color"
       [labels]="(note$ | async).labels"

@@ -23,6 +23,10 @@ import { EditorFacadeService } from '../services/editor-facade.service';
 export class EditorBaseComponent {
   @Input() noteId?: string;
 
+  @Input() userId?: string;
+
+  @Input() connectToNote = true;
+
   @Input() folderId?: string;
 
   @Input()

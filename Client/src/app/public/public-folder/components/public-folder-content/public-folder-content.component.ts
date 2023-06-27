@@ -18,13 +18,13 @@ import { EntitiesSizeENUM } from '../../../../shared/enums/font-size.enum';
 import { PersonalizationService } from '../../../../shared/services/personalization.service';
 import { OnDestroy } from '@angular/core';
 import { SmallNote } from '../../../../content/notes/models/small-note.model';
-import { PublicUser } from '../../../storage/public-action';
+import { GetPublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { UpdaterEntitiesService } from '../../../../core/entities-updater.service';
 import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
-import { AppInitializerService } from 'src/app/core/app-initializer.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { AuthService } from 'src/app/core/auth.service';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -60,23 +60,19 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     private readonly apiFullFolder: ApiFullFolderService,
     private readonly router: Router,
     private readonly updateNoteService: UpdaterEntitiesService,
-    private webSocketsFolderUpdaterService: WebSocketsFolderUpdaterService,
-    private appInitializerService: AppInitializerService,
-  ) {}
-
-  async ngOnInit() {
-    await this.appInitializerService.init();
+    public authService: AuthService,
+  ) {
     this.pService.setSpinnerState(true);
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.loaded = false;
       // lOAD FOLDER
       this.folderId = params.id;
-      if(!this.folderId) return;
+      if (!this.folderId) return;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
       const folder = this.store.selectSnapshot(FolderStore.full);
       if (folder) {
         const ownerId = this.store.selectSnapshot(FolderStore.getOwnerId);
-        await this.store.dispatch(new PublicUser(ownerId)).toPromise();
+        await this.store.dispatch(new GetPublicUser(ownerId)).toPromise();
 
         // INIT FOLDER NOTES
         const notes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
@@ -88,8 +84,12 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
       this.pService.setSpinnerState(false);
       this.loaded = true;
 
-      this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
+      // this.webSocketsFolderUpdaterService.tryJoinToFolder(this.folderId);
     });
+  }
+
+  ngOnInit() {
+    this.authService.redirectOnSuccessAuth(`folders/${this.folderId}`);
   }
 
   ngAfterViewInit(): void {
@@ -98,7 +98,7 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
 
   ngOnDestroy(): void {
     this.ffnService.onDestroy();
-    if(this.folderId){
+    if (this.folderId) {
       this.updateNoteService.addFolderToUpdate(this.folderId);
     }
     this.routeSubscription?.unsubscribe();

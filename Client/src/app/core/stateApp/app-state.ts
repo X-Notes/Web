@@ -83,6 +83,16 @@ export class AppStore {
   }
 
   @Selector()
+  static isNoteInnerPure(state: AppState): boolean {
+    return state.routing === EntityType.NoteInner;
+  }
+
+  @Selector()
+  static isFolderInnerNote(state: AppState): boolean {
+    return state.routing === EntityType.FolderInnerNote;
+  }
+
+  @Selector()
   static isDeletedFoldersNotesLabels(state: AppState): boolean {
     return (
       state.routing === EntityType.LabelDeleted ||
@@ -165,6 +175,9 @@ export class AppStore {
 
       case EntityType.Profile:
         return 'background';
+
+      case EntityType.History:
+        return 'history';
 
       default:
         throw new Error('error');

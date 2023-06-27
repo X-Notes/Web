@@ -123,10 +123,9 @@ export class SignalRService {
   }
 
   private startConnection = async () => {
-    const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
-      .withUrl(`${environment.writeAPI}/api/hub`, { accessTokenFactory: () => token })
+      .withUrl(`${environment.writeAPI}/api/hub`, { accessTokenFactory: () => this.auth.getTokenRefreshed() })
       .withAutomaticReconnect()
       .build();
 

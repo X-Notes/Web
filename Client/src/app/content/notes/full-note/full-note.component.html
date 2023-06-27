@@ -7,6 +7,7 @@
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
       [noteId]="(note$ | async).id"
+      [userId]="(user$ | async)?.id"
       [color]="(note$ | async).color"
       [labels]="(note$ | async).labels"
       [progressiveLoading]="true"

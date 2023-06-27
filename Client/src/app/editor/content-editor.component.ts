@@ -90,8 +90,7 @@ import { ContentEditorContentsService } from './ui-services/contents/content-edi
 })
 export class ContentEditorComponent
   extends EditorCollectionsComponent
-  implements OnInit, AfterViewInit, OnChanges, OnDestroy
-{
+  implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SelectionDirective) selectionDirective?: SelectionDirective;
 
   @ViewChild(MenuSelectionDirective) menuSelectionDirective?: MenuSelectionDirective;
@@ -232,16 +231,20 @@ export class ContentEditorComponent
   }
 
   ngAfterViewInit(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
-    this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
-    this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
-    this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
-    this.facade.selectionService.onSelectChanges$
-      .pipe(takeUntil(this.facade.dc.d$))
-      .subscribe(() => {
-        this.options = this.buildMenuOptions();
-        this.facade.cdr.detectChanges();
-      });
+    if (!this.isReadOnlyMode) {
+      this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
+      this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
+      this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
+      this.facade.selectionService.onSelectChanges$
+        .pipe(takeUntil(this.facade.dc.d$))
+        .subscribe(() => {
+          this.options = this.buildMenuOptions();
+          this.facade.cdr.detectChanges();
+        });
+    }
+    if(this.noteId && this.connectToNote && this.userId?.length > 0) {
+      this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
+    }
   }
 
   buildMenuOptions(): TextEditMenuOptions {
@@ -266,7 +269,9 @@ export class ContentEditorComponent
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
     this.muuriService.resetToDefaultOpacity();
-    this.webSocketsUpdaterService.leaveNote(this.noteId);
+    if(this.noteId && this.userId) {
+      this.webSocketsUpdaterService.leaveNote(this.noteId);
+    }
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
     this.facade.store.dispatch(ClearCursorsAction);
@@ -274,7 +279,7 @@ export class ContentEditorComponent
   }
 
   ngOnInit(): void {
-    
+
     this.facade.clickableContentService.cursorUpdatingActive = this.cursorActive;
 
     this.iniTitle(this.title);
@@ -384,7 +389,7 @@ export class ContentEditorComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onScroll($event: Event): void {}
+  onScroll($event: Event): void { }
 
   enterHandler(value: EnterEvent) {
     const curEl = this.getHTMLElementById(value.contentId);
@@ -407,7 +412,7 @@ export class ContentEditorComponent
 
   deleteRowHandler(id: string): void {
     const res = this.facade.contentsService.getContentAndIndexById<BaseText>(id);
-    if(!res) return;
+    if (!res) return;
     const action = new RestoreTextAction(res.content, res.index);
     this.facade.momentoStateService.saveToStack(action);
     const index = this.facade.contentsService.deleteContent(id);
@@ -433,10 +438,10 @@ export class ContentEditorComponent
 
     const action = new RestoreTextAction(data.content, data.index);
     this.facade.momentoStateService.saveToStack(action);
-    
+
     prevElement.updateContentsAndSync(resContent);
     el.syncHtmlWithLayout();
-    
+
     this.facade.contentsService.deleteById(id, false);
 
     setTimeout(() => {

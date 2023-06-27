@@ -30,8 +30,8 @@
               [dropdownActive]="dropdownActive"
               [link]="
                 isNoteWindowType
-                  ? (currentNote?.id | sharingLink : data.currentWindowType)
-                  : (currentFolder?.id | sharingLink : data.currentWindowType)
+                  ? (currentNote?.id | sharingLink : data.currentWindowType : data.isInnerFolderNote : data.folderId)
+                  : (currentFolder?.id | sharingLink : data.currentWindowType : data.isInnerFolderNote : data.folderId)
               "
               [refTypeId]="refTypeSelectedValue"
               [toggleDescription]="toggleDescription | translate"
