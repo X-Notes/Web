@@ -346,7 +346,9 @@
     "noItemInExport": "La collecte est vide",
     "subscriptionCreationError": "La limite de création pour cet abonnement a été dépassée",
     "subscriptionMaxNotesError": "maximum de {{count}} notes pour cet abonnement",
-    "copied": "Copié"
+    "copied": "Copié",
+    "reconnection": "Reconnexion",
+    "reconnected": "Reconnecté"
   },
   "titles": {
     "labels": "Étiquettes",

@@ -348,7 +348,9 @@
     "noItemInExport": "Колекция пустая",
     "subscriptionCreationError": "Превышен лимит создания для этой подписки",
     "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки",
-    "copied": "Скопировано"
+    "copied": "Скопировано",
+    "reconnection": "Переподключение",
+    "reconnected": "Переподключено"
   },
   "titles": {
     "labels": "Ярлыки",

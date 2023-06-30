@@ -346,7 +346,9 @@
     "noItemInExport": "Sammlung ist leer",
     "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten",
     "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "reconnection": "Wiederverbindung",
+    "reconnected": "Wieder verbunden"
   },
   "titles": {
     "labels": "Etiketten",

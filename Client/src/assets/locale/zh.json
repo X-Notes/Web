@@ -346,7 +346,9 @@
     "noItemInExport": "集合为空",
     "subscriptionCreationError": "此订阅的创建限制已经超过了",
     "subscriptionMaxNotesError": "本订阅号最多可有{{count}}个注释",
-    "copied": "抄袭"
+    "copied": "抄袭",
+    "reconnection": "重新连接",
+    "reconnected": "重新连接"
   },
   "titles": {
     "labels": "标签",

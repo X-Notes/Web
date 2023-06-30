@@ -346,7 +346,9 @@
     "noItemInExport": "Kolekcja jest pusta",
     "subscriptionCreationError": "Limit tworzenia dla tej subskrypcji został przekroczony",
     "subscriptionMaxNotesError": "maksymalnie {{count}} notatek dla tej subskrypcji",
-    "copied": "Skopiowane"
+    "copied": "Skopiowane",
+    "reconnection": "Ponowne połączenie",
+    "reconnected": "Ponownie podłączony"
   },
   "titles": {
     "labels": "Etykiety",

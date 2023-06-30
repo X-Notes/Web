@@ -346,7 +346,9 @@
     "noItemInExport": "コレクションが空です",
     "subscriptionCreationError": "このサブスクリプションの作成制限を超えました。",
     "subscriptionMaxNotesError": "本契約は最大{{count}}冊まで",
-    "copied": "コピー機"
+    "copied": "コピー機",
+    "reconnection": "リコネクション",
+    "reconnected": "再接続"
   },
   "titles": {
     "labels": "ラベル",

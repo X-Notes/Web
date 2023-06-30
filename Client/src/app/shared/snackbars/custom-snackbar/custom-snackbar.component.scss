@@ -1,4 +1,5 @@
 .custom-snackbar-container{
+  user-select: none;
   display: flex;
   justify-content: space-between;
   .snackbar-spinner-container{

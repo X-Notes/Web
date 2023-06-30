@@ -348,7 +348,9 @@
     "noItemInExport": "Колекція пуста",
     "subscriptionCreationError": "Ліміт створення для цієї підписки перевищено",
     "subscriptionMaxNotesError": "максимум {{count}} нотаток для цієї підписки",
-    "copied": "Скопійовано"
+    "copied": "Скопійовано",
+    "reconnection": "Перепідключення",
+    "reconnected": "З`єднано"
   },
   "titles": {
     "labels": "Ярлики",

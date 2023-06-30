@@ -30,6 +30,7 @@ export class SnackbarService {
   openSnackBarFromComponent<T>(
     component: ComponentType<T>,
     message: string,
+    showSpinner: boolean,
     horizontalPosition: MatSnackBarHorizontalPosition = 'end',
     duration = 3000,
   ) {
@@ -40,6 +41,7 @@ export class SnackbarService {
       duration,
       data: {
         message,
+        showSpinner
       }
     });
   }

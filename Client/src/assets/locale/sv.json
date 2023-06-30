@@ -346,7 +346,9 @@
     "noItemInExport": "Samlingen är tom",
     "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits.",
     "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration",
-    "copied": "Kopierad"
+    "copied": "Kopierad",
+    "reconnection": "Återanslutning",
+    "reconnected": "Återansluten"
   },
   "titles": {
     "labels": "Etiketter",

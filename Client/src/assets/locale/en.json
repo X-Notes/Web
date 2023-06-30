@@ -346,7 +346,9 @@
     "noItemInExport": "Collection is empty",
     "subscriptionCreationError": "The creation limit for this subscription has been exceeded",
     "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription",
-    "copied": "Copied"
+    "copied": "Copied",
+    "reconnection": "Reconnection",
+    "reconnected": "Reconnected"
   },
   "titles": {
     "labels": "Labels",
