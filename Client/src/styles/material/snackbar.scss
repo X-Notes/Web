@@ -10,3 +10,7 @@
   --mat-snack-bar-button-color: #5e99cc;
   --mdc-snackbar-supporting-text-color: #202020;
 }
+
+.mdc-snackbar__surface {
+  min-width: 250px !important;
+}

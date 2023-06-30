@@ -1,0 +1,8 @@
+.custom-snackbar-container{
+  display: flex;
+  justify-content: space-between;
+  .snackbar-spinner-container{
+    position: relative;
+    width: 50px;
+  }
+}

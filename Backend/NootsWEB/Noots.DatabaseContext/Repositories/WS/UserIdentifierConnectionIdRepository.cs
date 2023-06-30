@@ -20,7 +20,7 @@ public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierCon
     {
         return entities.Include(x => x.FolderConnections)
                        .Include(x => x.NoteConnections)
-                       .Where(x => x.ConnectedAt < earliestTimestamp)
+                       .Where(x => x.UpdatedAt < earliestTimestamp)
                        .ToListAsync();
     }
 }
