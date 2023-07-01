@@ -25,6 +25,7 @@ import { UpdaterEntitiesService } from '../../../../core/entities-updater.servic
 import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-folder/services/web-sockets-folder-updater.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { AuthService } from 'src/app/core/auth.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -35,6 +36,9 @@ import { AuthService } from 'src/app/core/auth.service';
 export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements?: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(FolderStore.full)
   folder$?: Observable<FullFolder>;
 

@@ -27,6 +27,7 @@ import {
 import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
 import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-deleted',
@@ -37,6 +38,9 @@ import { DialogsManageService } from '../../navigation/services/dialogs-manage.s
 export class DeletedComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(LabelStore.countDeleted)
   countDeleted$: Observable<number>;
 

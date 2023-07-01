@@ -34,7 +34,7 @@
               *ngFor="let item of viewNotes"
               [ngClass]="[
                 pService.orientationMobile ? 'grid-plus' : '',
-                (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''
+                (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
               ]"
             >
               <app-note

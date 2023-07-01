@@ -88,6 +88,9 @@ import { ButtonCollectionComponent } from '../editor/components/button-collectio
 import { SearchDialogComponent } from './modal_components/search-dialog/search-dialog.component';
 import { HighlightSearchPipe } from './directives/highlight-search.pipe';
 import { CustomSnackbarComponent } from './snackbars/custom-snackbar/custom-snackbar.component';
+import { SnackBarHandlerStatusService } from './services/snackbar/snack-bar-handler-status.service';
+import { SnackBarWrapperService } from './services/snackbar/snack-bar-wrapper.service';
+import { SnackbarService } from './services/snackbar/snackbar.service';
 
 @NgModule({
   declarations: [
@@ -249,6 +252,6 @@ import { CustomSnackbarComponent } from './snackbars/custom-snackbar/custom-snac
     HighlightSearchPipe,
     CustomSnackbarComponent
   ],
-  providers: [DialogService, BackgroundService, ApiContactUsService],
+  providers: [DialogService, BackgroundService, ApiContactUsService, SnackbarService, SnackBarWrapperService, SnackBarHandlerStatusService],
 })
 export class SharedModule {}

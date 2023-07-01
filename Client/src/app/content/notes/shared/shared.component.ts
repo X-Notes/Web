@@ -28,6 +28,9 @@ export class SharedComponent
   @Select(NoteStore.sharedCount)
   sharedCount$: Observable<number>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

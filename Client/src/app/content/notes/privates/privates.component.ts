@@ -26,6 +26,9 @@ export class PrivatesComponent
   @Select(NoteStore.privateCount)
   privateCount$: Observable<number>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

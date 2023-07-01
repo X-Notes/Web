@@ -26,6 +26,9 @@ export class DeletedComponent
   @Select(NoteStore.deletedCount)
   deletedCount$: Observable<number>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

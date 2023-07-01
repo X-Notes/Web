@@ -63,6 +63,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatMenu) menu: MatMenu;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
 

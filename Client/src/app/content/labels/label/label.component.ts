@@ -3,7 +3,7 @@ import {
   changeColorLabel,
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { LabelsColor } from 'src/app/shared/enums/labels-colors.enum';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -11,6 +11,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { Label } from '../models/label.model';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-label',
@@ -19,6 +21,10 @@ import { Label } from '../models/label.model';
   animations: [changeColorLabel],
 })
 export class LabelComponent implements OnInit, OnDestroy {
+  
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+
   @Input() label: Label;
 
   @Input() isSelected: boolean;

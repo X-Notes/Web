@@ -7,16 +7,12 @@ import { take } from 'rxjs/operators';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
-import { PersonalizationService } from '../personalization.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SnackBarWrapperService {
   constructor(
     private snackService: SnackbarService,
     private store: Store,
-    private prService: PersonalizationService,
     private translateService: TranslateService,
   ) {
     this.store.select(AppStore.getSnackBarNotification).subscribe((message) => {
@@ -64,12 +60,10 @@ export class SnackBarWrapperService {
     undoMessage?: string,
   ): MatSnackBarRef<TextOnlySnackBar> {
     const snackbarRef = this.buildSnackBarRef(message, undoMessage);
-    this.prService.isSnackBarActive$.next(true);
     snackbarRef
       .onAction()
       .pipe(take(1))
       .subscribe(() => {
-        this.prService.isSnackBarActive$.next(false);
         if (callback) {
           callback();
         }

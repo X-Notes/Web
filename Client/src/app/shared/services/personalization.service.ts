@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
 import { trigger, state, style, transition, animate, keyframes, query } from '@angular/animations';
 import { Subject, Observable, BehaviorSubject, combineLatest, fromEvent } from 'rxjs';
-import { Select, Store } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Store } from '@ngxs/store';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
 import { map, startWith } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
-import { EntitiesSizeENUM } from '../enums/font-size.enum';
 import { SideBarComponent } from 'src/app/content/navigation/side-bar/side-bar.component';
 
 export const timeSidenavAnimation = 200; // TODO move to constant file
@@ -139,12 +137,8 @@ export const uploader = trigger('uploader', [
   ]),
 ]);
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class PersonalizationService {
-  @Select(UserStore.getUserFontSize)
-  public fontSize$?: Observable<EntitiesSizeENUM>;
 
   spinnerActive = false;
 

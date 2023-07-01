@@ -25,6 +25,7 @@ import {
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-all',
@@ -35,6 +36,9 @@ import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-
 export class AllComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(LabelStore.countNoDeleted)
   countAll$: Observable<number>;
 

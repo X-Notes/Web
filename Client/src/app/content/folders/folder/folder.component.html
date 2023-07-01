@@ -2,12 +2,12 @@
   class="outer"
   [routerLink]="['/folders/', folder.id]"
   [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"
-  [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-outer' : ''"
+  [ngClass]="(fontSize$ | async) === fontSize.Big ? 'big-outer' : ''"
 ></div>
 <div
   class="folder"
   [ngStyle]="{'backgroundColor': folder.color}"
-  [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''"
+  [ngClass]="(fontSize$ | async) === fontSize.Big ? 'big-size' : ''"
 >
   <div
     class="highligt"
