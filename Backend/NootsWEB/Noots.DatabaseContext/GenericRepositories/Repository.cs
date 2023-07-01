@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Common.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -64,6 +65,16 @@ namespace Noots.DatabaseContext.GenericRepositories
         public Task<bool> GetAnyAsync(Expression<Func<T, bool>> predicate)
         {
             return entities.AnyAsync(predicate);
+        }
+
+        public Task<V> GetMinAsync<V>(Expression<Func<T, V>> predicate)
+        {
+            return entities.MinAsync(predicate);
+        }
+
+        public Task<V> GetMaxAsync<V>(Expression<Func<T, V>> predicate)
+        {
+            return entities.MaxAsync(predicate);
         }
 
         public async Task UpdateRangeAsync(IEnumerable<T> ents)

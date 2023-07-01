@@ -33,6 +33,9 @@ namespace Common.DatabaseModels.Models.Folders
         public DateTimeOffset UpdatedAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
 
+        [NotMapped]
+        public List<Guid> NoteIds { set; get; }
+
         public void ToType(FolderTypeENUM folderTypeId, DateTimeOffset? deletedAt = null)
         {
             DeletedAt = deletedAt;

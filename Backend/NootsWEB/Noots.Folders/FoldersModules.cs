@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Noots.Folders.Commands;
 using Noots.Folders.Commands.FolderInner;
+using Noots.Folders.Entities;
 using Noots.Folders.Handlers.Commands;
 using Noots.Folders.Handlers.Queries;
 using Noots.Folders.Impl;
@@ -21,7 +22,7 @@ public static class FoldersModules
         services.AddScoped<IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>, ArchiveFolderCommandHandler>();
         services.AddScoped<IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>, ChangeColorFolderCommandHandler>();
         services.AddScoped<IRequestHandler<SetDeleteFolderCommand, OperationResult<List<Guid>>>, SetDeleteFolderCommandHandler>();
-        services.AddScoped<IRequestHandler<CopyFolderCommand, OperationResult<List<SmallFolder>>>, CopyFolderCommandHandler>();
+        services.AddScoped<IRequestHandler<CopyFolderCommand, OperationResult<CopyFoldersResult>>, CopyFolderCommandHandler>();
         services.AddScoped<IRequestHandler<DeleteFoldersCommand, OperationResult<Unit>>, DeleteFoldersCommandHandler>();
         services.AddScoped<IRequestHandler<MakePrivateFolderCommand, OperationResult<Unit>>, MakePrivateFolderCommandHandler>();
         services.AddScoped<IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>, UpdatePositionsFoldersCommandHandler>();

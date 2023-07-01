@@ -37,7 +37,6 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-
         public Task<Note?> GetNoteWithLabels(Guid id)
         {
             return context.Notes

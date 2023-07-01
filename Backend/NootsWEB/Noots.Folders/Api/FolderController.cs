@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Folders.Commands;
+using Noots.Folders.Entities;
 using Noots.Folders.Queries;
 
 namespace Noots.Folders.Api;
@@ -95,7 +96,7 @@ public class FolderController : ControllerBase
 
     [HttpPatch("copy")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<List<SmallFolder>>> CopyFolder([FromBody] CopyFolderCommand command)
+    public async Task<OperationResult<CopyFoldersResult>> CopyFolder([FromBody] CopyFolderCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

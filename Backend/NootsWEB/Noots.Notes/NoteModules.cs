@@ -9,6 +9,7 @@ using Noots.Editor.Queries;
 using Noots.Editor.Services;
 using Noots.Editor.Services.Users;
 using Noots.Notes.Commands;
+using Noots.Notes.Entities;
 using Noots.Notes.Handlers.Commands;
 using Noots.Notes.Handlers.Queries;
 using Noots.Notes.Impl;
@@ -28,7 +29,10 @@ public static class NotesModules
         services.AddScoped<IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>, DeleteNotesCommandHandler>();
         services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, ArchiveNoteCommandHandler>();
         services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, MakePrivateNoteCommandHandler>();
-        services.AddScoped<IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>, CopyNoteCommandHandler>();
+
+        services.AddScoped<IRequestHandler<CopyNotesCommand, OperationResult<List<CopyNoteResult>>>, CopyNotesCommandHandler>();
+        services.AddScoped<IRequestHandler<CopyFolderNotesCommand, OperationResult<List<CopyNoteResult>>>, CopyNotesCommandHandler>();
+
         services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, RemoveLabelFromNoteCommandHandler>();
         services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, UpdatePositionsNotesCommandHandler>();
 
