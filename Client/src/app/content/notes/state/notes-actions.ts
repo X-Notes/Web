@@ -95,6 +95,12 @@ export class CopyNotes {
   ) {}
 }
 
+export class LoadNotesByIds {
+  static type = '[Notes] Load notes by Ids';
+
+  constructor(public ids: string[]) {}
+}
+
 export class ClearAddToDomNotes {
   static type = '[Notes] ClearAddedPrivate notes';
 }

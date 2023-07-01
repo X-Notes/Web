@@ -51,6 +51,7 @@ import {
   UpdateNoteTitleWS,
   CreateNoteCompleted,
   UpdateFolderNotes,
+  LoadNotesByIds,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -748,7 +749,7 @@ export class NoteStore {
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
     if (resp.eventBody.success && getState().notes.length > 0) {
-      const newIds = resp.eventBody.data;
+      const newIds = resp.eventBody.data.map(x => x.newId);
       const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
       const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
       dispatch(
@@ -768,6 +769,13 @@ export class NoteStore {
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
     dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
+  }
+
+  @Action(LoadNotesByIds)
+  async loadNotesByIds({ dispatch }: StateContext<NoteState>, { ids }: LoadNotesByIds) {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const notes = await this.api.getNotesMany(ids, pr).toPromise();
+      await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
   }
 
   @Action(AddLabelOnNote)
