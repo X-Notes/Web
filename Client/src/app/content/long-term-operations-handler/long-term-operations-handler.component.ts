@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { PersonalizationService, uploader } from 'src/app/shared/services/personalization.service';
 import { OperationDetailMini } from './models/long-term-operation';
 import { LongTermOperationsHandlerService } from './services/long-term-operations-handler.service';
@@ -22,25 +22,21 @@ export class LongTermOperationsHandlerComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
   ) {}
 
+  get positions() {
+    return this.prService.isSnackBarActive$.pipe(map(isSnackbar => {
+      if(isSnackbar) {
+        return this.prService.isMobile() ? { 'top': '55px' } : { 'bottom': '62px'};
+      }
+      return this.prService.isMobile() ? {  'top': '5px' } : { 'bottom': '25px'};
+    }));
+  }
+
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
-    this.prService.isSnackBarActive$
-      .pipe(
-        takeUntil(this.destroy),
-        filter(() => !!this.container?.nativeElement),
-      )
-      .subscribe((flag) => {
-        if (flag) {
-          this.renderer.setStyle(this.container.nativeElement, 'bottom', '82px');
-        } else {
-          this.renderer.setStyle(this.container.nativeElement, 'bottom', '42px');
-        }
-      });
-  }
+  ngOnInit(): void {}
 
   cancelAllHandler() {
     // TODO CONFIRMATION POP-UP

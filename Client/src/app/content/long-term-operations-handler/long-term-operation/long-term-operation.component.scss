@@ -2,18 +2,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 10px;
   background-color: #202125;
   border-radius: 5px;
   box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%),
     0px 1px 18px 0px rgb(0 0 0 / 12%);
 
   .message-header {
+    font-size: 0.875rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #2a2d32;
-    height: 40px;
+    height: 38px;
     padding: 0 0.875rem;
 
     .buttons {
@@ -25,8 +25,8 @@
       }
 
       .mini-spinner {
+        width: 48px;
         position: relative;
-        margin-right: 20px;
       }
 
       .icon {
@@ -112,6 +112,14 @@
     display: flex;
     height: 16px;
     width: 16px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    .message-header { 
+      height: 40px;
+    }
   }
 }
 

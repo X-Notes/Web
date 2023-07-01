@@ -49,8 +49,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
+import { LoadNotesByIds } from '../../notes/state/notes-actions';
+import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 
- export interface FolderState {
+export interface FolderState {
   folders: Folders[];
   fullFolder: FullFolder;
   isCanViewFullFolder: boolean;
@@ -82,7 +85,8 @@ export class FolderStore {
     private ngZone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-  ) {}
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+  ) { }
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
@@ -259,10 +263,20 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { typeFolder, selectedIds }: CopyFolders,
   ) {
-    const resp = await this.api.copyFolders(selectedIds).toPromise();
+    const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyFolders');
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'copying',
+      true,
+      true,
+    );
 
-    if (resp.success && resp.data?.length > 0) {
-      const newFolders = resp.data;
+    const result = await this.api.copyFolders(selectedIds, mini, operation).toPromise();
+    const resp = result.eventBody;
+
+    const newFolders = resp.data?.folders;
+    if (resp.success && newFolders?.length > 0) {
       const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
       dispatch(
         new UpdateFolders(
@@ -270,16 +284,18 @@ export class FolderStore {
           FolderTypeENUM.Private,
         ),
       );
-      dispatch([UnSelectAllFolder]);
-
       if (typeFolder === FolderTypeENUM.Private) {
         dispatch(new AddToDomFolders([...newFolders]));
       }
+    }
+    if (resp.success && resp.data?.noteIds?.length > 0) {
+      dispatch(new LoadNotesByIds(resp.data.noteIds));
     }
     if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
+    dispatch([UnSelectAllFolder]);
   }
 
   @Action(ClearAddToDomFolders)
