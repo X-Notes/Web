@@ -21,6 +21,7 @@ import {
 } from '../long-term-operations-handler/models/long-term-operation';
 import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
+import { CopyNoteResult } from './models/copy-note-result';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -147,7 +148,7 @@ export class ApiServiceNotes {
       folderId,
     };
     return this.httpClient
-      .patch<OperationResult<string[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
+      .patch<OperationResult<CopyNoteResult[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
         reportProgress: true,
         observe: 'events',
       })
