@@ -162,12 +162,16 @@ export abstract class BaseTextElementComponent
     });
   }
 
-  updateContentsAndSync(contents: TextBlock[]): void {
+  updateContentsAndSync(contents: TextBlock[], ...actions: (() => void)[]): void {
     this.handleUndoTextAction(this.content);
     this.content.contents = contents;
     const html = DeltaConverter.convertTextBlocksToHTML(contents);
     this.updateNativeHTML(html);
     this.textChanged.next();
+
+    if(actions.length > 0) {
+      this.addActionsAfterViewInit(actions);
+    }
   }
 
   updateHTML(contents: TextBlock[]): void {

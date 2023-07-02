@@ -26,18 +26,21 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 
         if (!permissions.CanRead) return new OperationResult<Unit>().SetNoPermissions();
 
-        var cursor = request.Cursor;
-        var updates = new UpdateCursorWS(
-            cursor.EntityId,
-            (CursorTypeWS)cursor.Type,
-            cursor.StartCursor,
-            cursor.EndCursor,
-            cursor.Color,
-            cursor.ItemId,
-            request.NoteId,
-            permissions.Caller.Id);
+        if (permissions.IsMultiplyUpdate)
+        {
+            var cursor = request.Cursor;
+            var updates = new UpdateCursorWS(
+                cursor.EntityId,
+                (CursorTypeWS)cursor.Type,
+                cursor.StartCursor,
+                cursor.EndCursor,
+                cursor.Color,
+                cursor.ItemId,
+                request.NoteId,
+                permissions.Caller.Id);
 
-        await appSignalRHub.UpdateUserNoteCursor(request.NoteId, updates);
+            await appSignalRHub.UpdateUserNoteCursor(request.NoteId, updates);
+        }
 
         return new OperationResult<Unit>(true, Unit.Value);
     }

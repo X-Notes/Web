@@ -244,7 +244,7 @@ export class ContentEditorComponent
           this.facade.cdr.detectChanges();
         });
     }
-    if(this.noteId && this.connectToNote && this.userId?.length > 0) {
+    if (this.noteId && this.connectToNote && this.userId?.length > 0) {
       this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
     }
   }
@@ -271,7 +271,7 @@ export class ContentEditorComponent
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
     this.muuriService.resetToDefaultOpacity();
-    if(this.noteId && this.userId) {
+    if (this.noteId && this.userId) {
       this.webSocketsUpdaterService.leaveNote(this.noteId);
     }
     this.contentEditorElementsListenersService.destroysListeners();
@@ -404,12 +404,11 @@ export class ContentEditorComponent
     const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, newTextContent.content.id);
     this.facade.momentoStateService.saveToStack(action);
     this.facade.cdr.detectChanges();
-    setTimeout(() => {
-      const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
-      const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
-      el.updateContentsAndSync(contents);
-      el.setFocus();
-    });
+
+    const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
+    const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
+    el.updateContentsAndSync(contents, () => el.setFocus());
+    el.detectChanges();
   }
 
   deleteRowHandler(id: string): void {
@@ -428,6 +427,11 @@ export class ContentEditorComponent
     const id = el.getContentId();
     const data = this.facade.contentsService.getContentAndIndexById<BaseText>(id);
     const indexPrev = data.index - 1;
+
+    if (indexPrev < 0) {
+      return;
+    }
+
     const prevContent = this.facade.contentsService.getContentByIndex<BaseText>(indexPrev);
 
     const prevElement = this.getHTMLElementById(prevContent.id);
@@ -441,14 +445,12 @@ export class ContentEditorComponent
     const action = new RestoreTextAction(data.content, data.index);
     this.facade.momentoStateService.saveToStack(action);
 
-    prevElement.updateContentsAndSync(resContent);
+    prevElement.updateContentsAndSync(resContent, () => prevElement.setFocusToEnd());
     el.syncHtmlWithLayout();
+    prevElement.detectChanges();
 
     this.facade.contentsService.deleteById(id, false);
 
-    setTimeout(() => {
-      prevElement.setFocusToEnd();
-    });
     this.postAction();
   }
 
@@ -512,12 +514,13 @@ export class ContentEditorComponent
       if (el) {
         setTimeout(() => { // need when to many elements updating at the same time and page is freezing
           const elLock = el;
-          elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+          let actionRestore: () => void = null;
+          if (pos.selection) {
+            pos.selection.start = pos.selection.end;
+            actionRestore = () => elLock.restoreSelection(pos.selection);
+          }
+          elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta), actionRestore);
         }, 5);
-      }
-      if (pos.selection) {
-        pos.selection.start = pos.selection.end;
-        setTimeout(() => el.restoreSelection(pos.selection), 20);
       }
     }
     this.unSelectItems();
