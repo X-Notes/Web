@@ -45,6 +45,9 @@ export abstract class BaseTextElementComponent
   @Input()
   content: BaseText;
 
+  @Input()
+  forceFocus: boolean;
+
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
@@ -224,7 +227,8 @@ export abstract class BaseTextElementComponent
   getIsActive() {
     return (
       (this.isContentEmpty() && this.isFocused) ||
-      (this.preFocus && this.isContentEmpty())
+      (this.preFocus && this.isContentEmpty()) || 
+      (this.forceFocus && this.isContentEmpty())
     );
   }
 

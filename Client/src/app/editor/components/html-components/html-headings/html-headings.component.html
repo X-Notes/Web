@@ -10,7 +10,7 @@
     h3: content.headingTypeId === hType.H3
   }"
 >
-  <app-drag-drop-handler-container [isShow]="isMouseOver"
+  <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
     ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div

@@ -119,6 +119,8 @@ export class ContentEditorComponent
 
   options?: TextEditMenuOptions;
 
+  emptyFocus = false;
+
   ngForSubject = new Subject<void>(); // for lazy loading
 
   constructor(
@@ -594,12 +596,12 @@ export class ContentEditorComponent
   }
 
   mouseEnter($event): void {
-    this.last?.mouseEnter($event);
+    this.emptyFocus = true;
     this.last?.detectChanges();
   }
 
   mouseOut($event): void {
-    this.last?.mouseLeave($event);
+    this.emptyFocus = false;
     this.last?.detectChanges();
   }
 }

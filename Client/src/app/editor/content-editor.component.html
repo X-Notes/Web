@@ -71,6 +71,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.default"
               [isSelected]="facade.selectionService.isSelected(item.id)"
+              [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme"
               [content]="item"
               [cursors$]="cursors$"
@@ -90,6 +91,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.numberList"
               [isSelected]="facade.selectionService.isSelected(item.id)"
+              [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme"
               [listNumber]="getNumberList(item, i)"
               [content]="item"
@@ -109,6 +111,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.dotList"
               [isSelected]="facade.selectionService.isSelected(item.id)"
+              [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme"
               [content]="item"
               [cursors$]="cursors$"
@@ -127,6 +130,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.checkList"
               [isSelected]="facade.selectionService.isSelected(item.id)"
+              [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme"
               [content]="item"
               [cursors$]="cursors$"
@@ -145,6 +149,7 @@
               #htmlComp
               *ngIf="item.noteTextTypeId === textType.heading"
               [isSelected]="facade.selectionService.isSelected(item.id)"
+              [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme"
               [content]="item"
               [cursors$]="cursors$"
