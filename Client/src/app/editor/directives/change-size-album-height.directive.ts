@@ -52,8 +52,10 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
   }
 
   mouseupHandler() {
-    this.isChangeSizeMode = false;
-    this.mouseClick.emit(false);
+    if (this.isChangeSizeMode) {
+      this.isChangeSizeMode = false;
+      this.mouseClick.emit(false);
+    }
   }
 
   mousemoveHandler(event: MouseEvent) {

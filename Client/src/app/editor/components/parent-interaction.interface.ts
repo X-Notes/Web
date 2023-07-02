@@ -50,4 +50,5 @@ export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ParentInteractionCollection extends ParentInteraction<ContentModelBase> {
   syncCollectionItems();
+  updateWS(): void;
 }

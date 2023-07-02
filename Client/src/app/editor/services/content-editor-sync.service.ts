@@ -64,6 +64,8 @@ export class ContentEditorSyncService {
 
   private isEdit = false;
 
+  private userId: string;
+
   private updateSubject: BehaviorSubject<boolean>;
 
   private updateImmediatelySubject: BehaviorSubject<boolean>;
@@ -96,7 +98,7 @@ export class ContentEditorSyncService {
 
   initTimers(): void {
     this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.isCanBeProcessed)).subscribe(async () => {
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.userId && !this.contentService.isRendering)).subscribe(async () => {
       const state = this.contentService.getEditorStateDiffs();
       try {
         const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
@@ -159,15 +161,17 @@ export class ContentEditorSyncService {
     }
   }
 
-  initRead(noteId: string, folderId: string): void {
+  initRead(noteId: string, folderId: string, userId: string): void {
     this.noteId = noteId;
     this.folderId = folderId;
+    this.userId = userId;
   }
 
-  initEdit(noteId: string, folderId: string): void {
+  initEdit(noteId: string, folderId: string, userId: string): void {
     this.isEdit = true;
     this.noteId = noteId;
     this.folderId = folderId;
+    this.userId = userId;
 
     this.destroyAndInitSubject();
 

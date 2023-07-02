@@ -153,7 +153,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mousewheelHandler(e: WheelEvent): boolean | void {
-    if (this.selectionService.isResizingPhoto) {
+    if (this.selectionService.isResizingPhoto$.getValue()) {
       e.preventDefault(); // lock scroll when changing height
     }
   }
@@ -222,7 +222,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   mouseMoveDelay(evt: MouseEvent) {
     if (
       !this.isMouseDown ||
-      this.selectionService.isResizingPhoto ||
+      this.selectionService.isResizingPhoto$.getValue() ||
       this.selectionService.disableDiv$.getValue() ||
       this.pS.isDialogActive$.getValue()
     ) {

@@ -77,26 +77,36 @@ export class PhotosComponent
   }
 
   ngAfterViewInit(): void {
-    this.setHeight(`${this.content.height}`); // init collection size first
+    this.setUIHeight(`${this.content.height}`); // init collection size first
   }
 
-  changeHeight(difference: number) {
-    const newHeight = this.startHeight + difference;
-    if (newHeight > 200) {
-      this.setHeight(`${newHeight}px`);
-    }
-  }
 
   syncHeight(): void {
     const height = `${this.albumChild?.nativeElement.offsetHeight}px`;
     if (this.content.height !== height) {
-      this.setHeight(`${this.content.height}`);
+      this.setUIHeight(`${this.content.height}`);
     }
   }
 
-  saveHeight(isResizingPhoto: boolean) {
+  setUIHeight(value: string): void {
+    value = value ?? 'auto';
+    this.facade.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
+    this.changeHeightSubject.next(value);
+  }
+
+  onStartChangeHeightUI(isResizingPhoto: boolean) {
     this.startHeight = this.albumChild.nativeElement.offsetHeight;
-    this.facade.selectionService.isResizingPhoto = isResizingPhoto;
+    this.facade.selectionService.isResizingPhoto$.next(isResizingPhoto);
+    if(!isResizingPhoto) {
+      this.facade.selectionService.resetSelectionAndItems();
+    }
+  }
+
+  onChangeHeightUI(difference: number) {
+    const newHeight = this.startHeight + difference;
+    if (newHeight > 200) {
+      this.setUIHeight(`${newHeight}px`);
+    }
   }
 
   ngOnInit(): void {
@@ -157,6 +167,12 @@ export class PhotosComponent
     this.detectChanges();
   }
 
+  updateWS(): void {
+    this.syncPhotos();
+    this.setUIHeight(this.content.height);
+    this.detectChanges();
+  }
+
   updateInternal() {
     this.setPhotosInRow(this.content.countInRow);
     this.syncHeight();
@@ -167,18 +183,20 @@ export class PhotosComponent
     this.reInitPhotosToDefault();
   }
 
-  syncPhotos(): void {
+  syncPhotos(): boolean {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
     const isNeedUpdateCountInRow = this.mainBlocks[0]?.length !== this.content.countInRow;
     if (photosCount !== currentLength || isNeedUpdateCountInRow) {
       this.reInitPhotosToDefault();
+      return true;
     }
+    return false;
   }
 
   reInitPhotosToDefault(): void {
     this.setFalseLoadedForAllPhotos();
-    this.setHeight('auto');
+    this.setUIHeight('auto');
     this.initBlocks();
   }
 
@@ -307,11 +325,5 @@ export class PhotosComponent
 
   deleteDown() {
     this.checkForDelete();
-  }
-
-  private setHeight(value: string): void {
-    value = value ?? 'auto';
-    this.facade.renderer.setStyle(this.albumChild.nativeElement, 'height', value);
-    this.changeHeightSubject.next(value);
   }
 }

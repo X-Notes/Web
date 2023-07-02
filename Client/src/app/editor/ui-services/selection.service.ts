@@ -10,7 +10,7 @@ import { ContentModelBase } from '../entities/contents/content-model-base';
 
 @Injectable()
 export class SelectionService {
-  isResizingPhoto = false;
+  isResizingPhoto$ = new BehaviorSubject<boolean>(false);
 
   onSelectChanges$ = new BehaviorSubject<void>(null);
 

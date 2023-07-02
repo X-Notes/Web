@@ -213,10 +213,10 @@ export class ContentEditorComponent
   @Input() set contents(contents: ContentModelBase[]) {
     if (this.isReadOnlyMode) {
       this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initRead(this.noteId, this.folderId);
+      this.facade.contentEditorSyncService.initRead(this.noteId, this.folderId, this.userId);
     } else {
       this.facade.contentsService.initEdit(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initEdit(this.noteId, this.folderId);
+      this.facade.contentEditorSyncService.initEdit(this.noteId, this.folderId, this.userId);
     }
 
     if (contents.length === 0) {
