@@ -8,12 +8,13 @@ import {
   ParentInteractionCollection,
   ParentInteractionHTML,
 } from '../components/parent-interaction.interface';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { NoteUserCursorWS } from '../entities/ws/note-user-cursor';
 import { EditorFacadeService } from '../services/editor-facade.service';
+import { EditorOptions } from '../entities-ui/editor-options';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -21,19 +22,34 @@ import { EditorFacadeService } from '../services/editor-facade.service';
   template: '',
 })
 export class EditorBaseComponent {
-  @Input() noteId?: string;
 
-  @Input() userId?: string;
+  @Input() set noteId(noteId: string) {
+    const value = this.options$.getValue();
+    this.options$.next({ ...value, noteId });
+  }
 
-  @Input() connectToNote = true;
+  @Input() set userId(userId: string) {
+    const value = this.options$.getValue();
+    this.options$.next({ ...value, userId });
+  }
 
-  @Input() folderId?: string;
+  @Input() set folderId(folderId: string) {
+    const value = this.options$.getValue();
+    this.options$.next({ ...value, folderId });
+  }
+
+  @Input() set isReadOnlyMode(isReadOnlyMode: boolean) {
+    const value = this.options$.getValue();
+    this.options$.next({ ...value, isReadOnlyMode });
+  }
+
+  @Input() set connectToNote(connectToNote: boolean) {
+    const value = this.options$.getValue();
+    this.options$.next({ ...value, connectToNote });
+  }
 
   @Input()
   cursorActive = true;
-  
-  @Input()
-  isReadOnlyMode = true;
 
   @Select(NoteStore.cursors)
   cursors$?: Observable<NoteUserCursorWS[]>;
@@ -44,9 +60,11 @@ export class EditorBaseComponent {
 
   isDragging = false;
 
+  readonly options$ = new BehaviorSubject<EditorOptions>({ noteId: null, isReadOnlyMode: true, connectToNote: true });
+
   protected elementsQuery?: QueryList<ParentInteraction<ContentModelBase>>;
 
-  constructor(public facade: EditorFacadeService) {}
+  constructor(public facade: EditorFacadeService) { }
 
   @ViewChildren('htmlComp') set elementsSet(elms: QueryList<ParentInteraction<ContentModelBase>>) {
     this.elementsQuery = elms;
@@ -80,7 +98,7 @@ export class EditorBaseComponent {
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   get preLast(): ParentInteraction<ContentModelBase> | undefined | null {
-    if(!this.elements) return;
+    if (!this.elements) return;
     if (this.elements.length >= 2) {
       return this.elements[this.elements.length - 2];
     }
@@ -129,27 +147,27 @@ export class EditorBaseComponent {
   }
 
   getElementByIndex<T extends ParentInteraction<ContentModelBase>>(index: number): T | null {
-    if(!this.elements) return null;
+    if (!this.elements) return null;
     return this.elements[index] as T;
   }
 
   getHTMLElementById(contentId: string): ParentInteractionHTML | null | undefined {
-    if(!this.htmlElements) return null;
+    if (!this.htmlElements) return null;
     return this.htmlElements.find((x) => x.getContentId() === contentId);
   }
 
   getHTMLElementsById(contentIds: string[]): ParentInteractionHTML[] | null {
-    if(!this.htmlElements) return null;
+    if (!this.htmlElements) return null;
     return this.htmlElements.filter((x) => contentIds.some((id) => id === x.getContentId()));
   }
 
   getCollectionElementById(contentId: string): ParentInteractionCollection | undefined | null {
-    if(!this.collectionElements) return null;
+    if (!this.collectionElements) return null;
     return this.collectionElements.find((x) => x.getContentId() === contentId);
   }
 
   postAction(): void {
-    if (this.isReadOnlyMode || !this.elementsQuery) {
+    if (this.options$.getValue().isReadOnlyMode || !this.elementsQuery) {
       return;
     }
     const empty = this.elements?.length === 0;

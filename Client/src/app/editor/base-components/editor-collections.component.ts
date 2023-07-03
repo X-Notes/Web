@@ -171,7 +171,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       .subscribe(async () => {
         await this.facade.photosService.uploadPhotosToCollectionHandler(
           { contentId: cont.content.id, files },
-          this.noteId,
+          this.options$.getValue().noteId,
         );
         this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
@@ -194,7 +194,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       .subscribe(async () => {
         await this.facade.audiosService.uploadAudiosToCollectionHandler(
           { contentId: cont.content.id, files },
-          this.noteId,
+          this.options$.getValue().noteId,
         );
         this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
@@ -217,7 +217,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       .subscribe(async () => {
         await this.facade.videosService.uploadVideosToCollectionHandler(
           { contentId: cont.content.id, files },
-          this.noteId,
+          this.options$.getValue().noteId,
         );
         this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
@@ -240,7 +240,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       .subscribe(async () => {
         await this.facade.documentsService.uploadDocumentsToCollectionHandler(
           { contentId: cont.content.id, files },
-          this.noteId,
+          this.options$.getValue().noteId,
         );
         this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
@@ -257,7 +257,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
     switch (event.typeFile) {
       case TypeUploadFile.photos: {
         newContentId = await this.facade.photosService.transformToPhotosCollection(
-          this.noteId,
+          this.options$.getValue().noteId,
           event.contentId,
           event.files,
         );
@@ -265,7 +265,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       }
       case TypeUploadFile.audios: {
         newContentId = await this.facade.audiosService.transformToAudiosCollection(
-          this.noteId,
+          this.options$.getValue().noteId,
           event.contentId,
           event.files,
         );
@@ -273,7 +273,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       }
       case TypeUploadFile.documents: {
         newContentId = await this.facade.documentsService.transformToDocumentsCollection(
-          this.noteId,
+          this.options$.getValue().noteId,
           event.contentId,
           event.files,
         );
@@ -281,7 +281,7 @@ export class EditorCollectionsComponent extends EditorTitleComponent {
       }
       case TypeUploadFile.videos: {
         newContentId = await this.facade.videosService.transformToVideosCollection(
-          this.noteId,
+          this.options$.getValue().noteId,
           event.contentId,
           event.files,
         );

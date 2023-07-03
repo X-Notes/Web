@@ -211,12 +211,12 @@ export class ContentEditorComponent
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
-    if (this.isReadOnlyMode) {
+    if (!this.options$.getValue().userId) {
       this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initRead(this.noteId, this.folderId, this.userId);
+      this.facade.contentEditorSyncService.initRead(this.options$);
     } else {
       this.facade.contentsService.initEdit(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initEdit(this.noteId, this.folderId, this.userId);
+      this.facade.contentEditorSyncService.initEdit(this.options$);
     }
 
     if (contents.length === 0) {
@@ -233,7 +233,7 @@ export class ContentEditorComponent
   }
 
   ngAfterViewInit(): void {
-    if (!this.isReadOnlyMode) {
+    if (!this.options$.getValue().isReadOnlyMode) {
       this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
       this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
       this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
@@ -244,8 +244,8 @@ export class ContentEditorComponent
           this.facade.cdr.detectChanges();
         });
     }
-    if (this.noteId && this.connectToNote && this.userId?.length > 0) {
-      this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
+    if (this.options$.getValue().noteId && this.options$.getValue().connectToNote && this.options$.getValue().userId) {
+      this.webSocketsUpdaterService.tryJoinToNote(this.options$.getValue().noteId);
     }
   }
 
@@ -271,8 +271,8 @@ export class ContentEditorComponent
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
     this.muuriService.resetToDefaultOpacity();
-    if (this.noteId && this.userId) {
-      this.webSocketsUpdaterService.leaveNote(this.noteId);
+    if (this.options$.getValue().noteId && this.options$.getValue().userId) {
+      this.webSocketsUpdaterService.leaveNote(this.options$.getValue().noteId);
     }
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
@@ -287,7 +287,7 @@ export class ContentEditorComponent
     this.iniTitle(this.title);
     this.initTitleSubscription();
     this.subscribeOnButtons();
-    this.facade.contentUpdateWsService.noteId = this.noteId;
+    this.facade.contentUpdateWsService.noteId = this.options$.getValue().noteId;
 
     this.ngForSubject.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
       this.facade.cdr.detectChanges();
@@ -306,7 +306,7 @@ export class ContentEditorComponent
   }
 
   subscribeOnButtons(): void {
-    if (this.isReadOnlyMode) {
+    if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
@@ -541,10 +541,10 @@ export class ContentEditorComponent
   }
 
   resetCursor(): void {
-    if (!this.noteId) return;
+    if (!this.options$.getValue().noteId) return;
     const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
     const cursor = new UpdateCursor(color).initNoneCursor();
-    this.facade.store.dispatch(new UpdateCursorAction(this.noteId, cursor));
+    this.facade.store.dispatch(new UpdateCursorAction(this.options$.getValue().noteId, cursor));
   }
 
   getIndexAndLengthForUpdateStyle(
@@ -586,7 +586,7 @@ export class ContentEditorComponent
   };
 
   placeHolderClick($event) {
-    if (this.isReadOnlyMode) {
+    if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
     $event.preventDefault();

@@ -5,7 +5,6 @@ import { BehaviorSubject, interval } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import {
   syncEditorIntervalDelay,
-  processSyncEditorIntervalDelay,
   syncEditorStateIntervalDelay,
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
@@ -36,6 +35,7 @@ import { TextDiff } from '../entities/text/text-diff';
 import { ParentInteraction, ParentInteractionCollection, ParentInteractionHTML } from '../components/parent-interaction.interface';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { SelectionService } from '../ui-services/selection.service';
+import { EditorOptions } from '../entities-ui/editor-options';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -58,14 +58,6 @@ export class ContentEditorSyncService {
 
   intervalSyncState = interval(syncEditorStateIntervalDelay);
 
-  private noteId: string;
-
-  private folderId: string;
-
-  private isEdit = false;
-
-  private userId: string;
-
   private updateSubject: BehaviorSubject<boolean>;
 
   private updateImmediatelySubject: BehaviorSubject<boolean>;
@@ -74,6 +66,10 @@ export class ContentEditorSyncService {
   public onStructureSync$: BehaviorSubject<EditorStructureResult>;
 
   private isProcessChanges = false;
+
+  options$: BehaviorSubject<EditorOptions>;
+
+  private isEdit = false;
 
   constructor(
     private contentService: ContentEditorContentsService,
@@ -94,6 +90,18 @@ export class ContentEditorSyncService {
 
   get isCanBeProcessed(): boolean {
     return this.isEdit && !this.contentService.isRendering;
+  }
+
+  get userId(): string {
+    return this.options$.getValue().userId;
+  }
+
+  get noteId(): string {
+    return this.options$.getValue().noteId;
+  }
+
+  get folderId(): string {
+    return this.options$.getValue().folderId;
   }
 
   initTimers(): void {
@@ -161,17 +169,13 @@ export class ContentEditorSyncService {
     }
   }
 
-  initRead(noteId: string, folderId: string, userId: string): void {
-    this.noteId = noteId;
-    this.folderId = folderId;
-    this.userId = userId;
+  initRead(options$: BehaviorSubject<EditorOptions>): void {
+    this.options$ = options$;
   }
 
-  initEdit(noteId: string, folderId: string, userId: string): void {
+  initEdit(options$: BehaviorSubject<EditorOptions>): void {
     this.isEdit = true;
-    this.noteId = noteId;
-    this.folderId = folderId;
-    this.userId = userId;
+    this.options$ = options$;
 
     this.destroyAndInitSubject();
 
@@ -179,7 +183,7 @@ export class ContentEditorSyncService {
       .pipe(
         takeUntil(this.dc.d$),
         filter((x) => x === true && !this.isProcessChanges),
-        debounceTime(processSyncEditorIntervalDelay),
+        debounceTime(syncEditorIntervalDelay / 2),
       )
       .subscribe(async () => {
         await this.processChanges();

@@ -48,7 +48,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
   initTitleSubscription() {
     this.subscribeWSUpdates();
-    if (!this.isReadOnlyMode) {
+    if (!this.options$.getValue().isReadOnlyMode) {
       this.subscribeOnEditUI();
     }
   }
@@ -86,8 +86,8 @@ export class EditorTitleComponent extends EditorBaseComponent {
     this.noteTitleChanged$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe(async (title) => {
-        if (!this.noteId) return;
-        this.facade.store.dispatch(new UpdateNoteTitle(title, this.noteId, true, undefined));
+        if (!this.options$.getValue().noteId) return;
+        this.facade.store.dispatch(new UpdateNoteTitle(title, this.options$.getValue().noteId, true, undefined));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
   }
