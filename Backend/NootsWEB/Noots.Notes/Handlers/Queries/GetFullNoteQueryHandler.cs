@@ -67,7 +67,7 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
                 note.NoteTypeId = NoteTypeENUM.Shared;
             }
 
-            note.LabelsNotes = note.LabelsNotes.OrderBy(x => x.AddedAt).ToList();;
+            note.LabelsNotes = note.LabelsNotes.OrderBy(x => x.AddedAt).ToList();
             var ent = mapperLockedEntities.MapNoteToFullNote(note, permissions.CanWrite);
             return new OperationResult<FullNote>(true, ent);
         }

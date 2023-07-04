@@ -124,11 +124,11 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 Title = GetTitle(noteForCopy.Title),
                 Color = noteForCopy.Color,
                 CreatedAt = DateTimeProvider.Time,
-                UpdatedAt = DateTimeProvider.Time,
                 NoteTypeId = NoteTypeENUM.Private,
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+            newNote.SetDateAndVersion();
             var dbNote = await noteRepository.AddAsync(newNote);
 
             if (isNoteOwner)
@@ -185,11 +185,12 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 Title = noteForCopy.Title,
                 Color = noteForCopy.Color,
                 CreatedAt = DateTimeProvider.Time,
-                UpdatedAt = DateTimeProvider.Time,
                 NoteTypeId = NoteTypeENUM.Private,
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+            newNote.SetDateAndVersion();
+
             var dbNote = await noteRepository.AddAsync(newNote);
 
             if (isNoteOwner)

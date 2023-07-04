@@ -15,6 +15,7 @@ public class BillingPermissionService
     private readonly NoteRepository noteRepository;
     private readonly FolderRepository folderRepository;
     private readonly LabelRepository labelRepository;
+    private readonly BackgroundRepository backgroundRepository;
     private readonly RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository;
 
     public BillingPermissionService(
@@ -23,6 +24,7 @@ public class BillingPermissionService
         NoteRepository noteRepository,
         FolderRepository folderRepository,
         LabelRepository labelRepository,
+        BackgroundRepository backgroundRepository,
         RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository)
     {
         this.vBillingPlanCacheRepository = vBillingPlanCacheRepository;
@@ -30,6 +32,7 @@ public class BillingPermissionService
         this.noteRepository = noteRepository;
         this.folderRepository = folderRepository;
         this.labelRepository = labelRepository;
+        this.backgroundRepository = backgroundRepository;
         this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
     }
     
@@ -45,7 +48,20 @@ public class BillingPermissionService
         
         return true;
     }
-    
+
+    public async Task<bool> CanCreateBackgroundAsync(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return false;
+
+        var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+
+        var userLabelsCount = await backgroundRepository.GetCountAsync(x => x.UserId == user.Id);
+        if (userLabelsCount >= userPlan.MaxBackgrounds) return false;
+
+        return true;
+    }
+
     public async Task<int> GetAvailableCountNotes(Guid userId)
     {
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);

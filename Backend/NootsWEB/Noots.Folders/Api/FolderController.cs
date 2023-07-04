@@ -9,9 +9,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Folders.Commands;
+using Noots.Folders.Commands.Sync;
 using Noots.Folders.Entities;
 using Noots.Folders.Queries;
-
 namespace Noots.Folders.Api;
 
 [Authorize]
@@ -57,6 +57,14 @@ public class FolderController : ControllerBase
     {
         var query = new GetFullFolderQuery(this.GetUserIdUnStrict(), id);
         return await _mediator.Send(query);
+    }
+
+    [HttpPatch("sync/state")]
+    [ValidationRequireUserIdFilter]
+    public async Task<OperationResult<SyncFolderResult>> SyncFolderState(SyncFolderStateCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
     }
 
     // Commands 

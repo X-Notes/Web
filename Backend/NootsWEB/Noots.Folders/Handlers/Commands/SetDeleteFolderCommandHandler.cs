@@ -34,7 +34,10 @@ public class SetDeleteFolderCommandHandler : IRequestHandler<SetDeleteFolderComm
         var foldersOwner = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
         if (foldersOwner.Any())
         {
-            foldersOwner.ForEach(x => x.ToType(FolderTypeENUM.Deleted, DateTimeProvider.Time));
+            foldersOwner.ForEach(x => {
+                x.ToType(FolderTypeENUM.Deleted, DateTimeProvider.Time);
+                x.SetDateAndVersion();
+            });
             await folderRepository.UpdateRangeAsync(foldersOwner);
             processedIds = foldersOwner.Select(x => x.Id).ToList();
         }

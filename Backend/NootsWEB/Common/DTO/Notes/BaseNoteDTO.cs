@@ -28,5 +28,7 @@ namespace Common.DTO.Notes
         public DateTimeOffset? DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
+
+        public int Version { set; get; }
     }
 }

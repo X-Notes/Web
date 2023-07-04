@@ -1,8 +1,10 @@
 ﻿using Common;
 using Common.DTO;
 using Common.DTO.Backgrounds;
+using Common.DTO.Notes;
 using MediatR;
 using Noots.Backgrounds.Commands;
+using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
@@ -16,21 +18,30 @@ public class NewBackgroundCommandHandler : IRequestHandler<NewBackgroundCommand,
     private readonly BackgroundRepository backgroundRepository;
     private readonly IMediator _mediator;
     private readonly UserBackgroundMapper userBackgroundMapper;
-    
+    private readonly BillingPermissionService billingPermissionService;
+
     public NewBackgroundCommandHandler(
         UserRepository userRepository, 
         BackgroundRepository backgroundRepository, 
         IMediator mediator, 
-        UserBackgroundMapper userBackgroundMapper)
+        UserBackgroundMapper userBackgroundMapper,
+        BillingPermissionService billingPermissionService)
     {
         this.userRepository = userRepository;
         this.backgroundRepository = backgroundRepository;
         _mediator = mediator;
         this.userBackgroundMapper = userBackgroundMapper;
+        this.billingPermissionService = billingPermissionService;
     }
     
     public async Task<OperationResult<BackgroundDTO>> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
     {
+        var isCanCreate = await billingPermissionService.CanCreateBackgroundAsync(request.UserId);
+        if (!isCanCreate)
+        {
+            return new OperationResult<BackgroundDTO>().SetBillingError();
+        }
+
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
         var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
         if(uploadPermission == PermissionUploadFileEnum.NoCanUpload)

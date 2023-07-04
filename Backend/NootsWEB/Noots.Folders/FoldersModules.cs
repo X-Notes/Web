@@ -6,8 +6,10 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Noots.Folders.Commands;
 using Noots.Folders.Commands.FolderInner;
+using Noots.Folders.Commands.Sync;
 using Noots.Folders.Entities;
 using Noots.Folders.Handlers.Commands;
+using Noots.Folders.Handlers.Commands.Sync;
 using Noots.Folders.Handlers.Queries;
 using Noots.Folders.Impl;
 using Noots.Folders.Queries;
@@ -39,5 +41,7 @@ public static class FoldersModules
         services.AddScoped<IRequestHandler<UpdateNotesPositionsInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
         services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
+
+        services.AddScoped<IRequestHandler<SyncFolderStateCommand, OperationResult<SyncFolderResult>>, SyncFolderStateCommandHandler>();
     }
 }

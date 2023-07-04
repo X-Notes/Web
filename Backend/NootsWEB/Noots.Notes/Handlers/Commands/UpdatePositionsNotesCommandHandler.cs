@@ -23,10 +23,11 @@ public class UpdatePositionsNotesCommandHandler : IRequestHandler<UpdatePosition
         {
             request.Positions.ForEach(x =>
             {
-                var note = notes.FirstOrDefault(z => z.Id == x.EntityId);
+                var note = notes.FirstOrDefault(q => q.Id == x.EntityId);
                 if (note != null)
                 {
                     note.Order = x.Position;
+                    note.SetDateAndVersion();
                 }
             });
 

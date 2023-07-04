@@ -26,7 +26,10 @@ public class MakePrivateFolderCommandHandler : IRequestHandler<MakePrivateFolder
         var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
         if (folders.Any())
         {
-            folders.ForEach(x => x.ToType(FolderTypeENUM.Private));
+            folders.ForEach(x => {
+                x.ToType(FolderTypeENUM.Private);
+                x.SetDateAndVersion();
+            });
             await folderRepository.UpdateRangeAsync(folders);
 
             return new OperationResult<Unit>(true, Unit.Value);

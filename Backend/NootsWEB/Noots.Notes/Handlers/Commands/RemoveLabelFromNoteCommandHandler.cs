@@ -49,7 +49,7 @@ public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFrom
             {
                 await labelsNotesRepository.RemoveRangeAsync(values);
 
-                notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
+                notes.ForEach(x => x.SetDateAndVersion());
                 await noteRepository.UpdateRangeAsync(notes);
 
                 foreach (var perm in permissions)

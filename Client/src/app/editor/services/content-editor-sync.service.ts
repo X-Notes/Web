@@ -6,6 +6,7 @@ import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import {
   syncEditorIntervalDelay,
   syncEditorStateIntervalDelay,
+  syncNoteStateIntervalDelay,
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
@@ -36,6 +37,10 @@ import { ParentInteraction, ParentInteractionCollection, ParentInteractionHTML }
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { SelectionService } from '../ui-services/selection.service';
 import { EditorOptions } from '../entities-ui/editor-options';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
+import { UpdateFullNote, UpdateNoteTitleState } from 'src/app/content/notes/state/notes-actions';
+import { Label } from 'src/app/content/labels/models/label.model';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -57,6 +62,8 @@ export class ContentEditorSyncService {
   intervalSync = interval(syncEditorIntervalDelay);
 
   intervalSyncState = interval(syncEditorStateIntervalDelay);
+
+  intervalSyncNoteState = interval(syncNoteStateIntervalDelay);
 
   private updateSubject: BehaviorSubject<boolean>;
 
@@ -80,6 +87,7 @@ export class ContentEditorSyncService {
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
+    private apiNotes: ApiServiceNotes,
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
     public dc: DestroyComponentService,
@@ -105,39 +113,62 @@ export class ContentEditorSyncService {
   }
 
   initTimers(): void {
-    this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.userId && !this.contentService.isRendering)).subscribe(async () => {
-      const state = this.contentService.getEditorStateDiffs();
-      try {
-        const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
-        if (!stateUpdates.success) return;
-        if (stateUpdates.data.idsToDelete?.length > 0) {
-          this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
-        }
-        let isStructureUpdate = false;
-        if (stateUpdates.data?.contentsToUpdate?.length > 0) {
-          for (const content of stateUpdates.data.contentsToUpdate) {
-            if (content.typeId === ContentTypeENUM.Text) {
-              this.updateText(content as BaseText);
-            } else {
-              this.updateCollection(content as BaseCollection<BaseFile>);
-            }
-          }
-          isStructureUpdate = true;
-        }
-        if (stateUpdates.data?.contentsToAdd?.length > 0) {
-          for (const content of stateUpdates.data.contentsToAdd) {
-            this.contentService.insertInto(content, content.order, true);
-          }
-          isStructureUpdate = true;
-        }
-        if (isStructureUpdate) {
-          this.contentService.sortByOrder(true);
-        }
-      } catch (e) {
-        console.error(e);
+    this.intervalSync.pipe(takeUntil(this.dc.d$))
+      .subscribe(() => this.change());
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.userId && !this.contentService.isRendering))
+      .subscribe(() => this.processSyncState());
+    this.intervalSyncNoteState.pipe(takeUntil(this.dc.d$), filter(() => !!this.userId))
+      .subscribe(() => this.processSyncNoteState());
+  }
+
+  async processSyncNoteState() {
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    try {
+      const state = await this.apiNotes.syncNoteState(note.id, note.version).toPromise();
+      if (state.success && state.data) {
+        this.store.dispatch(new UpdateFullNote({
+          color: state.data.color,
+          version: state.data.version,
+          labels: state.data.labels.map((x) => new Label(x))
+        }, state.data.noteId));
+        this.store.dispatch(new UpdateNoteTitleState(state.data.title, state.data.noteId));
       }
-    });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async processSyncState() {
+    const state = this.contentService.getEditorStateDiffs();
+    try {
+      const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
+      if (!stateUpdates.success) return;
+      if (stateUpdates.data.idsToDelete?.length > 0) {
+        this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
+      }
+      let isStructureUpdate = false;
+      if (stateUpdates.data?.contentsToUpdate?.length > 0) {
+        for (const content of stateUpdates.data.contentsToUpdate) {
+          if (content.typeId === ContentTypeENUM.Text) {
+            this.updateText(content as BaseText);
+          } else {
+            this.updateCollection(content as BaseCollection<BaseFile>);
+          }
+        }
+        isStructureUpdate = true;
+      }
+      if (stateUpdates.data?.contentsToAdd?.length > 0) {
+        for (const content of stateUpdates.data.contentsToAdd) {
+          this.contentService.insertInto(content, content.order, true);
+        }
+        isStructureUpdate = true;
+      }
+      if (isStructureUpdate) {
+        this.contentService.sortByOrder(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   updateText(text: BaseText): void {
@@ -224,7 +255,7 @@ export class ContentEditorSyncService {
   private async processChanges() {
     this.isProcessChanges = true;
     try {
-      if(this.isCanBeProcessed){
+      if (this.isCanBeProcessed) {
         await this.processStructureChanges();
       }
       await Promise.all([this.processTextsChanges(), this.processFileEntities()]);

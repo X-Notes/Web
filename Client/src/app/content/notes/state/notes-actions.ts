@@ -283,6 +283,16 @@ export class UpdateNoteTitleWS {
   ) {}
 }
 
+export class UpdateNoteTitleState {
+  static type = '[Notes] update note title state';
+
+  constructor(
+    public title: string,
+    public noteId: string
+  ) {}
+}
+
+
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';
 

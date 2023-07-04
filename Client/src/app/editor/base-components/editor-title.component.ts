@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { interval, Observable, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { UpdateCursorAction } from 'src/app/content/notes/state/editor-actions';
-import { UpdateNoteTitle, UpdateNoteTitleWS } from 'src/app/content/notes/state/notes-actions';
+import { UpdateNoteTitle, UpdateNoteTitleState, UpdateNoteTitleWS } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -47,14 +47,14 @@ export class EditorTitleComponent extends EditorBaseComponent {
   }
 
   initTitleSubscription() {
-    this.subscribeWSUpdates();
+    this.subscribeTitleUpdates();
     if (!this.options$.getValue().isReadOnlyMode) {
       this.subscribeOnEditUI();
     }
   }
 
   setTitle(title: string) {
-    if(this.noteTitleEl?.nativeElement) {
+    if (this.noteTitleEl?.nativeElement) {
       this.noteTitleEl.nativeElement.innerText = title;
     }
   }
@@ -72,8 +72,10 @@ export class EditorTitleComponent extends EditorBaseComponent {
   }
 
   // WS && INTERNAL
-  private subscribeWSUpdates() {
+  private subscribeTitleUpdates() {
     this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleWS), takeUntil(this.facade.dc.d$))
+      .subscribe((updates) => this.updateTitle(updates.title));
+    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleState), takeUntil(this.facade.dc.d$))
       .subscribe((updates) => this.updateTitle(updates.title));
   }
 

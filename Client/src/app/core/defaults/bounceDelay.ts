@@ -1,5 +1,7 @@
 export const syncEditorIntervalDelay = 400;
 export const syncEditorStateIntervalDelay = 10000;
+export const syncNoteStateIntervalDelay = 10000;
+export const syncFolderStateIntervalDelay = 10000;
 export const updateNoteTitleDelay = 100;
 export const createSnapshotDelay = 100;
 export const updateTitleEntitesDelay = 100;

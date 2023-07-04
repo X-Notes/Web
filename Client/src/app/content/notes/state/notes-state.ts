@@ -52,6 +52,7 @@ import {
   CreateNoteCompleted,
   UpdateFolderNotes,
   LoadNotesByIds,
+  UpdateNoteTitleState,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -1091,6 +1092,14 @@ export class NoteStore {
 
   @Action(UpdateNoteTitleWS)
   async updateNoteTitleWS(
+    { dispatch }: StateContext<NoteState>,
+    { title, noteId }: UpdateNoteTitleWS,
+  ) {
+    await dispatch(new UpdateNoteTitle(title, noteId, false, null));
+  }
+
+  @Action(UpdateNoteTitleState)
+  async updateNoteTitleState(
     { dispatch }: StateContext<NoteState>,
     { title, noteId }: UpdateNoteTitleWS,
   ) {

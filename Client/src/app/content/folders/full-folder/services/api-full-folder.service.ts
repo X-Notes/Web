@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
+import { SyncFolderResult } from '../../models/sync-folder-result';
 
 @Injectable()
 export class ApiFullFolderService {
@@ -14,6 +15,18 @@ export class ApiFullFolderService {
 
   constructor(private httpClient: HttpClient) {}
 
+  syncFolderState(folderId: string, version: number, noteIds: string[]) {
+    const obj = {
+      folderId,
+      version,
+      noteIds
+    };
+    return this.httpClient.patch<OperationResult<SyncFolderResult>>(
+      `${environment.writeAPI}/api/folder/sync/state`,
+      obj,
+    );
+  }
+  
   getFolderNotes(folderId: string, settings?: PersonalizationSetting, noteIds?: string[]) {
     const obj = {
       folderId,

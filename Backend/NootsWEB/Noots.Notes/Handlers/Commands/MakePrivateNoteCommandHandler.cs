@@ -26,7 +26,11 @@ public class MakePrivateNoteCommandHandler : IRequestHandler<MakePrivateNoteComm
         var notes = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Note).ToList();
         if (notes.Any())
         {
-            notes.ForEach(x => x.ToType(NoteTypeENUM.Private));
+            notes.ForEach(x =>
+            {
+                x.ToType(NoteTypeENUM.Private);
+                x.SetDateAndVersion();
+            });
             await noteRepository.UpdateRangeAsync(notes);
             return new OperationResult<Unit>(true, Unit.Value);
         }

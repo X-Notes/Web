@@ -119,17 +119,18 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
     {
         var foldersToSave = folders.Select(x =>
         {
-            return new Folder()
+            var folder = new Folder()
             {
                 Title = GetTitle(x.Title),
                 Color = x.Color,
                 FolderTypeId = FolderTypeENUM.Private,
                 RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeProvider.Time,
-                UpdatedAt = DateTimeProvider.Time,
                 UserId = userId,
                 NoteIds = x.FoldersNotes.Select(x => x.NoteId).ToList()
             };
+            folder.SetDateAndVersion();
+            return folder;
         }).ToList();
 
         await folderRepository.AddRangeAsync(foldersToSave);
