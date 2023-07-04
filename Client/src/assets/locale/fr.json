@@ -386,7 +386,10 @@
     "history-all": "Historique de toutes les notes",
     "personalization": "Paramètres de personnalisation",
     "per-month": "par mois",
-    "upgrade": "Mise à jour"
+    "upgrade": "Mise à jour",
+    "backgrounds": "{{count}} arrière-plans",
+    "maxUserAtSameTimeOnNote": "{{count}} utilisateurs sur une note en même temps",
+    "maxUserAtSameTimeOnFolder": "{{count}} utilisateurs sur un dossier en même temps"
   },
   "files": {
     "noAccessRightsNote": "Aucune autorisation de télécharger des fichiers à noter",

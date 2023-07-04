@@ -38,6 +38,6 @@ public class BillingPlanDTO
         Price = plan.Price;
         MaxUserAtSameTimeOnNote = plan.MaxUserAtSameTimeOnNote;
         MaxUserAtSameTimeOnFolder = plan.MaxUserAtSameTimeOnFolder;
-        MaxBackgrounds = plan.MaxLabels;
+        MaxBackgrounds = plan.MaxBackgrounds;
     }
 }

@@ -386,7 +386,10 @@
     "history-all": "Tutta la cronologia delle note",
     "personalization": "Impostazioni di personalizzazione",
     "per-month": "al mese",
-    "upgrade": "Aggiornamento"
+    "upgrade": "Aggiornamento",
+    "backgrounds": "{{count}} sfondi",
+    "maxUserAtSameTimeOnNote": "{{count}} utenti su una nota allo stesso tempo",
+    "maxUserAtSameTimeOnFolder": "{{count}} utenti su una cartella contemporaneamente"
   },
   "files": {
     "noAccessRightsNote": "Nessuna autorizzazione per caricare file da annotare",

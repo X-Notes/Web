@@ -388,7 +388,10 @@
     "history-all": "Вся история заметки",
     "personalization": "Параметры персонализации",
     "per-month": "в месяц",
-    "upgrade": "Обновить"
+    "upgrade": "Обновить",
+    "backgrounds": "{{count}} фонов",
+    "maxUserAtSameTimeOnNote": "{{count}} пользователей в заметке одновременно",
+    "maxUserAtSameTimeOnFolder": "{{count}} пользователей в папке одновременно"
   },
   "files": {
     "noAccessRightsNote": "Нет разрешения на загрузку файлов в заметку",

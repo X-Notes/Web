@@ -388,7 +388,10 @@
     "history-all": "Вся історія нотатка",
     "personalization": "Продвинута персоналізація",
     "per-month": "в місяць",
-    "upgrade": "Оновити"
+    "upgrade": "Оновити",
+    "backgrounds": "{{count}} фони",
+    "maxUserAtSameTimeOnNote": "{{count}} користувачів на нотатку одночасно",
+    "maxUserAtSameTimeOnFolder": "{{count}} користувачів у папці одночасно"
   },
   "files": {
     "noAccessRightsNote": "Немає дозволу завантажувати файли до нотатку",

@@ -386,7 +386,10 @@
     "history-all": "All anteckningshistorik",
     "personalization": "Inställningar för anpassning",
     "per-month": "per månad",
-    "upgrade": "Uppgradera"
+    "upgrade": "Uppgradera",
+    "backgrounds": "{{count}} bakgrunder",
+    "maxUserAtSameTimeOnNote": "{{count}} användare på en lapp samtidigt",
+    "maxUserAtSameTimeOnFolder": "{{count}} användare på en mapp samtidigt"
   },
   "files": {
     "noAccessRightsNote": "Ingen behörighet att ladda upp filer att notera",

@@ -386,7 +386,10 @@
     "history-all": "Todo el historial de notas",
     "personalization": "Configuración de personalización",
     "per-month": "por mes",
-    "upgrade": "Actualizar"
+    "upgrade": "Actualizar",
+    "backgrounds": "{{count}} antecedentes",
+    "maxUserAtSameTimeOnNote": "{{count}} usuarios en una nota al mismo tiempo",
+    "maxUserAtSameTimeOnFolder": "{{count}} usuarios en una carpeta al mismo tiempo"
   },
   "files": {
     "noAccessRightsNote": "No hay permiso para cargar archivos a la nota",

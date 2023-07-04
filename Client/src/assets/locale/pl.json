@@ -386,7 +386,10 @@
     "history-all": "Cała historia notatek",
     "personalization": "Ustawienia personalizacji",
     "per-month": "Miesięcznie",
-    "upgrade": "Aktualizacja"
+    "upgrade": "Aktualizacja",
+    "backgrounds": "{{count}} tła",
+    "maxUserAtSameTimeOnNote": "{{count}} użytkowników na notatce w tym samym czasie",
+    "maxUserAtSameTimeOnFolder": "{{count}} użytkowników w folderze w tym samym czasie"
   },
   "files": {
     "noAccessRightsNote": "Brak uprawnień do przesyłania plików do odnotowania",

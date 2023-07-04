@@ -386,7 +386,10 @@
     "history-all": "Gesamte Notizhistorie",
     "personalization": "Personalisierungseinstellungen",
     "per-month": "pro Monat",
-    "upgrade": "Update"
+    "upgrade": "Update",
+    "backgrounds": "{{count}} hintergründe",
+    "maxUserAtSameTimeOnNote": "{{count}} benutzer gleichzeitig auf eine Notiz setzen",
+    "maxUserAtSameTimeOnFolder": "{{count}} benutzer gleichzeitig auf einen Ordner zugreifen"
   },
   "files": {
     "noAccessRightsNote": "Keine Berechtigung zum Hochladen von Dateien, die notiert werden sollen",

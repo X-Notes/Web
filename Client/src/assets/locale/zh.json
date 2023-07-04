@@ -386,6 +386,9 @@
     "history-all": "所有笔记历史记录",
     "personalization": "个性化设置",
     "per-month": "每月",
-    "upgrade": "更新"
+    "upgrade": "更新",
+    "backgrounds": "{{count}} 背景",
+    "maxUserAtSameTimeOnNote": "{{count}} 用户同时处理笔记",
+    "maxUserAtSameTimeOnFolder": "{{count}} 用户同时访问一个文件夹"
   }
 }

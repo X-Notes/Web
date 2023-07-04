@@ -10,6 +10,7 @@
     flex-direction: column;
     width: 40%;
     border-radius: 5px;
+    padding-right: 15px;
     padding-bottom: 20px;
     background: #fbfbfb;
     color: #565656;
@@ -35,7 +36,6 @@
     }
     .plan-info {
       margin-left: 25px;
-      height: 220px;
       display: flex;
       flex-direction: column;
       .info {
