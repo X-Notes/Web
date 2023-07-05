@@ -19,6 +19,7 @@ namespace Noots.Editor.Services;
 
 public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
 {
+    private readonly int maxContents = 1000;
 
     private readonly BaseNoteContentRepository baseNoteContentRepository;
 
@@ -76,173 +77,181 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         List<DocumentsCollectionNoteDTO> documentsItemsThatNeedAdd = null;
         List<UpdateContentPositionWS> positions = null;
 
-        if (permissions.CanWrite)
+        if (!permissions.CanWrite)
         {
-            var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
-            var contentIds = contents.Select(x => x.Id).ToList();
-
-            if (request.Diffs.RemovedItems != null && request.Diffs.RemovedItems.Any())
-            {
-                var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
-                var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
-
-                var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
-                if (fileContents.Any())
-                {
-                    var collectionIds = fileContents.Select(x => x.Id);
-                    result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
-                }
-
-                var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
-                if (textIds.Any())
-                {
-                    result.Updates.ContentIdsToDelete ??= new List<Guid>();
-                    result.Updates.ContentIdsToDelete.AddRange(textIds);
-                    var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
-                    await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
-                }
-            }
-            if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
-            {
-                var newItemsToAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-                if (newItemsToAdd.Any())
-                {
-                    var items = newItemsToAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
-                    await textNotesRepository.AddRangeAsync(items);
-
-                    result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                    textItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
-                    SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
-                }
-                if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-                {
-                    logger.LogError("ITEMS TEXTS EXIST");
-                }
-            }
-
-            // FILES
-            if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
-            {
-                var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-                if (newCollectionItemsToAdd.Any())
-                {
-                    var items = newCollectionItemsToAdd.Select(x =>
-                    {
-                        var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
-                        cont.SetMetaDataPhotos("100%", "auto", 2);
-                        return cont;
-                    }).ToList();
-                    await collectionNoteRepository.AddRangeAsync(items);
-
-                    result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                    photosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
-                    SetNewIds(result.UpdateIds, photosItemsThatNeedAdd);
-                }
-                if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-                {
-                    logger.LogError("ITEMS PHOTOS EXIST");
-                }
-            }
-            if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
-            {
-                var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-                if (newCollectionItemsToAdd.Any())
-                {
-                    var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
-                    await collectionNoteRepository.AddRangeAsync(items);
-
-                    result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                    audiosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
-                    SetNewIds(result.UpdateIds, audiosItemsThatNeedAdd);
-                }
-                if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-                {
-                    logger.LogError("ITEMS AUDIOS EXIST");
-                }
-            }
-            if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
-            {
-                var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-                if (newCollectionItemsToAdd.Any())
-                {
-                    var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
-                    await collectionNoteRepository.AddRangeAsync(items);
-
-                    result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                    videosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
-                    SetNewIds(result.UpdateIds, videosItemsThatNeedAdd);
-                }
-                if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-                {
-                    logger.LogError("ITEMS VIDEOS EXIST");
-                }
-            }
-            if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
-            {
-                var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-                var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-                if (newCollectionItemsToAdd.Any())
-                {
-                    var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
-                    await collectionNoteRepository.AddRangeAsync(items);
-
-                    result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                    documentsItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
-                    SetNewIds(result.UpdateIds, documentsItemsThatNeedAdd);
-                }
-                if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-                {
-                    logger.LogError("ITEMS DOCUMENTS EXIST");
-                }
-            }
-
-            if (request.Diffs.Positions != null && request.Diffs.Positions.Any())
-            {
-                var updateItems = new List<BaseNoteContent>();
-                foreach (var item in request.Diffs.Positions)
-                {
-                    var content = contents.FirstOrDefault(x => x.Id == item.Id);
-                    if (content != null)
-                    {
-                        content.Order = item.Order;
-                        content.SetDateAndVersion();
-                        updateItems.Add(content);
-                    }
-                }
-                if (updateItems.Any())
-                {
-                    positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
-                    await baseNoteContentRepository.UpdateRangeAsync(updateItems);
-                }
-            }
-
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
-
-            result.Updates.TextContentsToAdd = textItemsThatNeedAdd;
-            result.Updates.PhotoContentsToAdd = photosItemsThatNeedAdd;
-            result.Updates.VideoContentsToAdd = videosItemsThatNeedAdd;
-            result.Updates.DocumentContentsToAdd = documentsItemsThatNeedAdd;
-            result.Updates.AudioContentsToAdd = audiosItemsThatNeedAdd;
-            result.Updates.Positions = positions;
-
-            if (permissions.IsMultiplyUpdate)
-            {
-                await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, result.Updates);
-            }
-
-            return new OperationResult<NoteStructureResult>(true, result);
+            return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
-        return new OperationResult<NoteStructureResult>().SetNoPermissions();
+        var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+
+        var removeContentsCount = request.Diffs.RemovedItems == null ? 0 : request.Diffs.RemovedItems.Count;
+        var totalCount = contents.Count - removeContentsCount + request.Diffs.GetNewItemsCount();
+        if (totalCount > maxContents)
+        {
+            return new OperationResult<NoteStructureResult>().SetBillingError();
+        }
+
+        var contentIds = contents.Select(x => x.Id).ToList();
+
+        if (request.Diffs.RemovedItems != null && request.Diffs.RemovedItems.Any())
+        {
+            var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
+            var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
+
+            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
+            if (fileContents.Any())
+            {
+                var collectionIds = fileContents.Select(x => x.Id);
+                result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
+            }
+
+            var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
+            if (textIds.Any())
+            {
+                result.Updates.ContentIdsToDelete ??= new List<Guid>();
+                result.Updates.ContentIdsToDelete.AddRange(textIds);
+                var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
+                await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
+            }
+        }
+        if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
+        {
+            var newItemsToAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+            if (newItemsToAdd.Any())
+            {
+                var items = newItemsToAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
+                await textNotesRepository.AddRangeAsync(items);
+
+                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                textItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
+                SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
+            }
+            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+            {
+                logger.LogError("ITEMS TEXTS EXIST");
+            }
+        }
+
+        // FILES
+        if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
+        {
+            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+            if (newCollectionItemsToAdd.Any())
+            {
+                var items = newCollectionItemsToAdd.Select(x =>
+                {
+                    var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
+                    cont.SetMetaDataPhotos("100%", "auto", 2);
+                    return cont;
+                }).ToList();
+                await collectionNoteRepository.AddRangeAsync(items);
+
+                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                photosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, photosItemsThatNeedAdd);
+            }
+            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+            {
+                logger.LogError("ITEMS PHOTOS EXIST");
+            }
+        }
+        if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
+        {
+            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+            if (newCollectionItemsToAdd.Any())
+            {
+                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
+                await collectionNoteRepository.AddRangeAsync(items);
+
+                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                audiosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, audiosItemsThatNeedAdd);
+            }
+            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+            {
+                logger.LogError("ITEMS AUDIOS EXIST");
+            }
+        }
+        if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
+        {
+            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+            if (newCollectionItemsToAdd.Any())
+            {
+                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
+                await collectionNoteRepository.AddRangeAsync(items);
+
+                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                videosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, videosItemsThatNeedAdd);
+            }
+            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+            {
+                logger.LogError("ITEMS VIDEOS EXIST");
+            }
+        }
+        if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
+        {
+            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+            if (newCollectionItemsToAdd.Any())
+            {
+                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
+                await collectionNoteRepository.AddRangeAsync(items);
+
+                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+                documentsItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, documentsItemsThatNeedAdd);
+            }
+            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+            {
+                logger.LogError("ITEMS DOCUMENTS EXIST");
+            }
+        }
+
+        if (request.Diffs.Positions != null && request.Diffs.Positions.Any())
+        {
+            var updateItems = new List<BaseNoteContent>();
+            foreach (var item in request.Diffs.Positions)
+            {
+                var content = contents.FirstOrDefault(x => x.Id == item.Id);
+                if (content != null)
+                {
+                    content.Order = item.Order;
+                    content.SetDateAndVersion();
+                    updateItems.Add(content);
+                }
+            }
+            if (updateItems.Any())
+            {
+                positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
+                await baseNoteContentRepository.UpdateRangeAsync(updateItems);
+            }
+        }
+
+        await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+
+        result.Updates.TextContentsToAdd = textItemsThatNeedAdd;
+        result.Updates.PhotoContentsToAdd = photosItemsThatNeedAdd;
+        result.Updates.VideoContentsToAdd = videosItemsThatNeedAdd;
+        result.Updates.DocumentContentsToAdd = documentsItemsThatNeedAdd;
+        result.Updates.AudioContentsToAdd = audiosItemsThatNeedAdd;
+        result.Updates.Positions = positions;
+
+        if (permissions.IsMultiplyUpdate)
+        {
+            await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, result.Updates);
+        }
+
+        return new OperationResult<NoteStructureResult>(true, result);
     }
 
 

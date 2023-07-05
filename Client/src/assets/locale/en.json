@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription",
     "copied": "Copied",
     "reconnection": "Reconnection",
-    "reconnected": "Reconnected"
+    "reconnected": "Reconnected",
+    "maxContents": "Exceeded number of elements in note"
   },
   "titles": {
     "labels": "Labels",

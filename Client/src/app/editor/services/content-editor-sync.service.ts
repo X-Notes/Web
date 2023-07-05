@@ -41,6 +41,8 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { UpdateFullNote, UpdateNoteTitleState } from 'src/app/content/notes/state/notes-actions';
 import { Label } from 'src/app/content/labels/models/label.model';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -279,6 +281,10 @@ export class ContentEditorSyncService {
         this.store.dispatch(LoadUsedDiskSpace);
       }
       this.onStructureSync$.next(resp.data);
+    }
+    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
+      const message = this.translateService.instant('snackBar.maxContents');
+      this.store.dispatch(new ShowSnackNotification(message, 10000));
     }
   }
 

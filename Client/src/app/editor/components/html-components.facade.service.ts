@@ -9,6 +9,7 @@ import { ContentEditorTextService } from '../ui-services/contents/content-editor
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ClickableContentService } from '../ui-services/clickable-content.service';
 import { ContentEditorMomentoStateService } from '../ui-services/contents/content-editor-momento-state.service';
+import { ContentEditorContentsService } from '../ui-services/contents/content-editor-contents.service';
 
 @Injectable()
 export class HtmlComponentsFacadeService {
@@ -23,5 +24,6 @@ export class HtmlComponentsFacadeService {
     public dc: DestroyComponentService,
     public momentoStateService: ContentEditorMomentoStateService,
     public contentEditorTextService: ContentEditorTextService,
+    public contentEditorContent: ContentEditorContentsService,
   ) {}
 }

@@ -350,7 +350,8 @@
     "subscriptionMaxNotesError": "максимум {{count}} нотаток для цієї підписки",
     "copied": "Скопійовано",
     "reconnection": "Перепідключення",
-    "reconnected": "З`єднано"
+    "reconnected": "З`єднано",
+    "maxContents": "Перевищено кількість елементів у нотатку"
   },
   "titles": {
     "labels": "Ярлики",

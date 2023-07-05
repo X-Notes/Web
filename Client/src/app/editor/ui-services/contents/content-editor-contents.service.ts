@@ -33,6 +33,8 @@ export class ContentEditorContentsService {
 
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
+  readonly maxContents = 1000;
+
   private progressiveLoadOptions = {
     firstLoadCount: 30,
     stepCount: 5,
@@ -120,6 +122,10 @@ export class ContentEditorContentsService {
         clearInterval(interval);
       }
     }, this.progressiveLoadOptions.renderInterval);
+  }
+
+  get isCanAddContent(): boolean {
+    return this.getContents.length < this.maxContents;
   }
 
   // UI CONTENTS

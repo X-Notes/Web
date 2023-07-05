@@ -350,7 +350,8 @@
     "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки",
     "copied": "Скопировано",
     "reconnection": "Переподключение",
-    "reconnected": "Переподключено"
+    "reconnected": "Переподключено",
+    "maxContents": "Превышено количество элементов в заметке"
   },
   "titles": {
     "labels": "Ярлыки",

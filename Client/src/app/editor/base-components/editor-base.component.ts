@@ -181,6 +181,7 @@ export class EditorBaseComponent {
   }
 
   isCanAddNewItem(el?: ParentInteraction<ContentModelBase>) {
+    if(!this.facade.contentsService.isCanAddContent) return false;
     if (!el || el.type === ComponentType.Collection) return true;
     const htmlComponent = el as ParentInteractionHTML;
     const content = htmlComponent.getContent();

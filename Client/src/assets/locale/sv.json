@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration",
     "copied": "Kopierad",
     "reconnection": "Återanslutning",
-    "reconnected": "Återansluten"
+    "reconnected": "Återansluten",
+    "maxContents": "Antalet element i noten har överskridits"
   },
   "titles": {
     "labels": "Etiketter",

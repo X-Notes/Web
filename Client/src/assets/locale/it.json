@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "massimo {{count}} note per questo abbonamento",
     "copied": "Copiato",
     "reconnection": "Riconnessione",
-    "reconnected": "Ricollegato"
+    "reconnected": "Ricollegato",
+    "maxContents": "Numero di elementi nella nota superato"
   },
   "titles": {
     "labels": "Etichette",

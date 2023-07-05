@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "本订阅号最多可有{{count}}个注释",
     "copied": "抄袭",
     "reconnection": "重新连接",
-    "reconnected": "重新连接"
+    "reconnected": "重新连接",
+    "maxContents": "注释中的元素数量超出限制"
   },
   "titles": {
     "labels": "标签",

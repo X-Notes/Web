@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement",
     "copied": "Kopiert",
     "reconnection": "Wiederverbindung",
-    "reconnected": "Wieder verbunden"
+    "reconnected": "Wieder verbunden",
+    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten"
   },
   "titles": {
     "labels": "Etiketten",

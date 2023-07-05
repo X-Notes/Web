@@ -348,7 +348,8 @@
     "subscriptionMaxNotesError": "maksymalnie {{count}} notatek dla tej subskrypcji",
     "copied": "Skopiowane",
     "reconnection": "Ponowne połączenie",
-    "reconnected": "Ponownie podłączony"
+    "reconnected": "Ponownie podłączony",
+    "maxContents": "Przekroczono liczbę elementów w notatce"
   },
   "titles": {
     "labels": "Etykiety",
