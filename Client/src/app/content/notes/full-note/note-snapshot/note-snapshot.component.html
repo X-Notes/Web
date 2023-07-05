@@ -8,10 +8,10 @@
 >
   <div *ngIf="(snapshotState$ | async)?.canView" class="wrapper-note">
     <app-content-editor
-      [noteId]="(snapshotNote$ | async).noteId"
+      [connectToNote]="false"
       [color]="(snapshotNote$ | async).color"
       [labels]="(snapshotNote$ | async).labels"
-      [title$]="snapshotNoteTitle$"
+      [title]="(snapshotNoteTitle$ | async)"
       [progressiveLoading]="true"
       [contents]="contents"
       [isReadOnlyMode]="true"

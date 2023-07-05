@@ -67,8 +67,8 @@
         <div
           *ngIf="!facade.pS.isMobile()"
           appChangeSizeAlbumHeight
-          (mouseClick)="saveHeight($event)"
-          (changeHeight)="changeHeight($event)"
+          (mouseClick)="onStartChangeHeightUI($event)"
+          (changeHeight)="onChangeHeightUI($event)"
           class="slider-bottom"
           [ngClass]="{ slider: !isReadOnlyMode }"
           [ngStyle]="{ opacity: (isSelectModeActive$ | async) ? '0' : '1' }"

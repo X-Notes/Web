@@ -20,5 +20,7 @@ export class BaseFolder {
 
   updatedAt!: Date;
 
+  version!: number;
+
   deletedAt!: Date;
 }

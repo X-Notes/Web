@@ -7,11 +7,12 @@
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
       [noteId]="(note$ | async).id"
+      [userId]="(user$ | async)?.id"
       [color]="(note$ | async).color"
       [labels]="(note$ | async).labels"
       [progressiveLoading]="true"
       [isReadOnlyMode]="(canEdit$ | async) === false"
-      [title$]="noteTitle$"
+      [title]="(noteTitle$ | async)"
       [contents]="contents"
       [editorTheme]="theme$ | async"
     ></app-content-editor>
@@ -28,5 +29,5 @@
       typeClass="type-module"
     ></app-no-results-illustration>
   </div>
-  <app-spinner *ngIf="!loaded"></app-spinner>
+  <app-spinner *ngIf="!loaded" [size]="25"></app-spinner>
 </div>

@@ -39,6 +39,9 @@ export class AddNotesInFolderComponent
 {
   @ViewChildren('item', { read: ElementRef }) refElements?: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(UserStore.getUser)
   public user$?: Observable<ShortUser>;
 

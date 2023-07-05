@@ -42,9 +42,9 @@ public class NewFolderCommandHandler : IRequestHandler<NewFolderCommand, Operati
             Color = FolderColorPallete.Green,
             FolderTypeId = FolderTypeENUM.Private,
             RefTypeId = RefTypeENUM.Viewer,
-            CreatedAt = DateTimeProvider.Time,
-            UpdatedAt = DateTimeProvider.Time
+            CreatedAt = DateTimeProvider.Time
         };
+        folder.SetDateAndVersion();
 
         await folderRepository.AddAsync(folder);
         var ent = appCustomMapper.MapFolderToSmallFolder(folder, true);

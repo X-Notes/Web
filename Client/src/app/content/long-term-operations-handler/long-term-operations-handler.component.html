@@ -1,4 +1,4 @@
-<div #container class="container">
+<div #container class="container" [ngStyle]="positions | async">
   <app-long-term-operation
     [@uploader]
     (cancelAllEvent)="cancelAllHandler()"

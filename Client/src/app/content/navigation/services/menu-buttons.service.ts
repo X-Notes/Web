@@ -255,26 +255,33 @@ export class MenuButtonsService {
 
   // SHARE
   openShareWithNotes() {
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+    const type = EntityPopupType.Note;
+    if (this.store.selectSnapshot(AppStore.isNoteInnerPure)) {
       const notes = [this.store.selectSnapshot(NoteStore.oneFull) as SmallNote];
-      return this.dialogsService.openShareEntity(EntityPopupType.Note, notes);
+      return this.dialogsService.openShareEntity(type, notes, false);
+    }
+    if (this.store.selectSnapshot(AppStore.isFolderInnerNote)) {
+      const folderId = this.store.selectSnapshot(FolderStore.full).id;
+      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as SmallNote];
+      return this.dialogsService.openShareEntity(type, notes, true, folderId);
     }
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
+      const folderId = this.store.selectSnapshot(FolderStore.full).id;
       const folderNotes = this.store.selectSnapshot(NoteStore.getSelectedFolderNotes);
-      return this.dialogsService.openShareEntity(EntityPopupType.Note, folderNotes);
+      return this.dialogsService.openShareEntity(type, folderNotes, true, folderId);
     }
     const smallNotes = this.store.selectSnapshot(NoteStore.getSelectedNotes);
-    return this.dialogsService.openShareEntity(EntityPopupType.Note, smallNotes);
+    return this.dialogsService.openShareEntity(type, smallNotes, false);
   }
 
   openShareWithFolders() {
     const type = EntityPopupType.Folder;
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
       const folders = [this.store.selectSnapshot(FolderStore.full) as SmallFolder];
-      return this.dialogsService.openShareEntity(type, folders);
+      return this.dialogsService.openShareEntity(type, folders, false);
     }
     const smallFolders = this.store.selectSnapshot(FolderStore.getSelectedFolders);
-    return this.dialogsService.openShareEntity(type, smallFolders);
+    return this.dialogsService.openShareEntity(type, smallFolders, false);
   }
 
   // COLORS

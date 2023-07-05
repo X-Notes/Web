@@ -346,7 +346,10 @@
     "noItemInExport": "La colección está vacía",
     "subscriptionCreationError": "Se ha superado el límite de creación de esta suscripción",
     "subscriptionMaxNotesError": "un máximo de {{count}} billetes para este abono",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "reconnection": "Reconexión",
+    "reconnected": "Reconectado",
+    "maxContents": "Número de elementos excedido en la nota"
   },
   "titles": {
     "labels": "Etiquetas",
@@ -384,7 +387,10 @@
     "history-all": "Todo el historial de notas",
     "personalization": "Configuración de personalización",
     "per-month": "por mes",
-    "upgrade": "Actualizar"
+    "upgrade": "Actualizar",
+    "backgrounds": "{{count}} antecedentes",
+    "maxUserAtSameTimeOnNote": "{{count}} usuarios en una nota al mismo tiempo",
+    "maxUserAtSameTimeOnFolder": "{{count}} usuarios en una carpeta al mismo tiempo"
   },
   "files": {
     "noAccessRightsNote": "No hay permiso para cargar archivos a la nota",

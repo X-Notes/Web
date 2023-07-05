@@ -15,6 +15,9 @@ import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-actio
 import { UserStore } from '../stateUser/user-state';
 import { byteToMB } from '../defaults/byte-convert';
 import { maxBackgroundPhotoSize } from '../defaults/constraints';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { TranslateService } from '@ngx-translate/core';
+import { ShowSnackNotification } from '../stateApp/app-action';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -33,7 +36,8 @@ export class BackgroundStore {
     private snackbarStatusHandler: SnackBarHandlerStatusService,
     private store: Store,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
-  ) {}
+    private translate: TranslateService,
+  ) { }
 
   @Selector()
   static getUserBackgrounds(state: BackgroundState): Background[] {
@@ -56,20 +60,21 @@ export class BackgroundStore {
     const resp = await this.backgroundAPI.newBackground(photo, mini, operation).toPromise();
     const result = resp.eventBody;
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
-      language,
-      result,
-      byteToMB(maxBackgroundPhotoSize),
-    );
-    if (isNeedInterrupt) {
+
+    this.snackbarStatusHandler.validateStatus(language, result, byteToMB(maxBackgroundPhotoSize));
+    if(result.status === OperationResultAdditionalInfo.BillingError) {
+      const message = this.translate.instant('snackBar.subscriptionCreationError');
+      this.store.dispatch(new ShowSnackNotification(message, 5000));
       return;
     }
 
-    const background = result.data;
-    patchState({
-      backgrounds: [background, ...getState().backgrounds],
-    });
-    dispatch([new SetCurrentBackground(background), LoadUsedDiskSpace]);
+    if (result.success) {
+      const background = result.data;
+      patchState({
+        backgrounds: [background, ...getState().backgrounds],
+      });
+      dispatch([new SetCurrentBackground(background), LoadUsedDiskSpace]);
+    }
   }
 
   @Action(LoadBackgrounds)

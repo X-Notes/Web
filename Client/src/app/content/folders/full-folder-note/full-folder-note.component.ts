@@ -15,6 +15,9 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { ApiFullFolderService } from '../full-folder/services/api-full-folder.service';
 import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
+import { LoadFullFolder } from '../state/folders-actions';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-full-folder-note',
@@ -33,6 +36,9 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
+
+  @Select(UserStore.getUser)
+  user$: Observable<ShortUser>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -61,9 +67,11 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     private api: ApiNoteContentService,
     public pService: PersonalizationService,
   ) {
-    this.routeSubscription = route.params.subscribe(async (params) => {
+    this.routeSubscription = route.params.pipe(takeUntilDestroyed()).subscribe(async (params) => {
       this.noteId = params.noteId;
       this.folderId = params.folderId;
+      if (!this.folderId) return;
+      await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
       await this.loadMainContent();
     });
   }

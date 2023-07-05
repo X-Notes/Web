@@ -95,6 +95,12 @@ export class CopyNotes {
   ) {}
 }
 
+export class LoadNotesByIds {
+  static type = '[Notes] Load notes by Ids';
+
+  constructor(public ids: string[]) {}
+}
+
 export class ClearAddToDomNotes {
   static type = '[Notes] ClearAddedPrivate notes';
 }
@@ -263,8 +269,7 @@ export class UpdateNoteTitle {
     public newTitle: string,
     public noteId: string,
     public isCallApi = true,
-    public errorPermissionMessage?: string,
-    public isUpdateFullNote = true,
+    public errorPermissionMessage?: string
   ) {}
 }
 
@@ -277,6 +282,16 @@ export class UpdateNoteTitleWS {
     public errorPermissionMessage?: string,
   ) {}
 }
+
+export class UpdateNoteTitleState {
+  static type = '[Notes] update note title state';
+
+  constructor(
+    public title: string,
+    public noteId: string
+  ) {}
+}
+
 
 export class UpdateFullNote {
   static type = '[Notes] update fullNote';

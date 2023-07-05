@@ -184,6 +184,9 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FolderTypeId");
@@ -612,6 +615,9 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NoteTypeId");
@@ -727,6 +733,9 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("integer");
 
+                    b.Property<int>("MaxBackgrounds")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MaxFolders")
                         .HasColumnType("integer");
 
@@ -742,6 +751,12 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<long>("MaxSize")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("MaxUserAtSameTimeOnFolder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxUserAtSameTimeOnNote")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -756,22 +771,28 @@ namespace Noots.DatabaseContext.Migrations
                         new
                         {
                             Id = 1,
+                            MaxBackgrounds = 5,
                             MaxFolders = 250,
                             MaxLabels = 500,
                             MaxNotes = 250,
                             MaxRelatedNotes = 5,
                             MaxSize = 104857600L,
+                            MaxUserAtSameTimeOnFolder = 10,
+                            MaxUserAtSameTimeOnNote = 5,
                             Name = "Standart",
                             Price = 0.0
                         },
                         new
                         {
                             Id = 2,
+                            MaxBackgrounds = 20,
                             MaxFolders = 10000,
                             MaxLabels = 10000,
                             MaxNotes = 10000,
                             MaxRelatedNotes = 30,
                             MaxSize = 5242880000L,
+                            MaxUserAtSameTimeOnFolder = 50,
+                            MaxUserAtSameTimeOnNote = 20,
                             Name = "Premium",
                             Price = 1.5
                         });

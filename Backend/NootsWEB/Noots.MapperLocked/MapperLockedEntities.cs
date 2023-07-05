@@ -42,7 +42,8 @@ namespace Noots.MapperLocked
                 Labels = note.LabelsNotes != null ? noteMapper.MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
+                UpdatedAt = note.UpdatedAt,
+                Version = note.Version
             };
             _fullNote = SetLockedState(_fullNote, note);
             return _fullNote;

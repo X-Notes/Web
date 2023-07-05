@@ -8,7 +8,11 @@ using Common.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.Editor.Commands.Text;
+using Noots.Editor.Entities;
 using Noots.Notes.Commands;
+using Noots.Notes.Commands.Sync;
+using Noots.Notes.Entities;
 using Noots.Notes.Queries;
 
 
@@ -25,6 +29,13 @@ public class NoteController : ControllerBase
         this._mediator = _mediator;
     }
 
+    [HttpPatch("sync/state")]
+    [ValidationRequireUserIdFilter]
+    public async Task<OperationResult<SyncNoteResult>> SyncNoteState(SyncNoteStateCommand command)
+    {
+        command.UserId = this.GetUserId();
+        return await _mediator.Send(command);
+    }
 
     [HttpGet("new")]
     [ValidationRequireUserIdFilter]
@@ -54,7 +65,7 @@ public class NoteController : ControllerBase
 
     [HttpPatch("copy")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<List<Guid>>> CopyNote([FromBody] CopyNoteCommand command)
+    public async Task<OperationResult<List<CopyNoteResult>>> CopyNote([FromBody] CopyNotesCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

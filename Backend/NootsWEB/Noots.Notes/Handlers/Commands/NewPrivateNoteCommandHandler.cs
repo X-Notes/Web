@@ -44,8 +44,9 @@ public class NewPrivateNoteCommandHandler : IRequestHandler<NewPrivateNoteComman
             NoteTypeId = NoteTypeENUM.Private,
             RefTypeId = RefTypeENUM.Viewer,
             CreatedAt = DateTimeProvider.Time,
-            UpdatedAt = DateTimeProvider.Time,
         };
+
+        note.SetDateAndVersion();
 
         await noteRepository.AddAsync(note);
         note.LabelsNotes = new List<LabelsNotes>();

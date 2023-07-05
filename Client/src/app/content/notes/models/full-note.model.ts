@@ -29,5 +29,7 @@ export class FullNote {
 
   updatedAt!: Date;
 
+  version!: number;
+
   deletedAt!: Date;
 }

@@ -61,7 +61,7 @@ public class AddLabelOnNoteCommandHandler : IRequestHandler<AddLabelOnNoteComman
             {
                 await labelsNotesRepository.AddRangeAsync(labelsToAdd);
 
-                notes.ForEach(x => x.UpdatedAt = DateTimeProvider.Time);
+                notes.ForEach(x => x.SetDateAndVersion());
                 await noteRepository.UpdateRangeAsync(notes);
 
                 foreach(var perm in permissions)

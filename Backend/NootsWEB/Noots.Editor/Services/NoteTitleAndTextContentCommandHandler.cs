@@ -65,7 +65,7 @@ namespace Noots.Editor.Services
                 async Task UpdateNoteTitle(string title)
                 {
                     note.Title = title;
-                    note.UpdatedAt = DateTimeProvider.Time;
+                    note.SetDateAndVersion();
                     await noteRepository.UpdateAsync(note);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);

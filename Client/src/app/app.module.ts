@@ -17,6 +17,7 @@ import { FolderStore } from './content/folders/state/folders-state';
 import { AppStore } from './core/stateApp/app-state';
 import { BackgroundStore } from './core/backgrounds/background-state';
 import { SharedPublicModule } from './public/shared-public/shared-public/shared-public.module';
+import { PersonalizationService } from './shared/services/personalization.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +27,6 @@ import { SharedPublicModule } from './public/shared-public/shared-public/shared-
     CoreModule,
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    SharedModule,
     SharedPublicModule,
     ContentModule,
     NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore, FolderStore, AppStore], {
@@ -35,7 +35,9 @@ import { SharedPublicModule } from './public/shared-public/shared-public/shared-
     NgxsStoragePluginModule.forRoot({
       key: UserStore,
     }),
+    SharedModule,
   ],
   bootstrap: [AppComponent],
+  providers: [PersonalizationService]
 })
 export class AppModule {}

@@ -1,10 +1,6 @@
 <div appTheme>
   <div class="billing-forms">
-    <div
-      *ngFor="let plan of billingPlans$ | async"
-      [ngClass]="{ active: user.billingPlanId === plan.id }"
-      class="form"
-    >
+    <div *ngFor="let plan of billingPlans$ | async" [ngClass]="{ active: user.billingPlanId === plan.id }" class="form">
       <div class="titles-section">
         <div class="title-main">
           <p>{{ getTitleById(plan.id) }}</p>
@@ -44,6 +40,18 @@
         <div *ngIf="billingPlanId.Standard === plan.id" class="info">
           <mat-icon svgIcon="billingPoint"></mat-icon>
           <p>{{ 'profile-billing.personalization' | translate }}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ 'profile-billing.backgrounds' | translate : { count: plan.maxBackgrounds } }}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ 'profile-billing.maxUserAtSameTimeOnNote' | translate : { count: plan.maxUserAtSameTimeOnNote } }}</p>
+        </div>
+        <div class="info">
+          <mat-icon svgIcon="billingPoint"></mat-icon>
+          <p>{{ 'profile-billing.maxUserAtSameTimeOnFolder' | translate : { count: plan.maxUserAtSameTimeOnFolder } }}</p>
         </div>
       </div>
       <div *ngIf="billingPlanId.Premium === plan.id && hasUserDefault" class="upgrade-section">

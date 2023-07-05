@@ -1,30 +1,27 @@
 /* eslint-disable class-methods-use-this */
 import { Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionDispatched } from '@ngxs/store';
 import { take } from 'rxjs/operators';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
-import { PersonalizationService } from '../personalization.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SnackBarWrapperService {
   constructor(
     private snackService: SnackbarService,
     private store: Store,
-    private prService: PersonalizationService,
+    private actions: Actions,
     private translateService: TranslateService,
   ) {
-    this.store.select(AppStore.getSnackBarNotification).subscribe((message) => {
-      if (message) {
-        this.buildNotification(message, undefined, undefined);
-        this.store.dispatch(new ShowSnackNotification(undefined));
-      }
-    });
+    this.actions.pipe(ofActionDispatched(ShowSnackNotification), takeUntilDestroyed())
+      .subscribe((action) => {
+        if (action) {
+          this.buildNotification(action.notification, undefined, undefined, action.duration);
+        }
+      });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -62,14 +59,13 @@ export class SnackBarWrapperService {
     message: string,
     callback?: () => void,
     undoMessage?: string,
+    duration?: number
   ): MatSnackBarRef<TextOnlySnackBar> {
-    const snackbarRef = this.buildSnackBarRef(message, undoMessage);
-    this.prService.isSnackBarActive$.next(true);
+    const snackbarRef = this.buildSnackBarRef(message, undoMessage, duration);
     snackbarRef
       .onAction()
       .pipe(take(1))
       .subscribe(() => {
-        this.prService.isSnackBarActive$.next(false);
         if (callback) {
           callback();
         }
@@ -77,7 +73,7 @@ export class SnackBarWrapperService {
     return snackbarRef;
   }
 
-  private buildSnackBarRef(message: string, undo?: string) {
-    return this.snackService.openSnackBar(message, undo);
+  private buildSnackBarRef(message: string, undo?: string, duration?: number) {
+    return this.snackService.openSnackBar(message, undo, null, duration);
   }
 }

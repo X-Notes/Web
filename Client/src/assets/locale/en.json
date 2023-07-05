@@ -346,7 +346,10 @@
     "noItemInExport": "Collection is empty",
     "subscriptionCreationError": "The creation limit for this subscription has been exceeded",
     "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription",
-    "copied": "Copied"
+    "copied": "Copied",
+    "reconnection": "Reconnection",
+    "reconnected": "Reconnected",
+    "maxContents": "Exceeded number of elements in note"
   },
   "titles": {
     "labels": "Labels",
@@ -384,7 +387,10 @@
     "history-all": "All note history",
     "personalization": "Personalization settings",
     "per-month": "per month",
-    "upgrade": "Upgrade"
+    "upgrade": "Upgrade",
+    "backgrounds": "{{count}} backgrounds",
+    "maxUserAtSameTimeOnNote": "{{count}} users on a note at the same time",
+    "maxUserAtSameTimeOnFolder": "{{count}} users on a folder at the same time"
   },
   "files": {
     "noAccessRightsNote" : "No permission to upload files to note",

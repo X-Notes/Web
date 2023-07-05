@@ -199,7 +199,7 @@ export class DialogsManageService {
     return instance;
   }
 
-  openShareEntity(currentWindowType: EntityPopupType, ents: SmallNote[] | SmallFolder[]) {
+  openShareEntity(currentWindowType: EntityPopupType, ents: SmallNote[] | SmallFolder[], isInnerFolderNote: boolean, folderId?: string) {
     this.validateIds(ents);
     this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
@@ -210,7 +210,7 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? ['custom-dialog-class-light', 'custom-dialog-no-border-900', 'dialog-full-screen-900']
           : ['custom-dialog-class-dark',  'custom-dialog-no-border-900', 'dialog-full-screen-900'],
-      data: { currentWindowType, ents },
+      data: { currentWindowType, ents, isInnerFolderNote, folderId },
     };
     const instance = this.dialogService.openDialog(ShareComponent, config);
     instance.afterClosed().pipe(take(1)).subscribe(() => {

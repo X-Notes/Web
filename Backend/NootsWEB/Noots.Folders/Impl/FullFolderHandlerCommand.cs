@@ -49,7 +49,7 @@ namespace Noots.Folders.Impl
                 async Task UpdateFolderTitle(string title)
                 {
                     folder.Title = title;
-                    folder.UpdatedAt = DateTimeProvider.Time;
+                    folder.SetDateAndVersion();
                     await folderRepository.UpdateAsync(folder);
                 }
 
@@ -101,7 +101,7 @@ namespace Noots.Folders.Impl
 
             if (newFoldersNotes.Any())
             {
-                folder.UpdatedAt = DateTimeProvider.Time;
+                folder.SetDateAndVersion();
 
                 await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
                 await folderRepository.UpdateAsync(folder);
@@ -128,7 +128,7 @@ namespace Noots.Folders.Impl
 
                 if (foldersNotesToDelete.Any())
                 {
-                    folder.UpdatedAt = DateTimeProvider.Time;
+                    folder.SetDateAndVersion();
 
                     await foldersNotesRepository.RemoveRangeAsync(foldersNotesToDelete);
                     await folderRepository.UpdateAsync(folder);
@@ -160,7 +160,7 @@ namespace Noots.Folders.Impl
 
                 if (foldersNotesToUpdateOrder.Any())
                 {
-                    folder.UpdatedAt = DateTimeProvider.Time;
+                    folder.SetDateAndVersion();
 
                     var noteLookUp = foldersNotesToUpdateOrder.ToDictionary(x => x.NoteId);
                     request.Positions.ForEach(x =>

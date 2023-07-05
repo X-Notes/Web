@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
-import { State, Selector, StateContext, Action } from '@ngxs/store';
+import { State, Selector, StateContext, Action, Store } from '@ngxs/store';
 import { Injectable, NgZone } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -51,6 +51,8 @@ import {
   UpdateNoteTitleWS,
   CreateNoteCompleted,
   UpdateFolderNotes,
+  LoadNotesByIds,
+  UpdateNoteTitleState,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -83,6 +85,7 @@ import { ApiTextService } from 'src/app/editor/api/api-text.service';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 export interface FullNoteState {
   note: FullNote;
@@ -143,7 +146,8 @@ export class NoteStore {
     private zone: NgZone,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
-    public pService: PersonalizationService
+    public pService: PersonalizationService,
+    private store: Store,
   ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -746,7 +750,7 @@ export class NoteStore {
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
     if (resp.eventBody.success && getState().notes.length > 0) {
-      const newIds = resp.eventBody.data;
+      const newIds = resp.eventBody.data.map(x => x.newId);
       const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
       const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
       dispatch(
@@ -766,6 +770,13 @@ export class NoteStore {
       this.snackbarService.openSnackBar(message, null, null, 5000);
     }
     dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
+  }
+
+  @Action(LoadNotesByIds)
+  async loadNotesByIds({ dispatch }: StateContext<NoteState>, { ids }: LoadNotesByIds) {
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const notes = await this.api.getNotesMany(ids, pr).toPromise();
+      await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
   }
 
   @Action(AddLabelOnNote)
@@ -927,8 +938,10 @@ export class NoteStore {
     { getState }: StateContext<NoteState>,
     { noteId, cursor }: UpdateCursorAction,
   ) {
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    if(!user?.id) return;
     const note = getState().fullNoteState.note;
-    if (!note || note.id !== noteId || !note.isCanEdit) return;
+    if (!note || note.id !== noteId) return;
     await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
   }
 
@@ -1048,7 +1061,7 @@ export class NoteStore {
   @Action(UpdateNoteTitle)
   async updateTitle(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { newTitle, isCallApi, noteId, errorPermissionMessage, isUpdateFullNote }: UpdateNoteTitle,
+    { newTitle, isCallApi, noteId, errorPermissionMessage }: UpdateNoteTitle,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
@@ -1056,13 +1069,11 @@ export class NoteStore {
     }
     if (resp.success) {
       // UPDATE FULL NOTE
-      if (isUpdateFullNote) {
-        const fullNote = getState().fullNoteState?.note;
-        if (fullNote && fullNote.id === noteId) {
-          patchState({
-            fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
-          });
-        }
+      const fullNote = getState().fullNoteState?.note;
+      if (fullNote && fullNote.id === noteId) {
+        patchState({
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
+        });
       }
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
@@ -1084,7 +1095,15 @@ export class NoteStore {
     { dispatch }: StateContext<NoteState>,
     { title, noteId }: UpdateNoteTitleWS,
   ) {
-    await dispatch(new UpdateNoteTitle(title, noteId, false, null, true));
+    await dispatch(new UpdateNoteTitle(title, noteId, false, null));
+  }
+
+  @Action(UpdateNoteTitleState)
+  async updateNoteTitleState(
+    { dispatch }: StateContext<NoteState>,
+    { title, noteId }: UpdateNoteTitleWS,
+  ) {
+    await dispatch(new UpdateNoteTitle(title, noteId, false, null));
   }
 
   @Action(UpdateFullNote)

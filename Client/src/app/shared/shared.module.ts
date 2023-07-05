@@ -87,6 +87,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonCollectionComponent } from '../editor/components/button-collection/button-collection.component';
 import { SearchDialogComponent } from './modal_components/search-dialog/search-dialog.component';
 import { HighlightSearchPipe } from './directives/highlight-search.pipe';
+import { CustomSnackbarComponent } from './snackbars/custom-snackbar/custom-snackbar.component';
+import { SnackBarHandlerStatusService } from './services/snackbar/snack-bar-handler-status.service';
+import { SnackBarWrapperService } from './services/snackbar/snack-bar-wrapper.service';
+import { SnackbarService } from './services/snackbar/snackbar.service';
 
 @NgModule({
   declarations: [
@@ -159,6 +163,7 @@ import { HighlightSearchPipe } from './directives/highlight-search.pipe';
     LeftSectionEntitiesShareComponent,
     SearchDialogComponent,
     HighlightSearchPipe,
+    CustomSnackbarComponent,
   ],
   imports: [
     CommonModule,
@@ -244,8 +249,9 @@ import { HighlightSearchPipe } from './directives/highlight-search.pipe';
     FullNoteActiveUsersComponent,
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
-    HighlightSearchPipe
+    HighlightSearchPipe,
+    CustomSnackbarComponent
   ],
-  providers: [DialogService, BackgroundService, ApiContactUsService],
+  providers: [DialogService, BackgroundService, ApiContactUsService, SnackbarService, SnackBarWrapperService, SnackBarHandlerStatusService],
 })
 export class SharedModule {}

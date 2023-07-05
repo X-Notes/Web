@@ -58,6 +58,7 @@ import { UpdateDocumentsCollectionWS } from '../editor/entities/ws/update-docume
 import { UpdateEditorStructureWS } from '../editor/entities/ws/update-note-structure-ws';
 import { UpdateNoteTextWS } from '../editor/entities/ws/update-note-text-ws';
 import { UpdatePhotosCollectionWS } from '../editor/entities/ws/update-photos-collection-ws';
+import { ThemeENUM } from '../shared/enums/theme.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -91,6 +92,10 @@ export class SignalRService {
 
   public wsConnectionClosed$ = new Subject<boolean>();
 
+  public onReconnecting$ = new Subject<boolean>();
+
+  public onReconnected$ = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private apiFolders: ApiFoldersService,
@@ -123,10 +128,9 @@ export class SignalRService {
   }
 
   private startConnection = async () => {
-    const token = await this.auth.getToken();
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
-      .withUrl(`${environment.writeAPI}/api/hub`, { accessTokenFactory: () => token })
+      .withUrl(`${environment.writeAPI}/api/hub`, { accessTokenFactory: () => this.auth.getTokenRefreshed() })
       .withAutomaticReconnect()
       .build();
 
@@ -138,10 +142,18 @@ export class SignalRService {
       })
       .catch((err) => console.log(`Error while starting connection: ${err}`));
 
+    this.hubConnection.onreconnecting(() => {
+      this.onReconnecting$.next(true);
+    });
+
+    this.hubConnection.onreconnected(() => {
+      this.onReconnected$.next(true);
+    });
+
     this.hubConnection.onclose(() => {
       this.wsConnectionClosed$.next(true);
       const message = this.translateService.instant('snackBar.reloadPage');
-      this.snackbarService.openSnackBar(message, null, null, Infinity);
+      this.snackbarService.openSnackBar(message, null, null, Infinity, ThemeENUM.Light);
     });
 
     this.hubConnection.on('newNotification', (notification: AppNotification) => {

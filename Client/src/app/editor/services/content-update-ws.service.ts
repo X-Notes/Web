@@ -124,7 +124,7 @@ export class ContentUpdateWsService {
       }
       case ComponentType.Collection: {
         const collectionEl = el as ParentInteractionCollection;
-        collectionEl.syncCollectionItems();
+        collectionEl.updateWS();
         break;
       }
       default: {

@@ -36,6 +36,8 @@ public class ChangeRefTypeNotesHandler : IRequestHandler<ChangeRefTypeNotes, Ope
 
                 note.RefTypeId = request.RefTypeId;
                 note.ToType(NoteTypeENUM.Shared);
+                note.SetDateAndVersion();
+
                 await noteRepository.UpdateAsync(note);
             }
             return new OperationResult<Unit>(true, Unit.Value);

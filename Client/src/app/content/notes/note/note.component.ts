@@ -9,6 +9,9 @@ import { ContentModelBase } from 'src/app/editor/entities/contents/content-model
 import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
 import { SelectNoteEvent } from './entities/select-note.event';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-note',
@@ -16,6 +19,10 @@ import { SelectNoteEvent } from './entities/select-note.event';
   styleUrls: ['./note.component.scss'],
 })
 export class NoteComponent implements OnInit {
+  
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Input() note?: SmallNote;
 
   @Input() date?: string;

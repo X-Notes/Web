@@ -26,6 +26,9 @@ export class ArchiveComponent
   @Select(NoteStore.archiveCount)
   archiveCount$: Observable<number>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

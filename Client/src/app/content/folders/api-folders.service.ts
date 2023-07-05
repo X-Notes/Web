@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
@@ -13,10 +13,17 @@ import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-not
 import { BottomFolderContent } from './models/bottom-folder-content.model';
 import { PositionEntityModel } from '../notes/models/position-note.model';
 import { FullFolder } from './models/full-folder.model';
+import { CopyFoldersResult } from './models/copy-folders-result';
+import { OperationDetailMini, LongTermOperation } from '../long-term-operations-handler/models/long-term-operation';
+import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
+import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 
 @Injectable()
 export class ApiFoldersService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,) { }
 
   getFolders(type: FolderTypeENUM, settings: PersonalizationSetting) {
     let params = new HttpParams();
@@ -138,13 +145,23 @@ export class ApiFoldersService {
     );
   }
 
-  copyFolders(ids: string[]): Observable<OperationResult<SmallFolder[]>> {
+  copyFolders(
+    ids: string[],
+    mini: OperationDetailMini,
+    operation: LongTermOperation) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<OperationResult<SmallFolder[]>>(
+    return this.httpClient.patch<OperationResult<CopyFoldersResult>>(
       `${environment.writeAPI}/api/folder/copy`,
-      obj,
+      obj, {
+      reportProgress: true,
+      observe: 'events',
+    }
+    ).pipe(
+      finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
+      takeUntil(mini.obs),
+      (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
     );
   }
 

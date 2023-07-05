@@ -35,6 +35,9 @@ export class SharedComponent
 {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(FolderStore.sharedCount)
   sharedCount$: Observable<number>;
 

@@ -138,6 +138,8 @@ export class ShareComponent implements OnInit, OnDestroy {
     public data: {
       currentWindowType: EntityPopupType;
       ents: SmallFolder[] | SmallNote[];
+      isInnerFolderNote: boolean,
+      folderId: string
     },
     public dialogRef: MatDialogRef<ShareComponent>,
   ) {}

@@ -12,7 +12,7 @@ import {
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, interval } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
@@ -38,11 +38,11 @@ import {
   UnSelectAllNote,
 } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
-import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
+import { syncFolderStateIntervalDelay, updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../../navigation/services/menu-buttons.service';
-import { UpdateFolderTitle, LoadFullFolder, LoadFolders } from '../state/folders-actions';
+import { UpdateFolderTitle, LoadFullFolder, LoadFolders, UpdateFullFolder } from '../state/folders-actions';
 import { PermissionsButtonsService } from '../../navigation/services/permissions-buttons.service';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
@@ -62,6 +62,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
 
   @ViewChild(MatMenu) menu: MatMenu;
+
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
 
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
@@ -102,6 +105,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //
 
+  intervalSyncFolderState = interval(syncFolderStateIntervalDelay);
+
   private routeSubscription: Subscription;
 
   private folderId: string;
@@ -122,7 +127,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private signalR: SignalRService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private actions$: Actions,
-  ) {}
+  ) { }
 
   get isOwner(): boolean {
     return this.store.selectSnapshot(FolderStore.isFullFolderOwner);
@@ -171,7 +176,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.store.dispatch(new LoadLabels());
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
@@ -213,6 +218,34 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
+
+    this.intervalSyncFolderState.pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(() => this.processSyncFolderState(this.folderId));
+  }
+
+  async processSyncFolderState(folderId: string) {
+    const isCanViewFullFolder = this.store.selectSnapshot(FolderStore.isCanViewFullFolder);
+    if (!isCanViewFullFolder) return;
+    try {
+      const folder = this.store.selectSnapshot(FolderStore.full);
+      const noteIds = this.ffnService.entities.map((x) => x.id);
+      const state = await this.apiFullFolder.syncFolderState(folderId, folder.version, noteIds).toPromise();
+      if (state.success && state.data) {
+        this.store.dispatch(new UpdateFullFolder({
+          color: state.data.color,
+          title: state.data.title,
+          version: state.data.version
+        }, folderId));
+        if(state.data.noteIdsToDelete.length > 0) {
+          this.ffnService.deleteFromDom([...state.data.noteIdsToDelete]);
+        }
+        if(state.data.noteIdsToAdd.length > 0){
+          await this.ffnService.handleAdding(state.data.noteIdsToAdd);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async resetToDefault() {

@@ -11,7 +11,6 @@ import {
   ReadAllNotifications,
   ReadNotification,
   NewNotification,
-  ShowSnackNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
@@ -19,7 +18,6 @@ import { AppNotification } from '../models/notifications/app-notification.model'
 interface AppState {
   routing: EntityType | null;
   notifications: AppNotification[];
-  snackNotification: string | null;
 }
 
 @State<AppState>({
@@ -27,17 +25,11 @@ interface AppState {
   defaults: {
     routing: null,
     notifications: [],
-    snackNotification: null,
   },
 })
 @Injectable()
 export class AppStore {
   constructor(public notificationService: NotificationServiceAPI) {}
-
-  @Selector()
-  static getSnackBarNotification(state: AppState): string | null {
-    return state.snackNotification;
-  }
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {
@@ -80,6 +72,16 @@ export class AppStore {
   @Selector()
   static isNoteInner(state: AppState): boolean {
     return state.routing === EntityType.NoteInner || state.routing === EntityType.FolderInnerNote;
+  }
+
+  @Selector()
+  static isNoteInnerPure(state: AppState): boolean {
+    return state.routing === EntityType.NoteInner;
+  }
+
+  @Selector()
+  static isFolderInnerNote(state: AppState): boolean {
+    return state.routing === EntityType.FolderInnerNote;
   }
 
   @Selector()
@@ -165,6 +167,9 @@ export class AppStore {
 
       case EntityType.Profile:
         return 'background';
+
+      case EntityType.History:
+        return 'history';
 
       default:
         throw new Error('error');
@@ -328,14 +333,5 @@ export class AppStore {
     patchState({
       notifications: [notification, ...getState().notifications],
     });
-  }
-
-  @Action(ShowSnackNotification)
-  // eslint-disable-next-line class-methods-use-this
-  async showSnackNotifications(
-    { patchState }: StateContext<AppState>,
-    { notification }: ShowSnackNotification,
-  ) {
-    patchState({ snackNotification: notification });
   }
 }

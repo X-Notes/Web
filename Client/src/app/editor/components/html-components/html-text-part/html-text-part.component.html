@@ -5,8 +5,8 @@
   (mouseleave)="mouseLeave($event)"
   (click)="setFocus($event)"
 >
-  <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false"></ng-content
+  <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && (isResizingPhoto$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     class="main-item"
@@ -19,10 +19,13 @@
       class="block-generic default-text-size default-text-id text-part"
       (input)="onInput()"
       (click)="textClick($event)"
-      [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false"
+      [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false && (isResizingPhoto$ | async) === false"
       [innerHTML]="viewHtml"
+      [ngClass]="{
+        'nope-select' : (isResizingPhoto$ | async) === true
+      }"
     ></p>
-    <div *ngIf="isActiveState && (isSelectModeActive$ | async) === false" class="no-content">
+    <div *ngIf="isActiveState && (isSelectModeActive$ | async) === false && (isResizingPhoto$ | async) === false" class="no-content">
       <p>{{ 'innerNote.text' | translate }}</p>
       <div
         *ngIf="(facade.pS.isTransformMenuMobile$ | async) === false"

@@ -27,5 +27,7 @@ namespace Common.DTO.Folders
         public DateTimeOffset UpdatedAt { set; get; }
 
         public DateTimeOffset CreatedAt { set; get; }
+
+        public int Version { set; get; }
     }
 }

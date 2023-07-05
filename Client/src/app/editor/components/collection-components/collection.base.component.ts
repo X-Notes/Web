@@ -183,4 +183,8 @@ export class CollectionBaseComponent<
   syncCollectionItems(): void {
     this.detectChanges();
   }
+
+  updateWS(): void {
+    this.detectChanges();
+  }
 }

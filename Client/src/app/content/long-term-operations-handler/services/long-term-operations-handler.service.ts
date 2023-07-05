@@ -53,7 +53,7 @@ export class LongTermOperationsHandlerService {
         if (operation.details.length === 0) {
           this.removeOperation(operation);
         }
-      }, 700);
+      }, 500);
     } else {
       this.removeOperationDetail(operation, operationMini);
       if (operation.details.length === 0) {

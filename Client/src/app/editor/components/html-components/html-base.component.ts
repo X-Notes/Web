@@ -40,10 +40,12 @@ import { ParentInteractionHTML, ComponentType } from '../parent-interaction.inte
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export abstract class BaseTextElementComponent
   extends BaseEditorElementComponent
-  implements ParentInteractionHTML
-{
+  implements ParentInteractionHTML {
   @Input()
   content: BaseText;
+
+  @Input()
+  forceFocus: boolean;
 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
@@ -159,12 +161,16 @@ export abstract class BaseTextElementComponent
     });
   }
 
-  updateContentsAndSync(contents: TextBlock[]): void {
+  updateContentsAndSync(contents: TextBlock[], ...actions: (() => void)[]): void {
     this.handleUndoTextAction(this.content);
     this.content.contents = contents;
     const html = DeltaConverter.convertTextBlocksToHTML(contents);
     this.updateNativeHTML(html);
     this.textChanged.next();
+
+    if (actions.length > 0) {
+      this.addActionsAfterViewInit(actions);
+    }
   }
 
   updateHTML(contents: TextBlock[]): void {
@@ -184,7 +190,7 @@ export abstract class BaseTextElementComponent
     const savedSel = this.getSelection();
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
     this.updateNativeHTML(html);
-    if(this.isFocused) {
+    if (this.isFocused) {
       this.facade.apiBrowser.restoreSelection(el, savedSel);
     }
     this.detectChanges();
@@ -224,7 +230,8 @@ export abstract class BaseTextElementComponent
   getIsActive() {
     return (
       (this.isContentEmpty() && this.isFocused) ||
-      (this.preFocus && this.isContentEmpty())
+      (this.preFocus && this.isContentEmpty()) ||
+      (this.forceFocus && this.isContentEmpty())
     );
   }
 
@@ -319,6 +326,9 @@ export abstract class BaseTextElementComponent
     if (textBlocks?.length === 0) return;
     let contentId = this.content.id;
     for (const blocks of textBlocks) {
+      if (!this.facade.contentEditorContent.isCanAddContent) {
+        break;
+      }
       const textType = this.getType(blocks);
       const newTextContent = this.facade.contentEditorTextService.insertNewContent(
         contentId,
@@ -382,6 +392,9 @@ export abstract class BaseTextElementComponent
     if (textBlocks?.length === 0) return;
     let contentId = this.content.id;
     for (const blocks of textBlocks) {
+      if (!this.facade.contentEditorContent.isCanAddContent) {
+        break;
+      }
       const newTextContent = this.facade.contentEditorTextService.insertNewContent(
         contentId,
         NoteTextTypeENUM.default,
@@ -439,7 +452,11 @@ export abstract class BaseTextElementComponent
       this.onSelectStart(e);
     });
     const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e) => {
-      this.enter(e);
+      if (this.facade.contentEditorContent.isCanAddContent) {
+        this.enter(e);
+      } else {
+        e.preventDefault();
+      }
     });
     const keydownBackspace = this.facade.renderer.listen(el, 'keydown.backspace', (e) => {
       this.checkForDeleteOrConcatWithPrev(e);
@@ -481,10 +498,10 @@ export abstract class BaseTextElementComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backUp(e) {}
+  backUp(e) { }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onBlur(e) {}
+  onBlur(e) { }
 
   textClick(e: MouseEvent): void {
     this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
@@ -553,7 +570,7 @@ export abstract class BaseTextElementComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSelectStart(e) {}
+  onSelectStart(e) { }
 
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;

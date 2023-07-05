@@ -2,10 +2,11 @@
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
+using Noots.Notes.Entities;
 
 namespace Noots.Notes.Commands
 {
-    public class CopyNoteCommand : BaseCommandEntity, IRequest<OperationResult<List<Guid>>>
+    public class CopyNotesCommand : BaseCommandEntity, IRequest<OperationResult<List<CopyNoteResult>>>
     {
         [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
@@ -13,7 +14,7 @@ namespace Noots.Notes.Commands
         public Guid? FolderId { set; get; }
 
 
-        public CopyNoteCommand(Guid userId) : base(userId)
+        public CopyNotesCommand(Guid userId) : base(userId)
         {
 
         }

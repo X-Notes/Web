@@ -34,7 +34,11 @@ public class SetDeleteNoteCommandHandler : IRequestHandler<SetDeleteNoteCommand,
         var notesOwner = permissions.Where(x => !x.perm.NoteNotFound && x.perm.IsOwner).Select(x => x.perm.Note).ToList();
         if (notesOwner.Any())
         {
-            notesOwner.ForEach(x => x.ToType(NoteTypeENUM.Deleted, DateTimeProvider.Time));
+            notesOwner.ForEach(x =>
+            {
+                x.ToType(NoteTypeENUM.Deleted, DateTimeProvider.Time);
+                x.SetDateAndVersion();
+            });
             await noteRepository.UpdateRangeAsync(notesOwner);
             processedIds = notesOwner.Select(x => x.Id).ToList();
         }

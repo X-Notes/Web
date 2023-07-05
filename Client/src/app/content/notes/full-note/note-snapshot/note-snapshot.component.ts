@@ -13,6 +13,7 @@ import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 
 @Component({
   selector: 'app-note-snapshot',
@@ -29,6 +30,9 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
   @Select(NoteStore.snapshotNote)
   public snapshotNote$: Observable<NoteSnapshot>;
 
+  @Select(UserStore.getUser)
+  user$: Observable<ShortUser>;
+  
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
 

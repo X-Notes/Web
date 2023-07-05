@@ -5,8 +5,8 @@ import { BehaviorSubject, interval } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import {
   syncEditorIntervalDelay,
-  processSyncEditorIntervalDelay,
   syncEditorStateIntervalDelay,
+  syncNoteStateIntervalDelay,
 } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
@@ -36,6 +36,13 @@ import { TextDiff } from '../entities/text/text-diff';
 import { ParentInteraction, ParentInteractionCollection, ParentInteractionHTML } from '../components/parent-interaction.interface';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { SelectionService } from '../ui-services/selection.service';
+import { EditorOptions } from '../entities-ui/editor-options';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
+import { UpdateFullNote, UpdateNoteTitleState } from 'src/app/content/notes/state/notes-actions';
+import { Label } from 'src/app/content/labels/models/label.model';
+import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -58,11 +65,7 @@ export class ContentEditorSyncService {
 
   intervalSyncState = interval(syncEditorStateIntervalDelay);
 
-  private noteId: string;
-
-  private folderId: string;
-
-  private isEdit = false;
+  intervalSyncNoteState = interval(syncNoteStateIntervalDelay);
 
   private updateSubject: BehaviorSubject<boolean>;
 
@@ -73,6 +76,10 @@ export class ContentEditorSyncService {
 
   private isProcessChanges = false;
 
+  options$: BehaviorSubject<EditorOptions>;
+
+  private isEdit = false;
+
   constructor(
     private contentService: ContentEditorContentsService,
     private apiContent: ApiNoteContentService,
@@ -82,6 +89,7 @@ export class ContentEditorSyncService {
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
     private apiPhotos: ApiPhotosService,
+    private apiNotes: ApiServiceNotes,
     private snackService: SnackBarWrapperService,
     private translateService: TranslateService,
     public dc: DestroyComponentService,
@@ -94,40 +102,75 @@ export class ContentEditorSyncService {
     return this.isEdit && !this.contentService.isRendering;
   }
 
+  get userId(): string {
+    return this.options$.getValue().userId;
+  }
+
+  get noteId(): string {
+    return this.options$.getValue().noteId;
+  }
+
+  get folderId(): string {
+    return this.options$.getValue().folderId;
+  }
+
   initTimers(): void {
-    this.intervalSync.pipe(takeUntil(this.dc.d$)).subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.isCanBeProcessed)).subscribe(async () => {
-      const state = this.contentService.getEditorStateDiffs();
-      try {
-        const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
-        if (!stateUpdates.success) return;
-        if (stateUpdates.data.idsToDelete?.length > 0) {
-          this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
-        }
-        let isStructureUpdate = false;
-        if (stateUpdates.data?.contentsToUpdate?.length > 0) {
-          for (const content of stateUpdates.data.contentsToUpdate) {
-            if (content.typeId === ContentTypeENUM.Text) {
-              this.updateText(content as BaseText);
-            } else {
-              this.updateCollection(content as BaseCollection<BaseFile>);
-            }
-          }
-          isStructureUpdate = true;
-        }
-        if (stateUpdates.data?.contentsToAdd?.length > 0) {
-          for (const content of stateUpdates.data.contentsToAdd) {
-            this.contentService.insertInto(content, content.order, true);
-          }
-          isStructureUpdate = true;
-        }
-        if (isStructureUpdate) {
-          this.contentService.sortByOrder(true);
-        }
-      } catch (e) {
-        console.error(e);
+    this.intervalSync.pipe(takeUntil(this.dc.d$))
+      .subscribe(() => this.change());
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.userId && !this.contentService.isRendering))
+      .subscribe(() => this.processSyncState());
+    this.intervalSyncNoteState.pipe(takeUntil(this.dc.d$), filter(() => !!this.userId))
+      .subscribe(() => this.processSyncNoteState());
+  }
+
+  async processSyncNoteState() {
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    try {
+      const state = await this.apiNotes.syncNoteState(note.id, note.version).toPromise();
+      if (state.success && state.data) {
+        this.store.dispatch(new UpdateFullNote({
+          color: state.data.color,
+          version: state.data.version,
+          labels: state.data.labels.map((x) => new Label(x))
+        }, state.data.noteId));
+        this.store.dispatch(new UpdateNoteTitleState(state.data.title, state.data.noteId));
       }
-    });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async processSyncState() {
+    const state = this.contentService.getEditorStateDiffs();
+    try {
+      const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
+      if (!stateUpdates.success) return;
+      if (stateUpdates.data.idsToDelete?.length > 0) {
+        this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
+      }
+      let isStructureUpdate = false;
+      if (stateUpdates.data?.contentsToUpdate?.length > 0) {
+        for (const content of stateUpdates.data.contentsToUpdate) {
+          if (content.typeId === ContentTypeENUM.Text) {
+            this.updateText(content as BaseText);
+          } else {
+            this.updateCollection(content as BaseCollection<BaseFile>);
+          }
+        }
+        isStructureUpdate = true;
+      }
+      if (stateUpdates.data?.contentsToAdd?.length > 0) {
+        for (const content of stateUpdates.data.contentsToAdd) {
+          this.contentService.insertInto(content, content.order, true);
+        }
+        isStructureUpdate = true;
+      }
+      if (isStructureUpdate) {
+        this.contentService.sortByOrder(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   updateText(text: BaseText): void {
@@ -159,15 +202,13 @@ export class ContentEditorSyncService {
     }
   }
 
-  initRead(noteId: string, folderId: string): void {
-    this.noteId = noteId;
-    this.folderId = folderId;
+  initRead(options$: BehaviorSubject<EditorOptions>): void {
+    this.options$ = options$;
   }
 
-  initEdit(noteId: string, folderId: string): void {
+  initEdit(options$: BehaviorSubject<EditorOptions>): void {
     this.isEdit = true;
-    this.noteId = noteId;
-    this.folderId = folderId;
+    this.options$ = options$;
 
     this.destroyAndInitSubject();
 
@@ -175,7 +216,7 @@ export class ContentEditorSyncService {
       .pipe(
         takeUntil(this.dc.d$),
         filter((x) => x === true && !this.isProcessChanges),
-        debounceTime(processSyncEditorIntervalDelay),
+        debounceTime(syncEditorIntervalDelay / 2),
       )
       .subscribe(async () => {
         await this.processChanges();
@@ -216,7 +257,7 @@ export class ContentEditorSyncService {
   private async processChanges() {
     this.isProcessChanges = true;
     try {
-      if(this.isCanBeProcessed){
+      if (this.isCanBeProcessed) {
         await this.processStructureChanges();
       }
       await Promise.all([this.processTextsChanges(), this.processFileEntities()]);
@@ -240,6 +281,10 @@ export class ContentEditorSyncService {
         this.store.dispatch(LoadUsedDiskSpace);
       }
       this.onStructureSync$.next(resp.data);
+    }
+    if(!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
+      const message = this.translateService.instant('snackBar.maxContents');
+      this.store.dispatch(new ShowSnackNotification(message, 10000));
     }
   }
 

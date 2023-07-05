@@ -215,7 +215,7 @@ namespace Noots.Mapper.Mapping
                 Contents = MapContentsToContentsDTO(relation.RelatedNote.Contents, relation.RelatedNote.UserId).ToList(),
                 DeletedAt = relation.RelatedNote.DeletedAt,
                 CreatedAt = relation.RelatedNote.CreatedAt,
-                UpdatedAt = relation.RelatedNote.UpdatedAt
+                UpdatedAt = relation.RelatedNote.UpdatedAt,
             };
         }
 
@@ -236,7 +236,8 @@ namespace Noots.Mapper.Mapping
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt,
-                IsCanEdit = isCanEdit
+                IsCanEdit = isCanEdit,
+                Version = note.Version,
             };
         }
 
@@ -256,7 +257,8 @@ namespace Noots.Mapper.Mapping
                 IsSelected = ids.Contains(note.Id),
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
+                UpdatedAt = note.UpdatedAt,
+                Version = note.Version,
             };
             return result;
         }
@@ -339,7 +341,8 @@ namespace Noots.Mapper.Mapping
                 FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId,
                 IsCanEdit = isCanEdit,
-                PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
+                PreviewNotes = MapNotesToNotesPreviewInFolder(notes),
+                Version = folder.Version,
             };
         }
 
@@ -356,7 +359,8 @@ namespace Noots.Mapper.Mapping
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
                 FolderTypeId = folder.FolderTypeId,
-                RefTypeId = folder.RefTypeId
+                RefTypeId = folder.RefTypeId,
+                Version = folder.Version,
             };
         }
     }

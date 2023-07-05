@@ -36,7 +36,7 @@ public class ChangeColorFolderCommandHandler : IRequestHandler<ChangeColorFolder
             foreach (var folder in foldersForUpdate)
             {
                 folder.Color = request.Color;
-                folder.UpdatedAt = DateTimeProvider.Time;
+                folder.SetDateAndVersion();
             }
 
             await folderRepository.UpdateRangeAsync(foldersForUpdate);

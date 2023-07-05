@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Common.DatabaseModels.Models.Folders;
@@ -19,6 +20,8 @@ namespace Common.DatabaseModels.Models.Notes
     [Table(nameof(Note), Schema = SchemeConfig.Note)]
     public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote
     {
+        public int _version;
+
         public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
 
@@ -28,6 +31,20 @@ namespace Common.DatabaseModels.Models.Notes
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }
+
+        [Range(1, int.MaxValue)]
+        public int Version
+        {
+            get
+            {
+                return this._version;
+            }
+            set
+            {
+                if (value <= 0) throw new Exception("Value cannot be 0");
+                this._version = value;
+            }
+        }
 
         [NotMapped]
         public bool IsLocked { get => !string.IsNullOrEmpty(Password); }
@@ -67,11 +84,16 @@ namespace Common.DatabaseModels.Models.Notes
             return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Select(x => x as CollectionNote);
         }
 
+        public void SetDateAndVersion()
+        {
+            UpdatedAt = DateTimeProvider.Time;
+            Version++;
+        }
+
         public void ToType(NoteTypeENUM noteTypeId, DateTimeOffset? deletedAt = null)
         {
             DeletedAt = deletedAt;
             NoteTypeId = noteTypeId;
-            UpdatedAt = DateTimeProvider.Time;
         }
 
         public bool IsShared() => NoteTypeId == NoteTypeENUM.Shared;

@@ -346,7 +346,10 @@
     "noItemInExport": "Sammlung ist leer",
     "subscriptionCreationError": "Das Erstellungslimit für dieses Abonnement wurde überschritten",
     "subscriptionMaxNotesError": "maximal {{count}} Scheine für dieses Abonnement",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "reconnection": "Wiederverbindung",
+    "reconnected": "Wieder verbunden",
+    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten"
   },
   "titles": {
     "labels": "Etiketten",
@@ -384,7 +387,10 @@
     "history-all": "Gesamte Notizhistorie",
     "personalization": "Personalisierungseinstellungen",
     "per-month": "pro Monat",
-    "upgrade": "Update"
+    "upgrade": "Update",
+    "backgrounds": "{{count}} hintergründe",
+    "maxUserAtSameTimeOnNote": "{{count}} benutzer gleichzeitig auf eine Notiz setzen",
+    "maxUserAtSameTimeOnFolder": "{{count}} benutzer gleichzeitig auf einen Ordner zugreifen"
   },
   "files": {
     "noAccessRightsNote": "Keine Berechtigung zum Hochladen von Dateien, die notiert werden sollen",

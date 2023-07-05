@@ -1,4 +1,5 @@
-﻿using Common.DTO;
+﻿using Common.DatabaseModels.Models.Folders;
+using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Commands;
@@ -23,10 +24,11 @@ public class UpdatePositionsFoldersCommandHandler : IRequestHandler<UpdatePositi
         {
             request.Positions.ForEach(x =>
             {
-                var folder = folders.FirstOrDefault(z => z.Id == x.EntityId); 
+                var folder = folders.FirstOrDefault(q => q.Id == x.EntityId); 
                 if (folder != null)
                 {
                     folder.Order = x.Position;
+                    folder.SetDateAndVersion();
                 }
             });
 

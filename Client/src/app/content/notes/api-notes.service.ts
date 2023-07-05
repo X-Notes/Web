@@ -12,7 +12,6 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { SmallNote } from './models/small-note.model';
 import { Notes } from './state/notes.model';
 import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
-import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
 import {
@@ -21,6 +20,8 @@ import {
 } from '../long-term-operations-handler/models/long-term-operation';
 import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
+import { CopyNoteResult } from './models/copy-note-result';
+import { SyncNoteResult } from './models/sync-note-result';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -69,6 +70,18 @@ export class ApiServiceNotes {
     };
     return this.httpClient.post<BottomNoteContent[]>(
       `${environment.writeAPI}/api/note/additional`,
+      obj,
+    );
+  }
+
+  syncNoteState(noteId: string, version: number, folderId?: string) {
+    const obj = {
+      noteId,
+      folderId,
+      version,
+    };
+    return this.httpClient.patch<OperationResult<SyncNoteResult>>(
+      `${environment.writeAPI}/api/note/sync/state`,
       obj,
     );
   }
@@ -147,7 +160,7 @@ export class ApiServiceNotes {
       folderId,
     };
     return this.httpClient
-      .patch<OperationResult<string[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
+      .patch<OperationResult<CopyNoteResult[]>>(`${environment.writeAPI}/api/note/copy`, obj, {
         reportProgress: true,
         observe: 'events',
       })

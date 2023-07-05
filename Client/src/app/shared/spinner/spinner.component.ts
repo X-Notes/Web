@@ -15,6 +15,8 @@ export class SpinnerComponent {
 
   @Input() size?: number;
 
+  @Input() isBackground = true;
+
   @HostBinding('style.--target-color')
   @Input()
   color?: string;

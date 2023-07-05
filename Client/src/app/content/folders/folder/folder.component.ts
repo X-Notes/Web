@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -11,6 +11,7 @@ import { FolderStore } from '../state/folders-state';
 import { SmallFolder } from '../models/folder.model';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-folder',
@@ -20,6 +21,9 @@ import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @ViewChild('folderTitle', { read: ElementRef }) folderTitleEl: ElementRef<HTMLInputElement>;
 
   @Input() date: Date;

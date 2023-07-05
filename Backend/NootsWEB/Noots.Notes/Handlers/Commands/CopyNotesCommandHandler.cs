@@ -7,6 +7,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
+using Common.RegexHelpers;
 using MediatR;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Folders;
@@ -17,13 +18,15 @@ using Noots.DatabaseContext.Repositories.Users;
 using Noots.Editor.Services;
 using Noots.Encryption.Impl;
 using Noots.Notes.Commands;
+using Noots.Notes.Entities;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 using Noots.Storage.Entities;
 
 namespace Noots.Notes.Handlers.Commands;
 
-public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, OperationResult<List<Guid>>>
+public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, OperationResult<List<CopyNoteResult>>>,
+                                       IRequestHandler<CopyFolderNotesCommand, OperationResult<List<CopyNoteResult>>>
 {
     private readonly IMediator mediator;
     private readonly FoldersNotesRepository foldersNotesRepository;
@@ -35,7 +38,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
     private readonly BillingPermissionService billingPermissionService;
     private readonly UserRepository userRepository;
 
-    public CopyNoteCommandHandler(
+    public CopyNotesCommandHandler(
         IMediator _mediator, 
         FoldersNotesRepository foldersNotesRepository,
         NoteRepository noteRepository,
@@ -57,9 +60,9 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         this.userRepository = userRepository;
     }
     
-    public async Task<OperationResult<List<Guid>>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
+    public async Task<OperationResult<List<CopyNoteResult>>> Handle(CopyNotesCommand request, CancellationToken cancellationToken)
     {
-        var resultIds = new List<Guid>();
+        var results = new List<CopyNoteResult>();
 
         List<Guid> idsForCopy = new();
         User caller = null;
@@ -76,7 +79,7 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
             }
             else
             {
-                return new OperationResult<List<Guid>>().SetNoPermissions();
+                return new OperationResult<List<CopyNoteResult>>().SetNoPermissions();
             }
         }
         else
@@ -93,13 +96,13 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
 
         if (!idsForCopy.Any() || caller == null)
         {
-            return new OperationResult<List<Guid>>().SetNotFound();
+            return new OperationResult<List<CopyNoteResult>>().SetNotFound();
         }
 
         var availableNotes = await billingPermissionService.GetAvailableCountNotes(request.UserId);
         if (idsForCopy.Count > availableNotes)
         {
-            return new OperationResult<List<Guid>>().SetBillingError();
+            return new OperationResult<List<CopyNoteResult>>().SetBillingError();
         }
 
         var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
@@ -118,14 +121,14 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
 
             var newNote = new Note()
             {
-                Title = noteForCopy.Title + " (1)",
+                Title = GetTitle(noteForCopy.Title),
                 Color = noteForCopy.Color,
                 CreatedAt = DateTimeProvider.Time,
-                UpdatedAt = DateTimeProvider.Time,
                 NoteTypeId = NoteTypeENUM.Private,
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+            newNote.SetDateAndVersion();
             var dbNote = await noteRepository.AddAsync(newNote);
 
             if (isNoteOwner)
@@ -147,12 +150,76 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
             var fileIdsToLink = contents.SelectMany(x => x.GetInternalFilesIds()).ToHashSet();
             await collectionLinkedService.TryLink(fileIdsToLink);
 
-            resultIds.Add(dbNote.Entity.Id);
+            var res = new CopyNoteResult { NewId = dbNote.Entity.Id, PreviousId = noteForCopy.Id };
+            results.Add(res);
         }
 
-        return new OperationResult<List<Guid>>(true, resultIds);
+        return new OperationResult<List<CopyNoteResult>>(true, results);
     }
-    
+
+    public async Task<OperationResult<List<CopyNoteResult>>> Handle(CopyFolderNotesCommand request, CancellationToken cancellationToken)
+    {
+        if (request.Ids == null || !request.Ids.Any())
+        {
+            return new OperationResult<List<CopyNoteResult>>().SetNotFound();
+        }
+
+        var results = new List<CopyNoteResult>();
+
+        var notesForCopy = await noteRepository.GetNotesWithContent(request.Ids);
+        foreach (var noteForCopy in notesForCopy)
+        {
+            var isNoteOwner = noteForCopy.UserId == request.UserId;
+
+            if (noteForCopy.IsLocked)
+            {
+                var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
+                if (!isUnlocked)
+                {
+                    continue;
+                }
+            }
+
+            var newNote = new Note()
+            {
+                Title = noteForCopy.Title,
+                Color = noteForCopy.Color,
+                CreatedAt = DateTimeProvider.Time,
+                NoteTypeId = NoteTypeENUM.Private,
+                RefTypeId = noteForCopy.RefTypeId,
+                UserId = request.UserId,
+            };
+            newNote.SetDateAndVersion();
+
+            var dbNote = await noteRepository.AddAsync(newNote);
+
+            if (isNoteOwner)
+            {
+                var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
+                {
+                    NoteId = dbNote.Entity.Id,
+                    LabelId = label.LabelId,
+                    AddedAt = DateTimeProvider.Time
+                });
+                await labelsNotesRepository.AddRangeAsync(labels);
+            }
+
+            // COPY CONTENTS
+            var contents = await CopyContentAsync(noteForCopy.Contents, dbNote.Entity.Id, noteForCopy.UserId, request.Caller);
+            await baseNoteContentRepository.AddRangeAsync(contents);
+
+            // LINK FILES
+            var fileIdsToLink = contents.SelectMany(x => x.GetInternalFilesIds()).ToHashSet();
+            await collectionLinkedService.TryLink(fileIdsToLink);
+
+            var res = new CopyNoteResult { NewId = dbNote.Entity.Id, PreviousId = noteForCopy.Id };
+            results.Add(res);
+        }
+
+        return new OperationResult<List<CopyNoteResult>>(true, results);
+    }
+
+
     public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, Guid noteId, Guid authorId, User caller)
     {
         var isOwner = authorId == caller.Id;
@@ -212,5 +279,21 @@ public class CopyNoteCommandHandler : IRequestHandler<CopyNoteCommand, Operation
         }
 
         throw new ArgumentException("Incorrect type");
+    }
+
+    private string GetTitle(string title)
+    {
+        if (string.IsNullOrEmpty(title))
+        {
+            return null;
+        }
+
+        var res = title.EndsWithNumber();
+        if (res.end)
+        {
+            return title.RemoveLastParentheses() + $" ({res.number + 1})";
+        }
+
+        return title + " (1)";
     }
 }

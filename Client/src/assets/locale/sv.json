@@ -346,7 +346,10 @@
     "noItemInExport": "Samlingen är tom",
     "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits.",
     "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration",
-    "copied": "Kopierad"
+    "copied": "Kopierad",
+    "reconnection": "Återanslutning",
+    "reconnected": "Återansluten",
+    "maxContents": "Antalet element i noten har överskridits"
   },
   "titles": {
     "labels": "Etiketter",
@@ -384,7 +387,10 @@
     "history-all": "All anteckningshistorik",
     "personalization": "Inställningar för anpassning",
     "per-month": "per månad",
-    "upgrade": "Uppgradera"
+    "upgrade": "Uppgradera",
+    "backgrounds": "{{count}} bakgrunder",
+    "maxUserAtSameTimeOnNote": "{{count}} användare på en lapp samtidigt",
+    "maxUserAtSameTimeOnFolder": "{{count}} användare på en mapp samtidigt"
   },
   "files": {
     "noAccessRightsNote": "Ingen behörighet att ladda upp filer att notera",

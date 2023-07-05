@@ -77,6 +77,11 @@ export class AuthService {
     return user?.getIdToken(refresh);
   }
 
+  async getTokenRefreshed(): Promise<string | undefined> {
+    const user = await this.afAuth.currentUser;
+    return user?.getIdToken(true);
+  }
+
   async refreshToken(): Promise<void> {
     const user = await this.afAuth.currentUser;
     await user?.getIdToken(true);

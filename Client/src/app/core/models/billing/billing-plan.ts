@@ -13,6 +13,12 @@ export class BillingPlan {
 
   maxRelatedNotes!: number;
 
+  maxUserAtSameTimeOnNote!: number;
+
+  maxUserAtSameTimeOnFolder!: number;
+
+  maxBackgrounds!: number;
+
   name!: string;
 
   price!: number;

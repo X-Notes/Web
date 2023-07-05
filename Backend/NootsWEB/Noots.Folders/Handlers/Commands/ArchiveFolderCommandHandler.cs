@@ -26,7 +26,11 @@ public class ArchiveFolderCommandHandler : IRequestHandler<ArchiveFolderCommand,
         var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
         if (folders.Any())
         {
-            folders.ForEach(x => x.ToType(FolderTypeENUM.Archived));
+            folders.ForEach(x =>
+            {
+                x.ToType(FolderTypeENUM.Archived);
+                x.SetDateAndVersion();
+            });
             await folderRepository.UpdateRangeAsync(folders);
 
             return new OperationResult<Unit>(true, Unit.Value);

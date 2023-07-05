@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { PublicUser } from './public-action';
+import { GetPublicUser } from './public-action';
 import { PublicAPIService } from '../services/public-api.service';
 import { ShortUserPublic } from '../interfaces/short-user-public.model';
 
@@ -24,8 +24,8 @@ export class PublicStore {
     return state.owner;
   }
 
-  @Action(PublicUser)
-  async fetchUser({ patchState }: StateContext<UserState>, { id }: PublicUser) {
+  @Action(GetPublicUser)
+  async fetchUser({ patchState }: StateContext<UserState>, { id }: GetPublicUser) {
     const { data } = await this.api.getPublicUser(id).toPromise();
     patchState({ owner: data });
   }

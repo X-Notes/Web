@@ -3,7 +3,7 @@
     <p>{{ title | translate }}</p>
     <div class="buttons">
       <div class="mini-spinner" *ngIf="operation.isHeaderSpinnerActive">
-        <app-spinner [size]="16"></app-spinner>
+        <app-spinner [size]="16" [isBackground]="false"></app-spinner>
       </div>
       <div
         *ngIf="operation.isDetailViewActive"
@@ -36,7 +36,7 @@
         <div class="procent-info">
           <p *ngIf="item.isShowProcents" class="procent">{{ item.procent }}%</p>
           <div class="spinner-container">
-            <app-spinner [size]="16"></app-spinner>
+            <app-spinner [size]="16" [isBackground]="false"></app-spinner>
           </div>
         </div>
       </div>

@@ -90,8 +90,7 @@ import { ContentEditorContentsService } from './ui-services/contents/content-edi
 })
 export class ContentEditorComponent
   extends EditorCollectionsComponent
-  implements OnInit, AfterViewInit, OnChanges, OnDestroy
-{
+  implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SelectionDirective) selectionDirective?: SelectionDirective;
 
   @ViewChild(MenuSelectionDirective) menuSelectionDirective?: MenuSelectionDirective;
@@ -119,6 +118,8 @@ export class ContentEditorComponent
   textType = NoteTextTypeENUM;
 
   options?: TextEditMenuOptions;
+
+  emptyFocus = false;
 
   ngForSubject = new Subject<void>(); // for lazy loading
 
@@ -210,12 +211,12 @@ export class ContentEditorComponent
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
-    if (this.isReadOnlyMode) {
+    if (!this.options$.getValue().userId) {
       this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initRead(this.noteId, this.folderId);
+      this.facade.contentEditorSyncService.initRead(this.options$);
     } else {
       this.facade.contentsService.initEdit(contents, this.progressiveLoading);
-      this.facade.contentEditorSyncService.initEdit(this.noteId, this.folderId);
+      this.facade.contentEditorSyncService.initEdit(this.options$);
     }
 
     if (contents.length === 0) {
@@ -225,21 +226,27 @@ export class ContentEditorComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.noteId && changes.noteId.currentValue !== changes.noteId.previousValue) {
+      this.initTitle(this.title);
+      this.facade.momentoStateService.clear();
       this.titleInited = false;
     }
   }
 
   ngAfterViewInit(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
-    this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
-    this.webSocketsUpdaterService.tryJoinToNote(this.noteId);
-    this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
-    this.facade.selectionService.onSelectChanges$
-      .pipe(takeUntil(this.facade.dc.d$))
-      .subscribe(() => {
-        this.options = this.buildMenuOptions();
-        this.facade.cdr.detectChanges();
-      });
+    if (!this.options$.getValue().isReadOnlyMode) {
+      this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
+      this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
+      this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
+      this.facade.selectionService.onSelectChanges$
+        .pipe(takeUntil(this.facade.dc.d$))
+        .subscribe(() => {
+          this.options = this.buildMenuOptions();
+          this.facade.cdr.detectChanges();
+        });
+    }
+    if (this.options$.getValue().noteId && this.options$.getValue().connectToNote && this.options$.getValue().userId) {
+      this.webSocketsUpdaterService.tryJoinToNote(this.options$.getValue().noteId);
+    }
   }
 
   buildMenuOptions(): TextEditMenuOptions {
@@ -264,7 +271,9 @@ export class ContentEditorComponent
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
     this.muuriService.resetToDefaultOpacity();
-    this.webSocketsUpdaterService.leaveNote(this.noteId);
+    if (this.options$.getValue().noteId && this.options$.getValue().userId) {
+      this.webSocketsUpdaterService.leaveNote(this.options$.getValue().noteId);
+    }
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
     this.facade.store.dispatch(ClearCursorsAction);
@@ -272,12 +281,13 @@ export class ContentEditorComponent
   }
 
   ngOnInit(): void {
-    
+
     this.facade.clickableContentService.cursorUpdatingActive = this.cursorActive;
 
-    this.initTitle();
+    this.iniTitle(this.title);
+    this.initTitleSubscription();
     this.subscribeOnButtons();
-    this.facade.contentUpdateWsService.noteId = this.noteId;
+    this.facade.contentUpdateWsService.noteId = this.options$.getValue().noteId;
 
     this.ngForSubject.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
       this.facade.cdr.detectChanges();
@@ -296,7 +306,7 @@ export class ContentEditorComponent
   }
 
   subscribeOnButtons(): void {
-    if (this.isReadOnlyMode) {
+    if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
@@ -381,7 +391,7 @@ export class ContentEditorComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onScroll($event: Event): void {}
+  onScroll($event: Event): void { }
 
   enterHandler(value: EnterEvent) {
     const curEl = this.getHTMLElementById(value.contentId);
@@ -394,17 +404,16 @@ export class ContentEditorComponent
     const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent, newTextContent.content.id);
     this.facade.momentoStateService.saveToStack(action);
     this.facade.cdr.detectChanges();
-    setTimeout(() => {
-      const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
-      const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
-      el.updateContentsAndSync(contents);
-      el.setFocus();
-    });
+
+    const el = this.getElementByIndex<ParentInteractionHTML>(newTextContent.index);
+    const contents = DeltaConverter.convertHTMLToTextBlocks(value.breakModel.nextHtml);
+    el.updateContentsAndSync(contents, () => el.setFocus());
+    el.detectChanges();
   }
 
   deleteRowHandler(id: string): void {
     const res = this.facade.contentsService.getContentAndIndexById<BaseText>(id);
-    if(!res) return;
+    if (!res) return;
     const action = new RestoreTextAction(res.content, res.index);
     this.facade.momentoStateService.saveToStack(action);
     const index = this.facade.contentsService.deleteContent(id);
@@ -418,6 +427,11 @@ export class ContentEditorComponent
     const id = el.getContentId();
     const data = this.facade.contentsService.getContentAndIndexById<BaseText>(id);
     const indexPrev = data.index - 1;
+
+    if (indexPrev < 0) {
+      return;
+    }
+
     const prevContent = this.facade.contentsService.getContentByIndex<BaseText>(indexPrev);
 
     const prevElement = this.getHTMLElementById(prevContent.id);
@@ -430,15 +444,13 @@ export class ContentEditorComponent
 
     const action = new RestoreTextAction(data.content, data.index);
     this.facade.momentoStateService.saveToStack(action);
-    
-    prevElement.updateContentsAndSync(resContent);
+
+    prevElement.updateContentsAndSync(resContent, () => prevElement.setFocusToEnd());
     el.syncHtmlWithLayout();
-    
+    prevElement.detectChanges();
+
     this.facade.contentsService.deleteById(id, false);
 
-    setTimeout(() => {
-      prevElement.setFocusToEnd();
-    });
     this.postAction();
   }
 
@@ -502,12 +514,13 @@ export class ContentEditorComponent
       if (el) {
         setTimeout(() => { // need when to many elements updating at the same time and page is freezing
           const elLock = el;
-          elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta));
+          let actionRestore: () => void = null;
+          if (pos.selection) {
+            pos.selection.start = pos.selection.end;
+            actionRestore = () => elLock.restoreSelection(pos.selection);
+          }
+          elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta), actionRestore);
         }, 5);
-      }
-      if (pos.selection) {
-        pos.selection.start = pos.selection.end;
-        setTimeout(() => el.restoreSelection(pos.selection), 20);
       }
     }
     this.unSelectItems();
@@ -528,10 +541,10 @@ export class ContentEditorComponent
   }
 
   resetCursor(): void {
-    if (!this.noteId) return;
+    if (!this.options$.getValue().noteId) return;
     const color = this.facade.store.selectSnapshot(NoteStore.cursorColor);
     const cursor = new UpdateCursor(color).initNoneCursor();
-    this.facade.store.dispatch(new UpdateCursorAction(this.noteId, cursor));
+    this.facade.store.dispatch(new UpdateCursorAction(this.options$.getValue().noteId, cursor));
   }
 
   getIndexAndLengthForUpdateStyle(
@@ -573,7 +586,7 @@ export class ContentEditorComponent
   };
 
   placeHolderClick($event) {
-    if (this.isReadOnlyMode) {
+    if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
     $event.preventDefault();
@@ -586,12 +599,12 @@ export class ContentEditorComponent
   }
 
   mouseEnter($event): void {
-    this.last?.mouseEnter($event);
+    this.emptyFocus = true;
     this.last?.detectChanges();
   }
 
   mouseOut($event): void {
-    this.last?.mouseLeave($event);
+    this.emptyFocus = false;
     this.last?.detectChanges();
   }
 }

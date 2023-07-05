@@ -41,7 +41,7 @@ public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteComm
             foreach(var note in notesForUpdate)
             {
                 note.Color = request.Color;
-                note.UpdatedAt = DateTimeProvider.Time;
+                note.SetDateAndVersion();
             }
 
             await noteRepository.UpdateRangeAsync(notesForUpdate);

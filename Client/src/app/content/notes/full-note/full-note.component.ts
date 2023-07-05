@@ -19,6 +19,7 @@ import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -33,6 +34,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
 
+  @Select(UserStore.getUser)
+  user$: Observable<ShortUser>;
+  
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
 

@@ -8,9 +8,7 @@ import {
   OperationResultAdditionalInfo,
 } from '../../models/operation-result.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SnackBarHandlerStatusService {
   constructor(private store: Store, private translateService: TranslateService) {}
 

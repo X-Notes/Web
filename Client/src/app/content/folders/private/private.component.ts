@@ -33,6 +33,9 @@ export class PrivateComponent
 {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  @Select(UserStore.getUserFontSize)
+  public fontSize$?: Observable<EntitiesSizeENUM>;
+  
   @Select(FolderStore.privateCount)
   privateCount$: Observable<number>;
 
