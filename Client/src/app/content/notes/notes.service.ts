@@ -78,6 +78,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .select(UserStore.getPersonalizationSettings)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (pr) => {
+        if(!pr) return;
         if (this.prevSortedNoteByTypeId && this.prevSortedNoteByTypeId !== pr.sortedNoteByTypeId) {
           this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
           this.resetAndInitLayout();

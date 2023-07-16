@@ -798,6 +798,25 @@ namespace Noots.DatabaseContext.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Security.RefreshToken", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TokenString")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpireAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsProcessing")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("UserId", "TokenString");
+
+                    b.ToTable("RefreshToken", "sec");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Systems.FontSize", b =>
                 {
                     b.Property<int>("Id")
@@ -1703,6 +1722,17 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Security.RefreshToken", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Users.User", "User")
+                        .WithMany("Tokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.Background", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "File")
@@ -2094,6 +2124,8 @@ namespace Noots.DatabaseContext.Migrations
                     b.Navigation("PersonalizationSetting");
 
                     b.Navigation("RelatedNoteUserStates");
+
+                    b.Navigation("Tokens");
 
                     b.Navigation("UserHistories");
 

@@ -22,4 +22,5 @@ public interface IRepository<T, IdType> where T : BaseEntity<IdType>
     Task<List<T>> GetAllAsync();
     Task<List<T>> GetAllNoTrackAsync();
     Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate);
+    Task<List<T>> GetWhereAsNoTrackingAsync(Expression<Func<T, bool>> predicate);
 }

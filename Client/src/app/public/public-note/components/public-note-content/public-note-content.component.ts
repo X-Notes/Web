@@ -10,7 +10,7 @@ import { GetPublicUser } from '../../../storage/public-action';
 import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { take, takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -52,10 +52,6 @@ export class PublicNoteContentComponent implements OnInit, OnDestroy {
 
   private routeSubscription: Subscription;
 
-  get redirectUrl(): string {
-    return this.folderId ? `folders/${this.folderId}/${this.noteId}` : `notes/${this.noteId}`;
-  }
-
   constructor(
     private readonly route: ActivatedRoute,
     private store: Store,
@@ -69,13 +65,7 @@ export class PublicNoteContentComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-    this.store.select(NoteStore.fullNoteState).pipe(takeUntil(this.destroy)).subscribe((state) => {
-      if (state?.isCanView) {
-        this.authService.redirectOnSuccessAuth(this.redirectUrl);
-      }
-    });
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy() {
     this.destroy.next();

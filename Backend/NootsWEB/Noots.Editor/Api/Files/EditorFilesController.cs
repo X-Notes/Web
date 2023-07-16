@@ -6,6 +6,7 @@ using Common.DTO;
 using Common.DTO.Files;
 using Common.Filters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Editor.Commands.Files;
@@ -16,6 +17,7 @@ namespace Noots.Editor.Api.Files;
 
 [Route("api/editor/files")]
 [ApiController]
+[Authorize]
 public class EditorFilesController : ControllerBase
 {
 

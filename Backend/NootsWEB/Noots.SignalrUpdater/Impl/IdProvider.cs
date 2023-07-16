@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Common;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Noots.SignalrUpdater.Impl
 {
@@ -6,7 +7,7 @@ namespace Noots.SignalrUpdater.Impl
     {
         public virtual string GetUserId(HubConnectionContext connection)
         {
-            return connection.User.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+            return connection.User.Claims.FirstOrDefault(x => x.Type == ConstClaims.UserId)?.Value;
         }
     }
 }

@@ -27,30 +27,23 @@ export class UserAPIService {
     private httpClient: HttpClient,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
     protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-  ) {}
+  ) { }
 
-  verifyToken(token: string) {
+  logout() {
+    return this.httpClient.post<OperationResult<void>>(`${environment.writeAPI}/api/auth/logout`, null);
+  }
+
+  refreshToken() {
+    return this.httpClient.post<OperationResult<boolean>>(`${environment.writeAPI}/api/auth/refresh`, null);
+  }
+
+  googleLogin(token: string) {
     const value: Token = {
       token,
     };
     return this.httpClient.post<OperationResult<void>>(
-      `${environment.writeAPI}/api/auth/verify`,
+      `${environment.writeAPI}/api/auth/google/login`,
       value,
-    );
-  }
-
-  setTokenClaims() {
-    return this.httpClient.get<OperationResult<void>>(`${environment.writeAPI}/api/auth/set`);
-  }
-
-  tryGetFromAuthorize() {
-    return this.httpClient.get(`${environment.writeAPI}/api/auth/get`);
-  }
-
-  newUser(user: User) {
-    return this.httpClient.post<OperationResult<ShortUser>>(
-      `${environment.writeAPI}/api/user`,
-      user,
     );
   }
 

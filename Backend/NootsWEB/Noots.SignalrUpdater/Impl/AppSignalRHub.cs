@@ -233,7 +233,7 @@ public class AppSignalRHub : Hub
         }
     }
 
-    public override async Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await base.OnDisconnectedAsync(exception);
         await RemoveConnectionAsync();

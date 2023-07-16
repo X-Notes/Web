@@ -47,6 +47,11 @@ namespace Noots.API.Workers.Hosted
             RecurringJob.AddOrUpdate<RemoveDeadWSConnectionsHandler>(JobNames.RemoveDeadWSConnections, x => x.Handle(), Delay);
         }
 
+        public void RemoveExpiredTokens()
+        {
+            RecurringJob.AddOrUpdate<RemoveExpiredTokensHandler>(JobNames.RemoveExpiredTokens, x => x.Handle(), Delay);
+        }
+
         public void IndexTextContent()
         {
             RecurringJob.AddOrUpdate<IndexTextNoteContentJobHandler>(JobNames.IndexTexts, x => x.Handle(), Delay);
@@ -62,6 +67,7 @@ namespace Noots.API.Workers.Hosted
             UnLinkedFilesDelete();
             RemoveDeadWSConnections();
             IndexTextContent();
+            RemoveExpiredTokens();
 
             return Task.CompletedTask;
         }

@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
+using Common.DatabaseModels.Models.Security;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DatabaseModels.Models.WS;
@@ -70,5 +71,7 @@ namespace Common.DatabaseModels.Models.Users
         public Storage Storage { get; set; }
 
         public List<RelatedNoteUserState> RelatedNoteUserStates { set; get; }
+
+        public List<RefreshToken> Tokens { set; get; } 
     }
 }

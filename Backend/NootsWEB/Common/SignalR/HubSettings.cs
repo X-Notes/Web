@@ -1,4 +1,4 @@
-﻿namespace Noots.SignalrUpdater;
+﻿namespace Common.SignalR;
 
 public static class HubSettings
 {

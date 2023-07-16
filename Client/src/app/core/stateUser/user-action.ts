@@ -4,12 +4,9 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Background } from '../models/background.model';
 import { BillingPlanId } from '../models/billing/billing-plan-id.enum';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
-import { User } from '../models/user/user.model';
 
 export class Auth {
   static type = '[User] Auth User';
-
-  constructor(public user: User) {}
 }
 
 export class Logout {

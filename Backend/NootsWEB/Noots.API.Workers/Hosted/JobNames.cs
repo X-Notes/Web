@@ -16,6 +16,8 @@
 
         public static string RemoveDeadWSConnections = "RemoveDeadWSConnections";
 
+        public static string RemoveExpiredTokens = "RemoveExpiredTokens";
+
         public static string IndexTexts = "IndexTexts";
     }
 }

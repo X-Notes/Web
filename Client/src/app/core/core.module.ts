@@ -8,9 +8,6 @@ import {
   MissingTranslationHandlerParams,
 } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { environment } from 'src/environments/environment';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { UserAPIService } from './user-api.service';
 import { TokenInterceptorService } from './token-interceptor.service';
 import { ApiServiceLabels } from '../content/labels/api-labels.service';
@@ -46,8 +43,6 @@ export class MissingTranslationService implements MissingTranslationHandler {
   imports: [
     CommonModule,
     HttpClientModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

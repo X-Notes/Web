@@ -25,21 +25,6 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpPost]
-    public async Task<OperationResult<UserDTO>> Authorize(NewUserCommand command)
-    {
-        command.Email = this.GetUserEmail();
-        var res = await _mediator.Send(command);
-
-        if (!res.Success)
-        {
-            return new OperationResult<UserDTO>().SetAnotherError();
-            ;
-        }
-
-        return await _mediator.Send(new GetUserDTOQuery(res.Data));
-    }
-
     [HttpGet("short/{id}")]
     [AllowAnonymous]
     public async Task<OperationResult<ShortUser>> GetOne(Guid id)

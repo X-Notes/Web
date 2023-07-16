@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Noots.DatabaseContext.Repositories.Users;
 using Common;
 using Common.ConstraintsUploadFiles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Noots.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class FileController : ControllerBase
 {
 
@@ -33,7 +35,7 @@ public class FileController : ControllerBase
     [HttpPost("upload/canload")]
     public async Task<OperationResult<bool>> GetCanUserUploadFile(CanUploadFilesModel model)
     {
-        var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == this.GetUserId());
 
         if (user != null)
         {

@@ -63,14 +63,14 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
     if (this.store.selectSnapshot(AppStore.isNote)) {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       return (
-        this.store.selectSnapshot(NoteStore.getNotes).find((x) => x.typeNotes === noteType)?.count >
+        this.store.selectSnapshot(NoteStore.getNotes)?.find((x) => x?.typeNotes === noteType)?.count >
         0
       );
     }
     if (this.store.selectSnapshot(AppStore.isFolder)) {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
       return (
-        this.store.selectSnapshot(FolderStore.getFolders).find((x) => x.typeFolders === folderType)
+        this.store.selectSnapshot(FolderStore.getFolders)?.find((x) => x?.typeFolders === folderType)
           ?.count > 0
       );
     }
@@ -79,6 +79,7 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   get sortStateIcon(): string {
     const prSettings = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    if(!prSettings) return null;
     if (this.store.selectSnapshot(AppStore.isFolder)) {
       return this.getSortStateIcon(prSettings.sortedFolderByTypeId);
     }
@@ -158,12 +159,12 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
     isNote: boolean,
   ) => {
     const effect = 'rgba(0,0,0,0.15)';
-    if (isFolder) {
+    if (isFolder && prSettings) {
       return {
         background: sortedType === prSettings.sortedFolderByTypeId ? effect : null,
       };
     }
-    if (isNote) {
+    if (isNote && prSettings) {
       return {
         background: sortedType === prSettings.sortedNoteByTypeId ? effect : null,
       };
