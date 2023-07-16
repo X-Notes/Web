@@ -12,6 +12,7 @@ using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Notifications;
+using Noots.DatabaseContext.Repositories.Sec;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.DatabaseContext.Repositories.WS;
 
@@ -23,7 +24,9 @@ namespace Noots.DatabaseContext
         {
             services.AddSingleton(x => new DapperContext(dbConnection));
 
+            services.AddScoped(typeof(IDapperRepository<,>), typeof(DapperRepository<,>));
             services.AddScoped<DapperSearchRepository>();
+            services.AddScoped<DapperRefreshTokenRepository>();
         }
 
         public static void ApplyDataBaseDI(this IServiceCollection services, string dbConnection)
@@ -37,7 +40,10 @@ namespace Noots.DatabaseContext
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
             services.AddScoped<UserProfilePhotoRepository>();
-            
+
+            // SEC
+            services.AddScoped<RefreshTokenRepository>();
+
             // BILLING
             services.AddSingleton<BillingPlanCacheRepository>();
 

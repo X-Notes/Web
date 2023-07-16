@@ -92,9 +92,7 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
     });
   }
 
-  ngOnInit() {
-    this.authService.redirectOnSuccessAuth(`folders/${this.folderId}`);
-  }
+  ngOnInit() {}
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialize(this.refElements);

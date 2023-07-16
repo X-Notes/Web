@@ -1,6 +1,5 @@
 using AspNetCoreRateLimit;
 using Common.Azure;
-using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +25,9 @@ using Noots.API.ConfigureAPP;
 using Noots.API.Hosted;
 using Noots.API.Middlewares;
 using Common.App;
+using Common.SignalR;
+using Noots.Auth.Entities;
+using Common.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,7 @@ var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+    .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
 
@@ -56,11 +59,11 @@ builder.Services.Configure<FormOptions>(options =>
 });
 
 
-FirebaseApp.Create(new AppOptions
-{
-    Credential = GoogleCredential.FromFile("noots-storm-firebase.json")
-});
+var jwtTokenConfig = builder.Configuration.GetSection("JWTTokenConfig").Get<JwtTokenConfig>();
+builder.Services.AddSingleton(jwtTokenConfig);
 
+var googleConfig = builder.Configuration.GetSection("GoogleAuth").Get<GoogleAuth>();
+builder.Services.AddSingleton(googleConfig);
 
 var dbConn = builder.Configuration.GetSection("WriteDB").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
@@ -78,7 +81,7 @@ builder.Services.SetupLogger(builder.Configuration, environment);
 
 builder.Services.ApplyAzureConfig(azureConfig);
 builder.Services.TimersConfig(builder.Configuration);
-builder.Services.JWT(builder.Configuration);
+builder.Services.JWT(jwtTokenConfig);
 
 
 builder.Services.ApplyMapperDI();

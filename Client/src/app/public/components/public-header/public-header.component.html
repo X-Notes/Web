@@ -4,14 +4,6 @@
   </div>
   <ng-content></ng-content>
   <div class="actions">
-    <button type="button" (click)="login()" #trigger>
-      <div *ngIf="(authService.IsAuthActive | async) === false; else spinner" class="text">
-        {{ loginMessage | translate }}
-      </div>
-      <ng-template #spinner>
-        <app-spinner [size]="14"></app-spinner>
-      </ng-template>
-      <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
-    </button>
+    <div [id]="buttonId"></div> 
   </div>
 </header>

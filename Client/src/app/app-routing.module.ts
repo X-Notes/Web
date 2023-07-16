@@ -1,15 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
-import { canActivate, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 import { ContentComponent } from './content/content/content.component';
-
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['about']);
+import { authGuardGuard } from './core/guards/auth-guard.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: ContentComponent,
-    ...canActivate(redirectUnauthorizedToLogin),
+    canActivate: [authGuardGuard],
     children: [
       {
         path: 'notes',

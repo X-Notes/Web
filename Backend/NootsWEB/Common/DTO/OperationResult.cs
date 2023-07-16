@@ -24,10 +24,11 @@
 
         public T Data { set; get; }
 
-        public OperationResult(bool success, T data)
+        public OperationResult(bool success, T data, string message = null)
         {
             Success = success;
             Data = data;
+            Message = message;
         }
 
         public OperationResult(bool success, T data, OperationResultAdditionalInfo? status, string message = null)

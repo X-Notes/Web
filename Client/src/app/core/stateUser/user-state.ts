@@ -107,6 +107,11 @@ export class UserStore {
   }
 
   @Selector()
+  static isLogged(state: UserState): boolean {
+    return state.user !== null && Object.keys(state.user).length > 0;
+  }
+
+  @Selector()
   static getUserTheme(state: UserState): ThemeENUM {
     return state.user.themeId;
   }
@@ -132,18 +137,19 @@ export class UserStore {
   }
 
   @Action(Auth)
-  async auth({ patchState }: StateContext<UserState>, { user }: Auth) {
-    let userdb = await this.userApi.getUser().toPromise();
+  async auth({ patchState }: StateContext<UserState>) {
+    const userdb = await this.userApi.getUser().toPromise();
     if (userdb.status === OperationResultAdditionalInfo.NotFound) {
-      userdb = await this.userApi.newUser(user).toPromise();
+      throw new Error('User doesn`t exist');
     }
     patchState({ user: userdb.data });
   }
 
   @Action(Logout)
   // eslint-disable-next-line class-methods-use-this
-  logout({ patchState }: StateContext<UserState>) {
+  async logout({ patchState }: StateContext<UserState>) {
     patchState({ user: {} as ShortUser });
+    await this.userApi.logout().toPromise();
   }
 
   @Action(ChangeTheme)

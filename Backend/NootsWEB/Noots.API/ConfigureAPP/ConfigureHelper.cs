@@ -1,12 +1,8 @@
-﻿using FakeData;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Threading.Tasks;
-using Noots.Auth.Impl;
 using Noots.Backgrounds;
 using Noots.Billing;
 using Serilog;
@@ -24,14 +20,19 @@ using Noots.Personalization;
 using Noots.RelatedNotes;
 using Noots.Users;
 using Noots.Sharing;
-using Noots.SignalrUpdater;
 using Common.Redis;
 using Noots.Notifications;
 using Noots.Editor.Services;
 using Noots.Editor;
-using System.Threading.Channels;
-using Common.DTO.History;
-using Common.Channels;
+using Microsoft.IdentityModel.Tokens;
+using Noots.Auth.Entities;
+using System.Text;
+using Common.SignalR;
+using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
+using Noots.Auth.Interfaces;
+using Noots.Auth.Impl;
+using Azure.Core;
 
 namespace Noots.API.ConfigureAPP
 {
@@ -121,43 +122,51 @@ namespace Noots.API.ConfigureAPP
             services.AddSingleton(x => unlockConfig);
         }
 
-        public static void JWT(this IServiceCollection services, IConfiguration Configuration)
+        public static void JWT(this IServiceCollection services, JwtTokenConfig config)
         {
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services.AddScoped<IJwtAuthManager, JwtAuthManager>();
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer("Bearer", x =>
+            {
+                x.RequireHttpsMetadata = config.Https;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.Authority = Configuration["FirebaseOptions:Authority"];
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = Configuration["FirebaseOptions:Issuer"],
-                        ValidateAudience = true,
-                        ValidAudience = Configuration["FirebaseOptions:Audience"],
-                        ValidateLifetime = true
-                    };
+                    ValidateIssuer = true,
+                    ValidIssuer = config.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.Secret)),
+                    ValidAudience = config.Audience,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(1)
+                };
 
-                    options.Events = new JwtBearerEvents()
+                x.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
                     {
-                        OnMessageReceived = context =>
+                        var accessTokenCookie = context.Request.Cookies["access_token"];
+                        context.Token = accessTokenCookie;
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context => {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
-                            var accessToken = context.Request.Query["access_token"];
-
-                            var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) &&
-                                path.StartsWithSegments(HubSettings.endPoint))
-                            {
-                                context.Token = accessToken;
-                            }
-                            return Task.CompletedTask;
-                        },
-                    };
-                });
+                            context.Response.Headers.Add("IS-TOKEN-EXPIRED", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         }
 
         public static void BI(this IServiceCollection services)
         {
-            services.AddScoped<FirebaseAuthService>();
             services.AddScoped<CollectionLinkedService>();
         }
 

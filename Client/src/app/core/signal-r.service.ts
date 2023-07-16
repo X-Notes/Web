@@ -103,7 +103,7 @@ export class SignalRService {
     private snackbarService: SnackbarService,
     private readonly translateService: TranslateService,
     private readonly auth: AuthService,
-  ) {}
+  ) { }
 
   async init() {
     await this.startConnection();
@@ -127,30 +127,61 @@ export class SignalRService {
     this.hubConnection.invoke(methodName);
   }
 
+  wait = (delay = 0) => {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        resolve(true);
+      }, delay),
+    );
+  };
+
+  async tryStart(time: number) {
+    try {
+      await this.wait(time);
+      await this.hubConnection.start();
+      return true;
+    } catch (e) {
+      console.error('e: ', e);
+      return false;
+    }
+  }
+
   private startConnection = async () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
       // .configureLogging(signalR.LogLevel.None)
-      .withUrl(`${environment.writeAPI}/api/hub`, { accessTokenFactory: () => this.auth.getTokenRefreshed() })
+      .withUrl(`${environment.writeAPI}/api/hub`)
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection
-      .start()
-      .then(() => {
-        console.log('Connection started');
-        this.ping();
-      })
-      .catch((err) => console.log(`Error while starting connection: ${err}`));
+    let isInited = false;
+
+    for (let i = 0; i < 2; i++) {
+      const time = i === 0 ? 0 : 100;
+      isInited = await this.tryStart(time);
+      if (isInited) {
+        break;
+      }
+    }
+
+    if (!isInited) {
+      console.error('WS doesn`t inited');
+      return;
+    }
+
+    console.log('Connection started');
 
     this.hubConnection.onreconnecting(() => {
+      console.log('onreconnecting');
       this.onReconnecting$.next(true);
     });
 
     this.hubConnection.onreconnected(() => {
+      console.log('onreconnected');
       this.onReconnected$.next(true);
     });
 
     this.hubConnection.onclose(() => {
+      console.log('onclose');
       this.wsConnectionClosed$.next(true);
       const message = this.translateService.instant('snackBar.reloadPage');
       this.snackbarService.openSnackBar(message, null, null, Infinity, ThemeENUM.Light);

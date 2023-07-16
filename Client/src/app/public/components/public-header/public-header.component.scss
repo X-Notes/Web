@@ -39,33 +39,6 @@ header {
   .actions {
     display: flex;
     align-items: center;
-
-    button[type="button"] {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100px;
-      height: 32px;
-      outline: none;
-      border: 0.8px solid transparent;
-      border-radius: 5px;
-      background: $dark-button;
-      transition: 0.2s ease;
-      margin-left: auto;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #3d4049;
-      }
-
-      .text {
-        position: relative;
-        z-index: 5;
-        display: flex;
-        color: white;
-      }
-    }
   }
 
 }

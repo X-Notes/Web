@@ -1,55 +1,64 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpInterceptor } from '@angular/common/http';
 import { AuthService } from './auth.service';
-import { from, Observable, of, throwError } from 'rxjs';
-import { mergeMap, retryWhen, switchMap, take } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { Subject, from } from 'rxjs';
+import { filter, take } from 'rxjs/operators'
 
 export const InterceptorSkipToken = 'X-Skip-Token';
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
-  publicRoutes: string[] = ['/folder/', '/note/'];
 
-  constructor(private readonly auth: AuthService, private router: Router) {}
+  static isRefreshing = false;
 
-  isPublicRoute(route: string): boolean {
-    return this.publicRoutes.some((x) => route.includes(x));
+  static isRefreshed$ = new Subject<boolean>();
+
+  constructor(private readonly auth: AuthService) { }
+
+  intercept(request: HttpRequest<any>, next: HttpHandler) {
+    return from(this.handle(request, next));
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const isPublicRoute = this.isPublicRoute(this.router.url);
-    return from(this.auth.getToken()).pipe(
-      switchMap((token) => {
-        if (request.headers.has(InterceptorSkipToken)) {
-          const headers2 = request.headers.delete(InterceptorSkipToken);
-          return next.handle(request.clone({ headers: headers2 }));
+  async handle(req: HttpRequest<any>, next: HttpHandler) {
+    try {
+      const res = await next.handle(req).toPromise();
+      return res;
+    } catch (e) {
+      console.log(e);
+      const codes = [401, 403];
+      if (codes.some(x => x === e.status)) {
+        if (TokenInterceptorService.isRefreshing) {
+          await TokenInterceptorService.isRefreshed$.pipe(filter(x => !!x), take(1)).toPromise();
+          return await next.handle(req).toPromise();
+        } else {
+          TokenInterceptorService.isRefreshing = true;
+          const isRefreshed = await this.handleError();
+          TokenInterceptorService.isRefreshing = false;
+          if (isRefreshed) {
+            TokenInterceptorService.isRefreshed$.next(true);
+            return await next.handle(req).toPromise();
+          }
+          this.auth.logout();
         }
-        const headers = request.headers.set('Authorization', 'Bearer ' + token);
-        const requestClone = request.clone({
-          headers,
-        });
-        return next.handle(requestClone);
-      }),
-      retryWhen((errors: Observable<any>) =>
-        errors.pipe(
-          mergeMap((error, index) => {
-            if (isPublicRoute) {
-              return of(null);
-            }
-            if (error.status !== 401) {
-              return throwError(error);
-            }
-            if (index === 0) {
-              return this.auth.getToken(true);
-            }
-            this.auth.logout();
-            return throwError(error);
-          }),
-          take(2),
-        ),
-      ),
-    );
+      }
+      return e;
+    }
+  }
+
+  private async handleError() {
+    for (let i = 0; i < 2; i++) {
+      const resp = await this.auth.refresh().toPromise();
+      if (!resp) {
+        return false;
+      }
+      if (resp.success) {
+        return true;
+      }
+      if (!resp.success && resp.data) {
+        return false;
+      }
+    }
+    return false;
   }
 }

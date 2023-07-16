@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { NoteStore } from '../../../content/notes/state/notes-state';
 import { Observable } from 'rxjs';
-import { AuthService, AuthStatus } from 'src/app/core/auth.service';
+import { AuthService } from 'src/app/core/auth.service';
 import { OnlineUsersNote } from '../../../content/notes/models/online-users-note.model';
 
 @Component({
@@ -10,28 +10,24 @@ import { OnlineUsersNote } from '../../../content/notes/models/online-users-note
   templateUrl: './public-header.component.html',
   styleUrls: ['./public-header.component.scss'],
 })
-export class PublicHeaderComponent implements OnInit, OnDestroy {
+export class PublicHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
-  isEditingMessage: boolean | null = false;
+  buttonId: string | null;
+
+  @Input()
+  navigateToUrl: string;
 
   @Select(NoteStore.getOnlineUsersOnNote)
   onlineUsers$?: Observable<OnlineUsersNote[]>;
 
   constructor(public authService: AuthService) {}
 
-  get loginMessage(): string {
-    if (this.isEditingMessage) {
-      return 'header.signInEditing';
-    }
-    return 'header.signIn';
+  ngAfterViewInit(): void {
+    const ids = [this.buttonId];
+    this.authService.initGoogleLogin(ids, true, this.navigateToUrl)
   }
 
   ngOnDestroy(): void {}
 
   ngOnInit(): void {}
-
-  login(): void {
-    if (this.authService.authStatus.value === AuthStatus.InProgress) return;
-    this.authService.authGoogle();
-  }
 }

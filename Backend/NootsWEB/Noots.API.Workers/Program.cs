@@ -43,6 +43,7 @@ builder.Services.ApplyDataBaseDI(dbConn);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
+
 builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JOBS();

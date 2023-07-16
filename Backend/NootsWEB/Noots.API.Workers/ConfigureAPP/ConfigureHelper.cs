@@ -31,6 +31,7 @@ namespace Noots.API.Workers.ConfigureAPP
         {
             services.AddScoped<EntitiesDeleteJobHandler>();
             services.AddScoped<HistoryJobHandler>();
+            services.AddScoped<RemoveExpiredTokensHandler>();
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
             services.AddScoped<RemoveDeadWSConnectionsHandler>();
             services.AddScoped<IndexTextNoteContentJobHandler>();

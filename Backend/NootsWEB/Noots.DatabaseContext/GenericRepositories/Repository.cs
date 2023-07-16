@@ -18,6 +18,8 @@ namespace Noots.DatabaseContext.GenericRepositories
 
         public virtual Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => entities.FirstOrDefaultAsync(predicate);
 
+        public virtual Task<T> FirstOrDefaultNoTrackingAsync(Expression<Func<T, bool>> predicate) => entities.AsNoTracking().FirstOrDefaultAsync(predicate);
+
         public async Task<EntityEntry<T>> AddAsync(T entity)
         {
             var ent = await entities.AddAsync(entity);
@@ -50,6 +52,11 @@ namespace Noots.DatabaseContext.GenericRepositories
         public Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
         {
             return entities.Where(predicate).ToListAsync();
+        }
+
+        public Task<List<T>> GetWhereAsNoTrackingAsync(Expression<Func<T, bool>> predicate)
+        {
+            return entities.AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public Task<List<T>> GetManyAsync(IEnumerable<IdType> ids)

@@ -1,9 +1,23 @@
 ﻿using Common;
+using Common.DatabaseModels.Models.Security;
 using Common.DTO;
+using Common.Google;
+using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Auth.Impl;
+using Microsoft.Extensions.Logging;
+using Noots.Auth.Entities;
+using Noots.Auth.Interfaces;
+using Noots.DatabaseContext.Dapper.Reps;
+using Noots.DatabaseContext.GenericRepositories;
+using Noots.DatabaseContext.Repositories.Sec;
+using Noots.DatabaseContext.Repositories.Users;
+using Noots.Users.Commands;
+using Noots.Users.Entities;
+using Noots.Users.Queries;
+using System.Security.Claims;
 
 namespace Noots.Auth.Api;
 
@@ -11,55 +25,188 @@ namespace Noots.Auth.Api;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly FirebaseAuthService firebaseAuth;
+    private readonly GoogleAuth googleAuth;
+    private readonly ILogger<AuthController> logger;
+    private readonly IJwtAuthManager jwtAuthManager;
+    private readonly UserRepository userRepository;
+    private readonly IMediator mediator;
+    private readonly DapperRefreshTokenRepository dapperRefreshTokenRepository;
 
-    public AuthController(FirebaseAuthService firebaseAuth)
+    public AuthController(
+        GoogleAuth googleAuth, 
+        ILogger<AuthController> logger, 
+        IJwtAuthManager jwtAuthManager,
+        UserRepository userRepository,
+        IMediator mediator,
+        DapperRefreshTokenRepository dapperRefreshTokenRepository)
     {
-        this.firebaseAuth = firebaseAuth;
+        this.googleAuth = googleAuth;
+        this.logger = logger;
+        this.jwtAuthManager = jwtAuthManager;
+        this.userRepository = userRepository;
+        this.mediator = mediator;
+        this.dapperRefreshTokenRepository = dapperRefreshTokenRepository;
     }
 
-    [HttpPost("verify")]
+    [HttpPost("google/login")]
     public async Task<OperationResult<Unit>> VerifyToken(TokenVerifyRequest request)
     {
-        var isValid = await firebaseAuth.IsTokenValid(request.Token);
-        if (isValid)
-        {
-            return new OperationResult<Unit>(true, Unit.Value);
-        }
-        return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
-    }
+        var respVerifyToken = await VerifyGoogleTokenId(request.Token);
 
-    [HttpGet("set")]
-    [Authorize]
-    public async Task<OperationResult<Unit>> SetClaims()
-    {
-        var email = this.GetUserEmail();
-        var uid = this.GetFirebaseUID();
-
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(uid))
+        if(respVerifyToken == null)
         {
             return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
         }
 
-        var result = await firebaseAuth.TrySetCustomClaims(email, uid);
-        if (!result)
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Email == respVerifyToken.Email);
+        if (user == null)
         {
-            return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.NotFound);
+            var newUserCommand = new NewUserCommand(respVerifyToken.Name, respVerifyToken.Email, respVerifyToken.Picture);
+            var res = await mediator.Send(newUserCommand);
+            if (!res.Success)
+            {
+                return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
+            }
+
+            user = await userRepository.FirstOrDefaultAsync(x => x.Id == res.Data);
         }
+
+        var claims = new List<Claim> { new Claim(ConstClaims.UserEmail, user.Email), new Claim(ConstClaims.UserId, user.Id.ToString()) };
+        var result = await jwtAuthManager.GenerateTokens(user.Id, claims.ToArray());
+        InitCookiesTokens(result.AccessToken, result.RefreshToken.TokenString);
 
         return new OperationResult<Unit>(true, Unit.Value);
     }
 
-    [HttpGet("status")]
-    public ActionResult GETSTATUS()
+    [HttpPost("refresh")]
+    public async Task<OperationResult<bool>> Refresh()
     {
-        return Ok("Ok");
+        var accessToken = this.GetAccessToken();
+        var refreshToken = this.GetRefreshToken();
+
+        if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(accessToken))
+        {
+            return new OperationResult<bool>(false, false, "Tokens Empty");
+        }
+
+        var resp = jwtAuthManager.DecodeJwtToken(accessToken);
+
+        if (resp.IsShouldRevoked)
+        {
+            return new OperationResult<bool>(false, true, "Invalid Token");
+        }
+
+        var claim = resp.Principal?.Claims.FirstOrDefault(x => x.Type == ConstClaims.UserId);
+
+        if(claim == null)
+        {
+            return new OperationResult<bool>(false, true, "Invalid Token");
+        }
+
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == Guid.Parse(claim.Value));
+        if (user == null)
+        {
+            return new OperationResult<bool>(false, true, "Invalid Token");
+        }
+
+        var savedRefreshToken = await dapperRefreshTokenRepository.GetRefreshToken(user.Id, refreshToken);
+
+        if (savedRefreshToken == null)
+        {
+            return new OperationResult<bool>(false, true, "Token not found");
+        }
+        if (savedRefreshToken.IsProcessing)
+        {
+            return new OperationResult<bool>(false, true, "Token Processing");
+        }
+
+        var affectedRows = await dapperRefreshTokenRepository.SoftLockTokenAsync(user.Id, refreshToken);
+
+        if (affectedRows == 0 || DateTimeProvider.Time.UtcDateTime > savedRefreshToken.ExpireAt)
+        {
+            await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, refreshToken);
+            return new OperationResult<bool>(false, true, "Token expired");
+        }
+
+        var claims = new List<Claim> { new Claim(ConstClaims.UserEmail, user.Email), new Claim(ConstClaims.UserId, user.Id.ToString()) };
+        var newJwtToken = await jwtAuthManager.GenerateTokens(user.Id, claims.ToArray());
+
+        if (newJwtToken == null)
+        {
+            return new OperationResult<bool>(false, false, "Invalid attempt!");
+        }
+
+        var deletedRows = await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, refreshToken);
+        if (deletedRows == 0)
+        {
+            return new OperationResult<bool>(false, true, "Token has already processed");
+        }
+
+        InitCookiesTokens(newJwtToken.AccessToken, newJwtToken.RefreshToken.TokenString);
+
+        return new OperationResult<bool>(true, true);
     }
 
-    [Authorize]
-    [HttpGet("get")]
-    public ActionResult GET()
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> ClearSessionCookie()
     {
-        return Ok("Ok");
+        if (Request.Cookies.ContainsKey(ConstClaims.AccessToken))
+        {
+            Response.Cookies.Delete(ConstClaims.AccessToken);
+        }
+
+        if (Request.Cookies.ContainsKey(ConstClaims.RefreshToken))
+        {
+            var uid = this.GetUserIdUnStrict();
+            if (uid != Guid.Empty)
+            {
+                var user = await userRepository.FirstOrDefaultAsync(x => x.Id == uid);
+                if (user != null)
+                {
+                    var token = Request.Cookies[ConstClaims.RefreshToken];
+                    await jwtAuthManager.RemoveRefreshToken(uid, token!);
+                }
+            }
+            Response.Cookies.Delete(ConstClaims.RefreshToken);
+        }
+
+        return Ok();
+    }
+
+    private async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenId(string token)
+    {
+        try
+        {
+            // uncomment these lines if you want to add settings: 
+            var validationSettings = new GoogleJsonWebSignature.ValidationSettings
+            { 
+                Audience = new string[] { googleAuth.Audience }
+            };
+            // Add your settings and then get the payload
+            GoogleJsonWebSignature.Payload payload =  await GoogleJsonWebSignature.ValidateAsync(token, validationSettings);
+
+            return payload;
+        }
+        catch (Exception e)
+        {
+            logger.LogError("invalid google token");
+        }
+
+        return null;
+    }
+
+    private void InitCookiesTokens(string accessToken, string refreshToken)
+    {
+        // Set cookie policy parameters as required.
+        var cookieOptions = new CookieOptions
+        {
+            SameSite = SameSiteMode.Strict,
+            HttpOnly = true,
+            Secure = true
+        };
+
+        Response.Cookies.Append(ConstClaims.AccessToken, accessToken, cookieOptions);
+        Response.Cookies.Append(ConstClaims.RefreshToken, refreshToken, cookieOptions);
     }
 }

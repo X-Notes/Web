@@ -7,69 +7,75 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace Common
+namespace Common;
+
+public static class ControllerExtensions
 {
-    public static class ControllerExtensions
+    public static string GetAccessToken(this ControllerBase controller)
     {
-        public static string GetUserEmail(this ControllerBase controller)
+        if (!controller.Request.Cookies.ContainsKey(ConstClaims.AccessToken))
         {
-            var email = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("emailaddress"))?.Value;
-            return email;
+            return null;
         }
 
-        public static string GetFirebaseUID(this ControllerBase controller)
-        {
-            var userId = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("user_id"))?.Value;
-            return userId;
-        }
-
-
-        public static string GetUserIdRaw(this ControllerBase controller)
-        {
-            return controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
-        }
-
-        public static Guid GetUserId(this ControllerBase controller)
-        {
-            var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
-            return Guid.Parse(id);
-        }
-
-        public static bool IsValidUserId(this ClaimsPrincipal user)
-        {
-            var id = user.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
-            if (id != null)
-            {
-                return Guid.TryParse(id, out var res);
-            }
-            return false;
-        }
-
-        public static Guid GetUserIdUnStrict(this ControllerBase controller)
-        {
-            var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains("userId"))?.Value;
-            return string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
-        }
-
-        public static OperationResult<T> ValidateFile<T>(
-            this ControllerBase controller,
-            IFormFile file,
-            List<string> contentTypes,
-            long? maximumAllowableFileSize = null)
-        {
-            var size = maximumAllowableFileSize.HasValue ? maximumAllowableFileSize.Value : FileSizeConstraints.MaxRequestFileSize;
-            if (file.Length > size)
-            {
-                return new OperationResult<T>().SetFileSizeTooLarge();
-            }
-
-            if (!contentTypes.Contains(file.ContentType))
-            {
-                return new OperationResult<T>().SetNoSupportExtension();
-            }
-
-            return new OperationResult<T>(success: true, default);
-        }
-
+        return controller.Request.Cookies[ConstClaims.AccessToken];
     }
+
+    public static string GetRefreshToken(this ControllerBase controller)
+    {
+        if (!controller.Request.Cookies.ContainsKey(ConstClaims.RefreshToken))
+        {
+            return null;
+        }
+
+        return controller.Request.Cookies[ConstClaims.RefreshToken];
+    }
+
+    public static string GetUserIdRaw(this ControllerBase controller)
+    {
+        return controller.User.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
+    }
+
+    public static Guid GetUserId(this ControllerBase controller)
+    {
+        var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
+        return Guid.Parse(id);
+    }
+
+    public static bool IsValidUserId(this ClaimsPrincipal user)
+    {
+        var id = user.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
+        if (id != null)
+        {
+            return Guid.TryParse(id, out var res);
+        }
+        return false;
+    }
+
+    public static Guid GetUserIdUnStrict(this ControllerBase controller)
+    {
+        var id = controller.User.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
+        return string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
+    }
+
+    public static OperationResult<T> ValidateFile<T>(
+        this ControllerBase controller,
+        IFormFile file,
+        List<string> contentTypes,
+        long? maximumAllowableFileSize = null)
+    {
+        var size = maximumAllowableFileSize.HasValue ? maximumAllowableFileSize.Value : FileSizeConstraints.MaxRequestFileSize;
+        if (file.Length > size)
+        {
+            return new OperationResult<T>().SetFileSizeTooLarge();
+        }
+
+        if (!contentTypes.Contains(file.ContentType))
+        {
+            return new OperationResult<T>().SetNoSupportExtension();
+        }
+
+        return new OperationResult<T>(success: true, default);
+    }
+
 }

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule, inject } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { NgxsModule } from '@ngxs/store';
@@ -18,6 +18,14 @@ import { AppStore } from './core/stateApp/app-state';
 import { BackgroundStore } from './core/backgrounds/background-state';
 import { SharedPublicModule } from './public/shared-public/shared-public/shared-public.module';
 import { PersonalizationService } from './shared/services/personalization.service';
+import { OperationResult } from './shared/models/operation-result.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+function initializeAppFactory(httpClient: HttpClient): () => Observable<any> {
+  return () => httpClient.post<OperationResult<boolean>>(`${environment.writeAPI}/api/auth/refresh`, null)
+ }
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -38,6 +46,11 @@ import { PersonalizationService } from './shared/services/personalization.servic
     SharedModule,
   ],
   bootstrap: [AppComponent],
-  providers: [PersonalizationService]
+  providers: [{
+    provide: APP_INITIALIZER,
+    useFactory: initializeAppFactory,
+    deps: [HttpClient],
+    multi: true
+  }, PersonalizationService]
 })
-export class AppModule {}
+export class AppModule { }

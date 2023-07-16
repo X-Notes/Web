@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Noots.Auth\Noots.Auth.csproj" />
     <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
     <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
   </ItemGroup>

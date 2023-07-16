@@ -4,13 +4,8 @@
 
 export const environment = {
   production: false,
-  firebase: {
-    apiKey: 'AIzaSyARUCz9Wc864vcTUf8EK51pMH1t9jpFnTc',
-    authDomain: 'noots-storm.firebaseapp.com',
-    databaseURL: 'https://noots-storm.firebaseio.com',
-    projectId: 'noots-storm',
-    storageBucket: 'noots-storm.appspot.com',
-    messagingSenderId: '69998033878',
+  google: {
+    client_id: '1024902505455-dudik34jj7lnog037erpeu1hchn7c12i.apps.googleusercontent.com',
   },
   writeAPI: '', // proxy
   adminAPI: 'http://localhost:3333',

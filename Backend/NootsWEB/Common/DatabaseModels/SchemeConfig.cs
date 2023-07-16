@@ -20,5 +20,7 @@ namespace Common.DatabaseModels
         public const string File = "file";
 
         public const string WS = "ws";
+
+        public const string Security = "sec";
     }
 }

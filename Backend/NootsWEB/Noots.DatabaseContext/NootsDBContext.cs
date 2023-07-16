@@ -8,6 +8,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
+using Common.DatabaseModels.Models.Security;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.Users.Notifications;
@@ -106,6 +107,10 @@ namespace Noots.DatabaseContext
 
         public DbSet<ContentType> ContentTypes { set; get; }
 
+        // SEC
+        public DbSet<RefreshToken> RefreshTokens { set; get; }
+
+
         public NootsDBContext(DbContextOptions<NootsDBContext> options) : base(options)
         {
             //Database.EnsureCreated();
@@ -143,6 +148,11 @@ namespace Noots.DatabaseContext
 
             modelBuilder.Entity<UserProfilePhoto>()
                 .HasKey(x => x.UserId);
+
+            // SEC
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasKey(bc => new { bc.UserId, bc.TokenString });
 
             // NOTIFICATIONS 
             modelBuilder.Entity<Notification>().Property(x => x.NotificationMessagesId).HasDefaultValue(NotificationMessagesEnum.SentInvitesToNoteV1);
