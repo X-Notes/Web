@@ -28,6 +28,21 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return noteConnectionRepository.GetConnectionsById(noteId, exceptUserId);
         }
 
+        public Task<List<string>> GetConnectionsByIdAsync(Guid noteId)
+        {
+            return noteConnectionRepository.GetConnectionsById(noteId);
+        }
+
+        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId, Guid exceptUserId)
+        {
+            return noteConnectionRepository.GetUserIdsByNoteId(noteId, exceptUserId);
+        }
+
+        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId)
+        {
+            return noteConnectionRepository.GetUserIdsByNoteId(noteId);
+        }
+
         public Task<int> UsersOnNoteAsync(Guid noteId, Guid exceptUserId)
         {
             return noteConnectionRepository.UsersOnNoteAsync(noteId, exceptUserId);

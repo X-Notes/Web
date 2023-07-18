@@ -33,6 +33,21 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return folderConnectionRepository.GetConnectionsById(noteId, exceptUserId);
         }
 
+        public Task<List<string>> GetConnectionsByIdAsync(Guid noteId)
+        {
+            return folderConnectionRepository.GetConnectionsById(noteId);
+        }
+
+        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId, Guid exceptUserId)
+        {
+            return folderConnectionRepository.GetUserIdsByFolderId(noteId, exceptUserId);
+        }
+
+        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId)
+        {
+            return folderConnectionRepository.GetUserIdsByFolderId(noteId);
+        }
+
         public async Task AddAsync(Guid folderId, UserIdentifierConnectionId userIdentity)
         {
             var isExist = await folderConnectionRepository.GetAnyAsync(x => x.FolderId == folderId && x.UserIdentifierConnectionIdId == userIdentity.Id);
