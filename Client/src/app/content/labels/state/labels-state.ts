@@ -174,6 +174,7 @@ export class LabelStore {
   ) {
     const count = await this.api.getCountNotes(labelId).toPromise();
     const label = getState().labels.find((x) => x.id === labelId);
+    if(!label) return;
     setState(
       patch({
         labels: updateItem<Label>((label2) => label2.id === label.id, {

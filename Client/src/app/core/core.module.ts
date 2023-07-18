@@ -25,7 +25,6 @@ import { ApiBillingService } from './api-billing.service';
 import { ApiAudiosService } from '../editor/api/api-audios.service';
 import { ApiDocumentsService } from '../editor/api/api-documents.service';
 import { ApiPhotosService } from '../editor/api/api-photos.service';
-import { ApiTextService } from '../editor/api/api-text.service';
 import { ApiVideosService } from '../editor/api/api-videos.service';
 import { ApiEditorUsersService } from '../editor/api/api-editor-users.service';
 
@@ -80,7 +79,6 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiDocumentsService,
     ApiEditorUsersService,
     ApiVideosService,
-    ApiTextService,
   ],
 })
 export class CoreModule {}

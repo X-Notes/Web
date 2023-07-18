@@ -62,7 +62,7 @@ public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFrom
                     (new UpdateNoteWS { RemoveLabelIds = new List<Guid> { request.LabelId }, NoteId = x.noteId },
                         x.perm.GetAllUsers()));
 
-                await noteWsUpdateService.UpdateNotes(updates, request.UserId);
+                await noteWsUpdateService.UpdateNotesWithConnections(updates, request.ConnectionId);
             }
             return new OperationResult<Unit>(true, Unit.Value);
         }

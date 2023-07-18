@@ -17,7 +17,7 @@ import { DialogsManageService } from '../../navigation/services/dialogs-manage.s
 import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
+import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 @Component({
@@ -65,7 +65,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    private api: ApiNoteContentService,
+    private api: ApiNoteEditorService,
     private updateNoteService: UpdaterEntitiesService,
     private dialogsManageService: DialogsManageService,
   ) {

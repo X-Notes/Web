@@ -15,12 +15,11 @@ import { EditorUpdateIds } from '../entities/structure/editor-update-ids';
 import { UpdatePhotosCollectionInfoCommand } from '../entities/collections/update-photos-collection-info-command';
 import { ApiAudiosService } from '../api/api-audios.service';
 import { ApiPhotosService } from '../api/api-photos.service';
-import { ApiTextService } from '../api/api-text.service';
 import { ApiVideosService } from '../api/api-videos.service';
 import { ContentEditorContentsService } from '../ui-services/contents/content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { ApiDocumentsService } from '../api/api-documents.service';
-import { ApiNoteContentService } from '../api/api-editor-content.service';
+import { ApiNoteEditorService } from '../api/api-editor-content.service';
 import { BaseAddToCollectionItemsCommand } from '../entities/collections/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../entities/collections/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../entities/collections/base-update-collection-info-command';
@@ -82,9 +81,8 @@ export class ContentEditorSyncService {
 
   constructor(
     private contentService: ContentEditorContentsService,
-    private apiContent: ApiNoteContentService,
+    private apiNoteEditor: ApiNoteEditorService,
     private store: Store,
-    private apiTexts: ApiTextService,
     private apiAudios: ApiAudiosService,
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
@@ -143,7 +141,7 @@ export class ContentEditorSyncService {
   async processSyncState() {
     const state = this.contentService.getEditorStateDiffs();
     try {
-      const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
+      const stateUpdates = await this.apiNoteEditor.syncEditorState(this.noteId, state, this.folderId).toPromise();
       if (!stateUpdates.success) return;
       if (stateUpdates.data.idsToDelete?.length > 0) {
         this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
@@ -271,7 +269,7 @@ export class ContentEditorSyncService {
   private async processStructureChanges(): Promise<void> {
     const [structureDiffs, res] = this.contentService.getStructureDiffsNew();
     if (!structureDiffs.isAnyChanges()) { return; }
-    const resp = await this.apiContent
+    const resp = await this.apiNoteEditor
       .syncContentsStructure(this.noteId, structureDiffs)
       .toPromise();
     if (resp.success) {
@@ -498,7 +496,7 @@ export class ContentEditorSyncService {
   private async processTextsChanges() {
     const textDiffs = this.getTextDiffs();
     if (textDiffs.length > 0) {
-      const results = await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
+      const results = await this.apiNoteEditor.syncContents(this.noteId, textDiffs).toPromise();
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
         const v = results.data.find(x => x.contentId === text.id);

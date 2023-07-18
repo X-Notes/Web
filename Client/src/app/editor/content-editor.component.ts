@@ -360,7 +360,7 @@ export class ContentEditorComponent
           return;
         }
         const updateTitleFunc = (title: string) => {
-          this.setTitle(title);
+          this.setHtmlTitle(title);
           this.pushChangesToTitle(title, false);
         };
         const ids = this.facade.contentEditorRestoreService.restorePrev(updateTitleFunc);

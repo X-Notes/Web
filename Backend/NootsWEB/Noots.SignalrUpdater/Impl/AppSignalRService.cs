@@ -36,6 +36,11 @@ namespace Noots.SignalrUpdater.Impl
             return userIdentifierConnectionIdRepository.GetConnectionsAsync(userIds, exceptUserId);
         }
 
+        public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds)
+        {
+            return userIdentifierConnectionIdRepository.GetConnectionsAsync(userIds);
+        }
+
         public async Task<List<string>> GetAuthorizedConnections(Guid userId)
         {
             var connections = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId == userId);

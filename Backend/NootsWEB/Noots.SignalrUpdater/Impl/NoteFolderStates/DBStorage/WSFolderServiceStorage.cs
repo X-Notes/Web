@@ -38,6 +38,11 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return folderConnectionRepository.GetConnectionsById(folderId);
         }
 
+        public Task<List<string>> GetConnectionsByFolderIdsAsync(IEnumerable<Guid> folderIds)
+        {
+            return folderConnectionRepository.GetConnectionsByIds(folderIds);
+        }
+
         public Task<List<Guid>> GetUserIdsByFolderId(Guid folderId, Guid exceptUserId)
         {
             return folderConnectionRepository.GetUserIdsByFolderId(folderId, exceptUserId);

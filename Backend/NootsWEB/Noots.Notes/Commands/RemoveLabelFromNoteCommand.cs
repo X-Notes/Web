@@ -12,5 +12,7 @@ namespace Noots.Notes.Commands
         
         [RequiredListNotEmpty]
         public List<Guid> NoteIds { set; get; }
+
+        public string ConnectionId { set; get; }
     }
 }

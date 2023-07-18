@@ -81,7 +81,7 @@ namespace Noots.Editor.Services
 
                 // WS UPDATES
                 var update = new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true };
-                await noteWSUpdateService.UpdateNote(update, permissions.GetAllUsers(), request.UserId);
+                await noteWSUpdateService.UpdateNoteWithConnections(update, permissions.GetAllUsers(), request.ConnectionId);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

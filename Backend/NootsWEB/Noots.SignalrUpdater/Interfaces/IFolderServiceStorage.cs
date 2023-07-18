@@ -10,6 +10,7 @@ public interface IFolderServiceStorage
 
     Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId, Guid exceptUserId);
     Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId);
+    Task<List<string>> GetConnectionsByFolderIdsAsync(IEnumerable<Guid> folderIds);
 
     Task<List<Guid>> GetUserIdsByFolderId(Guid folderId, Guid exceptUserId);
     Task<List<Guid>> GetUserIdsByFolderId(Guid folderId);

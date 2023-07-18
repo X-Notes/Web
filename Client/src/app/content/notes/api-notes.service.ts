@@ -86,10 +86,11 @@ export class ApiServiceNotes {
     );
   }
 
-  addLabel(labelId: string, noteIds: string[]) {
+  addLabel(labelId: string, noteIds: string[], connectionId: string) {
     const obj = {
       labelId,
       noteIds,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/label/add`,
@@ -107,10 +108,11 @@ export class ApiServiceNotes {
     );
   }
 
-  removeLabel(labelId: string, noteIds: string[]) {
+  removeLabel(labelId: string, noteIds: string[], connectionId: string) {
     const obj = {
       labelId,
       noteIds,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/label/remove`,
@@ -118,10 +120,11 @@ export class ApiServiceNotes {
     );
   }
 
-  changeColor(ids: string[], color: string) {
+  changeColor(ids: string[], color: string, connectionId: string) {
     const obj = {
       ids,
       color,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/color`,

@@ -64,7 +64,7 @@ import { ThemeENUM } from '../shared/enums/theme.enum';
   providedIn: 'root',
 })
 export class SignalRService {
-  public hubConnection: signalR.HubConnection;
+  private hubConnection: signalR.HubConnection;
 
   public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
@@ -104,6 +104,10 @@ export class SignalRService {
     private readonly translateService: TranslateService,
   ) { }
 
+  get connectionId(): string {
+    return this.hubConnection.connectionId;
+  }
+
   get isConnected(): boolean {
     return this.hubConnection.state === signalR.HubConnectionState.Connected;
   }
@@ -124,7 +128,7 @@ export class SignalRService {
     }, pingWSDelay);
   }
 
-  private invoke(methodName: string, arg?: any): void {
+  public invoke(methodName: string, arg?: any): void {
     if (arg) {
       this.hubConnection.invoke(methodName, arg);
       return;
