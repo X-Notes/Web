@@ -27,7 +27,7 @@ namespace Noots.SignalrUpdater.Impl
 
         public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await WSFolderServiceStorage.GetConnectionsByIdAsync(update.FolderId, exceptUserId);
+            var connections = await WSFolderServiceStorage.GetConnectionsByFolderIdAsync(update.FolderId, exceptUserId);
 
             if (userIds != null && userIds.Any())
             {
@@ -35,7 +35,7 @@ namespace Noots.SignalrUpdater.Impl
                 connections.AddRange(additionalConnections);
             }
 
-            await appSignalRService.UpdateFolderInManyUsers(update, connections.Distinct());
+            await appSignalRService.UpdateFolderClients(update, connections.Distinct());
         }
     }
 }

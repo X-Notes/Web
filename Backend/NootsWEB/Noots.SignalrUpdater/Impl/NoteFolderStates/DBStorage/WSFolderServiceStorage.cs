@@ -28,24 +28,29 @@ namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
             return folderConnectionRepository.GetUserConnectionsById(folderId);
         }
 
-        public Task<List<string>> GetConnectionsByIdAsync(Guid noteId, Guid exceptUserId)
+        public Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId, Guid exceptUserId)
         {
-            return folderConnectionRepository.GetConnectionsById(noteId, exceptUserId);
+            return folderConnectionRepository.GetConnectionsById(folderId, exceptUserId);
         }
 
-        public Task<List<string>> GetConnectionsByIdAsync(Guid noteId)
+        public Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId)
         {
-            return folderConnectionRepository.GetConnectionsById(noteId);
+            return folderConnectionRepository.GetConnectionsById(folderId);
         }
 
-        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId, Guid exceptUserId)
+        public Task<List<Guid>> GetUserIdsByFolderId(Guid folderId, Guid exceptUserId)
         {
-            return folderConnectionRepository.GetUserIdsByFolderId(noteId, exceptUserId);
+            return folderConnectionRepository.GetUserIdsByFolderId(folderId, exceptUserId);
         }
 
-        public Task<List<Guid>> GetUserIdsByNoteId(Guid noteId)
+        public Task<List<Guid>> GetUserIdsByFolderId(Guid folderId)
         {
-            return folderConnectionRepository.GetUserIdsByFolderId(noteId);
+            return folderConnectionRepository.GetUserIdsByFolderId(folderId);
+        }
+
+        public Task<List<Guid>> GetUserIdsByFolderIds(List<Guid> folderIds)
+        {
+            return folderConnectionRepository.GetUserIdsByFolderIds(folderIds);
         }
 
         public async Task AddAsync(Guid folderId, UserIdentifierConnectionId userIdentity)

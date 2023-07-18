@@ -8,11 +8,12 @@ public interface IFolderServiceStorage
 
     Task<List<UserIdentifierConnectionId>> GetEntitiesId(Guid folderId);
 
-    Task<List<string>> GetConnectionsByIdAsync(Guid noteId, Guid exceptUserId);
-    Task<List<string>> GetConnectionsByIdAsync(Guid noteId);
+    Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId, Guid exceptUserId);
+    Task<List<string>> GetConnectionsByFolderIdAsync(Guid folderId);
 
-    Task<List<Guid>> GetUserIdsByNoteId(Guid noteId, Guid exceptUserId);
-    Task<List<Guid>> GetUserIdsByNoteId(Guid noteId);
+    Task<List<Guid>> GetUserIdsByFolderId(Guid folderId, Guid exceptUserId);
+    Task<List<Guid>> GetUserIdsByFolderId(Guid folderId);
+    Task<List<Guid>> GetUserIdsByFolderIds(List<Guid> folderIds);
 
     Task AddAsync(Guid folderId, UserIdentifierConnectionId userIdentity);
     Task RemoveAsync(Guid folderId, Guid userIdentifier);

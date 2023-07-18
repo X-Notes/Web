@@ -1,4 +1,5 @@
-﻿using Common.DTO.WebSockets;
+﻿using Common.DatabaseModels.Models.Folders;
+using Common.DTO.WebSockets;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.SignalrUpdater.Interfaces;
 
@@ -24,17 +25,17 @@ namespace Noots.SignalrUpdater.Impl
             this.foldersNotesRepository = foldersNotesRepository;
         }
 
-        public async Task UpdateNotes(IEnumerable<(UpdateNoteWS value, List<Guid> userIds)> updates, Guid exceptUserId)
+        public async Task UpdateNotesWithConnections(IEnumerable<(UpdateNoteWS value, List<Guid> userIds)> updates, Guid exceptUserId)
         {
             foreach (var update in updates)
             {
-                await UpdateNote(update.value, update.userIds, exceptUserId);
+                await UpdateNoteWithConnections(update.value, update.userIds, exceptUserId);
             }
         }
 
-        public async Task UpdateNote(UpdateNoteWS update, List<Guid> userIds, Guid exceptUserId)
+        public async Task UpdateNoteWithConnections(UpdateNoteWS update, List<Guid> userIds, Guid exceptUserId)
         {
-            var connections = await WSNoteServiceStorage.GetConnectionsByIdAsync(update.NoteId, exceptUserId); // unathorized && authorized connections
+            var connections = await WSNoteServiceStorage.GetConnectionsByIdAsync(update.NoteId, exceptUserId); 
 
             if (userIds != null && userIds.Any())
             {
@@ -48,7 +49,30 @@ namespace Noots.SignalrUpdater.Impl
                 connections.AddRange(folderConnections);
             }
 
-            await appSignalRService.UpdateNoteInManyUsers(update, connections.Distinct());
+            await appSignalRService.UpdateNoteClients(update, connections.Distinct());
+        }
+
+        public async Task UpdateNoteWithIds(UpdateNoteWS update, List<Guid> userIds)
+        {
+            if(userIds == null || userIds.Count == 0)
+            {
+                return;
+            }
+
+            var dbuserIds = await WSNoteServiceStorage.GetUserIdsByNoteId(update.NoteId);
+
+            if (dbuserIds != null && dbuserIds.Any())
+            {
+                userIds.AddRange(dbuserIds);
+            }
+
+            var folderNoteUserIds = await GetFolderUserIds(update.NoteId);
+            if (folderNoteUserIds.Any())
+            {
+                userIds.AddRange(folderNoteUserIds);
+            }
+
+            await appSignalRService.UpdateNoteUsers(update, userIds.Distinct());
         }
 
         private async Task<List<string>> GetFolderConnections(UpdateNoteWS updates, Guid exceptUserId)
@@ -59,10 +83,23 @@ namespace Noots.SignalrUpdater.Impl
             var result = new List<string>();
             foreach(var folderId in folderIds)
             {
-                var conns = await WSFolderServiceStorage.GetConnectionsByIdAsync(folderId, exceptUserId);
+                var conns = await WSFolderServiceStorage.GetConnectionsByFolderIdAsync(folderId, exceptUserId);
                 result.AddRange(conns);
             }
             return result;
+        }
+
+        private async Task<List<Guid>> GetFolderUserIds(Guid noteId)
+        {
+            var ents = await foldersNotesRepository.GetWhereAsync(x => noteId == x.NoteId);
+            var folderIds = ents.Select(x => x.FolderId).Distinct();
+
+            if (!folderIds.Any()) 
+            {
+                return new List<Guid>();
+            }
+
+            return await WSFolderServiceStorage.GetUserIdsByFolderIds(folderIds.ToList());
         }
     }
 }
