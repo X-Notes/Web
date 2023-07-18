@@ -20,21 +20,16 @@ namespace Noots.SignalrUpdater.Impl
 
         private readonly ILogger<AppSignalRService> logger;
 
-        private readonly INoteServiceStorage WSNoteServiceStorage;
-
         public AppSignalRService(
             IHubContext<AppSignalRHub> context,
             UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
-            ILogger<AppSignalRService> logger,
-            INoteServiceStorage wSNoteServiceStorage)
+            ILogger<AppSignalRService> logger)
         {
             signalRContext = context;
 
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
             this.logger = logger;
-            WSNoteServiceStorage = wSNoteServiceStorage;
         }
-
 
         public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds, Guid exceptUserId)
         {
@@ -52,7 +47,7 @@ namespace Noots.SignalrUpdater.Impl
             await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, notification);
         }
 
-        public async Task UpdateNoteInManyUsers(UpdateNoteWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateNoteClients(UpdateNoteWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
             if (list.Any())
@@ -61,9 +56,27 @@ namespace Noots.SignalrUpdater.Impl
             }
         }
 
-        public async Task UpdateFolderInManyUsers(UpdateFolderWS updates, IEnumerable<string> connectionIds)
+        public async Task UpdateNoteUsers(UpdateNoteWS updates, IEnumerable<Guid> userIds)
+        {
+            var list = new ReadOnlyCollection<string>(userIds.Select(x => x.ToString()).ToList());
+            if (list.Any())
+            {
+                await signalRContext.Clients.Users(list).SendAsync(ClientMethods.updateNoteGeneral, updates);
+            }
+        }
+
+        public async Task UpdateFolderClients(UpdateFolderWS updates, IEnumerable<string> connectionIds)
         {
             var list = new ReadOnlyCollection<string>(connectionIds.ToList());
+            if (list.Any())
+            {
+                await signalRContext.Clients.Clients(list).SendAsync(ClientMethods.updateFolderGeneral, updates);
+            }
+        }
+
+        public async Task UpdateFolderUsers(UpdateFolderWS updates, IEnumerable<Guid> userIds)
+        {
+            var list = new ReadOnlyCollection<string>(userIds.Select(x => x.ToString()).ToList());
             if (list.Any())
             {
                 await signalRContext.Clients.Clients(list).SendAsync(ClientMethods.updateFolderGeneral, updates);
