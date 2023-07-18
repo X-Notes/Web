@@ -50,13 +50,12 @@ public class RemoveDeadWSConnectionsHandler
 		}
 
 		var deadConnections = connections
-			.Where(x => x.GetUserId() != null)
 			.Select(x => new DeadConnectionDTO
 			{
 				UserIdentifierConnectionId = x.Id,
 				FolderIds = x.FolderConnections?.Select(x => x.FolderId).ToList(),
 				NoteIds = x.NoteConnections?.Select(x => x.NoteId).ToList(),
-				UserId = x.GetUserId()!.Value
+				UserId = x.UserId
 			});
 
 		var json = JsonConvert.SerializeObject(deadConnections);

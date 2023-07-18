@@ -25,8 +25,8 @@ public class FolderConnectionRepository : Repository<FolderConnection, int>
                        .Select(x => x.ConnectionId).ToListAsync();
     }
 
-    public Task<int> UsersOnFolderAsync(Guid folderId)
+    public Task<int> UsersOnFolderAsync(Guid folderId, Guid exceptUserId)
     {
-        return entities.Where(x => x.FolderId == folderId).GroupBy(x => x.UserId).CountAsync();
+        return entities.Where(x => x.FolderId == folderId && x.UserId != exceptUserId).GroupBy(x => x.UserId).CountAsync();
     }
 }

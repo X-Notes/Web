@@ -24,9 +24,9 @@ public class NoteConnectionRepository : Repository<NoteConnection, int>
                        .Select(x => x.ConnectionId).ToListAsync();
     }
 
-    public Task<int> UsersOnNoteAsync(Guid noteId)
+    public Task<int> UsersOnNoteAsync(Guid noteId, Guid exceptUserId)
     {
-        return entities.Where(x => x.NoteId == noteId).GroupBy(x => x.UserId).CountAsync();
+        return entities.Where(x => x.NoteId == noteId && x.UserId != exceptUserId).GroupBy(x => x.UserId).CountAsync();
     }
 }
  

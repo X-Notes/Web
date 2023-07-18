@@ -9,5 +9,5 @@ public interface IFolderServiceStorage
     Task<List<string>> GetConnectionsByIdAsync(Guid noteId, Guid exceptUserId);
     Task AddAsync(Guid folderId, UserIdentifierConnectionId userIdentity);
     Task RemoveAsync(Guid folderId, Guid userIdentifier);
-    Task<int> UsersOnFolderAsync(Guid folderId);
+    Task<int> UsersOnFolderAsync(Guid folderId, Guid exceptUserId);
 }

@@ -35,7 +35,23 @@ public class BillingPermissionService
         this.backgroundRepository = backgroundRepository;
         this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
     }
-    
+
+    public async Task<int> GetAvailableUserOnNotes(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return 0;
+        var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+        return userPlan.MaxUserAtSameTimeOnNote;
+    }
+
+    public async Task<int> GetAvailableUserOnFolders(Guid userId)
+    {
+        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user == null) return 0;
+        var userPlan = await vBillingPlanCacheRepository.FirstOrDefaultCacheAsync(user.BillingPlanId);
+        return userPlan.MaxUserAtSameTimeOnFolder;
+    }
+
     public async Task<bool> CanCreateNoteAsync(Guid userId)
     {
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);

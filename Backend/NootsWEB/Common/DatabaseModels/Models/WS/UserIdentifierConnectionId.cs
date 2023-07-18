@@ -11,10 +11,8 @@ namespace Common.DatabaseModels.Models.WS
     {
         override public Guid Id { set; get; }
 
-        public Guid? UserId { set; get; }
+        public Guid UserId { set; get; }
         public User User { set; get; }
-
-        public Guid? UnauthorizedId { set; get; }
 
         [Required(AllowEmptyStrings = false)]
         public string ConnectionId { set; get; }
@@ -28,10 +26,5 @@ namespace Common.DatabaseModels.Models.WS
         public List<FolderConnection> FolderConnections { set; get; }
 
         public List<NoteConnection> NoteConnections { set; get; }
-
-        public Guid? GetUserId()
-        {
-            return UserId ?? UnauthorizedId;
-        }
     }
 }

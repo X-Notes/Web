@@ -393,8 +393,8 @@ namespace Noots.DatabaseContext
                     MaxRelatedNotes = 5,
                     Price = 0,
                     MaxBackgrounds = 5,
-                    MaxUserAtSameTimeOnNote = 5,
-                    MaxUserAtSameTimeOnFolder = 10,
+                    MaxUserAtSameTimeOnNote = 10,
+                    MaxUserAtSameTimeOnFolder = 20,
                 },
                 new BillingPlan
                 {
@@ -407,7 +407,7 @@ namespace Noots.DatabaseContext
                     MaxRelatedNotes = 30,
                     Price = 1.5,
                     MaxBackgrounds = 20,
-                    MaxUserAtSameTimeOnNote = 20,
+                    MaxUserAtSameTimeOnNote = 40,
                     MaxUserAtSameTimeOnFolder = 50,
                     // last snapshots?
                     // personalization?

@@ -52,12 +52,10 @@ public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOn
 
         if (permissions.CanRead)
         {
-            var ents = await WSNoteServiceStorage.GetEntitiesIdAsync(request.Id);
-            var unrecognizedUsers = ents.Where(x => !x.UserId.HasValue).Select(x => userBackgroundMapper.MapToOnlineUserOnNote(x));
-            var recognizedUsers = ents.Where(x => x.UserId.HasValue).ToList();
+            var recognizedUsers = await WSNoteServiceStorage.GetEntitiesIdAsync(request.Id);
 
             var dict = recognizedUsers.ToLookup(x => x.UserId);
-            var ids = recognizedUsers.Select(x => x.UserId.Value).ToList();
+            var ids = recognizedUsers.Select(x => x.UserId).ToList();
             var users = await userRepository.GetUsersWithPhotos(ids);
 
             var dbUsers = users.Select(x =>
@@ -66,7 +64,7 @@ public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOn
                 return userBackgroundMapper.MapToOnlineUserOnNote(x, identityIds);
             });
 
-            return dbUsers.Concat(unrecognizedUsers).ToList();
+            return dbUsers.ToList();
         }
 
         return new List<OnlineUserOnNote>();
