@@ -49,26 +49,29 @@ export class ApiFullFolderService {
       .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
-  addNotesToFolder(noteIds: string[], folderId: string) {
+  addNotesToFolder(noteIds: string[], folderId: string, connectionId: string) {
     const obj = {
       noteIds,
       folderId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/add/notes`, obj);
   }
 
-  removeNotesFromFolder(noteIds: string[], folderId: string) {
+  removeNotesFromFolder(noteIds: string[], folderId: string, connectionId: string) {
     const obj = {
       noteIds,
       folderId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/remove/notes`, obj);
   }
 
-  orderNotesInFolder(positions: PositionEntityModel[], folderId: string) {
+  orderNotesInFolder(positions: PositionEntityModel[], folderId: string, connectionId: string) {
     const obj = {
       positions,
       folderId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(`${this.controllerApi}/order/notes`, obj);
   }

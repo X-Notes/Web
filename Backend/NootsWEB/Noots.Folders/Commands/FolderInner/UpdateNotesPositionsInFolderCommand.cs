@@ -13,5 +13,7 @@ public class UpdateNotesPositionsInFolderCommand : BaseCommandEntity, IRequest<O
 
     [RequiredListNotEmpty]
     public List<EntityPositionDTO> Positions { set; get; }
+
+    public string ConnectionId { set; get; }
 }
 

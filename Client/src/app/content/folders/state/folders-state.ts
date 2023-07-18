@@ -52,6 +52,7 @@ import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { LoadNotesByIds } from '../../notes/state/notes-actions';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 export interface FolderState {
   folders: Folders[];
@@ -86,6 +87,7 @@ export class FolderStore {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private signalR: SignalRService,
   ) { }
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
@@ -586,7 +588,7 @@ export class FolderStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.changeColor(selectedIds, color).toPromise();
+      resp = await this.api.changeColor(selectedIds, color, this.signalR.connectionIdOrError).toPromise();
     }
     if (resp.success) {
       const fullFolder = getState().fullFolder;
@@ -645,7 +647,7 @@ export class FolderStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.updateTitle(str, folderId).toPromise();
+      resp = await this.api.updateTitle(str, folderId, this.signalR.connectionIdOrError).toPromise();
     }
     if (resp.success) {
       // FULL NOTE

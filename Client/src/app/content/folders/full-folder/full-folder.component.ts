@@ -275,7 +275,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.isOwner) return;
         const note = payload.note;
         const resp = await this.apiFullFolder
-          .addNotesToFolder([note.id], this.folderId)
+          .addNotesToFolder([note.id], this.folderId, this.signalR.connectionIdOrError)
           .toPromise();
         if (resp.success) {
           this.ffnService.addToDom([note]);
@@ -305,7 +305,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(async (resp) => {
           if (resp) {
             const ids = resp.map((x) => x.id);
-            await this.apiFullFolder.addNotesToFolder(ids, this.folderId).toPromise();
+            await this.apiFullFolder.addNotesToFolder(ids, this.folderId, this.signalR.connectionIdOrError).toPromise();
             await this.ffnService.handleAdding(ids);
             this.updateState();
           }
@@ -316,7 +316,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.ffnService.destroy))
       .subscribe(async () => {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const res = await this.apiFullFolder.removeNotesFromFolder([...ids], this.folderId).toPromise();
+        const res = await this.apiFullFolder.removeNotesFromFolder([...ids], this.folderId, this.signalR.connectionIdOrError).toPromise();
         if (res.success) {
           this.ffnService.deleteFromDom([...ids]);
           this.updateState();

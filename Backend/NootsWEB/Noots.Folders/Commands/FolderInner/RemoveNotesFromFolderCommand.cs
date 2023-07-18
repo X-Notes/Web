@@ -11,4 +11,6 @@ public class RemoveNotesFromFolderCommand : BaseCommandEntity, IRequest<Operatio
     public Guid FolderId { set; get; }
 
     public List<Guid> NoteIds { set; get; }
+
+    public string ConnectionId { set; get; }
 }

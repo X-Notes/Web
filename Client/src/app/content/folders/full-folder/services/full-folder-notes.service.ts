@@ -103,7 +103,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
     if (!this.folderId) return;
     if (!this.isNeedUpdatePositions) return;
     const positions = this.murriService.getPositions();
-    await this.apiFullFolder.orderNotesInFolder(positions, this.folderId).toPromise();
+    await this.apiFullFolder.orderNotesInFolder(positions, this.folderId, this.signalR.connectionIdOrError).toPromise();
   }
 
   updateOrder(): void {

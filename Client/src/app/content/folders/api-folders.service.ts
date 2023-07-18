@@ -165,10 +165,11 @@ export class ApiFoldersService {
     );
   }
 
-  changeColor(ids: string[], color: string) {
+  changeColor(ids: string[], color: string, connectionId: string) {
     const obj = {
       ids,
       color,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/folder/color`,
@@ -209,10 +210,11 @@ export class ApiFoldersService {
 
   // FULL FOLDER
 
-  updateTitle(title: string, id: string) {
+  updateTitle(title: string, id: string, connectionId: string) {
     const obj = {
       title,
       id,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/fullfolder/title`,

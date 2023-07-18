@@ -108,6 +108,13 @@ export class SignalRService {
     return this.hubConnection.connectionId;
   }
 
+  get connectionIdOrError(): string {
+    if(this.hubConnection.connectionId) {
+      return this.hubConnection.connectionId;
+    }
+    throw new Error('connectionId is null');
+  }
+
   get isConnected(): boolean {
     return this.hubConnection.state === signalR.HubConnectionState.Connected;
   }

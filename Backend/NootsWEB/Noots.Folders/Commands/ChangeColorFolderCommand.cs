@@ -13,12 +13,15 @@ namespace Noots.Folders.Commands
 
         [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
-        
-        public ChangeColorFolderCommand(List<Guid> ids, Guid userId, string color)
+
+        public string ConnectionId { set; get; }
+
+        public ChangeColorFolderCommand(List<Guid> ids, Guid userId, string color, string connectionId)
             : base(userId)
         {
             this.Ids = ids;
             Color = color;
+            ConnectionId = connectionId;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Common.DTO.WebSockets;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage;
 using Noots.SignalrUpdater.Interfaces;
 
 namespace Noots.SignalrUpdater.Impl
@@ -17,25 +16,27 @@ namespace Noots.SignalrUpdater.Impl
             this.appSignalRService = appSignalRService;
         }
 
-        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates, Guid exceptUserId)
+        public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates, string exceptConnectionId)
         {
             foreach (var update in updates)
             {
-                await UpdateFolder(update.value, update.ids, exceptUserId);
+                await UpdateFolder(update.value, update.ids, exceptConnectionId);
             }
         }
 
-        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, Guid exceptUserId)
+        public async Task UpdateFolder(UpdateFolderWS update, List<Guid> userIds, string exceptConnectionId)
         {
-            var connections = await WSFolderServiceStorage.GetConnectionsByFolderIdAsync(update.FolderId, exceptUserId);
+            var connections = await WSFolderServiceStorage.GetConnectionsByFolderIdAsync(update.FolderId);
 
             if (userIds != null && userIds.Any())
             {
-                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds, exceptUserId);
+                var additionalConnections = await appSignalRService.GetAuthorizedConnections(userIds);
                 connections.AddRange(additionalConnections);
             }
 
-            await appSignalRService.UpdateFolderClients(update, connections.Distinct());
+            connections = connections.Where(id => id != exceptConnectionId).Distinct().ToList();
+
+            await appSignalRService.UpdateFolderClients(update, connections);
         }
     }
 }
