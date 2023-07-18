@@ -349,7 +349,9 @@
     "copied": "Copié",
     "reconnection": "Reconnexion",
     "reconnected": "Reconnecté",
-    "maxContents": "Dépassement du nombre d'éléments dans la note"
+    "maxContents": "Dépassement du nombre d'éléments dans la note",
+    "maxUsersOnNoteError": "La limite d'utilisateurs par note en même temps a été atteinte",
+    "maxUsersOnFolderError": "La limite d'utilisateurs par dossier en même temps a été atteinte"
   },
   "titles": {
     "labels": "Étiquettes",

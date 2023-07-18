@@ -349,7 +349,9 @@
     "copied": "コピー機",
     "reconnection": "リコネクション",
     "reconnected": "再接続",
-    "maxContents": "ノートの要素数を超えました"
+    "maxContents": "ノートの要素数を超えました",
+    "maxUsersOnNoteError": "同時にノートあたりのユーザー数の制限に達しました",
+    "maxUsersOnFolderError": "フォルダーごとの同時ユーザー数の制限に達しました"
   },
   "titles": {
     "labels": "ラベル",

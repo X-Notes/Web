@@ -349,7 +349,9 @@
     "copied": "Skopiowane",
     "reconnection": "Ponowne połączenie",
     "reconnected": "Ponownie podłączony",
-    "maxContents": "Przekroczono liczbę elementów w notatce"
+    "maxContents": "Przekroczono liczbę elementów w notatce",
+    "maxUsersOnNoteError": "Osiągnięto limit użytkowników na notatkę w tym samym czasie",
+    "maxUsersOnFolderError": "Osiągnięto limit użytkowników na folder w tym samym czasie"
   },
   "titles": {
     "labels": "Etykiety",

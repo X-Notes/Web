@@ -349,7 +349,9 @@
     "copied": "Kopierad",
     "reconnection": "Återanslutning",
     "reconnected": "Återansluten",
-    "maxContents": "Antalet element i noten har överskridits"
+    "maxContents": "Antalet element i noten har överskridits",
+    "maxUsersOnNoteError": "Gränsen för användare per anteckning samtidigt har nåtts",
+    "maxUsersOnFolderError": "Gränsen för användare per mapp samtidigt har nåtts"
   },
   "titles": {
     "labels": "Etiketter",

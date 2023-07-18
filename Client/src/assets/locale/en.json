@@ -349,7 +349,9 @@
     "copied": "Copied",
     "reconnection": "Reconnection",
     "reconnected": "Reconnected",
-    "maxContents": "Exceeded number of elements in note"
+    "maxContents": "Exceeded number of elements in note",
+    "maxUsersOnNoteError": "The limit of users per note at the same time has been reached",
+    "maxUsersOnFolderError": "The limit of users per folder at the same time has been reached"
   },
   "titles": {
     "labels": "Labels",

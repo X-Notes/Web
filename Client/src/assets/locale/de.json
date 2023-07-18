@@ -349,7 +349,9 @@
     "copied": "Kopiert",
     "reconnection": "Wiederverbindung",
     "reconnected": "Wieder verbunden",
-    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten"
+    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten",
+    "maxUsersOnNoteError": "Das Limit der Benutzer pro Notiz gleichzeitig wurde erreicht",
+    "maxUsersOnFolderError": "Das Limit der Benutzer pro Ordner gleichzeitig wurde erreicht"
   },
   "titles": {
     "labels": "Etiketten",
