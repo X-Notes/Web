@@ -527,7 +527,7 @@ export class FolderStore {
     { getState, patchState }: StateContext<FolderState>,
     { type, pr }: LoadFolders,
   ) {
-    if (!getState().folders.find((q) => q.typeFolders === type)) {
+    if (!getState().folders?.find((q) => q.typeFolders === type)) {
       const folders = await this.api.getFolders(type, pr).toPromise();
       patchState({
         folders: [...getState().folders, folders],

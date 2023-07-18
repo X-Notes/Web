@@ -21,7 +21,7 @@ import { EditorOptions } from '../entities-ui/editor-options';
   selector: '',
   template: '',
 })
-export class EditorBaseComponent {
+export abstract class EditorBaseComponent {
 
   @Input() set noteId(noteId: string) {
     const value = this.options$.getValue();
@@ -41,6 +41,7 @@ export class EditorBaseComponent {
   @Input() set isReadOnlyMode(isReadOnlyMode: boolean) {
     const value = this.options$.getValue();
     this.options$.next({ ...value, isReadOnlyMode });
+    this.onChangePermissions();
   }
 
   @Input() set connectToNote(connectToNote: boolean) {
@@ -192,4 +193,6 @@ export class EditorBaseComponent {
     }
     return false;
   }
+
+  abstract onChangePermissions(): void;
 }

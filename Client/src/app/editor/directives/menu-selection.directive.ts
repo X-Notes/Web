@@ -3,6 +3,8 @@ import { ParentInteraction, ParentInteractionHTML } from '../components/parent-i
 import { SelectionService } from '../ui-services/selection.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ContentModelBase } from '../entities/contents/content-model-base';
+import { BehaviorSubject } from 'rxjs';
+import { EditorOptions } from '../entities-ui/editor-options';
 
 @Directive({
   selector: '[appMenuSelection]',
@@ -10,7 +12,7 @@ import { ContentModelBase } from '../entities/contents/content-model-base';
 export class MenuSelectionDirective implements OnDestroy, OnInit {
   @Input() appMenuSelection: ParentInteractionHTML[];
 
-  @Input() isReadonly: boolean;
+  @Input() editorOptions$: BehaviorSubject<EditorOptions>;
 
   @Input() scrollElement: HTMLElement;
 
@@ -23,12 +25,14 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.isReadonly) {
-      const mouseupListener = this.renderer.listen(document, 'selectionchange', () =>
-        this.onSelectionchange(),
-      );
-      this.listeners.push(mouseupListener);
+    const mouseupListener = this.renderer.listen(document, 'selectionchange', () => {
+      if (this.editorOptions$.getValue().isReadOnlyMode) {
+        return true;
+      }
+      this.onSelectionchange();
     }
+    );
+    this.listeners.push(mouseupListener);
   }
 
   onSelectionchange(clearIfEmpty = false) {

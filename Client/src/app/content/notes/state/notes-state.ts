@@ -1167,7 +1167,7 @@ export class NoteStore {
 
   @Action(LoadNotes)
   async loadNotes({ getState, patchState }: StateContext<NoteState>, { type, pr }: LoadNotes) {
-    if (!getState().notes.find((q) => q.typeNotes === type)) {
+    if (!getState().notes?.find((q) => q.typeNotes === type)) {
       const notesAPI = await this.api.getNotes(type, pr).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],

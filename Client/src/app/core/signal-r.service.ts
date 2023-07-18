@@ -102,8 +102,11 @@ export class SignalRService {
     private apiNotes: ApiServiceNotes,
     private snackbarService: SnackbarService,
     private readonly translateService: TranslateService,
-    private readonly auth: AuthService,
   ) { }
+
+  get isConnected(): boolean {
+    return this.hubConnection.state === signalR.HubConnectionState.Connected;
+  }
 
   async init() {
     await this.startConnection();
@@ -112,7 +115,9 @@ export class SignalRService {
   private ping(): void {
     setInterval(() => {
       try {
-        this.invoke('UpdateUpdateStatus');
+        if (this.isConnected) {
+          this.invoke('UpdateUpdateStatus');
+        }
       } catch (e) {
         console.error(e);
       }
@@ -167,6 +172,8 @@ export class SignalRService {
       console.error('WS doesn`t inited');
       return;
     }
+
+    this.ping();
 
     console.log('Connection started');
 

@@ -8,5 +8,5 @@ export const updateTitleEntitesDelay = 100;
 export const searchDelay = 450;
 export const searchNotesFoldersDelay = 500;
 export const updateCollectionTitleDelay = 20;
-export const pingWSDelay = 2000;
+export const pingWSDelay = 5000;
 export const updateCursorDelay = 800;

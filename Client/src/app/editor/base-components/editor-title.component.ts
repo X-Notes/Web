@@ -24,7 +24,7 @@ import { ofActionDispatched } from '@ngxs/store';
   selector: '',
   template: '',
 })
-export class EditorTitleComponent extends EditorBaseComponent {
+export abstract class EditorTitleComponent extends EditorBaseComponent {
   @Input()
   title?: string;
 

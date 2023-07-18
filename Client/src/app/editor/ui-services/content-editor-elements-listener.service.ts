@@ -1,8 +1,9 @@
 import { Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ParentInteraction } from '../components/parent-interaction.interface';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { EditorOptions } from '../entities-ui/editor-options';
 
 @Injectable()
 export class ContentEditorElementsListenerService {
@@ -26,10 +27,10 @@ export class ContentEditorElementsListenerService {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>) {
+  setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>, options$: BehaviorSubject<EditorOptions>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', () => {
-      if (this.pS.isDialogActive$.getValue()) {
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
       this.onPressDeleteOrBackSpaceSubject.next();
@@ -39,7 +40,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownDelete = this.renderer.listen(document, 'keydown.delete', () => {
-      if (this.pS.isDialogActive$.getValue()) {
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
       this.onPressDeleteOrBackSpaceSubject.next();
@@ -49,7 +50,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.pS.isDialogActive$.getValue()) {
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
       if (e.ctrlKey && e.code === 'KeyZ') {
@@ -61,7 +62,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.pS.isDialogActive$.getValue()) {
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
       const htmlEl = e.target as HTMLElement;
@@ -88,7 +89,7 @@ export class ContentEditorElementsListenerService {
     });
 
     const keydownCtrlS = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.pS.isDialogActive$.getValue()) {
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
       if (e.ctrlKey && e.code === 'KeyS') {

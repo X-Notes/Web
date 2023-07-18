@@ -172,7 +172,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     const isFirstInit = this.needFirstInit();
     if (isFirstInit) {
       this.initState();
-      const ids = this.entities.map(x => x.id);
+      const ids = q.map(x => x.nativeElement.id);
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(this.getIsDraggable(noteType));
       await this.setFirstInitedMurri();
