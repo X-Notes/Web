@@ -17,10 +17,13 @@ public class BaseAddToCollectionItems : BaseCommandEntity, IRequest<OperationRes
     [ValidationGuid]
     public List<Guid> FileIds { set; get; }
 
-    public BaseAddToCollectionItems(Guid noteId, Guid contentId, List<Guid> fileIds)
+    public string ConnectionId { set; get; }
+
+    public BaseAddToCollectionItems(Guid noteId, Guid contentId, List<Guid> fileIds, string connectionId)
     {
         NoteId = noteId;
         ContentId = contentId;
         FileIds = fileIds;
+        ConnectionId = connectionId;
     }
 }
