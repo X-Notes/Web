@@ -227,9 +227,9 @@ export class ContentEditorComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.noteId && changes.noteId.currentValue !== changes.noteId.previousValue) {
-      this.initTitle(this.title);
       this.facade.momentoStateService.clear();
       this.titleInited = false;
+      this.initTitle(this.title);
     }
   }
 
