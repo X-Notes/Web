@@ -26,6 +26,7 @@ import { DialogsManageService } from '../navigation/services/dialogs-manage.serv
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 import { NoteComponent } from './note/note.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /** Injection only in component */
 @Injectable()
@@ -52,12 +53,12 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     super(dialogsManageService, store, murriService, apiService, router);
 
     this.actions$
-    .pipe(ofActionDispatched(SelectAllNote), takeUntil(this.destroy))
-    .subscribe(() => {
-      const notes = this.getNotesToRender();
-      const noteIds = notes.map(x => x.id);
-      this.store.dispatch(new SelectIdsNote(noteIds));
-    });
+      .pipe(ofActionDispatched(SelectAllNote), takeUntil(this.destroy))
+      .subscribe(() => {
+        const notes = this.getNotesToRender();
+        const noteIds = notes.map(x => x.id);
+        this.store.dispatch(new SelectIdsNote(noteIds));
+      });
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
@@ -78,7 +79,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
       .select(UserStore.getPersonalizationSettings)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (pr) => {
-        if(!pr) return;
+        if (!pr) return;
         if (this.prevSortedNoteByTypeId && this.prevSortedNoteByTypeId !== pr.sortedNoteByTypeId) {
           this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
           this.resetAndInitLayout();
@@ -100,6 +101,12 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
           }
         }
       });
+
+    this.murriService.dragEnd$.pipe(takeUntilDestroyed()).subscribe(flag => {
+      if (flag) {
+        this.syncPositions();
+      }
+    });
   }
 
   get getNotesByCurrentType() {
@@ -284,7 +291,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     }
   }
 
-  loadNoteAndAddToDom(notes: SmallNote[]) { 
+  loadNoteAndAddToDom(notes: SmallNote[]) {
     if (notes && notes.length > 0) {
       const m = notes.map((x) => ({ ...x }));
       this.entities.unshift(...m);

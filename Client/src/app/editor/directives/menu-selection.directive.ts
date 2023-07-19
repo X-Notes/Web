@@ -5,6 +5,8 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { BehaviorSubject } from 'rxjs';
 import { EditorOptions } from '../entities-ui/editor-options';
+import { Store } from '@ngxs/store';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Directive({
   selector: '[appMenuSelection]',
@@ -22,11 +24,12 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     private renderer: Renderer2,
     public apiBrowserService: ApiBrowserTextService,
     public selectionService: SelectionService,
+    private store: Store
   ) {}
 
   ngOnInit(): void {
     const mouseupListener = this.renderer.listen(document, 'selectionchange', () => {
-      if (this.editorOptions$.getValue().isReadOnlyMode) {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
         return true;
       }
       this.onSelectionchange();

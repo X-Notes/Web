@@ -27,7 +27,6 @@ public class UpdatePositionsNotesCommandHandler : IRequestHandler<UpdatePosition
                 if (note != null)
                 {
                     note.Order = x.Position;
-                    note.SetDateAndVersion();
                 }
             });
 

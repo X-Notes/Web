@@ -28,7 +28,6 @@ public class UpdatePositionsFoldersCommandHandler : IRequestHandler<UpdatePositi
                 if (folder != null)
                 {
                     folder.Order = x.Position;
-                    folder.SetDateAndVersion();
                 }
             });
 

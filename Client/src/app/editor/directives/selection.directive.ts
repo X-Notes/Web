@@ -14,6 +14,8 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { ClickableContentService } from '../ui-services/clickable-content.service';
 import { SelectionService } from '../ui-services/selection.service';
 import { EditorOptions } from '../entities-ui/editor-options';
+import { Store } from '@ngxs/store';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Directive({
   selector: '[appSelection]',
@@ -64,6 +66,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private selectionService: SelectionService,
     private clickableService: ClickableContentService,
     private pS: PersonalizationService,
+    private store: Store,
   ) {
     this.mainContent = elementRef.nativeElement;
   }
@@ -117,20 +120,20 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   initMouseHandlers(): void {
     const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) => {
-      if (this.editorOptions$.getValue().isReadOnlyMode) {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
         return true;
       }
       return this.mouseDown(e);
     });
     const mouseUpListener = this.renderer.listen(document, 'mouseup', (e: MouseEvent) => {
-      if (this.editorOptions$.getValue().isReadOnlyMode) {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
         return true;
       }
       return this.mouseUp(e);
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {
-      if (this.editorOptions$.getValue().isReadOnlyMode) {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
         return true;
       }
     });
@@ -138,7 +141,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.moveEventSub = fromEvent(document, 'mousemove')
       .pipe(bufferTime(20))
       .subscribe((events: MouseEvent[]) => {
-        if (this.editorOptions$.getValue().isReadOnlyMode) {
+        if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
           return true;
         }
         if (!events || events.length === 0) return;
