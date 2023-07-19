@@ -351,9 +351,7 @@
     "copied": "Скопировано",
     "reconnection": "Переподключение",
     "reconnected": "Переподключено",
-    "maxContents": "Превышено количество элементов в заметке",
-    "maxUsersOnNoteError": "Достигнут лимит пользователей на одну заметку одновременно",
-    "maxUsersOnFolderError": "Достигнут лимит пользователей на папку одновременно"
+    "maxContents": "Превышено количество элементов в заметке"
   },
   "titles": {
     "labels": "Ярлыки",
@@ -392,9 +390,7 @@
     "personalization": "Параметры персонализации",
     "per-month": "в месяц",
     "upgrade": "Обновить",
-    "backgrounds": "{{count}} фонов",
-    "maxUserAtSameTimeOnNote": "{{count}} пользователей в заметке одновременно",
-    "maxUserAtSameTimeOnFolder": "{{count}} пользователей в папке одновременно"
+    "backgrounds": "{{count}} фонов"
   },
   "files": {
     "noAccessRightsNote": "Нет разрешения на загрузку файлов в заметку",

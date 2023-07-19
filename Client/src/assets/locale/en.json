@@ -349,9 +349,7 @@
     "copied": "Copied",
     "reconnection": "Reconnection",
     "reconnected": "Reconnected",
-    "maxContents": "Exceeded number of elements in note",
-    "maxUsersOnNoteError": "The limit of users per note at the same time has been reached",
-    "maxUsersOnFolderError": "The limit of users per folder at the same time has been reached"
+    "maxContents": "Exceeded number of elements in note"
   },
   "titles": {
     "labels": "Labels",
@@ -390,9 +388,7 @@
     "personalization": "Personalization settings",
     "per-month": "per month",
     "upgrade": "Upgrade",
-    "backgrounds": "{{count}} backgrounds",
-    "maxUserAtSameTimeOnNote": "{{count}} users on a note at the same time",
-    "maxUserAtSameTimeOnFolder": "{{count}} users on a folder at the same time"
+    "backgrounds": "{{count}} backgrounds"
   },
   "files": {
     "noAccessRightsNote" : "No permission to upload files to note",

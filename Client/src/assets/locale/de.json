@@ -349,9 +349,7 @@
     "copied": "Kopiert",
     "reconnection": "Wiederverbindung",
     "reconnected": "Wieder verbunden",
-    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten",
-    "maxUsersOnNoteError": "Das Limit der Benutzer pro Notiz gleichzeitig wurde erreicht",
-    "maxUsersOnFolderError": "Das Limit der Benutzer pro Ordner gleichzeitig wurde erreicht"
+    "maxContents": "Die Anzahl der Elemente in der Notiz wurde überschritten"
   },
   "titles": {
     "labels": "Etiketten",
@@ -390,9 +388,7 @@
     "personalization": "Personalisierungseinstellungen",
     "per-month": "pro Monat",
     "upgrade": "Update",
-    "backgrounds": "{{count}} hintergründe",
-    "maxUserAtSameTimeOnNote": "{{count}} benutzer gleichzeitig auf eine Notiz setzen",
-    "maxUserAtSameTimeOnFolder": "{{count}} benutzer gleichzeitig auf einen Ordner zugreifen"
+    "backgrounds": "{{count}} hintergründe"
   },
   "files": {
     "noAccessRightsNote": "Keine Berechtigung zum Hochladen von Dateien, die notiert werden sollen",

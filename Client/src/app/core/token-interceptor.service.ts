@@ -25,7 +25,7 @@ export class TokenInterceptorService implements HttpInterceptor {
       const res = await next.handle(req).toPromise();
       return res;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       const codes = [401, 403];
       if (codes.some(x => x === e.status)) {
         if (TokenInterceptorService.isRefreshing) {

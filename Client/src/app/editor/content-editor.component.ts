@@ -237,11 +237,6 @@ export class ContentEditorComponent
     this.initKeyAndMouseHandlers();
     if (this.options$.getValue().noteId && this.options$.getValue().connectToNote && this.options$.getValue().userId) {
       this.webSocketsUpdaterService.tryJoinToNote(this.options$.getValue().noteId);
-      this.webSocketsUpdaterService.exceedLimitUsersOnNote$.pipe(takeUntil(this.facade.dc.d$)).subscribe(flag => {
-        if (flag) {
-          this.leaveNote();
-        }
-      })
     }
   }
 

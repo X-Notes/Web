@@ -349,9 +349,7 @@
     "copied": "Copiado",
     "reconnection": "Reconexión",
     "reconnected": "Reconectado",
-    "maxContents": "Número de elementos excedido en la nota",
-    "maxUsersOnNoteError": "Se alcanzó el límite de usuarios por nota al mismo tiempo",
-    "maxUsersOnFolderError": "Se alcanzó el límite de usuarios por carpeta al mismo tiempo"
+    "maxContents": "Número de elementos excedido en la nota"
   },
   "titles": {
     "labels": "Etiquetas",
@@ -390,9 +388,7 @@
     "personalization": "Configuración de personalización",
     "per-month": "por mes",
     "upgrade": "Actualizar",
-    "backgrounds": "{{count}} antecedentes",
-    "maxUserAtSameTimeOnNote": "{{count}} usuarios en una nota al mismo tiempo",
-    "maxUserAtSameTimeOnFolder": "{{count}} usuarios en una carpeta al mismo tiempo"
+    "backgrounds": "{{count}} antecedentes"
   },
   "files": {
     "noAccessRightsNote": "No hay permiso para cargar archivos a la nota",

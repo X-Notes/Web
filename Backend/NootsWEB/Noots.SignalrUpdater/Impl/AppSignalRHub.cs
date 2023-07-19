@@ -84,17 +84,6 @@ public class AppSignalRHub : Hub
             return;
         }
 
-        var usersOnNote = await noteServiceStorage.UsersOnNoteAsync(noteId, permission.Author.Id);
-        var availableUserOnNotes = await billingPermissionService.GetAvailableUserOnNotes(permission.Note.UserId);
-        var places = availableUserOnNotes - usersOnNote;
-
-        if(places <= 0)
-        {
-            var res = new OperationResult<bool>().SetBillingError();
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, res));
-            return;
-        }
-
         await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
     }
 
@@ -154,17 +143,6 @@ public class AppSignalRHub : Hub
         if (!isCanRead) 
         {
             var res = new OperationResult<bool>().SetNoPermissions();
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, res));
-            return;
-        }
-
-        var usersOnFolder = await folderServiceStorage.UsersOnFolderAsync(folderId, permission.Author.Id);
-        var availableUserOnFolder = await billingPermissionService.GetAvailableCountFolders(permission.Folder.UserId);
-        var places = availableUserOnFolder - usersOnFolder;
-
-        if (places <= 0)
-        {
-            var res = new OperationResult<bool>().SetBillingError();
             await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, res));
             return;
         }

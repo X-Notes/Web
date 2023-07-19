@@ -351,9 +351,7 @@
     "copied": "Скопійовано",
     "reconnection": "Перепідключення",
     "reconnected": "З`єднано",
-    "maxContents": "Перевищено кількість елементів у нотатку",
-    "maxUsersOnNoteError": "Досягнуто ліміту кількості користувачів на нотатку одночасно",
-    "maxUsersOnFolderError": "Досягнуто ліміту кількості користувачів на папку одночасно"
+    "maxContents": "Перевищено кількість елементів у нотатку"
   },
   "titles": {
     "labels": "Ярлики",
@@ -392,9 +390,7 @@
     "personalization": "Продвинута персоналізація",
     "per-month": "в місяць",
     "upgrade": "Оновити",
-    "backgrounds": "{{count}} фони",
-    "maxUserAtSameTimeOnNote": "{{count}} користувачів на нотатку одночасно",
-    "maxUserAtSameTimeOnFolder": "{{count}} користувачів у папці одночасно"
+    "backgrounds": "{{count}} фони"
   },
   "files": {
     "noAccessRightsNote": "Немає дозволу завантажувати файли до нотатку",

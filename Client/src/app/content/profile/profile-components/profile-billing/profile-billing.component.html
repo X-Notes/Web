@@ -45,14 +45,6 @@
           <mat-icon svgIcon="billingPoint"></mat-icon>
           <p>{{ 'profile-billing.backgrounds' | translate : { count: plan.maxBackgrounds } }}</p>
         </div>
-        <div class="info">
-          <mat-icon svgIcon="billingPoint"></mat-icon>
-          <p>{{ 'profile-billing.maxUserAtSameTimeOnNote' | translate : { count: plan.maxUserAtSameTimeOnNote } }}</p>
-        </div>
-        <div class="info">
-          <mat-icon svgIcon="billingPoint"></mat-icon>
-          <p>{{ 'profile-billing.maxUserAtSameTimeOnFolder' | translate : { count: plan.maxUserAtSameTimeOnFolder } }}</p>
-        </div>
       </div>
       <div *ngIf="billingPlanId.Premium === plan.id && hasUserDefault" class="upgrade-section">
         <div class="upgrade-button" (click)="updateBillingPlan(billingPlanId.Premium)">

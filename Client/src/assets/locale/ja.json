@@ -349,9 +349,7 @@
     "copied": "コピー機",
     "reconnection": "リコネクション",
     "reconnected": "再接続",
-    "maxContents": "ノートの要素数を超えました",
-    "maxUsersOnNoteError": "同時にノートあたりのユーザー数の制限に達しました",
-    "maxUsersOnFolderError": "フォルダーごとの同時ユーザー数の制限に達しました"
+    "maxContents": "ノートの要素数を超えました"
   },
   "titles": {
     "labels": "ラベル",
@@ -390,9 +388,7 @@
     "personalization": "パーソナライゼーション設定",
     "per-month": "月額",
     "upgrade": "更新情報",
-    "backgrounds": "{{count}} 背景",
-    "maxUserAtSameTimeOnNote": "{{count}} ユーザーが同時にノートを使用している",
-    "maxUserAtSameTimeOnFolder": "{{count}} 同時にフォルダー上のユーザー"
+    "backgrounds": "{{count}} 背景"
   },
   "files": {
     "noAccessRightsNote": "メモにファイルをアップロードする権限がありません",

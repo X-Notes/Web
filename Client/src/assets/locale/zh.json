@@ -349,9 +349,7 @@
     "copied": "抄袭",
     "reconnection": "重新连接",
     "reconnected": "重新连接",
-    "maxContents": "注释中的元素数量超出限制",
-    "maxUsersOnNoteError": "已达到每个笔记同时的用户数限制",
-    "maxUsersOnFolderError": "已达到每个文件夹同时的用户限制"
+    "maxContents": "注释中的元素数量超出限制"
   },
   "titles": {
     "labels": "标签",
@@ -390,8 +388,6 @@
     "personalization": "个性化设置",
     "per-month": "每月",
     "upgrade": "更新",
-    "backgrounds": "{{count}} 背景",
-    "maxUserAtSameTimeOnNote": "{{count}} 用户同时处理笔记",
-    "maxUserAtSameTimeOnFolder": "{{count}} 用户同时访问一个文件夹"
+    "backgrounds": "{{count}} 背景"
   }
 }

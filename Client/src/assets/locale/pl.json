@@ -349,9 +349,7 @@
     "copied": "Skopiowane",
     "reconnection": "Ponowne połączenie",
     "reconnected": "Ponownie podłączony",
-    "maxContents": "Przekroczono liczbę elementów w notatce",
-    "maxUsersOnNoteError": "Osiągnięto limit użytkowników na notatkę w tym samym czasie",
-    "maxUsersOnFolderError": "Osiągnięto limit użytkowników na folder w tym samym czasie"
+    "maxContents": "Przekroczono liczbę elementów w notatce"
   },
   "titles": {
     "labels": "Etykiety",
@@ -390,9 +388,7 @@
     "personalization": "Ustawienia personalizacji",
     "per-month": "Miesięcznie",
     "upgrade": "Aktualizacja",
-    "backgrounds": "{{count}} tła",
-    "maxUserAtSameTimeOnNote": "{{count}} użytkowników na notatce w tym samym czasie",
-    "maxUserAtSameTimeOnFolder": "{{count}} użytkowników w folderze w tym samym czasie"
+    "backgrounds": "{{count}} tła"
   },
   "files": {
     "noAccessRightsNote": "Brak uprawnień do przesyłania plików do odnotowania",
