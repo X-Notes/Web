@@ -5,7 +5,6 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import {
   UpdatePositionsNotes,
-  UpdatePositionsRelatedNotes,
 } from 'src/app/content/notes/state/notes-actions';
 import { UpdatePositionsFolders } from 'src/app/content/folders/state/folders-actions';
 import { UpdatePositionsLabels } from 'src/app/content/labels/state/labels-actions';
@@ -19,6 +18,8 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
 @Injectable()
 export class MurriService implements OnDestroy {
   layoutEnd$: Subject<boolean> = new Subject<boolean>();
+
+  dragEnd$: Subject<boolean> = new Subject<boolean>();
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -73,16 +74,16 @@ export class MurriService implements OnDestroy {
 
   /// SIDE BAR
 
-  initRelatedNotesAsync(noteId: string, delay = 0) {
+  initRelatedNotesAsync(delay = 0) {
     return new Promise<boolean>((resolve) =>
-      setTimeout(async () => {
-        this.initRelatedNotes(noteId);
+      setTimeout(() => {
+        this.initRelatedNotes();
         resolve(true);
       }, delay),
     );
   }
 
-  initRelatedNotes(noteId: string) {
+  initRelatedNotes() {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -95,9 +96,7 @@ export class MurriService implements OnDestroy {
     });
     this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
-      const positions = this.getPositions();
-      const command = new UpdatePositionsRelatedNotes(positions, noteId);
-      this.store.dispatch(command);
+      this.dragEnd$.next(true);
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);
