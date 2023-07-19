@@ -22,10 +22,11 @@ export class ApiAudiosService extends BaseNoteFileContentApiService<
     super(httpClient, ApiAudiosService.baseApi);
   }
 
-  transformTo(noteId: string, contentId: string) {
+  transformTo(noteId: string, contentId: string, connectionId: string) {
     const obj = {
       noteId,
       contentId,
+      connectionId
     };
     return this.httpClient
       .post<OperationResult<ApiAudiosCollection>>(`${this.baseApi}/transform`, obj)
