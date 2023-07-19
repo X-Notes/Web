@@ -33,10 +33,11 @@ export class ApiNoteEditorService {
     );
   }
 
-  syncContents(noteId: string, texts: TextDiff[]) {
+  syncContents(noteId: string, texts: TextDiff[], connectionId: string) {
     const obj = {
       noteId,
       texts,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<TextUpdateResult[]>>(
       `${environment.writeAPI}/api/editor/text/sync`,
@@ -44,10 +45,11 @@ export class ApiNoteEditorService {
     );
   }
   
-  syncContentsStructure(noteId: string, diffs: EditorStructureDiffs) {
+  syncContentsStructure(noteId: string, diffs: EditorStructureDiffs, connectionId: string) {
     const obj = {
       diffs,
       noteId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<EditorStructureResult>>(
       `${environment.writeAPI}/api/editor/contents/sync/structure`,
@@ -100,10 +102,11 @@ export class ApiNoteEditorService {
       );
   }
 
-  updateCursorPosition(noteId: string, cursor: UpdateCursor) {
+  updateCursorPosition(noteId: string, cursor: UpdateCursor, connectionId: string) {
     const obj = {
       cursor,
       noteId,
+      connectionId
     };
     return this.httpClient.post<OperationResult<void>>(
       `${environment.writeAPI}/api/editor/contents/cursor`,

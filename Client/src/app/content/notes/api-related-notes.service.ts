@@ -17,11 +17,13 @@ export class ApiRelatedNotesService {
 
   updateRelatedNotes(
     noteId: string,
-    relatedNoteIds: string[],
+    relatedNoteIds: string[], 
+    connectionId: string
   ): Observable<OperationResult<UpdateRelatedNotesWS>> {
     const obj = {
       noteId,
       relatedNoteIds,
+      connectionId
     };
     return this.httpClient.post<OperationResult<UpdateRelatedNotesWS>>(
       `${environment.writeAPI}/api/relatedNotes`,
@@ -58,10 +60,11 @@ export class ApiRelatedNotesService {
     );
   }
 
-  updateOrder(noteId: string, positions: PositionEntityModel[]) {
+  updateOrder(noteId: string, positions: PositionEntityModel[], connectionId: string) {
     const obj = {
       positions,
       noteId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/relatedNotes/order`,

@@ -12,4 +12,6 @@ public class UpdateCursorCommand : BaseCommandEntity, IRequest<OperationResult<U
     public Guid NoteId { set; get; }
 
     public Cursor Cursor { set; get; }
+
+    public string ConnectionId { set; get; }
 }

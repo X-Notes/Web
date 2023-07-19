@@ -10,11 +10,13 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
+    private readonly NoteWSUpdateService noteWSUpdateService;
 
-    public UpdateCursorCommandHandler(IMediator _mediator, AppSignalRService appSignalRHub)
+    public UpdateCursorCommandHandler(IMediator _mediator, AppSignalRService appSignalRHub, NoteWSUpdateService noteWSUpdateService)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
+        this.noteWSUpdateService = noteWSUpdateService;
     }
 
     public async Task<OperationResult<Unit>> Handle(UpdateCursorCommand request, CancellationToken cancellationToken)
@@ -39,7 +41,8 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
                 request.NoteId,
                 permissions.Caller.Id);
 
-            await appSignalRHub.UpdateUserNoteCursor(request.NoteId, updates);
+            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            await appSignalRHub.UpdateUserNoteCursor(updates, connections);
         }
 
         return new OperationResult<Unit>(true, Unit.Value);

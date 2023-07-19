@@ -15,15 +15,19 @@ public class ChangeOrderRelatedNotesCommandHandler : IRequestHandler<ChangeOrder
     private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     
     private readonly AppSignalRService appSignalRService;
-    
+
+    private readonly NoteWSUpdateService noteWSUpdateService;
+
     public ChangeOrderRelatedNotesCommandHandler(
         IMediator mediator, 
         RelatedNoteToInnerNoteRepository relatedRepository, 
-        AppSignalRService appSignalRService)
+        AppSignalRService appSignalRService,
+        NoteWSUpdateService noteWSUpdateService)
     {
         _mediator = mediator;
         this.relatedRepository = relatedRepository;
         this.appSignalRService = appSignalRService;
+        this.noteWSUpdateService = noteWSUpdateService;
     }
     
     public async Task<OperationResult<Unit>> Handle(ChangeOrderRelatedNotesCommand request, CancellationToken cancellationToken)
@@ -53,7 +57,8 @@ public class ChangeOrderRelatedNotesCommandHandler : IRequestHandler<ChangeOrder
                 if (permissions.IsMultiplyUpdate)
                 {
                     var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
-                    await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+                    var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                    await appSignalRService.UpdateRelatedNotes(updates, connections);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);
