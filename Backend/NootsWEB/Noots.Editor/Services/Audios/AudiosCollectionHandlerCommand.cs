@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
@@ -29,7 +30,7 @@ namespace Noots.Editor.Services.Audios
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
-
+        private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<AudiosCollectionHandlerCommand> logger;
 
         public AudiosCollectionHandlerCommand(
@@ -40,12 +41,14 @@ namespace Noots.Editor.Services.Audios
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
+            NoteWSUpdateService noteWSUpdateService,
             ILogger<AudiosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
         }
 
@@ -73,7 +76,8 @@ namespace Noots.Editor.Services.Audios
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateAudiosCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
@@ -105,7 +109,8 @@ namespace Noots.Editor.Services.Audios
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateAudiosCollection(connections, updates);
                     }
 
                     var res = new UpdateBaseContentResult(audiosCollection.Id, audiosCollection.Version, audiosCollection.UpdatedAt);
@@ -161,7 +166,8 @@ namespace Noots.Editor.Services.Audios
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateAudiosCollection(connections, updates);
                     }
 
                     return new OperationResult<AudiosCollectionNoteDTO>(success: true, result);
@@ -201,7 +207,8 @@ namespace Noots.Editor.Services.Audios
 
             if (permissions.IsMultiplyUpdate)
             {
-                await appSignalRService.UpdateAudiosCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateAudiosCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);

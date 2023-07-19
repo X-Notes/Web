@@ -29,7 +29,7 @@ namespace Noots.Editor.Services.Documents
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
-
+        private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
 
         public DocumentsCollectionHandlerCommand(
@@ -40,12 +40,14 @@ namespace Noots.Editor.Services.Documents
                 HistoryCacheService historyCacheService,
                 AppSignalRService appSignalRService,
                 CollectionLinkedService collectionLinkedService,
+                NoteWSUpdateService noteWSUpdateService,
                 ILogger<DocumentsCollectionHandlerCommand> logger) : base(documentNoteRepository, documentNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
         }
 
@@ -74,7 +76,8 @@ namespace Noots.Editor.Services.Documents
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateDocumentsCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
@@ -106,7 +109,8 @@ namespace Noots.Editor.Services.Documents
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateDocumentsCollection(connections, updates);
                     }
 
                     var res = new UpdateBaseContentResult(collection.Id, collection.Version, collection.UpdatedAt);
@@ -160,7 +164,8 @@ namespace Noots.Editor.Services.Documents
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateDocumentsCollection(connections, updates);
                     }
 
                     return new OperationResult<DocumentsCollectionNoteDTO>(success: true, result);
@@ -200,7 +205,8 @@ namespace Noots.Editor.Services.Documents
 
             if (permissions.IsMultiplyUpdate)
             {
-                await appSignalRService.UpdateDocumentsCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateDocumentsCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);

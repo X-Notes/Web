@@ -1,9 +1,7 @@
 ﻿using Common;
-using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO;
-using Common.DTO.Parts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections.Features;
@@ -72,10 +70,10 @@ public class AppSignalRHub : Hub
         var command = new GetUserPermissionsForNoteQuery(noteId, userId);
         var permission = await mediator.Send(command);
         var isCanRead = permission.CanRead;
-
+     
         if (permission.IsOwner)
         {
-            await JoinNoteIternalAsync(noteId, ent);
+            await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
             return;
         }
 
@@ -97,19 +95,18 @@ public class AppSignalRHub : Hub
             return;
         }
 
-        await JoinNoteIternalAsync(noteId, ent);
+        await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
     }
 
-    private async Task JoinNoteIternalAsync(Guid noteId, UserIdentifierConnectionId ent)
+    private async Task JoinNoteIternalAsync(Guid noteId, UserIdentifierConnectionId ent, List<Guid> userIds)
     {
         await noteServiceStorage.AddAsync(noteId, ent);
-        var groupId = WsNameHelper.GetNoteGroupName(noteId);
-
-        await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
 
         var result = new OperationResult<bool>(true, true);
         await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, result));
-        await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
+
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
     }
 
     public async Task LeaveNote(Guid noteId)
@@ -120,14 +117,16 @@ public class AppSignalRHub : Hub
 
         await noteServiceStorage.RemoveAsync(noteId, ent.Id);
 
-        await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId);
+        var command = new GetUserPermissionsForNoteQuery(noteId, userId);
+        var permission = await mediator.Send(command);
+
+        await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId, permission.GetAllUsers());
     }
 
-    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId)
+    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId, List<Guid> userIds)
     {
-        var groupId = WsNameHelper.GetNoteGroupName(noteId);
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-        await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
     }
 
     // FOLDERS
@@ -148,7 +147,7 @@ public class AppSignalRHub : Hub
 
         if (permission.IsOwner)
         {
-            await JoinFolderIternalAsync(folderId, ent);
+            await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
             return;
         }
 
@@ -170,19 +169,18 @@ public class AppSignalRHub : Hub
             return;
         }
 
-        await JoinFolderIternalAsync(folderId, ent);
+        await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
     }
 
-    private async Task JoinFolderIternalAsync(Guid folderId, UserIdentifierConnectionId ent)
+    private async Task JoinFolderIternalAsync(Guid folderId, UserIdentifierConnectionId ent, List<Guid> userIds)
     {
         await folderServiceStorage.AddAsync(folderId, ent);
-        var groupId = GetFolderGroupName(folderId);
-
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
 
         var result = new OperationResult<bool>(true, true);
         await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, result));
-        await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId);
+
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId);
     }
 
     public async Task LeaveFolder(Guid folderId)
@@ -193,17 +191,17 @@ public class AppSignalRHub : Hub
 
         await folderServiceStorage.RemoveAsync(folderId, ent.Id);
 
-        await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId);
+        var command = new GetUserPermissionsForFolderQuery(folderId, userId);
+        var permission = await mediator.Send(command);
+
+        await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId, permission.GetAllUsers());
     }
 
-    private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId)
+    private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId, List<Guid> userIds)
     {
-        var groupId = GetFolderGroupName(folderId);
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-        await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity(folderId, userIdentifier, userId));
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity(folderId, userIdentifier, userId));
     }
-
-    public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
     // override
     public override async Task OnConnectedAsync()

@@ -14,5 +14,7 @@ namespace Noots.Editor.Commands.Text
 
         [RequiredListNotEmpty]
         public List<TextDiff> Texts { set; get; } = new List<TextDiff>();
+
+        public string ConnectionId { set; get; }
     }
 }

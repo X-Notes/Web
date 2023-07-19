@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Azure.Core;
+using Common;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
@@ -103,7 +104,7 @@ namespace Noots.Editor.Services
 
             foreach (var text in request.Texts)
             {
-                var res = await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate);
+                var res = await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate, request.ConnectionId, permissions.GetAllUsers());
                 results.Add(res);
             }
 
@@ -112,7 +113,7 @@ namespace Noots.Editor.Services
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, Guid noteId, Guid userId, bool isMultiplyUpdate)
+        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, Guid noteId, Guid userId, bool isMultiplyUpdate, string connectionId, List<Guid> userToSendIds)
         {
             var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
             if (textForUpdate == null) return null;
@@ -128,7 +129,8 @@ namespace Noots.Editor.Services
             if (isMultiplyUpdate)
             {
                 var updates = new UpdateTextWS(mapper.ToTextDTO(textForUpdate));
-                await appSignalRService.UpdateTextContent(noteId, userId, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(noteId, userToSendIds, connectionId);
+                await appSignalRService.UpdateTextContent(updates, connections);
             }
 
             return new UpdateBaseContentResult(textForUpdate.Id, textForUpdate.Version, textForUpdate.UpdatedAt);
