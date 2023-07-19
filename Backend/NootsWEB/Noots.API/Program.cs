@@ -26,6 +26,7 @@ using Common.App;
 using Common.SignalR;
 using Noots.Auth.Entities;
 using Common.Google;
+using Noots.Editor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,7 +104,7 @@ builder.Services.Mediatr();
 builder.Services.ApplyDataBaseDI(dbConn);
 builder.Services.DapperDI(dbConn);
 
-builder.Services.BI();
+builder.Services.AddScoped<CollectionLinkedService>();
 builder.Services.ApplySignalRDI();
 
 builder.Services.AddMemoryCache();

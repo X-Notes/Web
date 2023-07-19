@@ -10,6 +10,8 @@ using Noots.API.Workers.ConfigureAPP;
 using Noots.API.Workers.Database;
 using Noots.API.Workers.Database.Models;
 using Noots.API.Workers.Filters;
+using Noots.Editor.Services;
+using Noots.Notes.Handlers.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,8 @@ builder.Services.ApplyDataBaseDI(dbConn);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
+builder.Services.AddScoped<CollectionLinkedService>();
+builder.Services.AddScoped<DeleteNotesCommandHandler>();
 
 builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);

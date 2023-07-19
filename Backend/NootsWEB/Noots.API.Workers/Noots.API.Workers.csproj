@@ -25,8 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Noots.Editor\Noots.Editor.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Notes\Noots.Notes.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
   </ItemGroup>
 

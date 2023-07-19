@@ -1,4 +1,5 @@
-﻿using Common.DTO;
+﻿using Common.DatabaseModels.Models.Notes;
+using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
@@ -37,30 +38,36 @@ public class DeleteNotesCommandHandler : IRequestHandler<DeleteNotesCommand, Ope
         var permissions = await mediator.Send(command);
 
         var notes = permissions.Where(x => x.perm.IsOwner);
-        if (notes.Any())
+
+        if (!notes.Any())
         {
-            var noteIds = notes.Select(x => x.noteId);
-
-            // HISTORY DELETION
-            var snapshots = await noteSnapshotRepository.GetSnapshotsWithSnapshotFileContent(noteIds);
-            var snapshotFileIds = snapshots.SelectMany(x => x.SnapshotFileContents.Select(x => x.AppFileId));
-
-            await noteSnapshotRepository.RemoveRangeAsync(snapshots);
-
-            // CONTENT DELETION
-            var collectionsToDelete = await collectionNoteRepository.GetManyIncludeNoteAppFiles(noteIds);
-            var collectionFileIds = collectionsToDelete.SelectMany(x => x.CollectionNoteAppFiles.Select(x => x.AppFileId));
-
-            var filesIdsToUnlink = snapshotFileIds.Concat(collectionFileIds).ToHashSet();
-
-            var notesToDelete = notes.Select(x => x.perm.Note);
-            await noteRepository.RemoveRangeAsync(notesToDelete);
-
-            await collectionLinkedService.UnlinkFiles(filesIdsToUnlink);
-
-            return new OperationResult<Unit>(true, Unit.Value);
+            return new OperationResult<Unit>().SetNotFound();
         }
- 
-        return new OperationResult<Unit>().SetNotFound();
+
+        var notesToDelete = notes.Select(x => x.perm.Note);
+        await DeleteNotesAsync(notesToDelete);
+
+        return new OperationResult<Unit>(true, Unit.Value);
+    }
+
+    public async Task DeleteNotesAsync(IEnumerable<Note> notesToDelete)
+    {
+        var noteIds = notesToDelete.Select(x => x.Id);
+
+        // HISTORY DELETION
+        var snapshots = await noteSnapshotRepository.GetSnapshotsWithSnapshotFileContent(noteIds);
+        var snapshotFileIds = snapshots.SelectMany(x => x.SnapshotFileContents.Select(x => x.AppFileId));
+
+        await noteSnapshotRepository.RemoveRangeAsync(snapshots);
+
+        // CONTENT DELETION
+        var collectionsToDelete = await collectionNoteRepository.GetManyIncludeNoteAppFiles(noteIds);
+        var collectionFileIds = collectionsToDelete.SelectMany(x => x.CollectionNoteAppFiles.Select(x => x.AppFileId));
+
+        var filesIdsToUnlink = snapshotFileIds.Concat(collectionFileIds).ToHashSet();
+
+        await noteRepository.RemoveRangeAsync(notesToDelete);
+
+        await collectionLinkedService.UnlinkFiles(filesIdsToUnlink);
     }
 }

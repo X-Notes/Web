@@ -4,6 +4,7 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.Notes.Handlers.Commands;
 
 namespace Noots.API.Workers.BI
 {
@@ -22,13 +23,16 @@ namespace Noots.API.Workers.BI
 
         private readonly ILogger<EntitiesDeleteJobHandler> logger;
 
+        private readonly DeleteNotesCommandHandler deleteNotesCommandHandler;
+
         public EntitiesDeleteJobHandler(
             LabelRepository labelRepostory,
             NoteRepository noteRepository,
             FolderRepository folderRepository,
             JobsTimerConfig timersConfig,
             NoteSnapshotRepository noteSnapshotRepository,
-            ILogger<EntitiesDeleteJobHandler> logger)
+            ILogger<EntitiesDeleteJobHandler> logger,
+            DeleteNotesCommandHandler deleteNotesCommandHandler)
         {
             this.labelRepostory = labelRepostory;
             this.noteRepository = noteRepository;
@@ -36,6 +40,7 @@ namespace Noots.API.Workers.BI
             jobsTimerConfig = timersConfig;
             this.noteSnapshotRepository = noteSnapshotRepository;
             this.logger = logger;
+            this.deleteNotesCommandHandler = deleteNotesCommandHandler;
         }
 
         public async Task DeleteLabelsHandler()
@@ -73,7 +78,7 @@ namespace Noots.API.Workers.BI
                 if (notes.Any())
                 {
                     logger.LogInformation($"{notes.Count()} notes will be deleted");
-                    await noteRepository.RemoveRangeAsync(notes);
+                    await deleteNotesCommandHandler.DeleteNotesAsync(notes);
                     logger.LogInformation("Notes was deleted");
                 }
             }
