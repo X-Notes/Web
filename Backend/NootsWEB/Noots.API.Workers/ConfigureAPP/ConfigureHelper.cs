@@ -29,12 +29,12 @@ namespace Noots.API.Workers.ConfigureAPP
 
         public static void JOBS(this IServiceCollection services)
         {
-            services.AddScoped<EntitiesDeleteJobHandler>();
-            services.AddScoped<HistoryJobHandler>();
+            services.AddScoped<NotesJobHandler>();
+            services.AddScoped<FoldersJobHandler>();
+            services.AddScoped<LabelsJobHandler>();
             services.AddScoped<RemoveExpiredTokensHandler>();
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
             services.AddScoped<RemoveDeadWSConnectionsHandler>();
-            services.AddScoped<IndexTextNoteContentJobHandler>();
 
             services.AddHostedService<JobRegisterHosted>();
         }

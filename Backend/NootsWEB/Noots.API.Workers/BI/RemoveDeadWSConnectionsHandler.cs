@@ -30,7 +30,7 @@ public class RemoveDeadWSConnectionsHandler
 		this.logger = logger;
 	}
 
-	public async Task Handle()
+	public async Task HandleAsync()
 	{
 		var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-jobsTimerConfig.DeleteDeadConnectionsMinutes);
 		var deadConnections = await userIdentifierConnectionIdRepository.GetConnectionsByDateIncludeNotesFoldersAsync(earliestTimestamp);

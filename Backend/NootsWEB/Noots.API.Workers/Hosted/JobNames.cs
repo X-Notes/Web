@@ -2,22 +2,16 @@
 {
     public static class JobNames
     {
-        public static string LabelsDelete = "LabelsDelete";
+        public static string LabelsJobs = "LabelsJobs";
 
-        public static string NotesDelete = "NotesDelete";
+        public static string FoldersJobs = "FoldersJobs";
 
-        public static string FoldersDelete = "FoldersDelete";
+        public static string NotesJobs = "NotesJobs";
 
-        public static string HistoryDelete = "HistoryDelete";
+        public static string RemoveTokensJobs = "RemoveTokensJobs";
 
-        public static string HistoryMake = "HistoryMake";
+        public static string RemoveConnectionsJobs = "RemoveConnectionsJobs";
 
-        public static string UnlinkedFilesDelete = "UnlinkedFilesDelete";
-
-        public static string RemoveDeadWSConnections = "RemoveDeadWSConnections";
-
-        public static string RemoveExpiredTokens = "RemoveExpiredTokens";
-
-        public static string IndexTexts = "IndexTexts";
+        public static string RemoveFilesJobs = "RemoveFilesJobs ";
     }
 }

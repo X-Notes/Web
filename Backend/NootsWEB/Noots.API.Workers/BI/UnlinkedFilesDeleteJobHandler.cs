@@ -29,7 +29,12 @@ namespace Noots.API.Workers.BI
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
         }
 
-        public async Task DeleteUnLinkedFiles()
+        public async Task HandleAsync()
+        {
+            await DeleteUnLinkedFiles();
+        }
+
+        private async Task DeleteUnLinkedFiles()
         {
             logger.LogInformation("Start DeleteUnLinkedFiles");
 
