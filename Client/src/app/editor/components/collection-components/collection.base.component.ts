@@ -123,6 +123,12 @@ export class CollectionBaseComponent<
     }
   }
 
+  uploadFilesDragDrop(files: File[]) {
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
+    }
+  }
+
   uploadFiles($event) {
     const files = $event.target?.files;
     if (files?.length > 0) {

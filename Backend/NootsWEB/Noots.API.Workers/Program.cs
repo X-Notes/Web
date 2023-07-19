@@ -17,6 +17,7 @@ var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+    .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
 builder.Configuration.AddConfiguration(configBuilder.Build());

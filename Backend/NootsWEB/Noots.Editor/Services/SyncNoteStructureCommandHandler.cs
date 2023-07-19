@@ -165,7 +165,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         }
         if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
         {
-            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var newCollectionItemsToAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
             var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
             if (newCollectionItemsToAdd.Any())
@@ -184,7 +184,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         }
         if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
         {
-            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var newCollectionItemsToAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
             var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
             if (newCollectionItemsToAdd.Any())
@@ -203,7 +203,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         }
         if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
         {
-            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var newCollectionItemsToAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
             var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
             if (newCollectionItemsToAdd.Any())
