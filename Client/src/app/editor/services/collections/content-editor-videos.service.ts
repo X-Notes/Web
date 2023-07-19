@@ -14,6 +14,7 @@ import { VideoModel, VideosCollection } from '../../entities/contents/videos-col
 import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
 import { ContentEditorContentsService } from '../../ui-services/contents/content-editor-contents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +27,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     contentEditorContentsService: ContentEditorContentsService,
     private apiVideos: ApiVideosService,
     private apiFiles: ApiNoteFilesService,
+    private signalR: SignalRService,
   ) {
     super(
       store,
@@ -42,7 +44,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     if (!isCan) {
       return;
     }
-    const collectionResult = await this.apiVideos.transformTo(noteId, contentId).toPromise();
+    const collectionResult = await this.apiVideos.transformTo(noteId, contentId, this.signalR.connectionIdOrError).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true;
       this.transformContentToOrWarning(collectionResult, contentId);

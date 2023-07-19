@@ -14,6 +14,7 @@ import { ContentEditorContentsService } from '../../ui-services/contents/content
 import { ApiNoteFilesService } from '../../api/api-editor-files.service';
 import { AudioModel, AudiosCollection } from '../../entities/contents/audios-collection';
 import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable()
 export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +27,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     private apiAudiosCollection: ApiAudiosService,
     contentEditorContentsService: ContentEditorContentsService,
     private apiFiles: ApiNoteFilesService,
+    private signalR: SignalRService,
   ) {
     super(
       store,
@@ -47,7 +49,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       return;
     }
     const collectionResult = await this.apiAudiosCollection
-      .transformTo(noteId, contentId)
+      .transformTo(noteId, contentId, this.signalR.connectionIdOrError)
       .toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH

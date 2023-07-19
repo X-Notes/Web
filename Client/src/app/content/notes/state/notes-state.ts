@@ -951,7 +951,7 @@ export class NoteStore {
     if(!user?.id) return;
     const note = getState().fullNoteState.note;
     if (!note || note.id !== noteId) return;
-    await this.apiNoteEditor.updateCursorPosition(noteId, cursor).toPromise();
+    await this.apiNoteEditor.updateCursorPosition(noteId, cursor, this.signalR.connectionIdOrError).toPromise();
   }
 
   @Action(ClearCursorsAction)
@@ -977,7 +977,7 @@ export class NoteStore {
   // eslint-disable-next-line no-empty-pattern
   async updateRelationNotePositions({ }: StateContext<NoteState>, { positions, noteId }: UpdatePositionsRelatedNotes) {
     if (noteId && positions && positions.length > 0) {
-      await this.apiRelated.updateOrder(noteId, positions).toPromise();
+      await this.apiRelated.updateOrder(noteId, positions, this.signalR.connectionIdOrError).toPromise();
     }
   }
 

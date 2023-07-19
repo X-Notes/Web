@@ -5,6 +5,7 @@ import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-r
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { ApiRelatedNotesService } from '../../api-related-notes.service';
 import { RelatedNote } from '../../models/related-note.model';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +17,11 @@ export class RelatedNotesService {
     private apiRelated: ApiRelatedNotesService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
+    private signalR: SignalRService,
   ) {}
 
   async updateRelatedNotes(noteId: string, ids: string[]): Promise<void> {
-    const resp = await this.apiRelated.updateRelatedNotes(noteId, ids).toPromise();
+    const resp = await this.apiRelated.updateRelatedNotes(noteId, ids, this.signalR.connectionIdOrError).toPromise();
     if (resp.success) {
       this.handleUpdates(resp.data, noteId);
     }
@@ -51,7 +53,7 @@ export class RelatedNotesService {
 
   async deleteRelatedNote(relatedNoteId: string, noteId: string): Promise<void> {
     const ids = this.notes.filter((x) => x.id !== relatedNoteId).map((x) => x.id);
-    const resp = await this.apiRelated.updateRelatedNotes(noteId, ids).toPromise();
+    const resp = await this.apiRelated.updateRelatedNotes(noteId, ids, this.signalR.connectionIdOrError).toPromise();
     if (resp.success) {
       this.handleUpdates(resp.data, noteId);
     }

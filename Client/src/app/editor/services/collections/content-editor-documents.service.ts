@@ -14,6 +14,7 @@ import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
 import { ContentEditorContentsService } from '../../ui-services/contents/content-editor-contents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { DocumentModel, DocumentsCollection } from '../../entities/contents/documents-collection';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable()
 export class ContentEditorDocumentsCollectionService extends ContentEditorFilesBase {
@@ -26,6 +27,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     contentEditorContentsService: ContentEditorContentsService,
     private apiDocuments: ApiDocumentsService,
     private apiFiles: ApiNoteFilesService,
+    private signalR: SignalRService,
   ) {
     super(
       store,
@@ -46,7 +48,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     if (!isCan) {
       return;
     }
-    const collectionResult = await this.apiDocuments.transformTo(noteId, contentId).toPromise();
+    const collectionResult = await this.apiDocuments.transformTo(noteId, contentId, this.signalR.connectionIdOrError).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
       this.transformContentToOrWarning(collectionResult, contentId);
