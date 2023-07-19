@@ -16,11 +16,14 @@ namespace Noots.Editor.Commands
 
         public string? Name { set; get; }
 
-        public BaseUpdateCollectionInfo(Guid noteId, Guid contentId, string name)
+        public string ConnectionId { set; get; }
+
+        public BaseUpdateCollectionInfo(Guid noteId, Guid contentId, string name, string connectionId)
         {
             NoteId = noteId;
             ContentId = contentId;
             Name = name;
+            ConnectionId = connectionId;
         }
     }
 }

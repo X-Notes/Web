@@ -4,7 +4,7 @@ namespace Noots.Editor.Commands.Photos;
 
 public class UpdatePhotosCollectionInfoCommand : BaseUpdateCollectionInfo
 {
-    public UpdatePhotosCollectionInfoCommand(Guid noteId, Guid contentId, string name) : base(noteId, contentId, name)
+    public UpdatePhotosCollectionInfoCommand(Guid noteId, Guid contentId, string name, string connectionId) : base(noteId, contentId, name, connectionId)
     {
     }
 

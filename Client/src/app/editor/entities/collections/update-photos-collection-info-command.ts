@@ -8,7 +8,8 @@ export class UpdatePhotosCollectionInfoCommand extends BaseUpdateCollectionInfoC
     public count: number,
     public width: string,
     public height: string,
+    public connectionId: string
   ) {
-    super(noteId, contentId, name);
+    super(noteId, contentId, name, connectionId);
   }
 }
