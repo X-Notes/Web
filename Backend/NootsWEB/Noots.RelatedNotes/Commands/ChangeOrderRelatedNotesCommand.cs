@@ -13,5 +13,7 @@ namespace Noots.RelatedNotes.Commands
 
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
+        public string ConnectionId { set; get; }
     }
 }

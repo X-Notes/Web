@@ -80,12 +80,12 @@ import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { ClearCursorsAction, UpdateCursorAction, UpdateCursorWS } from './editor-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
-import { ApiTextService } from 'src/app/editor/api/api-text.service';
+import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 export interface FullNoteState {
   note: FullNote;
@@ -136,9 +136,8 @@ export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
     private apiEditorUsers: ApiEditorUsersService,
-    private apiText: ApiTextService,
     private historyApi: ApiNoteHistoryService,
-    private apiContents: ApiNoteContentService,
+    private apiNoteEditor: ApiNoteEditorService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
     private updaterEntitiesService: UpdaterEntitiesService,
@@ -148,6 +147,7 @@ export class NoteStore {
     private translate: TranslateService,
     public pService: PersonalizationService,
     private store: Store,
+    private signalR: SignalRService,
   ) { }
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -706,7 +706,10 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.changeColor(selectedIds, color).toPromise();
+      if(!this.signalR.connectionId) {
+        throw new Error('connectionId null');
+      }
+      resp = await this.api.changeColor(selectedIds, color, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -786,7 +789,10 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.addLabel(label.id, selectedIds).toPromise();
+      if(!this.signalR.connectionId) {
+        throw new Error('connectionId null');
+      }
+      resp = await this.api.addLabel(label.id, selectedIds, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -827,7 +833,10 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.api.removeLabel(labelId, selectedIds).toPromise();
+      if(!this.signalR.connectionId) {
+        throw new Error('connectionId null');
+      }
+      resp = await this.api.removeLabel(labelId, selectedIds, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -942,7 +951,7 @@ export class NoteStore {
     if(!user?.id) return;
     const note = getState().fullNoteState.note;
     if (!note || note.id !== noteId) return;
-    await this.apiContents.updateCursorPosition(noteId, cursor).toPromise();
+    await this.apiNoteEditor.updateCursorPosition(noteId, cursor, this.signalR.connectionIdOrError).toPromise();
   }
 
   @Action(ClearCursorsAction)
@@ -968,7 +977,7 @@ export class NoteStore {
   // eslint-disable-next-line no-empty-pattern
   async updateRelationNotePositions({ }: StateContext<NoteState>, { positions, noteId }: UpdatePositionsRelatedNotes) {
     if (noteId && positions && positions.length > 0) {
-      await this.apiRelated.updateOrder(noteId, positions).toPromise();
+      await this.apiRelated.updateOrder(noteId, positions, this.signalR.connectionIdOrError).toPromise();
     }
   }
 
@@ -1065,7 +1074,10 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      resp = await this.apiText.updateTitle(newTitle, noteId).toPromise();
+      if(!this.signalR.connectionId) {
+        throw new Error('connectionId null');
+      }
+      resp = await this.apiNoteEditor.updateTitle(newTitle, noteId, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -1167,7 +1179,7 @@ export class NoteStore {
 
   @Action(LoadNotes)
   async loadNotes({ getState, patchState }: StateContext<NoteState>, { type, pr }: LoadNotes) {
-    if (!getState().notes.find((q) => q.typeNotes === type)) {
+    if (!getState().notes?.find((q) => q.typeNotes === type)) {
       const notesAPI = await this.api.getNotes(type, pr).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],

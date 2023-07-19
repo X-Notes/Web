@@ -16,17 +16,20 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
     private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     private readonly AppSignalRService appSignalRService;
     private readonly BillingPermissionService billingPermissionService;
+    private readonly NoteWSUpdateService noteWSUpdateService;
 
     public UpdateRelatedNotesToNoteCommandHandler(
         IMediator mediator, 
         RelatedNoteToInnerNoteRepository relatedRepository, 
         AppSignalRService appSignalRService,
-        BillingPermissionService billingPermissionService)
+        BillingPermissionService billingPermissionService,
+        NoteWSUpdateService noteWSUpdateService)
     {
         this.mediator = mediator;
         this.relatedRepository = relatedRepository;
         this.appSignalRService = appSignalRService;
         this.billingPermissionService = billingPermissionService;
+        this.noteWSUpdateService = noteWSUpdateService;
     }
     
     public async Task<OperationResult<UpdateRelatedNotesWS>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
@@ -76,7 +79,8 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
         var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
         if (permissions.IsMultiplyUpdate)
         {
-            await appSignalRService.UpdateRelatedNotes(request.NoteId, request.UserId, updates);
+            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            await appSignalRService.UpdateRelatedNotes(updates, connections);
         }
 
         return new OperationResult<UpdateRelatedNotesWS>(true, updates);    

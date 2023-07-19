@@ -14,10 +14,14 @@ namespace Noots.API.Controllers
     public class WSManagementController : ControllerBase
     {
         private readonly AppSignalRService appSignalRService;
+        private readonly NoteWSUpdateService noteWSUpdateService;
+        private readonly FolderWSUpdateService folderWSUpdateService;
 
-        public WSManagementController(AppSignalRService appSignalRService)
+        public WSManagementController(AppSignalRService appSignalRService, NoteWSUpdateService noteWSUpdateService, FolderWSUpdateService folderWSUpdateService)
         {
             this.appSignalRService = appSignalRService;
+            this.noteWSUpdateService = noteWSUpdateService;
+            this.folderWSUpdateService = folderWSUpdateService;
         }
 
 
@@ -30,14 +34,16 @@ namespace Noots.API.Controllers
                 {
                     foreach (var noteId in con.NoteIds)
                     {
-                        await appSignalRService.RemoveOnlineUsersNoteAsync(noteId, con.UserIdentifierConnectionId, con.UserId);
+                        var userIds = await noteWSUpdateService.GetNotesUserIds(noteId);
+                        await appSignalRService.RemoveOnlineUsersNoteAsync(noteId, con.UserIdentifierConnectionId, con.UserId, userIds);
                     }
                 }
                 if (con.FolderIds != null)
                 {
                     foreach (var folderId in con.FolderIds)
                     {
-                        await appSignalRService.RemoveOnlineUsersFolderAsync(folderId, con.UserIdentifierConnectionId, con.UserId);
+                        var userIds = await folderWSUpdateService.GetFoldersUserIds(folderId);
+                        await appSignalRService.RemoveOnlineUsersFolderAsync(folderId, con.UserIdentifierConnectionId, con.UserId, userIds);
                     }
                 }
             }

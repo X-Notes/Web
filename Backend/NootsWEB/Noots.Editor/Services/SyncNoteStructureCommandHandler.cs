@@ -39,6 +39,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
     private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
+    private readonly NoteWSUpdateService noteWSUpdateService;
+
     public SyncNoteStructureCommandHandler(
         BaseNoteContentRepository baseNoteContentRepository,
         HistoryCacheService historyCacheService,
@@ -48,7 +50,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         IMediator _mediator,
         CollectionLinkedService collectionLinkedService,
         ILogger<SyncNoteStructureCommandHandler> logger,
-        NoteFolderLabelMapper noteFolderLabelMapper)
+        NoteFolderLabelMapper noteFolderLabelMapper,
+        NoteWSUpdateService noteWSUpdateService)
     {
 
         this.historyCacheService = historyCacheService;
@@ -60,6 +63,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         this.collectionLinkedService = collectionLinkedService;
         this.logger = logger;
         this.noteFolderLabelMapper = noteFolderLabelMapper;
+        this.noteWSUpdateService = noteWSUpdateService;
     }
 
 
@@ -248,7 +252,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
         if (permissions.IsMultiplyUpdate)
         {
-            await appSignalRService.UpdateNoteStructure(request.NoteId, permissions.Caller.Id, result.Updates);
+            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            await appSignalRService.UpdateNoteStructure(result.Updates, connections);
         }
 
         return new OperationResult<NoteStructureResult>(true, result);

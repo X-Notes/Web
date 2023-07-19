@@ -16,10 +16,6 @@ public class BillingPlanDTO
         
     public int MaxRelatedNotes { set; get; }
 
-    public int MaxUserAtSameTimeOnNote { set; get; }
-
-    public int MaxUserAtSameTimeOnFolder { set; get; }
-
     public int MaxBackgrounds { set; get; }
 
     public string Name { set; get; }
@@ -36,8 +32,6 @@ public class BillingPlanDTO
         MaxRelatedNotes = plan.MaxRelatedNotes;
         Name = plan.Name;
         Price = plan.Price;
-        MaxUserAtSameTimeOnNote = plan.MaxUserAtSameTimeOnNote;
-        MaxUserAtSameTimeOnFolder = plan.MaxUserAtSameTimeOnFolder;
         MaxBackgrounds = plan.MaxBackgrounds;
     }
 }

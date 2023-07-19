@@ -23,7 +23,7 @@ import { EditorFacadeService } from '../services/editor-facade.service';
   selector: '',
   template: '',
 })
-export class EditorCollectionsComponent extends EditorTitleComponent {
+export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(facade: EditorFacadeService) {
     super(facade);

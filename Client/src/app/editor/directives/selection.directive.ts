@@ -8,11 +8,14 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { fromEvent, Subscription } from 'rxjs';
+import { BehaviorSubject, fromEvent, Subscription } from 'rxjs';
 import { bufferTime } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ClickableContentService } from '../ui-services/clickable-content.service';
 import { SelectionService } from '../ui-services/selection.service';
+import { EditorOptions } from '../entities-ui/editor-options';
+import { Store } from '@ngxs/store';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Directive({
   selector: '[appSelection]',
@@ -31,7 +34,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   onScrollEvent = new EventEmitter<Event>();
 
-  @Input() isReadonly: boolean;
+  @Input() editorOptions$: BehaviorSubject<EditorOptions>;
 
   listeners = [];
 
@@ -63,6 +66,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private selectionService: SelectionService,
     private clickableService: ClickableContentService,
     private pS: PersonalizationService,
+    private store: Store,
   ) {
     this.mainContent = elementRef.nativeElement;
   }
@@ -103,7 +107,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isReadonly) return;
     this.initMouseHandlers();
   }
 
@@ -117,24 +120,36 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   initMouseHandlers(): void {
     const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) => {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
+        return true;
+      }
       return this.mouseDown(e);
     });
     const mouseUpListener = this.renderer.listen(document, 'mouseup', (e: MouseEvent) => {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
+        return true;
+      }
       return this.mouseUp(e);
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {});
-    this.listeners.push(mouseMoveListener);
+    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {
+      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
+        return true;
+      }
+    });
 
     this.moveEventSub = fromEvent(document, 'mousemove')
       .pipe(bufferTime(20))
       .subscribe((events: MouseEvent[]) => {
+        if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
+          return true;
+        }
         if (!events || events.length === 0) return;
         const last = events[events.length - 1];
         this.mouseMoveDelay(last);
       });
 
-    this.listeners.push(mouseDownListener, mouseUpListener);
+    this.listeners.push(mouseMoveListener, mouseDownListener, mouseUpListener);
   }
 
   initSelectionDrawer(scrollSection: HTMLElement): void {

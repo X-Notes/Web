@@ -43,7 +43,7 @@ public class ChangeColorFolderCommandHandler : IRequestHandler<ChangeColorFolder
 
             // WS UPDATES
             var updates = permissions.Select(x => (new UpdateFolderWS { Color = request.Color, FolderId = x.folderId }, x.perm.GetAllUsers()));
-            await folderWsUpdateService.UpdateFolders(updates, request.UserId);
+            await folderWsUpdateService.UpdateFolders(updates, request.ConnectionId);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

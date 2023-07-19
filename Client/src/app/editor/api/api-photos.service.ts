@@ -22,10 +22,11 @@ export class ApiPhotosService extends BaseNoteFileContentApiService<
     super(httpClient, ApiPhotosService.baseApi);
   }
 
-  transformTo(noteId: string, contentId: string) {
+  transformTo(noteId: string, contentId: string, connectionId: string) {
     const obj = {
       noteId,
       contentId,
+      connectionId
     };
     return this.httpClient
       .post<OperationResult<ApiPhotosCollection>>(`${this.baseApi}/transform`, obj)

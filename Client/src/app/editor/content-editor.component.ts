@@ -63,6 +63,7 @@ import { ContentEditorVideosCollectionService } from './services/collections/con
 import { ContentEditorElementsListenerService } from './ui-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from './ui-services/content-editor-listener.service';
 import { ContentEditorContentsService } from './ui-services/contents/content-editor-contents.service';
+import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
 
 @Component({
   selector: 'app-content-editor',
@@ -233,20 +234,25 @@ export class ContentEditorComponent
   }
 
   ngAfterViewInit(): void {
-    if (!this.options$.getValue().isReadOnlyMode) {
-      this.contentEditorElementsListenersService.setHandlers(this.elementsQuery);
-      this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl);
-      this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
-      this.facade.selectionService.onSelectChanges$
-        .pipe(takeUntil(this.facade.dc.d$))
-        .subscribe(() => {
-          this.options = this.buildMenuOptions();
-          this.facade.cdr.detectChanges();
-        });
-    }
+    this.initKeyAndMouseHandlers();
     if (this.options$.getValue().noteId && this.options$.getValue().connectToNote && this.options$.getValue().userId) {
       this.webSocketsUpdaterService.tryJoinToNote(this.options$.getValue().noteId);
     }
+  }
+
+  initKeyAndMouseHandlers(): void {
+    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery, this.options$);
+    this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl, this.options$);
+    this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
+    this.facade.selectionService.onSelectChanges$
+      .pipe(takeUntil(this.facade.dc.d$))
+      .subscribe(() => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
+        this.options = this.buildMenuOptions();
+        this.facade.cdr.detectChanges();
+      });
   }
 
   buildMenuOptions(): TextEditMenuOptions {
@@ -271,13 +277,23 @@ export class ContentEditorComponent
   ngOnDestroy(): void {
     this.facade.selectionService.resetSelectionAndItems();
     this.muuriService.resetToDefaultOpacity();
-    if (this.options$.getValue().noteId && this.options$.getValue().userId) {
-      this.webSocketsUpdaterService.leaveNote(this.options$.getValue().noteId);
-    }
+    this.leaveNote();
     this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
     this.facade.store.dispatch(ClearCursorsAction);
     this.resetCursor();
+  }
+
+  loadUsers(): void {
+    if (this.options$.getValue().noteId && this.options$.getValue().userId) {
+      this.facade.store.dispatch(new LoadOnlineUsersOnNote(this.options$.getValue().noteId));
+    }
+  }
+
+  leaveNote(): void {
+    if (this.options$.getValue().noteId && this.options$.getValue().userId) {
+      this.webSocketsUpdaterService.leaveNote(this.options$.getValue().noteId);
+    }
   }
 
   ngOnInit(): void {
@@ -303,15 +319,17 @@ export class ContentEditorComponent
       this.facade.cdr.detectChanges();
       this.menuSelectionDirective.onSelectionchange();
     });
+
+    this.loadUsers();
   }
 
   subscribeOnButtons(): void {
-    if (this.options$.getValue().isReadOnlyMode) {
-      return;
-    }
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
         for (const itemId of this.facade.selectionService.getSelectedItems()) {
           this.deleteRowHandler(itemId);
           this.facade.selectionService.removeFromSelectedItems(itemId);
@@ -321,6 +339,9 @@ export class ContentEditorComponent
     this.contentEditorElementsListenersService.onPressCtrlASubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
         this.facade.apiBrowser.removeAllRanges();
         const ids = this.contents.map((x) => x.id);
         this.facade.selectionService.selectItems(ids);
@@ -330,8 +351,11 @@ export class ContentEditorComponent
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
         const updateTitleFunc = (title: string) => {
-          this.setTitle(title);
+          this.setHtmlTitle(title);
           this.pushChangesToTitle(title, false);
         };
         const ids = this.facade.contentEditorRestoreService.restorePrev(updateTitleFunc);
@@ -347,11 +371,19 @@ export class ContentEditorComponent
 
     this.contentEditorElementsListenersService.onPressCtrlSSubject
       .pipe(takeUntil(this.facade.dc.d$))
-      .subscribe(() => this.facade.contentEditorSyncService.changeImmediately());
+      .subscribe(() => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
+        this.facade.contentEditorSyncService.changeImmediately()
+      });
 
     this.contentEditorListenerService.onPressEnterSubject
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe((contentId: string) => {
+        if (this.options$.getValue().isReadOnlyMode) {
+          return;
+        }
         if (contentId) {
           this.enterHandler({
             breakModel: { isFocusToNext: true },
@@ -606,5 +638,11 @@ export class ContentEditorComponent
   mouseOut($event): void {
     this.emptyFocus = false;
     this.last?.detectChanges();
+  }
+
+  onChangePermissions(): void {
+    if (this.options$.getValue().isReadOnlyMode) {
+      this.unSelectItems();
+    }
   }
 }

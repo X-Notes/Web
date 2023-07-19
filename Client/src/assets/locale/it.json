@@ -388,9 +388,7 @@
     "personalization": "Impostazioni di personalizzazione",
     "per-month": "al mese",
     "upgrade": "Aggiornamento",
-    "backgrounds": "{{count}} sfondi",
-    "maxUserAtSameTimeOnNote": "{{count}} utenti su una nota allo stesso tempo",
-    "maxUserAtSameTimeOnFolder": "{{count}} utenti su una cartella contemporaneamente"
+    "backgrounds": "{{count}} sfondi"
   },
   "files": {
     "noAccessRightsNote": "Nessuna autorizzazione per caricare file da annotare",

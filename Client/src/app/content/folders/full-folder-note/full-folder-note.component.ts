@@ -13,7 +13,7 @@ import { SmallNote } from '../../notes/models/small-note.model';
 import { LoadFullNote } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { ApiFullFolderService } from '../full-folder/services/api-full-folder.service';
-import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
+import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { LoadFullFolder } from '../state/folders-actions';
@@ -64,7 +64,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     route: ActivatedRoute,
     private store: Store,
     private apiFullFolder: ApiFullFolderService,
-    private api: ApiNoteContentService,
+    private api: ApiNoteEditorService,
     public pService: PersonalizationService,
   ) {
     this.routeSubscription = route.params.pipe(takeUntilDestroyed()).subscribe(async (params) => {

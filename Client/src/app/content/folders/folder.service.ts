@@ -22,6 +22,7 @@ import {
 import { ApiFoldersService } from './api-folders.service';
 import { FolderComponent } from './folder/folder.component';
 import { UpdateFolderUI } from './state/update-folder-ui.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /** Injection only in component */
 @Injectable()
@@ -89,6 +90,12 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
           this.store.dispatch(ClearAddToDomFolders);
         }
       });
+
+    this.murriService.dragEnd$.pipe(takeUntilDestroyed()).subscribe(flag => {
+      if (flag) {
+        this.syncPositions();
+      }
+    });
   }
 
   get isAnySelected(): boolean {

@@ -12,17 +12,44 @@ import { EditorStructureDiffs } from '../entities/structure/editor-structure-dif
 import { UpdateEditorStructureWS } from '../entities/ws/update-note-structure-ws';
 import { ContentState } from '../entities/state/content-state';
 import { EditorStateResult } from '../entities/state/editor-state-result';
+import { TextDiff } from '../entities/text/text-diff';
+import { TextUpdateResult } from '../entities/text/text-update-result';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ApiNoteContentService {
+export class ApiNoteEditorService {
   constructor(private httpClient: HttpClient) {}
 
-  syncContentsStructure(noteId: string, diffs: EditorStructureDiffs) {
+  updateTitle(title: string, id: string, connectionId: string) {
+    const obj = {
+      title,
+      id,
+      connectionId
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/editor/text/title`,
+      obj,
+    );
+  }
+
+  syncContents(noteId: string, texts: TextDiff[], connectionId: string) {
+    const obj = {
+      noteId,
+      texts,
+      connectionId
+    };
+    return this.httpClient.patch<OperationResult<TextUpdateResult[]>>(
+      `${environment.writeAPI}/api/editor/text/sync`,
+      obj,
+    );
+  }
+  
+  syncContentsStructure(noteId: string, diffs: EditorStructureDiffs, connectionId: string) {
     const obj = {
       diffs,
       noteId,
+      connectionId
     };
     return this.httpClient.patch<OperationResult<EditorStructureResult>>(
       `${environment.writeAPI}/api/editor/contents/sync/structure`,
@@ -75,10 +102,11 @@ export class ApiNoteContentService {
       );
   }
 
-  updateCursorPosition(noteId: string, cursor: UpdateCursor) {
+  updateCursorPosition(noteId: string, cursor: UpdateCursor, connectionId: string) {
     const obj = {
       cursor,
       noteId,
+      connectionId
     };
     return this.httpClient.post<OperationResult<void>>(
       `${environment.writeAPI}/api/editor/contents/cursor`,

@@ -388,9 +388,7 @@
     "personalization": "Personalization settings",
     "per-month": "per month",
     "upgrade": "Upgrade",
-    "backgrounds": "{{count}} backgrounds",
-    "maxUserAtSameTimeOnNote": "{{count}} users on a note at the same time",
-    "maxUserAtSameTimeOnFolder": "{{count}} users on a folder at the same time"
+    "backgrounds": "{{count}} backgrounds"
   },
   "files": {
     "noAccessRightsNote" : "No permission to upload files to note",

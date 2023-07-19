@@ -15,12 +15,11 @@ import { EditorUpdateIds } from '../entities/structure/editor-update-ids';
 import { UpdatePhotosCollectionInfoCommand } from '../entities/collections/update-photos-collection-info-command';
 import { ApiAudiosService } from '../api/api-audios.service';
 import { ApiPhotosService } from '../api/api-photos.service';
-import { ApiTextService } from '../api/api-text.service';
 import { ApiVideosService } from '../api/api-videos.service';
 import { ContentEditorContentsService } from '../ui-services/contents/content-editor-contents.service';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { ApiDocumentsService } from '../api/api-documents.service';
-import { ApiNoteContentService } from '../api/api-editor-content.service';
+import { ApiNoteEditorService } from '../api/api-editor-content.service';
 import { BaseAddToCollectionItemsCommand } from '../entities/collections/base-add-to-collection-items-command';
 import { BaseRemoveFromCollectionItemsCommand } from '../entities/collections/base-remove-from-collection-items-command';
 import { BaseUpdateCollectionInfoCommand } from '../entities/collections/base-update-collection-info-command';
@@ -43,6 +42,7 @@ import { UpdateFullNote, UpdateNoteTitleState } from 'src/app/content/notes/stat
 import { Label } from 'src/app/content/labels/models/label.model';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 export interface SyncResult {
   isNeedLoadMemory: boolean;
@@ -82,9 +82,8 @@ export class ContentEditorSyncService {
 
   constructor(
     private contentService: ContentEditorContentsService,
-    private apiContent: ApiNoteContentService,
+    private apiNoteEditor: ApiNoteEditorService,
     private store: Store,
-    private apiTexts: ApiTextService,
     private apiAudios: ApiAudiosService,
     private apiVideos: ApiVideosService,
     private apiDocuments: ApiDocumentsService,
@@ -94,6 +93,7 @@ export class ContentEditorSyncService {
     private translateService: TranslateService,
     public dc: DestroyComponentService,
     private selectionService: SelectionService,
+    private signalRService: SignalRService,
   ) {
     this.initTimers();
   }
@@ -143,7 +143,7 @@ export class ContentEditorSyncService {
   async processSyncState() {
     const state = this.contentService.getEditorStateDiffs();
     try {
-      const stateUpdates = await this.apiContent.syncEditorState(this.noteId, state, this.folderId).toPromise();
+      const stateUpdates = await this.apiNoteEditor.syncEditorState(this.noteId, state, this.folderId).toPromise();
       if (!stateUpdates.success) return;
       if (stateUpdates.data.idsToDelete?.length > 0) {
         this.contentService.deleteByIds(stateUpdates.data.idsToDelete, true);
@@ -271,8 +271,8 @@ export class ContentEditorSyncService {
   private async processStructureChanges(): Promise<void> {
     const [structureDiffs, res] = this.contentService.getStructureDiffsNew();
     if (!structureDiffs.isAnyChanges()) { return; }
-    const resp = await this.apiContent
-      .syncContentsStructure(this.noteId, structureDiffs)
+    const resp = await this.apiNoteEditor
+      .syncContentsStructure(this.noteId, structureDiffs, this.signalRService.connectionIdOrError)
       .toPromise();
     if (resp.success) {
       this.updateIds(resp.data.updateIds);
@@ -317,6 +317,7 @@ export class ContentEditorSyncService {
         collection.countInRow,
         collection.width,
         collection.height,
+        this.signalRService.connectionIdOrError
       );
       const resp = await this.apiPhotos.updateInfo(command).toPromise();
       if (resp.success) {
@@ -329,7 +330,7 @@ export class ContentEditorSyncService {
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiPhotos.addItemsToCollection(command).toPromise();
         if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
@@ -341,7 +342,7 @@ export class ContentEditorSyncService {
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiPhotos.removeItemsFromCollection(command).toPromise();
         if (resp.success) {
           const item = this.contentService.getSyncContentById<PhotosCollection>(diff.contentId);
@@ -362,7 +363,8 @@ export class ContentEditorSyncService {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
         collection.id,
-        collection.name,
+        collection.name, 
+        this.signalRService.connectionIdOrError
       );
       const resp = await this.apiAudios.updateInfo(command).toPromise();
       if (resp.success) {
@@ -375,7 +377,7 @@ export class ContentEditorSyncService {
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiAudios.addItemsToCollection(command).toPromise();
         if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
@@ -387,7 +389,7 @@ export class ContentEditorSyncService {
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiAudios.removeItemsFromCollection(command).toPromise();
         if (resp.success) {
           const item = this.contentService.getSyncContentById<AudiosCollection>(diff.contentId);
@@ -408,7 +410,8 @@ export class ContentEditorSyncService {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
         collection.id,
-        collection.name,
+        collection.name, 
+        this.signalRService.connectionIdOrError
       );
       const resp = await this.apiDocuments.updateInfo(command).toPromise();
       if (resp.success) {
@@ -421,7 +424,7 @@ export class ContentEditorSyncService {
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiDocuments.addItemsToCollection(command).toPromise();
         if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
@@ -433,7 +436,7 @@ export class ContentEditorSyncService {
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiDocuments.removeItemsFromCollection(command).toPromise();
         if (resp.success) {
           const item = this.contentService.getSyncContentById<DocumentsCollection>(diff.contentId);
@@ -453,7 +456,8 @@ export class ContentEditorSyncService {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
         collection.id,
-        collection.name,
+        collection.name, 
+        this.signalRService.connectionIdOrError
       );
       const resp = await this.apiVideos.updateInfo(command).toPromise();
       if (resp.success) {
@@ -466,7 +470,7 @@ export class ContentEditorSyncService {
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
-        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseAddToCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiVideos.addItemsToCollection(command).toPromise();
         if (resp.success) {
           const itemsToAdd = diff.itemsToAdd.filter(x => resp.data.fileIds.some(q => q === x.fileId));
@@ -478,7 +482,7 @@ export class ContentEditorSyncService {
       }
       if (diff.itemsToRemove && diff.itemsToRemove.length > 0) {
         const ids = diff.itemsToRemove.map((x) => x.fileId);
-        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids);
+        const command = new BaseRemoveFromCollectionItemsCommand(this.noteId, diff.contentId, ids, this.signalRService.connectionIdOrError);
         const resp = await this.apiVideos.removeItemsFromCollection(command).toPromise();
         if (resp.success) {
           const item = this.contentService.getSyncContentById<VideosCollection>(diff.contentId);
@@ -498,7 +502,7 @@ export class ContentEditorSyncService {
   private async processTextsChanges() {
     const textDiffs = this.getTextDiffs();
     if (textDiffs.length > 0) {
-      const results = await this.apiTexts.syncContents(this.noteId, textDiffs).toPromise();
+      const results = await this.apiNoteEditor.syncContents(this.noteId, textDiffs, this.signalRService.connectionIdOrError).toPromise();
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
         const v = results.data.find(x => x.contentId === text.id);

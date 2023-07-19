@@ -388,9 +388,7 @@
     "personalization": "Configuración de personalización",
     "per-month": "por mes",
     "upgrade": "Actualizar",
-    "backgrounds": "{{count}} antecedentes",
-    "maxUserAtSameTimeOnNote": "{{count}} usuarios en una nota al mismo tiempo",
-    "maxUserAtSameTimeOnFolder": "{{count}} usuarios en una carpeta al mismo tiempo"
+    "backgrounds": "{{count}} antecedentes"
   },
   "files": {
     "noAccessRightsNote": "No hay permiso para cargar archivos a la nota",

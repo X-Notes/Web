@@ -10,10 +10,19 @@ public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierCon
     {
     }
 
+    public Task<UserIdentifierConnectionId?> GetConnectionAsync(Guid userId, string connectionId)
+    {
+        return entities.FirstOrDefaultAsync(x => x.UserId == userId && x.ConnectionId == connectionId);
+    }
+
     public Task<List<string>> GetConnectionsAsync(List<Guid> userIds, Guid exceptUserId)
     {
-        return entities.Where(x => x.UserId != null && x.UserId != exceptUserId && userIds.Contains(x.UserId.Value))
-                       .Select(x => x.ConnectionId).ToListAsync();
+        return entities.Where(x => x.UserId != exceptUserId && userIds.Contains(x.UserId)).Select(x => x.ConnectionId).ToListAsync();
+    }
+
+    public Task<List<string>> GetConnectionsAsync(List<Guid> userIds)
+    {
+        return entities.Where(x => userIds.Contains(x.UserId)).Select(x => x.ConnectionId).ToListAsync();
     }
 
     public Task<List<UserIdentifierConnectionId>> GetConnectionsByDateIncludeNotesFoldersAsync(DateTimeOffset earliestTimestamp)

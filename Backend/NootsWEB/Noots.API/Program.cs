@@ -1,6 +1,4 @@
-using AspNetCoreRateLimit;
 using Common.Azure;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -110,18 +108,9 @@ builder.Services.ApplySignalRDI();
 
 builder.Services.AddMemoryCache();
 
-// RATE LIMITER
-//load general configuration from appsettings.json
-builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-//load ip rules from appsettings.json
-builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-// inject counter and rules stores
-builder.Services.AddInMemoryRateLimiting();
 
 builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<HistoryProcessingHosted>();
-
-builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 builder.Services.AddHttpClient();
 
@@ -163,8 +152,6 @@ if (isHostASP && !string.IsNullOrEmpty(builder.Environment.WebRootPath))
     });
 }
 
-
-app.UseIpRateLimiting();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

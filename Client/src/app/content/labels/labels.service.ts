@@ -7,6 +7,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Label } from './models/label.model';
 import { AddToDomLabels, UpdatePositionsLabels } from './state/labels-actions';
 import { LabelStore } from './state/labels-state';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /** Injection only in component */
 @Injectable()
@@ -26,6 +27,12 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
           this.store.dispatch(new AddToDomLabels([]));
         }
       });
+
+    this.murriService.dragEnd$.pipe(takeUntilDestroyed()).subscribe(flag => {
+      if (flag) {
+        this.syncPositions();
+      }
+    });
   }
 
   ngOnDestroy(): void {

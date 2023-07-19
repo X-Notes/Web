@@ -1,13 +1,13 @@
 ﻿using Common;
-using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.WS;
-using Common.DTO.Parts;
+using Common.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.WS;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Entities;
@@ -23,25 +23,22 @@ public class AppSignalRHub : Hub
     private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
     private readonly ILogger<AppSignalRHub> logger;
     private readonly IMediator mediator;
+    private readonly BillingPermissionService billingPermissionService;
 
     public AppSignalRHub(
         IFolderServiceStorage folderServiceStorage,
         INoteServiceStorage noteServiceStorage,
         UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
         ILogger<AppSignalRHub> logger,
-        IMediator _mediator)
+        IMediator _mediator,
+        BillingPermissionService billingPermissionService)
     {
         this.folderServiceStorage = folderServiceStorage;
         this.noteServiceStorage = noteServiceStorage;
         this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         this.logger = logger;
         mediator = _mediator;
-    }
-
-    public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
-    {
-        IReadOnlyList<string> list = new List<string>() { Context.ConnectionId };
-        await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
+        this.billingPermissionService = billingPermissionService;
     }
 
     public async Task UpdateUpdateStatus() {
@@ -54,138 +51,135 @@ public class AppSignalRHub : Hub
         await userIdentifierConnectionIdRepository.UpdateAsync(ent);
     }
 
-    private Guid? GetUserId()
+    private Guid GetUserId()
     {
-        var isParsed = Guid.TryParse(Context.UserIdentifier, out var parsedId);
-        Guid? userId = isParsed ? parsedId : null;
-        return userId;
+        return Guid.Parse(Context.UserIdentifier!);
     }
 
-    public async Task<UserIdentifierConnectionId> GetUserIdentifierConnectionAsync()
-    {
-        return await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
-    }
-
-    // NOTES
     public async Task JoinNote(Guid noteId)
     {
-        var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+        var userId = GetUserId();
+        var ent = await userIdentifierConnectionIdRepository.GetConnectionAsync(userId, Context.ConnectionId);
         if (ent == null)
         {
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
+            var res = new OperationResult<bool>().SetNotFound();
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, res));
             return;
         }
 
-        var usersOnNote = await noteServiceStorage.UsersOnNoteAsync(noteId);
-        Console.WriteLine("usersOnNote: " + usersOnNote);
-
-        var userId = ent.GetUserId();
-        if (!userId.HasValue)
-        {
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
-            return;
-        }
-
-        var command = new GetUserPermissionsForNoteQuery(noteId, userId.Value);
+        var command = new GetUserPermissionsForNoteQuery(noteId, userId);
         var permission = await mediator.Send(command);
         var isCanRead = permission.CanRead;
-
-        if (isCanRead)
+     
+        if (permission.IsOwner)
         {
-            await noteServiceStorage.AddAsync(noteId, ent);
-
-            var groupId = WsNameHelper.GetNoteGroupName(noteId);
-            await Groups.AddToGroupAsync(ent.ConnectionId, groupId);
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, true));
-            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
+            await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
             return;
         }
 
-        await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, false));
+        if (!isCanRead)
+        {
+            var res = new OperationResult<bool>().SetNoPermissions();
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, res));
+            return;
+        }
+
+        await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
+    }
+
+    private async Task JoinNoteIternalAsync(Guid noteId, UserIdentifierConnectionId ent, List<Guid> userIds)
+    {
+        await noteServiceStorage.AddAsync(noteId, ent);
+
+        var result = new OperationResult<bool>(true, true);
+        await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, result));
+
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
     }
 
     public async Task LeaveNote(Guid noteId)
     {
-        var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+        var userId = GetUserId();
+        var ent = await userIdentifierConnectionIdRepository.GetConnectionAsync(userId, Context.ConnectionId);
         if (ent == null) return;
 
         await noteServiceStorage.RemoveAsync(noteId, ent.Id);
 
-        var userId = ent.UserId ?? ent.UnauthorizedId;
-        if (userId.HasValue)
-        {
-            await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId.Value);
-        }
+        var command = new GetUserPermissionsForNoteQuery(noteId, userId);
+        var permission = await mediator.Send(command);
+
+        await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId, permission.GetAllUsers());
     }
 
-    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId)
+    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId, List<Guid> userIds)
     {
-        var groupId = WsNameHelper.GetNoteGroupName(noteId);
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-        await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
     }
 
     // FOLDERS
     public async Task JoinFolder(Guid folderId)
     {
-        var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+        var userId = GetUserId();
+        var ent = await userIdentifierConnectionIdRepository.GetConnectionAsync(userId, Context.ConnectionId);
         if (ent == null)
         {
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
+            var res = new OperationResult<bool>().SetNotFound();
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, res));
             return;
         }
 
-        var usersOnFolder = await folderServiceStorage.UsersOnFolderAsync(folderId);
-        Console.WriteLine("usersOnFolder: " + usersOnFolder);
-
-        var userId = ent.GetUserId();
-        if (!userId.HasValue)
-        {
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
-            return;
-        }
-
-        var command = new GetUserPermissionsForFolderQuery(folderId, userId.Value);
+        var command = new GetUserPermissionsForFolderQuery(folderId, userId);
         var permission = await mediator.Send(command);
         var isCanRead = permission.CanRead;
 
-        if (isCanRead)
+        if (permission.IsOwner)
         {
-            await folderServiceStorage.AddAsync(folderId, ent);
-
-            var groupId = GetFolderGroupName(folderId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
-            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, true));
-            await Clients.Group(groupId).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId);
+            await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
             return;
         }
 
-        await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, false));
+        if (!isCanRead) 
+        {
+            var res = new OperationResult<bool>().SetNoPermissions();
+            await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, res));
+            return;
+        }
+
+        await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
     }
 
+    private async Task JoinFolderIternalAsync(Guid folderId, UserIdentifierConnectionId ent, List<Guid> userIds)
+    {
+        await folderServiceStorage.AddAsync(folderId, ent);
+
+        var result = new OperationResult<bool>(true, true);
+        await Clients.Caller.SendAsync(ClientMethods.setJoinedToFolder, new JoinEntityStatus(folderId, result));
+
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersFolder, folderId);
+    }
 
     public async Task LeaveFolder(Guid folderId)
     {
-        var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
+        var userId = GetUserId();
+        var ent = await userIdentifierConnectionIdRepository.GetConnectionAsync(userId, Context.ConnectionId);
         if (ent == null) return;
 
         await folderServiceStorage.RemoveAsync(folderId, ent.Id);
 
-        var userId = ent.UserId ?? ent.UnauthorizedId;
-        if (userId.HasValue)
-        {
-            await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId.Value);
-        }
+        var command = new GetUserPermissionsForFolderQuery(folderId, userId);
+        var permission = await mediator.Send(command);
+
+        await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId, permission.GetAllUsers());
     }
 
-    private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId)
+    private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId, List<Guid> userIds)
     {
-        var groupId = GetFolderGroupName(folderId);
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId);
-        await Clients.Group(groupId).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity(folderId, userIdentifier, userId));
+        var ids = userIds.Select(x => x.ToString());
+        await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersFolder, new LeaveFromEntity(folderId, userIdentifier, userId));
     }
-
-    public static string GetFolderGroupName(Guid id) => "F-" + id.ToString();
 
     // override
     public override async Task OnConnectedAsync()
@@ -198,39 +192,28 @@ public class AppSignalRHub : Hub
     private async Task AddConnectionAsync()
     {
         var httpContext = Context.Features.Get<IHttpContextFeature>();
-        var userAgent = httpContext.HttpContext.Request.Headers["User-Agent"];
+        var headers = httpContext?.HttpContext?.Request?.Headers;
+        string userAgent = null!;
+        if (headers != null && headers.ContainsKey("User-Agent"))
+        {
+            userAgent = headers["User-Agent"];
+        }
 
         var userId = GetUserId();
-        UserIdentifierConnectionId entity = null;
-        if (userId.HasValue)
-        {
-            entity = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
-            if (entity == null)
-            {
-                entity = new UserIdentifierConnectionId { 
-                    UserId = userId.Value, 
-                    ConnectionId = Context.ConnectionId,
-                    UserAgent = userAgent,
-                    ConnectedAt = DateTimeProvider.Time,
-                    UpdatedAt = DateTimeProvider.Time
-                };
-            }
-        }
-        else
-        {
-            entity = new UserIdentifierConnectionId { 
-                ConnectionId = Context.ConnectionId,
-                UserAgent = userAgent,
-                ConnectedAt = DateTimeProvider.Time,
-                UpdatedAt = DateTimeProvider.Time,
-                UnauthorizedId = Guid.NewGuid()
-            };
-        }
+        var entity = await userIdentifierConnectionIdRepository.GetConnectionAsync(userId, Context.ConnectionId);
 
-        if (entity != null)
+        if (entity != null) return;
+
+        entity = new UserIdentifierConnectionId
         {
-            await userIdentifierConnectionIdRepository.AddAsync(entity);
-        }
+            UserId = userId,
+            ConnectionId = Context.ConnectionId,
+            UserAgent = userAgent,
+            ConnectedAt = DateTimeProvider.Time,
+            UpdatedAt = DateTimeProvider.Time
+        };
+
+        await userIdentifierConnectionIdRepository.AddAsync(entity);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -242,20 +225,11 @@ public class AppSignalRHub : Hub
     private async Task RemoveConnectionAsync()
     {
         var userId = GetUserId();
-        List<UserIdentifierConnectionId> ents = null;
+        var ents = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.ConnectionId == Context.ConnectionId);
 
-        if (userId.HasValue) // TODO USE DAPPER
+        if (ents != null)
         {
-            ents = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.UserId == userId.Value && x.ConnectionId == Context.ConnectionId);
-        }
-        else
-        {
-            ents = await userIdentifierConnectionIdRepository.GetWhereAsync(x => x.ConnectionId == Context.ConnectionId);
-        }
-
-        if (ents != null && ents.Any())
-        {
-            await userIdentifierConnectionIdRepository.RemoveRangeAsync(ents);
+            await userIdentifierConnectionIdRepository.RemoveAsync(ents);
         }
     }
 }

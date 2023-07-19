@@ -59,7 +59,7 @@ public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteComm
 
             if (updates.Any())
             {
-                await noteWsUpdateService.UpdateNotes(updates, request.UserId);
+                await noteWsUpdateService.UpdateNotesWithConnections(updates, request.ConnectionId);
             }
 
             return new OperationResult<Unit>(true, Unit.Value);

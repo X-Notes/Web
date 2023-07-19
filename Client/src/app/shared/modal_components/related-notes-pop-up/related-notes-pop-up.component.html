@@ -5,16 +5,16 @@
 <div appTheme class="related-notes-scroll-wrapper">
   <ng-scrollbar class="related-notes-container" visibility="hover" appearance="compact">
     <ng-container *ngIf="load">
-      <div class="related-note-container" *ngFor="let item of relatedNotesService.notes">
+      <div class="related-note-container" *ngFor="let item of notes">
         <app-related-note
           [note]="item"
           [isCanEdit]="data.canEdit"
-          (deleteNote)="relatedNotesService.deleteRelatedNote($event, data.noteId)"
-          (changeState)="relatedNotesService.changeOpenCloseState($event)"
+          (deleteNote)="deleteRelatedNote($event, data.noteId)"
+          (changeState)="changeState($event)"
         ></app-related-note>
       </div>
       <app-empty-search-placeholder
-        *ngIf="!relatedNotesService.notes || relatedNotesService.notes.length === 0"
+        *ngIf="!_notes || _notes.length === 0"
       ></app-empty-search-placeholder>
     </ng-container>
   </ng-scrollbar>

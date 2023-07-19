@@ -1,13 +1,19 @@
 ﻿using Common;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Noots.SignalrUpdater.Impl
+namespace Noots.SignalrUpdater.Impl;
+
+public class IdProvider : IUserIdProvider
 {
-    public class IdProvider : IUserIdProvider
+    public virtual string GetUserId(HubConnectionContext connection)
     {
-        public virtual string GetUserId(HubConnectionContext connection)
+        var userId = connection.User.Claims.FirstOrDefault(x => x.Type == ConstClaims.UserId)?.Value;
+
+        if(userId == null)
         {
-            return connection.User.Claims.FirstOrDefault(x => x.Type == ConstClaims.UserId)?.Value;
+            throw new Exception("User Id cannot be null");
         }
+
+        return userId;
     }
 }

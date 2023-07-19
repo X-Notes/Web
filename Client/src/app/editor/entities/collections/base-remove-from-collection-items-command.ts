@@ -1,3 +1,3 @@
 export class BaseRemoveFromCollectionItemsCommand {
-  constructor(public noteId: string, public contentId: string, public fileIds: string[]) {}
+  constructor(public noteId: string, public contentId: string, public fileIds: string[], public connectionId: string) {}
 }

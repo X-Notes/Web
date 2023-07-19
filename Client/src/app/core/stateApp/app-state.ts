@@ -11,6 +11,7 @@ import {
   ReadAllNotifications,
   ReadNotification,
   NewNotification,
+  UpdateDragMuuriState,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
@@ -18,6 +19,7 @@ import { AppNotification } from '../models/notifications/app-notification.model'
 interface AppState {
   routing: EntityType | null;
   notifications: AppNotification[];
+  isMuuriDragging: boolean;
 }
 
 @State<AppState>({
@@ -25,6 +27,7 @@ interface AppState {
   defaults: {
     routing: null,
     notifications: [],
+    isMuuriDragging: false
   },
 })
 @Injectable()
@@ -82,6 +85,11 @@ export class AppStore {
   @Selector()
   static isFolderInnerNote(state: AppState): boolean {
     return state.routing === EntityType.FolderInnerNote;
+  }
+
+  @Selector()
+  static IsMuuriDragging(state: AppState): boolean {
+    return state.isMuuriDragging;
   }
 
   @Selector()
@@ -288,6 +296,11 @@ export class AppStore {
         state.routing === EntityType.FolderShared) &&
       state.routing !== null
     );
+  }
+
+  @Action(UpdateDragMuuriState)
+  async updateDragMuuriState({ patchState }: StateContext<AppState>, { active }: UpdateDragMuuriState) {
+    patchState({ isMuuriDragging: active });
   }
 
   @Action(UpdateRoute)

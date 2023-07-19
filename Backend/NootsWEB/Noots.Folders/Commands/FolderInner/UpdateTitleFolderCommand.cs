@@ -11,4 +11,6 @@ public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationRes
 
     [ValidationGuid]
     public Guid Id { set; get; }
+
+    public string ConnectionId { set; get; }
 }

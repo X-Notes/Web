@@ -13,10 +13,13 @@ namespace Noots.Editor.Commands
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public BaseTransformToCommand(Guid noteId, Guid contentId)
+        public string ConnectionId { set; get; }
+
+        public BaseTransformToCommand(Guid noteId, Guid contentId, string connectionId)
         {
             NoteId = noteId;
             ContentId = contentId;
+            ConnectionId = connectionId;
         }
     }
 }

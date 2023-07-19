@@ -11,7 +11,7 @@ import { PublicStore } from '../../../storage/public-state';
 import { ShortUserPublic } from '../../../interfaces/short-user-public.model';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { take } from 'rxjs/operators';
-import { ApiNoteContentService } from 'src/app/editor/api/api-editor-content.service';
+import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
@@ -56,7 +56,7 @@ export class PublicNoteContentComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
-    private apiNotes: ApiNoteContentService,
+    private apiNotes: ApiNoteEditorService,
     public authService: AuthService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {

@@ -14,4 +14,6 @@ public class SyncNoteStructureCommand : BaseCommandEntity, IRequest<OperationRes
 
     [ValidationGuid]
     public Guid NoteId { set; get; }
+
+    public string ConnectionId { set; get; }
 }

@@ -11,4 +11,6 @@ public class AddNotesToFolderCommand : BaseCommandEntity, IRequest<OperationResu
     public Guid FolderId { set; get; }
 
     public List<Guid> NoteIds { set; get; }
+
+    public string ConnectionId { set; get; }
 }

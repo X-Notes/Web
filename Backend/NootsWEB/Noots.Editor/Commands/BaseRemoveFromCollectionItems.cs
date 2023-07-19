@@ -17,11 +17,14 @@ namespace Noots.Editor.Commands
         [ValidationGuid]
         public List<Guid> FileIds { set; get; }
 
-        public BaseRemoveFromCollectionItems(Guid noteId, Guid contentId, List<Guid> fileIds)
+        public string ConnectionId { set; get; }
+
+        public BaseRemoveFromCollectionItems(Guid noteId, Guid contentId, List<Guid> fileIds, string connectionId)
         {
             NoteId = noteId;
             ContentId = contentId;
             FileIds = fileIds;
+            ConnectionId = connectionId;
         }
     }
 }

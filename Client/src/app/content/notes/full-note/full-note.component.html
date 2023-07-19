@@ -17,7 +17,6 @@
       [editorTheme]="theme$ | async"
     ></app-content-editor>
     <app-right-section-content
-      [note$]="note$"
       [noteId]="(note$ | async).id"
     ></app-right-section-content>
   </div>

@@ -11,5 +11,7 @@ namespace Noots.Editor.Commands.Title
 
         [ValidationGuid]
         public Guid Id { set; get; }
+
+        public string ConnectionId { set; get; }
     }
 }

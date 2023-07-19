@@ -14,6 +14,7 @@ import { Photo, PhotosCollection } from '../../entities/contents/photos-collecti
 import { FileNoteTypes } from '../../entities/files/file-note-types.enum';
 import { ContentEditorContentsService } from '../../ui-services/contents/content-editor-contents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +27,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     private apiPhotos: ApiPhotosService,
     contentEditorContentsService: ContentEditorContentsService,
     private apiFiles: ApiNoteFilesService,
+    private signalR: SignalRService,
   ) {
     super(
       store,
@@ -46,7 +48,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     if (!isCan) {
       return;
     }
-    const collectionResult = await this.apiPhotos.transformTo(noteId, contentId).toPromise();
+    const collectionResult = await this.apiPhotos.transformTo(noteId, contentId, this.signalR.connectionIdOrError).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
       this.transformContentToOrWarning(collectionResult, contentId);

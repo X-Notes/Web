@@ -17,10 +17,6 @@ namespace Common.DatabaseModels.Models.Plan
         
         public int MaxRelatedNotes { set; get; }
 
-        public int MaxUserAtSameTimeOnNote { set; get; }
-
-        public int MaxUserAtSameTimeOnFolder { set; get; }
-
         public int MaxBackgrounds { set; get; }
         
         public string Name { set; get; }

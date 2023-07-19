@@ -14,11 +14,14 @@ namespace Noots.Notes.Commands
         [RequiredListNotEmpty]
         public List<Guid> Ids { set; get; }
 
-        public ChangeColorNoteCommand(List<Guid> ids, Guid userId, string color)
-            :base(userId)
+        public string ConnectionId { set; get; }
+
+        public ChangeColorNoteCommand(List<Guid> ids, Guid userId, string color, string connectionId)
+            : base(userId)
         {
             this.Ids = ids;
             Color = color;
+            ConnectionId = connectionId;
         }
     }
 }

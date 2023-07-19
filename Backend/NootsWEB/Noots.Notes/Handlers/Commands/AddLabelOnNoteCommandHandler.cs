@@ -76,7 +76,7 @@ public class AddLabelOnNoteCommandHandler : IRequestHandler<AddLabelOnNoteComman
                     var value = permissions.FirstOrDefault(x => x.noteId == labelNote.NoteId);
                     if (value.perm != null) {
                         var update = new UpdateNoteWS { AddLabels = labels, NoteId = value.noteId };
-                        await noteWSUpdateService.UpdateNote(update, value.perm.GetAllUsers(), request.UserId);
+                        await noteWSUpdateService.UpdateNoteWithConnections(update, value.perm.GetAllUsers(), request.ConnectionId);
                     }
                 }
             }

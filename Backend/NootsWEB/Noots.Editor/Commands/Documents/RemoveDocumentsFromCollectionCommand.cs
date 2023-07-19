@@ -4,7 +4,7 @@ namespace Noots.Editor.Commands.Documents;
 
 public class RemoveDocumentsFromCollectionCommand : BaseRemoveFromCollectionItems
 {
-    public RemoveDocumentsFromCollectionCommand(Guid noteId, Guid contentId, List<Guid> itemIds) : base(noteId, contentId, itemIds)
+    public RemoveDocumentsFromCollectionCommand(Guid noteId, Guid contentId, List<Guid> itemIds, string connectionId) : base(noteId, contentId, itemIds, connectionId)
     {
     }
 }

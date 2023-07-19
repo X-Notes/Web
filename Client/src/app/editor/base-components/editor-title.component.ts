@@ -24,7 +24,7 @@ import { ofActionDispatched } from '@ngxs/store';
   selector: '',
   template: '',
 })
-export class EditorTitleComponent extends EditorBaseComponent {
+export abstract class EditorTitleComponent extends EditorBaseComponent {
   @Input()
   title?: string;
 
@@ -53,7 +53,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
     }
   }
 
-  setTitle(title: string) {
+  setHtmlTitle(title: string) {
     if (this.noteTitleEl?.nativeElement) {
       this.noteTitleEl.nativeElement.innerText = title;
     }
@@ -61,7 +61,7 @@ export class EditorTitleComponent extends EditorBaseComponent {
 
 
   initTitle(title: string) {
-    this.setTitle(title);
+    this.setHtmlTitle(title);
     this.prevTitle = title;
     if (!this.titleInited) {
       this.titleInited = true;
@@ -105,23 +105,25 @@ export class EditorTitleComponent extends EditorBaseComponent {
   }
 
   private updateTitle(updateTitle: string) {
-    if (this.noteTitleEl?.nativeElement) {
-      const el = this.noteTitleEl.nativeElement;
-      const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
-
-      this.setTitle(updateTitle);
-
-      if (this.titleInited) {
-        requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
-      }
-
-      this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
-      this.facade.cdr.detectChanges();
-    } else {
-      this.setTitle(updateTitle);
-      this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
-      this.facade.cdr.detectChanges();
+    if (!this.noteTitleEl?.nativeElement) {
+      return;
     }
+
+    if(this.titleUI === updateTitle) {
+      return;
+    }
+
+    const el = this.noteTitleEl.nativeElement;
+    const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
+
+    this.setHtmlTitle(updateTitle);
+
+    if (this.titleInited) {
+      requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
+    }
+
+    this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
+    this.facade.cdr.detectChanges();
   }
 
   onTitleInput($event) {

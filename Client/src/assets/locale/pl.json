@@ -388,9 +388,7 @@
     "personalization": "Ustawienia personalizacji",
     "per-month": "Miesięcznie",
     "upgrade": "Aktualizacja",
-    "backgrounds": "{{count}} tła",
-    "maxUserAtSameTimeOnNote": "{{count}} użytkowników na notatce w tym samym czasie",
-    "maxUserAtSameTimeOnFolder": "{{count}} użytkowników w folderze w tym samym czasie"
+    "backgrounds": "{{count}} tła"
   },
   "files": {
     "noAccessRightsNote": "Brak uprawnień do przesyłania plików do odnotowania",

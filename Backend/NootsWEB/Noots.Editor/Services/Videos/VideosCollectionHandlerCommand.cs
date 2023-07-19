@@ -31,6 +31,8 @@ namespace Noots.Editor.Services.Videos
 
         private readonly AppSignalRService appSignalRService;
 
+        private readonly NoteWSUpdateService noteWSUpdateService;
+
         private readonly ILogger<VideosCollectionHandlerCommand> logger;
 
         public VideosCollectionHandlerCommand(
@@ -41,12 +43,14 @@ namespace Noots.Editor.Services.Videos
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
+            NoteWSUpdateService noteWSUpdateService,
             ILogger<VideosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
+            this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
         }
 
@@ -74,7 +78,8 @@ namespace Noots.Editor.Services.Videos
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateVideosCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);
@@ -123,7 +128,8 @@ namespace Noots.Editor.Services.Videos
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateVideosCollection(connections, updates);
                     }
 
                     return new OperationResult<VideosCollectionNoteDTO>(success: true, result);
@@ -165,7 +171,8 @@ namespace Noots.Editor.Services.Videos
 
                     if (permissions.IsMultiplyUpdate)
                     {
-                        await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        await appSignalRService.UpdateVideosCollection(connections, updates);
                     }
 
                     var res = new UpdateBaseContentResult(videosCollection.Id, videosCollection.Version, videosCollection.UpdatedAt);
@@ -203,7 +210,8 @@ namespace Noots.Editor.Services.Videos
 
             if (permissions.IsMultiplyUpdate)
             {
-                await appSignalRService.UpdateVideosCollection(request.NoteId, permissions.Caller.Id, updates);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                await appSignalRService.UpdateVideosCollection(connections, updates);
             }
 
             var res = new UpdateCollectionContentResult(resp.collection.Id, resp.collection.Version, resp.collection.UpdatedAt, resp.deleteFileIds);

@@ -388,9 +388,7 @@
     "personalization": "Personalisierungseinstellungen",
     "per-month": "pro Monat",
     "upgrade": "Update",
-    "backgrounds": "{{count}} hintergründe",
-    "maxUserAtSameTimeOnNote": "{{count}} benutzer gleichzeitig auf eine Notiz setzen",
-    "maxUserAtSameTimeOnFolder": "{{count}} benutzer gleichzeitig auf einen Ordner zugreifen"
+    "backgrounds": "{{count}} hintergründe"
   },
   "files": {
     "noAccessRightsNote": "Keine Berechtigung zum Hochladen von Dateien, die notiert werden sollen",

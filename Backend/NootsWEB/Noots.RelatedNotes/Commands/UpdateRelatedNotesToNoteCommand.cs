@@ -12,5 +12,7 @@ namespace Noots.RelatedNotes.Commands
         public Guid NoteId { set; get; }
         
         public List<Guid> RelatedNoteIds { set; get; }
+
+        public string ConnectionId { set; get; }
     }
 }

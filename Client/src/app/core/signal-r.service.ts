@@ -64,7 +64,7 @@ import { ThemeENUM } from '../shared/enums/theme.enum';
   providedIn: 'root',
 })
 export class SignalRService {
-  public hubConnection: signalR.HubConnection;
+  private hubConnection: signalR.HubConnection;
 
   public updateTextContentEvent$ = new Subject<UpdateNoteTextWS>();
 
@@ -102,8 +102,22 @@ export class SignalRService {
     private apiNotes: ApiServiceNotes,
     private snackbarService: SnackbarService,
     private readonly translateService: TranslateService,
-    private readonly auth: AuthService,
   ) { }
+
+  get connectionId(): string {
+    return this.hubConnection.connectionId;
+  }
+
+  get connectionIdOrError(): string {
+    if(this.hubConnection.connectionId) {
+      return this.hubConnection.connectionId;
+    }
+    throw new Error('connectionId is null');
+  }
+
+  get isConnected(): boolean {
+    return this.hubConnection.state === signalR.HubConnectionState.Connected;
+  }
 
   async init() {
     await this.startConnection();
@@ -112,14 +126,16 @@ export class SignalRService {
   private ping(): void {
     setInterval(() => {
       try {
-        this.invoke('UpdateUpdateStatus');
+        if (this.isConnected) {
+          this.invoke('UpdateUpdateStatus');
+        }
       } catch (e) {
         console.error(e);
       }
     }, pingWSDelay);
   }
 
-  private invoke(methodName: string, arg?: any): void {
+  public invoke(methodName: string, arg?: any): void {
     if (arg) {
       this.hubConnection.invoke(methodName, arg);
       return;
@@ -167,6 +183,8 @@ export class SignalRService {
       console.error('WS doesn`t inited');
       return;
     }
+
+    this.ping();
 
     console.log('Connection started');
 

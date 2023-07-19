@@ -3,22 +3,23 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {
-  UpdatePositionsNotes,
-  UpdatePositionsRelatedNotes,
-} from 'src/app/content/notes/state/notes-actions';
-import { UpdatePositionsFolders } from 'src/app/content/folders/state/folders-actions';
-import { UpdatePositionsLabels } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
 import { PersonalizationService } from './personalization.service';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
+import { UpdateDragMuuriState } from 'src/app/core/stateApp/app-action';
 
 @Injectable()
 export class MurriService implements OnDestroy {
   layoutEnd$: Subject<boolean> = new Subject<boolean>();
+
+  dragStart$: Subject<boolean> = new Subject<boolean>();
+
+  dragState$ = new BehaviorSubject<boolean>(false);
+
+  dragEnd$: Subject<boolean> = new Subject<boolean>();
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -73,16 +74,16 @@ export class MurriService implements OnDestroy {
 
   /// SIDE BAR
 
-  initRelatedNotesAsync(noteId: string, delay = 0) {
+  initRelatedNotesAsync(delay = 0) {
     return new Promise<boolean>((resolve) =>
-      setTimeout(async () => {
-        this.initRelatedNotes(noteId);
+      setTimeout(() => {
+        this.initRelatedNotes();
         resolve(true);
       }, delay),
     );
   }
 
-  initRelatedNotes(noteId: string) {
+  initRelatedNotes() {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -91,13 +92,16 @@ export class MurriService implements OnDestroy {
 
     this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragStart', async () => {
+      this.dragStart$.next(true);
+      this.dragState$.next(true);
+      this.store.dispatch(new UpdateDragMuuriState(true));
       this.apiBrowser.removeAllRanges();
     });
     this.grid.on('dragEnd', async () => {
       // eslint-disable-next-line no-underscore-dangle
-      const positions = this.getPositions();
-      const command = new UpdatePositionsRelatedNotes(positions, noteId);
-      this.store.dispatch(command);
+      this.dragState$.next(false);
+      this.dragEnd$.next(true);
+      this.store.dispatch(new UpdateDragMuuriState(false));
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);
@@ -139,7 +143,7 @@ export class MurriService implements OnDestroy {
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async () => {
-      this.store.dispatch(new UpdatePositionsNotes(this.getPositions()));
+      this.dragEnd$.next(true);
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);
@@ -192,7 +196,7 @@ export class MurriService implements OnDestroy {
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async () => {
-      this.store.dispatch(new UpdatePositionsFolders(this.getPositions()));
+      this.dragEnd$.next(true);
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);
@@ -209,7 +213,7 @@ export class MurriService implements OnDestroy {
     const gridItemName = '.grid-item';
     this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async () => {
-      this.store.dispatch(new UpdatePositionsLabels(this.getPositions()));
+      this.dragEnd$.next(true);
     });
     this.grid.on('layoutEnd', async () => {
       this.layoutEnd$.next(true);

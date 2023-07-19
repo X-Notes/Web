@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +19,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230717210136_aunthorized-id")]
+    partial class aunthorizedid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -751,6 +753,12 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<long>("MaxSize")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("MaxUserAtSameTimeOnFolder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxUserAtSameTimeOnNote")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -771,6 +779,8 @@ namespace Noots.DatabaseContext.Migrations
                             MaxNotes = 250,
                             MaxRelatedNotes = 5,
                             MaxSize = 104857600L,
+                            MaxUserAtSameTimeOnFolder = 20,
+                            MaxUserAtSameTimeOnNote = 10,
                             Name = "Standart",
                             Price = 0.0
                         },
@@ -783,6 +793,8 @@ namespace Noots.DatabaseContext.Migrations
                             MaxNotes = 10000,
                             MaxRelatedNotes = 30,
                             MaxSize = 5242880000L,
+                            MaxUserAtSameTimeOnFolder = 50,
+                            MaxUserAtSameTimeOnNote = 40,
                             Name = "Premium",
                             Price = 1.5
                         });

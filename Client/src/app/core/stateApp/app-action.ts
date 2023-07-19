@@ -1,6 +1,12 @@
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppNotification } from '../models/notifications/app-notification.model';
 
+export class UpdateDragMuuriState {
+  static type = '[App] Drag Muuri State';
+
+  constructor(public active: boolean) {}
+}
+
 export class UpdateRoute {
   static type = '[App] Update route';
 

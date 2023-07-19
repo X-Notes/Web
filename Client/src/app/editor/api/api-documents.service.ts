@@ -22,10 +22,11 @@ export class ApiDocumentsService extends BaseNoteFileContentApiService<
     super(httpClient, ApiDocumentsService.baseApi);
   }
 
-  transformTo(noteId: string, contentId: string) {
+  transformTo(noteId: string, contentId: string, connectionId: string) {
     const obj = {
       noteId,
       contentId,
+      connectionId
     };
     return this.httpClient
       .post<OperationResult<ApiDocumentsCollection>>(`${this.baseApi}/transform`, obj)

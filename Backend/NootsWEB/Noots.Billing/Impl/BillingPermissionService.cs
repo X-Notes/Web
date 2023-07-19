@@ -35,7 +35,7 @@ public class BillingPermissionService
         this.backgroundRepository = backgroundRepository;
         this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
     }
-    
+
     public async Task<bool> CanCreateNoteAsync(Guid userId)
     {
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == userId);

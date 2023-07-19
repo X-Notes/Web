@@ -23,10 +23,11 @@ export class ApiVideosService extends BaseNoteFileContentApiService<
     super(httpClient, ApiVideosService.baseApi);
   }
 
-  transformTo(noteId: string, contentId: string): Observable<OperationResult<VideosCollection>> {
+  transformTo(noteId: string, contentId: string, connectionId: string): Observable<OperationResult<VideosCollection>> {
     const obj = {
       noteId,
       contentId,
+      connectionId
     };
     return this.httpClient
       .post<OperationResult<ApiVideosCollection>>(`${this.baseApi}/transform`, obj)
