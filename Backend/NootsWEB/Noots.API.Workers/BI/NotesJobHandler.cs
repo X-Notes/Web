@@ -29,7 +29,9 @@ public class NotesJobHandler
     private readonly HistoryCacheService historyCacheService;
 
     private readonly IServiceScopeFactory serviceScopeFactory;
+
     private readonly TextNotesRepository textNotesRepository;
+
     private readonly TextNoteIndexRepository textNoteIndexRepository;
 
     public NotesJobHandler(

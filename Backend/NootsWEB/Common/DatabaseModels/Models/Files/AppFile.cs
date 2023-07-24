@@ -45,15 +45,17 @@ namespace Common.DatabaseModels.Models.Files
 
         public UserProfilePhoto UserProfilePhoto { set; get; }
 
-        public List<CollectionNote> PhotosCollectionNotes { set; get; }
+        public List<CollectionNote> CollectionNotes { set; get; }
 
-        public List<CollectionNoteAppFile> PhotosCollectionNoteAppFiles { set; get; }
+        public List<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
 
         public List<NoteSnapshot> NoteSnapshots { set; get; }
 
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }
 
         public DateTimeOffset CreatedAt { set; get; }
+
+        public DateTimeOffset LostCheckedAt { set; get; }
 
         public AppFile()
         {
@@ -106,6 +108,7 @@ namespace Common.DatabaseModels.Models.Files
             return this;
         }
 
+
         public List<FilePathesDTO> GetNotNullPathes()
         {
             if (PathSuffixes == null) return null;
@@ -113,6 +116,21 @@ namespace Common.DatabaseModels.Models.Files
             string buildPath(string fileName) => PathPrefix + "/" + PathFileId + "/" + fileName;
 
             return PathSuffixes.GetNotNullPathes().Select(x => new FilePathesDTO { FileName = x, FullPath = buildPath(x) }).ToList();
+        }
+
+        public bool IsLinkedSomeWhere()
+        {
+            if(
+                UserProfilePhoto != null || 
+                Background != null || 
+                (CollectionNoteAppFiles != null && CollectionNoteAppFiles.Any()) ||
+                (SnapshotFileContents != null && SnapshotFileContents.Any())
+                )
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public List<Guid> GetAdditionalIds()

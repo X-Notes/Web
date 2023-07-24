@@ -13,5 +13,7 @@
         public static string RemoveConnectionsJobs = "RemoveConnectionsJobs";
 
         public static string RemoveFilesJobs = "RemoveFilesJobs ";
+
+        public static string MarkLostedFilesAsUnlinked = "MarkLostedFilesAsUnlinked";
     }
 }

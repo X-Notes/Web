@@ -35,6 +35,7 @@ namespace Noots.API.Workers.ConfigureAPP
             services.AddScoped<RemoveExpiredTokensHandler>();
             services.AddScoped<UnlinkedFilesDeleteJobHandler>();
             services.AddScoped<RemoveDeadWSConnectionsHandler>();
+            services.AddScoped<MarkLostFilesAsUnlinkedJobHandler>();
 
             services.AddHostedService<JobRegisterHosted>();
         }

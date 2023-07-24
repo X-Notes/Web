@@ -5,7 +5,6 @@ using System.Text;
 using Newtonsoft.Json;
 using Common.DTO.WebSockets;
 using Noots.API.Workers.Models.Config;
-
 namespace Noots.API.Workers.BI;
 
 public class RemoveDeadWSConnectionsHandler
@@ -36,12 +35,15 @@ public class RemoveDeadWSConnectionsHandler
 		var deadConnections = await userIdentifierConnectionIdRepository.GetConnectionsByDateIncludeNotesFoldersAsync(earliestTimestamp);
 		if (deadConnections.Count > 0)
 		{
-			await SendDeadConnectionsAsync(deadConnections);
-			await userIdentifierConnectionIdRepository.RemoveRangeAsync(deadConnections);
+			var isSuccess = await SendDeadConnectionsAsync(deadConnections);
+			if (isSuccess)
+			{
+                await userIdentifierConnectionIdRepository.RemoveRangeAsync(deadConnections);
+            }
 		}
 	}
 
-	private async Task SendDeadConnectionsAsync(List<UserIdentifierConnectionId> connections)
+	private async Task<bool> SendDeadConnectionsAsync(List<UserIdentifierConnectionId> connections)
 	{
 		var nootsAPI = configuration.GetSection("NootsAPI").Value + "/api/WSManagement/connections";
 		if (string.IsNullOrEmpty(nootsAPI))
@@ -60,11 +62,22 @@ public class RemoveDeadWSConnectionsHandler
 
 		var json = JsonConvert.SerializeObject(deadConnections);
 		var content = new StringContent(json, Encoding.UTF8, "application/json");
-		var resp = await httpClient.PostAsync(nootsAPI, content);
 
-		if (!resp.IsSuccessStatusCode)
+		try
 		{
-			logger.LogError($"Code: {resp.StatusCode}, Reason: {resp.ReasonPhrase}");
-		}
+            var resp = await httpClient.PostAsync(nootsAPI, content);
+            if (!resp.IsSuccessStatusCode)
+            {
+                logger.LogError($"Code: {resp.StatusCode}, Reason: {resp.ReasonPhrase}");
+                return false;
+            }
+
+            return true;
+        }
+		catch (Exception e)
+		{
+            logger.LogError(e.ToString());
+			return false;
+        }
 	}
 }

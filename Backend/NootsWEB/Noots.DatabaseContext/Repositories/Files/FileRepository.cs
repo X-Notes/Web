@@ -21,5 +21,18 @@ namespace Noots.DatabaseContext.Repositories.Files
         {
             return entities.Include(x => x.AppFileUploadInfo).FirstOrDefaultAsync(x => x.Id == fileId);
         }
+
+        public Task<List<AppFile>> GetFilesIncludeAllByLostCheckedDateAsync(int take, DateTimeOffset earliestTimestamp)
+        {
+            return entities
+                .Include(x => x.Background)
+                .Include(x => x.UserProfilePhoto)
+                .Include(x => x.CollectionNoteAppFiles)
+                .Include(x => x.SnapshotFileContents)
+                .Where(x => x.LostCheckedAt < earliestTimestamp)
+                .Take(take)
+                .AsSplitQuery()
+                .ToListAsync();
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace Noots.API.Workers.Hosted
             RecurringJob.AddOrUpdate<RemoveDeadWSConnectionsHandler>(JobNames.RemoveConnectionsJobs, x => x.HandleAsync(), Delay);
             RecurringJob.AddOrUpdate<RemoveExpiredTokensHandler>(JobNames.RemoveTokensJobs, x => x.HandleAsync(), Delay);
             RecurringJob.AddOrUpdate<UnlinkedFilesDeleteJobHandler>(JobNames.RemoveFilesJobs, x => x.HandleAsync(), Delay);
+            RecurringJob.AddOrUpdate<MarkLostFilesAsUnlinkedJobHandler>(JobNames.MarkLostedFilesAsUnlinked, x => x.HandleAsync(), Delay);
 
             return Task.CompletedTask;
         }
