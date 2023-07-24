@@ -74,12 +74,6 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         var note = permissions.Note;
 
         NoteStructureResult result = new();
-        List<TextNoteDTO> textItemsThatNeedAdd = null;
-        List<PhotosCollectionNoteDTO> photosItemsThatNeedAdd = null;
-        List<VideosCollectionNoteDTO> videosItemsThatNeedAdd = null;
-        List<AudiosCollectionNoteDTO> audiosItemsThatNeedAdd = null;
-        List<DocumentsCollectionNoteDTO> documentsItemsThatNeedAdd = null;
-        List<UpdateContentPositionWS> positions = null;
 
         if (!permissions.CanWrite)
         {
@@ -129,8 +123,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 await textNotesRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                textItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
-                SetNewIds(result.UpdateIds, textItemsThatNeedAdd);
+                result.Updates.TextContentsToAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.TextContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
@@ -155,8 +149,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 await collectionNoteRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                photosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, photosItemsThatNeedAdd);
+                result.Updates.PhotoContentsToAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.PhotoContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
@@ -174,8 +168,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 await collectionNoteRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                audiosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, audiosItemsThatNeedAdd);
+                result.Updates.AudioContentsToAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.AudioContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
@@ -193,8 +187,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 await collectionNoteRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                videosItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, videosItemsThatNeedAdd);
+                result.Updates.VideoContentsToAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.VideoContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
@@ -212,8 +206,8 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                 await collectionNoteRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                documentsItemsThatNeedAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, documentsItemsThatNeedAdd);
+                result.Updates.DocumentContentsToAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.DocumentContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
@@ -236,19 +230,12 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             }
             if (updateItems.Any())
             {
-                positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
+                result.Updates.Positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
                 await baseNoteContentRepository.UpdateRangeAsync(updateItems);
             }
         }
 
         await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
-
-        result.Updates.TextContentsToAdd = textItemsThatNeedAdd;
-        result.Updates.PhotoContentsToAdd = photosItemsThatNeedAdd;
-        result.Updates.VideoContentsToAdd = videosItemsThatNeedAdd;
-        result.Updates.DocumentContentsToAdd = documentsItemsThatNeedAdd;
-        result.Updates.AudioContentsToAdd = audiosItemsThatNeedAdd;
-        result.Updates.Positions = positions;
 
         if (permissions.IsMultiplyUpdate)
         {
