@@ -5,7 +5,7 @@
         <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
       </div>
     </button>
-    <a class="redirect" [routerLink]="['/notes', note.id]" target="_blank">
+    <a *ngIf="note.userId === (user$ | async).id" class="redirect" [routerLink]="['/notes', note.id]" target="_blank">
       <div class="icon">
         <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
       </div>

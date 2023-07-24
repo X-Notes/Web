@@ -6,6 +6,7 @@ import { ThemeENUM } from '../../../../shared/enums/theme.enum';
 import { Observable } from 'rxjs';
 import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
+import { ShortUser } from 'src/app/core/models/user/short-user.model';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',
@@ -23,6 +24,9 @@ export class RelatedNoteComponent {
 
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
+
+  @Select(UserStore.getUser)
+  user$: Observable<ShortUser>;
 
   contentType = ContentTypeENUM;
 
