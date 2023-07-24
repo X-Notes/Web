@@ -155,14 +155,12 @@ namespace Noots.Editor.Services.Photos
                         Order = contentForRemove.Order,
                     };
 
-                    collection.SetMetaDataPhotos("100%", "auto", 2);
-
                     await collectionNoteRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
-                    var result = new PhotosCollectionNoteDTO(null, collection.Name, collection.MetaData.Width, collection.MetaData.Height,
-                                        collection.Id, collection.Order, collection.MetaData.CountInRow, collection.UpdatedAt, 1);
+                    var result = new PhotosCollectionNoteDTO(null, collection.Name, collection.MetaData?.Width, collection.MetaData?.Height,
+                                        collection.Id, collection.Order, collection.MetaData?.CountInRow, collection.UpdatedAt, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 

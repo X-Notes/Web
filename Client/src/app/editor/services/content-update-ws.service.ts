@@ -66,7 +66,7 @@ export class ContentUpdateWsService {
           }
           if (content.positions && content.positions.length > 0) {
             const posIds = content.positions.map(x => x.contentId);
-            if(posIds && posIds?.length > 0) {
+            if (posIds && posIds?.length > 0) {
               this.selectionService.resetSelectionAndItems();
             }
             this.contentEditorContentsService.updatePositions(content.positions, true);
@@ -78,34 +78,48 @@ export class ContentUpdateWsService {
               changes = true;
             }
           }
-          if (content.photoContentsToAdd) {
-            for (const item of content.photoContentsToAdd) {
-              this.contentEditorContentsService.insertInto(item, item.order, true);
-              changes = true;
+
+
+          if (content.collectionContentsToAdd?.length > 0) {
+            for (const item of content.collectionContentsToAdd) {
+              switch (item.typeId) {
+                case ContentTypeENUM.Photos: {
+                  const newItem = new PhotosCollection(item as PhotosCollection, []);
+                  this.contentEditorContentsService.insertInto(newItem, item.order, true);
+                  changes = true;
+                  break;
+                }
+                case ContentTypeENUM.Documents: {
+                  const newItem = new DocumentsCollection(item as DocumentsCollection, []);
+                  this.contentEditorContentsService.insertInto(newItem, item.order, true);
+                  changes = true;
+                  break;
+                }
+                case ContentTypeENUM.Videos: {
+                  const newItem = new VideosCollection(item as VideosCollection, []);
+                  this.contentEditorContentsService.insertInto(newItem, item.order, true);
+                  changes = true;
+                  break;
+                }
+                case ContentTypeENUM.Audios: {
+                  const newItem = new AudiosCollection(item as AudiosCollection, []);
+                  this.contentEditorContentsService.insertInto(newItem, item.order, true);
+                  changes = true;
+                  break;
+                }
+                default: {
+                  throw new Error('Incorrect type');
+                }
+              }
             }
           }
-          if (content.audioContentsToAdd) {
-            for (const item of content.audioContentsToAdd) {
-              this.contentEditorContentsService.insertInto(item, item.order, true);
-              changes = true;
-            }
-          }
-          if (content.videoContentsToAdd) {
-            for (const item of content.videoContentsToAdd) {
-              this.contentEditorContentsService.insertInto(item, item.order, true);
-              changes = true;
-            }
-          }
-          if (content.documentContentsToAdd) {
-            for (const item of content.documentContentsToAdd) {
-              this.contentEditorContentsService.insertInto(item, item.order, true);
-              changes = true;
-            }
-          }
+
           if (changes) {
             this.changes$.next(true);
           }
-        } catch (e) {
+
+        }
+        catch (e) {
           console.error(e);
         }
       });
@@ -139,7 +153,7 @@ export class ContentUpdateWsService {
       if (content) {
         try {
           const isSelect = this.selectionService.isSelectedAll(content.collection.id);
-          if(isSelect) {
+          if (isSelect) {
             this.selectionService.resetSelectionAndItems();
           }
           this.handleTextUpdates(content);
@@ -317,8 +331,8 @@ export class ContentUpdateWsService {
       this.contentEditorContentsService.removeItemsFromCollections(
         content.collectionItemIds,
         content.contentId,
-        content.entityTime, 
-        content.version, 
+        content.entityTime,
+        content.version,
         true,
       );
       this.updateUI(content.contentId);

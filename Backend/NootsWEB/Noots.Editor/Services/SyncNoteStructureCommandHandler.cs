@@ -14,6 +14,8 @@ using Noots.SignalrUpdater.Impl;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Mapper.Mapping;
 using Noots.Editor.Commands.Structure;
+using Azure;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Noots.Editor.Services;
 
@@ -132,86 +134,23 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             }
         }
 
-        // FILES
-        if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
+        if (request.Diffs.CollectionItems != null && request.Diffs.CollectionItems.Any())
         {
-            var newCollectionItemsToAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+            var newCollectionItemsToAdd = request.Diffs.CollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+            var itemsThatAlreadyAdded = request.Diffs.CollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
 
             if (newCollectionItemsToAdd.Any())
             {
-                var items = newCollectionItemsToAdd.Select(x =>
-                {
-                    var cont = GetCollectionContent(x, note.Id, FileTypeEnum.Photo);
-                    cont.SetMetaDataPhotos("100%", "auto", 2);
-                    return cont;
-                }).ToList();
+                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, x.TypeId)).ToList();
                 await collectionNoteRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.PhotoContentsToAdd = items.Select(x => noteFolderLabelMapper.ToPhotosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.PhotoContentsToAdd);
+                result.Updates.CollectionContentsToAdd = items.Select(x => noteFolderLabelMapper.ToCollectionNoteDTO(x)).ToList();
+                SetNewIds(result.UpdateIds, result.Updates.CollectionContentsToAdd);
             }
             if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
             {
-                logger.LogError("ITEMS PHOTOS EXIST");
-            }
-        }
-        if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
-        {
-            var newCollectionItemsToAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-            if (newCollectionItemsToAdd.Any())
-            {
-                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Audio)).ToList();
-                await collectionNoteRepository.AddRangeAsync(items);
-
-                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.AudioContentsToAdd = items.Select(x => noteFolderLabelMapper.ToAudiosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.AudioContentsToAdd);
-            }
-            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-            {
-                logger.LogError("ITEMS AUDIOS EXIST");
-            }
-        }
-        if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
-        {
-            var newCollectionItemsToAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-            if (newCollectionItemsToAdd.Any())
-            {
-                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Video)).ToList();
-                await collectionNoteRepository.AddRangeAsync(items);
-
-                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.VideoContentsToAdd = items.Select(x => noteFolderLabelMapper.ToVideosCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.VideoContentsToAdd);
-            }
-            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-            {
-                logger.LogError("ITEMS VIDEOS EXIST");
-            }
-        }
-        if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
-        {
-            var newCollectionItemsToAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-            if (newCollectionItemsToAdd.Any())
-            {
-                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, FileTypeEnum.Document)).ToList();
-                await collectionNoteRepository.AddRangeAsync(items);
-
-                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.DocumentContentsToAdd = items.Select(x => noteFolderLabelMapper.ToDocumentsCollection(x, note.UserId)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.DocumentContentsToAdd);
-            }
-            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-            {
-                logger.LogError("ITEMS DOCUMENTS EXIST");
+                logger.LogError("ITEMS EXIST");
             }
         }
 
@@ -279,6 +218,20 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     }
 
     // FILES
+    private CollectionNote GetCollectionContent(NewCollectionContent baseContent, Guid noteId, ContentTypeEnumDTO fileTypeEnum)
+    {
+        var fileType = fileTypeEnum switch
+        {
+            ContentTypeEnumDTO.Photos => FileTypeEnum.Photo,
+            ContentTypeEnumDTO.Documents => FileTypeEnum.Document,
+            ContentTypeEnumDTO.Audios => FileTypeEnum.Audio,
+            ContentTypeEnumDTO.Videos => FileTypeEnum.Video,
+            _ => throw new Exception("Incorrect type")
+        };
+
+        return GetCollectionContent(baseContent, noteId, fileType);
+    }
+
     private CollectionNote GetCollectionContent(NewCollectionContent baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
     {
         var content = new CollectionNote(fileTypeEnum);

@@ -219,32 +219,33 @@ export class ContentEditorContentsService {
         contents.push(item.copy());
       }
     }
-    if (updates.photoContentsToAdd?.length > 0) {
-      for (const item of updates.photoContentsToAdd) {
-        const newItem = item.copy() as PhotosCollection;
-        newItem.items = [];
-        contents.push(newItem);
-      }
-    }
-    if (updates.audioContentsToAdd?.length > 0) {
-      for (const item of updates.audioContentsToAdd) {
-        const newItem = item.copy() as AudiosCollection;
-        newItem.items = [];
-        contents.push(newItem);
-      }
-    }
-    if (updates.videoContentsToAdd?.length > 0) {
-      for (const item of updates.videoContentsToAdd) {
-        const newItem = item.copy() as VideosCollection;
-        newItem.items = [];
-        contents.push(newItem);
-      }
-    }
-    if (updates.documentContentsToAdd?.length > 0) {
-      for (const item of updates.documentContentsToAdd) {
-        const newItem = item.copy() as DocumentsCollection;
-        newItem.items = [];
-        contents.push(newItem);
+    if(updates.collectionContentsToAdd?.length > 0) {
+      for (const item of updates.collectionContentsToAdd) {
+        switch(item.typeId) {
+          case ContentTypeENUM.Photos: {
+            const newItem = new PhotosCollection({ ...item },  []);
+            contents.push(newItem);
+            break;
+          }
+          case ContentTypeENUM.Documents: {
+            const newItem = new DocumentsCollection({ ...item },  []);
+            contents.push(newItem);
+            break;
+          }
+          case ContentTypeENUM.Videos: {
+            const newItem = new VideosCollection({ ...item },  []);
+            contents.push(newItem);
+            break;
+          }
+          case ContentTypeENUM.Audios: {
+            const newItem = new AudiosCollection({ ...item },  []);
+            contents.push(newItem);
+            break;
+          }
+          default: {
+            throw new Error('Incorrect type');
+          }
+        }
       }
     }
     if (updates.positions?.length > 0) {

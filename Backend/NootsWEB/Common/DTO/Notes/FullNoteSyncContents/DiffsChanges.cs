@@ -1,5 +1,4 @@
-﻿using Common.DTO.Notes.FullNoteContent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common.DTO.Notes.FullNoteSyncContents
 {
@@ -10,23 +9,14 @@ namespace Common.DTO.Notes.FullNoteSyncContents
         public List<NewTextContent> NewTextItems { set; get; }
 
         // BASE FILE
-        public List<NewCollectionContent> PhotosCollectionItems { set; get; }
-
-        public List<NewCollectionContent> AudiosCollectionItems { set; get; }
-
-        public List<NewCollectionContent> VideosCollectionItems { set; get; }
-
-        public List<NewCollectionContent> DocumentsCollectionItems { set; get; }
+        public List<NewCollectionContent> CollectionItems { set; get; }
 
         public int GetNewItemsCount()
         {
             var addTextsCount = NewTextItems == null ? 0 : NewTextItems.Count;
-            var addPhotosCount = PhotosCollectionItems == null ? 0 : PhotosCollectionItems.Count;
-            var addAudiosCount = AudiosCollectionItems == null ? 0 : AudiosCollectionItems.Count;
-            var addVideoCount = VideosCollectionItems == null ? 0 : VideosCollectionItems.Count;
-            var addDocumentsCount = DocumentsCollectionItems == null ? 0 : DocumentsCollectionItems.Count;
+            var addCollectionCount = CollectionItems == null ? 0 : CollectionItems.Count;
 
-            return addTextsCount + addPhotosCount + addAudiosCount + addVideoCount + addDocumentsCount;
+            return addTextsCount + addCollectionCount;
         }
     }
 }

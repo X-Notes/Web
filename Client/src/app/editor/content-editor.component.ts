@@ -48,7 +48,7 @@ import { ContentEditorMomentoStateService } from './ui-services/contents/content
 import { ContentEditorRestoreService } from './ui-services/contents/content-editor-restore.service';
 import { ContentEditorTextService } from './ui-services/contents/content-editor-text.service';
 import { HtmlPropertyTagCollectorService } from './ui-services/html-property-tag-collector.service';
-import { ParentInteraction, ParentInteractionHTML } from './components/parent-interaction.interface';
+import { ComponentType, ParentInteraction, ParentInteractionHTML } from './components/parent-interaction.interface';
 import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { SelectionDirective } from './directives/selection.directive';
 import { EnterEvent } from './entities-ui/enter-event.model';
@@ -426,8 +426,10 @@ export class ContentEditorComponent
   onScroll($event: Event): void { }
 
   enterHandler(value: EnterEvent) {
-    const curEl = this.getHTMLElementById(value.contentId);
-    curEl.syncHtmlWithLayout();
+    const curEl = this.getElementById(value.contentId);
+    if(curEl.type === ComponentType.HTML) {
+      (curEl as ParentInteractionHTML).syncHtmlWithLayout();
+    }
     const newTextContent = this.facade.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,

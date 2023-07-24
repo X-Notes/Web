@@ -8,7 +8,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
 
   width: string;
 
-  countInRow: number;
+  countInRow?: number;
 
   constructor(collection: Partial<PhotosCollection>, items: Photo[]) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt, collection.version);
@@ -16,7 +16,7 @@ export class PhotosCollection extends BaseCollection<Photo> {
     this.setHeightWidth(collection.height, collection.width);
     this.name = collection.name;
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    this.items = items && items.length > 0 ? items.map((q) => new Photo(q)) : [];
+    this.items = (items && items.length > 0) ? items.map((q) => new Photo(q)) : [];
   }
 
   static getNew(): PhotosCollection {
@@ -26,6 +26,10 @@ export class PhotosCollection extends BaseCollection<Photo> {
       countInRow: 2,
     };
     return new PhotosCollection(obj, obj.items);
+  }
+
+  get countRowOrDefault(): number {
+    return this.countInRow ?? 2;
   }
 
   updateInfo(entity: PhotosCollection, version: number, updateDate: Date) {

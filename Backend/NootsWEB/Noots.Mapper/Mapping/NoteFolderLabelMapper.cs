@@ -138,6 +138,20 @@ namespace Noots.Mapper.Mapping
             return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
         }
 
+        public BaseNoteContentDTO ToCollectionNoteDTO(CollectionNote aN)
+        {
+            var fileType = aN.FileTypeId switch
+            {
+                FileTypeEnum.Photo => ContentTypeEnumDTO.Photos,
+                FileTypeEnum.Document => ContentTypeEnumDTO.Documents,
+                FileTypeEnum.Audio => ContentTypeEnumDTO.Audios,
+                FileTypeEnum.Video => ContentTypeEnumDTO.Videos,
+                _ => throw new Exception("Incorrect type")
+            };
+
+            return new BaseNoteContentDTO(aN.Id, aN.Order, fileType, aN.UpdatedAt, aN.Version);
+        }
+
         // TYPES
         public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {

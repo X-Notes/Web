@@ -30,63 +30,30 @@ export class EditorStructureDiffs {
 
   newTextItems: NewText[] = [];
 
-  photosCollectionItems: NewCollection[] = [];
-
-  audiosCollectionItems: NewCollection[] = [];
-
-  videosCollectionItems: NewCollection[] = [];
-
-  documentsCollectionItems: NewCollection[] = [];
+  collectionItems: NewCollection[] = [];
 
   push(content: ContentModelBase): void {
-    switch (content.typeId) {
-      case ContentTypeENUM.Text: {
-        const text = content as BaseText;
-        this.newTextItems.push({
-          id: text.id,
-          typeId: text.typeId,
-          noteTextTypeId: text.noteTextTypeId,
-          order: text.order,
-          contents: text.contents
-        });
-        break;
-      }
-      case ContentTypeENUM.Photos: {
-        this.photosCollectionItems.push({
-          id: content.id,
-          typeId: content.typeId,
-          order: content.order
-        });
-        break;
-      }
-      case ContentTypeENUM.Documents: {
-        this.documentsCollectionItems.push({
-          id: content.id,
-          typeId: content.typeId,
-          order: content.order
-        });
-        break;
-      }
-      case ContentTypeENUM.Videos: {
-        this.videosCollectionItems.push({
-          id: content.id,
-          typeId: content.typeId,
-          order: content.order
-        });
-        break;
-      }
-      case ContentTypeENUM.Audios: {
-        this.audiosCollectionItems.push({
-          id: content.id,
-          typeId: content.typeId,
-          order: content.order
-        });
-        break;
-      }
-      default: {
-        throw new Error('Incorrect type');
-      }
+    if (content.typeId === ContentTypeENUM.Text) {
+      const text = content as BaseText;
+      this.newTextItems.push({
+        id: text.id,
+        typeId: text.typeId,
+        noteTextTypeId: text.noteTextTypeId,
+        order: text.order,
+        contents: text.contents
+      });
+      return;
     }
+    const collectionTypes = [ContentTypeENUM.Photos, ContentTypeENUM.Documents, ContentTypeENUM.Videos, ContentTypeENUM.Audios];
+    if (collectionTypes.some(id => id === content.typeId)) {
+      this.collectionItems.push({
+        id: content.id,
+        typeId: content.typeId,
+        order: content.order
+      });
+      return;
+    }
+    throw new Error('Incorrect type');
   }
 
   isAnyChanges() {
@@ -94,10 +61,7 @@ export class EditorStructureDiffs {
       this.positions.length > 0 ||
       this.newTextItems.length > 0 ||
       this.removedItems.length > 0 ||
-      this.photosCollectionItems.length > 0 ||
-      this.audiosCollectionItems.length > 0 ||
-      this.videosCollectionItems.length > 0 ||
-      this.documentsCollectionItems.length > 0
+      this.collectionItems.length > 0
     );
   }
 }
