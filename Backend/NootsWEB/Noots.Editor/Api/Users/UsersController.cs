@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.DTO.Users;
+using Common.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("users/{id}")]
-    [AllowAnonymous]
+    [ValidationRequireUserIdFilter]
     public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
     {
         var query = new GetOnlineUsersOnNoteQuery(id);
-        query.UserId = this.GetUserIdUnStrict();
+        query.UserId = this.GetUserId();
         return await _mediator.Send(query);
     }
 
