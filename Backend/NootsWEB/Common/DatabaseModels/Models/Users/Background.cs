@@ -9,8 +9,10 @@ namespace Common.DatabaseModels.Models.Users
     {
         public Guid FileId { set; get; }
         public AppFile File { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
+
         public User CurrentUserBackground { set; get; }
     }
 }

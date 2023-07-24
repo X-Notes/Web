@@ -19,7 +19,7 @@ namespace Noots.Editor.Services;
 
 public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
 {
-    private readonly int maxContents = 1000;
+    private readonly int maxContents = 300;
 
     private readonly BaseNoteContentRepository baseNoteContentRepository;
 

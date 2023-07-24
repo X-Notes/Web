@@ -39,15 +39,18 @@ namespace Common.DatabaseModels.Models.Files
         public StoragesEnum StorageId { set; get; }
         public Storage Storage { get; set; }
 
-
         public AppFileUploadInfo AppFileUploadInfo { set; get; }
 
-        public List<UserProfilePhoto> UserProfilePhotos { set; get; }
+        public Background Background { set; get; }
+
+        public UserProfilePhoto UserProfilePhoto { set; get; }
 
         public List<CollectionNote> PhotosCollectionNotes { set; get; }
+
         public List<CollectionNoteAppFile> PhotosCollectionNoteAppFiles { set; get; }
 
         public List<NoteSnapshot> NoteSnapshots { set; get; }
+
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }
 
         public DateTimeOffset CreatedAt { set; get; }

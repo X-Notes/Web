@@ -33,7 +33,7 @@ export class ContentEditorContentsService {
 
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
-  readonly maxContents = 1000;
+  readonly maxContents = 300;
 
   private progressiveLoadOptions = {
     firstLoadCount: 30,
