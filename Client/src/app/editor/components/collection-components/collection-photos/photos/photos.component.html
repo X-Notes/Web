@@ -6,7 +6,7 @@
     class="main-item"
     appTheme
     appDrop="drop-active"
-    (fileDropped)="uploadFiles($event)"
+    (fileDropped)="uploadFilesDragDrop($event)"
     [ngStyle]="{
       backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
     }"
@@ -30,7 +30,7 @@
           class="blocks"
           [ngStyle]="{ height: 'calc(100% / ' + totalRows + ')' }"
         >
-          <div class="block" [ngClass]="getStyle(content.countInRow)">
+          <div class="block" [ngClass]="getStyle(content.countRowOrDefault)">
             <app-photo
               *ngFor="let item of block"
               [photo]="item"

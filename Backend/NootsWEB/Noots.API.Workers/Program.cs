@@ -10,6 +10,8 @@ using Noots.API.Workers.ConfigureAPP;
 using Noots.API.Workers.Database;
 using Noots.API.Workers.Database.Models;
 using Noots.API.Workers.Filters;
+using Noots.Editor.Services;
+using Noots.Notes.Handlers.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,7 @@ var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+    .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
 builder.Configuration.AddConfiguration(configBuilder.Build());
@@ -43,6 +46,8 @@ builder.Services.ApplyDataBaseDI(dbConn);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
+builder.Services.AddScoped<CollectionLinkedService>();
+builder.Services.AddScoped<DeleteNotesCommandHandler>();
 
 builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);

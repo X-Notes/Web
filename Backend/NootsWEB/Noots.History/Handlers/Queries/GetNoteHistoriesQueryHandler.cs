@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.Models.History;
+﻿using Common;
+using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using Common.DTO.Users;
@@ -64,7 +65,8 @@ public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuer
         var isPremium = await billingPermissionService.IsUserPlanPremiumAsync(userId);
         if (!isPremium)
         {
-            return await noteHistoryRepository.GetNoteHistories(noteId, HistoryBillingConstraints.maxSnapshotForNoPremiumUser);
+            var earliestTimestamp = DateTimeProvider.Time.AddDays(-100);
+            return await noteHistoryRepository.GetNoteHistories(noteId, earliestTimestamp);
         }
         return await noteHistoryRepository.GetNoteHistories(noteId);
     }

@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +19,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230724112852_update-constraints")]
+    partial class updateconstraints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +46,6 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Property<int>("FileTypeId")
                         .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("LostCheckedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<AppFileMetaData>("MetaData")
                         .HasColumnType("jsonb");
@@ -969,8 +968,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileId")
-                        .IsUnique();
+                    b.HasIndex("FileId");
 
                     b.HasIndex("UserId");
 
@@ -1212,8 +1210,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("AppFileId")
-                        .IsUnique();
+                    b.HasIndex("AppFileId");
 
                     b.ToTable("UserProfilePhoto", "user");
                 });
@@ -1587,7 +1584,7 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNoteAppFile", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("CollectionNoteAppFiles")
+                        .WithMany("PhotosCollectionNoteAppFiles")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1728,8 +1725,8 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.Background", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "File")
-                        .WithOne("Background")
-                        .HasForeignKey("Common.DatabaseModels.Models.Users.Background", "FileId")
+                        .WithMany()
+                        .HasForeignKey("FileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1849,8 +1846,8 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.Users.UserProfilePhoto", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithOne("UserProfilePhoto")
-                        .HasForeignKey("Common.DatabaseModels.Models.Users.UserProfilePhoto", "AppFileId")
+                        .WithMany("UserProfilePhotos")
+                        .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1958,13 +1955,11 @@ namespace Noots.DatabaseContext.Migrations
                 {
                     b.Navigation("AppFileUploadInfo");
 
-                    b.Navigation("Background");
-
-                    b.Navigation("CollectionNoteAppFiles");
+                    b.Navigation("PhotosCollectionNoteAppFiles");
 
                     b.Navigation("SnapshotFileContents");
 
-                    b.Navigation("UserProfilePhoto");
+                    b.Navigation("UserProfilePhotos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>

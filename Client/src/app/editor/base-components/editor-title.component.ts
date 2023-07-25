@@ -48,9 +48,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
   initTitleSubscription() {
     this.subscribeTitleUpdates();
-    if (!this.options$.getValue().isReadOnlyMode) {
-      this.subscribeOnEditUI();
-    }
+    this.subscribeOnEditUI();
   }
 
   setHtmlTitle(title: string) {
@@ -88,7 +86,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     this.noteTitleChanged$
       .pipe(takeUntil(this.facade.dc.d$), debounceTime(updateNoteTitleDelay))
       .subscribe(async (title) => {
-        if (!this.options$.getValue().noteId) return;
+        if (!this.options$.getValue().noteId || this.options$.getValue().isReadOnlyMode) return;
         this.facade.store.dispatch(new UpdateNoteTitle(title, this.options$.getValue().noteId, true, undefined));
         this.facade.htmlTitleService.setCustomOrDefault(title, 'titles.note');
       });
@@ -115,7 +113,6 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
     const el = this.noteTitleEl.nativeElement;
     const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
-
     this.setHtmlTitle(updateTitle);
 
     if (this.titleInited) {

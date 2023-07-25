@@ -1,4 +1,4 @@
-export const syncEditorIntervalDelay = 400;
+export const syncEditorIntervalDelay = 800;
 export const syncEditorStateIntervalDelay = 10000;
 export const syncNoteStateIntervalDelay = 10000;
 export const syncFolderStateIntervalDelay = 10000;

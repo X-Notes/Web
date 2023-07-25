@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>4da5c465-6d17-4a2a-a585-aeb4c7243bb8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,8 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Noots.Editor\Noots.Editor.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Notes\Noots.Notes.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
   </ItemGroup>
 

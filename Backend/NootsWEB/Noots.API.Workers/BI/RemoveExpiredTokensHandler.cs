@@ -14,7 +14,7 @@ public class RemoveExpiredTokensHandler
         this.logger = logger;
     }
 
-    public async Task Handle()
+    public async Task HandleAsync()
     {
         var nowTime = DateTimeProvider.Time;
         var expiredTokens = await refreshTokenRepository.GetWhereAsNoTrackingAsync(x => x.ExpireAt < nowTime);

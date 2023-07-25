@@ -29,36 +29,37 @@ public class UpdateRelatedNoteStateCommandHandler : IRequestHandler<UpdateRelate
         var permissions = await _mediator.Send(command);
         var note = permissions.Note;
 
-        if (permissions.CanRead)
+        if (!permissions.CanRead)
         {
-            var relatedNote = await relatedNoteUserStateRepository.FirstOrDefaultAsync(x => x.RelatedNoteInnerNoteId == request.ReletatedNoteInnerNoteId 
-                && x.UserId == request.UserId);
-                
-            if(relatedNote != null)
-            {
-                relatedNote.IsOpened = request.IsOpened;
-                await relatedNoteUserStateRepository.UpdateAsync(relatedNote);
-            }
-            else
-            {
-                var related = await relatedRepository.FirstOrDefaultAsync(x => x.Id == request.ReletatedNoteInnerNoteId);
-                if(related == null)
-                {
-                    return new OperationResult<Unit>().SetNotFound();
-                }
-
-                var state = new RelatedNoteUserState 
-                { 
-                    UserId = request.UserId, 
-                    RelatedNoteInnerNoteId = request.ReletatedNoteInnerNoteId, 
-                    IsOpened = request.IsOpened 
-                };
-                await relatedNoteUserStateRepository.AddAsync(state);
-            }
-
-            return new OperationResult<Unit>(true, Unit.Value);
+            return new OperationResult<Unit>(false, Unit.Value);
         }
 
-        return new OperationResult<Unit>(false, Unit.Value);
+        var relatedNoteUserState = await relatedNoteUserStateRepository
+            .FirstOrDefaultAsync(x => x.RelatedNoteInnerNoteId == request.ReletatedNoteInnerNoteId && x.UserId == request.UserId);
+                
+        if(relatedNoteUserState != null)
+        {
+            relatedNoteUserState.IsOpened = request.IsOpened;
+            await relatedNoteUserStateRepository.UpdateAsync(relatedNoteUserState);
+        }
+        else
+        {
+            var related = await relatedRepository.FirstOrDefaultAsync(x => x.Id == request.ReletatedNoteInnerNoteId);
+            if(related == null)
+            {
+                return new OperationResult<Unit>().SetNotFound();
+            }
+
+            var state = new RelatedNoteUserState 
+            { 
+                UserId = request.UserId, 
+                RelatedNoteInnerNoteId = request.ReletatedNoteInnerNoteId, 
+                IsOpened = request.IsOpened 
+            };
+
+            await relatedNoteUserStateRepository.AddAsync(state);
+        }
+
+        return new OperationResult<Unit>(true, Unit.Value); 
     }
 }

@@ -165,11 +165,6 @@ namespace Noots.API.ConfigureAPP
             });
         }
 
-        public static void BI(this IServiceCollection services)
-        {
-            services.AddScoped<CollectionLinkedService>();
-        }
-
         public static void SetupSignalR(this IServiceCollection services, RedisConfig config)
         {
             var signalR = services.AddSignalR();

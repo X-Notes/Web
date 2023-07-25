@@ -32,13 +32,13 @@ export class DropDirective {
     this.dragLeaveEvent.emit();
   }
 
-  @HostListener('drop', ['$event']) public ondrop(evt) {
+  @HostListener('drop', ['$event']) public ondrop(evt: DragEvent) {
     evt.preventDefault();
     evt.stopPropagation();
     this.isActive = false;
-    const { files } = evt.dataTransfer;
+    const files = [...evt.dataTransfer.files as any];
     if (files.length > 0) {
-      this.fileDropped.emit([...files]);
+      this.fileDropped.emit(files);
     }
   }
 }

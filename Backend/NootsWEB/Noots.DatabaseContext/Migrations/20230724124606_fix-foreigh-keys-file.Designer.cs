@@ -9,6 +9,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -18,9 +19,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Noots.DatabaseContext.Migrations
 {
     [DbContext(typeof(NootsDBContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230724124606_fix-foreigh-keys-file")]
+    partial class fixforeighkeysfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +46,6 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Property<int>("FileTypeId")
                         .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("LostCheckedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<AppFileMetaData>("MetaData")
                         .HasColumnType("jsonb");
@@ -1587,7 +1586,7 @@ namespace Noots.DatabaseContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.CollectionNoteAppFile", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("CollectionNoteAppFiles")
+                        .WithMany("PhotosCollectionNoteAppFiles")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1960,7 +1959,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.Navigation("Background");
 
-                    b.Navigation("CollectionNoteAppFiles");
+                    b.Navigation("PhotosCollectionNoteAppFiles");
 
                     b.Navigation("SnapshotFileContents");
 

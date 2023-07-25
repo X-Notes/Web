@@ -50,20 +50,6 @@ export class ProfileBillingComponent implements OnInit {
     }
   }
 
-  getHistoryValueById(planId: BillingPlanId): string {
-    switch (planId) {
-      case BillingPlanId.Standard: {
-        return this.translate.instant('profile-billing.history-last-15');
-      }
-      case BillingPlanId.Premium: {
-        return this.translate.instant('profile-billing.history-all');
-      }
-      default: {
-        return '';
-      }
-    }
-  }
-
   getCount(count: number): string {
     if (count >= 1000) {
       return `${count / 1000}.000`;

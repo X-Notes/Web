@@ -54,11 +54,11 @@ export class PhotosComponent
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.items.length / this.content.countInRow);
+    return Math.floor(this.content.items.length / this.content.countRowOrDefault);
   }
 
   get countLastItems() {
-    return this.content.items.length % this.content.countInRow;
+    return this.content.items.length % this.content.countRowOrDefault;
   }
 
   get totalRows() {
@@ -125,7 +125,7 @@ export class PhotosComponent
 
     this.changeHeightSubject.next(this.content.height);
 
-    this.initCountInRow(this.content.countInRow);
+    this.initCountInRow(this.content.countRowOrDefault);
     this.initBlocks();
   }
 
@@ -174,7 +174,7 @@ export class PhotosComponent
   }
 
   updateInternal() {
-    this.setPhotosInRow(this.content.countInRow);
+    this.setPhotosInRow(this.content.countRowOrDefault);
     this.syncHeight();
   }
 
@@ -186,7 +186,7 @@ export class PhotosComponent
   syncPhotos(): boolean {
     const photosCount = this.content.items.length;
     const currentLength = this.mainBlocks.flat().length + this.lastBlock.length;
-    const isNeedUpdateCountInRow = this.mainBlocks[0]?.length !== this.content.countInRow;
+    const isNeedUpdateCountInRow = this.mainBlocks[0]?.length !== this.content.countRowOrDefault;
     if (photosCount !== currentLength || isNeedUpdateCountInRow) {
       this.reInitPhotosToDefault();
       return true;
@@ -201,7 +201,7 @@ export class PhotosComponent
   }
 
   initCountInRow(countInRow: number): void {
-    this.content.countInRow = countInRow === 0 ? 2 : countInRow;
+    this.content.countInRow = countInRow;
   }
 
   initBlocks(): void {
@@ -210,8 +210,8 @@ export class PhotosComponent
     const photoLength = this.content.items.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.content.countInRow));
-      j += this.content.countInRow;
+      this.mainBlocks.push(this.content.orderedItems.slice(j, j + this.content.countRowOrDefault));
+      j += this.content.countRowOrDefault;
     }
     if (this.countLastItems > 0) {
       const start = photoLength - this.countLastItems;

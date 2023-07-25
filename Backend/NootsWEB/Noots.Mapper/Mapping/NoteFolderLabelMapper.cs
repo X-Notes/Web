@@ -116,26 +116,40 @@ namespace Noots.Mapper.Mapping
 
         public AudiosCollectionNoteDTO ToAudiosCollection(CollectionNote aN, Guid ownerId)
         {
-            var audiosDTO = aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList();
+            var audiosDTO = aN.Files != null ? aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList() : null;
             return new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
         }
 
         public PhotosCollectionNoteDTO ToPhotosCollection(CollectionNote aN, Guid ownerId)
         {
-            var photosDTO = aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList();
+            var photosDTO = aN.Files != null ? aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList() : null;
             return new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt, aN.Version);
         }
 
         public VideosCollectionNoteDTO ToVideosCollection(CollectionNote aN, Guid ownerId)
         {
-            var videosDTO = aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList();
+            var videosDTO = aN.Files != null ? aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList() : null;
             return new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
         }
 
         public DocumentsCollectionNoteDTO ToDocumentsCollection(CollectionNote aN, Guid ownerId)
         {
-            var documentsDTO = aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList();
+            var documentsDTO = aN.Files != null ? aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList() : null;
             return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
+        }
+
+        public BaseNoteContentDTO ToCollectionNoteDTO(CollectionNote aN)
+        {
+            var fileType = aN.FileTypeId switch
+            {
+                FileTypeEnum.Photo => ContentTypeEnumDTO.Photos,
+                FileTypeEnum.Document => ContentTypeEnumDTO.Documents,
+                FileTypeEnum.Audio => ContentTypeEnumDTO.Audios,
+                FileTypeEnum.Video => ContentTypeEnumDTO.Videos,
+                _ => throw new Exception("Incorrect type")
+            };
+
+            return new BaseNoteContentDTO(aN.Id, aN.Order, fileType, aN.UpdatedAt, aN.Version);
         }
 
         // TYPES

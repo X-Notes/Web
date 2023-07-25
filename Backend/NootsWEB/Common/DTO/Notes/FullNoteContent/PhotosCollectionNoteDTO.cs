@@ -14,7 +14,7 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public string Height { set; get; }
 
-        public int CountInRow { set; get; }
+        public int? CountInRow { set; get; }
 
         public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string name, string width, string height, Guid id, int order, int? countInRow, DateTimeOffset updatedAt, int version)
             : base(id, order, ContentTypeEnumDTO.Photos, updatedAt, version)
@@ -23,7 +23,7 @@ namespace Common.DTO.Notes.FullNoteContent
             this.Name = name;
             this.Height = height;
             this.Width = width;
-            this.CountInRow = countInRow.HasValue ? countInRow.Value : 2;
+            this.CountInRow = countInRow;
         }
     }
 }

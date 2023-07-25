@@ -270,11 +270,11 @@ namespace Noots.DatabaseContext
 
             modelBuilder.Entity<CollectionNote>()
                 .HasMany(p => p.Files)
-                .WithMany(p => p.PhotosCollectionNotes)
+                .WithMany(p => p.CollectionNotes)
                 .UsingEntity<CollectionNoteAppFile>(
                     j => j
                         .HasOne(pt => pt.AppFile)
-                        .WithMany(t => t.PhotosCollectionNoteAppFiles)
+                        .WithMany(t => t.CollectionNoteAppFiles)
                         .HasForeignKey(pt => pt.AppFileId),
                     j => j
                         .HasOne(pt => pt.CollectionNote)
@@ -387,12 +387,12 @@ namespace Noots.DatabaseContext
                     Id = BillingPlanTypeENUM.Standart, 
                     Name = nameof(BillingPlanTypeENUM.Standart), 
                     MaxSize = 104857600, // 100 MB
-                    MaxLabels = 500,
-                    MaxNotes = 250,
-                    MaxFolders = 250,
+                    MaxLabels = 100,
+                    MaxNotes = 160,
+                    MaxFolders = 40,
                     MaxRelatedNotes = 5,
                     Price = 0,
-                    MaxBackgrounds = 5,
+                    MaxBackgrounds = 10,
                 },
                 new BillingPlan
                 {

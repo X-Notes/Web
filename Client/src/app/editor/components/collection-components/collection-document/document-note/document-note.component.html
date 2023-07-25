@@ -5,7 +5,7 @@
 
   <div
     appDrop="drop-active"
-    (fileDropped)="uploadFiles($event)"
+    (fileDropped)="uploadFilesDragDrop($event)"
     class="playlist main-item"
     appTheme
     [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"

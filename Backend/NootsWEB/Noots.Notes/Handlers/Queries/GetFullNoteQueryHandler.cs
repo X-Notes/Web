@@ -37,12 +37,14 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
         var isCanRead = permissions.CanRead;
+        var isFolderPermissions = false;
 
         if (request.FolderId.HasValue && !isCanRead)
         {
             var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
             var permissionsFolder = await mediator.Send(queryFolder);
             isCanRead = permissionsFolder.CanRead;
+            isFolderPermissions = true;
         }
 
         if (isCanRead)
@@ -57,7 +59,7 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
                 }
             }
 
-            if(permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
+            if(!isFolderPermissions && permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
             {
                 await usersOnPrivateNotesRepository.AddAsync(new UserOnPrivateNotes { NoteId = note.Id, AccessTypeId = note.RefTypeId, UserId = permissions.Caller.Id });
             }
