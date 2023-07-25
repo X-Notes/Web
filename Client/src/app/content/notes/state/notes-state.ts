@@ -53,6 +53,7 @@ import {
   UpdateFolderNotes,
   LoadNotesByIds,
   UpdateNoteTitleState,
+  ResetNotesState,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -706,7 +707,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.changeColor(selectedIds, color, this.signalR.connectionId).toPromise();
@@ -777,9 +778,9 @@ export class NoteStore {
 
   @Action(LoadNotesByIds)
   async loadNotesByIds({ dispatch }: StateContext<NoteState>, { ids }: LoadNotesByIds) {
-      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const notes = await this.api.getNotesMany(ids, pr).toPromise();
-      await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    const notes = await this.api.getNotesMany(ids, pr).toPromise();
+    await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
   }
 
   @Action(AddLabelOnNote)
@@ -789,7 +790,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.addLabel(label.id, selectedIds, this.signalR.connectionId).toPromise();
@@ -833,7 +834,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.removeLabel(labelId, selectedIds, this.signalR.connectionId).toPromise();
@@ -948,7 +949,7 @@ export class NoteStore {
     { noteId, cursor }: UpdateCursorAction,
   ) {
     const user = this.store.selectSnapshot(UserStore.getUser);
-    if(!user?.id) return;
+    if (!user?.id) return;
     const note = getState().fullNoteState.note;
     if (!note || note.id !== noteId) return;
     await this.apiNoteEditor.updateCursorPosition(noteId, cursor, this.signalR.connectionIdOrError).toPromise();
@@ -1074,7 +1075,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.apiNoteEditor.updateTitle(newTitle, noteId, this.signalR.connectionId).toPromise();
@@ -1206,6 +1207,27 @@ export class NoteStore {
   async resetNotes({ patchState }: StateContext<NoteState>) {
     patchState({
       notes: [],
+    });
+  }
+
+  @Action(ResetNotesState)
+  async resetNotesState({ patchState }: StateContext<NoteState>) {
+    patchState({
+      notes: [],
+      fullNoteState: null,
+      fullNoteHistories: null,
+      snapshotState: null,
+      selectedIds: new Set(),
+      updateNoteEvent: [],
+      removeFromMurriEvent: [],
+      notesAddingToDom: null,
+      selectedLabelsFilter: [],
+      isCanceled: false,
+      InvitedUsersToNote: [],
+      onlineUsers: [],
+      folderNotes: [],
+      cursors: [],
+      cursorColor: null,
     });
   }
 

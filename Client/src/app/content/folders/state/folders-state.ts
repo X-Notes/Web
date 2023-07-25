@@ -38,6 +38,7 @@ import {
   ResetFolders,
   AddFolders,
   PatchUpdatesUIFolders,
+  ResetFoldersState,
 } from './folders-actions';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
@@ -541,6 +542,21 @@ export class FolderStore {
   // eslint-disable-next-line class-methods-use-this
   async resetFolders({ patchState }: StateContext<FolderState>) {
     patchState({ folders: [] });
+  }
+
+  @Action(ResetFoldersState)
+  // eslint-disable-next-line class-methods-use-this
+  async resetFoldersState({ patchState }: StateContext<FolderState>) {
+    patchState({
+      folders: [],
+      fullFolder: null,
+      isCanViewFullFolder: false,
+      selectedIds: new Set(),
+      removeFromMurriEvent: [],
+      updateFolderEvent: [],
+      foldersAddToDOM: [],
+      InvitedUsersToNote: [],
+    });
   }
 
   @Action(UpdateFolders)

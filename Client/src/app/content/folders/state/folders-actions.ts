@@ -17,6 +17,10 @@ export class ResetFolders {
   static type = '[Folders] Reset folders';
 }
 
+export class ResetFoldersState {
+  static type = '[Notes] Reset folders state';
+}
+
 // FUNCTIONS
 
 export class CreateFolder {

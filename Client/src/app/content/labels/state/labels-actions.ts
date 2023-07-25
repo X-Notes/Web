@@ -1,6 +1,10 @@
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { Label } from '../models/label.model';
 
+export class ResetLabelsState {
+  static type = '[Notes] Reset labels state';
+}
+
 export class LoadLabels {
   static type = '[Labels] Load Labels';
 }
