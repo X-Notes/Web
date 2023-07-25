@@ -20,10 +20,9 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
 
-        public Task<List<UserOnPrivateNotes>> GetByNoteIdsWithUser(List<Guid> noteIds)
+        public Task<List<Guid>> GetNoteIdsByUserId(Guid userId)
         {
-            return entities.Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
+            return entities.Where(x => x.UserId == userId).Select(x => x.NoteId).ToListAsync();
         }
-
     }
 }

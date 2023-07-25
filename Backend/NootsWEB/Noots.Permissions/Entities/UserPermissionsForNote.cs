@@ -34,6 +34,15 @@ namespace Noots.Permissions.Entities
 
         }
 
+        public bool SecondUsersHasAccess
+        {
+            get
+            {
+                return Note.UsersOnPrivateNotes.Any();
+            }
+
+        }
+
         public bool IsMultiplyUpdate
         {
             get

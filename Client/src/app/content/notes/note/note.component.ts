@@ -53,26 +53,20 @@ export class NoteComponent implements OnInit {
 
   constructor(public pService: PersonalizationService) { }
 
-  get noteFolders() {
-    return this.note?.additionalInfo?.noteFolderInfos?.filter(
-      (folder) => folder.folderId !== this.currentFolderId,
-    );
-  }
-
   get hasRelatedNotes(): boolean {
     return this.note?.additionalInfo?.noteRelatedNotes?.length > 0;
   }
 
   get hasFolderNotes(): boolean {
-    return this.note?.additionalInfo?.noteRelatedNotes?.length > 0;
+    return this.note?.additionalInfo?.noteFolderInfos?.length > 0;
   }
 
   get relatedNotesMessage(): string {
-    return this.note?.additionalInfo?.noteRelatedNotes.map(x =>  `<p>${x.name}</p>`).reduce((p, c) => p + c);
+    return this.note?.additionalInfo?.noteRelatedNotes?.map(x =>  `<p>${x.name}</p>`).reduce((p, c) => p + c);
   }
 
   get foldersNotesMessage(): string {
-    return this.note?.additionalInfo?.noteFolderInfos.map(x =>  `<p>${x.folderName}</p>`).reduce((p, c) => p + c);
+    return this.note?.additionalInfo?.noteFolderInfos?.map(x =>  `<p>${x.folderName}</p>`).reduce((p, c) => p + c);
   }
 
   get isAuthor(): boolean {

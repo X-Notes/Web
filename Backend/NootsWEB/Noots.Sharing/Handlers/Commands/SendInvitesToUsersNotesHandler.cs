@@ -5,6 +5,7 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
@@ -13,18 +14,18 @@ namespace Noots.Sharing.Handlers.Commands;
 
 public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsersNotes, OperationResult<Unit>>
 {
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
 
     public SendInvitesToUsersNotesHandler(
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+        UsersOnPrivateNotesService usersOnPrivateNotesService,
         IMediator _mediator,
         AppSignalRService appSignalRHub,
         NotificationService notificationService)
     {
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
@@ -43,14 +44,7 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
                 return new OperationResult<Unit>().SetContentLocked();
             }
 
-            var permissionsRequests = request.UserIds.Select(userId => new UserOnPrivateNotes()
-            {
-                AccessTypeId = request.RefTypeId,
-                NoteId = request.NoteId,
-                UserId = userId
-            }).ToList();
-
-            await usersOnPrivateNotesRepository.AddRangeAsync(permissionsRequests);
+            await usersOnPrivateNotesService.AddPermissionsAsync(request.NoteId, request.RefTypeId, request.UserIds);
 
             var updateCommand = new UpdatePermissionNoteWS();
             updateCommand.IdsToAdd.Add(request.NoteId);
