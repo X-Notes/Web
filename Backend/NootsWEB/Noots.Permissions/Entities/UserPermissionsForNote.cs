@@ -89,8 +89,14 @@ namespace Noots.Permissions.Entities
 
         public List<Guid> GetAllUsers()
         {
-            var userIds = Note.UsersOnPrivateNotes.Select(q => q.UserId).ToList();
-            userIds.Add(Author.Id);
+            var userIds = new List<Guid> { Author.Id };
+
+            if(Note.UsersOnPrivateNotes != null)
+            {
+                var userNoteIds = Note.UsersOnPrivateNotes.Select(q => q.UserId).ToList();
+                userIds.AddRange(userNoteIds);
+            }
+
             return userIds;
         }
     }

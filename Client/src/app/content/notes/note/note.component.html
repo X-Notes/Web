@@ -104,11 +104,10 @@
         >
           <mat-icon svgIcon="people-many" [inline]="true"></mat-icon>
         </div>
-        <div
-          *ngFor="let item of noteFolders | slice: 0:2"
-          [CustomTooltip]="item.folderName"
-          class="icon"
-        >
+        <div *ngIf="hasRelatedNotes" class="icon" [CustomTooltip]="relatedNotesMessage">
+          <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+        </div>
+        <div *ngIf="hasFolderNotes" class="icon" [CustomTooltip]="foldersNotesMessage">
           <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
         </div>
       </div>

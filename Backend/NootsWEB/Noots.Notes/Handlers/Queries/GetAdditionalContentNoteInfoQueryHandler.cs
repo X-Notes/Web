@@ -15,17 +15,20 @@ public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAddit
     private readonly FoldersNotesRepository foldersNotesRepository;
     private readonly CollectionNoteRepository collectionNoteRepository;
     private readonly NoteSnapshotRepository noteSnapshotRepository;
+    private readonly RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository;
 
     public GetAdditionalContentNoteInfoQueryHandler(
         UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
         FoldersNotesRepository foldersNotesRepository,
         CollectionNoteRepository collectionNoteRepository,
-        NoteSnapshotRepository noteSnapshotRepository)
+        NoteSnapshotRepository noteSnapshotRepository,
+        RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository)
     {
         this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         this.foldersNotesRepository = foldersNotesRepository;
         this.collectionNoteRepository = collectionNoteRepository;
         this.noteSnapshotRepository = noteSnapshotRepository;
+        this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
     }
     
     public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
@@ -44,6 +47,9 @@ public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAddit
         var size = await collectionNoteRepository.GetMemoryOfNotes(request.NoteIds);
         var sizeSnapshots = await noteSnapshotRepository.GetMemoryOfNotesSnapshots(request.NoteIds);
 
+        var notesNotes = await relatedNoteToInnerNoteRepository.GetByNotesThatHasRelatedNotesIds(request.NoteIds);
+        var notesNotesDict = notesNotes.ToLookup(x => x.RelatedNoteId);
+
         var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
         var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
 
@@ -52,6 +58,7 @@ public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAddit
             IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
             NoteId = noteId,
             NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
+            NoteRelatedNotes = notesNotesDict.Contains(noteId) ? notesNotesDict[noteId].Select(x => new NoteRelatedNoteInfo(x.NoteId, x.Note.Title)).ToList() : null,
             TotalSize = GetSize(noteId, size, sizeSnapshots)
         }).ToList();
     }

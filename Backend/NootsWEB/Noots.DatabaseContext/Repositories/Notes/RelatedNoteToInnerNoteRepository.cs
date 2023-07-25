@@ -16,5 +16,13 @@ namespace Noots.DatabaseContext.Repositories.Notes
         {
             return entities.Include(x => x.RelatedNoteUserStates).Where(x => x.NoteId == noteId).ToListAsync();
         }
+
+        public Task<List<RelatedNoteToInnerNote>> GetByNotesThatHasRelatedNotesIds(List<Guid> noteIds)
+        {
+            return entities
+                .Include(x => x.Note)
+                .Where(x => noteIds.Contains(x.RelatedNoteId))
+                .ToListAsync();
+        }
     }
 }
