@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Noots.Mapper.csproj" />
+    <ProjectReference Include="..\Noots.Permissions\Noots.Permissions.csproj" />
   </ItemGroup>
 
 </Project>

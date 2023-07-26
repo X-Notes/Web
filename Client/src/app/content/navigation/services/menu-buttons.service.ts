@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map, switchMap } from 'rxjs/operators';
-import { combineLatest, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from './dialogs-manage.service';
 import { MenuButtonsNotesService } from './menu-buttons-notes.service';
 import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
-import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Router } from '@angular/router';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
@@ -17,14 +16,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { LockEncryptService } from '../../notes/lock-encrypt.service';
 import { FolderStore } from '../../folders/state/folders-state';
 import { SmallNote } from '../../notes/models/small-note.model';
-import {
-  PatchUpdatesUINotes,
-  UnSelectAllNote,
-  UpdateFullNote,
-  UpdateOneNote,
-} from '../../notes/state/notes-actions';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
-import { UpdateNoteUI } from '../../notes/state/update-note-ui.model';
 import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from '../../folders/models/folder.model';
 import { CopyNoteText } from '../menu/actions/copy-note-text-action';
@@ -362,16 +354,12 @@ export class MenuButtonsService {
         this.menuButtonsNotesService.copyNotes();
         this.pService.innerNoteMenuActive = false;
       },
-      isVisible: this.isVisibleCopy,
+      isVisible: of(true),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  get isVisibleCopy(): Observable<boolean> {
-    return this.store.select(NoteStore.getAllSelectedNotesUnlockedNow);
-  }
 
   getCopyFoldersItem(): MenuItem {
     return {
@@ -390,22 +378,10 @@ export class MenuButtonsService {
         this.openShareWithNotes();
         this.pService.innerNoteMenuActive = false;
       },
-      isVisible: this.isVisibleShareNote,
+      isVisible: of(true),
       isOnlyForAuthor: true,
       IsNeedEditRightsToSee: true,
     };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  get isVisibleShareNote(): Observable<boolean> {
-    return this.store.select(AppStore.isNoteInner).pipe(
-      switchMap((flag) => {
-        if (flag) {
-          return this.store.select(NoteStore.oneFull).pipe(map((x) => !x?.isLocked));
-        }
-        return this.store.select(NoteStore.getAllSelectedNotesUnlocked);
-      }),
-    );
   }
 
   getFolderShareItem(): MenuItem {
@@ -482,81 +458,8 @@ export class MenuButtonsService {
     };
   }
 
-  getUnlockItem(): MenuItem {
-    return {
-      icon: 'unlock',
-      isVisible: this.store.select(NoteStore.isRemoveLock),
-      operation: () => {
-        const id = this.getSelectedNoteId();
-        this.dialogsService.openLockDialog(id, LockPopupState.RemoveLock, () =>
-          this.router.navigate([`notes/${id}`]),
-        );
-      },
-      isOnlyForAuthor: true,
-      IsNeedEditRightsToSee: true,
-      isDisableForShared: true,
-    };
-  }
-
-  // LOCK
-  isActiveForceLock(): Observable<string> {
-    return combineLatest([
-      this.store.select(AppStore.isNoteInner),
-      this.store.select(NoteStore.isCanForceLocked),
-      this.store.select(NoteStore.isCanBeForceLockNotes),
-    ]).pipe(map(([n, f, s]) => ((n && f) || s ? 'menu.forceLock' : 'menu.lock')));
-  }
-
-  isCanForceLock(): boolean {
-    return (
-      (this.store.selectSnapshot(AppStore.isNoteInner) &&
-        this.store.selectSnapshot(NoteStore.isCanForceLocked)) ||
-      this.store.selectSnapshot(NoteStore.isCanBeForceLockNotes)
-    );
-  }
-
-  getLockItem(): MenuItem {
-    return {
-      icon: 'lock',
-      tooltip: this.isActiveForceLock(),
-      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
-      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
-      operation: async () => {
-        const id = this.getSelectedNoteId();
-        if (this.isCanForceLock()) {
-          await this.setLockedInState(id);
-          this.updaterEntitiesService.clearLock(id);
-          this.router.navigate(['notes']);
-          return;
-        }
-        const route = this.store.selectSnapshot(AppStore.isNoteInner) ? `notes` : `notes/${id}`;
-        return this.dialogsService.openLockDialog(id, LockPopupState.Lock, () =>
-          this.router.navigate([route]),
-        );
-      },
-      isOnlyForAuthor: true,
-      IsNeedEditRightsToSee: true,
-      isDisableForShared: true,
-    };
-  }
-
   getNote(id: string): SmallNote {
     return this.store.selectSnapshot(NoteStore.getSmallNotes).find((x) => x.id === id);
-  }
-
-  async setLockedInState(id: string) {
-    await this.lockEncryptService.forceLock(id).toPromise();
-    const updatedNote = { ...this.getNote(id) };
-    updatedNote.isLockedNow = true;
-    updatedNote.isLocked = true;
-    this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.id));
-    this.store.dispatch(new UpdateFullNote({ isLocked: true, isLockedNow: true }, id));
-
-    const obj = new UpdateNoteUI(id);
-    obj.isLocked = true;
-    obj.isLockedNow = true;
-    this.store.dispatch(new PatchUpdatesUINotes([obj]));
-    this.store.dispatch(UnSelectAllNote);
   }
 
   getSelectedNoteId(): string {

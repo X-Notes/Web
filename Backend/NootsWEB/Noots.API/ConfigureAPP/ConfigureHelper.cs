@@ -7,11 +7,9 @@ using Noots.Backgrounds;
 using Noots.Billing;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
-using Noots.Encryption.Entities;
 using Noots.Permissions;
 using Noots.Storage;
 using Noots.History;
-using Noots.Encryption;
 using Noots.Folders;
 using Noots.Labels;
 using Noots.Notes;
@@ -22,17 +20,13 @@ using Noots.Users;
 using Noots.Sharing;
 using Common.Redis;
 using Noots.Notifications;
-using Noots.Editor.Services;
 using Noots.Editor;
 using Microsoft.IdentityModel.Tokens;
 using Noots.Auth.Entities;
 using System.Text;
-using Common.SignalR;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Noots.Auth.Interfaces;
 using Noots.Auth.Impl;
-using Azure.Core;
 
 namespace Noots.API.ConfigureAPP
 {
@@ -67,8 +61,6 @@ namespace Noots.API.ConfigureAPP
             //SHARE
             services.ApplySharingDI();
 
-            //LOCK
-            services.ApplyEncryptionDI();
 
             // HISTORY
             services.ApplyHistorysDI();
@@ -115,12 +107,6 @@ namespace Noots.API.ConfigureAPP
             };
         }
 
-
-        public static void TimersConfig(this IServiceCollection services, IConfiguration Configuration)
-        {
-            var unlockConfig = Configuration.GetSection("UnlockConfig").Get<UnlockConfig>();
-            services.AddSingleton(x => unlockConfig);
-        }
 
         public static void JWT(this IServiceCollection services, JwtTokenConfig config)
         {

@@ -6,7 +6,6 @@ using Common.DTO.Users;
 using MediatR;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Histories;
-using Noots.Encryption.Impl;
 using Noots.History.Entities;
 using Noots.History.Queries;
 using Noots.Mapper.Mapping;
@@ -17,20 +16,17 @@ namespace Noots.History.Handlers.Queries;
 public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>
 {
     private readonly IMediator mediator;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly NoteSnapshotRepository noteHistoryRepository;
     private readonly NoteFolderLabelMapper noteCustomMapper;
     private readonly BillingPermissionService billingPermissionService;
 
     public GetNoteHistoriesQueryHandler(
         IMediator mediator, 
-        UserNoteEncryptService userNoteEncryptStorage,
         NoteSnapshotRepository noteHistoryRepository,
         NoteFolderLabelMapper noteCustomMapper,
         BillingPermissionService billingPermissionService)
     {
         this.mediator = mediator;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.noteHistoryRepository = noteHistoryRepository;
         this.noteCustomMapper = noteCustomMapper;
         this.billingPermissionService = billingPermissionService;
@@ -40,15 +36,6 @@ public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuer
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
-
-        if (permissions.Note.IsLocked)
-        {
-            var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-            if (!isUnlocked)
-            {
-                return new OperationResult<List<NoteHistoryDTO>>(false, null).SetContentLocked();
-            }
-        }
 
         if (permissions.CanRead)
         {

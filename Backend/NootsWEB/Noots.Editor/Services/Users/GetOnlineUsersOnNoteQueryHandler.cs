@@ -1,7 +1,6 @@
 ﻿using Common.DTO.Users;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Encryption.Impl;
 using Noots.Mapper.Mapping;
 using Noots.Notes.Queries;
 using Noots.Permissions.Queries;
@@ -15,20 +14,17 @@ public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOn
     private readonly UserRepository userRepository;
     private readonly IMediator mediator;
     private readonly UserBackgroundMapper userBackgroundMapper;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
 
     public GetOnlineUsersOnNoteQueryHandler(
         INoteServiceStorage WSNoteServiceStorage,
         UserRepository userRepository,
         IMediator mediator,
-        UserBackgroundMapper userBackgroundMapper,
-        UserNoteEncryptService userNoteEncryptStorage)
+        UserBackgroundMapper userBackgroundMapper)
     {
         this.WSNoteServiceStorage = WSNoteServiceStorage;
         this.userRepository = userRepository;
         this.mediator = mediator;
         this.userBackgroundMapper = userBackgroundMapper;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
     }
 
     public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
@@ -39,15 +35,6 @@ public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOn
         if (permissions.NoteNotFound)
         {
             return new List<OnlineUserOnNote>();
-        }
-
-        if (permissions.Note.IsLocked)
-        {
-            var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-            if (!isUnlocked)
-            {
-                return new List<OnlineUserOnNote>();
-            }
         }
 
         if (permissions.CanRead)

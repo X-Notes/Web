@@ -279,7 +279,7 @@ namespace Noots.Mapper.Mapping
 
         public T SetContent<T>(T note) where T : SmallNote
         {
-            note.Contents = note.IsLockedNow ? null : note.Contents;
+            note.Contents = note.Contents;
             return note;
         }
 

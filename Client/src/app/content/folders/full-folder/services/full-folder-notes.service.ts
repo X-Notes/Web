@@ -24,13 +24,12 @@ export class FullFolderNotesService extends NoteEntitiesService {
     murriService: MurriService,
     apiNoteService: ApiServiceNotes,
     private apiFullFolder: ApiFullFolderService,
-    dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     router: Router,
     public signalR: SignalRService,
     public readonly pService: PersonalizationService,
   ) {
-    super(dialogsManageService, store, murriService, apiNoteService, router);
+    super(store, murriService, apiNoteService, router);
 
     // WS UPDATES
     this.signalR.updateFolder$.pipe(takeUntil(this.destroy)).subscribe(async (x) => {

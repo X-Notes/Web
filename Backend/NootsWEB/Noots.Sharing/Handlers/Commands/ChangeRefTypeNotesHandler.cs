@@ -29,11 +29,6 @@ public class ChangeRefTypeNotesHandler : IRequestHandler<ChangeRefTypeNotes, Ope
             {
                 var note = perm.perm.Note;
 
-                if (note.IsLocked)
-                {
-                    return new OperationResult<Unit>().SetContentLocked();
-                }
-
                 note.RefTypeId = request.RefTypeId;
                 note.ToType(NoteTypeENUM.Shared);
                 note.SetDateAndVersion();

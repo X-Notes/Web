@@ -79,7 +79,6 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 builder.Services.SetupLogger(builder.Configuration, environment);
 
 builder.Services.ApplyAzureConfig(azureConfig);
-builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JWT(jwtTokenConfig);
 
 

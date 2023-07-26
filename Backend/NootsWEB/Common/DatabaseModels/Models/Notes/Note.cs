@@ -46,13 +46,6 @@ namespace Common.DatabaseModels.Models.Notes
             }
         }
 
-        [NotMapped]
-        public bool IsLocked { get => !string.IsNullOrEmpty(Password); }
-
-        public string Password { set; get; }
-
-        public DateTimeOffset? UnlockTime { set; get; }
-
         public Guid UserId { set; get; }
         public User User { set; get; }
 

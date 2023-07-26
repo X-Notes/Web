@@ -37,11 +37,6 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
         if (permissions.IsOwner)
         {
 
-            if (permissions.Note.IsLocked)
-            {
-                return new OperationResult<Unit>().SetContentLocked();
-            }
-
             var access = await usersOnPrivateNotesRepository
                 .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
 

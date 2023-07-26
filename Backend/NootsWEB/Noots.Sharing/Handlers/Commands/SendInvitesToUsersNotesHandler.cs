@@ -1,9 +1,7 @@
-﻿using Common.DatabaseModels.Models.Notes;
-using Common.DatabaseModels.Models.Users.Notifications;
+﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notifications.Services;
 using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
@@ -38,12 +36,6 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
 
         if (permissions.IsOwner)
         {
-
-            if (permissions.Note.IsLocked)
-            {
-                return new OperationResult<Unit>().SetContentLocked();
-            }
-
             await usersOnPrivateNotesService.AddPermissionsAsync(request.NoteId, request.RefTypeId, request.UserIds);
 
             var updateCommand = new UpdatePermissionNoteWS();

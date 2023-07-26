@@ -84,10 +84,6 @@ export class NoteComponent implements OnInit {
     return null;
   }
 
-  get unlockedTime() {
-    return dayjs(this.note.unlockedTime).add(5, 'minutes').format('LT');
-  }
-
   ngOnInit(): void {
     this.syncContent();
   }

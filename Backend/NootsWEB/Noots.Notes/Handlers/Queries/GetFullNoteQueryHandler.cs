@@ -3,7 +3,6 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Encryption.Impl;
 using Noots.MapperLocked;
 using Noots.Notes.Queries;
 using Noots.Permissions.Impl;
@@ -15,20 +14,17 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
 {
     private readonly IMediator mediator;
     private readonly NoteRepository noteRepository;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly MapperLockedEntities mapperLockedEntities;
 
     public GetFullNoteQueryHandler(
         IMediator _mediator,
         NoteRepository noteRepository,
-        UserNoteEncryptService userNoteEncryptStorage,
         UsersOnPrivateNotesService usersOnPrivateNotesService,
         MapperLockedEntities mapperLockedEntities)
     {
         mediator = _mediator;
         this.noteRepository = noteRepository;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.mapperLockedEntities = mapperLockedEntities;
     }
@@ -51,14 +47,6 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
         if (isCanRead)
         {
             var note = await noteRepository.GetNoteWithLabels(request.NoteId);
-            if (note.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
-                if (!isUnlocked)
-                {
-                    return new OperationResult<FullNote>(false, null).SetContentLocked();
-                }
-            }
 
             if(!isFolderPermissions && permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
             {

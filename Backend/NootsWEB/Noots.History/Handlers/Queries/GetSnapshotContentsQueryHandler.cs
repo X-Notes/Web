@@ -5,7 +5,6 @@ using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
-using Noots.Encryption.Impl;
 using Noots.History.Queries;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
@@ -23,35 +22,23 @@ namespace Noots.History.Handlers.Queries
 
         private readonly FileRepository fileRepository;
 
-        private readonly UserNoteEncryptService userNoteEncryptStorage;
 
         public GetSnapshotContentsQueryHandler(
             IMediator _mediator,
             NoteSnapshotRepository noteHistoryRepository,
             NoteFolderLabelMapper noteCustomMapper,
-            FileRepository fileRepository,
-            UserNoteEncryptService userNoteEncryptStorage)
+            FileRepository fileRepository)
         {
             this._mediator = _mediator;
             this.noteHistoryRepository = noteHistoryRepository;
             this.noteCustomMapper = noteCustomMapper;
             this.fileRepository = fileRepository;
-            this.userNoteEncryptStorage = userNoteEncryptStorage;
         }
         
         public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
-
-            if (permissions.Note.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-                if (!isUnlocked)
-                {
-                    return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
-                }
-            }
 
             if (permissions.CanRead)
             {

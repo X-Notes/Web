@@ -14,12 +14,11 @@ import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
-import { LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
-import { take } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
+
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -88,29 +87,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
-    if (isLocked) {
-      const instance = this.dialogsManageService.openLockDialog(
-        this.id,
-        LockPopupState.Unlock,
-        null,
-      );
-      instance
-        .afterClosed()
-        .pipe(take(1))
-        .subscribe(async (flag) => {
-          if (flag) {
-            await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-            await this.loadInternalContent();
-            await this.loadLeftMenuWithNotes();
-          }
-          this.loaded = true;
-        });
-    } else {
-      await this.loadInternalContent();
-      await this.loadLeftMenuWithNotes();
-      this.loaded = true;
-    }
+    await this.loadInternalContent();
+    await this.loadLeftMenuWithNotes();
+    this.loaded = true;
   }
 
   async loadInternalContent() {

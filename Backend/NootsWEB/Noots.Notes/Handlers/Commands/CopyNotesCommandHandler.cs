@@ -16,7 +16,6 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Editor.Services;
-using Noots.Encryption.Impl;
 using Noots.Notes.Commands;
 using Noots.Notes.Entities;
 using Noots.Permissions.Queries;
@@ -32,7 +31,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
     private readonly FoldersNotesRepository foldersNotesRepository;
     private readonly NoteRepository noteRepository;
     private readonly LabelsNotesRepository labelsNotesRepository;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly BaseNoteContentRepository baseNoteContentRepository;
     private readonly CollectionLinkedService collectionLinkedService;
     private readonly BillingPermissionService billingPermissionService;
@@ -43,7 +41,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         FoldersNotesRepository foldersNotesRepository,
         NoteRepository noteRepository,
         LabelsNotesRepository labelsNotesRepository,
-        UserNoteEncryptService userNoteEncryptStorage,
         BaseNoteContentRepository baseNoteContentRepository,
         CollectionLinkedService collectionLinkedService,
         BillingPermissionService billingPermissionService,
@@ -53,7 +50,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         this.foldersNotesRepository = foldersNotesRepository;
         this.noteRepository = noteRepository;
         this.labelsNotesRepository = labelsNotesRepository;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.baseNoteContentRepository = baseNoteContentRepository;
         this.collectionLinkedService = collectionLinkedService;
         this.billingPermissionService = billingPermissionService;
@@ -110,15 +106,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         {
             var isNoteOwner = noteForCopy.UserId == request.UserId;
 
-            if (noteForCopy.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
-                if (!isUnlocked)
-                {
-                    continue;
-                }
-            }
-
             var newNote = new Note()
             {
                 Title = GetTitle(noteForCopy.Title),
@@ -128,6 +115,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+
             newNote.SetDateAndVersion();
             var dbNote = await noteRepository.AddAsync(newNote);
 
@@ -171,15 +159,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         {
             var isNoteOwner = noteForCopy.UserId == request.UserId;
 
-            if (noteForCopy.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(noteForCopy.UnlockTime);
-                if (!isUnlocked)
-                {
-                    continue;
-                }
-            }
-
             var newNote = new Note()
             {
                 Title = noteForCopy.Title,
@@ -189,6 +168,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 RefTypeId = noteForCopy.RefTypeId,
                 UserId = request.UserId,
             };
+
             newNote.SetDateAndVersion();
 
             var dbNote = await noteRepository.AddAsync(newNote);

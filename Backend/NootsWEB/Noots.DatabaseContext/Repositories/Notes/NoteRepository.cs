@@ -1,7 +1,5 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.NoteContent;
+﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using Microsoft.EntityFrameworkCore;
@@ -130,29 +128,29 @@ namespace Noots.DatabaseContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
-                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, Guid noteId)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(Guid userId, Guid noteId)
         {
-           return entities.Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+           return entities.Where(x => x.UserId == userId && x.Id != noteId && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, List<Guid> exceptIds)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(Guid userId, List<Guid> exceptIds)
         {
-            return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+            return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(List<Guid> noteIds)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(List<Guid> noteIds)
         {
-            return entities.Where(x => noteIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+            return entities.Where(x => noteIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }

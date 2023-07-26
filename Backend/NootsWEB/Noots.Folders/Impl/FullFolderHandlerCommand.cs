@@ -91,7 +91,7 @@ namespace Noots.Folders.Impl
             var notesPermissions = await _mediator.Send(commandNotePermissions);
             var noteIdsRead = notesPermissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
 
-            var idsToAdd = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(noteIdsRead);
+            var idsToAdd = await noteRepository.GetNoteIdsNoDeleted(noteIdsRead);
 
             var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
             var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
