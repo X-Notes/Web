@@ -37,14 +37,13 @@ import { FolderTypeENUM } from '../shared/enums/folder-types.enum';
 import { NoteTypeENUM } from '../shared/enums/note-types.enum';
 import { RefTypeENUM } from '../shared/enums/ref-type.enum';
 import { SnackbarService } from '../shared/services/snackbar/snackbar.service';
-import { AuthService } from './auth.service';
 import { UpdateRelatedNotesWS } from './models/signal-r/innerNote/update-related-notes-ws';
 import { UpdateVideosCollectionWS } from '../editor/entities/ws/update-videos-collection-ws';
 import { UpdatePermissionFolder } from './models/signal-r/permissions/update-permission-folder';
 import { UpdatePermissionNote } from './models/signal-r/permissions/update-permission-note';
 import { UpdateFolderWS } from './models/signal-r/update-folder-ws';
 import { UpdateNoteWS } from './models/signal-r/update-note-ws';
-import { NewNotification } from './stateApp/app-action';
+import { NewNotification, Ping } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 import { UserStore } from './stateUser/user-state';
 import { pingWSDelay } from './defaults/bounceDelay';
@@ -127,7 +126,7 @@ export class SignalRService {
     setInterval(() => {
       try {
         if (this.isConnected) {
-          this.invoke('UpdateUpdateStatus');
+          this.store.dispatch(new Ping(this.connectionIdOrError));
         }
       } catch (e) {
         console.error(e);

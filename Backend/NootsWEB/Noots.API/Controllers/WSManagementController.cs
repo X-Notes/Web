@@ -1,9 +1,9 @@
-﻿using Common.DatabaseModels.Models.Notes;
+﻿using Common;
 using Common.DTO.WebSockets;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Impl;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -46,6 +46,18 @@ namespace Noots.API.Controllers
                         await appSignalRService.RemoveOnlineUsersFolderAsync(folderId, con.UserIdentifierConnectionId, con.UserId, userIds);
                     }
                 }
+            }
+        }
+
+        [HttpPost("ping")]
+        [Authorize]
+        public async Task Ping(PingDTO ping)
+        {
+            var userId = this.GetUserId();
+
+            if (!string.IsNullOrEmpty(ping.ConnectionId))
+            {
+                await appSignalRService.UpdateUpdateStatus(userId, ping.ConnectionId);
             }
         }
     }

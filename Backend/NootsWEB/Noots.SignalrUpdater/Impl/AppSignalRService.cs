@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Common;
 using Common.DTO.Notifications;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
@@ -29,6 +30,17 @@ namespace Noots.SignalrUpdater.Impl
 
             this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
             this.logger = logger;
+        }
+
+        public async Task UpdateUpdateStatus(Guid userId, string connectionId)
+        {
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.ConnectionId == connectionId);
+            if (ent == null)
+            {
+                return;
+            }
+            ent.UpdatedAt = DateTimeProvider.Time;
+            await userIdentifierConnectionIdRepository.UpdateAsync(ent);
         }
 
         public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds)

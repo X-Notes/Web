@@ -64,6 +64,13 @@ export class UserAPIService {
     return this.httpClient.post(`${environment.writeAPI}/api/user/theme`, obj);
   }
 
+  ping(connectionId: string) {
+    const obj = {
+      connectionId,
+    };
+    return this.httpClient.post(`${environment.writeAPI}/api/WSManagement/ping`, obj);
+  }
+
   changeFontSize(id: EntitiesSizeENUM) {
     const obj = {
       id,
