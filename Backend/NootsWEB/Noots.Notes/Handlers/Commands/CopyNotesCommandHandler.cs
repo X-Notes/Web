@@ -101,6 +101,23 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
             return new OperationResult<List<CopyNoteResult>>().SetBillingError();
         }
 
+        var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
+        var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
+                                          .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
+                                          .Cast<CollectionNote>()
+                                          .SelectMany(x => x.Files)
+                                          .Where(x => x.UserId != request.UserId);
+
+        if (externalFiles.Any())
+        {
+            var size = externalFiles.Sum(x => x.Size);
+            var uploadPermission = await mediator.Send(new GetPermissionUploadFileQuery(size, request.UserId));
+            if(uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+            {
+                return new OperationResult<List<CopyNoteResult>>().SetNoEnougnMemory();
+            }
+        }
+
         var notesForCopy = await noteRepository.GetNotesWithContent(idsForCopy);
         foreach (var noteForCopy in notesForCopy)
         {

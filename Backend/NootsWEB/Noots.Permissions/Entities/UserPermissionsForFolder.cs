@@ -5,11 +5,11 @@ namespace Noots.Permissions.Entities
 {
     public class UserPermissionsForFolder
     {
-        public User Author
+        public Guid AuthorId
         {
             get
             {
-                return Folder.User;
+                return Folder.UserId;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Noots.Permissions.Entities
         public List<Guid> GetAllUsers()
         {
             var userIds = Folder.UsersOnPrivateFolders.Select(q => q.UserId).ToList();
-            userIds.Add(Author.Id);
+            userIds.Add(AuthorId);
             return userIds;
         }
     }

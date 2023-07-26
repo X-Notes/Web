@@ -41,7 +41,7 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
         if (isCanRead)
         {
             var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
-            var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);
+            var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.AuthorId);
             return new OperationResult<List<BaseNoteContentDTO>>(true, result);
         }
 

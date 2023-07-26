@@ -5,11 +5,11 @@ namespace Noots.Permissions.Entities
 {
     public class UserPermissionsForNote
     {
-        public User Author
+        public Guid AuthorId
         {
             get
             {
-                return Note.User;
+                return Note.UserId;
             }
         }
 
@@ -98,7 +98,7 @@ namespace Noots.Permissions.Entities
 
         public List<Guid> GetAllUsers()
         {
-            var userIds = new List<Guid> { Author.Id };
+            var userIds = new List<Guid> { AuthorId };
 
             if(Note.UsersOnPrivateNotes != null)
             {

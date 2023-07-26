@@ -22,7 +22,6 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public Task<Note?> GetForCheckPermission(Guid id)
         {
             return context.Notes
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -30,7 +29,6 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
         {
             return context.Notes
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
@@ -161,6 +159,16 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
                 .Include(x => x.Contents)
                     .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
+                .Include(x => x.Contents)
+                    .ThenInclude(q => (q as CollectionNote).Files)
+                .Where(x => noteIds.Contains(x.Id))
+                .AsSplitQuery()
+                .ToListAsync();
+        }
+
+        public Task<List<Note>> GetNotesIncludeCollectionNoteAppFiles(List<Guid> noteIds)
+        {
+            return entities  // TODO OPTIMIZATION
                 .Include(x => x.Contents)
                     .ThenInclude(q => (q as CollectionNote).Files)
                 .Where(x => noteIds.Contains(x.Id))
