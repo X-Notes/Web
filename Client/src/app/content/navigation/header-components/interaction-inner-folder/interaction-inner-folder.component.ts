@@ -26,11 +26,11 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
   animations: [showMenuLeftRight],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
-
   @Select(FolderStore.full)
   folder$: Observable<FullFolder>;
+
+  @Select(FolderStore.canEdit)
+  canEdit$: Observable<boolean>;
 
   @Select(NoteStore.fullNoteType)
   noteType$: Observable<NoteTypeENUM>;
@@ -59,10 +59,9 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
     public pB: PermissionsButtonsService,
   ) {
     this.isNewButtonActive$ = combineLatest([
-      this.folder$,
-      this.user$,
+      this.canEdit$,
       pService.isMenuActive$,
-    ]).pipe(map(([folder, user, menuActive]) => folder.userId === user.id && !menuActive));
+    ]).pipe(map(([canEdit, menuActive]) => canEdit && !menuActive));
   }
 
   ngOnInit(): void {

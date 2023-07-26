@@ -4,6 +4,7 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -14,18 +15,18 @@ public class RemoveAllUsersFromFolderCommandHandler : IRequestHandler<RemoveAllU
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
     private readonly NotificationService notificationService;
 
     public RemoveAllUsersFromFolderCommandHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService,
         NotificationService notificationService)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
-        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
         this.notificationService = notificationService;
     }
     
@@ -36,9 +37,7 @@ public class RemoveAllUsersFromFolderCommandHandler : IRequestHandler<RemoveAllU
 
         if (permissions.IsOwner)
         {
-            var ents = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
-            var userIds = ents.Select(x => x.UserId).ToList();
-            await usersOnPrivateFoldersRepository.RemoveRangeAsync(ents);
+            var userIds = await usersOnPrivateFoldersService.RevokeAllPermissionsFolder(request.FolderId);
 
             foreach (var userId in userIds)
             {

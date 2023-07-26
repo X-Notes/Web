@@ -4,6 +4,7 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Commands;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Commands;
@@ -12,16 +13,16 @@ public class SetDeleteFolderCommandHandler : IRequestHandler<SetDeleteFolderComm
 {
     private readonly IMediator mediator;
     private readonly FolderRepository folderRepository;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
 
     public SetDeleteFolderCommandHandler(
         IMediator mediator, 
         FolderRepository folderRepository,
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService)
     {
         this.mediator = mediator;
         this.folderRepository = folderRepository;
-        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
     }
     
     public async Task<OperationResult<List<Guid>>> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
@@ -42,11 +43,7 @@ public class SetDeleteFolderCommandHandler : IRequestHandler<SetDeleteFolderComm
             processedIds = foldersOwner.Select(x => x.Id).ToList();
         }
 
-        var usersOnPrivate = await usersOnPrivateFoldersRepository.GetWhereAsync(x => request.UserId == x.UserId && request.Ids.Contains(x.FolderId));
-        if (usersOnPrivate.Any())
-        {
-            await usersOnPrivateFoldersRepository.RemoveRangeAsync(usersOnPrivate);
-        }
+        await usersOnPrivateFoldersService.RevokePermissionsFolders(request.UserId, request.Ids);
 
         return new OperationResult<List<Guid>>(true, processedIds);
     }

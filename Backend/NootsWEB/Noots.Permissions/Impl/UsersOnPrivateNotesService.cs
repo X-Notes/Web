@@ -27,10 +27,9 @@ public class UsersOnPrivateNotesService
             return new List<Guid>();
         }
 
-        var noteToManageIds = usersOnPrivate.Select(x => x.NoteId);
         var userIds = usersOnPrivate.Select(x => x.UserId);
 
-        await RemoveUserRelatedNotesAsync(userIds, noteToManageIds);
+        await RemoveUserRelatedNotesAsync(userIds, new List<Guid> { noteId });
 
         await usersOnPrivateNotesRepository.RemoveRangeAsync(usersOnPrivate);
 
@@ -45,8 +44,6 @@ public class UsersOnPrivateNotesService
         {
             return false;
         }
-
-        var noteToManageIds = usersOnPrivate.Select(x => x.NoteId);
 
         await RemoveUserRelatedNotesAsync(new List<Guid> { userId }, noteIds);
 

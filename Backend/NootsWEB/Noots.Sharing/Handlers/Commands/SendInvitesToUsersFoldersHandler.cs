@@ -4,6 +4,7 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -13,18 +14,18 @@ namespace Noots.Sharing.Handlers.Commands;
 public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUsersFolders, Unit>
 {
     private readonly IMediator mediator;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
     private readonly NotificationService notificationService;
     private readonly AppSignalRService appSignalRHub;
 
     public SendInvitesToUsersFoldersHandler(
-        IMediator _mediator, 
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
+        IMediator _mediator,
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService,
         NotificationService notificationService,
         AppSignalRService appSignalRHub)
     {
         mediator = _mediator;
-        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
         this.notificationService = notificationService;
         this.appSignalRHub = appSignalRHub;
     }
@@ -36,14 +37,7 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
 
         if (permissions.IsOwner)
         {
-            var permissionsRequests = request.UserIds.Select(userId => new UsersOnPrivateFolders()
-            {
-                AccessTypeId = request.RefTypeId,
-                FolderId = request.FolderId,
-                UserId = userId
-            }).ToList();
-
-            await usersOnPrivateFoldersRepository.AddRangeAsync(permissionsRequests);
+            await usersOnPrivateFoldersService.AddPermissionsAsync(request.FolderId, request.RefTypeId, request.UserIds);
 
             var updateCommand = new UpdatePermissionFolderWS();
             updateCommand.IdsToAdd.Add(request.FolderId);

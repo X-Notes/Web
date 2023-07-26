@@ -1,7 +1,6 @@
 <ng-container *ngIf="folder$ | async">
   <app-general-header-button
-    *ngIf="
-      (folder$ | async).userId === (user$ | async).id && (pService.isMenuActive$ | async) === false
+    *ngIf="(canEdit$ | async) && (pService.isMenuActive$ | async) === false
     "
     (clickEvent)="addNotesToFolderHandler()"
     [message]="'header.manage' | translate"

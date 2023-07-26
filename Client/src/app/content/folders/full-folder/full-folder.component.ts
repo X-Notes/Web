@@ -129,8 +129,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private actions$: Actions,
   ) { }
 
-  get isOwner(): boolean {
-    return this.store.selectSnapshot(FolderStore.isFullFolderOwner);
+  get isCanEdit(): boolean {
+    return this.store.selectSnapshot(FolderStore.canEdit);
   }
 
   initTitle() {
@@ -149,7 +149,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     // UPDATE WS
     this.store
       .select(FolderStore.fullFolderTitle)
-      .pipe(takeUntil(this.ffnService.destroy))
+      .pipe(takeUntil(this.ffnService.destroy), debounceTime(200))
       .subscribe((title) => this.updateTitle(title));
 
     // UPDATE CURRENT
@@ -272,7 +272,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actions$
       .pipe(ofActionDispatched(CreateNoteCompleted), takeUntil(this.ffnService.destroy))
       .subscribe(async (payload: CreateNoteCompleted) => {
-        if (!this.isOwner) return;
+        if (!this.isCanEdit) return;
         const note = payload.note;
         const resp = await this.apiFullFolder
           .addNotesToFolder([note.id], this.folderId, this.signalR.connectionIdOrError)

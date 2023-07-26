@@ -21,6 +21,13 @@ namespace Noots.DatabaseContext.Repositories.Folders
             return entities.Where(x => x.FolderId == folderId).Select(x => x.NoteId).ToListAsync();
         }
 
+        public Task<List<FoldersNotes>> GetFoldersNotesByFolderIdIncludeNote(IEnumerable<Guid> folderIds)
+        {
+            return entities
+                .Include(x => x.Note)
+                .Where(x => folderIds.Contains(x.FolderId)).ToListAsync();
+        }
+
         public Task<List<FoldersNotes>> GetByFolderIdAndNoteIds(Guid folderId, List<Guid> noteIds)
         {
             return entities.Where(x => x.FolderId == folderId && noteIds.Contains(x.NoteId)).ToListAsync();

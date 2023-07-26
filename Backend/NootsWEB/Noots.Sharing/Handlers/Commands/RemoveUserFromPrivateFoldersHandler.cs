@@ -2,8 +2,8 @@
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +15,18 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
 
     public RemoveUserFromPrivateFoldersHandler(
         IMediator mediator, 
         AppSignalRService appSignalRHub,
         NotificationService notificationService,
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService)
     {
         this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
-        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
     }
     
     public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
@@ -36,12 +36,9 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
 
         if (permissions.IsOwner)
         {
-            var access = await usersOnPrivateFoldersRepository
-                .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
-            if (access != null)
+            var isRevoked = await usersOnPrivateFoldersService.RevokePermissionsFolders(request.PermissionUserId, new List<Guid> { request.FolderId });
+            if (isRevoked)
             {
-                await usersOnPrivateFoldersRepository.RemoveAsync(access);
-
                 var updateCommand = new UpdatePermissionFolderWS();
                 updateCommand.RevokeIds.Add(request.FolderId);
                 await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
