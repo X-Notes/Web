@@ -111,6 +111,9 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<HistoryProcessingHosted>();
+builder.Services.AddHostedService<CopyFolderHosted>();
+builder.Services.AddHostedService<CopyNoteHosted>();
+
 
 builder.Services.AddHttpClient();
 
