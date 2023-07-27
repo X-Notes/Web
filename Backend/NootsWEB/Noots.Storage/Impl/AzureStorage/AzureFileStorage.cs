@@ -145,7 +145,7 @@ namespace Noots.Storage.Impl.AzureStorage
             };
         }
 
-        public async Task<string> CopyBlobAsync(
+        public async Task<(bool success, string path)> CopyBlobAsync(
             StoragesEnum storageFromId, string userFromId, string pathFrom, 
             StoragesEnum storageToId, string userToId,
             string prefixFolder, string contentId, string fileName)
@@ -194,14 +194,15 @@ namespace Noots.Storage.Impl.AzureStorage
                     sourceProperties = await sourceBlob.GetPropertiesAsync();
                 }
 
-                return destBlob.Name;      
+                return (true, destBlob.Name);      
             }
             catch (RequestFailedException ex)
             {
                 logger.LogDebug(ex.ToString());
                 await lease.BreakAsync();
-                throw;
             }
+
+            return (false!, null!);
         }
 
         public async Task<long> GetUsedDiskSpace(StoragesEnum storageId, string userId)
