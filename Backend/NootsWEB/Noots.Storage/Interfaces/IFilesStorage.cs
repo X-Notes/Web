@@ -7,7 +7,7 @@ namespace Noots.Storage.Interfaces
     {
         public Task CreateUserContainer(StoragesEnum storageId, Guid userId);
         Task<UploadFileResult> SaveFile(StoragesEnum storageId, string userId, byte[] file, string ContentType, string prefixFolder, string contentId, string fileName);
-        Task RemoveFile(StoragesEnum storageId, string userId, string path);
+        Task<bool> RemoveFile(StoragesEnum storageId, string userId, string path);
         Task RemoveFiles(StoragesEnum storageId, string userId, params string[] pathes);
         Task<GetFileResponse> GetFile(StoragesEnum storageId, string userId, string path);
         Task<long> GetUsedDiskSpace(StoragesEnum storageId, string userId);
