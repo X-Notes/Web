@@ -54,6 +54,9 @@ namespace Common.DatabaseModels.Models.Folders
         [NotMapped]
         public List<Guid> NoteIds { set; get; }
 
+        [NotMapped]
+        public Guid PrevId { set; get; }
+
         public void ToType(FolderTypeENUM folderTypeId, DateTimeOffset? deletedAt = null)
         {
             DeletedAt = deletedAt;

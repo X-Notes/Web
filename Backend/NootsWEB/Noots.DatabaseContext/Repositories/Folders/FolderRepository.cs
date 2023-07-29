@@ -32,10 +32,11 @@ namespace Noots.DatabaseContext.Repositories.Folders
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<List<Folder>> GetFoldersByIdsForCopy(List<Guid> ids)
+        public Task<List<Folder>> GetFoldersByIdsIncludeNotes(List<Guid> ids)
         {
             return context.Folders
                 .Include(x => x.FoldersNotes)
+                .ThenInclude(x => x.Note)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 

@@ -2,9 +2,11 @@
 
 namespace Common.DTO.Notes.Copy;
 
-public class CopyNote
+public class CopyNoteResult
 {
-    public Guid NoteId { set; get; }
+    public Guid PreviousId { set; get; }
+
+    public Guid NewId { set; get; }
 
     public Guid UserId { set; get; }
 
