@@ -21,7 +21,7 @@ namespace Noots.Storage.Impl
         IRequestHandler<SaveVideosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveBackgroundCommand, AppFile>,
         IRequestHandler<SaveUserPhotoCommand, AppFile>,
-        IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
+        IRequestHandler<CopyBlobFromContainerToContainerCommand, (bool success, AppFile file)>,
         IRequestHandler<RemoveFilesCommand, Unit>,
         IRequestHandler<RemoveFilesFromStorageCommand, Unit>,
         IRequestHandler<CreateUserContainerCommand, Unit>,
@@ -189,22 +189,36 @@ namespace Noots.Storage.Impl
             return files;
         }
 
-        public async Task<AppFile> Handle(CopyBlobFromContainerToContainerCommand request, CancellationToken cancellationToken)
+        public async Task<(bool success, AppFile file)> Handle(CopyBlobFromContainerToContainerCommand request, CancellationToken cancellationToken)
         {
             var prefixFolder = pathStorageBuilder.GetPrefixContentFolder(request.ContentTypesFile);
             var contentId = pathStorageBuilder.GetContentPathFileId();
 
+            var processedPathes = new List<string>();
             foreach (var path in request.AppFile.GetNotNullPathes())
             {
-                await filesStorage.CopyBlobAsync(
+                var resp = await filesStorage.CopyBlobAsync(
                     request.StorageFromId, request.UserFromId.ToString(), path.FullPath,
                     request.StorageToId, request.UserToId.ToString(), prefixFolder, contentId, path.FileName);
+
+                if(resp.success)
+                {
+                    processedPathes.Add(resp.path);
+                }
+                else 
+                {
+                    if (processedPathes.Any())
+                    {
+                        await filesStorage.RemoveFiles(request.StorageToId, request.UserToId.ToString(), processedPathes.ToArray());
+                    }
+                    return (false!, null!);
+                }
             }
 
             var file = new AppFile(request.AppFile.ContentType, request.AppFile.Size, request.AppFile.FileTypeId, request.UserToId, request.AppFile.Name);
             file.InitPathes(request.StorageToId, prefixFolder, contentId, request.AppFile.PathSuffixes);
 
-            return file;
+            return (true, file);
         }
 
         public async Task<AppFile> Handle(SaveBackgroundCommand request, CancellationToken cancellationToken)
@@ -260,7 +274,6 @@ namespace Noots.Storage.Impl
 
         public async Task<AppFile> Handle(SaveUserPhotoCommand request, CancellationToken cancellationToken)
         {
-            var photoType = GetExtensionByMIME(request.File.ContentType);
             var prefixFolder = pathStorageBuilder.GetPrefixContentFolder(ContentTypesFile.Photos);
             var contentId = pathStorageBuilder.GetContentPathFileId();
             var storageId = storageIdProvider.GetStorageId();
