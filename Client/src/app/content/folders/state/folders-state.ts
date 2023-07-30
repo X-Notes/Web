@@ -292,7 +292,7 @@ export class FolderStore {
       }
     }
     if (resp.success && resp.data?.noteIds?.length > 0) {
-      dispatch(new LoadNotesByIds(resp.data.noteIds));
+      // TODO MESSAGE
     }
     if (!resp.success && resp.status === OperationResultAdditionalInfo.BillingError) {
       const message = this.translate.instant('snackBar.subscriptionCreationError');

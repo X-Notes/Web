@@ -29,10 +29,8 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             FileTypeId = fileTypeId;
         }
 
-        public CollectionNote(CollectionNote entity, List<CollectionNoteAppFile> collectionNoteAppFiles, Guid noteId, int version)
+        public CollectionNote(CollectionNote entity, List<CollectionNoteAppFile> collectionNoteAppFiles, int version)
         {
-            NoteId = noteId;
-
             UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.Collection;
 
@@ -46,10 +44,8 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             CollectionNoteAppFiles = collectionNoteAppFiles;
         }
 
-        public CollectionNote(CollectionNote entity, List<AppFile> files, Guid noteId, int version)
+        public CollectionNote(CollectionNote entity, List<AppFile> files, int version)
         {
-            NoteId = noteId;
-
             UpdatedAt = DateTimeProvider.Time;
             ContentTypeId = ContentTypeENUM.Collection;
 

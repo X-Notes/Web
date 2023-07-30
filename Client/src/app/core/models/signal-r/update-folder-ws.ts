@@ -3,11 +3,11 @@ import { PositionEntityModel } from 'src/app/content/notes/models/position-note.
 
 export interface UpdateFolderWS {
   folderId: string;
-  color: string;
-  title: string;
-  isUpdateTitle: string;
-  previewNotes: PreviewNotesInFolder[];
-  idsToRemove: string[];
-  idsToAdd: string[];
-  positions: PositionEntityModel[];
+  color?: string;
+  title?: string;
+  isUpdateTitle?: string;
+  previewNotes?: PreviewNotesInFolder[];
+  idsToRemove?: string[];
+  idsToAdd?: string[];
+  positions?: PositionEntityModel[];
 }

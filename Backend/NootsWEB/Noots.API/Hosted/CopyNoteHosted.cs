@@ -1,21 +1,22 @@
 ﻿using Common.Channels;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Noots.History.Impl;
+using Noots.Notes.Commands.Copy;
+using Noots.SignalrUpdater.Impl;
 using System;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Noots.API.Hosted;
 
-public class HistoryProcessingHosted : BackgroundService
+public class CopyNoteHosted : BackgroundService
 {
     private readonly ILogger<HistoryProcessingHosted> logger;
     private readonly IServiceProvider serviceProvider;
 
-    public HistoryProcessingHosted(
+    public CopyNoteHosted(
         ILogger<HistoryProcessingHosted> logger,
         IServiceProvider serviceProvider)
     {
@@ -26,15 +27,20 @@ public class HistoryProcessingHosted : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = serviceProvider.CreateScope();
-        var historyCacheService = scope.ServiceProvider.GetRequiredService<HistoryCacheService>();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        var signalR = scope.ServiceProvider.GetRequiredService<AppSignalRService>();
 
-        await foreach (var item in ChannelsService.HistoryChannel.Reader.ReadAllAsync())
+        await foreach (var item in ChannelsService.CopyNotesChannel.Reader.ReadAllAsync())
         {
             try
             {
                 if (item != null)
                 {
-                    await historyCacheService.ProcessChangeAsync(item);
+                    var resp = await mediator.Send(new CopyNoteInternalCommand(item.NoteId, item.UserId, item.FolderId));
+                    if(resp != null && resp.Success)
+                    {
+                        await signalR.SendNewCopiedNoteResult(resp.Data.UserId, resp.Data);
+                    }
                 }
             }
             catch (Exception e)

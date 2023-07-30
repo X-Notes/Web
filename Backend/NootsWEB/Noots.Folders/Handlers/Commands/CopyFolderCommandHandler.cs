@@ -1,5 +1,7 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
@@ -15,6 +17,12 @@ using Noots.Mapper.Mapping;
 using Noots.Notes.Commands;
 using Noots.Notes.Entities;
 using Noots.Permissions.Queries;
+using Common.DatabaseModels.Models.Labels;
+using Azure.Core;
+using Noots.Notes.Commands.Copy;
+using Common.Channels;
+using Common.DTO.Notes.Copy;
+using System.Linq;
 
 namespace Noots.Folders.Handlers.Commands;
 
@@ -63,41 +71,45 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
             return new OperationResult<CopyFoldersResult>().SetBillingError();
         }
         
-        var foldersForCopy = await folderRepository.GetFoldersByIdsForCopy(idsForCopy);
+        var foldersForCopy = await folderRepository.GetFoldersByIdsIncludeNotes(idsForCopy);
         var foldersNotes = foldersForCopy.SelectMany(x => x.FoldersNotes).ToList();
-        Dictionary<Guid, CopyNoteResult> copyResults = new();
 
-        if (foldersNotes.Any())
+        var notesToCopy = foldersNotes.DistinctBy(x => x.NoteId).Where(x => x.Note.UserId != request.UserId);
+        var notesToCopyCount = notesToCopy.Count();
+        var notesToCopyDict = notesToCopy.ToDictionary(x => x.NoteId);
+
+        if (notesToCopyCount > 0)
         {
-            var noteIds = foldersNotes.Select(x => x.NoteId).Distinct();
-            var dbNotes = await noteRepository.GetManyAsync(noteIds);
-            var notesToCopy = dbNotes.Where(x => x.UserId != request.UserId).ToList();
-
-            if (notesToCopy.Any())
+            var availableNotes = await billingPermissionService.GetAvailableCountNotes(request.UserId);
+            if (notesToCopyCount > availableNotes)
             {
-                var availableNotes = await billingPermissionService.GetAvailableCountNotes(request.UserId);
-                if (notesToCopy.Count > availableNotes)
+                return new OperationResult<CopyFoldersResult>().SetBillingError();
+            }
+
+            var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
+            var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
+                                              .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
+                                              .Cast<CollectionNote>()
+                                              .SelectMany(x => x.Files)
+                                              .Where(x => x.UserId != request.UserId);
+
+            if (externalFiles.Any())
+            {
+                var size = externalFiles.Sum(x => x.Size);
+                var uploadPermission = await mediator.Send(new GetPermissionUploadFileQuery(size, request.UserId));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
                 {
-                    return new OperationResult<CopyFoldersResult>().SetBillingError();
-                }
-
-                var noteCopyIds = notesToCopy.Select(x => x.Id).ToList();
-                var caller = permissions.First().perm.Caller;
-                var copyCommand = new CopyFolderNotesCommand(request.UserId, caller, noteCopyIds);
-                var res = await mediator.Send(copyCommand);
-
-                if (res.Data != null) {
-                    copyResults = res.Data.ToDictionary(x => x.PreviousId);
+                    return new OperationResult<CopyFoldersResult>().SetNoEnougnMemory();
                 }
             }
         }
 
         var dbFolders = await CopyFoldersAsync(foldersForCopy, request.UserId);
 
-        var folderNotes = dbFolders.SelectMany(folder => folder.NoteIds.Select(noteId => new FoldersNotes()
+        var folderNotes = dbFolders.SelectMany(folder => folder.NoteIds.Where(id => !notesToCopyDict.ContainsKey(id)).Select(noteId => new FoldersNotes()
         {
             FolderId = folder.Id,
-            NoteId = copyResults.ContainsKey(noteId) ? copyResults[noteId].NewId : noteId
+            NoteId = noteId
         }));
 
         await foldersNotesRepository.AddRangeAsync(folderNotes);
@@ -109,9 +121,33 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
         var result = new CopyFoldersResult
         {
             Folders = ents,
-            NoteIds = copyResults.Select(x => x.Value.NewId).ToList()
+            NoteIds = notesToCopyDict.Keys.ToList()
         };
+
+        foreach(var newFolder in dbFolders)
+        {
+            var folderNotesToCopy = notesToCopy.Where(x => x.FolderId == newFolder.PrevId).ToList();
+            if (folderNotesToCopy.Any())
+            {
+                await CopyNotes(request.UserId, newFolder.Id, folderNotesToCopy);
+            }
+        }
+
         return new OperationResult<CopyFoldersResult>(true, result);
+    }
+
+    private async Task CopyNotes(Guid userId, Guid folderId, List<FoldersNotes> folderNotesToCopy)
+    {
+        if(folderNotesToCopy == null)
+        {
+            return;
+        }
+
+        foreach(var folderNote in folderNotesToCopy)
+        {
+            var ent = new CopyNote { NoteId = folderNote.NoteId, UserId = userId, FolderId = folderId };
+            await ChannelsService.CopyNotesChannel.Writer.WriteAsync(ent);
+        }
     }
 
 
@@ -127,7 +163,8 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
                 RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeProvider.Time,
                 UserId = userId,
-                NoteIds = x.FoldersNotes.Select(x => x.NoteId).ToList()
+                NoteIds = x.FoldersNotes.Select(x => x.NoteId).ToList(),
+                PrevId = x.Id
             };
             folder.SetDateAndVersion();
             return folder;

@@ -21,6 +21,7 @@ import { SmallNote } from '../content/notes/models/small-note.model';
 import {
   AddLabelOnNote,
   AddNotes,
+  AddToDomNotes,
   ChangeColorNote,
   DeleteNotesPermanently,
   LoadOnlineUsersOnNote,
@@ -29,6 +30,7 @@ import {
   RemoveOnlineUsersOnNote,
   UpdateFullNote,
   UpdateNoteTitleWS,
+  UpdateNotes,
   UpdateOneNote,
 } from '../content/notes/state/notes-actions';
 import { UpdateNoteUI } from '../content/notes/state/update-note-ui.model';
@@ -58,6 +60,11 @@ import { UpdateEditorStructureWS } from '../editor/entities/ws/update-note-struc
 import { UpdateNoteTextWS } from '../editor/entities/ws/update-note-text-ws';
 import { UpdatePhotosCollectionWS } from '../editor/entities/ws/update-photos-collection-ws';
 import { ThemeENUM } from '../shared/enums/theme.enum';
+import { CopyNoteResult } from '../content/notes/models/copy-note-result';
+import { NoteStore } from '../content/notes/state/notes-state';
+import { Notes } from '../content/notes/state/notes.model';
+import { AddNotesToDom } from '../content/notes/state/add-notes-to-dom.model';
+import { LoadUsedDiskSpace } from './stateUser/user-action';
 
 @Injectable({
   providedIn: 'root',
@@ -216,6 +223,21 @@ export class SignalRService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     this.hubConnection.on('updateOnlineUsersFolder', (folderId: string) => {
       // TODO
+    });
+
+    this.hubConnection.on('copyNote', async (result: CopyNoteResult) => {
+      const newIds = [result.newId];
+      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+      const newNotes = await this.apiNotes.getNotesMany(newIds, pr).toPromise();
+      const privateNotes = this.store.selectSnapshot(NoteStore.getPrivateNotes);
+      const command = new UpdateNotes(new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]), NoteTypeENUM.Private);
+      await this.store.dispatch(command).toPromise();
+      const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
+      this.store.dispatch([new AddToDomNotes(obj), LoadUsedDiskSpace]);
+      if(result.folderId) {
+        const obj: UpdateFolderWS = { folderId:result.folderId, idsToAdd: newIds };
+        this.updateFolder$.next(obj);
+      }
     });
 
     // REMOVE ONLINE
