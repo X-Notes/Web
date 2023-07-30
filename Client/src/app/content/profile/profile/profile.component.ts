@@ -28,12 +28,13 @@ import { PersonalizationSetting } from 'src/app/core/models/personalization-sett
 import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
-import { ResetNotes } from '../../notes/state/notes-actions';
-import { ResetFolders } from '../../folders/state/folders-actions';
+import { ResetNotes, ResetNotesState } from '../../notes/state/notes-actions';
+import { ResetFolders, ResetFoldersState } from '../../folders/state/folders-actions';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
 import { EnumConverterService } from 'src/app/shared/services/enum-converter.service';
+import { ResetLabelsState } from '../../labels/state/labels-actions';
 
 @Component({
   selector: 'app-profile',
@@ -120,6 +121,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+    this.store.dispatch([ResetNotesState, ResetFoldersState, ResetLabelsState]);
   }
 
   changeTheme(value: boolean) {

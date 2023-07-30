@@ -1,7 +1,7 @@
 ﻿
 namespace Common.DTO.Notes
 {
-    public class FullNote : LockNoteDTO
+    public class FullNote : BaseNoteDTO
     {
     }
 }

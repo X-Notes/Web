@@ -6,6 +6,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Queries;
 using Noots.Mapper.Mapping;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Queries;
@@ -14,16 +15,16 @@ public class GetFullFolderQueryHandler : IRequestHandler<GetFullFolderQuery, Ope
 {
     private readonly IMediator mediator;
     private readonly NoteFolderLabelMapper appCustomMapper;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
 
     public GetFullFolderQueryHandler(
         IMediator mediator, 
-        NoteFolderLabelMapper appCustomMapper, 
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
+        NoteFolderLabelMapper appCustomMapper,
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService)
     {
         this.mediator = mediator;
         this.appCustomMapper = appCustomMapper;
-        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
     }
     
     public async Task<OperationResult<FullFolder>> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
@@ -36,7 +37,7 @@ public class GetFullFolderQueryHandler : IRequestHandler<GetFullFolderQuery, Ope
         {
             if (permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
             {
-                await usersOnPrivateFoldersRepository.AddAsync(new UsersOnPrivateFolders { FolderId = folder.Id, AccessTypeId = folder.RefTypeId, UserId = permissions.Caller.Id });
+                await usersOnPrivateFoldersService.AddPermissionAsync(folder.Id, folder.RefTypeId, permissions.Caller.Id);
             }
 
             if (!permissions.IsOwner)

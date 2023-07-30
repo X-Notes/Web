@@ -13,6 +13,12 @@ export class UpdateRoute {
   constructor(public type: EntityType) {}
 }
 
+export class Ping {
+  static type = '[App] Ping';
+  
+  constructor(public connectionId: string) {}
+}
+
 export class LoadNotifications {
   static type = '[App] Load Notifications';
 }

@@ -12,7 +12,6 @@ import {
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
-import { LockPopupState } from '../modal_components/lock/lock.component';
 import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 import { SelectNoteEvent } from 'src/app/content/notes/note/entities/select-note.event';
@@ -23,7 +22,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
   selectedIds: Set<string>;
 
   constructor(
-    private dialogsManageService: DialogsManageService,
     public store: Store,
     murriService: MurriService,
     public apiService: ApiServiceNotes,
@@ -66,9 +64,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
         note.color = value.color ?? note.color;
         note.title = value.title ?? note.title;
         note.isCanEdit = value.isCanEdit ?? note.isCanEdit;
-        note.isLocked = value.isLocked ?? note.isLocked;
-        note.isLockedNow = value.isLockedNow ?? note.isLockedNow;
-        note.unlockedTime = value.unlockedTime ?? note.unlockedTime;
       }
     }
     if (updates.length > 0) {
@@ -82,11 +77,6 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     if (isSelectedMode) {
       this.highlightNote({ isSelected: this.getIsSelected(note.id), note });
     } else {
-      if (note.isLockedNow) {
-        const callback = () => this.router.navigate([`notes/${note.id}`]);
-        this.dialogsManageService.openLockDialog(note.id, LockPopupState.Unlock, callback);
-        return;
-      }
       navigateFunc();
     }
   }

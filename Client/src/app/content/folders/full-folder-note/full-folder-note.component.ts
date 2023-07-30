@@ -100,7 +100,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   }
 
   async loadContent() {
-    this.contents = await this.api.getContents(this.noteId).toPromise();
+    this.contents = await this.api.getContents(this.noteId, this.folderId).toPromise();
   }
 
   ngOnDestroy(): void {

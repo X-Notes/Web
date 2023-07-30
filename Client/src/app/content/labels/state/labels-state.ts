@@ -14,6 +14,7 @@ import {
   DeleteAllLabelsFromBin,
   UpdateLabelCount,
   AddToDomLabels,
+  ResetLabelsState,
 } from './labels-actions';
 import { ApiServiceLabels } from '../api-labels.service';
 import { Label } from '../models/label.model';
@@ -237,6 +238,15 @@ export class LabelStore {
     await this.api.removeAll().toPromise();
     patchState({
       labels: getState().labels.filter((x) => !x.isDeleted),
+    });
+  }
+
+  @Action(ResetLabelsState)
+  resetLabelsState({ patchState }: StateContext<LabelState>) {
+    patchState({
+      labels: [],
+      labelsAddToDOM: [],
+      loaded: false,
     });
   }
 

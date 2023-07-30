@@ -315,6 +315,13 @@ export class ContentEditorComponent
         this.facade.cdr.detectChanges();
       });
 
+    this.facade.contentEditorSyncService.onStateSync$.pipe(takeUntil(this.facade.dc.d$))
+      .subscribe((flag) => {
+        if(flag) {
+          this.facade.cdr.detectChanges();
+        }
+      });
+
     this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
       this.facade.cdr.detectChanges();
       this.menuSelectionDirective.onSelectionchange();
@@ -427,7 +434,7 @@ export class ContentEditorComponent
 
   enterHandler(value: EnterEvent) {
     const curEl = this.getElementById(value.contentId);
-    if(curEl.type === ComponentType.HTML) {
+    if (curEl.type === ComponentType.HTML) {
       (curEl as ParentInteractionHTML).syncHtmlWithLayout();
     }
     const newTextContent = this.facade.contentEditorTextService.insertNewContent(

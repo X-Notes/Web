@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
 using System;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Noots.API.Hosted;
@@ -27,23 +28,18 @@ public class HistoryProcessingHosted : BackgroundService
         using var scope = serviceProvider.CreateScope();
         var historyCacheService = scope.ServiceProvider.GetRequiredService<HistoryCacheService>();
 
-        while (!ChannelsService.HistoryChannel.Reader.Completion.IsCompleted)
+        await foreach (var item in ChannelsService.HistoryChannel.Reader.ReadAllAsync())
         {
             try
             {
-                var resp = await ChannelsService.HistoryChannel.Reader.ReadAsync();
-                if(resp != null)
+                if (item != null)
                 {
-                    await historyCacheService.ProcessChangeAsync(resp);
+                    await historyCacheService.ProcessChangeAsync(item);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogError(e.ToString());
-            }
-            finally
-            {
-                Task.Delay(100);
             }
         }
     }

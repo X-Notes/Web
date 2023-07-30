@@ -78,14 +78,11 @@ export class PublicNoteContentComponent implements OnInit, OnDestroy {
     const maybeFolderId = await this.tryGetFolderId();
     this.folderId = typeof maybeFolderId === 'string' ? maybeFolderId : null;
     await this.store.dispatch(new LoadFullNote(noteId, this.folderId)).toPromise();
-    const isLocked = this.store.selectSnapshot(NoteStore.isLocked);
-    if (!isLocked) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull);
-      if (note) {
-        const ownerId = this.store.selectSnapshot(NoteStore.getOwnerId);
-        await this.store.dispatch(new GetPublicUser(ownerId)).toPromise();
-        this.contents = await this.apiNotes.getContents(noteId, this.folderId).toPromise();
-      }
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
+    if (note) {
+      const ownerId = this.store.selectSnapshot(NoteStore.getOwnerId);
+      await this.store.dispatch(new GetPublicUser(ownerId)).toPromise();
+      this.contents = await this.apiNotes.getContents(noteId, this.folderId).toPromise();
     }
     this.loaded = true;
   }

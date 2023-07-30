@@ -23,32 +23,19 @@ public class AppSignalRHub : Hub
     private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
     private readonly ILogger<AppSignalRHub> logger;
     private readonly IMediator mediator;
-    private readonly BillingPermissionService billingPermissionService;
 
     public AppSignalRHub(
         IFolderServiceStorage folderServiceStorage,
         INoteServiceStorage noteServiceStorage,
         UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
         ILogger<AppSignalRHub> logger,
-        IMediator _mediator,
-        BillingPermissionService billingPermissionService)
+        IMediator _mediator)
     {
         this.folderServiceStorage = folderServiceStorage;
         this.noteServiceStorage = noteServiceStorage;
         this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         this.logger = logger;
         mediator = _mediator;
-        this.billingPermissionService = billingPermissionService;
-    }
-
-    public async Task UpdateUpdateStatus() {
-        var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.ConnectionId == Context.ConnectionId);
-        if (ent == null)
-        {
-            return;
-        }
-        ent.UpdatedAt = DateTimeProvider.Time;
-        await userIdentifierConnectionIdRepository.UpdateAsync(ent);
     }
 
     private Guid GetUserId()

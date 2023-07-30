@@ -12,9 +12,12 @@ import {
   ReadNotification,
   NewNotification,
   UpdateDragMuuriState,
+  Ping,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
+import { UserAPIService } from '../user-api.service';
+import { SignalRService } from '../signal-r.service';
 
 interface AppState {
   routing: EntityType | null;
@@ -32,7 +35,9 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
-  constructor(public notificationService: NotificationServiceAPI) {}
+  constructor(
+    public notificationService: NotificationServiceAPI, 
+    private userAPIService: UserAPIService) {}
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {
@@ -301,6 +306,12 @@ export class AppStore {
   @Action(UpdateDragMuuriState)
   async updateDragMuuriState({ patchState }: StateContext<AppState>, { active }: UpdateDragMuuriState) {
     patchState({ isMuuriDragging: active });
+  }
+
+  @Action(Ping)
+  // eslint-disable-next-line no-empty-pattern
+  async ping({ }: StateContext<AppState>, { connectionId }: Ping) {
+    await this.userAPIService.ping(connectionId).toPromise();
   }
 
   @Action(UpdateRoute)

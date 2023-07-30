@@ -16,5 +16,21 @@ namespace Noots.DatabaseContext.Repositories.Notes
         {
             return entities.Include(x => x.RelatedNoteUserStates).Where(x => x.NoteId == noteId).ToListAsync();
         }
+
+        public Task<List<RelatedNoteToInnerNote>> GeIncludeRootNoteByRelatedNoteIds(List<Guid> noteIds)
+        {
+            return entities
+                .Include(x => x.Note)
+                .Where(x => noteIds.Contains(x.RelatedNoteId))
+                .ToListAsync();
+        }
+
+        public Task<List<RelatedNoteToInnerNote>> GeIncludeRelatedNoteByNotesIds(IEnumerable<Guid> noteIds)
+        {
+            return entities
+                .Include(x => x.RelatedNote)
+                .Where(x => noteIds.Contains(x.NoteId))
+                .ToListAsync();
+        }
     }
 }

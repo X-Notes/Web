@@ -21,7 +21,6 @@ namespace Noots.DatabaseContext.Repositories.Folders
         public Task<Folder?> GetForCheckPermission(Guid id)
         {
             return context.Folders
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -29,15 +28,15 @@ namespace Noots.DatabaseContext.Repositories.Folders
         public Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
         {
             return context.Folders
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateFolders)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
-        public Task<List<Folder>> GetFoldersByIdsForCopy(List<Guid> ids)
+        public Task<List<Folder>> GetFoldersByIdsIncludeNotes(List<Guid> ids)
         {
             return context.Folders
                 .Include(x => x.FoldersNotes)
+                .ThenInclude(x => x.Note)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 

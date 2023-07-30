@@ -4,6 +4,7 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
@@ -13,18 +14,18 @@ namespace Noots.Sharing.Handlers.Commands;
 public class RemoveAllUsersFromNoteCommandHandler : IRequestHandler<RemoveAllUsersFromNoteCommand, OperationResult<Unit>>
 {
     private readonly IMediator mediator;
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
 
     public RemoveAllUsersFromNoteCommandHandler(
-        IMediator _mediator, 
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+        IMediator _mediator,
+        UsersOnPrivateNotesService usersOnPrivateNotesService,
         AppSignalRService appSignalRHub,
         NotificationService notificationService)
     {
         mediator = _mediator;
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
     }
@@ -36,10 +37,8 @@ public class RemoveAllUsersFromNoteCommandHandler : IRequestHandler<RemoveAllUse
 
         if (permissions.IsOwner)
         {
-            var ents = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-            var userIds = ents.Select(x => x.UserId).ToList();
-            await usersOnPrivateNotesRepository.RemoveRangeAsync(ents);
-
+            var userIds =  await usersOnPrivateNotesService.RevokeAllPermissionsNote(request.NoteId);
+  
             foreach (var userId in userIds)
             {
                 var updateCommand = new UpdatePermissionNoteWS();

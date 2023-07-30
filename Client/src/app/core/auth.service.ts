@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Auth, Logout } from './stateUser/user-action';
@@ -30,6 +30,7 @@ export class AuthService {
     private readonly router: Router,
     private readonly store: Store,
     private readonly apiAuth: UserAPIService,
+    private ngZone: NgZone
   ) {}
 
   get isLogined(): boolean {
@@ -76,7 +77,7 @@ export class AuthService {
       if (res.success) {
         await this.store.dispatch(new Auth()).toPromise();
         this.authStatus.next(AuthStatus.Successful);
-        this.router.navigate([this.navigateToUrl]);
+        this.ngZone.run(()=> this.router.navigate([this.navigateToUrl]));
       }
     } else {
       // Sign-in failed
@@ -91,6 +92,6 @@ export class AuthService {
 
   logout = async () => {
     await this.store.dispatch(new Logout()).toPromise();
-    await this.router.navigate(['about']);
+    this.ngZone.run(()=> this.router.navigate(['about']));
   };
 }

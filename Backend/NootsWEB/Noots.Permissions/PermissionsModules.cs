@@ -17,6 +17,9 @@ namespace Noots.Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>, PermissionFolderHandlerQuery>();
 
             services.AddScoped<IRequestHandler<GetPermissionUploadFileQuery, PermissionUploadFileEnum>, PermissionNoteHandlerQuery>();
+
+            services.AddScoped<UsersOnPrivateNotesService>();
+            services.AddScoped<UsersOnPrivateFoldersService>();
         }
     }
 }

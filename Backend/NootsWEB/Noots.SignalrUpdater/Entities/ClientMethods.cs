@@ -15,6 +15,10 @@
 
         public const string removeOnlineUsersFolder = "removeOnlineUsersFolder";
 
+        // Copy note
+
+        public const string copyNote = "copyNote";
+
         // NOTIFICATION
 
         public const string newNotification = "newNotification";

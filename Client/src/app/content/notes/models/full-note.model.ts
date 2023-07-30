@@ -19,12 +19,6 @@ export class FullNote {
 
   noteTypeId?: NoteTypeENUM;
 
-  isLocked?: boolean;
-
-  isLockedNow?: boolean;
-
-  unlockedTime?: Date;
-
   createdAt!: Date;
 
   updatedAt!: Date;

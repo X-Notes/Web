@@ -53,6 +53,7 @@ import {
   UpdateFolderNotes,
   LoadNotesByIds,
   UpdateNoteTitleState,
+  ResetNotesState,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -69,7 +70,6 @@ import { LongTermsIcons } from '../../long-term-operations-handler/models/long-t
 import { Router } from '@angular/router';
 import { NoteSnapshot } from '../full-note/models/history/note-snapshot.model';
 import { PositionEntityModel } from '../models/position-note.model';
-import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiRelatedNotesService } from '../api-related-notes.service';
 import { AddNotesToDom } from './add-notes-to-dom.model';
 import { NoteHistory } from '../full-note/models/history/note-history.model';
@@ -89,7 +89,6 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 
 export interface FullNoteState {
   note: FullNote;
-  isLocked: boolean;
   isCanView: boolean;
 }
 
@@ -140,7 +139,6 @@ export class NoteStore {
     private apiNoteEditor: ApiNoteEditorService,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
     private router: Router,
-    private updaterEntitiesService: UpdaterEntitiesService,
     private apiRelated: ApiRelatedNotesService,
     private zone: NgZone,
     private snackbarService: SnackbarService,
@@ -160,29 +158,9 @@ export class NoteStore {
     ).length;
   }
 
-  @Selector()
-  static isRemoveLock(state: NoteState) {
-    if (state.selectedIds.size === 1) {
-      const id = state.selectedIds[0];
-      const note = state.notes.flatMap((x) => x.notes).find((n) => n.id === id);
-      return note.isLockedNow;
-    }
-    return false;
-  }
-
   @Selector([AppStore.isNoteInner])
   static isFullNoteAndCanView(noteState: NoteState, isInnerNote: boolean) {
     return noteState.fullNoteState?.isCanView === isInnerNote
-  }
-
-  @Selector()
-  static isCanBeForceLockNotes(state: NoteState) {
-    if (state.selectedIds?.size === 1) {
-      const id = state.selectedIds[0];
-      const note = state.notes.flatMap((x) => x.notes).find((n) => n.id === id);
-      return !note?.isLockedNow && note?.isLocked;
-    }
-    return false;
   }
 
   @Selector()
@@ -193,6 +171,11 @@ export class NoteStore {
   @Selector()
   static getNotes(state: NoteState): Notes[] {
     return state.notes;
+  }
+
+  @Selector()
+  static getPrivateNotes(state: NoteState): SmallNote[] {
+    return this.getNotesByTypeStatic(state, NoteTypeENUM.Private)?.notes;
   }
 
   @Selector()
@@ -225,16 +208,6 @@ export class NoteStore {
   @Selector()
   static getAllSelectedFullFolderNotesNoShared(state: NoteState): boolean {
     return this.getSelectedFolderNotes(state).every((x) => x.noteTypeId !== NoteTypeENUM.Shared);
-  }
-
-  @Selector()
-  static getAllSelectedNotesUnlocked(state: NoteState): boolean {
-    return this.getSelectedNotes(state).every((x) => !x.isLocked);
-  }
-
-  @Selector()
-  static getAllSelectedNotesUnlockedNow(state: NoteState): boolean {
-    return this.getSelectedNotes(state).every((x) => !x.isLockedNow);
   }
 
   @Selector()
@@ -370,18 +343,8 @@ export class NoteStore {
   }
 
   @Selector()
-  static isLocked(state: NoteState): boolean {
-    return state.fullNoteState?.isLocked;
-  }
-
-  @Selector()
   static getOwnerId(state: NoteState): string {
     return state.fullNoteState?.note.userId;
-  }
-
-  @Selector()
-  static isCanForceLocked(state: NoteState): boolean {
-    return !state.fullNoteState?.note?.isLockedNow && state.fullNoteState?.note?.isLocked;
   }
 
   @Selector()
@@ -706,7 +669,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.changeColor(selectedIds, color, this.signalR.connectionId).toPromise();
@@ -739,8 +702,8 @@ export class NoteStore {
 
   @Action(CopyNotes)
   async copyNotes(
-    { getState, dispatch }: StateContext<NoteState>,
-    { selectedIds, pr, folderId }: CopyNotes,
+    { dispatch }: StateContext<NoteState>,
+    { selectedIds, folderId }: CopyNotes,
   ) {
     const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
     const mini = this.longTermOperationsHandler.getNewMini(
@@ -752,20 +715,8 @@ export class NoteStore {
     );
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
-    if (resp.eventBody.success && getState().notes.length > 0) {
-      const newIds = resp.eventBody.data.map(x => x.newId);
-      const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
-      const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
-      dispatch(
-        new UpdateNotes(
-          new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]),
-          NoteTypeENUM.Private,
-        ),
-      );
-      const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
-      dispatch(new AddToDomNotes(obj));
-    }
     if (
+      resp.eventBody &&
       !resp.eventBody.success &&
       resp.eventBody.status === OperationResultAdditionalInfo.BillingError
     ) {
@@ -777,9 +728,9 @@ export class NoteStore {
 
   @Action(LoadNotesByIds)
   async loadNotesByIds({ dispatch }: StateContext<NoteState>, { ids }: LoadNotesByIds) {
-      const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const notes = await this.api.getNotesMany(ids, pr).toPromise();
-      await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    const notes = await this.api.getNotesMany(ids, pr).toPromise();
+    await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
   }
 
   @Action(AddLabelOnNote)
@@ -789,7 +740,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.addLabel(label.id, selectedIds, this.signalR.connectionId).toPromise();
@@ -833,7 +784,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.api.removeLabel(labelId, selectedIds, this.signalR.connectionId).toPromise();
@@ -948,7 +899,7 @@ export class NoteStore {
     { noteId, cursor }: UpdateCursorAction,
   ) {
     const user = this.store.selectSnapshot(UserStore.getUser);
-    if(!user?.id) return;
+    if (!user?.id) return;
     const note = getState().fullNoteState.note;
     if (!note || note.id !== noteId) return;
     await this.apiNoteEditor.updateCursorPosition(noteId, cursor, this.signalR.connectionIdOrError).toPromise();
@@ -1011,24 +962,14 @@ export class NoteStore {
       patchState({
         fullNoteState: {
           note: request.data,
-          isLocked: false,
           isCanView: true,
         },
         cursorColor: UpdateCursor.getRandomBrightColor(),
-      });
-    } else if (!request.success && request.status === OperationResultAdditionalInfo.ContentLocked) {
-      patchState({
-        fullNoteState: {
-          note: null,
-          isLocked: true,
-          isCanView: false,
-        },
       });
     } else {
       patchState({
         fullNoteState: {
           note: null,
-          isLocked: false,
           isCanView: false,
         },
       });
@@ -1074,7 +1015,7 @@ export class NoteStore {
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
-      if(!this.signalR.connectionId) {
+      if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
       resp = await this.apiNoteEditor.updateTitle(newTitle, noteId, this.signalR.connectionId).toPromise();
@@ -1184,11 +1125,6 @@ export class NoteStore {
       patchState({
         notes: [...getState().notes, notesAPI],
       });
-      // process unlocked;
-      const notesToUpdate = notesAPI.notes.filter(
-        (x) => x.isLocked && !x.isLockedNow && x.unlockedTime,
-      );
-      notesToUpdate.forEach((note) => this.updaterEntitiesService.lockNoteAfter(note.id));
     }
   }
 
@@ -1206,6 +1142,27 @@ export class NoteStore {
   async resetNotes({ patchState }: StateContext<NoteState>) {
     patchState({
       notes: [],
+    });
+  }
+
+  @Action(ResetNotesState)
+  async resetNotesState({ patchState }: StateContext<NoteState>) {
+    patchState({
+      notes: [],
+      fullNoteState: null,
+      fullNoteHistories: null,
+      snapshotState: null,
+      selectedIds: new Set(),
+      updateNoteEvent: [],
+      removeFromMurriEvent: [],
+      notesAddingToDom: null,
+      selectedLabelsFilter: [],
+      isCanceled: false,
+      InvitedUsersToNote: [],
+      onlineUsers: [],
+      folderNotes: [],
+      cursors: [],
+      cursorColor: null,
     });
   }
 

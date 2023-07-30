@@ -4,6 +4,7 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notes.Commands;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 
 namespace Noots.Notes.Handlers.Commands;
@@ -12,16 +13,16 @@ public class SetDeleteNoteCommandHandler : IRequestHandler<SetDeleteNoteCommand,
 {
     private readonly IMediator mediator;
     private readonly NoteRepository noteRepository;
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
 
     public SetDeleteNoteCommandHandler(
         IMediator _mediator, 
         NoteRepository noteRepository,
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
+        UsersOnPrivateNotesService usersOnPrivateNotesService)
     {
         mediator = _mediator;
         this.noteRepository = noteRepository;
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
     }
     
     public async Task<OperationResult<List<Guid>>> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
@@ -43,11 +44,7 @@ public class SetDeleteNoteCommandHandler : IRequestHandler<SetDeleteNoteCommand,
             processedIds = notesOwner.Select(x => x.Id).ToList();
         }
 
-        var usersOnPrivate = await usersOnPrivateNotesRepository.GetWhereAsync(x => request.UserId == x.UserId && request.Ids.Contains(x.NoteId));
-        if (usersOnPrivate.Any())
-        {
-            await usersOnPrivateNotesRepository.RemoveRangeAsync(usersOnPrivate);
-        }
+        await usersOnPrivateNotesService.RevokePermissionsNotes(request.UserId, request.Ids);
 
         return new OperationResult<List<Guid>>(true, processedIds);
     }

@@ -1,6 +1,7 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes;
 using Common.DTO.Notes.AdditionalContent;
+using Common.DTO.Notes.Copy;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using MediatR;
@@ -9,9 +10,11 @@ using Noots.Editor.Queries;
 using Noots.Editor.Services;
 using Noots.Editor.Services.Users;
 using Noots.Notes.Commands;
+using Noots.Notes.Commands.Copy;
 using Noots.Notes.Commands.Sync;
 using Noots.Notes.Entities;
 using Noots.Notes.Handlers.Commands;
+using Noots.Notes.Handlers.Commands.Copy;
 using Noots.Notes.Handlers.Queries;
 using Noots.Notes.Handlers.Sync;
 using Noots.Notes.Impl;
@@ -32,8 +35,8 @@ public static class NotesModules
         services.AddScoped<IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>, ArchiveNoteCommandHandler>();
         services.AddScoped<IRequestHandler<MakePrivateNoteCommand, OperationResult<Unit>>, MakePrivateNoteCommandHandler>();
 
-        services.AddScoped<IRequestHandler<CopyNotesCommand, OperationResult<List<CopyNoteResult>>>, CopyNotesCommandHandler>();
-        services.AddScoped<IRequestHandler<CopyFolderNotesCommand, OperationResult<List<CopyNoteResult>>>, CopyNotesCommandHandler>();
+        services.AddScoped<IRequestHandler<CopyNotesCommand, OperationResult<Unit>>, CopyNotesCommandHandler>();
+        services.AddScoped<IRequestHandler<CopyNoteInternalCommand, OperationResult<CopyNoteResult>>, CopyNotesCommandHandler>();
 
         services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>, RemoveLabelFromNoteCommandHandler>();
         services.AddScoped<IRequestHandler<UpdatePositionsNotesCommand, OperationResult<Unit>>, UpdatePositionsNotesCommandHandler>();

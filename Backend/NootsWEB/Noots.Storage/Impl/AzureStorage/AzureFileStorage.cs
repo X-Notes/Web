@@ -72,7 +72,7 @@ namespace Noots.Storage.Impl.AzureStorage
             }
         }
 
-        public async Task RemoveFile(StoragesEnum storageId, string userId, string path)
+        public async Task<bool> RemoveFile(StoragesEnum storageId, string userId, string path)
         {
             var blobContainer = GetBlobContainerClient(storageId, userId);
             var containerExist = await blobContainer.ExistsAsync();
@@ -80,7 +80,7 @@ namespace Noots.Storage.Impl.AzureStorage
             if (!containerExist)
             {
                 logger.LogCritical($"RemoveFile, CONTAINER does not exist, storageId: {storageId}, userId: {userId}, path: {path}");
-                return;
+                return false;
             }
 
             var blob = blobContainer.GetBlobClient(path);
@@ -89,10 +89,20 @@ namespace Noots.Storage.Impl.AzureStorage
             if (!blobExist)
             {
                 logger.LogCritical($"RemoveFile, BLOB does not exist, storageId: {storageId}, userId: {userId}, path: {path}");
-                return;
+                return false;
             }
 
-            await blobContainer.DeleteBlobAsync(path);
+            try
+            {
+                await blobContainer.DeleteBlobAsync(path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogCritical(ex.ToString());
+            }
+
+            return false;
         }
 
         public async Task RemoveFiles(StoragesEnum storageId, string userId, params string[] pathes)
@@ -145,7 +155,7 @@ namespace Noots.Storage.Impl.AzureStorage
             };
         }
 
-        public async Task<string> CopyBlobAsync(
+        public async Task<(bool success, string path)> CopyBlobAsync(
             StoragesEnum storageFromId, string userFromId, string pathFrom, 
             StoragesEnum storageToId, string userToId,
             string prefixFolder, string contentId, string fileName)
@@ -194,14 +204,15 @@ namespace Noots.Storage.Impl.AzureStorage
                     sourceProperties = await sourceBlob.GetPropertiesAsync();
                 }
 
-                return destBlob.Name;      
+                return (true, destBlob.Name);      
             }
-            catch (RequestFailedException ex)
+            catch (Exception ex)
             {
                 logger.LogDebug(ex.ToString());
                 await lease.BreakAsync();
-                throw;
             }
+
+            return (false!, null!);
         }
 
         public async Task<long> GetUsedDiskSpace(StoragesEnum storageId, string userId)

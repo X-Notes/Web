@@ -32,7 +32,7 @@ namespace Noots.Editor.Services.Audios
             {
                 var colectionFiles = await collectionAppFileRepository.GetAppFilesByContentIds(new List<Guid> { request.CollectionId });
                 var files = colectionFiles.Where(x => request.FileIds.Contains(x.AppFileId)).Select(x => x.AppFile);
-                return files.Select(x => mapper.MapToAudioDTO(x, permissions.Author.Id)).ToList();
+                return files.Select(x => mapper.MapToAudioDTO(x, permissions.AuthorId)).ToList();
             }
 
             return new List<AudioNoteDTO>();

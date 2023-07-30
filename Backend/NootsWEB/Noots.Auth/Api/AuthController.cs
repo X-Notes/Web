@@ -1,22 +1,16 @@
 ﻿using Common;
-using Common.DatabaseModels.Models.Security;
 using Common.DTO;
 using Common.Google;
 using Google.Apis.Auth;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Noots.Auth.Entities;
 using Noots.Auth.Interfaces;
 using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.GenericRepositories;
-using Noots.DatabaseContext.Repositories.Sec;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Users.Commands;
-using Noots.Users.Entities;
-using Noots.Users.Queries;
 using System.Security.Claims;
 
 namespace Noots.Auth.Api;

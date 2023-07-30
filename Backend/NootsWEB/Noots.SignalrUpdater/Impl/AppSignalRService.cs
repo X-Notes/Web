@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Common;
+using Common.DTO.Notes.Copy;
 using Common.DTO.Notifications;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
@@ -31,6 +33,17 @@ namespace Noots.SignalrUpdater.Impl
             this.logger = logger;
         }
 
+        public async Task UpdateUpdateStatus(Guid userId, string connectionId)
+        {
+            var ent = await userIdentifierConnectionIdRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.ConnectionId == connectionId);
+            if (ent == null)
+            {
+                return;
+            }
+            ent.UpdatedAt = DateTimeProvider.Time;
+            await userIdentifierConnectionIdRepository.UpdateAsync(ent);
+        }
+
         public Task<List<string>> GetAuthorizedConnections(List<Guid> userIds)
         {
             return userIdentifierConnectionIdRepository.GetConnectionsAsync(userIds);
@@ -39,6 +52,11 @@ namespace Noots.SignalrUpdater.Impl
         public async Task SendNewNotification(Guid userId, NotificationDTO notification)
         {
             await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, notification);
+        }
+
+        public async Task SendNewCopiedNoteResult(Guid userId, CopyNoteResult copyNoteResult)
+        {
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.copyNote, copyNoteResult);
         }
 
         public async Task UpdateNoteClients(UpdateNoteWS updates, IEnumerable<string> connectionIds)

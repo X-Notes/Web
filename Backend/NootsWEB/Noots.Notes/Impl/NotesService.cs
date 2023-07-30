@@ -1,24 +1,24 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using Noots.DatabaseContext.Repositories.Notes;
+using Noots.Permissions.Impl;
 
 namespace Noots.Notes.Impl;
 
 public class NotesService
 {
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly NoteRepository noteRepository;
 
-    public NotesService(UsersOnPrivateNotesRepository usersOnPrivateNotesRepository, NoteRepository noteRepository)
+    public NotesService(UsersOnPrivateNotesService usersOnPrivateNotesService, NoteRepository noteRepository)
     {
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.noteRepository = noteRepository;
     }
     
     public async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
     {
-        var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == userId);
-        var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
+        var notesIds = await usersOnPrivateNotesService.GetNoteIds(userId);
         var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, settings);
         sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
         return sharedNotes;

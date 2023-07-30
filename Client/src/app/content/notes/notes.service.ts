@@ -22,7 +22,6 @@ import {
 } from './state/notes-actions';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
-import { DialogsManageService } from '../navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from './api-notes.service';
 import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 import { NoteComponent } from './note/note.component';
@@ -45,12 +44,11 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     murriService: MurriService,
     router: Router,
     private route: ActivatedRoute,
-    dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
     public actions$: Actions,
     private updateService: UpdaterEntitiesService,
   ) {
-    super(dialogsManageService, store, murriService, apiService, router);
+    super(store, murriService, apiService, router);
 
     this.actions$
       .pipe(ofActionDispatched(SelectAllNote), takeUntil(this.destroy))

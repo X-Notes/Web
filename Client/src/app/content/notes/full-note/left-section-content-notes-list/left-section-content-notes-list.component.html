@@ -11,9 +11,6 @@
         <p *ngIf="!note.title" class="empty-placeholder">
           {{ 'placeholder.unnamedNote' | translate }}
         </p>
-        <div class="lock-container" [ngStyle]="{ backgroundColor: note.color }">
-          <mat-icon *ngIf="note.isLockedNow" svgIcon="lock"></mat-icon>
-        </div>
       </div>
     </ng-scrollbar>
   </ng-container>

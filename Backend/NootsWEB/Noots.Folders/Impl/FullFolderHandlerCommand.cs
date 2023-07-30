@@ -77,7 +77,7 @@ namespace Noots.Folders.Impl
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if (!permissions.IsOwner)
+            if (!permissions.CanWrite)
             {
                 return new OperationResult<Unit>().SetNoPermissions();
             }
@@ -91,7 +91,7 @@ namespace Noots.Folders.Impl
             var notesPermissions = await _mediator.Send(commandNotePermissions);
             var noteIdsRead = notesPermissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
 
-            var idsToAdd = await noteRepository.GetNoteIdsNoLockedAndNoDeleted(noteIdsRead);
+            var idsToAdd = await noteRepository.GetNoteIdsNoDeleted(noteIdsRead);
 
             var foldersNotes = await foldersNotesRepository.GetByFolderId(request.FolderId);
             var foldersNoteIds = foldersNotes.Select(x => x.Id).ToList();
@@ -122,29 +122,35 @@ namespace Noots.Folders.Impl
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if (permissions.IsOwner && request.NoteIds.Any())
+
+            if (!permissions.CanWrite)
             {
-                var foldersNotesToDelete = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, request.NoteIds);
-
-                if (foldersNotesToDelete.Any())
-                {
-                    folder.SetDateAndVersion();
-
-                    await foldersNotesRepository.RemoveRangeAsync(foldersNotesToDelete);
-                    await folderRepository.UpdateAsync(folder);
-
-                    // WS UPDATES
-                    var noteIdsToDelete = foldersNotesToDelete.Select(x => x.NoteId);
-                    var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
-                    var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
-                    updates.IdsToRemove.AddRange(noteIdsToDelete);
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.ConnectionId);
-                }
-
-                return new OperationResult<Unit>(true, Unit.Value);
+                return new OperationResult<Unit>().SetNoPermissions();
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            if (!request.NoteIds.Any())
+            {
+                return new OperationResult<Unit>().SetAnotherError();
+            }
+
+            var foldersNotesToDelete = await foldersNotesRepository.GetByFolderIdAndNoteIds(request.FolderId, request.NoteIds);
+
+            if (foldersNotesToDelete.Any())
+            {
+                folder.SetDateAndVersion();
+
+                await foldersNotesRepository.RemoveRangeAsync(foldersNotesToDelete);
+                await folderRepository.UpdateAsync(folder);
+
+                // WS UPDATES
+                var noteIdsToDelete = foldersNotesToDelete.Select(x => x.NoteId);
+                var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
+                updates.IdsToRemove.AddRange(noteIdsToDelete);
+                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.ConnectionId);
+            }
+
+            return new OperationResult<Unit>(true, Unit.Value);
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateNotesPositionsInFolderCommand request, CancellationToken cancellationToken)

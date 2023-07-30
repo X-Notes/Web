@@ -10,15 +10,12 @@ import { TypeAuthEnum } from '../models/type.auth.enum';
 export class AboutComponent implements OnInit, AfterViewInit {
   authType = TypeAuthEnum;
 
-  isLoaded = false;
-
   constructor(
     public authService: AuthService) { }
 
   ngAfterViewInit(): void {
     const ids = ['loginGoogle1', 'loginGoogle2'];
     this.authService.initGoogleLogin(ids, true, 'notes');
-    setTimeout(() => (this.isLoaded = true), 150);
   }
 
   ngOnInit(): void {}

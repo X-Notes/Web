@@ -42,7 +42,6 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
-import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
 import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
@@ -122,7 +121,6 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,
-    LockComponent,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
     ViewDocComponent,

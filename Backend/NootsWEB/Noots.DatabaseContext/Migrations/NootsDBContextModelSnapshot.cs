@@ -600,17 +600,11 @@ namespace Noots.DatabaseContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
-
                     b.Property<int>("RefTypeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("UnlockTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

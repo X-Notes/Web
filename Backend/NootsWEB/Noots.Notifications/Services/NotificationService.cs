@@ -50,7 +50,7 @@ public class NotificationService
         return notification;
     }
 
-    public async Task AddAndSendNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
+    public async Task AddAndSendNotificationsAsync(Guid userFromId, IEnumerable<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
         var notifications = await AddNotificationsAsync(userFromId, userToIds, key, metadata);
         var notificationIds = notifications.Select(x => x.Id);
@@ -68,7 +68,7 @@ public class NotificationService
         }
     }
 
-    public async Task<List<Notification>> AddNotificationsAsync(Guid userFromId, List<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
+    public async Task<List<Notification>> AddNotificationsAsync(Guid userFromId, IEnumerable<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
         var notifications = userToIds.Select(userId => new Notification()
         {

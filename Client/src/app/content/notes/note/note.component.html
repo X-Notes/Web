@@ -66,16 +66,6 @@
         <p>{{ (date ?? note.updatedAt) | dateFromNow }}<span>{{ size }}</span></p>
       </div>
       <div class="help-icons">
-        <div *ngIf="note?.isLockedNow" class="icon">
-          <mat-icon svgIcon="lock" [inline]="true"></mat-icon>
-        </div>
-        <div
-          *ngIf="note?.isLocked && !note?.isLockedNow"
-          class="icon"
-          [CustomTooltip]="'entity-bottom-tooltip.unlockTime' | translate: { time: unlockedTime }"
-        >
-          <mat-icon svgIcon="unlock" [inline]="true"></mat-icon>
-        </div>
         <div
           *ngIf="isShowWrightRead && note.isCanEdit && !isAuthor"
           class="icon"
@@ -104,11 +94,10 @@
         >
           <mat-icon svgIcon="people-many" [inline]="true"></mat-icon>
         </div>
-        <div
-          *ngFor="let item of noteFolders | slice: 0:2"
-          [CustomTooltip]="item.folderName"
-          class="icon"
-        >
+        <div *ngIf="hasRelatedNotes" class="icon" [CustomTooltip]="relatedNotesMessage">
+          <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+        </div>
+        <div *ngIf="hasFolderNotes" class="icon" [CustomTooltip]="foldersNotesMessage">
           <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
         </div>
       </div>

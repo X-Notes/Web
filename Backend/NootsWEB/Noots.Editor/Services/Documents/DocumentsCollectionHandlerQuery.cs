@@ -30,7 +30,7 @@ namespace Noots.Editor.Services.Documents
             {
                 var colectionFiles = await collectionAppFileRepository.GetAppFilesByContentIds(new List<Guid> { request.CollectionId });
                 var files = colectionFiles.Where(x => request.FileIds.Contains(x.AppFileId)).Select(x => x.AppFile);
-                return files.Select(x => mapper.MapToDocumentDTO(x, permissions.Author.Id)).ToList();
+                return files.Select(x => mapper.MapToDocumentDTO(x, permissions.AuthorId)).ToList();
             }
 
             return new List<DocumentNoteDTO>();

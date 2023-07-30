@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Noots.Encryption\Noots.Encryption.csproj" />
   </ItemGroup>
 
 </Project>

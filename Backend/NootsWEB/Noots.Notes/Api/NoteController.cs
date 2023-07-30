@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Noots.Editor.Commands.Text;
 using Noots.Editor.Entities;
 using Noots.Notes.Commands;
+using Noots.Notes.Commands.Copy;
 using Noots.Notes.Commands.Sync;
 using Noots.Notes.Entities;
 using Noots.Notes.Queries;
@@ -65,7 +66,7 @@ public class NoteController : ControllerBase
 
     [HttpPatch("copy")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<List<CopyNoteResult>>> CopyNote([FromBody] CopyNotesCommand command)
+    public async Task<OperationResult<Unit>> CopyNote([FromBody] CopyNotesCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

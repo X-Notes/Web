@@ -19,6 +19,10 @@ export class ResetNotes {
   static type = '[Notes] Reset notes';
 }
 
+export class ResetNotesState {
+  static type = '[Notes] Reset notes state';
+}
+
 export class LoadNotes {
   static type = '[Notes] Load notes';
 

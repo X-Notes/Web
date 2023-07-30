@@ -5,7 +5,7 @@ using Noots.Storage.Entities;
 
 namespace Noots.Storage.Commands
 {
-    public class CopyBlobFromContainerToContainerCommand : IRequest<AppFile>
+    public class CopyBlobFromContainerToContainerCommand : IRequest<(bool success, AppFile file)>
     {
         public StoragesEnum StorageFromId { set; get; }
         public Guid UserFromId { set; get; }

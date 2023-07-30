@@ -74,6 +74,8 @@ export class ContentEditorSyncService {
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public onStructureSync$: BehaviorSubject<EditorStructureResult>;
 
+  public onStateSync$: BehaviorSubject<boolean>;
+
   private isProcessChanges = false;
 
   options$: BehaviorSubject<EditorOptions>;
@@ -167,6 +169,7 @@ export class ContentEditorSyncService {
       }
       if (isStructureUpdate) {
         this.contentService.sortByOrder(true);
+        this.onStateSync$.next(true);
       }
     } catch (e) {
       console.error(e);
@@ -252,6 +255,9 @@ export class ContentEditorSyncService {
 
     this.onStructureSync$?.complete();
     this.onStructureSync$ = new BehaviorSubject<EditorStructureResult>(null);
+
+    this.onStateSync$?.complete();
+    this.onStateSync$ = new BehaviorSubject<boolean>(false);
   }
 
   private async processChanges() {

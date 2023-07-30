@@ -3,7 +3,6 @@ using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Queries;
-using Noots.Encryption.Impl;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 
@@ -12,18 +11,15 @@ namespace Noots.Editor.Services;
 public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
 {
     private readonly IMediator mediator;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly BaseNoteContentRepository baseNoteContentRepository;
     private readonly NoteFolderLabelMapper appCustomMapper;
 
     public GetNoteContentsQueryHandler(
         IMediator _mediator,
-        UserNoteEncryptService userNoteEncryptStorage,
         BaseNoteContentRepository baseNoteContentRepository,
         NoteFolderLabelMapper appCustomMapper)
     {
         mediator = _mediator;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.baseNoteContentRepository = baseNoteContentRepository;
         this.appCustomMapper = appCustomMapper;
     }
@@ -41,19 +37,11 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
             isCanRead = permissionsFolder.CanRead;
         }
 
-        if (permissions.Note.IsLocked)
-        {
-            var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-            if (!isUnlocked)
-            {
-                return new OperationResult<List<BaseNoteContentDTO>>(false, null).SetContentLocked();
-            }
-        }
 
         if (isCanRead)
         {
             var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
-            var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.Author.Id);
+            var result = appCustomMapper.MapContentsToContentsDTO(contents, permissions.AuthorId);
             return new OperationResult<List<BaseNoteContentDTO>>(true, result);
         }
 

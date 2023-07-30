@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.History", "Noots.Hist
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Mapper", "Noots.Mapper\Noots.Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Encryption", "Noots.Encryption\Noots.Encryption.csproj", "{718DD94C-9633-49D7-B740-DA3A41E3C43B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Permissions", "Noots.Permissions\Noots.Permissions.csproj", "{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Storage", "Noots.Storage\Noots.Storage.csproj", "{D58AEE45-071B-4DF5-B0EC-038881E77E25}"
@@ -89,10 +87,6 @@ Global
 		{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{718DD94C-9633-49D7-B740-DA3A41E3C43B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{718DD94C-9633-49D7-B740-DA3A41E3C43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{718DD94C-9633-49D7-B740-DA3A41E3C43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{718DD94C-9633-49D7-B740-DA3A41E3C43B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}.Release|Any CPU.ActiveCfg = Release|Any CPU

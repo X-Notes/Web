@@ -34,7 +34,7 @@ namespace Noots.Editor.Services
             if (permissions.CanWrite)
             {
                 // PERMISSION MEMORY
-                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Files.Sum(x => x.Length), permissions.Author.Id));
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Files.Sum(x => x.Length), permissions.AuthorId));
                 if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
                 {
                     return new OperationResult<List<AppFile>>().SetNoEnougnMemory();
@@ -47,22 +47,22 @@ namespace Noots.Editor.Services
                 {
                     case FileTypeEnum.Photo:
                         {
-                            dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes));
+                            dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.AuthorId, filebytes));
                             break;
                         }
                     case FileTypeEnum.Video:
                         {
-                            dbFiles = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebytes));
+                            dbFiles = await _mediator.Send(new SaveVideosToNoteCommand(permissions.AuthorId, filebytes));
                             break;
                         }
                     case FileTypeEnum.Document:
                         {
-                            dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebytes));
+                            dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.AuthorId, filebytes));
                             break;
                         }
                     case FileTypeEnum.Audio:
                         {
-                            dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes));
+                            dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.AuthorId, filebytes));
                             break;
                         }
                     default:
@@ -73,7 +73,7 @@ namespace Noots.Editor.Services
 
                 async Task removeFilesFromStorage()
                 {
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(dbFiles, permissions.Author.Id.ToString()));
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(dbFiles, permissions.AuthorId.ToString()));
                 }
 
                 if (cancellationToken.IsCancellationRequested)

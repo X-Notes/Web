@@ -3,9 +3,9 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Encryption.Impl;
 using Noots.MapperLocked;
 using Noots.Notes.Queries;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 
 namespace Noots.Notes.Handlers.Queries;
@@ -14,21 +14,18 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
 {
     private readonly IMediator mediator;
     private readonly NoteRepository noteRepository;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly MapperLockedEntities mapperLockedEntities;
 
     public GetFullNoteQueryHandler(
-        IMediator _mediator, 
+        IMediator _mediator,
         NoteRepository noteRepository,
-        UserNoteEncryptService userNoteEncryptStorage,
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+        UsersOnPrivateNotesService usersOnPrivateNotesService,
         MapperLockedEntities mapperLockedEntities)
     {
         mediator = _mediator;
         this.noteRepository = noteRepository;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.mapperLockedEntities = mapperLockedEntities;
     }
     
@@ -50,18 +47,10 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
         if (isCanRead)
         {
             var note = await noteRepository.GetNoteWithLabels(request.NoteId);
-            if (note.IsLocked)
-            {
-                var isUnlocked = userNoteEncryptStorage.IsUnlocked(note.UnlockTime);
-                if (!isUnlocked)
-                {
-                    return new OperationResult<FullNote>(false, null).SetContentLocked();
-                }
-            }
 
             if(!isFolderPermissions && permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
             {
-                await usersOnPrivateNotesRepository.AddAsync(new UserOnPrivateNotes { NoteId = note.Id, AccessTypeId = note.RefTypeId, UserId = permissions.Caller.Id });
+                await usersOnPrivateNotesService.AddPermissionAsync(note.Id, note.RefTypeId, permissions.Caller.Id);
             }
 
             if(!permissions.IsOwner)

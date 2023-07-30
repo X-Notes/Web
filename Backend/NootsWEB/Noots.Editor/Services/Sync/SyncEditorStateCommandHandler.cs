@@ -41,7 +41,7 @@ public class SyncEditorStateCommandHandler : IRequestHandler<SyncEditorStateComm
         }
 
         var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
-        var diffs = await GetDiffs(contents, request.SyncState, permissions.Note.Id, permissions.Author.Id);
+        var diffs = await GetDiffs(contents, request.SyncState, permissions.Note.Id, permissions.AuthorId);
 
         return new OperationResult<SyncStateResult>(true, diffs);
     }

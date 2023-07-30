@@ -29,10 +29,8 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             ContentTypeId = ContentTypeENUM.Text;
         }
 
-        public TextNote(TextNote text, Guid noteId)
+        public TextNote(TextNote text)
         {
-            NoteId = noteId;
-
             Order = text.Order;
 
             Contents = text.Contents;

@@ -4,6 +4,7 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notifications.Services;
+using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
 using Noots.SignalrUpdater.Impl;
@@ -15,18 +16,18 @@ public class RemoveUserFromPrivateNotesHandler : IRequestHandler<RemoveUserFromP
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
-    private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
 
     public RemoveUserFromPrivateNotesHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
         NotificationService notificationService,
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
+        UsersOnPrivateNotesService usersOnPrivateNotesService)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
-        this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.usersOnPrivateNotesService = usersOnPrivateNotesService;
     }
     
     public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
@@ -36,12 +37,9 @@ public class RemoveUserFromPrivateNotesHandler : IRequestHandler<RemoveUserFromP
 
         if (permissions.IsOwner)
         {
-            var access = await usersOnPrivateNotesRepository
-                .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.PermissionUserId);
-            if (access != null)
+            var isRevoked = await usersOnPrivateNotesService.RevokePermissionsNotes(request.PermissionUserId, new List<Guid> { request.NoteId });
+            if (isRevoked)
             {
-                await usersOnPrivateNotesRepository.RemoveAsync(access);
-
                 var updateCommand = new UpdatePermissionNoteWS();
                 updateCommand.RevokeIds.Add(request.NoteId);
                 await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);

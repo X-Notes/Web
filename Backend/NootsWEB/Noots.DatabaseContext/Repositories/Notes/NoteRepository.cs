@@ -1,7 +1,5 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.NoteContent;
+﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +22,6 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public Task<Note?> GetForCheckPermission(Guid id)
         {
             return context.Notes
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -32,7 +29,6 @@ namespace Noots.DatabaseContext.Repositories.Notes
         public Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
         {
             return context.Notes
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
@@ -130,29 +126,29 @@ namespace Noots.DatabaseContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
-                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+                .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, Guid noteId)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(Guid userId, Guid noteId)
         {
-           return entities.Where(x => x.UserId == userId && x.Id != noteId && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+           return entities.Where(x => x.UserId == userId && x.Id != noteId && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(Guid userId, List<Guid> exceptIds)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(Guid userId, List<Guid> exceptIds)
         {
-            return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+            return entities.Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
 
-        public Task<List<Guid>> GetNoteIdsNoLockedAndNoDeleted(List<Guid> noteIds)
+        public Task<List<Guid>> GetNoteIdsNoDeleted(List<Guid> noteIds)
         {
-            return entities.Where(x => noteIds.Contains(x.Id) && x.Password == null && x.NoteTypeId != NoteTypeENUM.Deleted)
+            return entities.Where(x => noteIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .Select(x => x.Id)
                 .ToListAsync();
         }
@@ -163,6 +159,16 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
                 .Include(x => x.Contents)
                     .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
+                .Include(x => x.Contents)
+                    .ThenInclude(q => (q as CollectionNote).Files)
+                .Where(x => noteIds.Contains(x.Id))
+                .AsSplitQuery()
+                .ToListAsync();
+        }
+
+        public Task<List<Note>> GetNotesIncludeCollectionNoteAppFiles(List<Guid> noteIds)
+        {
+            return entities  // TODO OPTIMIZATION
                 .Include(x => x.Contents)
                     .ThenInclude(q => (q as CollectionNote).Files)
                 .Where(x => noteIds.Contains(x.Id))

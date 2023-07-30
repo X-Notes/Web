@@ -5,11 +5,11 @@ namespace Noots.Permissions.Entities
 {
     public class UserPermissionsForNote
     {
-        public User Author
+        public Guid AuthorId
         {
             get
             {
-                return Note.User;
+                return Note.UserId;
             }
         }
 
@@ -30,6 +30,15 @@ namespace Noots.Permissions.Entities
             get
             {
                 return Caller?.Id == Note.UserId;
+            }
+
+        }
+
+        public bool SecondUsersHasAccess
+        {
+            get
+            {
+                return Note.UsersOnPrivateNotes.Any();
             }
 
         }
@@ -89,8 +98,14 @@ namespace Noots.Permissions.Entities
 
         public List<Guid> GetAllUsers()
         {
-            var userIds = Note.UsersOnPrivateNotes.Select(q => q.UserId).ToList();
-            userIds.Add(Author.Id);
+            var userIds = new List<Guid> { AuthorId };
+
+            if(Note.UsersOnPrivateNotes != null)
+            {
+                var userNoteIds = Note.UsersOnPrivateNotes.Select(q => q.UserId).ToList();
+                userIds.AddRange(userNoteIds);
+            }
+
             return userIds;
         }
     }

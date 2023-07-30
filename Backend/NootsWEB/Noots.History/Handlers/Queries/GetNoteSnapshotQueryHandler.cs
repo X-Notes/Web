@@ -3,7 +3,6 @@ using Common.DTO;
 using Common.DTO.Labels;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
-using Noots.Encryption.Impl;
 using Noots.History.Entities;
 using Noots.History.Queries;
 using Noots.Permissions.Queries;
@@ -13,16 +12,13 @@ namespace Noots.History.Handlers.Queries;
 public class GetNoteSnapshotQueryHandler : IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>
 {
     private readonly IMediator mediator;
-    private readonly UserNoteEncryptService userNoteEncryptStorage;
     private readonly NoteSnapshotRepository noteHistoryRepository;
 
     public GetNoteSnapshotQueryHandler(
         IMediator mediator, 
-        UserNoteEncryptService userNoteEncryptStorage,
         NoteSnapshotRepository noteHistoryRepository)
     {
         this.mediator = mediator;
-        this.userNoteEncryptStorage = userNoteEncryptStorage;
         this.noteHistoryRepository = noteHistoryRepository;
     }
     
@@ -30,15 +26,6 @@ public class GetNoteSnapshotQueryHandler : IRequestHandler<GetNoteSnapshotQuery,
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
-
-        if (permissions.Note.IsLocked)
-        {
-            var isUnlocked = userNoteEncryptStorage.IsUnlocked(permissions.Note.UnlockTime);
-            if (!isUnlocked)
-            {
-                return new OperationResult<NoteHistoryDTOAnswer>(false, null).SetContentLocked();
-            }
-        }
 
         if (permissions.CanRead)
         {

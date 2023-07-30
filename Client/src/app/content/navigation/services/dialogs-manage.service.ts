@@ -8,7 +8,6 @@ import { ChangeColorComponent } from 'src/app/shared/modal_components/change-col
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { GenericDeletionPopUpComponent } from 'src/app/shared/modal_components/generic-deletion-pop-up/generic-deletion-pop-up.component';
-import { LockComponent, LockPopupState } from 'src/app/shared/modal_components/lock/lock.component';
 import { AddNotesInFolderComponent } from 'src/app/shared/modal_components/manage-notes-in-folder/add-notes-in-folder.component';
 import { NoteHistoryPopUpComponent } from 'src/app/shared/modal_components/note-history-pop-up/note-history-pop-up.component';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
@@ -163,21 +162,6 @@ export class DialogsManageService {
       data: { message, additionalMessage },
     };
     const instance = this.dialogService.openDialog(GenericDeletionPopUpComponent, config);
-    instance.afterClosed().pipe(take(1)).subscribe(() => {
-      this.pS.isDialogActive$.next(false);
-    });
-    return instance;
-  }
-
-  openLockDialog(id: string, state: LockPopupState, callback: () => Promise<any>) {
-    this.pS.isDialogActive$.next(true);
-    const config: MatDialogConfig = {
-      maxHeight: '100%',
-      maxWidth: '90vw',
-      panelClass: this.getDefaultPanelClass(),
-      data: { id, state, callback },
-    };
-    const instance = this.dialogService.openDialog(LockComponent, config);
     instance.afterClosed().pipe(take(1)).subscribe(() => {
       this.pS.isDialogActive$.next(false);
     });
