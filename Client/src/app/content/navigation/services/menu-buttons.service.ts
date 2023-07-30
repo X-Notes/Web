@@ -1,23 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from './dialogs-manage.service';
 import { MenuButtonsNotesService } from './menu-buttons-notes.service';
 import { MenuButtonsFoldersService } from './menu-buttons-folders.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { Router } from '@angular/router';
 import { EntityPopupType } from 'src/app/shared/models/entity-popup-type.enum';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { MenuItem } from '../models/menu-Item.model';
 import { NoteStore } from '../../notes/state/notes-state';
-import { LockEncryptService } from '../../notes/lock-encrypt.service';
 import { FolderStore } from '../../folders/state/folders-state';
 import { SmallNote } from '../../notes/models/small-note.model';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
-import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { SmallFolder } from '../../folders/models/folder.model';
 import { CopyNoteText } from '../menu/actions/copy-note-text-action';
 
@@ -202,9 +199,6 @@ export class MenuButtonsService {
     private pService: PersonalizationService,
     private menuButtonsNotesService: MenuButtonsNotesService,
     private menuButtonsFoldersService: MenuButtonsFoldersService,
-    private lockEncryptService: LockEncryptService,
-    private router: Router,
-    private updaterEntitiesService: UpdaterEntitiesService,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
@@ -354,7 +348,7 @@ export class MenuButtonsService {
         this.menuButtonsNotesService.copyNotes();
         this.pService.innerNoteMenuActive = false;
       },
-      isVisible: of(true),
+      isVisible: this.store.select(NoteStore.selectedCount).pipe(startWith(0), map(x => x === 1)),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };
@@ -365,7 +359,7 @@ export class MenuButtonsService {
     return {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: of(true),
+      isVisible: this.store.select(FolderStore.selectedCount).pipe(startWith(0), map(x => x === 1)),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Common;
+using Common.DTO.Notes.Copy;
 using Common.DTO.Notifications;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
@@ -51,6 +52,11 @@ namespace Noots.SignalrUpdater.Impl
         public async Task SendNewNotification(Guid userId, NotificationDTO notification)
         {
             await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.newNotification, notification);
+        }
+
+        public async Task SendNewCopiedNoteResult(Guid userId, CopyNoteResult copyNoteResult)
+        {
+            await signalRContext.Clients.User(userId.ToString()).SendAsync(ClientMethods.copyNote, copyNoteResult);
         }
 
         public async Task UpdateNoteClients(UpdateNoteWS updates, IEnumerable<string> connectionIds)

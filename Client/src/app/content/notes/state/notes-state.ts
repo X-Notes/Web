@@ -174,6 +174,11 @@ export class NoteStore {
   }
 
   @Selector()
+  static getPrivateNotes(state: NoteState): SmallNote[] {
+    return this.getNotesByTypeStatic(state, NoteTypeENUM.Private)?.notes;
+  }
+
+  @Selector()
   static getSelectedNotes(state: NoteState): SmallNote[] {
     return state.notes
       .flatMap((x) => x.notes)
@@ -697,8 +702,8 @@ export class NoteStore {
 
   @Action(CopyNotes)
   async copyNotes(
-    { getState, dispatch }: StateContext<NoteState>,
-    { selectedIds, pr, folderId }: CopyNotes,
+    { dispatch }: StateContext<NoteState>,
+    { selectedIds, folderId }: CopyNotes,
   ) {
     const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
     const mini = this.longTermOperationsHandler.getNewMini(
@@ -710,20 +715,8 @@ export class NoteStore {
     );
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
-    if (resp.eventBody.success && getState().notes.length > 0) {
-      const newIds = resp.eventBody.data.map(x => x.newId);
-      const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
-      const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
-      dispatch(
-        new UpdateNotes(
-          new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]),
-          NoteTypeENUM.Private,
-        ),
-      );
-      const obj: AddNotesToDom = { type: NoteTypeENUM.Private, notes: [...newNotes] };
-      dispatch(new AddToDomNotes(obj));
-    }
     if (
+      resp.eventBody &&
       !resp.eventBody.success &&
       resp.eventBody.status === OperationResultAdditionalInfo.BillingError
     ) {
