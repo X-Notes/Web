@@ -61,7 +61,9 @@ export abstract class BaseEditorElementComponent implements AfterViewChecked {
   executeAfterViewActions(): void {
     if (this.actionsAfterViewInit?.length > 0) {
       for (const action of this.actionsAfterViewInit) {
-        action();
+        if(action) {
+          action();
+        }
       }
       this.detectChanges();
       this.actionsAfterViewInit = [];
