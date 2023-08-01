@@ -12,7 +12,6 @@ import {
   notification,
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
-import { ContactUsComponent } from '../../../../shared/modal_components/contact-us/contact-us.component';
 import { DialogsManageService } from '../../services/dialogs-manage.service';
 
 @Component({
@@ -85,18 +84,6 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     if (userTheme === ThemeENUM.Light) {
       this.store.dispatch(new ChangeTheme(ThemeENUM.Dark));
     }
-  }
-
-  contactUs() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass:
-        theme === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
-    };
-    this.dialog.open(ContactUsComponent, config);
   }
 
   openSearch(): void {

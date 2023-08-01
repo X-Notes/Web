@@ -53,9 +53,7 @@ import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
 import { DropDirective } from '../content/profile/drop/drop.directive';
-import { ContactUsComponent } from './modal_components/contact-us/contact-us.component';
 import { AutosizeDirective } from './directives/autosize.directive';
-import { ApiContactUsService } from './modal_components/contact-us/services/api-contact-us.service';
 import { FormatDateMomentPipe } from './pipes/format-date-moment.pipe';
 import { NotePreviewTextHeadingComponent } from '../content/notes/note/note-preview-text/note-preview-text-heading/note-preview-text-heading.component';
 import { NotePreviewTextListComponent } from '../content/notes/note/note-preview-text/note-preview-text-list/note-preview-text-list.component';
@@ -133,7 +131,6 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
     NavProfileItemComponent,
     ButtonCollectionComponent,
     DropDirective,
-    ContactUsComponent,
     AutosizeDirective,
     FormatDateMomentPipe,
     NotePreviewTextHeadingComponent,
@@ -250,6 +247,6 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
     HighlightSearchPipe,
     CustomSnackbarComponent
   ],
-  providers: [DialogService, BackgroundService, ApiContactUsService, SnackbarService, SnackBarWrapperService, SnackBarHandlerStatusService],
+  providers: [DialogService, BackgroundService, SnackbarService, SnackBarWrapperService, SnackBarHandlerStatusService],
 })
 export class SharedModule {}

@@ -27,9 +27,11 @@
         <mat-icon>quiz</mat-icon>
         <span> {{ 'header.questionItems.faq' | translate }} </span>
       </button>
-      <button (click)="contactUs()" mat-menu-item type="button" [name]="'header.questionItems.contact' | translate">
+      <button mat-menu-item type="button" [name]="'header.questionItems.contact' | translate">
         <mat-icon> contact_support </mat-icon>
-        <span> {{ 'header.questionItems.contact' | translate }} </span>
+        <a href="mailto:noots.tech.sp@gmail.com?subject = Feedback&body = Message">
+          {{ 'header.questionItems.contact' | translate }}
+        </a>
       </button>
     </mat-menu>
   </div>
