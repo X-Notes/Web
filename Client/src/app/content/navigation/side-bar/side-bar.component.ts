@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { sideBarId } from 'src/app/core/defaults/component-sizes';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 
@@ -12,13 +13,12 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
   styleUrls: ['./side-bar.component.scss'],
 })
 export class SideBarComponent implements OnInit, OnDestroy {
-  static sideBarId = 'sidebar-id';
 
   destroy = new Subject<void>();
 
   billing: BillingPlanId;
 
-  idNav = SideBarComponent.sideBarId;
+  idNav = sideBarId;
 
   constructor(private store: Store) {}
 

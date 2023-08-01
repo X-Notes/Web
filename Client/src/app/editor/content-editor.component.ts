@@ -162,20 +162,43 @@ export class ContentEditorComponent
     );
   }
 
-  get textEditMenuTop(): number {
+  get textEditMenuTop(): string {
     if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return (
+      if(this.pS.isMobile()) {
+        return 'auto';
+      }
+      const res = (
         this.facade.selectionService.getCursorTop -
         this.textEditMenu.nativeElement.offsetHeight -
-        this.mainSection.nativeElement.scrollTop
+        this.mainSection.nativeElement.scrollTop 
       );
+      return res + 'px';
     }
     if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
       const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
-      return resTop < 52 ? 52 : resTop; // to stick menu while select couple of elements and scroll down
+      return resTop < 52 ? '52px' : (resTop + 'px'); // to stick menu while select couple of elements and scroll down
     }
-    return 0;
+    return '0';
+  }
+
+  get textEditMenuBottom(): string {
+    if(!this.pS.isMobile()) {
+      return 'auto';
+    }
+    if(this.audioService.currentFile){
+      return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
+    }
+
+    return this.pS.navMenuHeight + 'px';
+  }
+
+  get transformMenuBottom(): string {
+    if(this.audioService.currentFile){
+      return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
+    }
+
+    return this.pS.navMenuHeight + 'px';
   }
 
   get textEditMenuLeft(): number {

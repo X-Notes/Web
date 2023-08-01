@@ -7,7 +7,7 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
-import { SideBarComponent } from 'src/app/content/navigation/side-bar/side-bar.component';
+import { audioControlsId, sideBarId } from 'src/app/core/defaults/component-sizes';
 
 export const timeSidenavAnimation = 200; // TODO move to constant file
 
@@ -204,9 +204,14 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
-  get navMenuHeight(): number | undefined {
-    const height = document.getElementById(SideBarComponent.sideBarId)?.offsetHeight;
-    return height;
+  get navMenuHeight(): number {
+    const height = document.getElementById(sideBarId)?.offsetHeight;
+    return height ?? 0;
+  }
+
+  get audioControlsHeight(): number {
+    const height = document.getElementById(audioControlsId)?.offsetHeight;
+    return height ?? 0;
   }
 
   subscribeWindowEvents() {

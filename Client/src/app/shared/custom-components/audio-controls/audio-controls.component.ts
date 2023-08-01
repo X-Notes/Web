@@ -8,6 +8,7 @@ import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from '../../enums/theme.enum';
 import { AudioModel } from 'src/app/editor/entities/contents/audios-collection';
+import { audioControlsId } from 'src/app/core/defaults/component-sizes';
 
 @Component({
   selector: 'app-audio-controls',
@@ -18,6 +19,8 @@ import { AudioModel } from 'src/app/editor/entities/contents/audios-collection';
 export class AudioControlsComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$?: Observable<ThemeENUM>;
+
+  idAudioControls = audioControlsId;
 
   isOpen = false;
 
