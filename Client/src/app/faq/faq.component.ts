@@ -3,7 +3,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { UserStore } from '../core/stateUser/user-state';
 import { ThemeENUM } from '../shared/enums/theme.enum';
-import { ContactUsComponent } from '../shared/modal_components/contact-us/contact-us.component';
 
 @Component({
   selector: 'app-faq',
@@ -39,18 +38,6 @@ export class FaqComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize();
-  }
-
-  contactUs() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass:
-        theme === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
-    };
-    this.dialog.open(ContactUsComponent, config);
   }
 
   match() {

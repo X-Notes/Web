@@ -5,6 +5,11 @@
 .mat-mdc-menu-panel {
   button {
     background: transparent;
+    a {
+      font-size: 0.875rem;
+      text-decoration: none;
+      color: black;
+    }
     span {
       font-size: 0.875rem;
     }
@@ -16,6 +21,9 @@
   button {
     color: white;
     span {
+      color: white;
+    }
+    a {
       color: white;
     }
     .mat-icon {
