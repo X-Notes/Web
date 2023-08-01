@@ -246,15 +246,15 @@
 </div>
 <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
 <app-mobile-transform-menu
-  [ngClass]="{'player-active-position-transform-menu': audioService.currentFile}"
   *ngIf="(isMobileMenuActive$ | async) === true"
+  [style.bottom]="transformMenuBottom"
   (transformTo)="transformToTypeText($event)"
   (transformToFile)="transformToFileType($event)"
 ></app-mobile-transform-menu>
 <app-text-edit-menu
   #textEditMenu
-  [ngClass]="{'player-active-position': audioService.currentFile}"
-  [style.top.px]="textEditMenuTop"
+  [style.top]="textEditMenuTop"
+  [style.bottom]="textEditMenuBottom"
   [style.left.px]="textEditMenuLeft"
   [style.visibility]="
     isTextMenuActive && (isMobileMenuActive$ | async) === false ? 'visible' : 'hidden'

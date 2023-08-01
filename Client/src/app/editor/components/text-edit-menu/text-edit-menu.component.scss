@@ -3,6 +3,7 @@
 :host {
   position: fixed;
   z-index: 100;
+ // height: 36px;
 }
 
 .root-menu-buttons-container {
@@ -130,7 +131,6 @@
 @media (max-width: 1024px) {
   :host {
     display: flex;
-    bottom: 80px; // mobile menu height
     left: 0 !important;
     top: initial !important;
     width: 100%;
@@ -158,7 +158,6 @@
 
 @media (max-width: 600px) {
   :host {
-    bottom: $bottom-mobile-menu;
     .menu-buttons-container {
       .button {
         padding: 0 5px;

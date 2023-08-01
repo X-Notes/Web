@@ -1,8 +1,7 @@
 @import 'variables';
 
 :host {
-  position: absolute;
-  bottom: 0;
+  position: fixed;
   z-index: $full-main-menu;
   width: 100%;
 }
