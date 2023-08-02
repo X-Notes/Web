@@ -61,7 +61,6 @@ import { ContentEditorDocumentsCollectionService } from './services/collections/
 import { ContentEditorPhotosCollectionService } from './services/collections/content-editor-photos.service';
 import { ContentEditorVideosCollectionService } from './services/collections/content-editor-videos.service';
 import { ContentEditorElementsListenerService } from './ui-services/content-editor-elements-listener.service';
-import { ContentEditorListenerService } from './ui-services/content-editor-listener.service';
 import { ContentEditorContentsService } from './ui-services/contents/content-editor-contents.service';
 import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
 
@@ -85,7 +84,7 @@ import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
     ContentEditorRestoreService,
     ContentEditorTextService,
     ClickableContentService,
-    ContentEditorListenerService,
+    ContentEditorElementsListenerService
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -126,7 +125,6 @@ export class ContentEditorComponent
 
   constructor(
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
-    private contentEditorListenerService: ContentEditorListenerService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
     public pS: PersonalizationService,
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
@@ -264,8 +262,7 @@ export class ContentEditorComponent
   }
 
   initKeyAndMouseHandlers(): void {
-    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery, this.options$);
-    this.contentEditorListenerService.setHandlers(this.elementsQuery, this.noteTitleEl, this.options$);
+    this.contentEditorElementsListenersService.setHandlers(this.elementsQuery, this.noteTitleEl, this.options$);
     this.selectionDirective.initSelectionDrawer(this.mainSection.nativeElement);
     this.facade.selectionService.onSelectChanges$
       .pipe(takeUntil(this.facade.dc.d$))
@@ -302,7 +299,6 @@ export class ContentEditorComponent
     this.muuriService.resetToDefaultOpacity();
     this.leaveNote();
     this.contentEditorElementsListenersService.destroysListeners();
-    this.contentEditorListenerService.destroysListeners();
     this.facade.store.dispatch(ClearCursorsAction);
     this.resetCursor();
   }
@@ -408,7 +404,7 @@ export class ContentEditorComponent
         this.facade.contentEditorSyncService.changeImmediately()
       });
 
-    this.contentEditorListenerService.onPressEnterSubject
+    this.contentEditorElementsListenersService.onPressEnterSubject$
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe((contentId: string) => {
         if (this.options$.getValue().isReadOnlyMode) {
