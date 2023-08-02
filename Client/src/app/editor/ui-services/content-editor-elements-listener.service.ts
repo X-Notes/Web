@@ -48,7 +48,6 @@ export class ContentEditorElementsListenerService {
         for (const el of elements.toArray()) {
           el.deleteDown();
         }
-        return false;
       }
       if(e.code === 'Enter'){
         e.preventDefault();
