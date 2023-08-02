@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SmallNote } from '../models/small-note.model';
-import dayjs from 'dayjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { BaseText } from 'src/app/editor/entities/contents/base-text';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
@@ -12,6 +11,7 @@ import { SelectNoteEvent } from './entities/select-note.event';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-note',
@@ -19,10 +19,10 @@ import { Observable } from 'rxjs';
   styleUrls: ['./note.component.scss'],
 })
 export class NoteComponent implements OnInit {
-  
+
   @Select(UserStore.getUserFontSize)
   public fontSize$?: Observable<EntitiesSizeENUM>;
-  
+
   @Input() note?: SmallNote;
 
   @Input() date?: string;
@@ -51,7 +51,9 @@ export class NoteComponent implements OnInit {
 
   contents?: ContentModelBase[];
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(
+    public pService: PersonalizationService,
+    private translate: TranslateService) { }
 
   get hasRelatedNotes(): boolean {
     return this.note?.additionalInfo?.noteRelatedNotes?.length > 0;
@@ -62,11 +64,11 @@ export class NoteComponent implements OnInit {
   }
 
   get relatedNotesMessage(): string {
-    return this.note?.additionalInfo?.noteRelatedNotes?.map(x =>  `<p>${x.name}</p>`).reduce((p, c) => p + c);
+    return this.note?.additionalInfo?.noteRelatedNotes?.map(x => `<p>${x.name || this.translate.instant('placeholder.unnamedNote')}</p>`).reduce((p, c) => p + c) ?? '';
   }
 
   get foldersNotesMessage(): string {
-    return this.note?.additionalInfo?.noteFolderInfos?.map(x =>  `<p>${x.folderName}</p>`).reduce((p, c) => p + c);
+    return this.note?.additionalInfo?.noteFolderInfos?.map(x => `<p>${x.folderName || this.translate.instant('placeholder.unnamedFolder')}</p>`).reduce((p, c) => p + c) ?? '';
   }
 
   get isAuthor(): boolean {

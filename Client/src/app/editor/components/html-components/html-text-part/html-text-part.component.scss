@@ -74,12 +74,12 @@
     color: #6b6b6b;
 
     .buttons {
-      background-color: #eaeaea;
+      border: 1px solid #cdcdcd;
       .icon {
         color: #404040;
 
         &:hover {
-          background-color: #dddddd;
+          background-color: #f2f2f2;
           color: $text-color;
         }
       }

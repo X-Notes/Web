@@ -10,7 +10,7 @@ nav {
   flex-direction: column;
   height: 100%;
   width: 80px;
-  border-right: 1px solid #e7e7e7;
+  border-right: 1px solid $light-separator;
   transition: 0.2s ease;
 
   .module {
@@ -61,7 +61,7 @@ nav {
 }
 
 .light {
-  background-color: $light-color;
+  background-color: white;
 
   .module {
     &:hover:not(.active) {
@@ -87,7 +87,8 @@ nav {
   }
 
   .billing-field {
-    background-color: $light-billing-field;
+    background-color: white;
+    border-top: 1px solid $light-separator;
     .billing {
       background-color: $light-text-color;
       color: #f6f6f6;

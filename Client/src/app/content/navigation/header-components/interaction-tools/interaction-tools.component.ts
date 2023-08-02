@@ -48,7 +48,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
         originY: 'bottom',
       },
       { overlayX: 'end', overlayY: 'top' },
-      59,
+      10,
       10,
     ),
   ];

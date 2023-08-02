@@ -64,17 +64,18 @@
 
 .light {
   .sub-nav-section {
-    background-color:#FAFAFA;
+    background-color: white;
 
     .information {
-      background-color: $light-billing-field;
-
+      background-color: white;
+      border-top: 1px solid $light-separator;
       .text {
         color: $light-text-color;
       }
     }
   }
 }
+
 
 @media (max-width: 1024px) {
   .sub-nav {

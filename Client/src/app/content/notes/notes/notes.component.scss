@@ -22,10 +22,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 20px;
-    max-height: 0;
+    height: 24px;
     width: calc(100% - 3rem);
     margin: 0 1.5rem;
+    margin-top: 0.625rem;
+    margin-bottom: 0.625rem;
     border-radius: 2px;
     background-color: white;
     color: black;
@@ -69,7 +70,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        height: 20px;
+        height: 24px;
         width: 100%;
         padding: 0 0.5rem;
         border-radius: 2px;
@@ -97,11 +98,6 @@
 }
 
 .active-select {
-  .label-cancel {
-    max-height: 20px;
-    margin-top: 0.625rem;
-    margin-bottom: 0.625rem;
-  }
 
   .label-container {
     height: calc(100% - 40px);
@@ -113,11 +109,9 @@
 }
 
 .light {
-  .label-section {
-    .label-cancel {
-      background-color: $light-cancel-label;
-      color: $light-text-color;
-    }
+  .label-cancel {
+    color: $light-text-color;
+    border: 1px solid #d8d8d8;
   }
 }
 

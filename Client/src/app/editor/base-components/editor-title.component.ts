@@ -77,7 +77,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
       .subscribe((updates) => this.updateTitle(updates.title));
   }
 
-  isContentEmpty() {
+  isTitleEmpty() {
     return this.noteTitleEl?.nativeElement?.textContent.length === 0;
   }
 
@@ -214,7 +214,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
       start: cursor.startCursor,
       end: cursor.endCursor,
     };
-    if (this.isContentEmpty()) {
+    if (this.isTitleEmpty()) {
       return new TextCursorUI(this.cursorShift.left, this.cursorShift.top, cursor.color);
     }
     const range = this.facade.apiBrowser.restoreSelection(el, selection, false);

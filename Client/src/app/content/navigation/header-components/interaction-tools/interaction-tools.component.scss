@@ -32,13 +32,13 @@
 .light {
   .auxiliary-icon {
     .icon {
-      color: #c5c5c5;
+      color: #868686;
     }
     &:hover {
       background-color: $light-nav-backlight;
 
       .icon {
-        color: $light-managment-hover;
+        color: rgb(76, 76, 76);
       }
     }
   }
