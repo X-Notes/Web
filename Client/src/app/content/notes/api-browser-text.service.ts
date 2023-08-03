@@ -126,6 +126,10 @@ export class ApiBrowserTextService {
     return window.getSelection();
   };
 
+  isSelectionEmpty = () => {
+    return this.getSelection().toString() === '';
+  }
+
   getInputSelection(el: HTMLInputElement): number {
     return el.selectionStart;
   }
