@@ -27,7 +27,6 @@ import { TextEditMenuComponent } from "./components/text-edit-menu/text-edit-men
 import { ChangeSizeAlbumHeightDirective } from "./directives/change-size-album-height.directive";
 import { CopyDirective } from "./directives/copy.directive";
 import { LazyForDirective } from "./directives/lazy-for.directive";
-import { MenuSelectionDirective } from "./directives/menu-selection.directive";
 import { SelectionDirective } from "./directives/selection.directive";
 
 @NgModule({
@@ -41,7 +40,6 @@ import { SelectionDirective } from "./directives/selection.directive";
       HtmlHeadingsComponent,
       HtmlCheckListComponent,
       HtmlLinkComponent,
-      MenuSelectionDirective,
       SelectionDirective,
       CopyDirective,
       ChangeSizeAlbumHeightDirective,
