@@ -11,6 +11,7 @@ import { updateCursorDelay } from 'src/app/core/defaults/bounceDelay';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ContentModelBase } from '../entities/contents/content-model-base';
+import { SelectionService } from './selection.service';
 
 @Injectable()
 export class ClickableContentService {
@@ -38,7 +39,7 @@ export class ClickableContentService {
 
   cursorUpdatingActive = true;
 
-  constructor(public dc: DestroyComponentService, private apiBrowser: ApiBrowserTextService) {
+  constructor(public dc: DestroyComponentService, private selectionService: SelectionService) {
     this.cursorChanged$
       .pipe(takeUntil(dc.d$), filter(() => this.cursorUpdatingActive), debounceTime(updateCursorDelay))
       .subscribe((action) => {
@@ -83,7 +84,7 @@ export class ClickableContentService {
     keepRanges = false
   ) {
     if (type !== ClickableSelectableEntities.Text && !keepRanges) {
-      this.apiBrowser.removeAllRanges();
+      this.selectionService.resetSelectionAndItems();
     }
     // PREV
     this.prevContent = this.currentContent;

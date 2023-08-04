@@ -38,10 +38,6 @@ export abstract class BaseEditorElementComponent implements AfterViewChecked {
     return this.facade.selectionService.getSelectionDivActive$;
   }
 
-  get selectionDivActiveMultiplyRows$(): Observable<boolean> {
-    return this.facade.selectionService.getSelectionDivActiveMultiplyRows$;
-  }
-
   get isResizingPhoto$(): Observable<boolean> {
     return this.facade.selectionService.isResizingPhoto$;
   }

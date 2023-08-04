@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -33,7 +33,7 @@ import { DestroyComponentService } from '../shared/services/destroy-component.se
 import { EditorCollectionsComponent } from './base-components/editor-collections.component';
 import { HtmlComponentsFacadeService } from './components/html-components.facade.service';
 import { TextEditMenuOptions } from './components/text-edit-menu/models/text-edit-menu-options';
-import { TextEditMenuEnum } from './components/text-edit-menu/models/text-edit-menu.enum';
+import { EditorSelectionEnum } from './entities-ui/editor-selection.enum';
 import { SaveSelection } from './entities-ui/save-selection';
 import { ChangePositionAction } from './entities-ui/undo/change-position-action';
 import { RestoreTextAction } from './entities-ui/undo/restore-text-action';
@@ -49,7 +49,6 @@ import { ContentEditorRestoreService } from './ui-services/contents/content-edit
 import { ContentEditorTextService } from './ui-services/contents/content-editor-text.service';
 import { HtmlPropertyTagCollectorService } from './ui-services/html-property-tag-collector.service';
 import { ComponentType, ParentInteraction, ParentInteractionHTML } from './components/parent-interaction.interface';
-import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { SelectionDirective } from './directives/selection.directive';
 import { EnterEvent } from './entities-ui/enter-event.model';
 import { TransformContent } from './entities-ui/transform-content.model';
@@ -63,6 +62,8 @@ import { ContentEditorVideosCollectionService } from './services/collections/con
 import { ContentEditorElementsListenerService } from './ui-services/content-editor-elements-listener.service';
 import { ContentEditorContentsService } from './ui-services/contents/content-editor-contents.service';
 import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
+import { DrawerCoordsConfig } from './entities-ui/selection/drawer-coords';
+import { EditorSelectionModeEnum } from './entities-ui/editor-selection-mode.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -93,10 +94,11 @@ export class ContentEditorComponent
   implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild(SelectionDirective) selectionDirective?: SelectionDirective;
 
-  @ViewChild(MenuSelectionDirective) menuSelectionDirective?: MenuSelectionDirective;
-
   @ViewChild('textEditMenu', { read: ElementRef, static: false })
   textEditMenu?: ElementRef<HTMLElement>;
+
+  @ViewChild('selectionDrawer', { read: ElementRef, static: false })
+  selectionDrawer?: ElementRef<HTMLElement>;
 
   @ViewChild('mainSection', { read: ElementRef }) mainSection?: ElementRef<HTMLElement>;
 
@@ -117,11 +119,19 @@ export class ContentEditorComponent
 
   textType = NoteTextTypeENUM;
 
-  options?: TextEditMenuOptions;
+  menuOptions?: TextEditMenuOptions;
 
   emptyFocus = false;
 
   ngForSubject = new Subject<void>(); // for lazy loading
+
+  // selection
+
+  isDrawerVisible$ = new BehaviorSubject<boolean>(false);
+
+  coords: DrawerCoordsConfig;
+
+  selectionTextItemId: string;
 
   constructor(
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
@@ -135,23 +145,38 @@ export class ContentEditorComponent
     super(editorApiFacadeService);
   }
 
-  get isSelectModeActive(): boolean {
-    const isAnySelect = this.facade.selectionService.isAnySelect();
-    const divActive = this.selectionDirective?.isDivActive;
-    return isAnySelect || divActive;
-  }
-
-
-  get selectedMenuType(): TextEditMenuEnum {
+  get selectedMenuType(): EditorSelectionEnum {
     return this.facade.selectionService.selectedMenuType;
   }
 
+  get isDefaultSelection(): boolean {
+    if (this.selectedMenuType === EditorSelectionEnum.None && this.selectionTextItemId) {
+      return true;
+    }
+    if (this.selectedMenuType === EditorSelectionEnum.One && this.selectionTextItemId === this.facade.selectionService.getFirstItem()) {
+      return true;
+    }
+    return false;
+  }
+
+  get selectionMode(): EditorSelectionModeEnum {
+    if (this.isDefaultSelection && this.facade.apiBrowser.isSelectionEmpty()) {
+      return EditorSelectionModeEnum.DefaultSelectionEmpty;
+    }
+    if (this.isDefaultSelection && !this.facade.apiBrowser.isSelectionEmpty()) {
+      return EditorSelectionModeEnum.DefaultSelection;
+    }
+    if (this.selectedMenuType === EditorSelectionEnum.One) {
+      return EditorSelectionModeEnum.EntireRow;
+    }
+    if (this.selectedMenuType === EditorSelectionEnum.MultiplyRows) {
+      return EditorSelectionModeEnum.MultiplyRows;
+    }
+    return EditorSelectionModeEnum.None;
+  }
+
   get isTextMenuActive(): boolean {
-    return (
-      this.selectedMenuType !== null &&
-      !!this.options &&
-      this.options.ids?.length > 0
-    );
+    return this.menuOptions && this.menuOptions.ids.length > 0 && this.getHTMLElementsById(this.menuOptions.ids).some(x => x.getText()?.length > 0);
   }
 
   get isMobileMenuActive$(): Observable<boolean> {
@@ -161,30 +186,44 @@ export class ContentEditorComponent
   }
 
   get textEditMenuTop(): string {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      if(this.pS.isMobile()) {
-        return 'auto';
-      }
+
+    if (this.pS.isMobile()) {
+      return 'auto';
+    }
+
+    if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
+      const selection = this.facade.apiBrowser.getSelection();
+      const range = selection.getRangeAt(0);
+      const coords = range.getBoundingClientRect();
+      const getCursorTop = coords.top + this.mainSection.nativeElement?.scrollTop - 5;
+
       const res = (
-        this.facade.selectionService.getCursorTop -
+        getCursorTop -
         this.textEditMenu.nativeElement.offsetHeight -
-        this.mainSection.nativeElement.scrollTop 
+        this.mainSection.nativeElement.scrollTop
       );
+
       return res + 'px';
     }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+
+    if (this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
       const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
       return resTop < 52 ? '52px' : (resTop + 'px'); // to stick menu while select couple of elements and scroll down
     }
+
     return '0';
   }
 
+  get isDrawing(): boolean {
+    return this.isDrawerVisible$.getValue() && this.selectionDirective.isSelectionActive;
+  }
+
   get textEditMenuBottom(): string {
-    if(!this.pS.isMobile()) {
+    if (!this.pS.isMobile()) {
       return 'auto';
     }
-    if(this.audioService.currentFile){
+    if (this.audioService.currentFile) {
       return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
     }
 
@@ -192,7 +231,7 @@ export class ContentEditorComponent
   }
 
   get transformMenuBottom(): string {
-    if(this.audioService.currentFile){
+    if (this.audioService.currentFile) {
       return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
     }
 
@@ -200,12 +239,21 @@ export class ContentEditorComponent
   }
 
   get textEditMenuLeft(): number {
-    if (this.selectedMenuType === TextEditMenuEnum.OneRow) {
-      return this.facade.selectionService.getCursorLeft;
+    if (this.pS.isMobile()) {
+      return 0;
     }
-    if (this.selectedMenuType === TextEditMenuEnum.MultiplyRows) {
+
+    if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
+      const selection = this.facade.apiBrowser.getSelection();
+      const range = selection.getRangeAt(0);
+      const coords = range.getBoundingClientRect();
+      return (coords.left + coords.right) / 2;
+    }
+
+    if (this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows) {
       return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
     }
+
     return 0;
   }
 
@@ -218,7 +266,8 @@ export class ContentEditorComponent
   }
 
   get selectedElementsRects(): DOMRect[] {
-    return this.getSelectedElements()?.map((x) =>
+    if(!this.menuOptions?.ids || this.menuOptions.ids.length === 0) return [];
+    return this.getHTMLElementsById(this.menuOptions.ids).filter(x => x.getText()?.length > 0)?.map((x) =>
       x.getHost().nativeElement.getBoundingClientRect(),
     );
   }
@@ -270,28 +319,47 @@ export class ContentEditorComponent
         if (this.options$.getValue().isReadOnlyMode) {
           return;
         }
-        this.options = this.buildMenuOptions();
+        if (this.selectionMode === EditorSelectionModeEnum.MultiplyRows || this.isDrawing) {
+          this.facade.apiBrowser.removeAllRanges();
+        }
+        this.menuOptions = this.buildMenuOptions();
         this.facade.cdr.detectChanges();
       });
   }
 
   buildMenuOptions(): TextEditMenuOptions {
-    const htmlElements = this.getSelectedHTMLElements();
-    const obj: TextEditMenuOptions = {
-      isBold: this.htmlPTCollectorService.getIsBold(this.selectedMenuType, htmlElements),
-      isItalic: this.htmlPTCollectorService.getIsItalic(this.selectedMenuType, htmlElements),
-      ids: this.facade.selectionService.getAllSelectedItems(),
-      textType: this.selectedTextElement?.noteTextTypeId,
-      headingType: this.selectedTextElement?.headingTypeId,
-      isOneRowType: this.selectedMenuType === TextEditMenuEnum.OneRow,
-      backgroundColor: this.htmlPTCollectorService.getProperty(
-        'backgroundColor',
-        this.selectedMenuType,
-        htmlElements,
-      ),
-      color: this.htmlPTCollectorService.getProperty('color', this.selectedMenuType, htmlElements),
-    };
-    return obj;
+    if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
+      const item = this.getHTMLElementById(this.selectionTextItemId).getContent();
+      const obj: TextEditMenuOptions = {
+        isBold: this.htmlPTCollectorService.getIsBoldSelection(),
+        isItalic: this.htmlPTCollectorService.getIsItalicSelection(),
+        textType: item?.noteTextTypeId,
+        headingType: item?.headingTypeId,
+        isOneRowType: true,
+        backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
+        color: this.htmlPTCollectorService.getPropertySelection('color'),
+        ids: [this.selectionTextItemId]
+      };
+      return obj;
+    }
+    if (this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows) {
+      const htmlElements = this.getSelectedHTMLElements().filter(x => x.getText()?.length > 0);
+      if (htmlElements.length <= 0) {
+        return null;
+      }
+      const obj: TextEditMenuOptions = {
+        isBold: this.htmlPTCollectorService.getIsBold(htmlElements),
+        isItalic: this.htmlPTCollectorService.getIsItalic(htmlElements),
+        textType: this.selectedTextElement?.noteTextTypeId,
+        headingType: this.selectedTextElement?.headingTypeId,
+        isOneRowType: htmlElements.length === 1,
+        backgroundColor: this.htmlPTCollectorService.getProperty('backgroundColor', htmlElements),
+        color: this.htmlPTCollectorService.getProperty('color', htmlElements),
+        ids: htmlElements.map(x => x.getContentId())
+      };
+      return obj;
+    }
+    return null;
   }
 
   ngOnDestroy(): void {
@@ -336,14 +404,14 @@ export class ContentEditorComponent
 
     this.facade.contentEditorSyncService.onStateSync$.pipe(takeUntil(this.facade.dc.d$))
       .subscribe((flag) => {
-        if(flag) {
+        if (flag) {
           this.facade.cdr.detectChanges();
         }
       });
 
     this.facade.contentUpdateWsService.changes$.pipe(takeUntil(this.facade.dc.d$)).subscribe(() => {
       this.facade.cdr.detectChanges();
-      this.menuSelectionDirective.onSelectionchange();
+      this.handleSelection();
     });
 
     this.loadUsers();
@@ -418,6 +486,38 @@ export class ContentEditorComponent
           });
         }
       });
+
+    this.contentEditorElementsListenersService.onSelectionChangeSubject$
+      .pipe(takeUntil(this.facade.dc.d$))
+      .subscribe(x => {
+        if (x) {
+          this.handleSelection();
+        }
+      })
+  }
+
+  handleSelection(): void {
+    const selection = this.facade.apiBrowser.getSelection();
+    const currentItem = this.getCurrentItem(selection);
+    if (currentItem) {
+      this.selectionTextItemId = currentItem;
+      this.facade.selectionService.onSetChanges();
+      return;
+    }
+
+    this.selectionTextItemId = null;
+    this.facade.selectionService.onSetChanges();
+  }
+
+  getCurrentItem(selection: Selection): string {
+    let el = (selection.focusNode as Element);
+    while (el) {
+      if (el.getAttribute && el.getAttribute('content_id')) {
+        return el.getAttribute('content_id');
+      }
+      el = el.parentElement;
+    }
+    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -425,27 +525,33 @@ export class ContentEditorComponent
     this.facade.clickableContentService.prevItem?.detectChanges();
   }
 
-  selectionHandler(secondRect: DOMRect) {
-    this.facade.selectionService.selectionHandler(
-      secondRect,
-      this.elementsQuery,
-      this.selectionDirective.isDivTransparent,
-    );
+  selectionHandler(coords: DrawerCoordsConfig): void {
+    this.coords = coords;
+    const test = this.selectionDrawer.nativeElement.getBoundingClientRect();
+    this.facade.selectionService.selectionHandler(test.x, test.y, test.width, test.height, this.elementsQuery);
   }
 
-  selectionStartHandler($event: DOMRect): void {
-    const isSelectionInZone = this.facade.selectionService.isSelectionInZone(
-      $event,
-      this.elementsQuery,
-      this.noteTitleEl,
-    );
-    this.selectionDirective.setIsShowDiv(!isSelectionInZone);
+  selectionStartHandler(coords: DrawerCoordsConfig): void {
+    this.coords = coords;
+    const el = this.facade.selectionService.isSelectionInZone(coords.x, coords.y, coords.width, coords.height, this.elementsQuery);
+    if(el && el.type === ComponentType.HTML && (el as ParentInteractionHTML).getText()?.length > 0) {
+      this.isDrawerVisible$.next(false);
+      return;
+    }
+    this.isDrawerVisible$.next(true);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  selectionEndHandler($event: DOMRect): void {
-    if (!this.isSelectModeActive) return;
-    this.facade.apiBrowser.removeAllRanges();
+  selectionEndHandler(coords: DrawerCoordsConfig): void {
+    this.coords = coords;
+  }
+
+  getIsSelected(itemId: string): boolean {
+    const types = [EditorSelectionModeEnum.DefaultSelectionEmpty, EditorSelectionModeEnum.DefaultSelection, EditorSelectionModeEnum.None];
+    if (types.some(x => this.selectionMode === x)) {
+      return false;
+    }
+    return this.facade.selectionService.isSelected(itemId);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -548,7 +654,8 @@ export class ContentEditorComponent
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
-    const selectMenuType = this.selectedMenuType;
+    console.log('updates: ', updates);
+    const selectionMode = this.selectionMode;
     const elements = this.getHTMLElementsById(updates.ids);
     for (const el of elements) {
       if (!el) {
@@ -558,7 +665,8 @@ export class ContentEditorComponent
       const blocks = el.getTextBlocks();
       const html = DeltaConverter.convertTextBlocksToHTML(blocks);
       if (!html) continue;
-      const pos = this.getIndexAndLengthForUpdateStyle(el.getEditableNative(), selectMenuType);
+      const pos = this.getIndexAndLengthForUpdateStyle(selectionMode, el.getEditableNative());
+      console.log('pos: ', pos);
       let resultDelta: DeltaStatic;
       if (updates.isRemoveStyles) {
         resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);
@@ -589,7 +697,9 @@ export class ContentEditorComponent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent): void {
     this.postAction();
-    this.menuSelectionDirective.onSelectionchange(true);
+    if (this.facade.apiBrowser.isSelectionEmpty()) {
+      this.facade.selectionService.resetSelectedItems();
+    }
   }
 
   unSelectItems(): void {
@@ -607,18 +717,12 @@ export class ContentEditorComponent
     this.facade.store.dispatch(new UpdateCursorAction(this.options$.getValue().noteId, cursor));
   }
 
-  getIndexAndLengthForUpdateStyle(
-    el: HTMLElement | Element,
-    menuType: TextEditMenuEnum,
-  ): { index: number; length: number; selection: SaveSelection } {
-    if (menuType === TextEditMenuEnum.OneRow) {
+  getIndexAndLengthForUpdateStyle(editorSelectionModeEnum: EditorSelectionModeEnum, el: HTMLElement | Element): { index: number; length: number; selection: SaveSelection } {
+    if (editorSelectionModeEnum === EditorSelectionModeEnum.DefaultSelection) {
       const selection = this.facade.apiBrowser.getSelectionInfo(el);
       return { index: selection.start, length: selection.end - selection.start, selection };
     }
-    if (menuType === TextEditMenuEnum.MultiplyRows) {
-      return { index: 0, length: el.innerHTML.length, selection: null };
-    }
-    return null;
+    return { index: 0, length: el.innerHTML.length, selection: null };
   }
 
   changeDetectionChecker = () => {
@@ -645,11 +749,12 @@ export class ContentEditorComponent
     this.isDragging = false;
   };
 
-  placeHolderClick($event) {
+  placeHolderClick($event: MouseEvent) {
     if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
-    $event.preventDefault();
+    // $event.stopPropagation();
+    //$event.preventDefault();
     this.postAction();
     requestAnimationFrame(() => {
       this.last?.setFocus();

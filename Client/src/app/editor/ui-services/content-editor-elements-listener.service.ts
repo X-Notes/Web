@@ -7,6 +7,8 @@ import { EditorOptions } from '../entities-ui/editor-options';
 import { FocusDirection } from '../entities-ui/set-focus';
 import { ClickableContentService } from './clickable-content.service';
 import { ClickableSelectableEntities } from '../entities-ui/clickable-selectable-entities.enum';
+import { Store } from '@ngxs/store';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Injectable()
 export class ContentEditorElementsListenerService {
@@ -24,6 +26,8 @@ export class ContentEditorElementsListenerService {
 
   onPressEnterSubject$ = new Subject();
 
+  onSelectionChangeSubject$ = new Subject<Event>();
+
   private ctrlAExceptValuesIds = ['title-element', 'search-element'];
 
   private ctrlAExceptValuesClasses = ['default-text-id', 'collection-title-text-id'];
@@ -33,7 +37,8 @@ export class ContentEditorElementsListenerService {
   constructor(
     rendererFactory: RendererFactory2,
     private pS: PersonalizationService,
-    private clickableService: ClickableContentService) {
+    private clickableService: ClickableContentService,
+    private store: Store) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -43,13 +48,13 @@ export class ContentEditorElementsListenerService {
       if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
         return true;
       }
-      if(e.code === 'Backspace' || e.code === 'Delete'){
+      if (e.code === 'Backspace' || e.code === 'Delete') {
         this.onPressDeleteOrBackSpaceSubject.next();
         for (const el of elements.toArray()) {
           el.deleteDown();
         }
       }
-      if(e.code === 'Enter'){
+      if (e.code === 'Enter') {
         e.preventDefault();
         if (this.clickableService?.type !== ClickableSelectableEntities.Text) {
           this.onPressEnterSubject$.next(this.clickableService.currentContent.id);
@@ -103,7 +108,14 @@ export class ContentEditorElementsListenerService {
       return true;
     });
 
-    this.listeners.push(keydown);
+    const selectionListener = this.renderer.listen(document, 'selectionchange', (e: Event) => {
+      if (options$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
+        return true;
+      }
+      this.onSelectionChangeSubject$.next(e);
+    });
+
+    this.listeners.push(keydown, selectionListener);
   }
 
   moveUp(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): void {

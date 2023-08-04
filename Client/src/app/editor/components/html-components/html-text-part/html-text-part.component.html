@@ -2,16 +2,18 @@
   appTheme
   class="main-container"
   (mouseover)="mouseEnter($event)"
+  (mousedown)="mouseDown($event)"
   (mouseleave)="mouseLeave($event)"
-  (click)="setFocus($event)"
+  (click)="setFocusText($event)"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
     ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && (isResizingPhoto$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
+    ondragstart="return false;" ondrop="return false;"
     class="main-item"
     [ngStyle]="{
-      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
     }"
   >
     <p
@@ -19,7 +21,8 @@
       class="block-generic default-text-size default-text-id text-part"
       (input)="onInput()"
       (click)="textClick($event)"
-      [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false && (isResizingPhoto$ | async) === false"
+      [attr.contenteditable]="!isReadOnlyMode && (isResizingPhoto$ | async) === false"
+      [attr.content_id]="content.id"
       [innerHTML]="viewHtml"
       [ngClass]="{
         'nope-select' : (isResizingPhoto$ | async) === true

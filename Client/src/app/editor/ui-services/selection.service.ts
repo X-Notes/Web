@@ -1,11 +1,10 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { map } from 'rxjs/operators';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ParentInteraction } from '../components/parent-interaction.interface';
-import { TextEditMenuEnum } from '../components/text-edit-menu/models/text-edit-menu.enum';
+import { EditorSelectionEnum } from '../entities-ui/editor-selection.enum';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 
 @Injectable()
@@ -22,32 +21,21 @@ export class SelectionService {
     map(([disableDiv, selectionDivActive]) => !disableDiv && selectionDivActive),
   );
 
-  getSelectionDivActiveMultiplyRows$ = combineLatest([this.getSelectionDivActive$]).pipe(
-    map(() => this.selectedMenuType === TextEditMenuEnum.MultiplyRows),
-  );
-
-  private selectionTop = 0;
-
-  private selectionLeft = 0;
-
-  private selectedItemId: string;
-
   private selectedItemsSet = new Set<string>();
 
   constructor(
-    private pS: PersonalizationService,
     private apiBrowserService: ApiBrowserTextService,
     private router: Router,
   ) {}
 
-  get selectedMenuType(): TextEditMenuEnum {
-    if (this.selectedItemId && this.selectedItemsSet.size === 0) {
-      return TextEditMenuEnum.OneRow;
+  get selectedMenuType(): EditorSelectionEnum {
+    if (this.selectedItemsSet.size <= 0) {
+      return EditorSelectionEnum.None;
     }
-    if (this.selectedItemsSet.size !== 0) {
-      return TextEditMenuEnum.MultiplyRows;
+    if (this.selectedItemsSet.size === 1) {
+      return EditorSelectionEnum.One;
     }
-    return null;
+    return EditorSelectionEnum.MultiplyRows;
   }
 
   get sidebarWidth(): number {
@@ -56,54 +44,33 @@ export class SelectionService {
       : 270;
   }
 
-  get getCursorLeft(): number {
-    if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
-      return 0;
-    }
-    return this.selectionLeft;
-  }
-
-  get getCursorTop() {
-    if (this.pS.windowWidth$.value < this.pS.startMobileWidth) {
-      return 0;
-    }
-    return this.selectionTop;
-  }
-
   updateSelectionValue(flag: boolean): void {
     this.selectionDivActive$.next(flag);
   }
 
   selectionHandler(
-    secondRect: DOMRect,
-    elements: QueryList<ParentInteraction<ContentModelBase>>,
-    isInternalSelect: boolean,
+    x: number, y: number, width: number, height: number,
+    elements: QueryList<ParentInteraction<ContentModelBase>>
   ) {
-    let isHasChanges = false;
+    let isDeleted = false;
     const contentToSelect: ContentModelBase[] = [];
     for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       const content = item.getContent();
-      if (this.isRectToRect(firstRect, secondRect)) {
+      if (this.isRectToRect(firstRect, x, y, width, height)) {
         contentToSelect.push(content);
       } else {
         this.selectedItemsSet.delete(content.id);
-        isHasChanges = true;
+        isDeleted = true;
       }
     }
 
-    if (isInternalSelect) {
-      if (contentToSelect.length !== 1) {
-        contentToSelect.forEach((content) => this.selectedItemsSet.add(content.id));
-        isHasChanges = true;
-      }
-    } else {
-      contentToSelect.forEach((content) => this.selectedItemsSet.add(content.id));
-      isHasChanges = true;
-    }
+    contentToSelect.forEach((content) => {
+      this.selectedItemsSet.add(content.id);
+    });
 
-    if (isHasChanges) {
+    if (isDeleted || contentToSelect.length > 0) {
       this.onSetChanges();
     }
   }
@@ -116,16 +83,12 @@ export class SelectionService {
     return this.selectedItemsSet.has(id);
   }
 
-  isSelectedAll(id: string) {
-    return this.isSelected(id) || this.selectedItemId === id;
+  getFirstItem(): string {
+    return this.getSelectedItems()[0];
   }
 
   getSelectedItems(): string[] {
-    return Array.from(this.selectedItemsSet).filter((x) => x);
-  }
-
-  getAllSelectedItems(): string[] {
-    return [...this.getSelectedItems(), this.selectedItemId].filter((x) => x);
+    return Array.from(this.selectedItemsSet);
   }
 
   selectItems(ids: string[]) {
@@ -138,16 +101,15 @@ export class SelectionService {
     this.onSetChanges();
   }
 
-  resetSelectionItems(): void {
+  resetSelectedItems(): void {
     this.disableDiv$.next(false);
-    this.selectedItemId = null;
     this.selectedItemsSet.clear();
     this.onSetChanges();
   }
 
   resetSelectionAndItems(): void {
     this.apiBrowserService.removeAllRanges();
-    this.resetSelectionItems();
+    this.resetSelectedItems();
   }
 
   onSetChanges(): void {
@@ -155,40 +117,25 @@ export class SelectionService {
   }
 
   isSelectionInZone(
-    secondRect: DOMRect,
-    elements: QueryList<ParentInteraction<ContentModelBase>>,
-    title: ElementRef<HTMLElement>,
-  ) {
-    if (this.isRectToRect(title.nativeElement.getBoundingClientRect(), secondRect)) {
-      return true;
-    }
+    x: number, y: number, width: number, height: number,
+    elements: QueryList<ParentInteraction<ContentModelBase>>
+  ): ParentInteraction<ContentModelBase> | null {
     for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
-      if (this.isRectToRect(firstRect, secondRect)) {
-        return true;
+      if (this.isRectToRect(firstRect, x, y, width, height)) {
+        return item;
       }
     }
-    return false;
+    return null;
   }
 
-  isRectToRect = (firstRect: DOMRect, secondRect: DOMRect) => {
+  isRectToRect = (firstRect: DOMRect, x: number, y: number, width: number, height: number) => {
     return (
-      firstRect.x < secondRect.x + secondRect.width &&
-      secondRect.x < firstRect.x + firstRect.width &&
-      firstRect.y < secondRect.y + secondRect.height &&
-      secondRect.y < firstRect.y + firstRect.height
+      firstRect.x < x + width &&
+      x < firstRect.x + firstRect.width &&
+      firstRect.y < y + height &&
+      y < firstRect.y + firstRect.height
     );
   };
-
-  initSingle(id: string, scrollElement: HTMLElement, selectionCoords: DOMRect): void {
-    this.selectedItemId = id;
-
-    const left = (selectionCoords.left + selectionCoords.right) / 2;
-    const top = selectionCoords.top + scrollElement?.scrollTop - 5;
-    this.selectionTop = top;
-    this.selectionLeft = left;
-
-    this.onSetChanges();
-  }
 }

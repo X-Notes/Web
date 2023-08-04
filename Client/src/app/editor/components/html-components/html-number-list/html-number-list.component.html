@@ -1,7 +1,8 @@
 <div
   appTheme
   class="main-container"
-  (click)="setFocus($event)"
+  (click)="setFocusText($event)"
+  (mousedown)="mouseDown($event)"
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
 >
@@ -9,9 +10,10 @@
     ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && (isResizingPhoto$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
+    ondragstart="return false;" ondrop="return false;"
     class="main-item"
     [ngStyle]="{
-      backgroundColor: isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
     }"
   >
     <div class="number-container">
@@ -21,7 +23,8 @@
       <p
         class="block-generic default-text-size default-text-id number-list"
         #contentHtml
-        [attr.contenteditable]="!isReadOnlyMode && (selectionDivActiveMultiplyRows$ | async) === false && (isResizingPhoto$ | async) === false"
+        [attr.contenteditable]="!isReadOnlyMode && (isResizingPhoto$ | async) === false"
+        [attr.content_id]="content.id"
         [innerHTML]="viewHtml"
         (input)="onInput()"
         (click)="textClick($event)"
