@@ -35,13 +35,13 @@ export class PhotoComponent implements OnInit {
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
+
   @Input()
   uiCursors$: Observable<CollectionCursorUI[]>;
 
   destroy = new Subject<void>();
 
-  constructor(private clickableService: ClickableContentService) {}
+  constructor(private clickableService: ClickableContentService) { }
 
   get isClicked() {
     return this.clickableService.isClicked(this.photo.fileId);
@@ -59,7 +59,7 @@ export class PhotoComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onLoadImage(): void {
     this.photo.loaded = true;
@@ -67,5 +67,10 @@ export class PhotoComponent implements OnInit {
 
   deletePhoto() {
     this.deleteEvent.emit(this.photo.fileId);
+  }
+
+  onMousedown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.clickEvent.emit(this.photo.fileId);
   }
 }

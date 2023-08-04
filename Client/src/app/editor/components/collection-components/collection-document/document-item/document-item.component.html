@@ -2,7 +2,7 @@
   [id]="document.fileId"
   class="card"
   appTheme
-  (click)="clickEvent.emit(document.fileId)"
+  (mousedown)="onMousedown($event)"
   [ngClass]="{ 'is-selected': isClicked }"
   [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
 >

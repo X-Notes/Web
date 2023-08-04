@@ -118,14 +118,14 @@ export abstract class EditorBaseComponent {
   }
 
   getSelectedElements(): ParentInteraction<ContentModelBase>[] {
-    return this.getElements((x) => this.facade.selectionService.isSelectedAll(x.getContentId()));
+    return this.getElements((x) => this.facade.selectionService.isSelected(x.getContentId()));
   }
 
   getSelectedHTMLElements(): ParentInteractionHTML[] {
     return this.getElements(
       (x) =>
         x.type === ComponentType.HTML &&
-        this.facade.selectionService.isSelectedAll(x.getContentId()),
+        this.facade.selectionService.isSelected(x.getContentId()),
     );
   }
 
@@ -133,7 +133,7 @@ export abstract class EditorBaseComponent {
     return this.getElements(
       (x) =>
         x.type === ComponentType.Collection &&
-        this.facade.selectionService.isSelectedAll(x.getContentId()),
+        this.facade.selectionService.isSelected(x.getContentId()),
     );
   }
 

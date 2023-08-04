@@ -24,6 +24,7 @@ import { UpdateCursor } from 'src/app/editor/entities/cursors/cursor';
 import { CursorTypeENUM } from 'src/app/editor/entities/cursors/cursor-type.enum';
 import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 import { ClickableContentService } from 'src/app/editor/ui-services/clickable-content.service';
+import { SelectionService } from 'src/app/editor/ui-services/selection.service';
 
 @Component({
   selector: 'app-title-collection',
@@ -68,7 +69,11 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
-  constructor(public store: Store, private apiBrowser: ApiBrowserTextService, public clickableService: ClickableContentService) { }
+  constructor(
+    public store: Store, 
+    private apiBrowser: ApiBrowserTextService, 
+    public clickableService: ClickableContentService,
+    private selectionService: SelectionService) { }
 
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
@@ -148,6 +153,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   focusOnTitle(): void {
     this.titleHtml.nativeElement.focus();
+  }
+
+  onSelectStart(): void {
+    this.selectionService.disableDiv$.next(true);
   }
 
   scrollToTitle(behavior: ScrollBehavior = 'smooth', block: ScrollLogicalPosition = 'center') {

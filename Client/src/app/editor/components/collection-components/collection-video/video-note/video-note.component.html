@@ -31,7 +31,7 @@
     >
       <video
         [id]="currentVideo?.fileId"
-        (click)="clickItemHandler(currentVideo?.fileId)"
+        (mousedown)="onMousedown($event)"
         (timeupdate)="updateVideoTime()"
         #videoplayer
         oncontextmenu="return false"

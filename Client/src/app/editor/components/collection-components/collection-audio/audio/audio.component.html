@@ -1,7 +1,7 @@
 <div
   [id]="audio.fileId"
   class="audio-container"
-  (click)="clickEvent.emit(audio.fileId)"
+  (mousedown)="onMousedown($event)"
   [ngClass]="{'is-selected' : isClicked}"
   [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
   appTheme

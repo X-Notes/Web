@@ -1,6 +1,6 @@
 <div
   [id]="photo.fileId"
-  (click)="clickEvent.emit(photo.fileId)"
+  (mousedown)="onMousedown($event)"
   [ngClass]="{ 'is-selected': isClicked }"
   [ngStyle]="(cursor$ | async) && { 'border': '2px solid ' + (cursor$ | async).color }"
   class="photo"
