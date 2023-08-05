@@ -145,7 +145,10 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     this.audioService.seekTo(value);
   }
 
-  onSliderVolumeChangeEnd(value: number) {
+  input($event: Event): void {
+    const value = ($event.target as HTMLInputElement).value;
     this.audioService.seekToVolume(value);
   }
+
+  onSliderVolumeChangeEnd(value: number) {}
 }

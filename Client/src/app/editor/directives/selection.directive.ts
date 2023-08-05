@@ -160,7 +160,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseDown(evt: MouseEvent) {
-    console.log('evt: ', evt);
     this.selectionService.resetSelectedItems();
     if (
       (evt.target as HTMLElement).classList.contains('icon') ||
@@ -195,7 +194,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.setLeft(this.startLeft);
     this.coords = {... this.coords, x: this.x, y: this.y };
 
-    console.log('bleat');
     this.clickableService.reset();
 
     this.selectionStartEvent.emit(this.coords);

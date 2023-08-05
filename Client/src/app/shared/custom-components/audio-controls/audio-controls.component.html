@@ -102,7 +102,7 @@
           [step]="0.01"
           [disabled]="audioService.getState()?.error || audioService.currentFile === undefined"
         >
-          <input (valueChange)="onSliderVolumeChangeEnd($event)" [value]="audioService.getState()?.currentVolume" matSliderThumb />
+          <input (input)="input($event)" (valueChange)="onSliderVolumeChangeEnd($event)" [value]="audioService.getState()?.currentVolume" matSliderThumb />
         </mat-slider>
       </div>
     </div>
