@@ -261,12 +261,16 @@ export class ContentEditorComponent
     return this.contents[this.contents.length - 1].id;
   }
 
+  get mainContentHeight() {
+    return this.mainSection?.nativeElement?.clientHeight
+  }
+
   get contents(): ContentModelBase[] | any[] {
     return this.facade.contentsService.getContents;
   }
 
   get selectedElementsRects(): DOMRect[] {
-    if(!this.menuOptions?.ids || this.menuOptions.ids.length === 0) return [];
+    if (!this.menuOptions?.ids || this.menuOptions.ids.length === 0) return [];
     return this.getHTMLElementsById(this.menuOptions.ids).filter(x => x.getText()?.length > 0)?.map((x) =>
       x.getHost().nativeElement.getBoundingClientRect(),
     );
@@ -534,7 +538,7 @@ export class ContentEditorComponent
   selectionStartHandler(coords: DrawerCoordsConfig): void {
     this.coords = coords;
     const el = this.facade.selectionService.isSelectionInZone(coords.x, coords.y, coords.width, coords.height, this.elementsQuery);
-    if(el && el.type === ComponentType.HTML && (el as ParentInteractionHTML).getText()?.length > 0) {
+    if (el && el.type === ComponentType.HTML && (el as ParentInteractionHTML).getText()?.length > 0) {
       this.isDrawerVisible$.next(false);
       return;
     }
