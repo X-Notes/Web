@@ -207,6 +207,7 @@
     "title": "Заголовок",
     "openNoteOrFile": "нотатки",
     "text": "Текст",
+    "textCommand": "Текст, '/' для команд",
     "heading": "Заголовок",
     "menu": {
       "addVideo": "Завантажити нові відео",
@@ -216,6 +217,31 @@
       "download": "Завантажити",
       "copy": "Копіювати посилання",
       "delete": "Видалити"
+    },
+    "transformMenu": {
+      "h1": "Заголовок 1",
+      "h2": "Заголовок 2",
+      "h3": "Заголовок 3",
+      "dotList": "Маркований список",
+      "numberList": "Нумерований список",
+      "checkList": "Список задач",
+      "addVideos": "Відео",
+      "addAudios": "Аудіо",
+      "addDocuments": "Документи",
+      "addPhotos": "Фотографії"
+    },
+    "colors": {
+      "reset": "Скинути",
+      "cardinal": "Кардинал",
+      "tiger": "Тигр",
+      "canary": "Канарка",
+      "frog": "Жаба",
+      "parrot": "Папуга",
+      "bluebird": "Синя пташка",
+      "dolphin": "Дельфін",
+      "whale": "Кит",
+      "butterfly": "Метелик",
+      "flamingo": "Фламінго"
     },
     "photoMenu": {
       "download": "Завантажити",

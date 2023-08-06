@@ -19,6 +19,7 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { NoteStore } from '../../state/notes-state';
 import { SidebarNotesService } from '../services/sidebar-notes.service';
+import { SelectionService } from 'src/app/editor/ui-services/selection.service';
 
 @Component({
   selector: 'app-right-section-content',
@@ -41,19 +42,25 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnCh
     public pService: PersonalizationService,
     public sideBarService: SidebarNotesService,
     private store: Store,
+    private selectionService: SelectionService,
   ) { }
 
 
   async ngOnChanges(changes: SimpleChanges) {
-    if(changes['noteId'].previousValue && changes['noteId'].previousValue !== changes['noteId'].currentValue) {
+    if (changes['noteId'].previousValue && changes['noteId'].previousValue !== changes['noteId'].currentValue) {
       await this.reInitLayout(this.noteId);
     }
   }
 
-  ngOnDestroy(): void {}
+
+  startSelection($event): void {
+    this.selectionService.disableDiv$.next(true);
+  }
+
+  ngOnDestroy(): void { }
 
   async ngOnInit() {
-    if(this.noteId) {
+    if (this.noteId) {
       await this.loadData(this.noteId);
     }
   }

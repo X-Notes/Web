@@ -15,7 +15,7 @@
         <div class="grid" [ngStyle]="{ opacity: sideBarService.murriService.flagForOpacity ? '1' : '0' }">
           <div #relatedItem [id]="item.id" [attr.order]="item.order" class="grid-item-small"
             *ngFor="let item of sideBarService.entities">
-            <app-related-note [note]="item" [isCanEdit]="canEdit$ | async"
+            <app-related-note (selectstart)="startSelection($event)" [note]="item" [isCanEdit]="canEdit$ | async"
               (deleteNote)="sideBarService.deleteRelatedNote($event, noteId)"
               (changeState)="sideBarService.changeState($event)"></app-related-note>
           </div>

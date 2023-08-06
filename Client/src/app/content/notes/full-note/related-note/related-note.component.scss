@@ -7,6 +7,14 @@
   user-select: text;
 }
 
+.text-size {
+  font-size: 1rem;
+  letter-spacing: 0.75px;
+  line-height: 1.4;
+  word-spacing: 1px;
+}
+
+
 .small-note {
   display: flex;
   flex-direction: column;

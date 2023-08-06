@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { BaseUndoAction } from '../entities-ui/undo/base-undo-action';
 import { UndoActionTypeEnum } from '../entities-ui/undo/undo-action-type.enum';
 import {
@@ -51,6 +51,8 @@ export abstract class EditorBaseComponent {
 
   @Input()
   cursorActive = true;
+
+  @ViewChild('contentSection', { read: ElementRef }) contentSection?: ElementRef<HTMLElement>;
 
   @Select(NoteStore.cursors)
   cursors$?: Observable<NoteUserCursorWS[]>;
@@ -118,14 +120,14 @@ export abstract class EditorBaseComponent {
   }
 
   getSelectedElements(): ParentInteraction<ContentModelBase>[] {
-    return this.getElements((x) => this.facade.selectionService.isSelectedAll(x.getContentId()));
+    return this.getElements((x) => this.facade.selectionService.isSelected(x.getContentId()));
   }
 
   getSelectedHTMLElements(): ParentInteractionHTML[] {
     return this.getElements(
       (x) =>
         x.type === ComponentType.HTML &&
-        this.facade.selectionService.isSelectedAll(x.getContentId()),
+        this.facade.selectionService.isSelected(x.getContentId()),
     );
   }
 
@@ -133,7 +135,7 @@ export abstract class EditorBaseComponent {
     return this.getElements(
       (x) =>
         x.type === ComponentType.Collection &&
-        this.facade.selectionService.isSelectedAll(x.getContentId()),
+        this.facade.selectionService.isSelected(x.getContentId()),
     );
   }
 

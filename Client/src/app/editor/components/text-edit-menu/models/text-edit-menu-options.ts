@@ -3,7 +3,6 @@ import { NoteTextTypeENUM } from "src/app/editor/entities/contents/text-models/n
 
 
 export interface TextEditMenuOptions {
-  ids: string[];
   isBold: boolean;
   isItalic: boolean;
   textType: NoteTextTypeENUM;
@@ -11,4 +10,5 @@ export interface TextEditMenuOptions {
   isOneRowType: boolean;
   backgroundColor: string;
   color: string;
+  ids: string[];
 }

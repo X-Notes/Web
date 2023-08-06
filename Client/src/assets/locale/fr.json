@@ -207,6 +207,7 @@
     "title": "Titre",
     "openNoteOrFile": "Notes",
     "text": "SMS",
+    "textCommand": "Texte, '/' pour les commandes",
     "heading": "Rubrique",
     "menu": {
       "addVideo": "Ajouter de nouvelles vidéos",
@@ -216,6 +217,31 @@
       "download": "Télécharger",
       "copy": "Copier l’URL",
       "delete": "Supprimer"
+    },
+    "transformMenu": {
+      "h1": "Titre 1",
+      "h2": "Titre 2",
+      "h3": "Titre 3",
+      "dotList": "Liste à puces",
+      "numberList": "Liste numérotée",
+      "checkList": "Liste de choses à faire",
+      "addVideos": "Vidéos",
+      "addAudios": "Audios",
+      "addDocuments": "Documents",
+      "addPhotos": "Photos"
+    },
+    "colors": {
+      "reset": "Réinitialiser",
+      "cardinal": "Cardinal",
+      "tiger": "Tigre",
+      "canary": "Canari",
+      "frog": "Grenouille",
+      "parrot": "Perroquet",
+      "bluebird": "Oiseau bleu",
+      "dolphin": "Dauphin",
+      "whale": "Baleine",
+      "butterfly": "Papillon",
+      "flamingo": "Flamant rose"
     },
     "photoMenu": {
       "upload": "Télécharger de nouvelles photos",

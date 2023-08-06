@@ -16,19 +16,20 @@ import { SelectionService } from '../ui-services/selection.service';
 import { EditorOptions } from '../entities-ui/editor-options';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { DrawerCoordsConfig } from '../entities-ui/selection/drawer-coords';
 
 @Directive({
   selector: '[appSelection]',
 })
 export class SelectionDirective implements OnDestroy, OnInit {
   @Output()
-  selectionEvent = new EventEmitter<DOMRect>();
+  selectionStartEvent = new EventEmitter<DrawerCoordsConfig>();
 
   @Output()
-  selectionStartEvent = new EventEmitter<DOMRect>();
+  selectionEndEvent = new EventEmitter<DrawerCoordsConfig>();
 
   @Output()
-  selectionEndEvent = new EventEmitter<DOMRect>();
+  changeDrawerCoordsEvent = new EventEmitter<DrawerCoordsConfig>();
 
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -38,9 +39,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   listeners = [];
 
-  x;
+  x: number;
 
-  y;
+  y: number;
 
   isMouseDown = false;
 
@@ -56,9 +57,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   header: HTMLElement;
 
-  private div: HTMLElement;
-
   private prevMouseEvent: MouseEvent;
+
+  private coords: DrawerCoordsConfig = { top: 0, left: 0, width: 0, height: 0, x: 0, y: 0 };
 
   constructor(
     elementRef: ElementRef,
@@ -71,18 +72,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.mainContent = elementRef.nativeElement;
   }
 
-  get isDivTransparent(): boolean {
-    return this.div.style.opacity === '0';
-  }
-
-  get isDivActive(): boolean {
-    if (!this.div) return false;
-    return this.isUserStartSelect && this.div.style.opacity === '1';
-  }
-
   get isSelectionActive(): boolean {
-    if (!this.div) return false;
-    return this.isUserStartSelect;
+    // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
+    return (this.coords?.height > 15 && this.coords?.width > 3) || (this.coords?.width > 15 && this.coords?.height > 3);
   }
 
   get headerHeight(): number {
@@ -92,18 +84,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return this.header.offsetHeight;
   }
 
-  get isUserStartSelect(): boolean {
-    const size = this.div.getBoundingClientRect();
-    // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
-    return size.width > 5 && size.height > 5;
-  }
-
   processY(y: number): number {
     return y + this.scrollSection.scrollTop - this.scrollSection.offsetTop - this.headerHeight;
   }
 
   processX(x: number): number {
-    return x - this.selectionService.sidebarWidth - 5;
+    return x - this.selectionService.sidebarWidth;
   }
 
   ngOnInit(): void {
@@ -120,6 +106,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   initMouseHandlers(): void {
     const mouseDownListener = this.renderer.listen(document, 'mousedown', (e: MouseEvent) => {
+      // e.preventDefault();
       if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
         return true;
       }
@@ -154,7 +141,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   initSelectionDrawer(scrollSection: HTMLElement): void {
     this.scrollSection = scrollSection;
-    this.div = document.getElementById('note-selector');
 
     const scrollEventListener = this.renderer.listen(scrollSection, 'scroll', (e) =>
       this.scrollEvent(e),
@@ -173,16 +159,9 @@ export class SelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  setIsShowDiv(isShow: boolean): void {
-    if (isShow) {
-      this.div.style.opacity = '1';
-    } else {
-      this.div.style.opacity = '0';
-    }
-  }
-
   mouseDown(evt: MouseEvent) {
-    this.selectionService.resetSelectionItems();
+    this.selectionService.resetSelectedItems();
+    const isBackdropActive = document.getElementsByClassName('cdk-overlay-backdrop')[0]; // handle mat-menu
     if (
       (evt.target as HTMLElement).classList.contains('icon') ||
       (evt.target as HTMLElement).tagName === 'svg' ||
@@ -190,7 +169,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).localName === 'mat-icon' ||
       evt.target === this.scrollSection || // scroll click
       this.pS.isMobile() ||
-      this.pS.isDialogActive$.getValue()
+      this.pS.isDialogActive$.getValue() ||
+      !!isBackdropActive
     ) {
       return;
     }
@@ -200,11 +180,10 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.y = 0;
     this.isMouseDown = true;
 
-    const rectSize = this.div.getBoundingClientRect();
-    if (rectSize.width === 0 || rectSize.height === 0) {
-      rectSize.x = 0;
-      rectSize.y = 0;
-      this.selectionEvent.emit(rectSize);
+    if (this.coords.width === 0 || this.coords.height === 0) {
+      //rectSize.x = 0;
+      //rectSize.y = 0;
+      //this.selectionEvent.emit(rectSize);
     }
 
     this.x = evt.pageX;
@@ -215,10 +194,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
     this.setTop(this.startTop);
     this.setLeft(this.startLeft);
+    this.coords = {... this.coords, x: this.x, y: this.y };
 
     this.clickableService.reset();
 
-    this.selectionStartEvent.emit(this.div.getBoundingClientRect());
+    this.selectionStartEvent.emit(this.coords);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -231,7 +211,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.y = 0;
     this.resetDiv();
     this.selectionService.updateSelectionValue(false);
-    this.selectionEndEvent.emit(this.div.getBoundingClientRect());
+    this.coords = { top: 0, left: 0, width: 0, height: 0, x: 0, y: 0 };
+    this.selectionEndEvent.emit();
   }
 
   mouseMoveDelay(evt: MouseEvent) {
@@ -271,11 +252,12 @@ export class SelectionDirective implements OnDestroy, OnInit {
       this.setLeft(this.startLeft);
     }
 
+    this.coords = {... this.coords, x: newX, y: newY };
     this.setWidth(newValueWidth);
     this.setHeight(newValueHeight);
 
     this.selectionService.updateSelectionValue(this.isSelectionActive);
-    this.selectionEvent.emit(this.div.getBoundingClientRect());
+    this.changeDrawerCoordsEvent.emit(this.coords);
   }
 
   resetDiv(): void {
@@ -286,19 +268,19 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   setTop(top: number): void {
-    this.div.style.top = `${top}px`;
+    this.coords = {... this.coords, top };
   }
 
   setLeft(left: number): void {
-    this.div.style.left = `${left}px`;
+    this.coords = {... this.coords, left };
   }
 
   setWidth(width: number): void {
-    this.div.style.width = `${width}px`;
+    this.coords = {... this.coords, width };
   }
 
   setHeight(height: number): void {
-    this.div.style.height = `${height}px`;
+    this.coords = {... this.coords, height };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

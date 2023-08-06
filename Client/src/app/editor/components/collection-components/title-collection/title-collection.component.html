@@ -5,6 +5,7 @@
       #titleHtml
       (input)="onTitleChangeInput($event)"
       (click)="onClick()"
+      (selectstart)="onSelectStart()"
       [textContent]="textContent"
       [attr.contenteditable]="!isReadOnlyMode && !isSelectionStart"
       (keydown.enter)="preventEnter($event)"

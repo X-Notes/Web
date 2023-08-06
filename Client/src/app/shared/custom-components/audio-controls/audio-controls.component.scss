@@ -159,7 +159,8 @@
 }
 
 .light {
-  background-color: $light-billing-field;
+  background-color: white;
+  border-top: 1px solid $light-separator;
   color: $text-color;
 
   .preview {

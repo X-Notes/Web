@@ -33,6 +33,7 @@ import { CursorTypeENUM } from '../../entities/cursors/cursor-type.enum';
 import { BaseEditorElementComponent } from '../base-html-components';
 import { HtmlComponentsFacadeService } from '../html-components.facade.service';
 import { ParentInteractionHTML, ComponentType } from '../parent-interaction.interface';
+import { EditorSelectionModeEnum } from '../../entities-ui/editor-selection-mode.enum';
 
 @Component({
   template: '',
@@ -47,8 +48,17 @@ export abstract class BaseTextElementComponent
   @Input()
   forceFocus: boolean;
 
+  @Input()
+  editorSelectionMode: EditorSelectionModeEnum;
+
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
+
+  @Output()
+  mouseoverEvent = new EventEmitter<void>();
+
+  @Output()
+  mouseleaveEvent = new EventEmitter<void>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -139,6 +149,10 @@ export abstract class BaseTextElementComponent
 
   getText(): string {
     return this.getEditableNative<HTMLElement>().textContent;
+  }
+
+  get hasText(): boolean {
+    return this.getText()?.length > 0;
   }
 
   initBaseHTML(): void {
@@ -244,16 +258,25 @@ export abstract class BaseTextElementComponent
     $event.preventDefault();
     this.isSelectModeActive$.pipe(take(1)).subscribe((x) => (this.preFocus = !x));
     this.isMouseOver = true;
+    this.mouseoverEvent.emit();
   }
+
+  mouseDown($event: MouseEvent): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave($event) {
     this.preFocus = false;
     this.isMouseOver = false;
+    this.mouseleaveEvent.emit();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFocus($event) {
+  setFocusText($event: MouseEvent): void {
+    this.setFocus(null);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setFocus($event: SetFocus) {
     this.contentHtml.nativeElement.focus();
     this.setFocusedElement();
     this.onFocus.emit(this);
@@ -417,22 +440,30 @@ export abstract class BaseTextElementComponent
     this.updateContentsAndSync(resTextBlocks);
   }
 
-  checkForDeleteOrConcatWithPrev($event) {
-    if (this.facade.selectionService.isAnySelect()) {
+  checkForDeleteOrConcatWithPrev($event: KeyboardEvent) {
+    if (this.editorSelectionMode === EditorSelectionModeEnum.None) {
       return;
     }
 
-    const selection = this.facade.apiBrowser.getSelection().toString();
-    if (
+    if (this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelectionEmpty || this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelection) {
+      $event.stopPropagation();
+    }
+
+    if (this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelectionEmpty &&
       this.facade.apiBrowser.isStart(this.getEditableNative()) &&
-      !this.isContentEmpty() &&
-      selection === ''
-    ) {
+      !this.isContentEmpty()) {
+      $event.stopPropagation();
       $event.preventDefault();
       this.concatThisWithPrev.emit(this);
+      return;
+    }
+
+    if (this.editorSelectionMode === EditorSelectionModeEnum.MultiplyRows || this.editorSelectionMode === EditorSelectionModeEnum.EntireRow) {
+      return;
     }
 
     if (this.isContentEmpty()) {
+      $event.stopPropagation();
       $event.preventDefault();
       this.deleteThis.emit(this.content.id);
     }
@@ -443,29 +474,41 @@ export abstract class BaseTextElementComponent
     const blur = this.facade.renderer.listen(el, 'blur', (e) => {
       this.onBlur(e);
     });
+    const copy = this.facade.renderer.listen(el, 'copy', (e: ClipboardEvent) => {
+      e.stopPropagation();
+    });
     const paste = this.facade.renderer.listen(el, 'paste', (e) => {
       const action = () => this.pasteCommandHandler(e);
       this.saveAndRestoreCursor(action);
       this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
     });
     const selectStart = this.facade.renderer.listen(el, 'selectstart', (e) => {
-      this.onSelectStart(e);
+      // this.onSelectStart(e);
     });
-    const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e) => {
+    const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (this.facade.contentEditorContent.isCanAddContent) {
         this.enter(e);
-      } else {
-        e.preventDefault();
       }
     });
-    const keydownBackspace = this.facade.renderer.listen(el, 'keydown.backspace', (e) => {
+    const keydownBackspace = this.facade.renderer.listen(el, 'keydown.backspace', (e: KeyboardEvent) => {
+      // e.stopPropagation();
       this.checkForDeleteOrConcatWithPrev(e);
     });
-    const keyupBackspace = this.facade.renderer.listen(el, 'keyup.backspace', (e) => {
+    const keyupBackspace = this.facade.renderer.listen(el, 'keyup.backspace', (e: KeyboardEvent) => {
+      // e.stopPropagation();
       this.backUp(e);
     });
-    const keydownDelete = this.facade.renderer.listen(el, 'keydown.delete', (e) => {
+    const keydownDelete = this.facade.renderer.listen(el, 'keydown.delete', (e: KeyboardEvent) => {
+      // e.stopPropagation();
       this.checkForDeleteOrConcatWithPrev(e);
+    });
+    const keydown = this.facade.renderer.listen(el, 'keydown', (e: KeyboardEvent) => {
+      const isEmpty = !this.getText() || this.getText.length === 0;
+      if (isEmpty && e.code === 'Slash') {
+        this.onFirstSlash(e);
+      }
     });
     this.listeners.push(
       blur,
@@ -475,6 +518,8 @@ export abstract class BaseTextElementComponent
       keydownEnter,
       keyupBackspace,
       keydownDelete,
+      copy,
+      keydown
     );
   }
 
@@ -569,12 +614,11 @@ export abstract class BaseTextElementComponent
     return new TextCursorUI(cursorLeft, cursorTop, cursor.color);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSelectStart(e) { }
-
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
   }
+
+  onFirstSlash($event: KeyboardEvent): void { }
 
   abstract enter(e);
 

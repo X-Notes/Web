@@ -68,4 +68,9 @@ export class DocumentItemComponent {
   openModal(document: DocumentModel) {
     this.dialogsManageService.viewDock(document.documentPath);
   }
+
+  onMousedown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.clickEvent.emit(this.document.fileId);
+  }
 }

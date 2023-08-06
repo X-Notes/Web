@@ -85,4 +85,9 @@ export class AudioComponent implements OnInit, OnDestroy {
   playMusic() {
     this.playEvent.emit(this.audio);
   }
+
+  onMousedown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.clickEvent.emit(this.audio.fileId);
+  }
 }

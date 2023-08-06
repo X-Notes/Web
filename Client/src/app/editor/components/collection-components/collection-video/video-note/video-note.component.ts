@@ -314,4 +314,9 @@ export class VideoNoteComponent
   deleteDown() {
     this.checkForDelete();
   }
+
+  onMousedown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.clickItemHandler(this.currentVideo?.fileId)
+  }
 }

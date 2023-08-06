@@ -7,8 +7,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
-import { TextColors } from 'src/app/shared/enums/text-colors.enum';
+import { TextBackgroundColorsDark } from 'src/app/shared/enums/text-background-colors.enum';
+import { TextColorsDark } from 'src/app/shared/enums/text-colors.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
@@ -26,6 +26,9 @@ export class ColorPickItemComponent implements OnInit {
 
   @Input()
   color: string;
+
+  @Input()
+  isDefault: boolean;
 
   @Input()
   isBackground: boolean;
@@ -46,24 +49,24 @@ export class ColorPickItemComponent implements OnInit {
   ngOnInit(): void {}
 
   getColor(color: string): string {
-    if (color === TextBackgroundColors.Default && this.theme === ThemeENUM.Light) {
+    if (color === TextBackgroundColorsDark.Default && this.theme === ThemeENUM.Light) {
       return '#f2f2f2';
     }
     return color;
   }
 
   getColorText(color: string): string {
-    if (color === TextBackgroundColors.Default) {
+    if (color === TextBackgroundColorsDark.Default) {
       return null;
     }
     return color;
   }
 
-  getTextColor(color: TextColors): string {
+  getTextColor(color: TextColorsDark): string {
     if (!this.hoverText) {
       return 'initial';
     }
-    if (color === TextColors.Default && this.theme === ThemeENUM.Light) {
+    if (color === TextColorsDark.Default && this.theme === ThemeENUM.Light) {
       return 'black';
     }
     return color;

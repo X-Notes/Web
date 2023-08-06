@@ -1,6 +1,16 @@
 .mat-mdc-menu-content {
   padding: 0 !important;
+  .mat-mdc-menu-item {
+    min-height: 42px;
+    .mat-icon{
+      height: 22px;
+      width: 22px;
+      font-size: 22px;
+      overflow: initial;
+    }
+  }
 }
+
 
 .mat-mdc-menu-panel {
   button {
@@ -33,6 +43,11 @@
       color: white;
     }
   }
+}
+
+.white-menu {
+  border: 1px solid #cecece;
+  box-shadow: none !important;
 }
 
 .dark-text-color-menu {

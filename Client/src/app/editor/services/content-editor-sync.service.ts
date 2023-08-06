@@ -177,7 +177,7 @@ export class ContentEditorSyncService {
   }
 
   updateText(text: BaseText): void {
-    const isSelect = this.selectionService.isSelectedAll(text.id);
+    const isSelect = this.selectionService.isSelected(text.id);
     if (isSelect) {
       this.selectionService.resetSelectionAndItems();
     }

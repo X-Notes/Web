@@ -1,7 +1,7 @@
 @import 'variables';
 
 @mixin is-selected {
-  box-shadow: 0 0 0 2px #0887a7;
+  box-shadow: 0 0 0 1px #0887a7;
 }
 
 .is-selected {
@@ -110,7 +110,7 @@
   color: $text-color;
   border: 0.8px solid #bababa;
   .controls {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.1);
   }
   .no-preview {
     color: #8e8e8e;

@@ -25,8 +25,8 @@
 
   <div class="separator"></div>
 
-  <div *ngIf="loaded" class="label-section" [ngClass]="labelsActive ? 'active-select' : ''">
-    <div class="label-cancel" (click)="cancelLabel()">
+  <div *ngIf="loaded" appTheme class="label-section" [ngClass]="labelsActive ? 'active-select' : ''">
+    <div *ngIf="labelsActive" class="label-cancel" (click)="cancelLabel()">
       <p>{{ 'subMenu.cancel' | translate }}</p>
     </div>
     <ng-scrollbar class="label-container" [visibility]="'hover'" [appearance]="'compact'">

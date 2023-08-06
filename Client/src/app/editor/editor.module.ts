@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { SelectionService } from "./ui-services/selection.service";
 import { HtmlPropertyTagCollectorService } from "./ui-services/html-property-tag-collector.service";
-import { ContentEditorElementsListenerService } from "./ui-services/content-editor-elements-listener.service";
 import { CommonModule } from "@angular/common";
 import { SharedModule } from "../shared/shared.module";
 import { ContentEditorComponent } from "./content-editor.component";
@@ -28,7 +27,6 @@ import { TextEditMenuComponent } from "./components/text-edit-menu/text-edit-men
 import { ChangeSizeAlbumHeightDirective } from "./directives/change-size-album-height.directive";
 import { CopyDirective } from "./directives/copy.directive";
 import { LazyForDirective } from "./directives/lazy-for.directive";
-import { MenuSelectionDirective } from "./directives/menu-selection.directive";
 import { SelectionDirective } from "./directives/selection.directive";
 
 @NgModule({
@@ -42,7 +40,6 @@ import { SelectionDirective } from "./directives/selection.directive";
       HtmlHeadingsComponent,
       HtmlCheckListComponent,
       HtmlLinkComponent,
-      MenuSelectionDirective,
       SelectionDirective,
       CopyDirective,
       ChangeSizeAlbumHeightDirective,
@@ -66,7 +63,6 @@ import { SelectionDirective } from "./directives/selection.directive";
     providers: [
       SelectionService,
       HtmlPropertyTagCollectorService,
-      ContentEditorElementsListenerService,
     ],
     imports: [CommonModule, SharedModule],
   })

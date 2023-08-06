@@ -113,6 +113,10 @@ export class ApiBrowserTextService {
     };
   };
 
+  selectElement(element): void {
+    this.getSelection().setBaseAndExtent(element, 0, element, 1);
+  }
+
   createImage = (options): HTMLImageElement => {
     options = options || {};
     const img = Image ? new Image() : document.createElement('img');
@@ -125,6 +129,10 @@ export class ApiBrowserTextService {
   getSelection = () => {
     return window.getSelection();
   };
+
+  isSelectionEmpty = () => {
+    return this.getSelection().toString() === '';
+  }
 
   getInputSelection(el: HTMLInputElement): number {
     return el.selectionStart;
@@ -194,7 +202,7 @@ export class ApiBrowserTextService {
   }
 
   // eslint-disable-next-line consistent-return
-  isStart(element) {
+  isStart(element): boolean {
     const sel = this.getSelection();
     if (sel.rangeCount) {
       const selRange = sel.getRangeAt(0);

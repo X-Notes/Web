@@ -4,53 +4,87 @@
   width: auto;
 }
 
-.note {
-  font-size: 1rem;
-  width: calc(100% - 2.25rem);
-  margin: 0.875rem 1.125rem 0 1.125rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 5px;
-  color: $text-color;
-  cursor: pointer;
-  position: relative;
-
-  .lock-container {
-    border-radius: 5px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding-left: 5px;
-    padding-right: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    mat-icon {
-      width: 10px;
-      height: auto;
-      color: #646464;
-    }
+.light.left-section-notes-container {
+  .left-section-note {
+    color: #202020;
+    background: white; // #fafafa
   }
-
-  p {
-    @include text-overflow;
-  }
-
-  .empty-placeholder {
-    color: #808080;
-  }
-
-  &:last-child {
-    margin-bottom: 0.875rem;
+  .left-section-note-separator  {
+    background: #e1e1e1;
   }
 }
 
-@media (max-width: 1024px) {
-  .background,
-  .note {
-    margin-right: 1rem;
-    margin-left: 1rem;
-    width: calc(100% - 2rem);
+.left-section-notes-container {
+  display: flex;
+  flex-direction: column;
+
+  .left-section-note {
+    color: white;
+    font-size: 0.875rem;
+    width: calc(100%);
+    position: relative;
+    background: #202125;
+    cursor: pointer;
+    display: flex;
+
+    .note-content-container {
+      margin-left: 8px;
+      padding: 8px 0 5px 0;
+      display: flex;
+      width: calc(100% - 25px);
+      flex-direction: column;
+
+      .note-title-section {
+        font-weight: 600;
+        display: flex;
+
+        .color-palette {
+          width: 2px;
+          border-radius: 2px;
+        }
+
+        .note-title {
+          width: calc(100% - 10px);
+          margin-left: 5px;
+        }
+      }
+
+      .note-content {
+        margin-top: 8px;
+        padding-left: 5px
+      }
+    }
+
+    p {
+      @include text-overflow;
+    }
+
+    .empty-placeholder {
+      color: #808080;
+    }
+
+    &:last-child {
+      margin-bottom: 0.875rem;
+    }
   }
+
+
+  &:last-child {
+    .left-section-note-separator {
+      display: none;
+    }
+  }
+
+  .left-section-note-separator {
+    background: #393939;
+    height: 1px;
+    width: 100%;
+  }
+}
+
+
+.default-text-size {
+  letter-spacing: 1px;
+  line-height: 1.5;
+  word-spacing: 1px;
 }

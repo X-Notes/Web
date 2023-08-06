@@ -31,16 +31,12 @@
     height: 1.25rem;
     font-size: 1.25rem;
   }
-
-  .material-icons-outlined-important {
-    font-family: 'Material Icons Outlined';
-  }
 }
 
 .dark {
   color: white;
   &:hover {
-    background-color: $dark-button;
+    background-color: rgba(128, 128, 128, 0.5);
   }
 }
 
@@ -53,6 +49,6 @@
 .light-static {
   color: white;
   &:hover {
-    background-color: $dark-button !important;
+    background-color: rgba(51, 51, 51, 0.5);
   }
 }

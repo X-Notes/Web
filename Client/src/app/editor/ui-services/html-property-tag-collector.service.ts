@@ -3,12 +3,11 @@ import { HeadingTypeENUM } from '../entities/contents/text-models/heading-type.e
 import { NoteTextTypeENUM } from '../entities/contents/text-models/note-text-type.enum';
 import { ParentInteractionHTML } from '../components/parent-interaction.interface';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
-import { TextEditMenuEnum } from '../components/text-edit-menu/models/text-edit-menu.enum';
 import { BaseText } from '../entities/contents/base-text';
 
 @Injectable()
 export class HtmlPropertyTagCollectorService {
-  constructor(private apiBrowserService: ApiBrowserTextService) {}
+  constructor(private apiBrowserService: ApiBrowserTextService) { }
 
   getIsActiveHeader(heading: HeadingTypeENUM, textItems: BaseText[]): boolean {
     return textItems.some(
@@ -20,50 +19,58 @@ export class HtmlPropertyTagCollectorService {
     return textItems.some((x) => type === x.noteTextTypeId);
   }
 
-  getIsBold = (selectedMenuType: TextEditMenuEnum, items: ParentInteractionHTML[]): boolean => {
-    return this.isSelectionTags(['strong', 'b'], selectedMenuType, items);
+  getIsBoldSelection = (): boolean => {
+    return this.isSelectionTagsSelection(['strong', 'b']);
   };
 
-  getIsItalic = (selectedMenuType: TextEditMenuEnum, items: ParentInteractionHTML[]): boolean => {
-    return this.isSelectionTags(['em'], selectedMenuType, items);
+  getIsBold = (items: ParentInteractionHTML[]): boolean => {
+    return this.isSelectionTags(['strong', 'b'], items);
   };
+
+  getIsItalicSelection = (): boolean => {
+    return this.isSelectionTagsSelection(['em']);
+  };
+
+  getIsItalic = (items: ParentInteractionHTML[]): boolean => {
+    return this.isSelectionTags(['em'], items);
+  };
+
+  isSelectionTagsSelection(selTags: string[]): boolean {
+    const sel = this.apiBrowserService.getSelection();
+    if (!sel) return false;
+    const tempDiv = this.getOneRowSelectedHTML(sel);
+    if (!tempDiv) return false;
+    if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
+    const tagsSet = new Set<string>();
+    for (const node of tempDiv.childNodes as any) {
+      let tags = [node.nodeName.toLowerCase()];
+      tagsSet.add(node.nodeName.toLowerCase());
+
+      // This covers selection that are inside bolded characters
+      while (tags.includes('#text')) {
+        const startParent = sel.anchorNode.parentNode;
+        const endParent = sel.focusNode.parentNode;
+
+        const startTag = startParent.nodeName.toLowerCase();
+        const endTag = endParent.nodeName.toLowerCase();
+
+        const startTagParent = startParent.parentElement.nodeName.toLowerCase();
+        const endTagParent = endParent.parentElement.nodeName.toLowerCase();
+
+        tags = [startTag, endTag];
+        tagsSet.add(startTag);
+        tagsSet.add(endTag);
+        tagsSet.add(startTagParent);
+        tagsSet.add(endTagParent);
+      }
+    }
+    return selTags.some((x) => tagsSet.has(x));
+  }
 
   isSelectionTags(
     selTags: string[],
-    selectedMenuType: TextEditMenuEnum,
     htmlItems: ParentInteractionHTML[],
   ): boolean {
-    if (selectedMenuType === TextEditMenuEnum.OneRow) {
-      const sel = this.apiBrowserService.getSelection();
-      if (!sel) return false;
-      const tempDiv = this.getOneRowSelectedHTML(sel);
-      if (!tempDiv) return false;
-      if (tempDiv.innerHTML === '' || !tempDiv.childNodes) return false;
-      const tagsSet = new Set<string>();
-      for (const node of tempDiv.childNodes as any) {
-        let tags = [node.nodeName.toLowerCase()];
-        tagsSet.add(node.nodeName.toLowerCase());
-
-        // This covers selection that are inside bolded characters
-        while (tags.includes('#text')) {
-          const startParent = sel.anchorNode.parentNode;
-          const endParent = sel.focusNode.parentNode;
-
-          const startTag = startParent.nodeName.toLowerCase();
-          const endTag = endParent.nodeName.toLowerCase();
-
-          const startTagParent = startParent.parentElement.nodeName.toLowerCase();
-          const endTagParent = endParent.parentElement.nodeName.toLowerCase();
-
-          tags = [startTag, endTag];
-          tagsSet.add(startTag);
-          tagsSet.add(endTag);
-          tagsSet.add(startTagParent);
-          tagsSet.add(endTagParent);
-        }
-      }
-      return selTags.some((x) => tagsSet.has(x));
-    }
 
     const rootEl = this.getMultiRowSelectedHTML(htmlItems);
     const properties: { isFounded: boolean } = { isFounded: false };
@@ -75,20 +82,18 @@ export class HtmlPropertyTagCollectorService {
     return false;
   }
 
-  getProperty(
-    propertySelector: string,
-    selectedMenuType: TextEditMenuEnum,
-    htmlItems: ParentInteractionHTML[],
+  getPropertySelection(propertySelector: string): string {
+    const sel = this.apiBrowserService.getSelection();
+    if (!sel) return null;
+    const tempDiv = this.getOneRowSelectedHTML(sel);
+    if (!tempDiv) return null;
+    if (tempDiv.innerHTML === '') return null;
+    const res = this.getNodeProperty(sel, tempDiv, propertySelector);
+    return res;
+  }
+
+  getProperty(propertySelector: string, htmlItems: ParentInteractionHTML[],
   ): string {
-    if (selectedMenuType === TextEditMenuEnum.OneRow) {
-      const sel = this.apiBrowserService.getSelection();
-      if (!sel) return null;
-      const tempDiv = this.getOneRowSelectedHTML(sel);
-      if (!tempDiv) return null;
-      if (tempDiv.innerHTML === '') return null;
-      const res = this.getNodeProperty(sel, tempDiv, propertySelector);
-      return res;
-    }
     const rootEl = this.getMultiRowSelectedHTML(htmlItems);
     const properties: string[] = [];
     this.findProperty(rootEl, propertySelector, properties);

@@ -207,6 +207,7 @@
     "title": "Título",
     "openNoteOrFile": "Notas",
     "text": "Mensaje de texto",
+    "textCommand": "Texto, '/' para comandos",
     "heading": "Encabezado",
     "menu": {
       "addVideo": "Añadir nuevos vídeos",
@@ -216,6 +217,31 @@
       "download": "Descargar",
       "copy": "Copiar url",
       "delete": "Borrar"
+    },
+    "transformMenu": {
+      "h1": "Título 1",
+      "h2": "Título 2",
+      "h3": "Título 3",
+      "dotList": "Lista de viñetas",
+      "numberList": "Lista numerada",
+      "checkList": "Lista de tareas",
+      "addVideos": "Videos",
+      "addAudios": "Audios",
+      "addDocuments": "Documentos",
+      "addPhotos": "Fotos"
+    },
+    "colors": {
+      "reset": "Restablecer",
+      "cardinal": "Cardenal",
+      "tiger": "Tigre",
+      "canary": "Canario",
+      "frog": "Rana",
+      "parrot": "Loro",
+      "bluebird": "Pájaro azul",
+      "dolphin": "Delfín",
+      "whale": "Ballena",
+      "butterfly": "Mariposa",
+      "flamingo": "Flamenco"
     },
     "photoMenu": {
       "upload": "Subir nuevas fotos",

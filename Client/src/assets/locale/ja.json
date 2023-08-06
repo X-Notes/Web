@@ -207,6 +207,7 @@
     "title": "タイトル",
     "openNoteOrFile": "筆記",
     "text": "テキスト",
+    "textCommand": "Testo, '/' per i comandi",
     "heading": "見出し",
     "menu": {
       "addVideo": "新しい動画を追加する",
@@ -216,6 +217,31 @@
       "download": "ダウンロード",
       "copy": "URLをコピーする",
       "delete": "削除"
+    },
+    "transformMenu": {
+      "h1": "見出し 1",
+      "h2": "見出し 2",
+      "h3": "見出し 3",
+      "dotList": "箇条書きリスト",
+      "numberList": "番号付きリスト",
+      "checkList": "チェックリスト",
+      "addVideos": "動画",
+      "addAudios": "オーディオ",
+      "addDocuments": "ドキュメント",
+      "addPhotos": "写真"
+    },
+    "colors": {
+      "reset": "リセット",
+      "cardinal": "カーディナル",
+      "tiger": "トラ",
+      "canary": "カナリア",
+      "frog": "カエル",
+      "parrot": "オウム",
+      "bluebird": "青い鳥",
+      "dolphin": "イルカ",
+      "whale": "クジラ",
+      "butterfly": "蝶",
+      "flamingo": "フラミンゴ"
     },
     "photoMenu": {
       "upload": "新しい写真をアップロードする",

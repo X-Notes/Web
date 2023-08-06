@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { TextBackgroundColors } from 'src/app/shared/enums/text-background-colors.enum';
-import { TextColors } from 'src/app/shared/enums/text-colors.enum';
+import { TextBackgroundColorsDark, TextBackgroundColorsDarkAnimals } from 'src/app/shared/enums/text-background-colors.enum';
+import { TextColorsDark, TextColorsDarkAnimals } from 'src/app/shared/enums/text-colors.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { TextEditMenuOptions } from './models/text-edit-menu-options';
 import { TransformContent } from '../../entities-ui/transform-content.model';
@@ -27,15 +27,19 @@ export class TextEditMenuComponent {
   @Input()
   theme: ThemeENUM;
 
-  themeE = ThemeENUM; 
+  themeE = ThemeENUM;
 
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;
 
-  textColorPalete = Object.entries(TextColors);
+  textColorPalete = Object.entries(TextColorsDark);
 
-  textBackgroundPalete = Object.entries(TextBackgroundColors);
+  textBackgroundPalete = Object.entries(TextBackgroundColorsDark);
+
+  backgroundsAnimals = TextBackgroundColorsDarkAnimals;
+
+  textsAnimals = TextColorsDarkAnimals;
 
   preventUnSelection = (e) => {
     e.preventDefault();
@@ -85,7 +89,7 @@ export class TextEditMenuComponent {
 
   updateStyles(textStyle: TextStyles, value: TextUpdateValue): void {
     let isRemoveStyles = false;
-    if (value === TextColors.Default || value === TextBackgroundColors.Default) {
+    if (value === TextColorsDark.Default || value === TextBackgroundColorsDark.Default) {
       value = null;
       isRemoveStyles = true;
     }

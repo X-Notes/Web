@@ -252,7 +252,7 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
-    this.facade.selectionService.resetSelectionItems();
+    this.facade.selectionService.resetSelectedItems();
     let newContentId: string;
     switch (event.typeFile) {
       case TypeUploadFile.photos: {

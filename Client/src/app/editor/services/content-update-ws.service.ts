@@ -152,7 +152,7 @@ export class ContentUpdateWsService {
     this.signalRService.updateTextContentEvent$.pipe(takeUntil(this.d.d$)).subscribe((content) => {
       if (content) {
         try {
-          const isSelect = this.selectionService.isSelectedAll(content.collection.id);
+          const isSelect = this.selectionService.isSelected(content.collection.id);
           if (isSelect) {
             this.selectionService.resetSelectionAndItems();
           }
