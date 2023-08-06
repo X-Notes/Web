@@ -207,6 +207,7 @@
     "title": "Titel",
     "openNoteOrFile": "Notizen",
     "text": "Text",
+    "textCommand": "Text, '/' für Befehle",
     "heading": "Überschrift",
     "menu": {
       "addVideo": "Neue Videos hinzufügen",
@@ -216,6 +217,18 @@
       "download": "Herunterladen",
       "copy": "URL kopieren",
       "delete": "Löschen"
+    },
+    "transformMenu": {
+      "h1": "Überschrift 1",
+      "h2": "Überschrift 2",
+      "h3": "Überschrift 3",
+      "dotList": "Aufzählung mit Punkten",
+      "numberList": "Nummerierte Liste",
+      "checkList": "Aufgabenliste",
+      "addVideos": "Videos",
+      "addAudios": "Audios",
+      "addDocuments": "Dokumente",
+      "addPhotos": "Fotos"
     },
     "photoMenu": {
       "upload": "Neue Fotos hochladen",

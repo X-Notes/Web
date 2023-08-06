@@ -7,7 +7,7 @@
   (mouseleave)="mouseLeave($event)"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
-    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && (isResizingPhoto$ | async) === false"></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content
   ></app-drag-drop-handler-container>
   <div
     ondragstart="return false;" ondrop="return false;"
@@ -41,7 +41,7 @@
           backgroundColor: cursor.color
         }"
       ></div>
-      <p class="no-content-list" *ngIf="isActiveState && (isSelectModeActive$ | async) === false">
+      <p class="no-content-list" *ngIf="isActiveState && (isSelectModeActive$ | async) === false && isRowsSelected === false">
         {{ 'innerNote.text' | translate }}
       </p>
     </div>

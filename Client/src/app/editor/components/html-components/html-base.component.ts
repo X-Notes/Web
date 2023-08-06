@@ -448,7 +448,7 @@ export abstract class BaseTextElementComponent
       return;
     }
 
-    if(this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelectionEmpty || this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelection) {
+    if (this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelectionEmpty || this.editorSelectionMode === EditorSelectionModeEnum.DefaultSelection) {
       $event.stopPropagation();
     }
 
@@ -458,6 +458,10 @@ export abstract class BaseTextElementComponent
       $event.stopPropagation();
       $event.preventDefault();
       this.concatThisWithPrev.emit(this);
+      return;
+    }
+
+    if (this.editorSelectionMode === EditorSelectionModeEnum.MultiplyRows || this.editorSelectionMode === EditorSelectionModeEnum.EntireRow) {
       return;
     }
 
@@ -503,6 +507,12 @@ export abstract class BaseTextElementComponent
       // e.stopPropagation();
       this.checkForDeleteOrConcatWithPrev(e);
     });
+    const keydown = this.facade.renderer.listen(el, 'keydown', (e: KeyboardEvent) => {
+      const isEmpty = !this.getText() || this.getText.length === 0;
+      if (isEmpty && e.code === 'Slash') {
+        this.onFirstSlash(e);
+      }
+    });
     this.listeners.push(
       blur,
       paste,
@@ -511,7 +521,8 @@ export abstract class BaseTextElementComponent
       keydownEnter,
       keyupBackspace,
       keydownDelete,
-      copy
+      copy,
+      keydown
     );
   }
 
@@ -609,6 +620,8 @@ export abstract class BaseTextElementComponent
   private updateNativeHTML(html: string): void {
     this.contentHtml.nativeElement.innerHTML = html;
   }
+
+  onFirstSlash($event: KeyboardEvent): void { }
 
   abstract enter(e);
 

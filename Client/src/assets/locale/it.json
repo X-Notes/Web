@@ -207,6 +207,7 @@
     "title": "Titolo",
     "openNoteOrFile": "Note",
     "text": "Testo",
+    "textCommand": "Testo, '/' per i comandi",
     "heading": "Intestazione",
     "menu": {
       "addVideo": "Aggiungi nuovi video",
@@ -216,6 +217,18 @@
       "download": "Scaricare",
       "copy": "Copia url",
       "delete": "Cancellare"
+    },
+    "transformMenu": {
+      "h1": "Titolo 1",
+      "h2": "Titolo 2",
+      "h3": "Titolo 3",
+      "dotList": "Lista puntata",
+      "numberList": "Lista numerata",
+      "checkList": "Lista di cose da fare",
+      "addVideos": "Video",
+      "addAudios": "Audio",
+      "addDocuments": "Documenti",
+      "addPhotos": "Foto"
     },
     "photoMenu": {
       "upload": "Carica nuove foto",

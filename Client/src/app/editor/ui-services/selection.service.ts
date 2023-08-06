@@ -6,6 +6,7 @@ import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.se
 import { ParentInteraction } from '../components/parent-interaction.interface';
 import { EditorSelectionEnum } from '../entities-ui/editor-selection.enum';
 import { ContentModelBase } from '../entities/contents/content-model-base';
+import { EditorSelectionModeEnum } from '../entities-ui/editor-selection-mode.enum';
 
 @Injectable()
 export class SelectionService {
@@ -17,6 +18,8 @@ export class SelectionService {
 
   selectionDivActive$ = new BehaviorSubject(false);
 
+  selectionTextItemId: string;
+
   getSelectionDivActive$ = combineLatest([this.disableDiv$, this.selectionDivActive$]).pipe(
     map(([disableDiv, selectionDivActive]) => !disableDiv && selectionDivActive),
   );
@@ -26,7 +29,7 @@ export class SelectionService {
   constructor(
     private apiBrowserService: ApiBrowserTextService,
     private router: Router,
-  ) {}
+  ) { }
 
   get selectedMenuType(): EditorSelectionEnum {
     if (this.selectedItemsSet.size <= 0) {
@@ -36,6 +39,36 @@ export class SelectionService {
       return EditorSelectionEnum.One;
     }
     return EditorSelectionEnum.MultiplyRows;
+  }
+
+  get isDefaultSelection(): boolean {
+    if (this.selectedMenuType === EditorSelectionEnum.None && this.selectionTextItemId) {
+      return true;
+    }
+    if (this.selectedMenuType === EditorSelectionEnum.One && this.selectionTextItemId === this.getFirstItem()) {
+      return true;
+    }
+    return false;
+  }
+
+  get selectionMode(): EditorSelectionModeEnum {
+    if (this.selectedMenuType === EditorSelectionEnum.MultiplyRows) {
+      return EditorSelectionModeEnum.MultiplyRows;
+    }
+    if (this.isDefaultSelection && this.apiBrowserService.isSelectionEmpty()) {
+      return EditorSelectionModeEnum.DefaultSelectionEmpty;
+    }
+    if (this.isDefaultSelection && !this.apiBrowserService.isSelectionEmpty()) {
+      return EditorSelectionModeEnum.DefaultSelection;
+    }
+    if (this.selectedMenuType === EditorSelectionEnum.One) {
+      return EditorSelectionModeEnum.EntireRow;
+    }
+    return EditorSelectionModeEnum.None;
+  }
+
+  get isMultiSelect(): boolean {
+    return this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows;
   }
 
   get sidebarWidth(): number {

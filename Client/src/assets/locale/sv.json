@@ -207,6 +207,7 @@
     "title": "Titel",
     "openNoteOrFile": "Anteckningar",
     "text": "SMS",
+    "textCommand": "Text, '/' för kommandon",
     "heading": "Överskrift",
     "menu": {
       "addVideo": "Lägg till nya videor",
@@ -216,6 +217,18 @@
       "download": "Ladda ned",
       "copy": "Kopiera url",
       "delete": "Ta bort"
+    },
+    "transformMenu": {
+      "h1": "Rubrik 1",
+      "h2": "Rubrik 2",
+      "h3": "Rubrik 3",
+      "dotList": "Punktlista",
+      "numberList": "Numrerad lista",
+      "checkList": "Att göra-lista",
+      "addVideos": "Videor",
+      "addAudios": "Ljudfiler",
+      "addDocuments": "Dokument",
+      "addPhotos": "Foton"
     },
     "photoMenu": {
       "upload": "Ladda upp nya foton",

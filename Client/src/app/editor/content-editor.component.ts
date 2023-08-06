@@ -131,8 +131,6 @@ export class ContentEditorComponent
 
   coords: DrawerCoordsConfig;
 
-  selectionTextItemId: string;
-
   constructor(
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private webSocketsUpdaterService: WebSocketsNoteUpdaterService,
@@ -145,34 +143,8 @@ export class ContentEditorComponent
     super(editorApiFacadeService);
   }
 
-  get selectedMenuType(): EditorSelectionEnum {
-    return this.facade.selectionService.selectedMenuType;
-  }
-
-  get isDefaultSelection(): boolean {
-    if (this.selectedMenuType === EditorSelectionEnum.None && this.selectionTextItemId) {
-      return true;
-    }
-    if (this.selectedMenuType === EditorSelectionEnum.One && this.selectionTextItemId === this.facade.selectionService.getFirstItem()) {
-      return true;
-    }
-    return false;
-  }
-
   get selectionMode(): EditorSelectionModeEnum {
-    if (this.isDefaultSelection && this.facade.apiBrowser.isSelectionEmpty()) {
-      return EditorSelectionModeEnum.DefaultSelectionEmpty;
-    }
-    if (this.isDefaultSelection && !this.facade.apiBrowser.isSelectionEmpty()) {
-      return EditorSelectionModeEnum.DefaultSelection;
-    }
-    if (this.selectedMenuType === EditorSelectionEnum.One) {
-      return EditorSelectionModeEnum.EntireRow;
-    }
-    if (this.selectedMenuType === EditorSelectionEnum.MultiplyRows) {
-      return EditorSelectionModeEnum.MultiplyRows;
-    }
-    return EditorSelectionModeEnum.None;
+    return this.facade.selectionService.selectionMode;
   }
 
   get isTextMenuActive(): boolean {
@@ -333,7 +305,7 @@ export class ContentEditorComponent
 
   buildMenuOptions(): TextEditMenuOptions {
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
-      const item = this.getHTMLElementById(this.selectionTextItemId).getContent();
+      const item = this.getHTMLElementById(this.facade.selectionService.selectionTextItemId).getContent();
       const obj: TextEditMenuOptions = {
         isBold: this.htmlPTCollectorService.getIsBoldSelection(),
         isItalic: this.htmlPTCollectorService.getIsItalicSelection(),
@@ -342,7 +314,7 @@ export class ContentEditorComponent
         isOneRowType: true,
         backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
         color: this.htmlPTCollectorService.getPropertySelection('color'),
-        ids: [this.selectionTextItemId]
+        ids: [this.facade.selectionService.selectionTextItemId]
       };
       return obj;
     }
@@ -504,12 +476,12 @@ export class ContentEditorComponent
     const selection = this.facade.apiBrowser.getSelection();
     const currentItem = this.getCurrentItem(selection);
     if (currentItem) {
-      this.selectionTextItemId = currentItem;
+      this.facade.selectionService.selectionTextItemId = currentItem;
       this.facade.selectionService.onSetChanges();
       return;
     }
 
-    this.selectionTextItemId = null;
+    this.facade.selectionService.selectionTextItemId = null;
     this.facade.selectionService.onSetChanges();
   }
 
@@ -652,13 +624,16 @@ export class ContentEditorComponent
     if (selection) {
       selection.start = selection.end;
       const el = this.getHTMLElementById(content.getContentId());
-      requestAnimationFrame(() => el.restoreSelection(selection));
+      requestAnimationFrame(() => {
+        el.restoreSelection(selection);
+        el.setFocusedElement();
+        el.detectChanges();
+      });
     }
     this.postAction();
   }
 
   updateTextStyles = (updates: UpdateTextStyles) => {
-    console.log('updates: ', updates);
     const selectionMode = this.selectionMode;
     const elements = this.getHTMLElementsById(updates.ids);
     for (const el of elements) {
@@ -670,7 +645,6 @@ export class ContentEditorComponent
       const html = DeltaConverter.convertTextBlocksToHTML(blocks);
       if (!html) continue;
       const pos = this.getIndexAndLengthForUpdateStyle(selectionMode, el.getEditableNative());
-      console.log('pos: ', pos);
       let resultDelta: DeltaStatic;
       if (updates.isRemoveStyles) {
         resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);

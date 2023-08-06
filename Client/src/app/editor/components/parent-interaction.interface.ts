@@ -44,6 +44,7 @@ export interface ParentInteractionHTML extends ParentInteraction<BaseText> {
   getText(): string;
   getSelection(): SaveSelection;
   restoreSelection(pos: SaveSelection): void;
+  setFocusedElement(): void;
   get isActiveState(): boolean;
 }
 

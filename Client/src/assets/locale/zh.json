@@ -207,6 +207,7 @@
     "title": "标题",
     "openNoteOrFile": "笔记",
     "text": "发短信",
+    "textCommand": "文本，'/' 表示命令",
     "heading": "标题",
     "menu": {
       "addVideo": "添加新视频",
@@ -216,6 +217,18 @@
       "download": "下载",
       "copy": "复制网址",
       "delete": "删除"
+    },
+    "transformMenu": {
+      "h1": "标题 1",
+      "h2": "标题 2",
+      "h3": "标题 3",
+      "dotList": "项目符号列表",
+      "numberList": "编号列表",
+      "checkList": "待办事项列表",
+      "addVideos": "视频",
+      "addAudios": "音频",
+      "addDocuments": "文档",
+      "addPhotos": "照片"
     },
     "photoMenu": {
       "upload": "上传新照片",

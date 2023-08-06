@@ -38,6 +38,10 @@ export abstract class BaseEditorElementComponent implements AfterViewChecked {
     return this.facade.selectionService.getSelectionDivActive$;
   }
 
+  get isRowsSelected(): boolean {
+    return this.facade.selectionService.isMultiSelect;
+  }
+
   get isResizingPhoto$(): Observable<boolean> {
     return this.facade.selectionService.isResizingPhoto$;
   }

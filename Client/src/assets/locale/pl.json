@@ -207,6 +207,7 @@
     "title": "Tytuł",
     "openNoteOrFile": "Notatki",
     "text": "Tekst",
+    "textCommand": "Tekst, '/' dla poleceń",
     "heading": "Nagłówek",
     "menu": {
       "addVideo": "Dodaj nowe filmy",
@@ -216,6 +217,18 @@
       "download": "Pobierać",
       "copy": "Skopiuj adres URL",
       "delete": "Usunąć"
+    },
+    "transformMenu": {
+      "h1": "Nagłówek 1",
+      "h2": "Nagłówek 2",
+      "h3": "Nagłówek 3",
+      "dotList": "Lista punktowana",
+      "numberList": "Lista numerowana",
+      "checkList": "Lista zadań do zrobienia",
+      "addVideos": "Filmy",
+      "addAudios": "Dźwięki",
+      "addDocuments": "Dokumenty",
+      "addPhotos": "Zdjęcia"
     },
     "photoMenu": {
       "upload": "Prześlij nowe zdjęcia",

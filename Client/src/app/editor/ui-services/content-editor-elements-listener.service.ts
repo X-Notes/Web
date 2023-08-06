@@ -9,6 +9,8 @@ import { ClickableContentService } from './clickable-content.service';
 import { ClickableSelectableEntities } from '../entities-ui/clickable-selectable-entities.enum';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { SelectionService } from './selection.service';
+import { EditorSelectionModeEnum } from '../entities-ui/editor-selection-mode.enum';
 
 @Injectable()
 export class ContentEditorElementsListenerService {
@@ -38,7 +40,8 @@ export class ContentEditorElementsListenerService {
     rendererFactory: RendererFactory2,
     private pS: PersonalizationService,
     private clickableService: ClickableContentService,
-    private store: Store) {
+    private store: Store,
+    private selectionService: SelectionService) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -62,12 +65,10 @@ export class ContentEditorElementsListenerService {
         return false;
       }
       if (e.code === 'ArrowDown') {
-        this.moveDown(e, noteTitleEl, elements);
-        return false;
+        return this.moveDown(e, noteTitleEl, elements);
       }
       if (e.code === 'ArrowUp') {
-        this.moveUp(e, noteTitleEl, elements);
-        return false;
+        return this.moveUp(e, noteTitleEl, elements);
       }
       if (e.code === 'Tab') {
         e.preventDefault();
@@ -118,61 +119,93 @@ export class ContentEditorElementsListenerService {
     this.listeners.push(keydown, selectionListener);
   }
 
-  moveUp(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): void {
+  moveUp(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): boolean {
+
     if (document.activeElement === noteTitleEl.nativeElement) {
-      return;
+      return false;
     }
 
     const arr = elements.toArray();
-    const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
-    if (el) {
-      const index = arr.indexOf(el);
-      const { currentItemId: itemId } = this.clickableService;
-      const isFocusToNext = el.isFocusToNext({
-        event,
-        itemId,
-        status: FocusDirection.Up,
-      });
-      const upEl = isFocusToNext ? arr[index - 1] : el;
-      if (index === 0 && isFocusToNext) {
-        noteTitleEl.nativeElement?.focus();
-        return;
+
+    const isMode = this.selectionService.selectionMode === EditorSelectionModeEnum.MultiplyRows || this.selectionService.selectionMode === EditorSelectionModeEnum.EntireRow;
+    if (isMode) {
+      const elms = arr.filter((item) => this.selectionService.isSelected(item.getContentId()));
+      if (elms.length > 0) {
+        this.selectionService.resetSelectedItems();
+        const minEl = elms.sort((a, b) => a.getContent().order - b.getContent().order)[0];
+        minEl.setFocus({ event, itemId: this.clickableService.currentItemId, status: FocusDirection.Up });
       }
-      if (upEl) {
-        upEl.setFocus({ event, itemId, status: FocusDirection.Up });
-        el.detectChanges();
-      }
+      return false;
     }
+
+    const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
+    if (!el) {
+      return false;
+    }
+
+    const index = arr.indexOf(el);
+    const { currentItemId: itemId } = this.clickableService;
+    const isFocusToNext = el.isFocusToNext({
+      event,
+      itemId,
+      status: FocusDirection.Up,
+    });
+    const upEl = isFocusToNext ? arr[index - 1] : el;
+    if (index === 0 && isFocusToNext) {
+      noteTitleEl.nativeElement?.focus();
+      return false;
+    }
+    if (upEl) {
+      upEl.setFocus({ event, itemId, status: FocusDirection.Up });
+      el.detectChanges();
+    }
+
+    return false;
   }
 
-  moveDown(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): void {
+  moveDown(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): boolean {
     const arr = elements.toArray();
+
+    const isMode = this.selectionService.selectionMode === EditorSelectionModeEnum.MultiplyRows || this.selectionService.selectionMode === EditorSelectionModeEnum.EntireRow;
+    if (isMode) {
+      const elms = arr.filter((item) => this.selectionService.isSelected(item.getContentId()));
+      if (elms.length > 0) {
+        this.selectionService.resetSelectedItems();
+        const minEl = elms.sort((a, b) => a.getContent().order - b.getContent().order)[0];
+        minEl.setFocus({ event, itemId: this.clickableService.currentItemId, status: FocusDirection.Down });
+      }
+      return false;
+    }
 
     if (document.activeElement === noteTitleEl.nativeElement) {
       arr[0]?.setFocus({ event, itemId: null, status: FocusDirection.Down });
-      return;
+      return false;
     }
 
     const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
-    if (el) {
-      const index = arr.indexOf(el);
+    if (!el) {
+      return false;
+    }
 
-      const upDown = arr[index + 1];
-      if (upDown) {
-        const { currentItemId: itemId } = this.clickableService;
-        const upEl = el.isFocusToNext({
-          event,
-          itemId,
-          status: FocusDirection.Down,
-        })
-          ? arr[index + 1]
-          : el;
-        if (upEl) {
-          upEl.setFocus({ event, itemId, status: FocusDirection.Down });
-          el.detectChanges();
-        }
+    const index = arr.indexOf(el);
+
+    const upDown = arr[index + 1];
+    if (upDown) {
+      const { currentItemId: itemId } = this.clickableService;
+      const upEl = el.isFocusToNext({
+        event,
+        itemId,
+        status: FocusDirection.Down,
+      })
+        ? arr[index + 1]
+        : el;
+      if (upEl) {
+        upEl.setFocus({ event, itemId, status: FocusDirection.Down });
+        el.detectChanges();
       }
     }
+
+    return false;
   }
 
   destroysListeners() {

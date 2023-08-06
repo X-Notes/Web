@@ -19,6 +19,7 @@ import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/n
 import { isValidURL } from 'src/app/shared/utils/is-valid-url.util';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
 import { BaseTextElementComponent } from '../html-base.component';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-html-text-part',
@@ -28,12 +29,15 @@ import { BaseTextElementComponent } from '../html-base.component';
 })
 export class HtmlTextPartComponent
   extends BaseTextElementComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy, AfterViewInit {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
   @ViewChild('uploadFile') uploadFile: ElementRef;
+
+  @ViewChild(MatMenu) menu: MatMenu;
+
+  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
   textType = NoteTextTypeENUM;
 
@@ -66,13 +70,13 @@ export class HtmlTextPartComponent
   }
 
   // eslint-disable-next-line class-methods-use-this
-  backspaceUp() {}
+  backspaceUp() { }
 
   // eslint-disable-next-line class-methods-use-this
-  backspaceDown() {}
+  backspaceDown() { }
 
   // eslint-disable-next-line class-methods-use-this
-  deleteDown() {}
+  deleteDown() { }
 
   ngAfterViewInit(): void {
     this.setHandlers();
@@ -86,6 +90,13 @@ export class HtmlTextPartComponent
     this.destroysListeners();
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  onFirstSlash($event: KeyboardEvent): void {
+    if (!this.facade.pS.isMobile()) {
+      $event.preventDefault();
+      this.menuTrigger.openMenu();
+    }
   }
 
   ngOnInit(): void {
