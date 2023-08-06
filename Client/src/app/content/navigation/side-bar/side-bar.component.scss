@@ -64,31 +64,37 @@ nav {
   background-color: white;
 
   .module {
-    &:hover:not(.active) {
-      background-color: $light-nav-backlight;
+    &:hover {
+      .item {
+        .main-icon {
+          color: #383838;
+        }
+
+        .menu-item-name {
+          color: #383838;
+        }
+      }
     }
 
     .item {
       .main-icon {
-        color: $light-text-color;
+        color: #5d5d5d;
       }
 
       .menu-item-name {
-        background: linear-gradient(135deg, #404040 0%, #404040 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #5d5d5d;
       }
     }
   }
 
   .active {
-    background-color: $light-text-color;
+    // background-color: $light-text-color;
   }
 
   .billing-field {
     background-color: white;
     border-top: 1px solid $light-separator;
+
     .billing {
       background-color: $light-text-color;
       color: #f6f6f6;
@@ -109,6 +115,7 @@ nav {
       .main-icon {
         color: white;
       }
+
       .menu-item-name {
         background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
         background-clip: text;
@@ -127,7 +134,20 @@ nav {
   }
 }
 
-.light,
+.light {
+  .active {
+    .item {
+      .main-icon {
+        color: #383838;
+      }
+
+      .menu-item-name {
+        color: #383838;
+      }
+    }
+  }
+}
+
 .dark {
   .active {
     .item {
@@ -164,6 +184,7 @@ nav {
     }
   }
 }
+
 @media (max-width: 600px) {
   nav {
     height: $bottom-mobile-menu;
@@ -183,6 +204,7 @@ nav {
     }
   }
 }
+
 @media (max-width: 320px) {
   nav {
     .module {

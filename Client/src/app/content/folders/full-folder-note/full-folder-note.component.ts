@@ -87,7 +87,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     await this.loadMain();
     // LEFT SECTION
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    this.linkNotes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
+    const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
+    this.linkNotes = notes?.length > 0 ? notes.filter(x => x.id !== this.noteId) : [];
   }
 
   async loadMain() {
