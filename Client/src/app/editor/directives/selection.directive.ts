@@ -74,7 +74,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   get isSelectionActive(): boolean {
     // when the user starts to do select, the dom element that handles select is resized, e.g. rectangle, 5, so that random clicks are not handled accidentally
-    return (this.coords?.height > 10 && this.coords?.width > 1) || (this.coords?.width > 10 && this.coords?.height > 1);
+    return (this.coords?.height > 15 && this.coords?.width > 3) || (this.coords?.width > 15 && this.coords?.height > 3);
   }
 
   get headerHeight(): number {
@@ -161,6 +161,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   mouseDown(evt: MouseEvent) {
     this.selectionService.resetSelectedItems();
+    const isBackdropActive = document.getElementsByClassName('cdk-overlay-backdrop')[0]; // handle mat-menu
     if (
       (evt.target as HTMLElement).classList.contains('icon') ||
       (evt.target as HTMLElement).tagName === 'svg' ||
@@ -168,7 +169,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
       (evt.target as HTMLElement).localName === 'mat-icon' ||
       evt.target === this.scrollSection || // scroll click
       this.pS.isMobile() ||
-      this.pS.isDialogActive$.getValue()
+      this.pS.isDialogActive$.getValue() ||
+      !!isBackdropActive
     ) {
       return;
     }

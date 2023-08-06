@@ -261,10 +261,7 @@ export abstract class BaseTextElementComponent
     this.mouseoverEvent.emit();
   }
 
-  mouseDown($event: MouseEvent): void {
-    // this.facade.selectionService.resetSelectedItems();
-    // $event.stopPropagation();
-  }
+  mouseDown($event: MouseEvent): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave($event) {

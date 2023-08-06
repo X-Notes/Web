@@ -1,4 +1,4 @@
-<div appTheme class="main-container" (mouseover)="mouseEnter($event)" (mousedown)="mouseDown($event)"
+<div appTheme class="main-container" (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)" (click)="setFocusText($event)">
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"><ng-content
       *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content></app-drag-drop-handler-container>

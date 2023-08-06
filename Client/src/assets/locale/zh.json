@@ -230,6 +230,19 @@
       "addDocuments": "文档",
       "addPhotos": "照片"
     },
+    "colors": {
+      "reset": "重置",
+      "cardinal": "红衣主教",
+      "tiger": "虎",
+      "canary": "金丝雀",
+      "frog": "青蛙",
+      "parrot": "鹦鹉",
+      "bluebird": "蓝鸟",
+      "dolphin": "海豚",
+      "whale": "鲸鱼",
+      "butterfly": "蝴蝶",
+      "flamingo": "火烈鸟"
+    },
     "photoMenu": {
       "upload": "上传新照片",
       "countRow": "照片排成一排",

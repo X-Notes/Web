@@ -230,6 +230,19 @@
       "addDocuments": "ドキュメント",
       "addPhotos": "写真"
     },
+    "colors": {
+      "reset": "リセット",
+      "cardinal": "カーディナル",
+      "tiger": "トラ",
+      "canary": "カナリア",
+      "frog": "カエル",
+      "parrot": "オウム",
+      "bluebird": "青い鳥",
+      "dolphin": "イルカ",
+      "whale": "クジラ",
+      "butterfly": "蝶",
+      "flamingo": "フラミンゴ"
+    },
     "photoMenu": {
       "upload": "新しい写真をアップロードする",
       "countRow": "行の写真",

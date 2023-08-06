@@ -230,6 +230,19 @@
       "addDocuments": "Documents",
       "addPhotos": "Photos"
     },
+    "colors": {
+      "reset": "Réinitialiser",
+      "cardinal": "Cardinal",
+      "tiger": "Tigre",
+      "canary": "Canari",
+      "frog": "Grenouille",
+      "parrot": "Perroquet",
+      "bluebird": "Oiseau bleu",
+      "dolphin": "Dauphin",
+      "whale": "Baleine",
+      "butterfly": "Papillon",
+      "flamingo": "Flamant rose"
+    },
     "photoMenu": {
       "upload": "Télécharger de nouvelles photos",
       "countRow": "Photo en ligne",

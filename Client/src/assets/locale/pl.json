@@ -230,6 +230,19 @@
       "addDocuments": "Dokumenty",
       "addPhotos": "Zdjęcia"
     },
+    "colors": {
+      "reset": "Resetuj",
+      "cardinal": "Kardynał",
+      "tiger": "Tygrys",
+      "canary": "Kanarek",
+      "frog": "Żaba",
+      "parrot": "Papuga",
+      "bluebird": "Modrzyk",
+      "dolphin": "Delfin",
+      "whale": "Wieloryb",
+      "butterfly": "Motyl",
+      "flamingo": "Flaming"
+    },
     "photoMenu": {
       "upload": "Prześlij nowe zdjęcia",
       "countRow": "Zdjęcie w rzędzie",

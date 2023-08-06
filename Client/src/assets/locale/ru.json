@@ -230,6 +230,19 @@
       "addDocuments": "Документы",
       "addPhotos": "Фотографии"
     },
+    "colors": {
+      "reset": "Сбросить",
+      "cardinal": "Кардинал",
+      "tiger": "Тигр",
+      "canary": "Канарейка",
+      "frog": "Лягушка",
+      "parrot": "Попугай",
+      "bluebird": "Синяя птица",
+      "dolphin": "Дельфин",
+      "whale": "Кит",
+      "butterfly": "Бабочка",
+      "flamingo": "Фламинго"
+    },
     "photoMenu": {
       "download": "Скачать",
       "delete": "Удалить",

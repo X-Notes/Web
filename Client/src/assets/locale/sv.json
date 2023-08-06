@@ -230,6 +230,19 @@
       "addDocuments": "Dokument",
       "addPhotos": "Foton"
     },
+    "colors": {
+      "reset": "Återställ",
+      "cardinal": "Kardinal",
+      "tiger": "Tiger",
+      "canary": "Kanariefågel",
+      "frog": "Groda",
+      "parrot": "Papegoja",
+      "bluebird": "Blåfågel",
+      "dolphin": "Delfin",
+      "whale": "Val",
+      "butterfly": "Fjäril",
+      "flamingo": "Flamingo"
+    },
     "photoMenu": {
       "upload": "Ladda upp nya foton",
       "countRow": "Foto i rad",
