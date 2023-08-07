@@ -50,14 +50,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
-import { LoadNotesByIds } from '../../notes/state/notes-actions';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { SignalRService } from 'src/app/core/signal-r.service';
 
+export interface FullFolderState {
+  folder: FullFolder;
+  isCanView: boolean;
+}
+
 export interface FolderState {
   folders: Folders[];
-  fullFolder: FullFolder;
+  fullFolderState: FullFolderState | null;
   isCanViewFullFolder: boolean;
   selectedIds: Set<string>;
   removeFromMurriEvent: string[];
@@ -70,7 +74,7 @@ export interface FolderState {
   name: 'Folders',
   defaults: {
     folders: [],
-    fullFolder: null,
+    fullFolderState: null,
     isCanViewFullFolder: false,
     selectedIds: new Set(),
     removeFromMurriEvent: [],
@@ -106,18 +110,18 @@ export class FolderStore {
   }
 
   @Selector()
-  static full(state: FolderState) {
-    return state.fullFolder;
+  static full(state: FolderState): FullFolder {
+    return state.fullFolderState?.folder;
   }
 
   @Selector()
   static fullFolderShared(state: FolderState): boolean {
-    return state.fullFolder?.folderTypeId === FolderTypeENUM.Shared;
+    return state.fullFolderState?.folder?.folderTypeId === FolderTypeENUM.Shared;
   }
 
   @Selector([UserStore.getUser])
   static isFullFolderOwner(folderState: FolderState, user: ShortUser) {
-    const folderOwnerId = folderState.fullFolder?.userId;
+    const folderOwnerId = folderState.fullFolderState?.folder?.userId;
     return folderOwnerId === user.id;
   }
 
@@ -128,22 +132,27 @@ export class FolderStore {
 
   @Selector()
   static isFullFolderViewer(state: FolderState): boolean {
-    return state.fullFolder?.refTypeId === RefTypeENUM.Viewer;
+    return state.fullFolderState?.folder?.refTypeId === RefTypeENUM.Viewer;
   }
 
   @Selector()
   static isFullFolderEditor(state: FolderState): boolean {
-    return state.fullFolder?.refTypeId === RefTypeENUM.Editor;
+    return state.fullFolderState?.folder?.refTypeId === RefTypeENUM.Editor;
   }
 
   @Selector()
   static fullFolderTitle(state: FolderState): string {
-    return state.fullFolder?.title;
+    return state.fullFolderState?.folder?.title;
   }
 
   @Selector()
   static canEdit(state: FolderState): boolean {
-    return state.fullFolder?.isCanEdit;
+    return state.fullFolderState?.folder?.isCanEdit;
+  }
+
+  @Selector()
+  static canView(state: FolderState): boolean {
+    return state.fullFolderState?.isCanView;
   }
 
   @Selector()
@@ -243,7 +252,7 @@ export class FolderStore {
 
   @Selector()
   static getOwnerId(state: FolderState): string {
-    return state.fullFolder.userId;
+    return state.fullFolderState?.folder?.userId;
   }
 
   @Action(ClearUpdatesUIFolders)
@@ -462,7 +471,7 @@ export class FolderStore {
     await dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo)).toPromise();
 
     // UPDATE FULL NOTE
-    const idToUpdate = selectedIds.find((id) => id === getState().fullFolder?.id);
+    const idToUpdate = selectedIds.find((id) => id === getState().fullFolderState?.folder?.id);
     if (idToUpdate) {
       dispatch(new UpdateFullFolder({ folderTypeId: typeTo, refTypeId }, idToUpdate));
     }
@@ -549,7 +558,7 @@ export class FolderStore {
   async resetFoldersState({ patchState }: StateContext<FolderState>) {
     patchState({
       folders: [],
-      fullFolder: null,
+      fullFolderState: null,
       isCanViewFullFolder: false,
       selectedIds: new Set(),
       removeFromMurriEvent: [],
@@ -607,9 +616,9 @@ export class FolderStore {
       resp = await this.api.changeColor(selectedIds, color, this.signalR.connectionIdOrError).toPromise();
     }
     if (resp.success) {
-      const fullFolder = getState().fullFolder;
+      const fullFolder = getState().fullFolderState?.folder;
       if (fullFolder && selectedIds.some((id) => id === fullFolder.id)) {
-        patchState({ fullFolder: { ...fullFolder, color } });
+        patchState({ fullFolderState: {  ... getState().fullFolderState, folder: { ...fullFolder, color } } });
       }
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
       foldersForUpdate.forEach((folder) => (folder.color = color));
@@ -668,9 +677,9 @@ export class FolderStore {
     if (resp.success) {
       // FULL NOTE
       if (isUpdateFullNote) {
-        const folder = getState().fullFolder;
+        const folder = getState().fullFolderState?.folder;
         if (folder && folder.id === folderId) {
-          patchState({ fullFolder: { ...folder, title: str } });
+          patchState({ fullFolderState: {  ... getState().fullFolderState, folder: { ...folder, title: str } } });
         }
       }
 
@@ -696,10 +705,23 @@ export class FolderStore {
   @Action(LoadFullFolder)
   async loadFull({ patchState }: StateContext<FolderState>, { id }: LoadFullFolder) {
     const request = await this.api.get(id).toPromise();
-    patchState({
-      fullFolder: request.data,
-      isCanViewFullFolder: request.success,
-    });
+    if(request.success) {
+      patchState({
+        fullFolderState: {
+          folder: request.data,
+          isCanView: true
+        },
+        isCanViewFullFolder: request.success,
+      });
+    } else {
+      patchState({
+        fullFolderState: {
+          folder: null,
+          isCanView: false
+        },
+        isCanViewFullFolder: request.success,
+      });
+    }
   }
 
   @Action(UpdateFullFolder)
@@ -708,10 +730,10 @@ export class FolderStore {
     { getState, patchState }: StateContext<FolderState>,
     { folder, folderId }: UpdateFullFolder,
   ) {
-    const folderState = getState().fullFolder;
+    const folderState = getState().fullFolderState?.folder;
     if (folder && folderId === folderState?.id) {
       const newFolder: FullFolder = { ...folderState, ...folder };
-      patchState({ fullFolder: newFolder });
+      patchState({ fullFolderState: {  ... getState().fullFolderState, folder: newFolder } });
     }
   }
 

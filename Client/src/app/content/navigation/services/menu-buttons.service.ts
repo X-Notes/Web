@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from './dialogs-manage.service';
@@ -199,7 +199,7 @@ export class MenuButtonsService {
     private pService: PersonalizationService,
     private menuButtonsNotesService: MenuButtonsNotesService,
     private menuButtonsFoldersService: MenuButtonsFoldersService,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line class-methods-use-this
 
@@ -342,13 +342,19 @@ export class MenuButtonsService {
   }
 
   getCopyNotesItem(): MenuItem {
+    const isVisible = this.store.select(AppStore.isNoteInner).pipe(switchMap(flag => {
+      if (flag) {
+        return this.store.select(NoteStore.canView);
+      }
+      return this.store.select(NoteStore.selectedCount).pipe(startWith(0), map(x => x === 1));
+    }));
     return {
       icon: 'copy',
       operation: () => {
         this.menuButtonsNotesService.copyNotes();
         this.pService.innerNoteMenuActive = false;
       },
-      isVisible: this.store.select(NoteStore.selectedCount).pipe(startWith(0), map(x => x === 1)),
+      isVisible,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };
@@ -356,10 +362,16 @@ export class MenuButtonsService {
 
 
   getCopyFoldersItem(): MenuItem {
+    const isVisible = this.store.select(AppStore.isFolderInner).pipe(switchMap(flag => {
+      if (flag) {
+        return this.store.select(FolderStore.canView);
+      }
+      return this.store.select(FolderStore.selectedCount).pipe(startWith(0), map(x => x === 1));
+    }));
     return {
       icon: 'copy',
       operation: () => this.menuButtonsFoldersService.copyFolders(),
-      isVisible: this.store.select(FolderStore.selectedCount).pipe(startWith(0), map(x => x === 1)),
+      isVisible,
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
     };

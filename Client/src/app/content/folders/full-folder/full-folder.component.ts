@@ -69,6 +69,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
 
+  @Select(FolderStore.canView)
+  public canView$: Observable<boolean>;
+
   @Select(FolderStore.full)
   public folder$: Observable<FullFolder>;
 
