@@ -204,6 +204,14 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }
 
+  get widthMoreThan1024$() {
+    return this.windowWidth$.pipe(map((value) => value > 1024));
+  }
+
+  get isWidthMoreThan600$() {
+    return this.windowWidth$.pipe(map((value) => value >= 600));
+  }
+
   get navMenuHeight(): number {
     const height = document.getElementById(sideBarId)?.offsetHeight;
     return height ?? 0;
@@ -256,14 +264,6 @@ export class PersonalizationService {
   isMobile(): boolean {
     return window.innerWidth < this.startMobileWidth;
   }
-
-  widthMoreThan1024 = () => {
-    return window.innerWidth > 1024;
-  };
-
-  isWidthMoreThan600 = () => {
-    return window.innerWidth >= 600;
-  };
 
   waitPreloading(time?: number) {
     return new Promise<boolean>((resolve) =>

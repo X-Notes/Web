@@ -7,7 +7,7 @@
   </div>
 
   <div [CustomTooltip]="'header.theme' | translate" position="Bottom" class="auxiliary-icon" (click)="toggleTheme()"
-    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false" #themeApp>
+    *ngIf="(pService.widthMoreThan1024$ | async) && (pService.isDisableRightToolsActive$ | async) === false" #themeApp>
     <div class="icon">
       <mat-icon svgIcon="themeLight" [inline]="true"></mat-icon>
     </div>
@@ -15,7 +15,7 @@
   </div>
 
   <div [CustomTooltip]="'header.questions' | translate" position="Bottom" class="auxiliary-icon"
-    *ngIf="pService.widthMoreThan1024() && (pService.isDisableRightToolsActive$ | async) === false"
+    *ngIf="(pService.widthMoreThan1024$ | async) && (pService.isDisableRightToolsActive$ | async) === false"
     [matMenuTriggerFor]="menu" #question>
     <div class="icon">
       <mat-icon svgIcon="question" [inline]="true"></mat-icon>
@@ -37,7 +37,7 @@
   </div>
 
   <div [CustomTooltip]="'header.notification' | translate" position="Bottom" class="auxiliary-icon"
-    (click)="isOpenNotification = !isOpenNotification" *ngIf="!pService.widthMoreThan1024()" #notificationHeader
+    (click)="isOpenNotification = !isOpenNotification" *ngIf="(pService.widthMoreThan1024$ | async) === false" #notificationHeader
     cdk-overlay-origin #origin="cdkOverlayOrigin">
     <div class="icon">
       <mat-icon svgIcon="notification" [inline]="true"></mat-icon>
@@ -53,7 +53,7 @@
   </div>
 
   <div [CustomTooltip]="'header.orientation' | translate" position="Bottom" class="auxiliary-icon"
-    (click)="toggleOrientation()" *ngIf="(isProfile$ | async) === false && !pService.widthMoreThan1024()"
+    (click)="toggleOrientation()" *ngIf="(isProfile$ | async) === false && (pService.widthMoreThan1024$ | async) === false"
     #orientationNote>
     <div class="icon">
       <mat-icon svgIcon="viewChange" [inline]="true"></mat-icon>

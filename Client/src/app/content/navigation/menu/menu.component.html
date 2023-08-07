@@ -10,7 +10,7 @@
         position="Bottom"
         [disabled]="item?.isActive | async"
         *ngIf="(item?.isVisible | async) === (true || undefined || null)"
-        [flagDisable]="disableTooltpUser()"
+        [flagDisable]="(pService.widthMoreThan1024$ | async) === false"
       >
         <div class="inner">
           <div class="icon">

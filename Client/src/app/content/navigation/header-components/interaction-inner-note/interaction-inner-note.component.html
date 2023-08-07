@@ -7,7 +7,7 @@
       buttonService.getNoteMenuByNoteType(noteType$ | async)
         | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
     "
-    *ngIf="pService.widthMoreThan1024()"
+    *ngIf="(pService.widthMoreThan1024$ | async)"
     [@showMenuLeftRight]
   ></app-menu>
 
@@ -72,7 +72,7 @@
           | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
       "
       [@showMenuLeftRight]
-      [@.disabled]="!pService.widthMoreThan1024()"
+      [@.disabled]="(pService.widthMoreThan1024$ | async) === false"
     ></app-menu>
   </ng-template>
 </div>

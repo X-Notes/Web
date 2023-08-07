@@ -118,7 +118,7 @@
       class="interactions"
       *ngIf="(pService.isMenuActive$ | async) && (isFolderInner$ | async) === false"
       [@showMenuLeftRight]
-      [@.disabled]="!pService.widthMoreThan1024()"
+      [@.disabled]="(pService.widthMoreThan1024$ | async) === false"
     >
       <app-menu
         [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
