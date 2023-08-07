@@ -108,6 +108,10 @@ export abstract class BaseTextElementComponent
     return this.getIsActive() && !this.isReadOnlyMode;
   }
 
+  get isActiveStateNoHover(): boolean {
+    return this.isContentEmpty() && !this.isReadOnlyMode;
+  }
+
   get uiCursors$(): Observable<TextCursorUI[]> {
     return this.getTextCursors()?.pipe(
       map((x) => {
@@ -261,7 +265,7 @@ export abstract class BaseTextElementComponent
     this.mouseoverEvent.emit();
   }
 
-  mouseDown($event: MouseEvent): void {}
+  mouseDown($event: MouseEvent): void { }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseLeave($event) {

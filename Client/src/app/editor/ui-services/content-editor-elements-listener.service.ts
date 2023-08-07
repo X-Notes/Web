@@ -88,7 +88,7 @@ export class ContentEditorElementsListenerService {
       }
       const htmlEl = e.target as HTMLElement;
       const classes = [...(htmlEl.classList as any)];
-      if (e.ctrlKey && e.code === 'KeyA') {
+      if ((e.metaKey || e.ctrlKey) && e.code === 'KeyA') {
         if (!htmlEl.textContent || htmlEl.textContent === '') {
           e.preventDefault();
           this.onPressCtrlASubject.next();
