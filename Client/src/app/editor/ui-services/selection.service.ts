@@ -72,9 +72,7 @@ export class SelectionService {
   }
 
   get sidebarWidth(): number {
-    return this.router.url.includes('public')
-      ? document.getElementById('public-left-section').offsetWidth
-      : 270;
+    return 270;
   }
 
   updateSelectionValue(flag: boolean): void {
