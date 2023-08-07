@@ -7,18 +7,19 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { SharedComponent } from './shared/shared.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 
 const itemRoutes: Routes = [
-  { path: '', component: PrivateComponent },
-  { path: 'deleted', component: DeletedComponent },
-  { path: 'shared', component: SharedComponent },
-  { path: 'archive', component: ArchiveComponent },
+  { path: '', component: PrivateComponent, data: { route_key: EntityType.FolderPrivate } },
+  { path: 'deleted', component: DeletedComponent, data: { route_key: EntityType.FolderDeleted } },
+  { path: 'shared', component: SharedComponent, data: { route_key: EntityType.FolderShared } },
+  { path: 'archive', component: ArchiveComponent, data: { route_key: EntityType.FolderArchive } },
 ];
 
 const routes: Routes = [
   { path: '', component: FoldersComponent, children: itemRoutes },
-  { path: ':id', component: FullFolderComponent },
-  { path: ':folderId/:noteId', component: FullFolderNoteComponent },
+  { path: ':id', component: FullFolderComponent, data: { route_key: EntityType.FolderInner }},
+  { path: ':folderId/:noteId', component: FullFolderNoteComponent, data: { route_key: EntityType.FolderInnerNote } },
 ];
 
 @NgModule({

@@ -14,4 +14,7 @@ export enum EntityType {
   LabelDeleted,
   Profile,
   History,
+  About,
+  FAQ,
+  Incorrect
 }

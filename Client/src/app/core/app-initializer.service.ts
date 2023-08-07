@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GlobalEventsService } from './global-events.service';
 import { SignalRService } from './signal-r.service';
+import { NavigatorService } from './navigator.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +8,11 @@ import { SignalRService } from './signal-r.service';
 export class AppInitializerService {
   constructor(
     private signalRService: SignalRService,
-    private globalEventsService: GlobalEventsService,
+    private navigatorService: NavigatorService,
   ) {}
 
   async init(): Promise<void> {
     await this.signalRService.init();
-    await this.globalEventsService.init();
+    await this.navigatorService.init();
   }
 }

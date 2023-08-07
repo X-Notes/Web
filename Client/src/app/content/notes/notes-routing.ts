@@ -5,12 +5,13 @@ import { PrivatesComponent } from './privates/privates.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { SharedComponent } from './shared/shared.component';
 import { ArchiveComponent } from './archive/archive.component';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 
 const itemRoutes: Routes = [
-  { path: '', component: PrivatesComponent },
-  { path: 'deleted', component: DeletedComponent },
-  { path: 'shared', component: SharedComponent },
-  { path: 'archive', component: ArchiveComponent },
+  { path: '', component: PrivatesComponent, data: { route_key: EntityType.NotePrivate } },
+  { path: 'deleted', component: DeletedComponent, data: { route_key: EntityType.NoteDeleted } },
+  { path: 'shared', component: SharedComponent, data: { route_key: EntityType.NoteShared } },
+  { path: 'archive', component: ArchiveComponent, data: { route_key: EntityType.NoteArchive } },
 ];
 
 const routes: Routes = [
