@@ -123,7 +123,7 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => this.pService.removeNotesToFolderSubject.next(true),
-      isVisible: of(true),
+      isVisible: this.store.select(FolderStore.canEdit),
       isOnlyForAuthor: false,
       IsNeedEditRightsToSee: false,
       tooltip: of('menu.removeFromFolder'),

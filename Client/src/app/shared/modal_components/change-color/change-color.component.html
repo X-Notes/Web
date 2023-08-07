@@ -24,11 +24,11 @@
     <div class="inner" [ngStyle]="{'backgroundColor': current}">
       <p>Preview</p>
       <div class="notes-folder">
-        <div *ngFor="let item of [1,2,3]" class="note-folder">
+        <div *ngFor="let item of phrases" class="note-folder">
           <div class="icon">
             <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
           </div>
-          <p>Hello Hello Hello Hello</p>
+          <p>{{ item }}</p>
         </div>
       </div>
     </div>

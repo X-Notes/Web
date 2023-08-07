@@ -134,7 +134,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
  
     public async Task<OperationResult<CopyNoteResult>> Handle(CopyNoteInternalCommand request, CancellationToken cancellationToken)
     {
-        var noteForCopy = await noteRepository.GetNoteWithContent(request.NoteId);
+        var noteForCopy = await noteRepository.GetNoteWithContentAsNoTracking(request.NoteId);
 
         if (noteForCopy == null)
         {

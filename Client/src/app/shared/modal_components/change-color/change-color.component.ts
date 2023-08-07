@@ -36,6 +36,14 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     },
   ) {}
 
+  get phrases(): string [] {
+    return [
+      'Innovation distinguishes between a leader and a follower.',
+      'Your time is limited, so don’t waste it living someone else’s life.',
+      'Don’t let the noise of others’ opinions drown out your own inner voice.'
+    ]
+  }
+
   ngOnInit(): void {
     this.current = this.pallete[0];
   }
