@@ -84,20 +84,6 @@
   }
 }
 
-.history {
-  width: auto;
-  margin-right: 0;
-  margin-left: auto;
-  font-size: 1.125rem;
-  font-weight: 500;
-  margin-left: 2.5rem;
-  .inner-content {
-    p {
-      padding-right: 0;
-    }
-  }
-}
-
 .profile-default {
   width: 100%;
   display: flex;
@@ -180,10 +166,6 @@
 }
 
 @media (max-width: 1320px) {
-  .history {
-    margin-left: initial;
-    margin-right: 2rem;
-  }
   .generic-unfixed-150 {
     min-width: 54px;
   }
@@ -213,10 +195,6 @@
 }
 
 @media (max-width: 1024px) {
-  .history {
-    display: none;
-  }
-
   .more_vert {
     display: flex;
     justify-content: center;

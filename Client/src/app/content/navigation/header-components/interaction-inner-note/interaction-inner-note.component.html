@@ -12,15 +12,6 @@
   ></app-menu>
 
   <app-general-header-button
-    class="app-history"
-    (clickEvent)="openHistoriesPopup()"
-    [message]="'menu.history' | translate"
-    [styleClasses]="'history'"
-    [styleType]="buttonStyleType.Dark"
-    [theme]="theme$ | async"
-  ></app-general-header-button>
-
-  <app-general-header-button
     *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
     (clickEvent)="openRelatedNotesPopup()"
     [tooltipMessage]="'modal.relatedNotesPopup.relatedNotes' | translate"

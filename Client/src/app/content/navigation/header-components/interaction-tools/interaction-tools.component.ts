@@ -13,6 +13,7 @@ import {
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from '../../services/dialogs-manage.service';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -88,6 +89,11 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
 
   openSearch(): void {
     this.dialogsManageService.openSearchDialog();
+  }
+
+  openHistory(): void {
+    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+    this.dialogsManageService.openNoteHistoriesMobile(noteId);
   }
 
   goTo(id: string, type: string) {

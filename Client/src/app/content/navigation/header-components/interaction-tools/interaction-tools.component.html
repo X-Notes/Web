@@ -1,5 +1,13 @@
 <div appTheme class="interactions">
-  <div class="auxiliary-icon" (click)="openSearch()" #search>
+
+  <div *ngIf="isNoteInner$ | async" [CustomTooltip]="'menu.history' | translate" position="Bottom" class="auxiliary-icon" (click)="openHistory()" #history>
+    <div class="icon">
+      <mat-icon fontSet="material-icons-round">history</mat-icon>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
+  </div>
+
+  <div [CustomTooltip]="'modal.searchModal.title' | translate" position="Bottom" class="auxiliary-icon" (click)="openSearch()" #search>
     <div class="icon">
       <mat-icon svgIcon="search" [inline]="true"></mat-icon>
     </div>

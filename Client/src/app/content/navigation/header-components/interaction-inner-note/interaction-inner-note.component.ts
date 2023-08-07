@@ -76,9 +76,4 @@ export class InteractionInnerNoteComponent {
     const isCanEdit = this.store.selectSnapshot(NoteStore.canEdit);
     this.dialogsManageService.openRelatedNotes(noteId, isCanEdit);
   }
-
-  openHistoriesPopup() {
-    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
-    this.dialogsManageService.openNoteHistoriesMobile(noteId);
-  }
 }
