@@ -121,7 +121,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
-    this.store.dispatch([ResetNotesState, ResetFoldersState, ResetLabelsState]);
   }
 
   changeTheme(value: boolean) {

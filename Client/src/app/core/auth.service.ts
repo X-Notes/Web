@@ -8,6 +8,9 @@ import { UserStore } from './stateUser/user-state';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { ResetFoldersState } from '../content/folders/state/folders-actions';
+import { ResetNotesState } from '../content/notes/state/notes-actions';
+import { ResetLabelsState } from '../content/labels/state/labels-actions';
 
 export enum AuthStatus {
   NoStarted,
@@ -92,6 +95,7 @@ export class AuthService {
 
   logout = async () => {
     await this.store.dispatch(new Logout()).toPromise();
+    await this.store.dispatch([ResetNotesState, ResetFoldersState, ResetLabelsState]).toPromise();
     this.ngZone.run(()=> this.router.navigate(['about']));
   };
 }
