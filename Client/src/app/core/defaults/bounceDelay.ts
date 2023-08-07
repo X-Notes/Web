@@ -10,3 +10,4 @@ export const searchNotesFoldersDelay = 500;
 export const updateCollectionTitleDelay = 20;
 export const pingWSDelay = 10000;
 export const updateCursorDelay = 800;
+export const preventResetCursor = 50;

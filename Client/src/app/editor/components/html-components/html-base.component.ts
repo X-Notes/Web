@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, take, takeUntil } from 'rxjs/operators';
 import { UpdateCursorAction } from 'src/app/content/notes/state/editor-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -34,6 +34,8 @@ import { BaseEditorElementComponent } from '../base-html-components';
 import { HtmlComponentsFacadeService } from '../html-components.facade.service';
 import { ParentInteractionHTML, ComponentType } from '../parent-interaction.interface';
 import { EditorSelectionModeEnum } from '../../entities-ui/editor-selection-mode.enum';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { preventResetCursor } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   template: '',
@@ -99,6 +101,12 @@ export abstract class BaseTextElementComponent
         content: this.content,
       });
     });
+
+    this.updateWS$.pipe(takeUntilDestroyed(), debounceTime(preventResetCursor)).subscribe(x => {
+      if (x) {
+        this.updateWSInternal();
+      }
+    })
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -204,6 +212,10 @@ export abstract class BaseTextElementComponent
   }
 
   updateWS(): void {
+    this.updateWS$.next(true);
+  }
+
+  updateWSInternal(): void {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.getSelection();
     const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);

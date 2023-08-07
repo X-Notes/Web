@@ -1,6 +1,6 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { HtmlComponentsFacadeService } from './html-components.facade.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { NoteUserCursorWS } from '../entities/ws/note-user-cursor';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
@@ -25,6 +25,8 @@ export abstract class BaseEditorElementComponent implements AfterViewChecked {
 
   @Output()
   someChangesEvent = new EventEmitter();
+
+  protected updateWS$ = new BehaviorSubject<boolean>(false);
 
   protected actionsAfterViewInit: (() => void)[];
 
