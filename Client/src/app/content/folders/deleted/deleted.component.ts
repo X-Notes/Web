@@ -10,7 +10,6 @@ import {
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
@@ -63,7 +62,6 @@ export class DeletedComponent
   }
 
   async ngOnInit() {
-    await this.store.dispatch(new UpdateRoute(EntityType.FolderDeleted)).toPromise();
     this.pService.setSpinnerState(true);
     await this.loadContent();
   }

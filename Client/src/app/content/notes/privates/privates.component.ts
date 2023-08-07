@@ -1,8 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Select, Store } from '@ngxs/store';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
@@ -49,7 +47,6 @@ export class PrivatesComponent
   }
 
   async ngOnInit() {
-    await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
     this.pService.setSpinnerState(true);
     await this.loadContent();
   }

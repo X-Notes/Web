@@ -121,7 +121,7 @@
       [@.disabled]="(pService.widthMoreThan1024$ | async) === false"
     >
       <app-menu
-        [items]="menuButtonService.items | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
+        [items]="(menuButtonService.items | async) | manageMenuButtons: pB.IsCanEdit: pB.IsOwner: pB.isAllNotesNoShared"
       ></app-menu>
     </div>
 

@@ -3,6 +3,8 @@ import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from '@
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { EntityType } from '../shared/enums/entity-types.enum';
+import { Store } from '@ngxs/store';
+import { UpdateAppRoute } from './stateApp/app-action';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +15,9 @@ export class NavigatorService {
 
   routeType$: BehaviorSubject<EntityType> = new BehaviorSubject<EntityType>(null);
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute, private store: Store) {
     this.router.events.pipe(
-    filter(event => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd)
     ).subscribe((event) => {
       let route = this.route.snapshot;
       while (route.firstChild) {
@@ -24,6 +26,9 @@ export class NavigatorService {
       const routeKey = route?.routeConfig?.data?.route_key;
       this.routeType$.next(routeKey);
       this.route$.next(route);
+      if (routeKey) {
+        this.store.dispatch(new UpdateAppRoute(routeKey))
+      }
     });
   }
 

@@ -12,8 +12,7 @@ import {
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
-import { ShowSnackNotification, UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { takeUntil } from 'rxjs/operators';
 import {
   LoadBackgrounds,
@@ -28,13 +27,12 @@ import { PersonalizationSetting } from 'src/app/core/models/personalization-sett
 import { PersonalizationEnum } from 'src/app/shared/enums/personalization.enum';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
-import { ResetNotes, ResetNotesState } from '../../notes/state/notes-actions';
-import { ResetFolders, ResetFoldersState } from '../../folders/state/folders-actions';
+import { ResetNotes } from '../../notes/state/notes-actions';
+import { ResetFolders } from '../../folders/state/folders-actions';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionOption } from 'src/app/shared/custom-components/select-component/entities/select-option';
 import { EnumConverterService } from 'src/app/shared/services/enum-converter.service';
-import { ResetLabelsState } from '../../labels/state/labels-actions';
 
 @Component({
   selector: 'app-profile',
@@ -93,7 +91,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
 
     await this.store.dispatch(new LoadBackgrounds()).toPromise();
     this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);

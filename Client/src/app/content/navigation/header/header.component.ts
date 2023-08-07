@@ -13,16 +13,13 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
-import { NoteStore } from '../../notes/state/notes-state';
-import { FullNote } from '../../notes/models/full-note.model';
-import { FolderStore } from '../../folders/state/folders-state';
-import { FullFolder } from '../../folders/models/full-folder.model';
 import { LabelStore } from '../../labels/state/labels-state';
 import { MenuButtonsService } from '../services/menu-buttons.service';
 import { PermissionsButtonsService } from '../services/permissions-buttons.service';
 import { AppInitializerService } from 'src/app/core/app-initializer.service';
 import { GeneralButtonStyleType } from '../header-components/general-header-button/models/general-button-style-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { NavigatorService } from 'src/app/core/navigator.service';
 
 @Component({
   selector: 'app-header',
@@ -86,28 +83,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public menuButtonService: MenuButtonsService,
     public pB: PermissionsButtonsService,
     private appInitializerService: AppInitializerService,
-  ) {}
+    private navigationService: NavigatorService,
+  ) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
   }
 
-  async ngOnInit(): Promise<void> {
-    this.store
-      .select(AppStore.getRouting)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x) => this.routeChange(x));
-    this.store
-      .select(NoteStore.oneFull)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (note) => this.routeChangeFullNote(note));
-
-    this.store
-      .select(FolderStore.full)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (folder) => this.routeChangeFullFolder(folder));
-
+  ngOnInit(): void {
     this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
@@ -131,103 +115,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.sideBarActive$.next(true);
   }
 
-  routeChangeFullFolder(folder: FullFolder) {
-    // TODO REFACTOR
-    if (!folder) {
-      return;
-    }
-
-    this.menuButtonService.setFoldersItems(this.menuButtonService.folderInnerNotesItems);
-  }
-
-  routeChangeFullNote(note: FullNote) {
-    // TODO REFACTOR
-    if (!note) {
-      return;
-    }
-    const items = this.menuButtonService.getNoteMenuByNoteType(note.noteTypeId);
-    this.menuButtonService.setNotesItems(items);
-  }
-
   newButton() {
     this.pService.newButtonSubject.next(true);
   }
 
   deleteAllFromBin() {
     this.pService.emptyTrashButtonSubject.next(true);
-  }
-
-  routeChange(type: EntityType) {
-    // TODO REFACTOR
-    if (!type) {
-      return;
-    }
-    switch (type) {
-      // FOLDER
-      case EntityType.FolderPrivate: {
-        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsPrivate);
-        break;
-      }
-      case EntityType.FolderShared: {
-        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsShared);
-        break;
-      }
-      case EntityType.FolderArchive: {
-        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsArchive);
-        break;
-      }
-      case EntityType.FolderDeleted: {
-        this.menuButtonService.setFoldersItems(this.menuButtonService.foldersItemsDeleted);
-        break;
-      }
-      case EntityType.FolderInner: {
-        break;
-      }
-      case EntityType.FolderInnerNote: {
-        break;
-      }
-
-      // NOTES
-      case EntityType.NotePrivate: {
-        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsPrivate);
-        break;
-      }
-      case EntityType.NoteShared: {
-        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsShared);
-        break;
-      }
-      case EntityType.NoteArchive: {
-        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsArchive);
-        break;
-      }
-      case EntityType.NoteDeleted: {
-        this.menuButtonService.setNotesItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case EntityType.NoteInner: {
-        break;
-      }
-
-      // LABELS
-      case EntityType.LabelPrivate: {
-        break;
-      }
-      case EntityType.LabelDeleted: {
-        break;
-      }
-
-      // PROFILE
-      case EntityType.Profile: {
-        break;
-      }
-
-      case EntityType.History: {
-        break;
-      }
-
-      default: {
-        throw new Error('error');
-      }
-    }
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { DialogsManageService } from './dialogs-manage.service';
 import { MenuButtonsNotesService } from './menu-buttons-notes.service';
@@ -17,10 +17,11 @@ import { SmallNote } from '../../notes/models/small-note.model';
 import { EntityMenuEnum } from '../models/entity-menu.enum';
 import { SmallFolder } from '../../folders/models/folder.model';
 import { CopyNoteText } from '../menu/actions/copy-note-text-action';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { NavigatorService } from 'src/app/core/navigator.service';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
-  public items: MenuItem[] = [];
 
   public type: EntityMenuEnum;
 
@@ -199,7 +200,9 @@ export class MenuButtonsService {
     private pService: PersonalizationService,
     private menuButtonsNotesService: MenuButtonsNotesService,
     private menuButtonsFoldersService: MenuButtonsFoldersService,
-  ) { }
+    private navigator: NavigatorService,
+  ) {
+  }
 
   // eslint-disable-next-line class-methods-use-this
 
@@ -475,17 +478,74 @@ export class MenuButtonsService {
     return this.store.selectSnapshot(NoteStore.selectedIds)[0];
   }
 
-  setNotesItems(newItems: MenuItem[]) {
-    this.type = EntityMenuEnum.Note;
-    this.setItems(newItems);
+  get items(): Observable<MenuItem[]> {
+    return this.navigator.routeType$.pipe(switchMap(route => this.mapRoute(route)))
   }
 
-  setFoldersItems(newItems: MenuItem[]) {
-    this.type = EntityMenuEnum.Folder;
-    this.setItems(newItems);
-  }
+  mapRoute(route: EntityType): Observable<MenuItem[]> {
+    switch (route) {
+      // FOLDER
+      case EntityType.FolderPrivate: {
+        this.type = EntityMenuEnum.Folder;
+        return of(this.foldersItemsPrivate);
+      }
+      case EntityType.FolderShared: {
+        this.type = EntityMenuEnum.Folder;
+        return of(this.foldersItemsShared);
+      }
+      case EntityType.FolderArchive: {
+        this.type = EntityMenuEnum.Folder;
+        return of(this.foldersItemsArchive);
+      }
+      case EntityType.FolderDeleted: {
+        this.type = EntityMenuEnum.Folder;
+        return of(this.foldersItemsDeleted);
+      }
+      case EntityType.FolderInner: {
+        this.type = EntityMenuEnum.Folder;
+        return of(this.folderInnerNotesItems);
+      }
+      case EntityType.FolderInnerNote: {
+        this.type = EntityMenuEnum.Note;
+        return this.store.select(NoteStore.oneFull).pipe(map(note => {
+          if (note) {
+            return this.getNoteMenuByNoteType(note.noteTypeId)
+          }
+          return [];
+        }));
+      }
 
-  private setItems(newItems: MenuItem[]) {
-    this.items = newItems;
+      // NOTES
+      case EntityType.NotePrivate: {
+        this.type = EntityMenuEnum.Note;
+        return of(this.notesItemsPrivate);
+      }
+      case EntityType.NoteShared: {
+        this.type = EntityMenuEnum.Note;
+        return of(this.notesItemsShared);
+      }
+      case EntityType.NoteArchive: {
+        this.type = EntityMenuEnum.Note;
+        return of(this.notesItemsArchive);
+      }
+      case EntityType.NoteDeleted: {
+        this.type = EntityMenuEnum.Note;
+        return of(this.notesItemsDeleted);
+      }
+      case EntityType.NoteInner: {
+        this.type = EntityMenuEnum.Note;
+        return this.store.select(NoteStore.oneFull).pipe(map(note => {
+          if (note) {
+            return this.getNoteMenuByNoteType(note.noteTypeId)
+          }
+          return [];
+        }));
+      }
+
+      default: {
+        return of([]);
+      }
+    }
   }
 }
+

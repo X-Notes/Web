@@ -9,7 +9,6 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { Observable } from 'rxjs';
@@ -55,7 +54,6 @@ export class AllComponent implements OnInit, AfterViewInit {
   ) {}
 
   async ngOnInit() {
-    await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
     this.pService.setSpinnerState(true);
     await this.loadContent();
   }
