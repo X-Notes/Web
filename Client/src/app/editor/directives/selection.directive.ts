@@ -118,12 +118,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
       }
       return this.mouseUp(e);
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e: MouseEvent) => {
-      if (this.editorOptions$.getValue().isReadOnlyMode || this.store.selectSnapshot(AppStore.IsMuuriDragging)) {
-        return true;
-      }
-    });
 
     this.moveEventSub = fromEvent(document, 'mousemove')
       .pipe(bufferTime(20))
@@ -136,7 +130,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
         this.mouseMoveDelay(last);
       });
 
-    this.listeners.push(mouseMoveListener, mouseDownListener, mouseUpListener);
+    this.listeners.push(mouseDownListener, mouseUpListener);
   }
 
   initSelectionDrawer(scrollSection: HTMLElement): void {
@@ -179,12 +173,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.x = 0;
     this.y = 0;
     this.isMouseDown = true;
-
-    if (this.coords.width === 0 || this.coords.height === 0) {
-      //rectSize.x = 0;
-      //rectSize.y = 0;
-      //this.selectionEvent.emit(rectSize);
-    }
 
     this.x = evt.pageX;
     this.y = evt.pageY;
@@ -235,19 +223,20 @@ export class SelectionDirective implements OnDestroy, OnInit {
     const newValueWidth = Math.abs(newWidth);
     const newValueHeight = Math.abs(newHeight);
 
-    if (newHeight < 0 && newWidth > 0) {
+    if (newHeight < 0 && newWidth > 0) { // right upper
       const top = this.processY(newY);
       this.setTop(top);
-    } else if (newHeight > 0 && newWidth < 0) {
+      this.setLeft(this.startLeft);
+    } else if (newHeight > 0 && newWidth < 0) { // bottom left
       this.setTop(this.startTop);
       const left = this.processX(newX);
       this.setLeft(left);
-    } else if (newHeight < 0 && newWidth < 0) {
+    } else if (newHeight < 0 && newWidth < 0) { // left upper
       const top = this.processY(newY);
       this.setTop(top);
       const left = this.processX(newX);
       this.setLeft(left);
-    } else {
+    } else { // bottom right
       this.setTop(this.startTop);
       this.setLeft(this.startLeft);
     }

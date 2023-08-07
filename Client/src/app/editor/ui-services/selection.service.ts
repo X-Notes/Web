@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
