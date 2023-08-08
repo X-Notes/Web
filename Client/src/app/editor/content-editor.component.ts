@@ -363,7 +363,7 @@ export class ContentEditorComponent
 
     this.facade.clickableContentService.cursorUpdatingActive = this.cursorActive;
 
-    this.iniTitle(this.title);
+    this.initStartTitle(this.title);
     this.initTitleSubscription();
     this.subscribeOnButtons();
     this.facade.contentUpdateWsService.noteId = this.options$.getValue().noteId;

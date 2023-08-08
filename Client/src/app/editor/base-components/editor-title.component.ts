@@ -42,7 +42,11 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     return this.noteTitleEl.nativeElement.textContent;
   }
 
-  iniTitle(title: string): void {
+  get isFocusedTitle(): boolean {
+    return document.activeElement === this.noteTitleEl.nativeElement;
+  }
+
+  initStartTitle(title: string): void {
     this.viewTitle = title;
   }
 
@@ -115,8 +119,8 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
     this.setHtmlTitle(updateTitle);
 
-    if (this.titleInited) {
-      requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
+    if (this.titleInited && this.isFocusedTitle) {
+      this.facade.apiBrowser.setCaretFirstChild(el, data)
     }
 
     this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');
