@@ -53,18 +53,14 @@ public class NotificationService
     public async Task AddAndSendNotificationsAsync(Guid userFromId, IEnumerable<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
         var notifications = await AddNotificationsAsync(userFromId, userToIds, key, metadata);
-        var notificationIds = notifications.Select(x => x.Id);
+        var notificationIds = notifications.Select(x => x.Id).ToList();
         var notificationsDb = await notificationRepository.GetByIdsIncludeUser(notificationIds.ToArray());
 
-        var notificationsDTO = notificationsDb.Select(x =>
+        foreach (var not in notificationsDb)
         {
-            var userPhotoPath = mapper.GetUserProfilePhotoPath(x.UserFrom);
-            return new NotificationDTO(x, userPhotoPath);
-        });
-
-        foreach(var not in notificationsDTO)
-        {
-            await appSignalRHub.SendNewNotification(userFromId, not);
+            var userPhotoPath = mapper.GetUserProfilePhotoPath(not.UserFrom);
+            var dtoNotifocation = new NotificationDTO(not, userPhotoPath);
+            await appSignalRHub.SendNewNotification(not.UserToId, dtoNotifocation);
         }
     }
 
@@ -77,10 +73,10 @@ public class NotificationService
             NotificationMessagesId = key,
             Metadata = metadata,
             Date = DateTimeProvider.Time
-        });
+        }).ToList();
 
         await notificationRepository.AddRangeAsync(notifications);
 
-        return notifications.ToList();
+        return notifications;
     }
 }
