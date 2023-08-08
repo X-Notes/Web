@@ -106,7 +106,7 @@ export abstract class BaseTextElementComponent
       if (x) {
         this.updateWSInternal();
       }
-    })
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering

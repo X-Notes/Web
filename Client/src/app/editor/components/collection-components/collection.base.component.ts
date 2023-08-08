@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import { UpdateCursorAction } from 'src/app/content/notes/state/editor-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -25,6 +25,9 @@ import { BaseEditorElementComponent } from '../base-html-components';
 import { HtmlComponentsFacadeService } from '../html-components.facade.service';
 import { ComponentType, ParentInteractionCollection } from '../parent-interaction.interface';
 import { TitleCollectionComponent } from './title-collection/title-collection.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { preventResetCursor } from 'src/app/core/defaults/bounceDelay';
+import { SaveSelection } from '../../entities-ui/save-selection';
 
 @Component({
   template: '',
@@ -66,6 +69,36 @@ export class CollectionBaseComponent<
     facade: HtmlComponentsFacadeService,
   ) {
     super(cdr, facade);
+
+    this.updateWS$.pipe(takeUntilDestroyed(), debounceTime(preventResetCursor)).subscribe(x => {
+      if (x) {
+        this.updateWSInternal();
+      }
+    });
+  }
+
+  get isFocused(): boolean {
+    return document.activeElement === this.titleComponent.titleHtml.nativeElement;
+  }
+
+  getSelection(): SaveSelection {
+    const el = this.titleComponent?.titleHtml.nativeElement;
+    if (!el) return null;
+    return this.facade.apiBrowser.getSelectionInfo(el);
+  }
+
+  updateWSInternal(): void {
+    const uiTitle = this.titleComponent.titleHtml.nativeElement.textContent;
+    if(uiTitle !== this.content.name) {
+      const el = this.titleComponent?.titleHtml.nativeElement;
+      const savedSel = this.getSelection();
+      this.titleComponent.viewTextContent = this.content.name;
+      this.titleComponent.detectChange();
+      if (this.isFocused) {
+        this.facade.apiBrowser.restoreSelection(el, savedSel);
+      }
+    }
+    this.detectChanges();
   }
 
   get isDragActive(): boolean {
@@ -192,5 +225,6 @@ export class CollectionBaseComponent<
 
   updateWS(): void {
     this.detectChanges();
+    this.updateWS$.next(true);
   }
 }

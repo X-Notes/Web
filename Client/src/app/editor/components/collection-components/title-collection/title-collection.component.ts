@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -59,6 +60,8 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   @Input()
   textContent = '';
 
+  viewTextContent = '';
+
   @Input()
   contentId: string;
 
@@ -70,10 +73,11 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   nameCollectionChanged: Subject<string> = new Subject<string>();
 
   constructor(
-    public store: Store, 
-    private apiBrowser: ApiBrowserTextService, 
+    public store: Store,
+    private apiBrowser: ApiBrowserTextService,
     public clickableService: ClickableContentService,
-    private selectionService: SelectionService) { }
+    private selectionService: SelectionService,
+    private cdr: ChangeDetectorRef) { }
 
   get isFocusedOnTitle(): boolean {
     return document.activeElement === this.titleHtml.nativeElement;
@@ -134,6 +138,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.setTitleUI(this.textContent);
     this.nameCollectionChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateCollectionTitleDelay))
       .subscribe((name) => {
@@ -141,9 +146,17 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
       });
   }
 
+  setTitleUI(viewTextContent: string): void {
+    this.viewTextContent = viewTextContent;
+  }
+
   onTitleChangeInput($event: Event) {
     const text = ($event.target as HTMLInputElement).innerText;
     this.nameCollectionChanged.next(text);
+  }
+
+  detectChange(): void {
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {

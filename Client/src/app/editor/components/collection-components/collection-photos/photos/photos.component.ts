@@ -170,7 +170,7 @@ export class PhotosComponent
   updateWS(): void {
     this.syncPhotos();
     this.setUIHeight(this.content.height);
-    this.detectChanges();
+    super.updateWS();
   }
 
   updateInternal() {
