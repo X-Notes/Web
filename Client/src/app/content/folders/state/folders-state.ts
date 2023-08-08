@@ -307,6 +307,11 @@ export class FolderStore {
       const message = this.translate.instant('snackBar.subscriptionCreationError');
       this.snackbarService.openSnackBar(message, null, 'end', 5000);
     }
+    if (!resp.success && resp.status === OperationResultAdditionalInfo.NotEnoughMemory) {
+      const message = this.translate.instant('files.noEnoughMemory');
+      this.snackbarService.openSnackBar(message, null, 'end', 5000);
+    }
+
     dispatch([UnSelectAllFolder]);
   }
 

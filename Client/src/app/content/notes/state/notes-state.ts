@@ -715,14 +715,18 @@ export class NoteStore {
     );
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
-    if (
-      resp.eventBody &&
-      !resp.eventBody.success &&
-      resp.eventBody.status === OperationResultAdditionalInfo.BillingError
+    if (resp.eventBody &&!resp.eventBody.success
     ) {
-      const message = this.translate.instant('snackBar.subscriptionCreationError');
-      this.snackbarService.openSnackBar(message, null, null, 5000);
+      if (resp.eventBody.status === OperationResultAdditionalInfo.BillingError) {
+        const message = this.translate.instant('snackBar.subscriptionCreationError');
+        this.snackbarService.openSnackBar(message, null, null, 5000);
+      }
+      if (resp.eventBody.status === OperationResultAdditionalInfo.NotEnoughMemory) {
+        const message = this.translate.instant('files.noEnoughMemory');
+        this.store.dispatch(new ShowSnackNotification(message));
+      }
     }
+
     dispatch([UnSelectAllNote, LoadUsedDiskSpace]);
   }
 
