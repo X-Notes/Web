@@ -1,7 +1,9 @@
-﻿using Common.DatabaseModels.Models.Notes;
+﻿using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
 using Noots.Notes.Queries;
@@ -16,17 +18,20 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
     private readonly NoteRepository noteRepository;
     private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly MapperLockedEntities mapperLockedEntities;
+    private readonly FoldersNotesRepository foldersNotesRepository;
 
     public GetFullNoteQueryHandler(
         IMediator _mediator,
         NoteRepository noteRepository,
         UsersOnPrivateNotesService usersOnPrivateNotesService,
-        MapperLockedEntities mapperLockedEntities)
+        MapperLockedEntities mapperLockedEntities,
+        FoldersNotesRepository foldersNotesRepository)
     {
         mediator = _mediator;
         this.noteRepository = noteRepository;
         this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.mapperLockedEntities = mapperLockedEntities;
+        this.foldersNotesRepository = foldersNotesRepository;
     }
     
     public async Task<OperationResult<FullNote>> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
@@ -38,10 +43,14 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
 
         if (request.FolderId.HasValue && !isCanRead)
         {
-            var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
-            var permissionsFolder = await mediator.Send(queryFolder);
-            isCanRead = permissionsFolder.CanRead;
-            isFolderPermissions = true;
+            var isNoteInFolder = await foldersNotesRepository.GetAnyAsync(x => x.FolderId == request.FolderId.Value && x.NoteId == request.NoteId);
+            if (isNoteInFolder)
+            {
+                var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+                var permissionsFolder = await mediator.Send(queryFolder);
+                isCanRead = permissionsFolder.CanRead;
+                isFolderPermissions = true;
+            }
         }
 
         if (isCanRead)
