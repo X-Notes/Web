@@ -35,7 +35,6 @@ export class SearchDialogComponent implements OnInit {
         if (searchStr?.length > this.searchSymbols) {
           this.isSearching = true;
           this.searchResult = await this.searchService.searchNotesAndFolder(searchStr).toPromise();
-          console.log('searchResult: ', this.searchResult);
         } else {
           this.searchResult = null;
         }

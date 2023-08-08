@@ -188,5 +188,19 @@ namespace Noots.DatabaseContext.Repositories.Notes
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
+
+        public Task<Note?> GetNoteWithContentAsNoTracking(Guid noteId)
+        {
+            return entities  // TODO OPTIMIZATION
+                .Include(x => x.LabelsNotes)
+                    .ThenInclude(q => q.Label)
+                .Include(x => x.Contents)
+                    .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
+                .Include(x => x.Contents)
+                    .ThenInclude(q => (q as CollectionNote).Files)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == noteId);
+        }
     }
 }

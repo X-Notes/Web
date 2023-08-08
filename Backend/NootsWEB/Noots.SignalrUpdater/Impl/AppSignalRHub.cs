@@ -96,6 +96,8 @@ public class AppSignalRHub : Hub
         var command = new GetUserPermissionsForNoteQuery(noteId, userId);
         var permission = await mediator.Send(command);
 
+        if (permission.NoteNotFound) return;
+
         await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId, permission.GetAllUsers());
     }
 
@@ -158,6 +160,8 @@ public class AppSignalRHub : Hub
 
         var command = new GetUserPermissionsForFolderQuery(folderId, userId);
         var permission = await mediator.Send(command);
+
+        if (permission.FolderNotFound) return;
 
         await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId, permission.GetAllUsers());
     }

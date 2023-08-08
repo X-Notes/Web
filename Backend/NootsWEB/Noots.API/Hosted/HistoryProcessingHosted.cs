@@ -25,15 +25,15 @@ public class HistoryProcessingHosted : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = serviceProvider.CreateScope();
-        var historyCacheService = scope.ServiceProvider.GetRequiredService<HistoryCacheService>();
-
         await foreach (var item in ChannelsService.HistoryChannel.Reader.ReadAllAsync())
         {
             try
             {
                 if (item != null)
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var historyCacheService = scope.ServiceProvider.GetRequiredService<HistoryCacheService>();
+
                     await historyCacheService.ProcessChangeAsync(item);
                 }
             }

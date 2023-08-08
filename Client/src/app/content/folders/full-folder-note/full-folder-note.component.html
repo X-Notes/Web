@@ -6,7 +6,7 @@
 >
   <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
     <app-content-editor
-      [noteId]="noteId"
+      [noteId]="(note$ | async).id"
       [userId]="(user$ | async)?.id"
       [folderId]="folderId"
       [color]="(note$ | async).color"
@@ -29,5 +29,5 @@
       typeClass="type-module"
     ></app-no-results-illustration>
   </div>
-  <app-spinner *ngIf="!loaded"></app-spinner>
+  <app-spinner [size]="30" *ngIf="!loaded"></app-spinner>
 </div>

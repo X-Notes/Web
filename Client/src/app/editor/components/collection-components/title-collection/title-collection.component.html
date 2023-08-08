@@ -6,7 +6,7 @@
       (input)="onTitleChangeInput($event)"
       (click)="onClick()"
       (selectstart)="onSelectStart()"
-      [textContent]="textContent"
+      [textContent]="viewTextContent"
       [attr.contenteditable]="!isReadOnlyMode && !isSelectionStart"
       (keydown.enter)="preventEnter($event)"
     ></p>

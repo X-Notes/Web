@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -110,7 +109,5 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit() {
-    this.store.dispatch(new UpdateRoute(EntityType.FolderInnerNote));
-  }
+  ngOnInit() {}
 }

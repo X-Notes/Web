@@ -7,18 +7,9 @@
       buttonService.getNoteMenuByNoteType(noteType$ | async)
         | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
     "
-    *ngIf="pService.widthMoreThan1024()"
+    *ngIf="(pService.widthMoreThan1024$ | async)"
     [@showMenuLeftRight]
   ></app-menu>
-
-  <app-general-header-button
-    class="app-history"
-    (clickEvent)="openHistoriesPopup()"
-    [message]="'menu.history' | translate"
-    [styleClasses]="'history'"
-    [styleType]="buttonStyleType.Dark"
-    [theme]="theme$ | async"
-  ></app-general-header-button>
 
   <app-general-header-button
     *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
@@ -72,7 +63,7 @@
           | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
       "
       [@showMenuLeftRight]
-      [@.disabled]="!pService.widthMoreThan1024()"
+      [@.disabled]="(pService.widthMoreThan1024$ | async) === false"
     ></app-menu>
   </ng-template>
 </div>

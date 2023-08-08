@@ -47,8 +47,9 @@
         />
       </div>
     </div>
-    <div *ngIf="canEdit$ | async" class="container buttons-container">
+    <div class="container buttons-container">
       <button
+        *ngIf="canEdit$ | async"
         class="side-button"
         type="button"
         name="Color"
@@ -80,6 +81,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="share"></div>
       </button>
       <button
+        *ngIf="canView$ | async"
         class="side-button icon-only"
         type="button"
         name="more"

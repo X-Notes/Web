@@ -4,8 +4,6 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { DeleteCurrentNoteData, LoadFullNote, LoadNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
@@ -77,8 +75,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     });
   }
 
-  async ngOnInit() {
-    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
+  ngOnInit() {
   }
 
   async loadContent() {

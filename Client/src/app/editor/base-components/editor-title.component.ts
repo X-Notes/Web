@@ -4,7 +4,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { UpdateCursorAction } from 'src/app/content/notes/state/editor-actions';
 import { UpdateNoteTitle, UpdateNoteTitleState, UpdateNoteTitleWS } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
+import { preventResetCursor, updateNoteTitleDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ComponentType, ParentInteractionHTML } from '../components/parent-interaction.interface';
 import { TextCursor } from '../entities-ui/cursors-ui/text-cursor';
@@ -42,7 +42,11 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     return this.noteTitleEl.nativeElement.textContent;
   }
 
-  iniTitle(title: string): void {
+  get isFocusedTitle(): boolean {
+    return document.activeElement === this.noteTitleEl.nativeElement;
+  }
+
+  initStartTitle(title: string): void {
     this.viewTitle = title;
   }
 
@@ -71,9 +75,9 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
   // WS && INTERNAL
   private subscribeTitleUpdates() {
-    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleWS), takeUntil(this.facade.dc.d$))
+    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleWS), takeUntil(this.facade.dc.d$), debounceTime(preventResetCursor))
       .subscribe((updates) => this.updateTitle(updates.title));
-    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleState), takeUntil(this.facade.dc.d$))
+    this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleState), takeUntil(this.facade.dc.d$), debounceTime(preventResetCursor))
       .subscribe((updates) => this.updateTitle(updates.title));
   }
 
@@ -115,8 +119,8 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
     this.setHtmlTitle(updateTitle);
 
-    if (this.titleInited) {
-      requestAnimationFrame(() => this.facade.apiBrowser.setCaretFirstChild(el, data));
+    if (this.titleInited && this.isFocusedTitle) {
+      this.facade.apiBrowser.setCaretFirstChild(el, data)
     }
 
     this.facade.htmlTitleService.setCustomOrDefault(updateTitle, 'titles.note');

@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { Injectable, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -72,9 +72,7 @@ export class SelectionService {
   }
 
   get sidebarWidth(): number {
-    return this.router.url.includes('public')
-      ? document.getElementById('public-left-section').offsetWidth
-      : 270;
+    return 270;
   }
 
   updateSelectionValue(flag: boolean): void {

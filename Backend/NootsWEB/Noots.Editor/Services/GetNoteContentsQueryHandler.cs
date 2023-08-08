@@ -1,6 +1,7 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
+using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Queries;
 using Noots.Mapper.Mapping;
@@ -13,15 +14,18 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
     private readonly IMediator mediator;
     private readonly BaseNoteContentRepository baseNoteContentRepository;
     private readonly NoteFolderLabelMapper appCustomMapper;
+    private readonly FoldersNotesRepository foldersNotesRepository;
 
     public GetNoteContentsQueryHandler(
         IMediator _mediator,
         BaseNoteContentRepository baseNoteContentRepository,
-        NoteFolderLabelMapper appCustomMapper)
+        NoteFolderLabelMapper appCustomMapper,
+        FoldersNotesRepository foldersNotesRepository)
     {
         mediator = _mediator;
         this.baseNoteContentRepository = baseNoteContentRepository;
         this.appCustomMapper = appCustomMapper;
+        this.foldersNotesRepository = foldersNotesRepository;
     }
 
     public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
@@ -32,9 +36,13 @@ public class GetNoteContentsQueryHandler : IRequestHandler<GetNoteContentsQuery,
 
         if (request.FolderId.HasValue && !isCanRead)
         {
-            var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
-            var permissionsFolder = await mediator.Send(queryFolder);
-            isCanRead = permissionsFolder.CanRead;
+            var isNoteInFolder = await foldersNotesRepository.GetAnyAsync(x => x.FolderId == request.FolderId.Value && x.NoteId == request.NoteId);
+            if (isNoteInFolder)
+            {
+                var queryFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
+                var permissionsFolder = await mediator.Send(queryFolder);
+                isCanRead = permissionsFolder.CanRead;
+            }
         }
 
 

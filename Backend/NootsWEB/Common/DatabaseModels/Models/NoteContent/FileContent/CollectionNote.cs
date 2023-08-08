@@ -44,24 +44,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             CollectionNoteAppFiles = collectionNoteAppFiles;
         }
 
-        public CollectionNote(CollectionNote entity, List<AppFile> files, int version)
-        {
-            UpdatedAt = DateTimeProvider.Time;
-            ContentTypeId = ContentTypeENUM.Collection;
-
-            Version = version;
-
-            Name = entity.Name;
-            Order = entity.Order;
-            FileTypeId = entity.FileTypeId;
-            MetaData = entity.MetaData;
-
-            Files = files;
-        }
-
         public override IEnumerable<Guid> GetInternalFilesIds()
         {
-            return Files.Select(x => x.Id);
+            return CollectionNoteAppFiles.Select(x => x.AppFileId);
         }
 
         public void SetMetaDataPhotos(string width, string height, int countInRow)

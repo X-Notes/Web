@@ -1,9 +1,9 @@
 <div appTheme class="sub-nav nope-select">
   <div
     class="sub-nav-section"
-    *ngIf="(pService.sideBarActive$ | async) || pService.widthMoreThan1024()"
+    *ngIf="(pService.sideBarActive$ | async) || (pService.widthMoreThan1024$ | async)"
     [@sidebarCloseOpen]
-    [@.disabled]="pService.widthMoreThan1024()"
+    [@.disabled]="pService.widthMoreThan1024$ | async"
   >
     <app-nav-profile-item *ngIf="isProfileActive"></app-nav-profile-item>
     <div class="left-inner-content">

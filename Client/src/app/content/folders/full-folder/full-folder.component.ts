@@ -10,7 +10,6 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subject, Subscription, interval } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,7 +33,6 @@ import {
   CreateNote,
   CreateNoteCompleted,
   SelectIdsNote,
-  SetFolderNotes,
   UnSelectAllNote,
 } from '../../notes/state/notes-actions';
 import { WebSocketsFolderUpdaterService } from './services/web-sockets-folder-updater.service';
@@ -68,6 +66,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
+
+  @Select(FolderStore.canView)
+  public canView$: Observable<boolean>;
 
   @Select(FolderStore.full)
   public folder$: Observable<FullFolder>;
@@ -178,7 +179,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new LoadLabels());
-    this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
     this.routeSubscription = this.route.params
       .pipe(takeUntil(this.ffnService.destroy))

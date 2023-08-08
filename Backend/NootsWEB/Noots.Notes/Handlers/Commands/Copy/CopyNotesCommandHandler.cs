@@ -15,6 +15,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Migrations;
+using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
@@ -39,6 +40,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
     private readonly CollectionLinkedService collectionLinkedService;
     private readonly BillingPermissionService billingPermissionService;
     private readonly UserRepository userRepository;
+    private readonly FileRepository fileRepository;
     private readonly ILogger<CopyNotesCommandHandler> logger;
 
     public CopyNotesCommandHandler(
@@ -50,6 +52,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         CollectionLinkedService collectionLinkedService,
         BillingPermissionService billingPermissionService,
         UserRepository userRepository,
+        FileRepository fileRepository,
         ILogger<CopyNotesCommandHandler> logger)
     {
         mediator = _mediator;
@@ -60,6 +63,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         this.collectionLinkedService = collectionLinkedService;
         this.billingPermissionService = billingPermissionService;
         this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
         this.logger = logger;
     }
 
@@ -134,7 +138,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
  
     public async Task<OperationResult<CopyNoteResult>> Handle(CopyNoteInternalCommand request, CancellationToken cancellationToken)
     {
-        var noteForCopy = await noteRepository.GetNoteWithContent(request.NoteId);
+        var noteForCopy = await noteRepository.GetNoteWithContentAsNoTracking(request.NoteId);
 
         if (noteForCopy == null)
         {
@@ -296,7 +300,16 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 return (false, res);
             }
 
-            res.Add(new CollectionNote(collection, copyFiles.appFiles, 1));
+            if (copyFiles.appFiles.Any())
+            {
+                await fileRepository.AddRangeAsync(copyFiles.appFiles);
+                var collectionNoteAppFiles = copyFiles.appFiles.Select(x => new CollectionNoteAppFile { AppFileId = x.Id }).ToList();
+                res.Add(new CollectionNote(collection, collectionNoteAppFiles, 1));
+            }
+            else
+            {
+                res.Add(new CollectionNote(collection, new(), 1));
+            }
         }
 
         return (true, res);

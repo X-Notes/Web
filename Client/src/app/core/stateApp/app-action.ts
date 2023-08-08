@@ -7,7 +7,7 @@ export class UpdateDragMuuriState {
   constructor(public active: boolean) {}
 }
 
-export class UpdateRoute {
+export class UpdateAppRoute {
   static type = '[App] Update route';
 
   constructor(public type: EntityType) {}

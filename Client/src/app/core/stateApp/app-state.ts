@@ -6,7 +6,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
 
 import {
-  UpdateRoute,
+  UpdateAppRoute,
   LoadNotifications,
   ReadAllNotifications,
   ReadNotification,
@@ -17,7 +17,6 @@ import {
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
 import { UserAPIService } from '../user-api.service';
-import { SignalRService } from '../signal-r.service';
 
 interface AppState {
   routing: EntityType | null;
@@ -314,8 +313,8 @@ export class AppStore {
     await this.userAPIService.ping(connectionId).toPromise();
   }
 
-  @Action(UpdateRoute)
-  async updateRoute({ patchState }: StateContext<AppState>, { type }: UpdateRoute) {
+  @Action(UpdateAppRoute)
+  async updateRoute({ patchState }: StateContext<AppState>, { type }: UpdateAppRoute) {
     patchState({ routing: type });
   }
 

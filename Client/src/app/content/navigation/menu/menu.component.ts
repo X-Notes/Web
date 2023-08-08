@@ -29,12 +29,4 @@ export class MenuComponent {
     }
     return 'menu.' + item.icon;
   }
-
-  // eslint-disable-next-line consistent-return
-  disableTooltpUser = () => {
-    if (!this.pService.widthMoreThan1024()) {
-      return true;
-    }
-    return false;
-  };
 }
