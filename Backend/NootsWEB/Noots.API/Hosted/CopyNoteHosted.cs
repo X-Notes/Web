@@ -26,16 +26,16 @@ public class CopyNoteHosted : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = serviceProvider.CreateScope();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-        var signalR = scope.ServiceProvider.GetRequiredService<AppSignalRService>();
-
         await foreach (var item in ChannelsService.CopyNotesChannel.Reader.ReadAllAsync())
         {
             try
             {
                 if (item != null)
                 {
+                    using var scope = serviceProvider.CreateScope();
+                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                    var signalR = scope.ServiceProvider.GetRequiredService<AppSignalRService>();
+
                     var resp = await mediator.Send(new CopyNoteInternalCommand(item.NoteId, item.UserId, item.FolderId));
                     if(resp != null && resp.Success)
                     {
