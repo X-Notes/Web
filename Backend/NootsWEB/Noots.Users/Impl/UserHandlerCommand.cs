@@ -61,7 +61,7 @@ namespace Noots.Users.Impl
             var user = new User()
             {
                 Name = request.Name,
-                LanguageId = LanguageENUM.English,
+                LanguageId = request.LanguageId,
                 Email = request.Email,
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,

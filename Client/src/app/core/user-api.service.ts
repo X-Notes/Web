@@ -17,9 +17,6 @@ import {
   OperationDetailMini,
 } from '../content/long-term-operations-handler/models/long-term-operation';
 
-export interface Token {
-  token: string;
-}
 
 @Injectable()
 export class UserAPIService {
@@ -38,8 +35,9 @@ export class UserAPIService {
   }
 
   googleLogin(token: string) {
-    const value: Token = {
+    const value = {
       token,
+      languageId: LanguagesENUM.en
     };
     return this.httpClient.post<OperationResult<void>>(
       `${environment.writeAPI}/api/auth/google/login`,

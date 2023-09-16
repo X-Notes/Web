@@ -55,7 +55,7 @@ public class AuthController : ControllerBase
         var user = await userRepository.FirstOrDefaultAsync(x => x.Email == respVerifyToken.Email);
         if (user == null)
         {
-            var newUserCommand = new NewUserCommand(respVerifyToken.Name, respVerifyToken.Email, respVerifyToken.Picture);
+            var newUserCommand = new NewUserCommand(respVerifyToken.Name, respVerifyToken.Email, respVerifyToken.Picture, request.LanguageId);
             var res = await mediator.Send(newUserCommand);
             if (!res.Success)
             {
