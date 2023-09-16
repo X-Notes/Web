@@ -4,7 +4,7 @@ import { PublicFolderComponent } from './public-folder.component';
 import { HandleAuthorizedUserGuard } from '../guards/handle-authorized-user.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/about', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: ':id', component: PublicFolderComponent, canActivate: [HandleAuthorizedUserGuard] },
 ];
 

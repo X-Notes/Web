@@ -4,7 +4,7 @@ import { PublicNoteComponent } from './public-note.component';
 import { HandleAuthorizedUserGuard } from '../guards/handle-authorized-user.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/about', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: ':id', component: PublicNoteComponent, canActivate: [HandleAuthorizedUserGuard] },
 ];
 

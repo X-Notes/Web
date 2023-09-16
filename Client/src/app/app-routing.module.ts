@@ -51,7 +51,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'about',
+    path: 'login',
     loadChildren: () => import('./about/about.module').then(({ AboutModule }) => AboutModule),
   },
   {

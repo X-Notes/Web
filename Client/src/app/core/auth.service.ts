@@ -96,6 +96,6 @@ export class AuthService {
   logout = async () => {
     await this.store.dispatch(new Logout()).toPromise();
     await this.store.dispatch([ResetNotesState, ResetFoldersState, ResetLabelsState]).toPromise();
-    this.ngZone.run(()=> this.router.navigate(['about']));
+    this.ngZone.run(()=> this.router.navigate(['login']));
   };
 }

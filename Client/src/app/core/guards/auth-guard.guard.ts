@@ -9,5 +9,5 @@ export const authGuardGuard: CanActivateFn = (route, state) => {
   if(store.selectSnapshot(UserStore.isLogged)) {
     return true;
   }
-  return router.navigateByUrl('about');
+  return router.navigateByUrl('login');
 };
