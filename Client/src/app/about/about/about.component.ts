@@ -14,7 +14,7 @@ export class AboutComponent implements OnInit, AfterViewInit {
     public authService: AuthService) { }
 
   ngAfterViewInit(): void {
-    const ids = ['loginGoogle1', 'loginGoogle2'];
+    const ids = ['loginGoogle1'];
     this.authService.initGoogleLogin(ids, true, 'notes');
   }
 
