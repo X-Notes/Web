@@ -19,4 +19,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS=http://+:5600
-ENTRYPOINT ["dotnet", "Noots.API.Workers.csproj"]
+ENTRYPOINT ["dotnet", "Noots.API.Workers.dll"]
