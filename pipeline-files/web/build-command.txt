@@ -1,1 +1,1 @@
-docker build -t davydq/noots-web . -f pipeline-files/web/noots-web.dockerfiles
+docker build -t davydq/noots-web . -f pipeline-files/web/noots-web.dockerfile

@@ -5,8 +5,6 @@ container name noots web = noots-api
 container name noots worker = noots-worker-api
 container name noots health check = noots-health-check-api
 
-docker build -t davydq/noots-write_api . -f noots-api.dockerfile
-
 angular worker settings --
 
 ng build --prod

@@ -7,16 +7,16 @@ ENV ASPNETCORE_ENVIRONMENT DockerDev
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY Backend/NootsWEB/ source/
-RUN dotnet restore "source/WriteAPI/WriteAPI.csproj"
+RUN dotnet restore "source/Noots.API/Noots.API.csproj"
 COPY . .
-WORKDIR "/src/source/WriteAPI"
-RUN dotnet build "WriteAPI.csproj" -c Release -o /app/build
+WORKDIR "/src/source/Noots.API"
+RUN dotnet build "Noots.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WriteAPI.csproj" -c Release -o /app/publish
+RUN dotnet publish "Noots.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_URLS=http://+:5000
-ENTRYPOINT ["dotnet", "WriteAPI.dll"]
+ENTRYPOINT ["dotnet", "Noots.API.dll"]
