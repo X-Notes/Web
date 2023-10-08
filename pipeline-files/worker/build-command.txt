@@ -1,0 +1,1 @@
+docker build -t davydq/noots-worker-api . -f pipeline-files/worker/noots-worker-api.dockerfile
