@@ -1,0 +1,1 @@
+docker build -t davydq/noots-health-check-api . -f pipeline-files/health-check/noots-health-check-api.dockerfile
