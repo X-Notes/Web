@@ -3,13 +3,13 @@ name: Docker Image CI Web Client
 on:
   push:
     branches:
-      - 'dev'
+      - 'DEV'
       - 'master'
     tags:
       - 'v*'
   pull_request:
     branches:
-      - 'dev'
+      - 'DEV'
       - 'master'
 
 jobs:
