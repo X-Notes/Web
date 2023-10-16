@@ -52,7 +52,7 @@ builder.Services.AddScoped<DeleteNotesCommandHandler>();
 builder.Services.ApplyMakeHistoryDI();
 builder.Services.TimersConfig(builder.Configuration);
 builder.Services.JOBS();
-
+builder.Services.AddDaprClient();
 builder.Services.AddHttpClient();
 builder.Services.HangFireConfig(appDb);
 

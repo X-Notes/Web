@@ -4,7 +4,10 @@ using Noots.DatabaseContext.Repositories.WS;
 using System.Text;
 using Newtonsoft.Json;
 using Common.DTO.WebSockets;
+using Dapr.Client;
 using Noots.API.Workers.Models.Config;
+
+
 namespace Noots.API.Workers.BI;
 
 public class RemoveDeadWSConnectionsHandler
@@ -13,6 +16,7 @@ public class RemoveDeadWSConnectionsHandler
 	private readonly JobsTimerConfig jobsTimerConfig;
 	private readonly IConfiguration configuration;
 	private readonly HttpClient httpClient;
+	private readonly DaprClient _daprClient;
 	private readonly ILogger<RemoveDeadWSConnectionsHandler> logger;
 
 	public RemoveDeadWSConnectionsHandler(
@@ -20,12 +24,14 @@ public class RemoveDeadWSConnectionsHandler
 		JobsTimerConfig jobsTimerConfig,
 		IConfiguration configuration,
 		HttpClient httpClient,
+		DaprClient daprClient,
 		ILogger<RemoveDeadWSConnectionsHandler> logger)
 	{
 		this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
 		this.jobsTimerConfig = jobsTimerConfig;
 		this.configuration = configuration;
 		this.httpClient = httpClient;
+		_daprClient = daprClient;
 		this.logger = logger;
 	}
 
@@ -45,11 +51,7 @@ public class RemoveDeadWSConnectionsHandler
 
 	private async Task<bool> SendDeadConnectionsAsync(List<UserIdentifierConnectionId> connections)
 	{
-		var nootsAPI = configuration.GetSection("NootsAPI").Value + "/api/WSManagement/connections";
-		if (string.IsNullOrEmpty(nootsAPI))
-		{
-			throw new Exception("NootsAPI value cannot be NULL");
-		}
+		var nootsAPI = configuration.GetSection("NootsAPI").Value;
 
 		var deadConnections = connections
 			.Select(x => new DeadConnectionDTO
@@ -58,26 +60,25 @@ public class RemoveDeadWSConnectionsHandler
 				FolderIds = x.FolderConnections?.Select(x => x.FolderId).ToList(),
 				NoteIds = x.NoteConnections?.Select(x => x.NoteId).ToList(),
 				UserId = x.UserId
-			});
-
-		var json = JsonConvert.SerializeObject(deadConnections);
-		var content = new StringContent(json, Encoding.UTF8, "application/json");
+			}).ToList();
 
 		try
 		{
-            var resp = await httpClient.PostAsync(nootsAPI, content);
-            if (!resp.IsSuccessStatusCode)
-            {
-                logger.LogError($"Code: {resp.StatusCode}, Reason: {resp.ReasonPhrase}");
-                return false;
-            }
+			await _daprClient.InvokeMethodAsync(HttpMethod.Post, nootsAPI, "api/WSManagement/connections", deadConnections);
 
-            return true;
-        }
-		catch (Exception e)
+			return true;
+		}
+		catch (InvocationException ex)
 		{
-            logger.LogError(e.ToString());
-			return false;
-        }
+			logger.LogError(ex.ToString());
+			// Handle error
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex.ToString());
+			// Handle error
+		}
+
+		return false;
 	}
 }

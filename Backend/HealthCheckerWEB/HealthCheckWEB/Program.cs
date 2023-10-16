@@ -6,8 +6,6 @@ using HealthCheckWEB.Models.Azure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +13,7 @@ var configBuilder = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", reloadOnChange: true, optional: true)
+    .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
 builder.Configuration.AddConfiguration(configBuilder.Build());
@@ -37,30 +36,32 @@ var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>()
 var nootsWorkersAPI = builder.Configuration.GetSection("NootsWorkersAPI").Value;
 var nootsWorkersDbConn = builder.Configuration.GetSection("NootsWorkersDB").Value;
 
+builder.Services.AddDaprClient();
+
 // HEALTH CHECKER
 builder.Services.AddHealthChecks()
                 .AddElasticsearch(elasticConn)
                 .AddNpgSql(nootsDbConn, name: "Noots Database")
                 .AddNpgSql(appDb, name: "Health check Database")
                 .AddNpgSql(nootsWorkersDbConn, name: "Noots workers Database")
-                .AddSignalRHub($"{nootsAPI}/hub")
-                .AddUrlGroup(
-                    new Uri($"{nootsAPI}/health"), name: "NOOTS API",
-                    failureStatus: HealthStatus.Unhealthy,
-                    timeout: TimeSpan.FromSeconds(3),
-                    tags: new string[] { "services" })
-                .AddUrlGroup(
-                    new Uri($"{nootsWorkersAPI}/health"), name: "Noots workers API",
-                    failureStatus: HealthStatus.Unhealthy,
-                    timeout: TimeSpan.FromSeconds(3),
-                    tags: new string[] { "services" })
+                // .AddSignalRHub($"{nootsAPI}/api/hub", "Signal R")
+                // .AddUrlGroup(
+                //     new Uri($"{nootsAPI}/health"), name: "NOOTS API",
+                //     failureStatus: HealthStatus.Unhealthy,
+                //     timeout: TimeSpan.FromSeconds(3),
+                //     tags: new string[] { "services" })
+                // .AddUrlGroup(
+                //     new Uri($"{nootsWorkersAPI}/health"), name: "Noots workers API",
+                //     failureStatus: HealthStatus.Unhealthy,
+                //     timeout: TimeSpan.FromSeconds(3),
+                //     tags: new string[] { "services" })
                 .AddCheck<AzureBlobStorageHealthChecker>("AzureBlobStorageChecker");
 
 
 builder.Services.AddHealthChecksUI(setup =>
                 {
                     setup.SetEvaluationTimeInSeconds(5);
-                    setup.AddHealthCheckEndpoint("APPS", $"http://{Dns.GetHostName()}:5900/app-health");
+                    setup.AddHealthCheckEndpoint("APPS", $"app-health");
                 })
                 .AddInMemoryStorage();
 
@@ -68,7 +69,7 @@ builder.Services.AddHealthChecksUI(setup =>
 builder.Services.AddSingleton(x => storageConfig);
 builder.Services.AddAzureClients(builder =>
 {
-    builder.AddBlobServiceClient(storageConfig.StorageConnectionEmulator);
+    builder.AddBlobServiceClient(storageConfig.StorageConnection);
 });
 
 
@@ -93,6 +94,8 @@ app.UseAuthorization();
 // HEALTH CHECK
 // API URL /healthchecks-ui
 app.MapHealthChecksUI().RequireAuthorization();
+// app.UseHealthChecksUI(config => config.UIPath = "/app-health");
+
 app.MapHealthChecks("/app-health", new HealthCheckOptions
 {
     Predicate = registration => true,

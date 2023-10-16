@@ -6,6 +6,7 @@ using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Impl;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Noots.API.Controllers
 {
@@ -16,12 +17,18 @@ namespace Noots.API.Controllers
         private readonly AppSignalRService appSignalRService;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly FolderWSUpdateService folderWSUpdateService;
+        private readonly ILogger<WSManagementController> _logger;
 
-        public WSManagementController(AppSignalRService appSignalRService, NoteWSUpdateService noteWSUpdateService, FolderWSUpdateService folderWSUpdateService)
+        public WSManagementController(
+            AppSignalRService appSignalRService,
+            NoteWSUpdateService noteWSUpdateService,
+            FolderWSUpdateService folderWSUpdateService,
+            ILogger<WSManagementController> logger)
         {
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
             this.folderWSUpdateService = folderWSUpdateService;
+            _logger = logger;
         }
 
 

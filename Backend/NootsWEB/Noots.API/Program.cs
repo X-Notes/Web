@@ -113,6 +113,7 @@ builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<HistoryProcessingHosted>();
 builder.Services.AddHostedService<CopyNoteHosted>();
 
+builder.Services.AddDaprClient();
 
 builder.Services.AddHttpClient();
 
