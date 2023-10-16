@@ -1,4 +1,5 @@
-﻿using Common.DTO;
+﻿using Common.DatabaseModels.Models.Users;
+using Common.DTO;
 using Common.DTO.Personalization;
 using MediatR;
 using Noots.Billing.Impl;
@@ -26,13 +27,21 @@ namespace Noots.Personalization.Impl
                 return new OperationResult<Unit>().SetAnotherError();
             }
 
-            var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == request.UserId);
-            pr.SetUpdateStatus(request.PersonalizationSetting);
-            if (pr.HasUpdates)
+            var pSettings = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == request.UserId);
+
+            if (pSettings == null)
             {
-                pr.UpdateSortSettings(request.PersonalizationSetting);
-                pr.UpdatePersonalizationSettings(request.PersonalizationSetting);
-                await personalizationSettingRepository.UpdateAsync(pr);
+                pSettings = new PersonalizationSetting().GetNewFactory(request.UserId);
+                await personalizationSettingRepository.AddAsync(pSettings);
+            }
+
+            pSettings.SetUpdateStatus(request.PersonalizationSetting);
+
+            if (pSettings.HasUpdates)
+            {
+                pSettings.UpdateSortSettings(request.PersonalizationSetting);
+                pSettings.UpdatePersonalizationSettings(request.PersonalizationSetting);
+                await personalizationSettingRepository.UpdateAsync(pSettings);
             }
 
             return new OperationResult<Unit>(true, Unit.Value);

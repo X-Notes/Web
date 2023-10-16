@@ -24,7 +24,6 @@ namespace Noots.Storage.Impl
         IRequestHandler<CopyBlobFromContainerToContainerCommand, (bool success, AppFile file)>,
         IRequestHandler<RemoveFilesCommand, Unit>,
         IRequestHandler<RemoveFilesFromStorageCommand, Unit>,
-        IRequestHandler<CreateUserContainerCommand, Unit>,
         IRequestHandler<UpdateFileMetaDataCommand, OperationResult<FileDTO>>
     {
         private readonly IFilesStorage filesStorage;
@@ -32,7 +31,7 @@ namespace Noots.Storage.Impl
         private readonly IImageProcessor imageProcessor;
 
         private readonly FileRepository fileRepository;
-        
+
         private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
         private readonly PathStorageBuilder pathStorageBuilder;
@@ -205,7 +204,7 @@ namespace Noots.Storage.Impl
                 {
                     processedPathes.Add(resp.path);
                 }
-                else 
+                else
                 {
                     if (processedPathes.Any())
                     {
@@ -223,7 +222,6 @@ namespace Noots.Storage.Impl
 
         public async Task<AppFile> Handle(SaveBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var photoType = GetExtensionByMIME(request.File.ContentType);
             var prefixFolder = pathStorageBuilder.GetPrefixContentFolder(ContentTypesFile.Photos);
             var contentId = pathStorageBuilder.GetContentPathFileId();
             var storageId = storageIdProvider.GetStorageId();
@@ -323,13 +321,6 @@ namespace Noots.Storage.Impl
             return resultFile;
         }
 
-        public async Task<Unit> Handle(CreateUserContainerCommand request, CancellationToken cancellationToken)
-        {
-            var storageId = storageIdProvider.GetStorageId();
-            await filesStorage.CreateUserContainer(storageId, request.UserId);
-            return Unit.Value;
-        }
-
         public async Task<Unit> Handle(RemoveFilesFromStorageCommand request, CancellationToken cancellationToken)
         {
             foreach(var file in request.Files)
@@ -366,7 +357,7 @@ namespace Noots.Storage.Impl
                     var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                     file.MetaData.ImagePath = noteFolderLabelMapper.BuildFilePath(user.StorageId, request.UserId, file.MetaData.ImagePath);
                 };
-                
+
                 var respResult = new FileDTO(file.Id, azureConfig.FirstOrDefaultCache(file.StorageId).Url, file.PathPrefix, file.PathFileId, file.PathSuffixes, file.Name, file.UserId, file.MetaData, file.CreatedAt);
                 return new OperationResult<FileDTO>(true, respResult);
             }

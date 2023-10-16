@@ -30,7 +30,6 @@ namespace Noots.Storage
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveBackgroundCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveUserPhotoCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<CreateUserContainerCommand, Unit>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateFileMetaDataCommand, OperationResult<FileDTO>>, FileHandlerCommand>();
 
             ApplyFileRemoving(services);

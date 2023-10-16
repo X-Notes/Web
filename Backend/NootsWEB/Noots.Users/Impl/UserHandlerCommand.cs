@@ -28,8 +28,6 @@ namespace Noots.Users.Impl
 
         private readonly IMediator _mediator;
 
-        private readonly PersonalizationSettingRepository personalizationSettingRepository;
-
         private readonly UserBackgroundMapper userBackgroundMapper;
 
         private readonly StorageIdProvider storageIdProvider;
@@ -37,15 +35,13 @@ namespace Noots.Users.Impl
         public UserHandlerCommand(
             UserRepository userRepository,
             UserProfilePhotoRepository userProfilePhotoRepository,
-            IMediator _mediator,
-            PersonalizationSettingRepository personalizationSettingRepository,
+            IMediator mediator,
             UserBackgroundMapper userBackgroundMapper,
             StorageIdProvider storageIdProvider)
         {
             this.userRepository = userRepository;
             this.userProfilePhotoRepository = userProfilePhotoRepository;
-            this._mediator = _mediator;
-            this.personalizationSettingRepository = personalizationSettingRepository;
+            this._mediator = mediator;
             this.userBackgroundMapper = userBackgroundMapper;
             this.storageIdProvider = storageIdProvider;
         }
@@ -57,7 +53,7 @@ namespace Noots.Users.Impl
             {
                 return new OperationResult<Guid>().SetAnotherError();
             }
-            
+
             var user = new User()
             {
                 Name = request.Name,
@@ -71,10 +67,6 @@ namespace Noots.Users.Impl
             };
 
             await userRepository.AddAsync(user);
-
-            await _mediator.Send(new CreateUserContainerCommand(user.Id));
-
-            await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 
             return new OperationResult<Guid>(true, user.Id);
         }

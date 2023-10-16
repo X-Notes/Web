@@ -25,7 +25,7 @@ namespace Noots.Personalization.Impl
         {
             if (pr == null)
             {
-                return null;
+                pr = new PersonalizationSetting().GetNewFactory(Guid.Empty);
             }
 
             return new PersonalizationSettingDTO()
