@@ -5,7 +5,6 @@ namespace Noots.Storage.Interfaces
 {
     public interface IFilesStorage : IDisposable
     {
-        public Task CreateUserContainer(StoragesEnum storageId, Guid userId);
         Task<UploadFileResult> SaveFile(StoragesEnum storageId, string userId, byte[] file, string ContentType, string prefixFolder, string contentId, string fileName);
         Task<bool> RemoveFile(StoragesEnum storageId, string userId, string path);
         Task RemoveFiles(StoragesEnum storageId, string userId, params string[] pathes);
