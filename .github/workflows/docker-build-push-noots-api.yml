@@ -55,5 +55,5 @@ jobs:
           context: .
           file: ./pipeline-files/api/noots-api.dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.version }}
           labels: ${{ steps.meta.outputs.labels }}
