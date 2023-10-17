@@ -78,6 +78,7 @@ export class HtmlNumberListComponent
 
   enter($event: any) {
     $event.preventDefault();
+    $event.stopPropagation();
     if (this.isContentEmpty()) {
       this.transformTo.emit({
         contentId: this.content.id,

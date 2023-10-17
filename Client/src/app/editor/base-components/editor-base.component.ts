@@ -15,6 +15,7 @@ import { ContentModelBase } from '../entities/contents/content-model-base';
 import { NoteUserCursorWS } from '../entities/ws/note-user-cursor';
 import { EditorFacadeService } from '../services/editor-facade.service';
 import { EditorOptions } from '../entities-ui/editor-options';
+import { NoteTextTypeENUM } from '../entities/contents/text-models/note-text-type.enum';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -162,6 +163,14 @@ export abstract class EditorBaseComponent {
   getHTMLElementsById(contentIds: string[]): ParentInteractionHTML[] | null {
     if (!this.htmlElements) return null;
     return this.htmlElements.filter((x) => contentIds.some((id) => id === x.getContentId()));
+  }
+
+  getHTMLElementsByIdWithoutTypes(contentIds: string[], ...contentTypes: NoteTextTypeENUM[]): ParentInteractionHTML[] | null {
+    return this.getHTMLElementsById(contentIds)?.filter(x => !contentTypes.some(y => y === x.getContent().noteTextTypeId));
+  }
+
+  getHTMLElementsByIdWithoutCode(contentIds: string[]): ParentInteractionHTML[] | null {
+    return this.getHTMLElementsByIdWithoutTypes(contentIds, NoteTextTypeENUM.code);
   }
 
   getCollectionElementById(contentId: string): ParentInteractionCollection | undefined | null {

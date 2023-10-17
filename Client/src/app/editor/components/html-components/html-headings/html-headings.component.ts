@@ -98,6 +98,7 @@ export class HtmlHeadingsComponent
 
   enter($event: any) {
     $event.preventDefault();
+    $event.stopPropagation();
     const breakModel = this.facade.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);

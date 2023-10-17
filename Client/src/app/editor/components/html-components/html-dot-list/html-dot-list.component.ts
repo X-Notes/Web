@@ -26,9 +26,6 @@ export class HtmlDotListComponent
   extends BaseTextElementComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  @Output()
-  transformTo = new EventEmitter<TransformContent>();
-
   constructor(
     private host: ElementRef,
     cdr: ChangeDetectorRef,
@@ -72,6 +69,7 @@ export class HtmlDotListComponent
 
   enter($event: any) {
     $event.preventDefault();
+    $event.stopPropagation();
     if (this.isContentEmpty()) {
       this.transformTo.emit({
         contentId: this.content.id,

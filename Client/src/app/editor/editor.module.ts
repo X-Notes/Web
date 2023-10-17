@@ -28,6 +28,7 @@ import { ChangeSizeAlbumHeightDirective } from "./directives/change-size-album-h
 import { CopyDirective } from "./directives/copy.directive";
 import { LazyForDirective } from "./directives/lazy-for.directive";
 import { SelectionDirective } from "./directives/selection.directive";
+import { HtmlCodeComponent } from './components/html-components/html-code/html-code.component';
 
 @NgModule({
     declarations: [
@@ -56,6 +57,7 @@ import { SelectionDirective } from "./directives/selection.directive";
       MobileTransformMenuComponent,
       ColorPickItemComponent,
       LazyForDirective,
+      HtmlCodeComponent,
     ],
     exports: [
       ContentEditorComponent,
