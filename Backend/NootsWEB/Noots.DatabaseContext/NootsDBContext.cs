@@ -154,7 +154,7 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<RefreshToken>()
                 .HasKey(bc => new { bc.UserId, bc.TokenString });
 
-            // NOTIFICATIONS 
+            // NOTIFICATIONS
             modelBuilder.Entity<Notification>().Property(x => x.NotificationMessagesId).HasDefaultValue(NotificationMessagesEnum.SentInvitesToNoteV1);
 
             // WS
@@ -384,8 +384,8 @@ namespace Noots.DatabaseContext
             modelBuilder.Entity<BillingPlan>().HasData(
                 new BillingPlan
                 {
-                    Id = BillingPlanTypeENUM.Standart, 
-                    Name = nameof(BillingPlanTypeENUM.Standart), 
+                    Id = BillingPlanTypeENUM.Standart,
+                    Name = nameof(BillingPlanTypeENUM.Standart),
                     MaxSize = 104857600, // 100 MB
                     MaxLabels = 100,
                     MaxNotes = 160,
@@ -396,8 +396,8 @@ namespace Noots.DatabaseContext
                 },
                 new BillingPlan
                 {
-                    Id = BillingPlanTypeENUM.Premium, 
-                    Name = nameof(BillingPlanTypeENUM.Premium), 
+                    Id = BillingPlanTypeENUM.Premium,
+                    Name = nameof(BillingPlanTypeENUM.Premium),
                     MaxSize = 5242880000, // 5000 MB
                     MaxLabels = 10000,
                     MaxNotes = 10000,
@@ -428,7 +428,8 @@ namespace Noots.DatabaseContext
                 new NoteTextType { Id = NoteTextTypeENUM.Heading, Name = nameof(NoteTextTypeENUM.Heading) },
                 new NoteTextType { Id = NoteTextTypeENUM.Dotlist, Name = nameof(NoteTextTypeENUM.Dotlist) },
                 new NoteTextType { Id = NoteTextTypeENUM.Numberlist, Name = nameof(NoteTextTypeENUM.Numberlist) },
-                new NoteTextType { Id = NoteTextTypeENUM.Checklist, Name = nameof(NoteTextTypeENUM.Checklist) }
+                new NoteTextType { Id = NoteTextTypeENUM.Checklist, Name = nameof(NoteTextTypeENUM.Checklist) },
+                new NoteTextType { Id = NoteTextTypeENUM.Code, Name = nameof(NoteTextTypeENUM.Code) }
             );
 
             modelBuilder.Entity<ContentType>().HasData(
