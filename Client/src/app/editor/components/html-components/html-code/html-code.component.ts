@@ -25,13 +25,11 @@ export class HtmlCodeComponent extends BaseTextElementComponent
   onInput(): void {
     const text = this.contentHtml.nativeElement.innerText;
     const html = hljs.default.highlightAuto(text);
-    console.log('html: ', html);
     const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html.value) ?? '';
     const selection = this.getSelection();
     this.facade.apiBrowser.removeAllRanges();
     this.viewHtml = convertedHTML as string;
     if(selection) {
-      console.log('selection: ', selection);
       setTimeout(() => {
         this.restoreSelection(selection);
       }, 0);

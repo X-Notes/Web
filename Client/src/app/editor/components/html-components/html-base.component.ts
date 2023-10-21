@@ -539,8 +539,11 @@ export abstract class BaseTextElementComponent
           }
         }
       }
-      if(e.code === 'Tab'){
+      if (!e.shiftKey && e.code === 'Tab') {
         this.tab(e);
+      }
+      if (e.shiftKey && e.code === 'Tab') {
+        this.tabReverse(e);
       }
     });
     this.listeners.push(
@@ -606,10 +609,14 @@ export abstract class BaseTextElementComponent
     this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
   }
 
-  saveAndRestoreCursor(action: () => void) {
+  saveAndRestoreCursor(action: () => void, shiftCursor = 0) {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.getSelection();
     action();
+    if (shiftCursor !== 0) {
+      savedSel.start += shiftCursor;
+      savedSel.end += shiftCursor;
+    }
     this.facade.apiBrowser.restoreSelection(el, savedSel);
   }
 
@@ -653,8 +660,78 @@ export abstract class BaseTextElementComponent
 
   onFirstSlash($event: KeyboardEvent): void { }
 
-  tab(e): void {
-    // insert tabs
+  tab(e: KeyboardEvent): void {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (this.isContentEmpty()) {
+      return;
+    }
+    this.handleUndoTextAction(this.content);
+    const insertSpacesFunc = () => {
+      const selection = this.facade.apiBrowser.getSelection();
+      const range = selection.getRangeAt(0);
+      // Create a text node for the three spaces
+      const spaces = document.createTextNode('\u00A0\u00A0\u00A0');
+      // Insert the spaces into the range
+      range.insertNode(spaces);
+    };
+    this.saveAndRestoreCursor(insertSpacesFunc, 3);
+    this.initContentFromHTML(this.contentHtml.nativeElement.innerHTML);
+    this.textChanged.next();
+    this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
+  }
+
+  tabReverse(e: KeyboardEvent): void {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (this.isContentEmpty()) {
+      return;
+    }
+    this.handleUndoTextAction(this.content);
+    const content = this.contentHtml.nativeElement.innerHTML;
+    if(!content) return;
+    const selection = this.facade.apiBrowser.getSelection();
+    const range = selection.getRangeAt(0);
+    const startPos = range.startOffset;
+    const endPos = range.endOffset;
+    // Check if the surrounding content has &nbsp;
+    const beforeCursor = content.substring(Math.max(startPos - 6, 0), startPos);
+    const afterCursor = content.substring(endPos, endPos + 6);
+
+    // Regex pattern to find up to 3 consecutive &nbsp;
+    const pattern = /(&nbsp;){1,3}/g;
+
+    let replaced = false;
+
+    console.log('beforeCursor: ', beforeCursor);
+    console.log('afterCursor; ', afterCursor)
+    // Remove &nbsp; before cursor
+    const newBefore = beforeCursor.replace(pattern, (match) => {
+      replaced = true;
+      return '';
+    });
+
+    // Remove &nbsp; after cursor if none were removed before cursor
+    const newAfter = !replaced ? afterCursor.replace(pattern, (match) => {
+      replaced = true;
+      return '';
+    }) : afterCursor;
+
+    if (replaced) {
+        const innerHTML = content.substring(0, Math.max(startPos - 6, 0))
+          + newBefore
+          + content.substring(startPos, endPos)
+          + newAfter
+          + content.substring(endPos + 6);
+        console.log('innerHTML: ', innerHTML);
+        this.initContentFromHTML(innerHTML);
+      // Set the cursor to its previous position
+      // const newRange = document.createRange();
+      // sel.removeAllRanges();
+      // newRange.setStart(this.childNodes[0], startPos - (beforeCursor.length - newBefore.length));
+      // newRange.setEnd(this.childNodes[0], endPos - (beforeCursor.length - newBefore.length));
+      // sel.addRange(newRange);
+    }
   }
 
   abstract enter(e);

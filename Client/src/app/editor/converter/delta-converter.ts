@@ -88,6 +88,18 @@ export class DeltaConverter {
     return formatted;
   }
 
+  static insertText(
+    html: string,
+    index: number,
+    text: string,
+  ): DeltaStatic {
+    this.setHTMLToEditor(html);
+    DeltaConverter.quillInstance.insertText(index, text);
+    const formatted = { ...DeltaConverter.getFormated };
+    this.clearEditor();
+    return formatted;
+  }
+
   static removeStyles(html: string, index: number, length: number): DeltaStatic {
     this.setHTMLToEditor(html);
     DeltaConverter.quillInstance.removeFormat(index, length);
