@@ -148,7 +148,7 @@ export class ContentEditorComponent
   }
 
   get isTextMenuActive(): boolean {
-    return this.menuOptions && this.menuOptions.ids.length > 0 && this.getHTMLElementsById(this.menuOptions.ids).some(x => x.getText()?.length > 0);
+    return this.menuOptions && this.menuOptions.ids.length > 0 && this.getHTMLElementsByIdWithoutCode(this.menuOptions.ids).some(x => x.getText()?.length > 0);
   }
 
   get isMobileMenuActive$(): Observable<boolean> {
@@ -635,7 +635,7 @@ export class ContentEditorComponent
 
   updateTextStyles = (updates: UpdateTextStyles) => {
     const selectionMode = this.selectionMode;
-    const elements = this.getHTMLElementsById(updates.ids);
+    const elements = this.getHTMLElementsByIdWithoutCode(updates.ids);
     for (const el of elements) {
       if (!el) {
         this.unSelectItems();

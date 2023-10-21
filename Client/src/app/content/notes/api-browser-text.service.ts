@@ -5,6 +5,25 @@ import { SaveSelection } from 'src/app/editor/entities-ui/save-selection';
   providedIn: 'root',
 })
 export class ApiBrowserTextService {
+
+  isCaretOnFirstLine(element, inaccuracy = 5) {
+    const elRect = element.getBoundingClientRect();
+    const sel = this.getSelection();
+    if (!sel.rangeCount) return false;
+    const selRect = sel.getRangeAt(0).getBoundingClientRect();
+    const diff = Math.abs(selRect.top - elRect.top);
+    return diff < inaccuracy;  // Use < 1 to account for potential float inaccuracies
+  }
+
+  isCaretOnLastLine(element, inaccuracy = 5) {
+    const elRect = element.getBoundingClientRect();
+    const sel = this.getSelection();
+    if (!sel.rangeCount) return false;
+    const selRect = sel.getRangeAt(0).getBoundingClientRect();
+    const diff = Math.abs(selRect.bottom - elRect.bottom);
+    return diff < inaccuracy;  // Use < 1 to account for potential float inaccuracies
+  }
+
   pasteOnlyTextHandler = (e: ClipboardEvent) => {
     e.preventDefault();
     let text = e.clipboardData.getData('text/plain');

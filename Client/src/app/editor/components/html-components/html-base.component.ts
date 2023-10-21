@@ -170,7 +170,6 @@ export abstract class BaseTextElementComponent
   initBaseHTML(): void {
     if (this.content.contents?.length > 0) {
       const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
-      this.facade.sanitizer.bypassSecurityTrustHtml(html);
       const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html) ?? '';
       this.viewHtml = convertedHTML as string;
       this.textChanged.next();
@@ -325,6 +324,7 @@ export abstract class BaseTextElementComponent
       return;
     }
     const html = e.clipboardData.getData('text/html');
+    console.log('html: ', html);
     if (html) {
       this.handleHtmlInserting(html);
       this.textChanged.next();
@@ -502,8 +502,6 @@ export abstract class BaseTextElementComponent
       // this.onSelectStart(e);
     });
     const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
       if (this.facade.contentEditorContent.isCanAddContent) {
         this.enter(e);
       }
@@ -524,6 +522,25 @@ export abstract class BaseTextElementComponent
       const isEmpty = !this.getText() || this.getText.length === 0;
       if (isEmpty && e.code === 'Slash') {
         this.onFirstSlash(e);
+      }
+      if (e.code === 'ArrowDown') {
+        if (!this.isContentEmpty()) {
+          const isLastLine = this.facade.apiBrowser.isCaretOnLastLine(this.getEditableNative());
+          if (!isLastLine) {
+            e.stopImmediatePropagation();
+          }
+        }
+      }
+      if (e.code === 'ArrowUp') {
+        if (!this.isContentEmpty()) {
+          const isFirstLine = this.facade.apiBrowser.isCaretOnFirstLine(this.getEditableNative());
+          if (!isFirstLine) {
+            e.stopImmediatePropagation();
+          }
+        }
+      }
+      if(e.code === 'Tab'){
+        this.tab(e);
       }
     });
     this.listeners.push(
@@ -636,8 +653,11 @@ export abstract class BaseTextElementComponent
 
   onFirstSlash($event: KeyboardEvent): void { }
 
-  abstract enter(e);
+  tab(e): void {
+    // insert tabs
+  }
 
+  abstract enter(e);
   abstract setFocusedElement(): void;
 
   abstract isFocusToNext(entity?: SetFocus);

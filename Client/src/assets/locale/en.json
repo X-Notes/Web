@@ -208,6 +208,7 @@
     "openNoteOrFile": "notes",
     "text": "Text",
     "textCommand": "Text, '/' for commands",
+    "noCode": "No code",
     "heading": "Heading",
     "menu": {
       "addVideo": "Add new videos",
@@ -222,6 +223,7 @@
       "h1": "Heading 1",
       "h2": "Heading 2",
       "h3": "Heading 3",
+      "code": "Code",
       "dotList": "Bullet list",
       "numberList": "Numbered list",
       "checkList": "Todo list",

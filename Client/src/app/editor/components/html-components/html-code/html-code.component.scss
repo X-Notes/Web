@@ -1,0 +1,41 @@
+@import 'variables.scss';
+
+
+.scrollable {
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+        height: 7px;
+    }
+}
+
+.code-block {
+    pre {
+        display: inline-flex;
+
+        code {
+            display: inline-flex;
+        }
+    }
+}
+
+.no-content {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: 300;
+    font-size: 1.125rem;
+    padding: 0.25rem 0.375rem;
+
+    p {
+        color: #6b6b6b;
+        user-select: none;
+        margin-left: $full-note-margin-left-no-content;
+    }
+}

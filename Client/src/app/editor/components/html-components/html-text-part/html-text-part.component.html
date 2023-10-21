@@ -1,5 +1,5 @@
-<div appTheme class="main-container" (mouseover)="mouseEnter($event)"
-  (mouseleave)="mouseLeave($event)" (click)="setFocusText($event)">
+<div appTheme class="main-container" (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)"
+  (click)="setFocusText($event)">
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"><ng-content
       *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content></app-drag-drop-handler-container>
   <div ondragstart="return false;" ondrop="return false;" class="main-item" [ngStyle]="{
@@ -11,7 +11,8 @@
       [attr.content_id]="content.id" [innerHTML]="viewHtml" [ngClass]="{
         'nope-select' : (isResizingPhoto$ | async) === true
       }"></p>
-    <div *ngIf="isActiveState && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"
+    <div
+      *ngIf="isActiveState && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"
       class="no-content">
       <p>{{ 'innerNote.textCommand' | translate }}</p>
     </div>
@@ -37,6 +38,10 @@
   <button mat-menu-item type="button" name="h3" (click)="transformContent($event, textType.heading, headingType.H3)">
     <mat-icon class="menu-icon-size" svgIcon="h3"></mat-icon>
     <span>{{ 'innerNote.transformMenu.h3' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="code" (click)="transformContent($event, textType.code)">
+    <mat-icon class="menu-icon-size" svgIcon="code"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.code' | translate }}</span>
   </button>
   <button mat-menu-item type="button" name="listChecked" (click)="transformContent($event, textType.checkList)">
     <mat-icon class="menu-icon-size" svgIcon="listChecked"></mat-icon>
