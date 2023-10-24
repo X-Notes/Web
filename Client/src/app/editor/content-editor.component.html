@@ -69,15 +69,6 @@
               (someChangesEvent)="postAction()">
               <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
             </app-html-check-list>
-            <app-html-code #htmlComp *ngIf="item.noteTextTypeId === textType.code" [isSelected]="getIsSelected(item.id)"
-              [forceFocus]="emptyFocus && (contents.length - 1) === i" [theme]="editorTheme" [content]="item"
-              [cursors$]="cursors$" [isReadOnlyMode]="options$.getValue().isReadOnlyMode"
-              [editorSelectionMode]="selectionMode" (enterEvent)="enterHandler($event)"
-              (transformTo)="transformToTypeText($event)" (deleteThis)="deleteRowHandler($event)"
-              (concatThisWithPrev)="concatThisWithPrev($event)" (inputHtmlEvent)="updateHtmlHandler($event)"
-              (onFocus)="onFocusHandler($event)" (someChangesEvent)="postAction()">
-              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
-            </app-html-code>
             <app-html-headings #htmlComp *ngIf="item.noteTextTypeId === textType.heading"
               [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
               [theme]="editorTheme" [content]="item" [cursors$]="cursors$"
