@@ -324,7 +324,6 @@ export abstract class BaseTextElementComponent
       return;
     }
     const html = e.clipboardData.getData('text/html');
-    console.log('html: ', html);
     if (html) {
       this.handleHtmlInserting(html);
       this.textChanged.next();

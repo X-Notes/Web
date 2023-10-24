@@ -169,10 +169,6 @@ export abstract class EditorBaseComponent {
     return this.getHTMLElementsById(contentIds)?.filter(x => !contentTypes.some(y => y === x.getContent().noteTextTypeId));
   }
 
-  getHTMLElementsByIdWithoutCode(contentIds: string[]): ParentInteractionHTML[] | null {
-    return this.getHTMLElementsByIdWithoutTypes(contentIds, NoteTextTypeENUM.code);
-  }
-
   getCollectionElementById(contentId: string): ParentInteractionCollection | undefined | null {
     if (!this.collectionElements) return null;
     return this.collectionElements.find((x) => x.getContentId() === contentId);

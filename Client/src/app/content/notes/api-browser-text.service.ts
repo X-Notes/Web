@@ -84,7 +84,6 @@ export class ApiBrowserTextService {
 
     try {
       document.execCommand('copy');
-      console.log(1);
     } catch (error) {
       console.error(error);
     } finally {
