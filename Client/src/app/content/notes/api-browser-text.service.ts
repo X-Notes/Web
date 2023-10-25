@@ -6,22 +6,22 @@ import { SaveSelection } from 'src/app/editor/entities-ui/save-selection';
 })
 export class ApiBrowserTextService {
 
-  isCaretOnFirstLine(element, inaccuracy = 5) {
+  isCaretOnFirstLine(element, inaccuracy = 8) {
     const elRect = element.getBoundingClientRect();
     const sel = this.getSelection();
     if (!sel.rangeCount) return false;
     const selRect = sel.getRangeAt(0).getBoundingClientRect();
     const diff = Math.abs(selRect.top - elRect.top);
-    return diff < inaccuracy;  // Use < 1 to account for potential float inaccuracies
+    return diff <= inaccuracy;  // Use < 1 to account for potential float inaccuracies
   }
 
-  isCaretOnLastLine(element, inaccuracy = 5) {
+  isCaretOnLastLine(element, inaccuracy = 8) {
     const elRect = element.getBoundingClientRect();
     const sel = this.getSelection();
     if (!sel.rangeCount) return false;
     const selRect = sel.getRangeAt(0).getBoundingClientRect();
     const diff = Math.abs(selRect.bottom - elRect.bottom);
-    return diff < inaccuracy;  // Use < 1 to account for potential float inaccuracies
+    return diff <= inaccuracy;  // Use < 1 to account for potential float inaccuracies
   }
 
   pasteOnlyTextHandler = (e: ClipboardEvent) => {

@@ -27,8 +27,7 @@ export class SelectionService {
   private selectedItemsSet = new Set<string>();
 
   constructor(
-    private apiBrowserService: ApiBrowserTextService,
-    private router: Router,
+    private apiBrowserService: ApiBrowserTextService
   ) { }
 
   get selectedMenuType(): EditorSelectionEnum {

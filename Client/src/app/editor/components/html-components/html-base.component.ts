@@ -527,6 +527,8 @@ export abstract class BaseTextElementComponent
           const isLastLine = this.facade.apiBrowser.isCaretOnLastLine(this.getEditableNative());
           if (!isLastLine) {
             e.stopImmediatePropagation();
+          } else {
+            this.facade.selectionService.resetSelectionAndItems();
           }
         }
       }
@@ -535,6 +537,8 @@ export abstract class BaseTextElementComponent
           const isFirstLine = this.facade.apiBrowser.isCaretOnFirstLine(this.getEditableNative());
           if (!isFirstLine) {
             e.stopImmediatePropagation();
+          } else {
+            this.facade.selectionService.resetSelectionAndItems();
           }
         }
       }
