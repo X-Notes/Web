@@ -7,6 +7,19 @@ namespace Common.DatabaseModels.Models.Files
 {
     public class PathFileSuffixes
     {
+        public PathFileSuffixes()
+        {
+            
+        }
+        
+        public PathFileSuffixes(string small, string medium, string large, string @default)
+        {
+            Small = small;
+            Medium = medium;
+            Large = large;
+            Default = @default;
+        }
+        
         public string Small { set; get; }
 
         public string Medium { set; get; }

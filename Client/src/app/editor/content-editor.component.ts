@@ -33,11 +33,10 @@ import { DestroyComponentService } from '../shared/services/destroy-component.se
 import { EditorCollectionsComponent } from './base-components/editor-collections.component';
 import { HtmlComponentsFacadeService } from './components/html-components.facade.service';
 import { TextEditMenuOptions } from './components/text-edit-menu/models/text-edit-menu-options';
-import { EditorSelectionEnum } from './entities-ui/editor-selection.enum';
 import { SaveSelection } from './entities-ui/save-selection';
 import { ChangePositionAction } from './entities-ui/undo/change-position-action';
 import { RestoreTextAction } from './entities-ui/undo/restore-text-action';
-import { UpdateTextTypeAction } from './entities-ui/undo/update-text-type-action';
+import { UpdateTextTypeAction } from './entities-ui/undo/update-text-metadata-action';
 import { UpdateCursor } from './entities/cursors/cursor';
 import { UpdateContentPosition } from './entities/ws/update-content-position-ws';
 import { ContentEditorSyncService } from './services/content-editor-sync.service';
@@ -64,6 +63,8 @@ import { ContentEditorContentsService } from './ui-services/contents/content-edi
 import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
 import { DrawerCoordsConfig } from './entities-ui/selection/drawer-coords';
 import { EditorSelectionModeEnum } from './entities-ui/editor-selection-mode.enum';
+import { KeyDownHtmlComponent } from './entities-ui/keydown-event';
+import { KeyboardKeyEnum } from './entities-ui/keyboard-keys.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -309,8 +310,8 @@ export class ContentEditorComponent
       const obj: TextEditMenuOptions = {
         isBold: this.htmlPTCollectorService.getIsBoldSelection(),
         isItalic: this.htmlPTCollectorService.getIsItalicSelection(),
-        textType: item?.noteTextTypeId,
-        headingType: item?.headingTypeId,
+        textType: item?.metadata?.noteTextTypeId,
+        headingType: item?.metadata?.hTypeId,
         isOneRowType: true,
         backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
         color: this.htmlPTCollectorService.getPropertySelection('color'),
@@ -326,8 +327,8 @@ export class ContentEditorComponent
       const obj: TextEditMenuOptions = {
         isBold: this.htmlPTCollectorService.getIsBold(htmlElements),
         isItalic: this.htmlPTCollectorService.getIsItalic(htmlElements),
-        textType: this.selectedTextElement?.noteTextTypeId,
-        headingType: this.selectedTextElement?.headingTypeId,
+        textType: this.selectedTextElement?.metadata.noteTextTypeId,
+        headingType: this.selectedTextElement?.metadata.hTypeId,
         isOneRowType: htmlElements.length === 1,
         backgroundColor: this.htmlPTCollectorService.getProperty('backgroundColor', htmlElements),
         color: this.htmlPTCollectorService.getProperty('color', htmlElements),
@@ -577,7 +578,8 @@ export class ContentEditorComponent
     const prevContent = this.facade.contentsService.getContentByIndex<BaseText>(indexPrev);
 
     const prevElement = this.getHTMLElementById(prevContent.id);
-
+    const textLength =  prevElement.getText().length;
+    const selection = { start: textLength, end: textLength} as SaveSelection
     if (!prevElement) {
       return;
     }
@@ -587,7 +589,7 @@ export class ContentEditorComponent
     const action = new RestoreTextAction(data.content, data.index);
     this.facade.momentoStateService.saveToStack(action);
 
-    prevElement.updateContentsAndSync(resContent, () => prevElement.setFocusToEnd());
+    prevElement.updateContentsAndSync(resContent, () => prevElement.restoreSelection(selection));
     el.syncHtmlWithLayout();
     prevElement.detectChanges();
 
@@ -603,7 +605,7 @@ export class ContentEditorComponent
   getNumberList(content: ContentModelBase, contentIndex: number): number {
     const text = content as BaseText;
     const prev = this.getTextContent(contentIndex - 1);
-    if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
+    if (!prev || prev.metadata.noteTextTypeId !== NoteTextTypeENUM.numberList) {
       text.listNumber = 1;
       return text.listNumber;
     }
@@ -615,7 +617,7 @@ export class ContentEditorComponent
     const content = this.getHTMLElementById(value.contentId);
     if (!content) return;
     const c = content.getContent();
-    const action = new UpdateTextTypeAction(c.id, c.noteTextTypeId, c.headingTypeId);
+    const action = new UpdateTextTypeAction(c.id, c.metadata);
     this.facade.momentoStateService.saveToStack(action);
     const selection = content.getSelection();
     this.unSelectItems();
@@ -624,6 +626,36 @@ export class ContentEditorComponent
     if (selection) {
       selection.start = selection.end;
       const el = this.getHTMLElementById(content.getContentId());
+      requestAnimationFrame(() => {
+        el.restoreSelection(selection);
+        el.setFocusedElement();
+        el.detectChanges();
+      });
+    }
+    this.postAction();
+  }
+
+  keyDownEventHandler(event: KeyDownHtmlComponent): void {
+    if (!event || !event.content) return;
+    const c = event.content.getContent();
+    const action = new UpdateTextTypeAction(c.id, c.metadata);
+    this.facade.momentoStateService.saveToStack(action);
+    const selection = event.content.getSelection();
+    this.unSelectItems();
+    switch (event.key) {
+      case KeyboardKeyEnum.Tab: {
+        this.facade.contentEditorTextService.updateTabCount(c.id, true);
+        break;
+      }
+      case KeyboardKeyEnum.ShiftTab: {
+        this.facade.contentEditorTextService.updateTabCount(c.id, false);
+        break;
+      }
+    }
+    this.facade.cdr.detectChanges();
+    if (selection) {
+      selection.start = selection.end;
+      const el = this.getHTMLElementById(event.content.getContentId());
       requestAnimationFrame(() => {
         el.restoreSelection(selection);
         el.setFocusedElement();

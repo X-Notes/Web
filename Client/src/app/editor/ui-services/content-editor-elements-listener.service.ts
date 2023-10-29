@@ -165,8 +165,8 @@ export class ContentEditorElementsListenerService {
 
   moveDown(event: KeyboardEvent, noteTitleEl: ElementRef, elements: QueryList<ParentInteraction<ContentModelBase>>): boolean {
     const arr = elements.toArray();
-
     const isMode = this.selectionService.selectionMode === EditorSelectionModeEnum.MultiplyRows || this.selectionService.selectionMode === EditorSelectionModeEnum.EntireRow;
+    
     if (isMode) {
       const elms = arr.filter((item) => this.selectionService.isSelected(item.getContentId()));
       if (elms.length > 0) {

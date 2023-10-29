@@ -5,6 +5,7 @@ using Common.DTO.Notes.FullNoteContent;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.DTO.Notes.FullNoteContent.Text;
 
 namespace Common.DTO.Notes.FullNoteSyncContents;
 
@@ -22,5 +23,5 @@ public class NewTextContent
     [Required]
     public ContentTypeEnumDTO TypeId { set; get; }
 
-    public List<TextBlock> Contents { set; get; }
+    public List<TextBlockDto> Contents { set; get; }
 }

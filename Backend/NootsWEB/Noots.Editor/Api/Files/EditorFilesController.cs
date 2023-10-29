@@ -87,7 +87,8 @@ public class EditorFilesController : ControllerBase
         if (resp.Success)
         {
             var respResult = resp.Data
-                .Select(x => new FileDTO(x.Id, azureConfig.FirstOrDefaultCache(x.StorageId).Url, x.PathPrefix, x.PathFileId, x.PathSuffixes, x.Name, x.UserId, x.MetaData, x.CreatedAt)).ToList();
+                .Select(x => new FileDTO(x.Id, azureConfig.FirstOrDefaultCache(x.StorageId).Url, x.PathPrefix, x.PathFileId, x.GetPathFileSuffixes(), 
+                    x.Name, x.UserId, x.GetMetadata(), x.CreatedAt)).ToList();
             return new OperationResult<List<FileDTO>>(true, respResult);
         }
 

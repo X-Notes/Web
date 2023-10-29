@@ -64,7 +64,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private api: ApiNoteEditorService,
     private updateNoteService: UpdaterEntitiesService,
-    private dialogsManageService: DialogsManageService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;

@@ -36,6 +36,9 @@ import { ParentInteractionHTML, ComponentType } from '../parent-interaction.inte
 import { EditorSelectionModeEnum } from '../../entities-ui/editor-selection-mode.enum';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { preventResetCursor } from 'src/app/core/defaults/bounceDelay';
+import { KeyDownHtmlComponent } from '../../entities-ui/keydown-event';
+import { KeyboardKeyEnum } from '../../entities-ui/keyboard-keys.enum';
+import { tabCount } from 'src/app/core/defaults/constraints';
 
 @Component({
   template: '',
@@ -70,6 +73,9 @@ export abstract class BaseTextElementComponent
 
   @Output()
   deleteThis = new EventEmitter<string>();
+
+  @Output()
+  keyDown = new EventEmitter<KeyDownHtmlComponent>();
 
   @Output()
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -114,6 +120,20 @@ export abstract class BaseTextElementComponent
 
   get isActiveState(): boolean {
     return this.getIsActive() && !this.isReadOnlyMode;
+  }
+
+  get textPaddingNumber(): number {
+    if(!this.content.metadata?.tabCount || this.content.metadata?.tabCount === 0) return 0;
+    const tabCountNumber = this.content.metadata?.tabCount > tabCount ? tabCount : this.content.metadata?.tabCount;
+    return tabCountNumber * 12;
+  }
+
+  get textPadding(): string {
+    return this.textPaddingNumber + 'px';
+  }
+
+  get textPlaceholderPadding(): string {
+    return this.textPaddingNumber + 7 + 'px';
   }
 
   get isActiveStateNoHover(): boolean {
@@ -170,7 +190,6 @@ export abstract class BaseTextElementComponent
   initBaseHTML(): void {
     if (this.content.contents?.length > 0) {
       const html = DeltaConverter.convertTextBlocksToHTML(this.content.contents);
-      this.facade.sanitizer.bypassSecurityTrustHtml(html);
       const convertedHTML = this.facade.sanitizer.bypassSecurityTrustHtml(html) ?? '';
       this.viewHtml = convertedHTML as string;
       this.textChanged.next();
@@ -231,7 +250,7 @@ export abstract class BaseTextElementComponent
   }
 
   getTextType(): NoteTextTypeENUM {
-    return this.content.noteTextTypeId;
+    return this.content.metadata.noteTextTypeId;
   }
 
   handleUndoTextAction(text: BaseText): void {
@@ -502,8 +521,6 @@ export abstract class BaseTextElementComponent
       // this.onSelectStart(e);
     });
     const keydownEnter = this.facade.renderer.listen(el, 'keydown.enter', (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
       if (this.facade.contentEditorContent.isCanAddContent) {
         this.enter(e);
       }
@@ -524,6 +541,32 @@ export abstract class BaseTextElementComponent
       const isEmpty = !this.getText() || this.getText.length === 0;
       if (isEmpty && e.code === 'Slash') {
         this.onFirstSlash(e);
+      }
+      if (e.code === 'ArrowDown') {
+        if (!this.isContentEmpty()) {
+          const isLastLine = this.facade.apiBrowser.isCaretOnLastLine(this.getEditableNative());
+          if (!isLastLine) {
+            e.stopImmediatePropagation();
+          } else {
+            this.facade.selectionService.resetSelectionAndItems();
+          }
+        }
+      }
+      if (e.code === 'ArrowUp') {
+        if (!this.isContentEmpty()) {
+          const isFirstLine = this.facade.apiBrowser.isCaretOnFirstLine(this.getEditableNative());
+          if (!isFirstLine) {
+            e.stopImmediatePropagation();
+          } else {
+            this.facade.selectionService.resetSelectionAndItems();
+          }
+        }
+      }
+      if (!e.shiftKey && e.code === 'Tab') {
+        this.tab(e);
+      }
+      if (e.shiftKey && e.code === 'Tab') {
+        this.tabReverse(e);
       }
     });
     this.listeners.push(
@@ -589,10 +632,14 @@ export abstract class BaseTextElementComponent
     this.facade.store.dispatch(new UpdateCursorAction(noteId, cursor));
   }
 
-  saveAndRestoreCursor(action: () => void) {
+  saveAndRestoreCursor(action: () => void, shiftCursor = 0) {
     const el = this.contentHtml.nativeElement;
     const savedSel = this.getSelection();
     action();
+    if (shiftCursor !== 0) {
+      savedSel.start += shiftCursor;
+      savedSel.end += shiftCursor;
+    }
     this.facade.apiBrowser.restoreSelection(el, savedSel);
   }
 
@@ -636,8 +683,19 @@ export abstract class BaseTextElementComponent
 
   onFirstSlash($event: KeyboardEvent): void { }
 
-  abstract enter(e);
+  tab(e: KeyboardEvent): void {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    this.keyDown.emit({ content: this, key: KeyboardKeyEnum.Tab});
+  }
 
+  tabReverse(e: KeyboardEvent): void {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    this.keyDown.emit({ content: this, key: KeyboardKeyEnum.ShiftTab});
+  }
+
+  abstract enter(e);
   abstract setFocusedElement(): void;
 
   abstract isFocusToNext(entity?: SetFocus);

@@ -3,5 +3,5 @@ export enum NoteTextTypeENUM {
   heading = 2,
   dotList = 3,
   numberList = 4,
-  checkList = 5,
+  checkList = 5
 }

@@ -2,11 +2,11 @@
   <div class="billing">{{ userBillingPlan }}</div>
   <div class="progress-bar-section">
     <div class="text">
-      <p>{{ memoryUsedM }} of {{ userMemory }}</p>
+      <p>{{ memoryUsedM$ | async }} of {{ userMemory }}</p>
     </div>
     <div class="progress-bar">
       <div
-        [ngStyle]="{ width: procent, 'background-color': getIndicatorColor(theme$ | async) }"
+        [ngStyle]="{ width: percent, 'background-color': getIndicatorColor(theme$ | async) }"
         class="indicator"
       ></div>
     </div>

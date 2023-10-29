@@ -512,7 +512,7 @@ export class ContentEditorSyncService {
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
         const v = results.data.find(x => x.contentId === text.id);
-        item.patch(text.contents, text.headingTypeId, text.noteTextTypeId, text.checked, v.version, v.updatedDate);
+        item.patch(text.contents, text.contentMetadata, v.version, v.updatedDate);
         item.updateDateAndVersion(v.version, v.updatedDate);
       }
     }

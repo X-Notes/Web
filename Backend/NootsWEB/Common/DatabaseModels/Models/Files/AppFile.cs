@@ -20,7 +20,7 @@ namespace Common.DatabaseModels.Models.Files
         public string PathFileId { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public PathFileSuffixes PathSuffixes { set; get; }
+        public string PathSuffixes { set; get; }
 
         public string Name { set; get; }
         public long Size { set; get; }
@@ -31,7 +31,7 @@ namespace Common.DatabaseModels.Models.Files
         public FileType FileType { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public AppFileMetaData MetaData { set; get; }
+        public string MetaData { set; get; }
 
         public Guid UserId { set; get; }
         public User User { get; set; }
@@ -74,48 +74,65 @@ namespace Common.DatabaseModels.Models.Files
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
-        public AppFile InitPathes(StoragesEnum storageId, string prefixFolder, string pathFileId, string _default, string small = null, string medium = null, string large = null)
+        public AppFile InitPaths(StoragesEnum storageId, string prefixFolder, string pathFileId, string @default, string small, string medium, string large)
         {
             PathPrefix = prefixFolder;
             PathFileId = pathFileId;
             StorageId = storageId;
 
-            InitPathSuffixes(_default, small, medium, large);
+            UpdatePathSuffixes(new PathFileSuffixes(small, medium, large, @default));
 
             return this;
         }
-
-        private AppFile InitPathSuffixes(string _default, string small, string medium, string large)
-        {
-            PathSuffixes ??= new PathFileSuffixes();
-            PathSuffixes.Default = _default;
-            PathSuffixes.Small = small;
-            PathSuffixes.Medium = medium;
-            PathSuffixes.Large = large;
-
-            return this;
-        }
-
-
-        public AppFile InitPathes(StoragesEnum storageId, string prefixFolder, string pathFileId, PathFileSuffixes suffixes)
+        
+        public AppFile InitSuffixes(StoragesEnum storageId, string prefixFolder, string pathFileId, string pathSuffixes)
         {
             PathPrefix = prefixFolder;
             PathFileId = pathFileId;
             StorageId = storageId;
 
-            PathSuffixes = suffixes;
+            PathSuffixes = pathSuffixes;
 
             return this;
         }
+        
+        public PathFileSuffixes GetPathFileSuffixes()
+        {
+            if (!string.IsNullOrEmpty(PathSuffixes))
+            {
+                return DbJsonConverter.DeserializeObject<PathFileSuffixes>(PathSuffixes);
+            }
 
+            return new PathFileSuffixes();
+        }
+        
+        public AppFileMetaData GetMetadata()
+        {
+            if (!string.IsNullOrEmpty(MetaData))
+            {
+                return DbJsonConverter.DeserializeObject<AppFileMetaData>(MetaData);
+            }
 
+            return new AppFileMetaData();
+        }
+        
+        public void UpdateMetadata(AppFileMetaData metadata)
+        {
+            MetaData = metadata != null ? DbJsonConverter.Serialize(metadata) : null;
+        }
+        
+        public void UpdatePathSuffixes(PathFileSuffixes pathSuffixes)
+        {
+            PathSuffixes = pathSuffixes != null ? DbJsonConverter.Serialize(pathSuffixes) : null;
+        }
+        
         public List<FilePathesDTO> GetNotNullPathes()
         {
             if (PathSuffixes == null) return null;
 
             string buildPath(string fileName) => PathPrefix + "/" + PathFileId + "/" + fileName;
 
-            return PathSuffixes.GetNotNullPathes().Select(x => new FilePathesDTO { FileName = x, FullPath = buildPath(x) }).ToList();
+            return GetPathFileSuffixes().GetNotNullPathes().Select(x => new FilePathesDTO { FileName = x, FullPath = buildPath(x) }).ToList();
         }
 
         public bool IsLinkedSomeWhere()
@@ -135,12 +152,13 @@ namespace Common.DatabaseModels.Models.Files
 
         public List<Guid> GetAdditionalIds()
         {
-           var ids = new List<Guid>(); 
-           if (MetaData != null && MetaData.ImageFileId.HasValue)
-           {
-                ids.Add(MetaData.ImageFileId.Value);
-           }
-           return ids;
+            var metadata = GetMetadata();
+            var ids = new List<Guid>(); 
+            if (MetaData != null && metadata.ImageFileId.HasValue)
+            {
+                ids.Add(metadata.ImageFileId.Value);
+            }
+            return ids;
         }
 
         public IEnumerable<Guid> GetIds()
@@ -155,7 +173,7 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromSmallPath();
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().GetFromSmallPath();
             }
         }
 
@@ -164,7 +182,7 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.GetFromDefaultPath();
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().GetFromDefaultPath();
             }
         }
 
@@ -173,8 +191,8 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                if (string.IsNullOrEmpty(PathSuffixes.Default)) return null;
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Default;
+                if (string.IsNullOrEmpty(GetPathFileSuffixes().Default)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().Default;
             }
         }
 
@@ -183,8 +201,8 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                if (string.IsNullOrEmpty(PathSuffixes.Small)) return null;
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Small;
+                if (string.IsNullOrEmpty(GetPathFileSuffixes().Small)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().Small;
             }
         }
 
@@ -193,8 +211,8 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                if (string.IsNullOrEmpty(PathSuffixes.Medium)) return null;
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Medium;
+                if (string.IsNullOrEmpty(GetPathFileSuffixes().Medium)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().Medium;
             }
         }
 
@@ -203,8 +221,8 @@ namespace Common.DatabaseModels.Models.Files
         {
             get
             {
-                if (string.IsNullOrEmpty(PathSuffixes.Large)) return null;
-                return PathPrefix + "/" + PathFileId + "/" + PathSuffixes.Large;
+                if (string.IsNullOrEmpty(GetPathFileSuffixes().Large)) return null;
+                return PathPrefix + "/" + PathFileId + "/" + GetPathFileSuffixes().Large;
             }
         }
 

@@ -101,7 +101,7 @@ export class NoteComponent implements OnInit {
   getNumberList(content: ContentModelBase, contentIndex: number): number {
     const text = content as BaseText;
     const prev = this.getTextContent(contentIndex - 1);
-    if (!prev || prev.noteTextTypeId !== NoteTextTypeENUM.numberList) {
+    if (!prev || prev.metadata?.noteTextTypeId !== NoteTextTypeENUM.numberList) {
       text.listNumber = 1;
       return text.listNumber;
     }

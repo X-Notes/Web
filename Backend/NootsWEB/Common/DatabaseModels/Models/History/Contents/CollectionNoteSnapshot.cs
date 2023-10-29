@@ -11,19 +11,29 @@ namespace Common.DatabaseModels.Models.History.Contents
     {
         public string Name { set; get; }
 
-        public CollectionMetadata MetaData { set; get; }
+        public string Metadata { set; get; }
 
         public FileTypeEnum FileTypeId { set; get; }
 
         public List<Guid> FilesIds { get; set; }
 
-        public CollectionNoteSnapshot(string name, List<Guid> filesIds, CollectionMetadata metaData, FileTypeEnum fileTypeId,
+        public CollectionNoteSnapshot(string name, List<Guid> filesIds, string metaData, FileTypeEnum fileTypeId,
                                         int order, ContentTypeENUM contentTypeId, DateTimeOffset updatedAt) : base(order, contentTypeId, updatedAt)
         {
             Name = name;
-            MetaData = metaData;
+            Metadata =  metaData;
             FileTypeId = fileTypeId;
             FilesIds = filesIds;
+        }
+        
+        public CollectionMetadata GetMetadata()
+        {
+            if (!string.IsNullOrEmpty(Metadata))
+            {
+                return DbJsonConverter.DeserializeObject<CollectionMetadata>(Metadata);
+            }
+
+            return null;
         }
     }
 }

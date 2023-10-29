@@ -5,24 +5,20 @@ import { BaseFile } from './base-file';
 import { TextBlock } from './text-models/text-block';
 import { NoteTextTypeENUM } from './text-models/note-text-type.enum';
 import { HeadingTypeENUM } from './text-models/heading-type.enum';
+import { TextMetadata } from './text-models/text-metadata';
 
 export class BaseText extends ContentModelBase {
   listNumber?: number;
 
-  headingTypeId?: HeadingTypeENUM;
-
-  noteTextTypeId: NoteTextTypeENUM;
-
-  checked?: boolean;
+  metadata: TextMetadata;
 
   contents: TextBlock[];
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.order, text.updatedAt, text.version);
     this.contents = text.contents?.map((x) => new TextBlock(x));
-    this.headingTypeId = text.headingTypeId;
-    this.noteTextTypeId = text.noteTextTypeId;
-    this.checked = text.checked;
+    const type = text.metadata?.noteTextTypeId ?? NoteTextTypeENUM.default;
+    this.metadata = new TextMetadata(type, text.metadata?.hTypeId, text.metadata?.checked, text.metadata?.tabCount);
   }
 
   get getItems(): BaseFile[] {
@@ -41,16 +37,20 @@ export class BaseText extends ContentModelBase {
     this.updateContent([]);
   }
 
-  updateHeadingTypeId(headingTypeId?: HeadingTypeENUM) {
-    this.headingTypeId = headingTypeId;
+  updateHeadingTypeId(hTypeId?: HeadingTypeENUM) {
+    this.metadata.hTypeId = hTypeId;
   }
 
   updateNoteTextTypeId(noteTextTypeId: NoteTextTypeENUM) {
-    this.noteTextTypeId = noteTextTypeId;
+    this.metadata.noteTextTypeId = noteTextTypeId;
   }
 
   updateChecked(_checked?: boolean) {
-    this.checked = _checked;
+    this.metadata.checked = _checked;
+  }
+
+  updateTabCount(tabCount: number) {
+    this.metadata.tabCount = tabCount;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -71,20 +71,13 @@ export class BaseText extends ContentModelBase {
   copyBase(): BaseText {
     const obj = new BaseText(this);
     obj.contents = null;
-    obj.headingTypeId = null;
-    obj.noteTextTypeId = null;
-    obj.checked = null;
+    obj.metadata = null;
     return obj;
   }
 
   isEqual(content: BaseText): boolean {
     const isEqualText = this.isEqualText(this.contents, content.contents);
-    return (
-      isEqualText &&
-      this.headingTypeId === content.headingTypeId &&
-      this.noteTextTypeId === content.noteTextTypeId &&
-      this.checked === content.checked
-    );
+    return (isEqualText && this.metadata.isEqual(content.metadata));
   }
 
   isEqualText = (blockF: TextBlock[], blockS: TextBlock[]): boolean => {
@@ -99,11 +92,12 @@ export class BaseText extends ContentModelBase {
     return true;
   };
 
-  patch(blocks: TextBlock[], headingType: HeadingTypeENUM, textType: NoteTextTypeENUM, checked: boolean, version: number, updateDate: Date) {
+  patch(blocks: TextBlock[], metadata: TextMetadata, version: number, updateDate: Date) {
     this.contents = blocks;
-    this.headingTypeId = headingType;
-    this.noteTextTypeId = textType;
-    this.checked = checked;
+    this.metadata.hTypeId = metadata.hTypeId;
+    this.metadata.noteTextTypeId = metadata.noteTextTypeId;
+    this.metadata.checked = metadata.checked;
+    this.metadata.tabCount = metadata.tabCount;
     this.updateDateAndVersion(version, updateDate);
   }
 

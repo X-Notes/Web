@@ -34,7 +34,7 @@ export class HtmlHeadingsComponent
   }
 
   get cursorClass(): string {
-    switch (this.content.headingTypeId) {
+    switch (this.content.metadata?.hTypeId) {
       case HeadingTypeENUM.H1: {
         return 'cursor-h1';
       }
@@ -51,7 +51,7 @@ export class HtmlHeadingsComponent
   }
 
   get cursorShift() {
-    switch (this.content.headingTypeId) {
+    switch (this.content.metadata?.hTypeId) {
       case HeadingTypeENUM.H1: {
         return { top: 4, left: 5 };
       }
@@ -98,6 +98,7 @@ export class HtmlHeadingsComponent
 
   enter($event: any) {
     $event.preventDefault();
+    $event.stopPropagation();
     const breakModel = this.facade.apiBrowser.pressEnterHandler(this.getEditableNative());
     const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.default, this.content.id);
     this.enterEvent.emit(event);

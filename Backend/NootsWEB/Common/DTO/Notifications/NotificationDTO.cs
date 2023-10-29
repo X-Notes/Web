@@ -31,7 +31,7 @@ namespace Common.DTO.Notifications
             
             this.NotificationMessagesId = notification.NotificationMessagesId;
             this.AdditionalMessage = notification.AdditionalMessage;
-            this.Metadata = notification.Metadata;
+            this.Metadata = notification.GetMetadata();
 
             this.UserFromId = notification.UserFrom.Id;
             this.UserFromName = notification.UserFrom.Name;

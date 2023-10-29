@@ -24,6 +24,21 @@ namespace Common.DatabaseModels.Models.Users.Notifications
         public DateTimeOffset Date { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public NotificationMetadata Metadata { get; set; }
+        public string Metadata { get; set; }
+        
+        public NotificationMetadata GetMetadata()
+        {
+            if (!string.IsNullOrEmpty(Metadata))
+            {
+                return DbJsonConverter.DeserializeObject<NotificationMetadata>(Metadata);
+            }
+
+            return null;
+        }
+
+        public void UpdateMetadata(NotificationMetadata metadata)
+        {
+            Metadata = metadata != null ? DbJsonConverter.Serialize(metadata) : null;
+        }
     }
 }

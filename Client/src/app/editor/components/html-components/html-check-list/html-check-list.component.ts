@@ -14,6 +14,7 @@ import { ClickableSelectableEntities } from 'src/app/editor/entities-ui/clickabl
 import { TransformContent } from 'src/app/editor/entities-ui/transform-content.model';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
 import { HtmlComponentsFacadeService } from '../../html-components.facade.service';
+import { UpdateTextTypeAction } from 'src/app/editor/entities-ui/undo/update-text-metadata-action';
 
 @Component({
   selector: 'app-html-check-list',
@@ -67,7 +68,14 @@ export class HtmlCheckListComponent
   }
 
   changeCheckBox() {
+    const action = new UpdateTextTypeAction(this.content.id, this.content.metadata);
+    this.facade.momentoStateService.saveToStack(action);
+    this.content.metadata.checked = !this.content.metadata.checked;
     this.someChangesEvent.emit();
+  }
+
+  syncLayoutWithContent() {
+    super.syncLayoutWithContent();
   }
 
   setFocusedElement(): void {
@@ -90,6 +98,7 @@ export class HtmlCheckListComponent
 
   enter($event: any) {
     $event.preventDefault();
+    $event.stopPropagation();
     if (this.isContentEmpty()) {
       this.transformTo.emit({
         contentId: this.content.id,

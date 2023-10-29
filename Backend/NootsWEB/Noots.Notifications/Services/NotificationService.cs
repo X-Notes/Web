@@ -41,10 +41,10 @@ public class NotificationService
             UserFromId = userFromId,
             UserToId = userToId,
             NotificationMessagesId = key,
-            Metadata = metadata,
             Date = DateTimeProvider.Time
         };
-
+        notification.UpdateMetadata(metadata);
+        
         await notificationRepository.AddAsync(notification);
 
         return notification;
@@ -66,13 +66,17 @@ public class NotificationService
 
     public async Task<List<Notification>> AddNotificationsAsync(Guid userFromId, IEnumerable<Guid> userToIds, NotificationMessagesEnum key, NotificationMetadata metadata)
     {
-        var notifications = userToIds.Select(userId => new Notification()
+        var notifications = userToIds.Select(userId =>
         {
-            UserFromId = userFromId,
-            UserToId = userId,
-            NotificationMessagesId = key,
-            Metadata = metadata,
-            Date = DateTimeProvider.Time
+            var notification = new Notification()
+            {
+                UserFromId = userFromId,
+                UserToId = userId,
+                NotificationMessagesId = key,
+                Date = DateTimeProvider.Time
+            };
+            notification.UpdateMetadata(metadata);
+            return notification;
         }).ToList();
 
         await notificationRepository.AddRangeAsync(notifications);

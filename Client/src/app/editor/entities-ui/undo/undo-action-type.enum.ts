@@ -3,7 +3,7 @@ export enum UndoActionTypeEnum {
   deleteContent,
   reorder,
   mutateTitle,
-  mutateTextType,
+  mutateTextMetadata,
   removeCollectionItems,
   restoreText,
   restoreCollection,
