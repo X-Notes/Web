@@ -9,7 +9,7 @@ import { RestoreCollectionAction } from '../../entities-ui/undo/restore-collecti
 import { RestoreCollectionItemsAction } from '../../entities-ui/undo/restore-collection-items-action';
 import { RestoreTextAction } from '../../entities-ui/undo/restore-text-action';
 import { UndoActionTypeEnum } from '../../entities-ui/undo/undo-action-type.enum';
-import { UpdateTextTypeAction } from '../../entities-ui/undo/update-text-type-action';
+import { UpdateTextTypeAction } from '../../entities-ui/undo/update-text-metadata-action';
 import { UpdateTitleAction } from '../../entities-ui/undo/update-title-action';
 import { BaseCollection } from '../../entities/contents/base-collection';
 import { BaseFile } from '../../entities/contents/base-file';
@@ -76,16 +76,11 @@ export class ContentEditorRestoreService {
         updateTitle(action.title);
         break;
       }
-      case UndoActionTypeEnum.mutateTextType: {
+      case UndoActionTypeEnum.mutateTextMetadata: {
         const action = prev as UpdateTextTypeAction;
         const content = this.textContents.find((x) => x.id === action.contentId);
         if (content) {
-          if (action.headingTypeId) {
-            content.headingTypeId = action.headingTypeId;
-          }
-          if (action.noteTextTypeId) {
-            content.noteTextTypeId = action.noteTextTypeId;
-          }
+          content.metadata = action.metadata;
           idsToUpdate.push(content.id);
         }
         break;

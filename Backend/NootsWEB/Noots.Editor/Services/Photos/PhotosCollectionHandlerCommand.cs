@@ -159,8 +159,8 @@ namespace Noots.Editor.Services.Photos
 
                     await transaction.CommitAsync();
 
-                    var result = new PhotosCollectionNoteDTO(null, collection.Name, collection.MetaData?.Width, collection.MetaData?.Height,
-                                        collection.Id, collection.Order, collection.MetaData?.CountInRow, collection.UpdatedAt, 1);
+                    var metadata = collection.GetMetadata();
+                    var result = new PhotosCollectionNoteDTO(null, collection.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 

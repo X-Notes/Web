@@ -166,7 +166,7 @@ export abstract class EditorBaseComponent {
   }
 
   getHTMLElementsByIdWithoutTypes(contentIds: string[], ...contentTypes: NoteTextTypeENUM[]): ParentInteractionHTML[] | null {
-    return this.getHTMLElementsById(contentIds)?.filter(x => !contentTypes.some(y => y === x.getContent().noteTextTypeId));
+    return this.getHTMLElementsById(contentIds)?.filter(x => !contentTypes.some(y => y === x.getContent().metadata?.noteTextTypeId));
   }
 
   getCollectionElementById(contentId: string): ParentInteractionCollection | undefined | null {

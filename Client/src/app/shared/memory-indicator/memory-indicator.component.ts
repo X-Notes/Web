@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BillingPlanId } from 'src/app/core/models/billing/billing-plan-id.enum';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -17,18 +17,18 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  memoryUsedBytes?: number;
+  memoryUsedBytes$ = new BehaviorSubject<number>(0);
 
-  memoryUsedM?: number;
+  memoryUsedM$ = new BehaviorSubject<number>(0);
 
-  billing?: BillingPlanId;
+  billing$ = new BehaviorSubject<BillingPlanId>(null);
 
   plans?: BillingPlan[];
 
   constructor(private store: Store) {}
 
   get userBillingPlan() {
-    switch (this.billing) {
+    switch (this.billing$.getValue()) {
       case BillingPlanId.Standard: {
         return 'S';
       }
@@ -41,14 +41,14 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     }
   }
 
-  get procent(): string {
-    if(!this.memoryUsedBytes || !this.userPlan?.maxSize) return '';
-    return `${(this.memoryUsedBytes / this.userPlan?.maxSize) * 100}%`;
+  get percent(): string {
+    if(!this.memoryUsedBytes$.getValue() || !this.userPlan?.maxSize) return '';
+    return `${(this.memoryUsedBytes$.getValue() / this.userPlan?.maxSize) * 100}%`;
   }
 
   get userPlan(): BillingPlan | undefined {
     if(!this.plans) return;
-    return this.plans.find((x) => x.id === this.billing);
+    return this.plans.find((x) => x.id === this.billing$.getValue());
   }
 
   get userMemory(): string | undefined {
@@ -56,8 +56,8 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   }
 
   getIndicatorColor(theme: ThemeENUM) {
-    if(!this.memoryUsedBytes || !this.userPlan?.maxSize) return '';
-    const check = this.memoryUsedBytes / this.userPlan?.maxSize;
+    if(!this.memoryUsedBytes$.getValue() || !this.userPlan?.maxSize) return '';
+    const check = this.memoryUsedBytes$.getValue() / this.userPlan?.maxSize;
     if (check < 0.85) {
       return theme === ThemeENUM.Dark ? 'white' : '#404040';
     }
@@ -74,19 +74,21 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
       .select(UserStore.getMemoryBytes)
       .pipe(takeUntil(this.destroy))
       // eslint-disable-next-line no-return-assign
-      .subscribe((space) => (this.memoryUsedBytes = space));
+      .subscribe((space) => (this.memoryUsedBytes$.next(space)));
 
     this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
       // eslint-disable-next-line no-return-assign
-      .subscribe((m) => (this.memoryUsedM = Math.ceil(m)));
+      .subscribe((m) => {
+        this.memoryUsedM$.next(Math.ceil(m));
+      });
 
     this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
       // eslint-disable-next-line no-return-assign
-      .subscribe((user) => (this.billing = user.billingPlanId));
+      .subscribe((user) => (this.billing$.next(user.billingPlanId)));
 
     this.store
       .select(UserStore.getBillingsPlans)

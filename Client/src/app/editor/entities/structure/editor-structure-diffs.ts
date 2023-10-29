@@ -38,7 +38,7 @@ export class EditorStructureDiffs {
       this.newTextItems.push({
         id: text.id,
         typeId: text.typeId,
-        noteTextTypeId: text.noteTextTypeId,
+        noteTextTypeId: text.metadata?.noteTextTypeId,
         order: text.order,
         contents: text.contents
       });

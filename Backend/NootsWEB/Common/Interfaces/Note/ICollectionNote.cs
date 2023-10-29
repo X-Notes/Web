@@ -6,7 +6,7 @@ namespace Common.Interfaces.Note
 {
     public interface ICollectionNote
     {
-        public CollectionMetadata MetaData { set; get; }
+        public string Metadata { set; get; }
 
         public FileTypeEnum FileTypeId { set; get; }
 

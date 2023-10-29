@@ -1,13 +1,14 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 using System;
+using Common.DTO.Notes.FullNoteContent.Text;
 
 namespace Common.DTO.WebSockets.InnerNote
 {
     public class UpdateTextWS
     {
-        public TextNoteDTO Collection { set; get; }
+        public TextNoteDto Collection { set; get; }
 
-        public UpdateTextWS(TextNoteDTO collection)
+        public UpdateTextWS(TextNoteDto collection)
         {
             Collection = collection;    
         }

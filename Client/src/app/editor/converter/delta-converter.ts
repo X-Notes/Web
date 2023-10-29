@@ -58,6 +58,7 @@ export class DeltaConverter {
   }
 
   static convertTextBlocksToHTML(contents: TextBlock[]): string {
+    if(!contents) return null;
     const ops = this.convertTextBlocksToDelta(contents);
     const html = this.convertDeltaToHtml(ops);
     return html;
@@ -182,13 +183,13 @@ export class DeltaConverter {
     }
     const staticDelta = {} as DeltaStatic;
     const ops = contents.map((item) => {
-      return { insert: item.text, attributes: this.convertToAttibutes(item) };
+      return { insert: item.text ?? '', attributes: this.convertToAttributes(item) };
     });
     staticDelta.ops = ops;
     return staticDelta;
   }
 
-  private static convertToAttibutes(block: TextBlock): StringAny {
+  private static convertToAttributes(block: TextBlock): StringAny {
     if (!block || !block.textTypes) {
       return {};
     }

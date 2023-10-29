@@ -34,7 +34,7 @@ export class HtmlHeadingsComponent
   }
 
   get cursorClass(): string {
-    switch (this.content.headingTypeId) {
+    switch (this.content.metadata?.hTypeId) {
       case HeadingTypeENUM.H1: {
         return 'cursor-h1';
       }
@@ -51,7 +51,7 @@ export class HtmlHeadingsComponent
   }
 
   get cursorShift() {
-    switch (this.content.headingTypeId) {
+    switch (this.content.metadata?.hTypeId) {
       case HeadingTypeENUM.H1: {
         return { top: 4, left: 5 };
       }

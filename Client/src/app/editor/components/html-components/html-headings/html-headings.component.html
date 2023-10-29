@@ -6,9 +6,9 @@
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseLeave($event)"
   [ngClass]="{
-    h1: content.headingTypeId === hType.H1,
-    h2: content.headingTypeId === hType.H2,
-    h3: content.headingTypeId === hType.H3
+    h1: content.metadata.hTypeId === hType.H1,
+    h2: content.metadata.hTypeId === hType.H2,
+    h3: content.metadata.hTypeId === hType.H3
   }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
@@ -18,7 +18,8 @@
     ondragstart="return false;" ondrop="return false;"
     class="main-item"
     [ngStyle]="{
-      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
+      paddingLeft: textPadding
     }"
   >
     <p
@@ -34,7 +35,7 @@
       }"
     ></p>
     <p class="no-content" *ngIf="isActiveStateNoHover && (isSelectModeActive$ | async) === false && isRowsSelected === false">
-      {{ ('innerNote.heading' | translate) }} {{ content.headingTypeId }}
+      {{ ('innerNote.heading' | translate) }} {{ content.metadata.hTypeId }}
     </p>
     <div
       *ngFor="let cursor of uiCursors$ | async"

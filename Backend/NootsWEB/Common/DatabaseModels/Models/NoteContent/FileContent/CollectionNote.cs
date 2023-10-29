@@ -13,7 +13,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         public string Name { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public CollectionMetadata MetaData { set; get; }
+        public string Metadata { set; get; }
 
         public FileTypeEnum FileTypeId { set; get; }
         public FileType FileType { set; get; }
@@ -39,11 +39,26 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Name = entity.Name;
             Order = entity.Order;
             FileTypeId = entity.FileTypeId;
-            MetaData = entity.MetaData;
+            Metadata = entity.Metadata;
 
             CollectionNoteAppFiles = collectionNoteAppFiles;
         }
 
+        public CollectionMetadata GetMetadata()
+        {
+            if (!string.IsNullOrEmpty(Metadata))
+            {
+                return DbJsonConverter.DeserializeObject<CollectionMetadata>(Metadata);
+            }
+
+            return null;
+        }
+        
+        public void UpdateMetadata(CollectionMetadata metadata)
+        {
+            Metadata = metadata != null ? DbJsonConverter.Serialize(metadata) : null;
+        }
+        
         public override IEnumerable<Guid> GetInternalFilesIds()
         {
             return CollectionNoteAppFiles.Select(x => x.AppFileId);
@@ -51,11 +66,11 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
 
         public void SetMetaDataPhotos(string width, string height, int countInRow)
         {
-            MetaData = MetaData ?? new CollectionMetadata();
-
-            MetaData.CountInRow = countInRow;
-            MetaData.Width = width;
-            MetaData.Height = height;
+            var metadata = string.IsNullOrEmpty(Metadata) ? new CollectionMetadata() : GetMetadata();
+            metadata.CountInRow = countInRow;
+            metadata.Width = width;
+            metadata.Height = height;
+            UpdateMetadata(metadata);
         }
     }
 }

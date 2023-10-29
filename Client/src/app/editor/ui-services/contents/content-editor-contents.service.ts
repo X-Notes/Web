@@ -453,11 +453,11 @@ export class ContentEditorContentsService {
   patchText(data: BaseText, isSync = false): void {
     const content = this.getContentById<BaseText>(data.id);
     if (content) {
-      content.patch(data.contents, data.headingTypeId, data.noteTextTypeId, data.checked, data.version, data.updatedAt);
+      content.patch(data.contents, data.metadata, data.version, data.updatedAt);
     }
     const contentSync = this.getSyncContentById<BaseText>(data.id);
     if (contentSync && isSync) {
-      contentSync.patch(data.contents, data.headingTypeId, data.noteTextTypeId, data.checked, data.version, data.updatedAt);
+      contentSync.patch(data.contents, data.metadata, data.version, data.updatedAt);
     }
   }
 

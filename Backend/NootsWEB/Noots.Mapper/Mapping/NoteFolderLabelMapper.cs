@@ -13,6 +13,7 @@ using Common.DTO.Labels;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
+using Common.DTO.Notes.FullNoteContent.Text;
 
 namespace Noots.Mapper.Mapping
 {
@@ -25,10 +26,10 @@ namespace Noots.Mapper.Mapping
 
         public AudioNoteDTO MapToAudioDTO(AppFile file, Guid ownerId)
         {
+            var metadata = file.GetMetadata();
             return new AudioNoteDTO(file.Name, file.Id, 
                 BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
-                file.UserId, file.MetaData?.SecondsDuration,
-                BuildFilePath(file.StorageId, ownerId, file.MetaData?.ImagePath), file.CreatedAt);
+                file.UserId, metadata?.SecondsDuration, metadata?.ImagePath, file.CreatedAt);
         }
 
         public VideoNoteDTO MapToVideoDTO(AppFile file, Guid ownerId)
@@ -109,9 +110,9 @@ namespace Noots.Mapper.Mapping
             return resultList;
         }
 
-        public TextNoteDTO ToTextDTO(TextNote tN)
+        public TextNoteDto ToTextDTO(TextNote tN)
         {
-            return new TextNoteDTO(tN.Contents, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt, tN.Version);
+            return new TextNoteDto(tN.GetContents(), tN.Id, tN.Order, tN.GetMetadata(), tN.UpdatedAt, tN.Version, tN.PlainContent);
         }
 
         public AudiosCollectionNoteDTO ToAudiosCollection(CollectionNote aN, Guid ownerId)
@@ -123,7 +124,8 @@ namespace Noots.Mapper.Mapping
         public PhotosCollectionNoteDTO ToPhotosCollection(CollectionNote aN, Guid ownerId)
         {
             var photosDTO = aN.Files != null ? aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList() : null;
-            return new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.MetaData?.Width, aN.MetaData?.Height, aN.Id, aN.Order, aN.MetaData?.CountInRow, aN.UpdatedAt, aN.Version);
+            var metadata = aN.GetMetadata();
+            return new PhotosCollectionNoteDTO(photosDTO, aN.Name, metadata?.Width, metadata?.Height, aN.Id, aN.Order, metadata?.CountInRow, aN.UpdatedAt, aN.Version);
         }
 
         public VideosCollectionNoteDTO ToVideosCollection(CollectionNote aN, Guid ownerId)

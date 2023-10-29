@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.DatabaseModels.Models;
 
 namespace FakeData;
 
@@ -16,16 +17,21 @@ public class BaseContentNoteGenerator
         return Enumerable.Range(0, count).Select(order =>
         {
             NoteTextTypeENUM type = faker.Random.Enum<NoteTextTypeENUM>();
-   
+
+            var metadata = new TextContentMetadata()
+            {
+                Checked = type == NoteTextTypeENUM.Checklist ? faker.Random.Bool() : null,
+                HTypeId = type == NoteTextTypeENUM.Heading ? faker.Random.Enum<HTypeENUM>() : null,
+                NoteTextTypeId = type,
+            };
+            
             return new TextNote()
             {
                 NoteId = noteId,
                 ContentTypeId = ContentTypeENUM.Text,
-                NoteTextTypeId = type,
-                Checked = type == NoteTextTypeENUM.Checklist ? faker.Random.Bool() : null,
-                HTypeId = type == NoteTextTypeENUM.Heading ? faker.Random.Enum<HTypeENUM>() : null,
+                Metadata = DbJsonConverter.Serialize(metadata),
                 Order = order,
-                Contents = SplitTextIntoSegments(faker),
+                Contents = DbJsonConverter.Serialize(SplitTextIntoSegments(faker)),
                 Version = 1
             };
         }).ToList();

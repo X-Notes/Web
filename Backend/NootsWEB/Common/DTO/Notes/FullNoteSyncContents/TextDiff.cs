@@ -5,6 +5,8 @@ using Common.DTO.Notes.FullNoteContent;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.DTO.Notes.FullNoteContent.Text;
+using Newtonsoft.Json;
 
 namespace Common.DTO.Notes.FullNoteSyncContents;
 
@@ -19,12 +21,8 @@ public class TextDiff
     [Required]
     public int Order { set; get; }
 
-    [RequiredEnumField]
-    public NoteTextTypeENUM NoteTextTypeId { set; get; }
-
-    public bool? Checked { set; get; }
-
-    public HTypeENUM? HeadingTypeId { set; get; }
-
-    public List<TextBlock> Contents { set; get; }
+    [Required]
+    public TextContentMetadataDto ContentMetadata { set; get; }
+    
+    public List<TextBlockDto> Contents { set; get; }
 }

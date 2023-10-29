@@ -1,9 +1,9 @@
-<ng-container [ngSwitch]="_content.noteTextTypeId">
+<ng-container [ngSwitch]="_content.metadata?.noteTextTypeId">
   <p class="note-preview-text" *ngSwitchCase="textType.default" [innerHTML]="viewHtml"></p>
   <app-note-preview-text-heading
     *ngSwitchCase="textType.heading"
     [html]="viewHtml"
-    [type]="_content.headingTypeId"
+    [type]="_content.metadata?.hTypeId"
   ></app-note-preview-text-heading>
   <app-note-preview-text-list
     *ngSwitchCase="textType.checkList"

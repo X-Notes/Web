@@ -7,13 +7,14 @@ import {
 } from './content-editor-contents.service';
 import { TransformContent } from '../../entities-ui/transform-content.model';
 import { BaseText } from '../../entities/contents/base-text';
+import { tabCount } from 'src/app/core/defaults/constraints';
 
 @Injectable()
 export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(private contentsService: ContentEditorContentsService) {}
+  constructor(private contentsService: ContentEditorContentsService) { }
 
   insertNewContent(
     contentId: string,
@@ -45,6 +46,23 @@ export class ContentEditorTextService {
       item.content.updateHeadingTypeId(value.headingType);
     }
     return item;
+  }
+
+  updateTabCount(contentId: string, addTab: boolean) {
+    const item = this.contentsService.getContentAndIndexById<BaseText>(contentId);
+    if (!item.content.metadata.tabCount) {
+      item.content.metadata.tabCount = 0;
+    }
+    if (addTab) {
+      if (item.content.metadata.tabCount >= tabCount) {
+        item.content.metadata.tabCount = tabCount;
+      } else {
+        item.content.metadata.tabCount++;
+      }
+    }
+    if (!addTab && item.content.metadata.tabCount > 0) {
+      item.content.metadata.tabCount--;
+    }
   }
 
   getNewTextContent = (): BaseText => {

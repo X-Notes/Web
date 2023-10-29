@@ -11,12 +11,12 @@ export class HtmlPropertyTagCollectorService {
 
   getIsActiveHeader(heading: HeadingTypeENUM, textItems: BaseText[]): boolean {
     return textItems.some(
-      (x) => x && x.noteTextTypeId === NoteTextTypeENUM.heading && x.headingTypeId === heading,
+      (x) => x && x.metadata.noteTextTypeId === NoteTextTypeENUM.heading && x.metadata?.hTypeId === heading,
     );
   }
 
   getIsActiveType(type: NoteTextTypeENUM, textItems: BaseText[]): boolean {
-    return textItems.some((x) => type === x.noteTextTypeId);
+    return textItems.some((x) => type === x.metadata.noteTextTypeId);
   }
 
   getIsBoldSelection = (): boolean => {

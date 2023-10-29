@@ -89,20 +89,20 @@ export class CopyDirective implements OnDestroy, OnInit {
     const typeId = content.getContent().typeId;
     if (typeId !== ContentTypeENUM.Text) return;
     const text = content.getContent() as BaseText;
-    if (text.noteTextTypeId === NoteTextTypeENUM.heading) {
-      const headingNumber = this.getHeadingNumber(text.headingTypeId);
+    if (text.metadata?.noteTextTypeId === NoteTextTypeENUM.heading) {
+      const headingNumber = this.getHeadingNumber(text.metadata?.hTypeId);
       const childHTML = content.getEditableNative().innerHTML;
       return `<h${headingNumber}>${childHTML}</h${headingNumber}>`;
     }
-    if (text.noteTextTypeId === NoteTextTypeENUM.dotList) {
+    if (text.metadata?.noteTextTypeId === NoteTextTypeENUM.dotList) {
       const childHTML = content.getEditableNative().innerHTML;
       return `<ul><li>${childHTML}</li></ul>`;
     }
-    if (text.noteTextTypeId === NoteTextTypeENUM.numberList) {
+    if (text.metadata?.noteTextTypeId === NoteTextTypeENUM.numberList) {
       const childHTML = content.getEditableNative().innerHTML;
       return `<ol><li>${childHTML}</li></ol>`;
     }
-    if (text.noteTextTypeId === NoteTextTypeENUM.checkList) {
+    if (text.metadata?.noteTextTypeId === NoteTextTypeENUM.checkList) {
       const child = content.getEditableNative().cloneNode(true) as HTMLElement;
       child.textContent = '[ ]' + child.textContent;
       return `<ul><li>${child.innerHTML}</li></ul>`;

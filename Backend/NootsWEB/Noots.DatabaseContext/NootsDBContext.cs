@@ -101,10 +101,6 @@ namespace Noots.DatabaseContext
 
         public DbSet<BillingPlan> BillingPlans { set; get; }
 
-        public DbSet<HType> HTypes { set; get; }
-
-        public DbSet<NoteTextType> NoteTextTypes { set; get; }
-
         public DbSet<ContentType> ContentTypes { set; get; }
 
         // SEC
@@ -410,27 +406,13 @@ namespace Noots.DatabaseContext
                     // memory
 
                 });
-
-            modelBuilder.Entity<HType>().HasData(
-                new HType { Id = HTypeENUM.H1, Name = nameof(HTypeENUM.H1) },
-                new HType { Id = HTypeENUM.H2, Name = nameof(HTypeENUM.H2) },
-                new HType { Id = HTypeENUM.H3, Name = nameof(HTypeENUM.H3) }
-            );
-
+            
             modelBuilder.Entity<SortedByType>().HasData(
                 new SortedByType { Id = SortedByENUM.AscDate, Name = nameof(SortedByENUM.AscDate) },
                 new SortedByType { Id = SortedByENUM.DescDate, Name = nameof(SortedByENUM.DescDate) },
                 new SortedByType { Id = SortedByENUM.CustomOrder, Name = nameof(SortedByENUM.CustomOrder) }
             );
-
-            modelBuilder.Entity<NoteTextType>().HasData(
-                new NoteTextType { Id = NoteTextTypeENUM.Default, Name = nameof(NoteTextTypeENUM.Default) },
-                new NoteTextType { Id = NoteTextTypeENUM.Heading, Name = nameof(NoteTextTypeENUM.Heading) },
-                new NoteTextType { Id = NoteTextTypeENUM.Dotlist, Name = nameof(NoteTextTypeENUM.Dotlist) },
-                new NoteTextType { Id = NoteTextTypeENUM.Numberlist, Name = nameof(NoteTextTypeENUM.Numberlist) },
-                new NoteTextType { Id = NoteTextTypeENUM.Checklist, Name = nameof(NoteTextTypeENUM.Checklist) }
-            );
-
+            
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }

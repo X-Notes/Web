@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
 using Common;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
@@ -102,10 +104,22 @@ namespace Noots.Editor.Services
 
             List<UpdateBaseContentResult> results = new();
 
+            var textIds = request.Texts.Select(x => x.Id).ToList();
+            if (!textIds.Any())
+            {
+                return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
+            }
+            
+            var textsForUpdate = await textNotesRepository.GetWhereAsync(x => textIds.Contains(x.Id));
+            
             foreach (var text in request.Texts)
             {
-                var res = await UpdateOne(text, request.NoteId, permissions.Caller.Id, permissions.IsMultiplyUpdate, request.ConnectionId, permissions.GetAllUsers());
-                results.Add(res);
+                var textToUpdate = textsForUpdate.FirstOrDefault(x => text.Id == x.Id);
+                if (textToUpdate != null)
+                {
+                    var res = await UpdateOne(text, textToUpdate, request.NoteId, permissions.IsMultiplyUpdate, request.ConnectionId, permissions.GetAllUsers());
+                    results.Add(res);   
+                }
             }
 
             await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
@@ -113,16 +127,13 @@ namespace Noots.Editor.Services
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, Guid noteId, Guid userId, bool isMultiplyUpdate, string connectionId, List<Guid> userToSendIds)
+        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, TextNote textForUpdate, Guid noteId, bool isMultiplyUpdate, string connectionId, List<Guid> userToSendIds)
         {
-            var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
-            if (textForUpdate == null) return null;
-
             textForUpdate.SetDateAndVersion();
-            textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
-            textForUpdate.HTypeId = text.HeadingTypeId;
-            textForUpdate.Checked = text.Checked;
-            textForUpdate.Contents = text.Contents;
+            textForUpdate.UpdateMetadata(text.ContentMetadata.NoteTextTypeId, text.ContentMetadata.HTypeId, text.ContentMetadata.Checked, text.ContentMetadata.TabCount);
+            var contents = text.Contents != null ? text.Contents
+                .Select(x => new TextBlock(x.Text, x.HighlightColor, x.TextColor, x.Link, x.TextTypes)).ToList() : null;
+            textForUpdate.UpdateContent(contents);
 
             await textNotesRepository.UpdateAsync(textForUpdate);
 

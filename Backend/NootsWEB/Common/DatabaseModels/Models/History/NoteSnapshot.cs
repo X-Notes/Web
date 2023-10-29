@@ -22,12 +22,12 @@ namespace Common.DatabaseModels.Models.History
 
         public string Title { set; get; }
         public string Color { set; get; }
+        
+        [Column(TypeName = "jsonb")]
+        public string Labels { get; set; }
 
         [Column(TypeName = "jsonb")]
-        public List<SnapshotNoteLabel> Labels { get; set; }
-
-        [Column(TypeName = "jsonb")]
-        public ContentSnapshot Contents { set; get; }
+        public string Contents { set; get; }
 
         public DateTimeOffset SnapshotTime { set; get; }
 
@@ -39,5 +39,35 @@ namespace Common.DatabaseModels.Models.History
 
         public List<AppFile> AppFiles { set; get; }
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }
+
+        public void UpdateLabels(List<SnapshotNoteLabel> labels)
+        {
+            Labels = labels != null ? DbJsonConverter.Serialize(labels) : null;
+        }
+        
+        public void UpdateContentSnapshot(ContentSnapshot contents)
+        {
+            Contents = contents != null ? DbJsonConverter.Serialize(contents) : null;
+        }
+        
+        public List<SnapshotNoteLabel> GetLabels()
+        {
+            if (!string.IsNullOrEmpty(Labels))
+            {
+                return DbJsonConverter.DeserializeObject<List<SnapshotNoteLabel>>(Labels);
+            }
+
+            return null;
+        }
+        
+        public ContentSnapshot GetContentSnapshot()
+        {
+            if (!string.IsNullOrEmpty(Contents))
+            {
+                return DbJsonConverter.DeserializeObject<ContentSnapshot>(Contents);
+            }
+
+            return null;
+        }
     }
 }

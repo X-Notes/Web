@@ -15,6 +15,7 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Mapper.Mapping;
 using Noots.Editor.Commands.Structure;
 using Azure;
+using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Noots.Editor.Services;
@@ -211,8 +212,10 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         textDb.NoteId = noteId;
 
         // UPDATE TEXT
-        textDb.NoteTextTypeId = textDto.NoteTextTypeId;
-        textDb.Contents = textDto.Contents;
+        textDb.UpdateMetadataNoteTextType(textDto.NoteTextTypeId);
+        var contents = textDto.Contents != null ? textDto.Contents
+            .Select(x => new TextBlock(x.Text, x.HighlightColor, x.TextColor, x.Link, x.TextTypes)).ToList() : null;
+        textDb.UpdateContent(contents);
 
         return textDb;
     }

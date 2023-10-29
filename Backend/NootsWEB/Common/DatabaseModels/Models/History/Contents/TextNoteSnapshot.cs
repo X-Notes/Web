@@ -4,29 +4,38 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.Interfaces.Note;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.History.Contents
 {
     public class TextNoteSnapshot : BaseNoteContentSnapshot, INoteText
     {
-        [Column(TypeName = "jsonb")]
-        public List<TextBlock> Contents { set; get; }
+        public string  Contents { set; get; }
 
-        public NoteTextTypeENUM NoteTextTypeId { set; get; }
+        public string PlainContent { set; get; }
+        
+        public string Metadata { set; get; }
+        
+        public List<TextBlock> GetContents()
+        {
+            return DbJsonConverter.DeserializeObject<List<TextBlock>>(Contents);
+        }
+        
+        public TextContentMetadata GetMetadata()
+        {
+            if (!string.IsNullOrEmpty(Metadata))
+            {
+                return DbJsonConverter.DeserializeObject<TextContentMetadata>(Metadata);
+            }
 
-        public HTypeENUM? HTypeId { set; get; }
-
-        public bool? Checked { set; get; }
-
-        public TextNoteSnapshot
-            (List<TextBlock> contents, NoteTextTypeENUM noteTextTypeId, HTypeENUM? hTypeId, bool? @checked,
+            return null;
+        }
+        
+        public TextNoteSnapshot(string contents, string textContentMetadata, string plainContent,
             int order, ContentTypeENUM contentTypeId, DateTimeOffset updatedAt) : base(order, contentTypeId, updatedAt)
         {
             Contents = contents;
-            NoteTextTypeId = noteTextTypeId;
-            HTypeId = hTypeId;
-            Checked = @checked; 
+            Metadata = textContentMetadata;
+            PlainContent = plainContent;
         }
     }
 }

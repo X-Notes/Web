@@ -46,11 +46,12 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 			Color = noteForCopy.Color,
 			SnapshotTime = DateTimeProvider.Time,
 			NoteId = noteForCopy.Id,
-			Labels = labels,
 			UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),
 			SnapshotFileContents = noteForCopy.Contents.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
-			Contents = Convert(noteForCopy.Contents)
 		};
+		
+		snapshot.UpdateLabels(labels);
+		snapshot.UpdateContentSnapshot(Convert(noteForCopy.Contents));
 
 		var dbSnapshot = await noteSnapshotRepository.AddAsync(snapshot);
 		return Unit.Value;
@@ -66,14 +67,14 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
             {
                 case TextNote tN:
                     {
-                        var tNDTO = new TextNoteSnapshot(tN.Contents, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
+                        var tNDTO = new TextNoteSnapshot(tN.Contents, tN.Metadata, tN.PlainContent, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
                         result.TextNoteSnapshots.Add(tNDTO);
                         break;
                     }
                 case CollectionNote aN:
                     {
                         var fileIds = aN.Files.Select(item => item.Id).ToList();
-                        var collectionDTO = new CollectionNoteSnapshot(aN.Name, fileIds, aN.MetaData, aN.FileTypeId, aN.Order, aN.ContentTypeId, aN.UpdatedAt);
+                        var collectionDTO = new CollectionNoteSnapshot(aN.Name, fileIds, aN.Metadata, aN.FileTypeId, aN.Order, aN.ContentTypeId, aN.UpdatedAt);
                         result.CollectionNoteSnapshots.Add(collectionDTO);
                         break;
                     }

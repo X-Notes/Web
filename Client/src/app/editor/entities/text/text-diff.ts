@@ -1,8 +1,7 @@
 import { BaseText } from "../contents/base-text";
 import { ContentTypeENUM } from "../contents/content-types.enum";
-import { HeadingTypeENUM } from "../contents/text-models/heading-type.enum";
-import { NoteTextTypeENUM } from "../contents/text-models/note-text-type.enum";
 import { TextBlock } from "../contents/text-models/text-block";
+import { TextMetadata } from "../contents/text-models/text-metadata";
 
 
 export class TextDiff {
@@ -12,21 +11,15 @@ export class TextDiff {
 
     order: number;
 
-    headingTypeId?: HeadingTypeENUM;
-
-    noteTextTypeId: NoteTextTypeENUM;
-
-    checked?: boolean;
-
+    contentMetadata: TextMetadata;
+    
     contents: TextBlock[];
 
     initFrom(text: BaseText) : TextDiff {
         this.id = text.id;
         this.typeId =  text.typeId;
         this.order = text.order;
-        this.headingTypeId = text.headingTypeId;
-        this.noteTextTypeId = text.noteTextTypeId;
-        this.checked = text.checked;
+        this.contentMetadata = new TextMetadata(text.metadata.noteTextTypeId, text.metadata.hTypeId, text.metadata.checked, text.metadata.tabCount);
         this.contents = text.contents;
         return this;
     }

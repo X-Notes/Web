@@ -2,6 +2,7 @@
 using Common.DatabaseModels.Models.History.Contents;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Text;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
@@ -38,12 +39,12 @@ namespace Noots.History.Handlers.Queries
         public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
+            var permissions = await _mediator.Send(command, cancellationToken);
 
             if (permissions.CanRead)
             {
                 var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
-                var result = await Convert(snapshot.Contents);
+                var result = await Convert(snapshot.GetContentSnapshot());
                 var data = result.OrderBy(x => x.Order).ToList();
                 return new OperationResult<List<BaseNoteContentDTO>>(true, data);
             }
@@ -55,7 +56,7 @@ namespace Noots.History.Handlers.Queries
         {
             var resultList = new List<BaseNoteContentDTO>();
 
-            resultList.AddRange(contents.TextNoteSnapshots.Select(text => new TextNoteDTO(text.Contents, Guid.Empty, text.Order, text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt, 1)));
+            resultList.AddRange(contents.TextNoteSnapshots.Select(text => new TextNoteDto(text.GetContents(), Guid.Empty, text.Order, text.GetMetadata(), text.UpdatedAt, 1, text.PlainContent)));
 
             var ids = contents.GetFileIdsFromAllContent();
             if (ids.Any())
@@ -96,7 +97,8 @@ namespace Noots.History.Handlers.Queries
         private PhotosCollectionNoteDTO ConvertPhotosCollection(CollectionNoteSnapshot photos, List<AppFile> files)
         {
             var filePhotos = files.Where(x => photos.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToPhotoDTO(x, x.UserId)).ToList();
-            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, photos.MetaData.Width, photos.MetaData.Height, Guid.Empty, photos.Order, photos.MetaData.CountInRow, photos.UpdatedAt, 1);
+            var metadata = photos.GetMetadata();
+            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, metadata?.Width, metadata?.Height, Guid.Empty, photos.Order, metadata?.CountInRow, photos.UpdatedAt, 1);
         }
 
         private VideosCollectionNoteDTO ConvertVideosCollection(CollectionNoteSnapshot videos, List<AppFile> files)
