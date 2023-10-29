@@ -1,1 +1,0 @@
-docker build -t davydq/noots-proxy . -f pipeline-files/reverse-proxy/noots-proxy.dockerfile
