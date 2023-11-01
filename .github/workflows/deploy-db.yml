@@ -58,3 +58,31 @@ jobs:
         env:
           DatabaseConnection: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
           NootsDatabaseConnection: ${{ secrets.DEV_NOOTS_API_DB_CONNECTION  }}
+
+  db-health-check-migration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Setup .NET SDK
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x' # Change this to your desired .NET version
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore Backend/HealthCheckerWEB/HealthCheckWEB/HealthCheckWEB.csproj
+
+      # Run EF Core migrations
+      - name: Run migrations
+        run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/HealthCheckerWEB/HealthCheckWEB -s Backend/HealthCheckerWEB/HealthCheckWEB
+        env:
+          NootsDB: ${{ secrets.DEV_NOOTS_API_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+          NootsWorkersDB: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION  }}
+          HealthCheckerDatabaseConn: ${{ secrets.DEV_NOOTS_HEALTH_CHECK_DB_CONNECTION }}
