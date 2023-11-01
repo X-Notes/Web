@@ -31,3 +31,28 @@ jobs:
         run: dotnet ef database update -c NootsDBContext -p Backend/NootsWEB/Noots.DatabaseContext -s Backend/NootsWEB/Noots.API
         env:
           WriteDB: ${{ secrets.DEV_NOOTS_API_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+  db-worker-migration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Setup .NET SDK
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x' # Change this to your desired .NET version
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore Backend/NootsWEB/Noots.API/Noots.API.csproj
+
+      # Run EF Core migrations
+      - name: Run migrations
+        run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/NootsWEB/Noots.API.Workers -s Backend/NootsWEB/Noots.API.Workers
+        env:
+          WriteDB: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
