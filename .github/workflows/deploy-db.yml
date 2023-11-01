@@ -19,6 +19,9 @@ jobs:
         with:
           dotnet-version: '6.0.x' # Change this to your desired .NET version
 
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
       # Restore dependencies
       - name: Restore dependencies
         run: dotnet restore Backend/NootsWEB/Noots.API/Noots.API.csproj
