@@ -55,4 +55,4 @@ jobs:
       - name: Run migrations
         run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/NootsWEB/Noots.API.Workers -s Backend/NootsWEB/Noots.API.Workers
         env:
-          WriteDB: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+          DatabaseConnection: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
