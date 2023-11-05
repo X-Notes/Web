@@ -24,7 +24,7 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         yamlConfigPath: ./pipeline-files/noots-api-deploy-config.yaml
-        imageToDeploy: nootsstorm/noots-api:dev
+        imageToDeploy: nootsstorm/noots-api:DEV
         containerAppName: noots-api
         resourceGroup: Noots-DEV
         containerAppEnvironment: managedEnvironment-NootsDEV-bd5e

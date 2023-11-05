@@ -7,5 +7,5 @@ properties:
         targetPort: 5000
     template:
       containers:
-        - image: nootsstorm/noots-api:dev
+        - image: nootsstorm/noots-api:DEV
           name: noots-api
