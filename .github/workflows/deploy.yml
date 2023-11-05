@@ -1,0 +1,30 @@
+name: Deploy to Azure Container Apps using GitHub Action
+
+on:
+    workflow_run:
+      workflows: ["Databases Migrations"]
+      branches: [DEV]
+      types: 
+        - completed
+  
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        yamlConfigPath: ./pipeline-files/noots-api-deploy-config.yaml
+        imageToDeploy: nootsstorm/noots-api:dev
+        containerAppName: noots-api
+        resourceGroup: Noots-DEV
+        containerAppEnvironment: managedEnvironment-NootsDEV-bd5e
