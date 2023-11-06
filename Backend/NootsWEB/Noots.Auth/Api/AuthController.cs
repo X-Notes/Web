@@ -195,7 +195,7 @@ public class AuthController : ControllerBase
         // Set cookie policy parameters as required.
         var cookieOptions = new CookieOptions
         {
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.None,
             HttpOnly = true,
             Secure = true
         };

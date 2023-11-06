@@ -67,6 +67,7 @@ builder.Services.AddSingleton(googleConfig);
 var dbConn = builder.Configuration.GetSection("WriteDB").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
+var origins = builder.Configuration.GetSection("Origins").Get<string[]>();
 
 var controllersConfig = builder.Configuration.GetSection("Controllers").Get<ControllersActiveConfig>();
 builder.Services.AddSingleton(x => controllersConfig);
@@ -119,6 +120,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors();
 // APP
 
 var app = builder.Build();
@@ -132,29 +134,15 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DockerDev"
     app.UseSwaggerUI();
 }
 
-var isHostASP = false;
-if (isHostASP && !string.IsNullOrEmpty(builder.Environment.WebRootPath))
-{
-    var path = Path.Combine(builder.Environment.WebRootPath);
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        ServeUnknownFileTypes = true,
-        FileProvider = new PhysicalFileProvider(path)
-    });
-}
 
 app.UseRouting();
 
-if (isHostASP && !string.IsNullOrEmpty(builder.Environment.WebRootPath))
-{
-    var path = Path.Combine(builder.Environment.WebRootPath);
-    app.MapFallbackToFile("index.html", new StaticFileOptions()
-    {
-        ServeUnknownFileTypes = true,
-        FileProvider = new PhysicalFileProvider(path),
-    });
-}
-
+app.UseCors(builder => builder
+    .WithOrigins(origins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .SetPreflightMaxAge(TimeSpan.FromMinutes(5)));
 
 app.UseMiddleware<ExceptionMiddleware>();
 
