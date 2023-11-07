@@ -10,29 +10,29 @@ properties:
         - image: nootsstorm/noots-api:DEV
           name: noots-api
           env:
-          - name: GoogleAuth_Audience
+          - name: GoogleAuth__Audience
             secretRef: google-client-id
-          - name: ElasticConfiguration_Uri
+          - name: ElasticConfiguration__Uri
             secretRef: elastic-uri
           - name: WriteDB
             secretRef: noots-api-db
-          - name: Controllers_FakeData
+          - name: Controllers__FakeData
             secretRef: fake-data-active
-          - name: Redis_Active
+          - name: Redis__Active
             secretRef: redis-active
-          - name: Redis_Connection
+          - name: Redis__Connection
             secretRef: redis-connection
-          - name: JWTokenConfig_secret
+          - name: JWTokenConfig__secret
             secretRef: jwt-secret
-          - name: JWTokenConfig_issuer
+          - name: JWTokenConfig__issuer
             secretRef: jwt-issuer
-          - name: JWTokenConfig_audience
+          - name: JWTokenConfig__audience
             secretRef: jwt-audience
-          - name: JWTokenConfig_accessTokenExpiration
+          - name: JWTokenConfig__accessTokenExpiration
             secretRef: jwt-access-token-expiration
-          - name: JWTokenConfig_refreshTokenExpiration
+          - name: JWTokenConfig__refreshTokenExpiration
             secretRef: jwt-refresh-token-expiration
-          - name: JWTokenConfig_https
+          - name: JWTokenConfig__https
             secretRef: jwt-https
           - name: Azure_Storages__0__Name
             secretRef: storage-dev-name
