@@ -9,3 +9,6 @@ properties:
       containers:
         - image: nootsstorm/noots-api:DEV
           name: noots-api
+          env:
+          - name: GoogleAuth_Audience
+            secretRef: google-client-id
