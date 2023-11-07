@@ -12,3 +12,35 @@ properties:
           env:
           - name: GoogleAuth_Audience
             secretRef: google-client-id
+          - name: ElasticConfiguration_Uri
+            secretRef: elastic-uri
+          - name: WriteDB
+            secretRef: noots-api-db
+          - name: Controllers_FakeData
+            secretRef: fake-data-active
+          - name: Redis_Active
+            secretRef: redis-active
+          - name: Redis_Connection
+            secretRef: redis-connection
+          - name: JWTokenConfig_secret
+            secretRef: jwt-secret
+          - name: JWTokenConfig_issuer
+            secretRef: jwt-issuer
+          - name: JWTokenConfig_audience
+            secretRef: jwt-audience
+          - name: JWTokenConfig_accessTokenExpiration
+            secretRef: jwt-access-token-expiration
+          - name: JWTokenConfig_refreshTokenExpiration
+            secretRef: jwt-refresh-token-expiration
+          - name: JWTokenConfig_https
+            secretRef: jwt-https
+          - name: Azure_Storages__0__Name
+            secretRef: storage-dev-name
+          - name: Azure_Storages__0__Id
+            secretRef: storage-dev-id
+          - name: Azure_Storages__0__Connection
+            secretRef: storage-dev-connection
+          - name: Azure_Storages__0__Url
+            secretRef: storage-dev-url
+          - name: Origins__0
+            secretRef: origins-0
