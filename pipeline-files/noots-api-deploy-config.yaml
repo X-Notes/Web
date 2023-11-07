@@ -44,3 +44,5 @@ properties:
             secretRef: storage-dev-url
           - name: Origins__0
             secretRef: origins-0
+          - name: Origins__1
+            secretRef: origins-1
