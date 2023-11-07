@@ -34,13 +34,13 @@ properties:
             secretRef: jwt-refresh-token-expiration
           - name: JWTokenConfig__https
             secretRef: jwt-https
-          - name: Azure_Storages__0__Name
+          - name: Azure__Storages__0__Name
             secretRef: storage-dev-name
-          - name: Azure_Storages__0__Id
+          - name: Azure__Storages__0__Id
             secretRef: storage-dev-id
-          - name: Azure_Storages__0__Connection
+          - name: Azure__Storages__0__Connection
             secretRef: storage-dev-connection
-          - name: Azure_Storages__0__Url
+          - name: Azure__Storages__0__Url
             secretRef: storage-dev-url
           - name: Origins__0
             secretRef: origins-0
