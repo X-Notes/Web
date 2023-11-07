@@ -1,25 +1,24 @@
-﻿using Common.DatabaseModels.Models.Files.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using Common.Azure;
+using Common.DatabaseModels.Models.Files.Models;
 
 namespace Noots.Storage.Impl
 {
     public class StorageIdProvider
     {
-        private readonly IHostingEnvironment hostEvn;
+        private static readonly Random Random = new();
+        
+        private readonly AzureConfig azureConfig;
 
-        public StorageIdProvider(IHostingEnvironment hostEvn)
+        public StorageIdProvider(AzureConfig azureConfig)
         {
-            this.hostEvn = hostEvn;
+            this.azureConfig = azureConfig;
         }
 
         public StoragesEnum GetStorageId()
         {
-            if (hostEvn.IsDevelopment())
-            {
-                return StoragesEnum.DEV;
-            }
-
-            throw new Exception("NO IMPLEMENTED");
+            var ids = azureConfig.GetAll().Select(x => x.Id).ToList();
+            int randomIndex = Random.Next(ids.Count);
+            return ids[randomIndex];
         }
     }
 }

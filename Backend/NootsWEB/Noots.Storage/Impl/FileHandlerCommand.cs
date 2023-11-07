@@ -47,8 +47,7 @@ namespace Noots.Storage.Impl
             NoteFolderLabelMapper noteFolderLabelMapper,
             PathStorageBuilder pathStorageBuilder,
             StorageIdProvider storageIdProvider,
-            AzureConfig azureConfig,
-            UserRepository userRepository)
+            AzureConfig azureConfig)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
