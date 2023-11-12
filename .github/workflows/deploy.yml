@@ -2,7 +2,7 @@ name: Deploy to Azure Container Apps using GitHub Action
 
 on:
     workflow_run:
-      workflows: ["Databases Migrations"]
+      workflows: ["Docker Image CI API"]
       branches: [DEV]
       types: 
         - completed

@@ -1,16 +1,11 @@
 name: Docker Image CI API
 
 on:
-  push:
-    branches:
-      - 'DEV'
-      - 'master'
-    tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - 'DEV'
-      - 'master'
+  workflow_run:
+    workflows: ["Databases Migrations"]
+    branches: [DEV]
+    types: 
+      - completed
 
 jobs:
   # define the job to build and publish the docker image
