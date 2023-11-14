@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '6.0.x' # Change this to your desired .NET version
 
       - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version 6.0.8
 
       # Restore dependencies
       - name: Restore dependencies
@@ -47,7 +47,7 @@ jobs:
           dotnet-version: '6.0.x' # Change this to your desired .NET version
 
       - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version 6.0.8
 
       # Restore dependencies
       - name: Restore dependencies
