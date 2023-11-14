@@ -11,7 +11,7 @@ jobs:
     name: Database migration
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Setup .NET SDK
       - name: Setup .NET Core SDK
@@ -84,6 +84,9 @@ jobs:
     # steps to perform in the job
     steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -99,7 +102,7 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          yamlConfigPath: ./pipeline-files/noots-api-deploy-config.yaml
+          yamlConfigPath: ./pipeline-files/api/deploy-config.yaml
           imageToDeploy: ${{ steps.meta.outputs.tags }}
           containerAppName: noots-api
           resourceGroup: Noots-DEV
