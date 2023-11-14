@@ -8,7 +8,7 @@ jobs:
 
   db-api-migration:
     runs-on: ubuntu-latest
-
+    name: Database migration
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -77,7 +77,7 @@ jobs:
   # define the job to build and publish the docker image
   deploy-to-aca:
     needs: [build-push-deploy]
-    name: Build Docker image and push to repositories
+    name: Deploy API to Azure container apps
     # run only when code is compiling and tests are passing
     runs-on: ubuntu-latest
 
