@@ -5,44 +5,8 @@ properties:
         external: true
         allowInsecure: false
         targetPort: 5000
-    template:
-      containers:
-        - image: nootsstorm/noots-api:DEV
-          name: noots-api
-          env:
-          - name: GoogleAuth__Audience
-            secretRef: google-client-id
-          - name: ElasticConfiguration__Uri
-            secretRef: elastic-uri
-          - name: WriteDB
-            secretRef: noots-api-db
-          - name: Controllers__FakeData
-            secretRef: fake-data-active
-          - name: Redis__Active
-            secretRef: redis-active
-          - name: Redis__Connection
-            secretRef: redis-connection
-          - name: JWTokenConfig__secret
-            secretRef: jwt-secret
-          - name: JWTokenConfig__issuer
-            secretRef: jwt-issuer
-          - name: JWTokenConfig__audience
-            secretRef: jwt-audience
-          - name: JWTokenConfig__accessTokenExpiration
-            secretRef: jwt-access-token-expiration
-          - name: JWTokenConfig__refreshTokenExpiration
-            secretRef: jwt-refresh-token-expiration
-          - name: JWTokenConfig__https
-            secretRef: jwt-https
-          - name: Azure__Storages__0__Name
-            secretRef: storage-dev-name
-          - name: Azure__Storages__0__Id
-            secretRef: storage-dev-id
-          - name: Azure__Storages__0__Connection
-            secretRef: storage-dev-connection
-          - name: Azure__Storages__0__Url
-            secretRef: storage-dev-url
-          - name: Origins__0
-            secretRef: origins-0
-          - name: Origins__1
-            secretRef: origins-1
+      dapr:
+        appId: x-notes-api
+        appPort: 5000
+        appProtocol: http
+        enabled: true
