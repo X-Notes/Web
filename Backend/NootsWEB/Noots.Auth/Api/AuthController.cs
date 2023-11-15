@@ -197,7 +197,7 @@ public class AuthController : ControllerBase
         {
             SameSite = SameSiteMode.None,
             HttpOnly = true,
-            Secure = false,
+            Secure = true,
             Expires = DateTimeOffset.UtcNow.AddDays(5)
         };
 
