@@ -197,7 +197,8 @@ public class AuthController : ControllerBase
         {
             SameSite = SameSiteMode.None,
             HttpOnly = true,
-            Secure = false
+            Secure = false,
+            Expires = DateTimeOffset.UtcNow.AddDays(5)
         };
 
         Response.Cookies.Append(ConstClaims.AccessToken, accessToken, cookieOptions);
