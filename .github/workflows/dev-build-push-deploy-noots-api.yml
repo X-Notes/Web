@@ -75,6 +75,26 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  # define the job to build and publish the docker image
+  deploy-to-aca:
+    needs: [build-push-docker-image]
+    name: Deploy API to Azure container apps
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-latest
+
+    # steps to perform in the job
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: nootsstorm/noots-api
+          tags: type=raw,value={{branch}}-{{sha}}
+
       - name: Log in to Azure
         uses: azure/login@v1
         with:
@@ -83,7 +103,6 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          yamlConfigPath: ./pipeline-files/api/deploy-config.yaml
           imageToDeploy: ${{ steps.meta.outputs.tags }}
           containerAppName: noots-api
           resourceGroup: Noots-DEV
