@@ -197,7 +197,7 @@ public class AuthController : ControllerBase
         {
             SameSite = SameSiteMode.None,
             HttpOnly = true,
-            Secure = true
+            Secure = false
         };
 
         Response.Cookies.Append(ConstClaims.AccessToken, accessToken, cookieOptions);
