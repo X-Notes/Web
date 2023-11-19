@@ -12,6 +12,7 @@ using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Users.Commands;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Noots.Auth.Api;
 
@@ -43,13 +44,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("google/login")]
-    public async Task<OperationResult<Unit>> VerifyToken(TokenVerifyRequest request)
+    public async Task<OperationResult<LoginResultDto>> VerifyToken(TokenVerifyRequest request)
     {
         var respVerifyToken = await VerifyGoogleTokenId(request.Token);
 
         if(respVerifyToken == null)
         {
-            return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
+            return new OperationResult<LoginResultDto>(false, null, OperationResultAdditionalInfo.AnotherError);
         }
 
         var user = await userRepository.FirstOrDefaultAsync(x => x.Email == respVerifyToken.Email);
@@ -59,7 +60,7 @@ public class AuthController : ControllerBase
             var res = await mediator.Send(newUserCommand);
             if (!res.Success)
             {
-                return new OperationResult<Unit>(false, Unit.Value, OperationResultAdditionalInfo.AnotherError);
+                return new OperationResult<LoginResultDto>(false, null, OperationResultAdditionalInfo.AnotherError);
             }
 
             user = await userRepository.FirstOrDefaultAsync(x => x.Id == res.Data);
@@ -67,59 +68,55 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim> { new Claim(ConstClaims.UserEmail, user.Email), new Claim(ConstClaims.UserId, user.Id.ToString()) };
         var result = await jwtAuthManager.GenerateTokens(user.Id, claims.ToArray());
-        InitCookiesTokens(result.AccessToken, result.RefreshToken.TokenString);
 
-        return new OperationResult<Unit>(true, Unit.Value);
+        return new OperationResult<LoginResultDto>(true, new LoginResultDto(result.AccessToken, result.RefreshToken.TokenString));
     }
 
     [HttpPost("refresh")]
-    public async Task<OperationResult<bool>> Refresh()
+    public async Task<OperationResult<RefreshResultDto>> Refresh(RefreshCommand command)
     {
-        var accessToken = this.GetAccessToken();
-        var refreshToken = this.GetRefreshToken();
-
-        if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(accessToken))
+        if (string.IsNullOrEmpty(command.RefreshToken) || string.IsNullOrEmpty(command.AccessToken))
         {
-            return new OperationResult<bool>(false, false, "Tokens Empty");
+            return new OperationResult<RefreshResultDto>(false, null!, "Tokens Empty");
         }
 
-        var resp = jwtAuthManager.DecodeJwtToken(accessToken);
+        var resp = jwtAuthManager.DecodeJwtToken(command.AccessToken);
 
         if (resp.IsShouldRevoked)
         {
-            return new OperationResult<bool>(false, true, "Invalid Token");
+            return new OperationResult<RefreshResultDto>(false, null!, "Invalid Token");
         }
 
         var claim = resp.Principal?.Claims.FirstOrDefault(x => x.Type == ConstClaims.UserId);
 
         if(claim == null)
         {
-            return new OperationResult<bool>(false, true, "Invalid Token");
+            return new OperationResult<RefreshResultDto>(false, null!, "Invalid Token");
         }
 
         var user = await userRepository.FirstOrDefaultAsync(x => x.Id == Guid.Parse(claim.Value));
         if (user == null)
         {
-            return new OperationResult<bool>(false, true, "Invalid Token");
+            return new OperationResult<RefreshResultDto>(false, null!, "Invalid Token");
         }
 
-        var savedRefreshToken = await dapperRefreshTokenRepository.GetRefreshToken(user.Id, refreshToken);
+        var savedRefreshToken = await dapperRefreshTokenRepository.GetRefreshToken(user.Id, command.RefreshToken);
 
         if (savedRefreshToken == null)
         {
-            return new OperationResult<bool>(false, true, "Token not found");
+            return new OperationResult<RefreshResultDto>(false, null!, "Token not found");
         }
         if (savedRefreshToken.IsProcessing)
         {
-            return new OperationResult<bool>(false, true, "Token Processing");
+            return new OperationResult<RefreshResultDto>(false, null!, "Token Processing");
         }
 
-        var affectedRows = await dapperRefreshTokenRepository.SoftLockTokenAsync(user.Id, refreshToken);
+        var affectedRows = await dapperRefreshTokenRepository.SoftLockTokenAsync(user.Id, command.RefreshToken);
 
         if (affectedRows == 0 || DateTimeProvider.Time.UtcDateTime > savedRefreshToken.ExpireAt)
         {
-            await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, refreshToken);
-            return new OperationResult<bool>(false, true, "Token expired");
+            await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, command.RefreshToken);
+            return new OperationResult<RefreshResultDto>(false, null!, "Token expired");
         }
 
         var claims = new List<Claim> { new Claim(ConstClaims.UserEmail, user.Email), new Claim(ConstClaims.UserId, user.Id.ToString()) };
@@ -127,42 +124,31 @@ public class AuthController : ControllerBase
 
         if (newJwtToken == null)
         {
-            return new OperationResult<bool>(false, false, "Invalid attempt!");
+            return new OperationResult<RefreshResultDto>(false, null!, "Invalid attempt!");
         }
 
-        var deletedRows = await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, refreshToken);
+        var deletedRows = await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, command.RefreshToken);
         if (deletedRows == 0)
         {
-            return new OperationResult<bool>(false, true, "Token has already processed");
+            return new OperationResult<RefreshResultDto>(false, null!, "Token has already processed");
         }
-
-        InitCookiesTokens(newJwtToken.AccessToken, newJwtToken.RefreshToken.TokenString);
-
-        return new OperationResult<bool>(true, true);
+        
+        return new OperationResult<RefreshResultDto>(true, new RefreshResultDto(newJwtToken.AccessToken, newJwtToken.RefreshToken.TokenString));
     }
 
 
     [HttpPost("logout")]
-    public async Task<IActionResult> ClearSessionCookie()
+    [Authorize]
+    public async Task<IActionResult> ClearSessionCookie([FromQuery]string refreshToken)
     {
-        if (Request.Cookies.ContainsKey(ConstClaims.AccessToken))
+        var uid = this.GetUserIdUnStrict();
+        if (uid != Guid.Empty)
         {
-            Response.Cookies.Delete(ConstClaims.AccessToken);
-        }
-
-        if (Request.Cookies.ContainsKey(ConstClaims.RefreshToken))
-        {
-            var uid = this.GetUserIdUnStrict();
-            if (uid != Guid.Empty)
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == uid);
+            if (user != null)
             {
-                var user = await userRepository.FirstOrDefaultAsync(x => x.Id == uid);
-                if (user != null)
-                {
-                    var token = Request.Cookies[ConstClaims.RefreshToken];
-                    await jwtAuthManager.RemoveRefreshToken(uid, token!);
-                }
+                await jwtAuthManager.RemoveRefreshToken(user.Id, refreshToken!);
             }
-            Response.Cookies.Delete(ConstClaims.RefreshToken);
         }
 
         return Ok();
@@ -188,20 +174,5 @@ public class AuthController : ControllerBase
         }
 
         return null;
-    }
-
-    private void InitCookiesTokens(string accessToken, string refreshToken)
-    {
-        // Set cookie policy parameters as required.
-        var cookieOptions = new CookieOptions
-        {
-            SameSite = SameSiteMode.None,
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTimeOffset.UtcNow.AddDays(5)
-        };
-
-        Response.Cookies.Append(ConstClaims.AccessToken, accessToken, cookieOptions);
-        Response.Cookies.Append(ConstClaims.RefreshToken, refreshToken, cookieOptions);
     }
 }

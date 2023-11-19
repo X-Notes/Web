@@ -11,26 +11,6 @@ namespace Common;
 
 public static class ControllerExtensions
 {
-    public static string GetAccessToken(this ControllerBase controller)
-    {
-        if (!controller.Request.Cookies.ContainsKey(ConstClaims.AccessToken))
-        {
-            return null;
-        }
-
-        return controller.Request.Cookies[ConstClaims.AccessToken];
-    }
-
-    public static string GetRefreshToken(this ControllerBase controller)
-    {
-        if (!controller.Request.Cookies.ContainsKey(ConstClaims.RefreshToken))
-        {
-            return null;
-        }
-
-        return controller.Request.Cookies[ConstClaims.RefreshToken];
-    }
-
     public static string GetUserIdRaw(this ControllerBase controller)
     {
         return controller.User.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
