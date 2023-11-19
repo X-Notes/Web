@@ -130,7 +130,7 @@ namespace Noots.API.ConfigureAPP
                     ValidAudience = config.Audience,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(1)
+                    ClockSkew = TimeSpan.FromMinutes(5)
                 };
 
                 x.Events = new JwtBearerEvents()

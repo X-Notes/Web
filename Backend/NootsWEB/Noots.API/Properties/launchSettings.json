@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "WriteAPI": {
+    "API": {
       "commandName": "Project",
       "launchBrowser": false,
       "launchUrl": "swagger",
