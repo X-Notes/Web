@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Folders.Commands.FolderInner;
 using Noots.Folders.Queries;
-using Noots.Search.Queries;
+using Search.Queries;
 
 namespace Noots.Folders.Api;
 

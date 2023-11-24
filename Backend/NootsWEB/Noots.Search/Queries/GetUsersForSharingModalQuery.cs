@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Common.CQRS;
 using MediatR;
-using Noots.Search.Entities;
+using Search.Entities;
 
-namespace Noots.Search.Queries
+namespace Search.Queries
 {
     public class GetUsersForSharingModalQuery : BaseQueryEntity, IRequest<List<ShortUserForShareModal>>
     {

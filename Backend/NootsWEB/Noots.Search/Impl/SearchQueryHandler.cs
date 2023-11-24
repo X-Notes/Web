@@ -10,10 +10,10 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.MapperLocked;
 using Noots.Permissions.Queries;
-using Noots.Search.Entities;
-using Noots.Search.Queries;
+using Search.Entities;
+using Search.Queries;
 
-namespace Noots.Search.Impl
+namespace Search.Impl
 {
     public class SearchQueryHandler
         : IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>,

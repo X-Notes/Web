@@ -8,7 +8,7 @@ using Noots.RelatedNotes.Commands;
 using Noots.RelatedNotes.Queries;
 using Common;
 using Common.Filters;
-using Noots.Search.Queries;
+using Search.Queries;
 
 namespace Noots.RelatedNotes.Api;
 

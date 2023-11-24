@@ -1,11 +1,11 @@
 ﻿using Common.DTO.Notes;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Search.Entities;
-using Noots.Search.Impl;
-using Noots.Search.Queries;
+using Search.Entities;
+using Search.Impl;
+using Search.Queries;
 
-namespace Noots.Search
+namespace Search
 {
     public static class SearchModules
     {

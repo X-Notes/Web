@@ -5,7 +5,7 @@ using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Noots.Search.Queries
+namespace Search.Queries
 {
     public class GetPreviewSelectedNotesForFolderQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {

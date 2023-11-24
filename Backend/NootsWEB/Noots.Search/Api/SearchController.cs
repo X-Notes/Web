@@ -3,10 +3,10 @@ using Common.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Search.Entities;
-using Noots.Search.Queries;
+using Search.Entities;
+using Search.Queries;
 
-namespace Noots.Search.Api;
+namespace Search.Api;
 
 [Authorize]
 [Route("api/[controller]")]

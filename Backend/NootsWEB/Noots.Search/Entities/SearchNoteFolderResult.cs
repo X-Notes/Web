@@ -1,4 +1,4 @@
-﻿namespace Noots.Search.Entities
+﻿namespace Search.Entities
 {
     public class SearchNoteFolderResult
     {
