@@ -8,16 +8,13 @@ using Common.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands.Text;
-using Noots.Editor.Entities;
-using Noots.Notes.Commands;
-using Noots.Notes.Commands.Copy;
-using Noots.Notes.Commands.Sync;
-using Noots.Notes.Entities;
-using Noots.Notes.Queries;
+using Notes.Commands;
+using Notes.Commands.Copy;
+using Notes.Commands.Sync;
+using Notes.Entities;
+using Notes.Queries;
 
-
-namespace Noots.Notes.Api;
+namespace Notes.Api;
 
 [Authorize]
 [Route("api/[controller]")]

@@ -5,10 +5,10 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Notes.Queries;
 using Noots.Permissions.Queries;
+using Notes.Queries;
 
-namespace Noots.Notes.Handlers.Queries;
+namespace Notes.Handlers.Queries;
 
 public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>
 {

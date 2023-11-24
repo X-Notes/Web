@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Labels", "Noots.Label
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Notes", "Noots.Notes\Noots.Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes", "Noots.Notes\Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Folders", "Noots.Folders\Noots.Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject

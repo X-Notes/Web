@@ -9,18 +9,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Noots.Editor.Queries;
 using Noots.Editor.Services;
 using Noots.Editor.Services.Users;
-using Noots.Notes.Commands;
-using Noots.Notes.Commands.Copy;
-using Noots.Notes.Commands.Sync;
-using Noots.Notes.Entities;
-using Noots.Notes.Handlers.Commands;
-using Noots.Notes.Handlers.Commands.Copy;
-using Noots.Notes.Handlers.Queries;
-using Noots.Notes.Handlers.Sync;
-using Noots.Notes.Impl;
 using Noots.Notes.Queries;
+using Notes.Commands;
+using Notes.Commands.Copy;
+using Notes.Commands.Sync;
+using Notes.Entities;
+using Notes.Handlers.Commands;
+using Notes.Handlers.Commands.Copy;
+using Notes.Handlers.Queries;
+using Notes.Handlers.Sync;
+using Notes.Impl;
+using Notes.Queries;
 
-namespace Noots.Notes;
+namespace Notes;
 
 public static class NotesModules
 {

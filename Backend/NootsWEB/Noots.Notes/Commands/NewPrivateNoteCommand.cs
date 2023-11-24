@@ -3,7 +3,7 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Noots.Notes.Commands;
+namespace Notes.Commands;
 
 public class NewPrivateNoteCommand: BaseCommandEntity, IRequest<OperationResult<SmallNote>>
 {

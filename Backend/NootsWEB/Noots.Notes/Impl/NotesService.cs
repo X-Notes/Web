@@ -3,7 +3,7 @@ using Common.DTO.Personalization;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Impl;
 
-namespace Noots.Notes.Impl;
+namespace Notes.Impl;
 
 public class NotesService
 {

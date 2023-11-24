@@ -1,9 +1,8 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes.Copy;
 using MediatR;
-using Noots.Notes.Entities;
 
-namespace Noots.Notes.Commands.Copy;
+namespace Notes.Commands.Copy;
 
 public class CopyNoteInternalCommand : IRequest<OperationResult<CopyNoteResult>>
 {

@@ -3,10 +3,10 @@ using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
-using Noots.Notes.Impl;
-using Noots.Notes.Queries;
+using Notes.Impl;
+using Notes.Queries;
 
-namespace Noots.Notes.Handlers.Queries;
+namespace Notes.Handlers.Queries;
 
 public class GetNotesByTypeQueryHandler : IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>
 {

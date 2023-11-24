@@ -1,9 +1,9 @@
-﻿using Common.CQRS;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
-namespace Noots.Notes.Commands.Copy
+namespace Notes.Commands.Copy
 {
     public class CopyNotesCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

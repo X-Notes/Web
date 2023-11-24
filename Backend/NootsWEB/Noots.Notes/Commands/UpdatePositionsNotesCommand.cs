@@ -4,7 +4,7 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Noots.Notes.Commands
+namespace Notes.Commands
 {
     public class UpdatePositionsNotesCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

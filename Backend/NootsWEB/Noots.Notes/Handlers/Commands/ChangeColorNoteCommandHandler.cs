@@ -1,14 +1,13 @@
-﻿using Common;
-using Common.DTO;
+﻿using Common.DTO;
 using Common.DTO.WebSockets;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
-using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
+using Notes.Commands;
 using SignalrUpdater.Impl;
 
-namespace Noots.Notes.Handlers.Commands;
+namespace Notes.Handlers.Commands;
 
 public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>
 {

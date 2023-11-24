@@ -3,11 +3,11 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Notes.Commands;
 using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
+using Notes.Commands;
 
-namespace Noots.Notes.Handlers.Commands;
+namespace Notes.Handlers.Commands;
 
 public class SetDeleteNoteCommandHandler : IRequestHandler<SetDeleteNoteCommand, OperationResult<List<Guid>>>
 {

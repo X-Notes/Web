@@ -2,9 +2,9 @@
 using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using Noots.Notes.Entities;
+using Notes.Entities;
 
-namespace Noots.Notes.Commands.Sync;
+namespace Notes.Commands.Sync;
 
 public class SyncNoteStateCommand : BaseCommandEntity, IRequest<OperationResult<SyncNoteResult>>
 {

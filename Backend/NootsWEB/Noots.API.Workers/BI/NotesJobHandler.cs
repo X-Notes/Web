@@ -10,7 +10,7 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Commands;
 using Noots.History.Impl;
-using Noots.Notes.Handlers.Commands;
+using Notes.Handlers.Commands;
 
 namespace Noots.API.Workers.BI;
 

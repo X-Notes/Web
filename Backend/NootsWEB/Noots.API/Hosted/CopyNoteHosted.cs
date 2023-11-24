@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Noots.Notes.Commands.Copy;
+using Notes.Commands.Copy;
 using SignalrUpdater.Impl;
 
 namespace API.Hosted;

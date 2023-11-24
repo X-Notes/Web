@@ -10,7 +10,7 @@ using Noots.API.Workers.Database;
 using Noots.API.Workers.Database.Models;
 using Noots.API.Workers.Filters;
 using Noots.Editor.Services;
-using Noots.Notes.Handlers.Commands;
+using Notes.Handlers.Commands;
 using Storage;
 
 var builder = WebApplication.CreateBuilder(args);

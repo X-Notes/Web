@@ -2,12 +2,11 @@
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Notes.Commands.Sync;
-using Noots.Notes.Entities;
 using Noots.Permissions.Queries;
+using Notes.Commands.Sync;
+using Notes.Entities;
 
-namespace Noots.Notes.Handlers.Sync;
+namespace Notes.Handlers.Sync;
 
 public class SyncNoteStateCommandHandler : IRequestHandler<SyncNoteStateCommand, OperationResult<SyncNoteResult>>
 {

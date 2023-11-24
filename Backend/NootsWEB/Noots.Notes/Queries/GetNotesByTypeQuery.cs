@@ -5,7 +5,7 @@ using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Noots.Notes.Queries
+namespace Notes.Queries
 {
     public class GetNotesByTypeQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {

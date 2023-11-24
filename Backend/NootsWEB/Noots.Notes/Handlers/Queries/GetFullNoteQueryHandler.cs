@@ -1,16 +1,15 @@
-﻿using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.Notes;
+﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
-using Noots.Notes.Queries;
 using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
+using Notes.Queries;
 
-namespace Noots.Notes.Handlers.Queries;
+namespace Notes.Handlers.Queries;
 
 public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>
 {

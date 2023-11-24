@@ -5,10 +5,10 @@ using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Editor.Services;
-using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
+using Notes.Commands;
 
-namespace Noots.Notes.Handlers.Commands;
+namespace Notes.Handlers.Commands;
 
 public class DeleteNotesCommandHandler : IRequestHandler<DeleteNotesCommand, OperationResult<Unit>>
 {

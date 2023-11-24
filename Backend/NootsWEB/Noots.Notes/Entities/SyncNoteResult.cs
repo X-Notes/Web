@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Labels;
 
-namespace Noots.Notes.Entities;
+namespace Notes.Entities;
 
 public class SyncNoteResult
 {

@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Notes.Commands
+namespace Notes.Commands
 {
     public class MakePrivateNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

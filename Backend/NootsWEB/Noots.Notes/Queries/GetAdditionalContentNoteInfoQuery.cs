@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO.Notes.AdditionalContent;
 using MediatR;
 
-namespace Noots.Notes.Queries
+namespace Notes.Queries
 {
     public class GetAdditionalContentNoteInfoQuery : BaseQueryEntity, IRequest<List<BottomNoteContent>>
     {

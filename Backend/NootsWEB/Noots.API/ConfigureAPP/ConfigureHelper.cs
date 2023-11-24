@@ -18,6 +18,7 @@ using Noots.History;
 using Noots.Labels;
 using Noots.Notes;
 using Noots.Permissions;
+using Notes;
 using Notifications;
 using Personalization;
 using RelatedNotes;

@@ -21,12 +21,12 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Editor.Services;
-using Noots.Notes.Commands.Copy;
 using Noots.Permissions.Queries;
+using Notes.Commands.Copy;
 using Storage.Commands;
 using Storage.Entities;
 
-namespace Noots.Notes.Handlers.Commands.Copy;
+namespace Notes.Handlers.Commands.Copy;
 
 public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, OperationResult<Unit>>,
                                        IRequestHandler<CopyNoteInternalCommand, OperationResult<CopyNoteResult>>

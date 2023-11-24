@@ -2,10 +2,10 @@
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
+using Notes.Commands;
 
-namespace Noots.Notes.Handlers.Commands;
+namespace Notes.Handlers.Commands;
 
 public class ArchiveNoteCommandHandler : IRequestHandler<ArchiveNoteCommand, OperationResult<Unit>>
 {

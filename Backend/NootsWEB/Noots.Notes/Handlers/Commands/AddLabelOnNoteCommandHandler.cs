@@ -7,11 +7,11 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
-using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
+using Notes.Commands;
 using SignalrUpdater.Impl;
 
-namespace Noots.Notes.Handlers.Commands;
+namespace Notes.Handlers.Commands;
 
 public class AddLabelOnNoteCommandHandler : IRequestHandler<AddLabelOnNoteCommand, OperationResult<Unit>>
 {

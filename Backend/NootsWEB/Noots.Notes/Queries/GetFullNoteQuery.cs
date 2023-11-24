@@ -3,7 +3,7 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Noots.Notes.Queries
+namespace Notes.Queries
 {
     public class GetFullNoteQuery: BaseQueryEntity, IRequest<OperationResult<FullNote>>
     {
