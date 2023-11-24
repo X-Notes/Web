@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Noots.Billing\Noots.Billing.csproj" />
+    <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
   </ItemGroup>
 

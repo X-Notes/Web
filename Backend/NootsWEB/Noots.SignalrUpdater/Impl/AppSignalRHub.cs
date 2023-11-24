@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.WS;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Entities;

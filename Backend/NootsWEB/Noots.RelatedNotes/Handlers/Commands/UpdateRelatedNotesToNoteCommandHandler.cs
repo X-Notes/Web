@@ -1,8 +1,8 @@
-﻿using Common.DatabaseModels.Models.Notes;
+﻿using Billing.Impl;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
 using Noots.RelatedNotes.Commands;

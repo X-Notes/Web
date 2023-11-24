@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Noots.Auth\Auth.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Labels", "Noots.Labels\Noots.Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Billing", "Noots.Billing\Noots.Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Notes", "Noots.Notes\Noots.Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
 EndProject

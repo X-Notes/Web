@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Billing.Impl;
+using Common;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
@@ -6,7 +7,6 @@ using Common.DTO;
 using Common.DTO.Notes;
 using Mapper.Mapping;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Notes.Commands;
 

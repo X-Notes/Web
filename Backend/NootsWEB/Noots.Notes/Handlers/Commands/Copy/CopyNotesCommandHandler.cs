@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Billing.Impl;
+using Common;
 using Common.Channels;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Folders;
@@ -13,7 +14,6 @@ using Common.DTO.Notes.Copy;
 using Common.RegexHelpers;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;

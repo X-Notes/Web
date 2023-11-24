@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Noots.Billing.Impl;
+﻿using Billing.Impl;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Noots.Billing;
+namespace Billing;
 
 public static class BillingModules
 {

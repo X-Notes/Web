@@ -2,7 +2,6 @@
 using Common.DTO;
 using Common.DTO.Personalization;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Personalization.Commands;
 

@@ -1,12 +1,12 @@
-﻿using Common.DatabaseModels.Models.Plan;
-using Noots.Billing.Entities;
+﻿using Billing.Entities;
+using Common.DatabaseModels.Models.Plan;
 using Noots.DatabaseContext.Repositories.Billing;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 
-namespace Noots.Billing.Impl;
+namespace Billing.Impl;
 
 public class BillingPermissionService
 {

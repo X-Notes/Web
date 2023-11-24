@@ -8,7 +8,6 @@ using Common.DTO;
 using Common.DTO.Folders;
 using Common.RegexHelpers;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Commands;
@@ -22,6 +21,7 @@ using Noots.Notes.Commands.Copy;
 using Common.Channels;
 using Common.DTO.Notes.Copy;
 using System.Linq;
+using Billing.Impl;
 using Mapper.Mapping;
 
 namespace Noots.Folders.Handlers.Commands;

@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿using Billing.Entities;
+using Billing.Impl;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Billing.Entities;
-using Noots.Billing.Impl;
 
-namespace Noots.Billing.Api;
+namespace Billing.Api;
 
 [Route("api/[controller]")]
 [ApiController]

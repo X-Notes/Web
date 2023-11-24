@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Plan;
 
-namespace Noots.Billing.Entities;
+namespace Billing.Entities;
 
 public class BillingPlanDTO
 {

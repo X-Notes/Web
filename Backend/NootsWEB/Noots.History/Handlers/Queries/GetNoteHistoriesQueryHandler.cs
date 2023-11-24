@@ -1,11 +1,11 @@
-﻿using Common;
+﻿using Billing.Impl;
+using Common;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using Common.DTO.Users;
 using Mapper.Mapping;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.History.Entities;
 using Noots.History.Queries;

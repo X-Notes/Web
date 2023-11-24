@@ -1,9 +1,9 @@
-﻿using Common;
+﻿using Billing.Impl;
+using Common;
 using Common.DatabaseModels.Models.Labels;
 using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
-using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.Labels.Commands;
 
