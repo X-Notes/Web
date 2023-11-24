@@ -37,7 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />
-    <ProjectReference Include="..\Noots.Auth\Noots.Auth.csproj" />
+    <ProjectReference Include="..\Noots.Auth\Auth.csproj" />
     <ProjectReference Include="..\Noots.Backgrounds\Noots.Backgrounds.csproj" />
     <ProjectReference Include="..\Noots.Billing\Noots.Billing.csproj" />
     <ProjectReference Include="..\Noots.Folders\Noots.Folders.csproj" />

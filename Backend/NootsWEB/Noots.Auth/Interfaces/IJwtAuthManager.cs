@@ -1,7 +1,7 @@
-﻿using Noots.Auth.Entities;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Auth.Entities;
 
-namespace Noots.Auth.Interfaces;
+namespace Auth.Interfaces;
 
 public interface IJwtAuthManager
 {

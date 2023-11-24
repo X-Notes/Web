@@ -1,20 +1,19 @@
-﻿using Common;
+﻿using System.Security.Claims;
+using Auth.Entities;
+using Auth.Interfaces;
+using Common;
 using Common.DTO;
 using Common.Google;
 using Google.Apis.Auth;
 using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Noots.Auth.Entities;
-using Noots.Auth.Interfaces;
 using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Users.Commands;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 
-namespace Noots.Auth.Api;
+namespace Auth.Api;
 
 [Route("api/[controller]")]
 [ApiController]

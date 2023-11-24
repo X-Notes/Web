@@ -1,17 +1,17 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Security;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using Noots.Auth.Entities;
-using Noots.Auth.Interfaces;
-using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.Repositories.Sec;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Auth.Entities;
+using Auth.Interfaces;
+using Common;
+using Common.DatabaseModels.Models.Security;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Noots.DatabaseContext.Dapper.Reps;
+using Noots.DatabaseContext.Repositories.Sec;
 
-namespace Noots.Auth.Impl;
+namespace Auth.Impl;
 
 public class JwtAuthManager : IJwtAuthManager
 {

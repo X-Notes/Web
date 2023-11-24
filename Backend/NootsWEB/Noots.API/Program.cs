@@ -16,13 +16,13 @@ using System;
 using API.ConfigureAPP;
 using API.Hosted;
 using API.Middlewares;
+using Auth.Entities;
 using Noots.DatabaseContext;
 using Common.Redis;
 using Common.ConstraintsUploadFiles;
 using Common.Filters;
 using Common.App;
 using Common.SignalR;
-using Noots.Auth.Entities;
 using Common.Google;
 using Noots.Editor.Services;
 

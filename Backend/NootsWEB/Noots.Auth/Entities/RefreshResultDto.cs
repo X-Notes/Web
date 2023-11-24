@@ -1,4 +1,4 @@
-﻿namespace Noots.Auth.Entities;
+﻿namespace Auth.Entities;
 
 public class RefreshResultDto
 {

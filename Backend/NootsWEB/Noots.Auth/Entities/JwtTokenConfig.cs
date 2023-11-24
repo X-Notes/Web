@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Noots.Auth.Entities;
+namespace Auth.Entities;
 
 public class JwtTokenConfig
 {

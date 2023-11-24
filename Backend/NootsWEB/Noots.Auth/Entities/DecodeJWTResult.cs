@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Noots.Auth.Entities;
+namespace Auth.Entities;
 
 public class DecodeJWTResult
 {

@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Security;
 using Newtonsoft.Json;
 
-namespace Noots.Auth.Entities;
+namespace Auth.Entities;
 
 public class JwtAuthResult
 {

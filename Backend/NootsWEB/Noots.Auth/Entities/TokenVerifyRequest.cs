@@ -2,7 +2,7 @@
 using Common.Attributes;
 using Common.DatabaseModels.Models.Systems;
 
-namespace Noots.Auth.Entities;
+namespace Auth.Entities;
 
 public class TokenVerifyRequest
 {
