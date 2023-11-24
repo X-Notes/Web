@@ -5,7 +5,7 @@ using Mapper.Mapping;
 using Noots.DatabaseContext.Repositories.Notifications;
 using Noots.SignalrUpdater.Impl;
 
-namespace Noots.Notifications.Services;
+namespace Notifications.Services;
 
 public class NotificationService
 {

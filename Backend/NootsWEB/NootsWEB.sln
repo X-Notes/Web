@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Notes", "Noots.Notes\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Folders", "Noots.Folders\Noots.Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Notifications", "Noots.Notifications\Noots.Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Noots.Notifications\Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Editor", "Noots.Editor\Noots.Editor.csproj", "{B7E325F8-5FE3-4BD7-95DA-4505F048976C}"
 EndProject

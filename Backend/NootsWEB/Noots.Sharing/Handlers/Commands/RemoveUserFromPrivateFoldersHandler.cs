@@ -2,11 +2,11 @@
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
-using Noots.Notifications.Services;
 using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Folders;
 using Noots.SignalrUpdater.Impl;
+using Notifications.Services;
 
 namespace Noots.Sharing.Handlers.Commands;
 

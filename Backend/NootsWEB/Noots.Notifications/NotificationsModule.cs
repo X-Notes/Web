@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Noots.Notifications.Services;
+using Notifications.Services;
 
-namespace Noots.Notifications;
+namespace Notifications;
 
 public static class NotificationsModule
 {

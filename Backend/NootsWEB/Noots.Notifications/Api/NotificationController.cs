@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common;
 using Common.DTO.Notifications;
-using Noots.DatabaseContext.Repositories.Notifications;
-using Common;
 using Common.Filters;
 using Mapper.Mapping;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Noots.DatabaseContext.Repositories.Notifications;
 
-namespace Noots.Notifications.Api;
+namespace Notifications.Api;
 
 [Authorize]
 [Route("api/[controller]")]
