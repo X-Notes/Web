@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.MapperLocked", "Noots
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search", "Noots.Search\Search.csproj", "{CF064099-4616-4A91-8998-7F45D3058189}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Personalization", "Noots.Personalization\Noots.Personalization.csproj", "{24426311-E6E3-4F31-93C1-C8153180966C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Personalization", "Noots.Personalization\Personalization.csproj", "{24426311-E6E3-4F31-93C1-C8153180966C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users", "Noots.Users\Users.csproj", "{B6A648ED-7253-458C-9CFC-5B735A6A3B6E}"
 EndProject

@@ -2,7 +2,7 @@
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Noots.Personalization.Queries
+namespace Personalization.Queries
 {
     public class GetUserPersonalizationSettingsQuery : BaseCommandEntity, IRequest<PersonalizationSettingDTO>
     {

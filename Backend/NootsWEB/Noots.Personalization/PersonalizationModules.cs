@@ -2,11 +2,11 @@
 using Common.DTO.Personalization;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Personalization.Commands;
-using Noots.Personalization.Impl;
-using Noots.Personalization.Queries;
+using Personalization.Commands;
+using Personalization.Impl;
+using Personalization.Queries;
 
-namespace Noots.Personalization
+namespace Personalization
 {
     public static class PersonalizationModules
     {

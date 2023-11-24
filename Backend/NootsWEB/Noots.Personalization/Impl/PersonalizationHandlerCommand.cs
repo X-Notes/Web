@@ -1,11 +1,10 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
-using Common.DTO.Personalization;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Personalization.Commands;
+using Personalization.Commands;
 
-namespace Noots.Personalization.Impl
+namespace Personalization.Impl
 {
     public class PersonalizationHandlerCommand
         : IRequestHandler<UpdatePersonalizationSettingsCommand, OperationResult<Unit>>

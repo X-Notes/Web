@@ -1,14 +1,14 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common;
 using Common.DTO;
 using Common.DTO.Personalization;
-using Microsoft.AspNetCore.Authorization;
-using Noots.Personalization.Commands;
-using Noots.Personalization.Queries;
-using Common;
 using Common.Filters;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Personalization.Commands;
+using Personalization.Queries;
 
-namespace Noots.Personalization.Api;
+namespace Personalization.Api;
 
 [Authorize]
 [Route("api/[controller]")]

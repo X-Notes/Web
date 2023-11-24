@@ -2,9 +2,9 @@
 using Common.DTO.Personalization;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Personalization.Queries;
+using Personalization.Queries;
 
-namespace Noots.Personalization.Impl
+namespace Personalization.Impl
 {
     public class PersonalizationHandlerQuery : IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>
     {
