@@ -1,18 +1,15 @@
-﻿using Common;
+﻿using API.Worker.Models.Config;
+using Common;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Noots.API.Workers.Models.Config;
-using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
-using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Commands;
 using Noots.History.Impl;
 using Notes.Handlers.Commands;
 
-namespace Noots.API.Workers.BI;
+namespace API.Worker.BI;
 
 public class NotesJobHandler
 {

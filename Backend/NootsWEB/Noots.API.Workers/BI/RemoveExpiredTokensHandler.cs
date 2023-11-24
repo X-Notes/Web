@@ -1,7 +1,7 @@
 ﻿using Common;
 using Noots.DatabaseContext.Repositories.Sec;
 
-namespace Noots.API.Workers.BI;
+namespace API.Worker.BI;
 
 public class RemoveExpiredTokensHandler
 {

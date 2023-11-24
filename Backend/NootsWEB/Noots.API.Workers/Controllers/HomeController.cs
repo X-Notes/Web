@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Noots.API.Workers.Models;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using API.Worker.Models;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Noots.API.Workers.Controllers
+namespace API.Worker.Controllers
 {
     public class HomeController : Controller
     {

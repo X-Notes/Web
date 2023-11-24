@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace Noots.API.Workers.Database.Models
+namespace API.Worker.Database.Models
 {
     public class Role : IdentityRole<int>
     {

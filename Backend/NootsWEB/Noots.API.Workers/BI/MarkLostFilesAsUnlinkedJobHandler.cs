@@ -1,10 +1,9 @@
-﻿using Common;
+﻿using API.Worker.Models.Config;
+using Common;
 using Editor.Services;
-using Noots.API.Workers.Models.Config;
 using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Labels;
 
-namespace Noots.API.Workers.BI;
+namespace API.Worker.BI;
 
 public class MarkLostFilesAsUnlinkedJobHandler
 {

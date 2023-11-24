@@ -1,14 +1,11 @@
-﻿using Common;
+﻿using API.Worker.Models.Config;
+using Common;
 using Common.DatabaseModels.Models.WS;
-using Noots.DatabaseContext.Repositories.WS;
-using System.Text;
-using Newtonsoft.Json;
 using Common.DTO.WebSockets;
 using Dapr.Client;
-using Noots.API.Workers.Models.Config;
+using Noots.DatabaseContext.Repositories.WS;
 
-
-namespace Noots.API.Workers.BI;
+namespace API.Worker.BI;
 
 public class RemoveDeadWSConnectionsHandler
 {

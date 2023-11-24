@@ -1,3 +1,7 @@
+using API.Worker.ConfigureAPP;
+using API.Worker.Database;
+using API.Worker.Database.Models;
+using API.Worker.Filters;
 using Microsoft.EntityFrameworkCore;
 using Hangfire;
 using Common.Azure;
@@ -6,10 +10,6 @@ using Mapper;
 using Noots.History;
 using MediatR;
 using Noots.DatabaseContext;
-using Noots.API.Workers.ConfigureAPP;
-using Noots.API.Workers.Database;
-using Noots.API.Workers.Database.Models;
-using Noots.API.Workers.Filters;
 using Notes.Handlers.Commands;
 using Storage;
 

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using API.Worker.Database.Models;
+using API.Worker.Models.DTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Noots.API.Workers.Database.Models;
-using Noots.API.Workers.Models.DTO;
 
-namespace Noots.API.Workers.Controllers
+namespace API.Worker.Controllers
 {
     public class AccountController : Controller
     {

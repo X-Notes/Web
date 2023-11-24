@@ -1,7 +1,7 @@
-﻿using Hangfire;
-using Noots.API.Workers.BI;
+﻿using API.Worker.BI;
+using Hangfire;
 
-namespace Noots.API.Workers.Hosted
+namespace API.Worker.Hosted
 {
     public class JobRegisterHosted : IHostedService
     {

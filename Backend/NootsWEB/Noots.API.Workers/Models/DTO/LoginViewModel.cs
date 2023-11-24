@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Noots.API.Workers.Models.DTO
+namespace API.Worker.Models.DTO
 {
     public class LoginViewModel
     {

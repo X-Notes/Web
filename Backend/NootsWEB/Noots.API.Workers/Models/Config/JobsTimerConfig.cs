@@ -1,4 +1,4 @@
-﻿namespace Noots.API.Workers.Models.Config
+﻿namespace API.Worker.Models.Config
 {
     public class JobsTimerConfig
     {

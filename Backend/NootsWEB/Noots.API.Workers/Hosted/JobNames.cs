@@ -1,4 +1,4 @@
-﻿namespace Noots.API.Workers.Hosted
+﻿namespace API.Worker.Hosted
 {
     public static class JobNames
     {

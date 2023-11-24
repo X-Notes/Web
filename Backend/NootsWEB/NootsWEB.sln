@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakeData", "FakeData\FakeDa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentProcessing", "ContentProcessing\ContentProcessing.csproj", "{E0D26516-BF4C-4887-9189-54F99FEB4791}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.API.Workers", "Noots.API.Workers\Noots.API.Workers.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "Noots.API.Workers\API.Worker.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.History", "Noots.History\Noots.History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject

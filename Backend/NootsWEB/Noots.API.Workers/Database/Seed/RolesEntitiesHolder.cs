@@ -1,6 +1,6 @@
-﻿using Noots.API.Workers.Database.Models;
+﻿using API.Worker.Database.Models;
 
-namespace Noots.API.Workers.Database.Seed
+namespace API.Worker.Database.Seed
 {
     public class RolesEntitiesHolder
     {

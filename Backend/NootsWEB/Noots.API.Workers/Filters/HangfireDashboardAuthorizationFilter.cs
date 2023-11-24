@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace Noots.API.Workers.Filters
+namespace API.Worker.Filters
 {
     public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {

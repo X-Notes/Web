@@ -1,8 +1,8 @@
-﻿using Common;
-using Noots.API.Workers.Models.Config;
+﻿using API.Worker.Models.Config;
+using Common;
 using Noots.DatabaseContext.Repositories.Labels;
 
-namespace Noots.API.Workers.BI;
+namespace API.Worker.BI;
 
 public class LabelsJobHandler
 {

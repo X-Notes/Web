@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using API.Worker.Database.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Noots.API.Workers.Database.Models;
 
-namespace Noots.API.Workers.Database.Seed
+namespace API.Worker.Database.Seed
 {
     public static class DatabaseInitializer
     {
