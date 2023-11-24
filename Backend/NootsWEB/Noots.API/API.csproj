@@ -53,7 +53,7 @@
     <ProjectReference Include="..\Noots.Sharing\Noots.Sharing.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\Noots.SignalrUpdater.csproj" />
     <ProjectReference Include="..\Noots.Storage\Noots.Storage.csproj" />
-    <ProjectReference Include="..\Noots.Users\Noots.Users.csproj" />
+    <ProjectReference Include="..\Noots.Users\Users.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

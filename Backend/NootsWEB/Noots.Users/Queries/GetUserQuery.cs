@@ -1,9 +1,9 @@
 ﻿using Common.CQRS;
 using Common.DTO;
 using MediatR;
-using Noots.Users.Entities;
+using Users.Entities;
 
-namespace Noots.Users.Queries
+namespace Users.Queries
 {
     public class GetUserDTOQuery : BaseQueryEntity, IRequest<OperationResult<UserDTO>>
     {

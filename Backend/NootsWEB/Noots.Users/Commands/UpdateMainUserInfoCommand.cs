@@ -2,7 +2,7 @@
 using Common.CQRS;
 using MediatR;
 
-namespace Noots.Users.Commands
+namespace Users.Commands
 {
     public class UpdateMainUserInfoCommand : BaseCommandEntity, IRequest<Unit>
     {

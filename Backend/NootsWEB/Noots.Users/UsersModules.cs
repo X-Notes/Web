@@ -1,13 +1,13 @@
 ﻿using Common.DTO;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Users.Commands;
 using Noots.Storage.Queries;
-using Noots.Users.Entities;
-using Noots.Users.Impl;
-using Noots.Users.Queries;
+using Users.Commands;
+using Users.Entities;
+using Users.Impl;
+using Users.Queries;
 
-namespace Noots.Users
+namespace Users
 {
     public static class UsersModules
     {

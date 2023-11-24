@@ -5,10 +5,10 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Storage.Queries;
-using Noots.Users.Entities;
-using Noots.Users.Queries;
+using Users.Entities;
+using Users.Queries;
 
-namespace Noots.Users.Impl
+namespace Users.Impl
 {
     public class UserHandlerQuery :
         IRequestHandler<GetUserDTOQuery, OperationResult<UserDTO>>,

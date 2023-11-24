@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Users.Entities
+namespace Users.Entities
 {
     public class ShortUser
     {

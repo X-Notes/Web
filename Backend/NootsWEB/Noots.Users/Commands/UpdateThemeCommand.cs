@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
 using MediatR;
 
-namespace Noots.Users.Commands
+namespace Users.Commands
 {
     public class UpdateThemeCommand : BaseCommandEntity, IRequest<Unit>
     {

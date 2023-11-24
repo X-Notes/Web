@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Users.Commands;
+using Users.Commands;
 
 namespace Auth.Api;
 

@@ -2,7 +2,7 @@
 using MediatR;
 using Noots.Storage.Queries;
 
-namespace Noots.Users.Queries
+namespace Users.Queries
 {
     public class GetUserMemoryQuery : BaseQueryEntity, IRequest<GetUserMemoryResponse>
     {

@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Storage.Queries;
-using Noots.Users.Commands;
-using Noots.Users.Entities;
-using Noots.Users.Queries;
+using Users.Commands;
+using Users.Entities;
+using Users.Queries;
 
-namespace Noots.Users.Api;
+namespace Users.Api;
 
 [Authorize]
 [Route("api/[controller]")]

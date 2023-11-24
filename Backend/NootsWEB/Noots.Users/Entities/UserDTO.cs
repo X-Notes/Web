@@ -2,7 +2,7 @@
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Backgrounds;
 
-namespace Noots.Users.Entities
+namespace Users.Entities
 {
     public class UserDTO
     {

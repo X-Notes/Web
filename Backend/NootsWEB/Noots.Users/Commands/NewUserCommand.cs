@@ -3,7 +3,7 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Users.Commands
+namespace Users.Commands
 {
     public class NewUserCommand : BaseCommandEntity, IRequest<OperationResult<Guid>>
     {

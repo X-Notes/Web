@@ -9,10 +9,10 @@ using Noots.DatabaseContext.Repositories.Users;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 using Noots.Storage.Impl;
-using Noots.Users.Commands;
-using Noots.Users.Entities;
+using Users.Commands;
+using Users.Entities;
 
-namespace Noots.Users.Impl
+namespace Users.Impl
 {
     public class UserHandlerCommand :
         IRequestHandler<NewUserCommand, OperationResult<Guid>>,

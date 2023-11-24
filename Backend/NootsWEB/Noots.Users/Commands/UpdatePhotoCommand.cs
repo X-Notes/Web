@@ -2,9 +2,9 @@
 using Common.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Noots.Users.Entities;
+using Users.Entities;
 
-namespace Noots.Users.Commands
+namespace Users.Commands
 {
     public class UpdatePhotoCommand : BaseCommandEntity, IRequest<OperationResult<AnswerChangeUserPhoto>>
     {
