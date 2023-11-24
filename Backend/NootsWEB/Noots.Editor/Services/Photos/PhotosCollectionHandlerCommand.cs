@@ -9,7 +9,7 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands.Photos;
 using Noots.Editor.Entities;
 using Noots.History.Impl;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using SignalrUpdater.Impl;
 
 namespace Noots.Editor.Services.Photos

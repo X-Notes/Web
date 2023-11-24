@@ -9,7 +9,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.History.Entities;
 using Noots.History.Queries;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.History.Handlers.Queries;
 

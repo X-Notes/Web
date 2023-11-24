@@ -6,7 +6,7 @@ using Microsoft.VisualBasic;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Commands.Sync;
 using Noots.Folders.Entities;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Commands.Sync;
 

@@ -9,13 +9,13 @@ using Common.DTO.WebSockets.InnerNote;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
-using Noots.Permissions.Queries;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands.Structure;
 using Azure;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Mapper.Mapping;
 using Microsoft.VisualBasic.FileIO;
+using Permissions.Queries;
 using SignalrUpdater.Impl;
 
 namespace Noots.Editor.Services;

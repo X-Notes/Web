@@ -2,9 +2,9 @@
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.Permissions.Queries;
 using Notes.Commands.Sync;
 using Notes.Entities;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Sync;
 

@@ -3,7 +3,7 @@ using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Notes.Queries;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using SignalrUpdater.Interfaces;
 
 namespace Noots.Editor.Services.Users;

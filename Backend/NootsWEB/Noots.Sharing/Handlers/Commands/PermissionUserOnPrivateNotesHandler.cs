@@ -3,8 +3,8 @@ using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Permissions.Queries;
 using Notifications.Services;
+using Permissions.Queries;
 using Sharing.Commands.Notes;
 using SignalrUpdater.Impl;
 

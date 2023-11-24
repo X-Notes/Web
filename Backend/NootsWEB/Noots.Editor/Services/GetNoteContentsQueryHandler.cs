@@ -5,7 +5,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Queries;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.Editor.Services;
 

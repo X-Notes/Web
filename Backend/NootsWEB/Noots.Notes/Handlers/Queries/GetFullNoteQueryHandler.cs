@@ -5,9 +5,9 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
-using Noots.Permissions.Impl;
-using Noots.Permissions.Queries;
 using Notes.Queries;
+using Permissions.Impl;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Queries;
 

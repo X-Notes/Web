@@ -4,8 +4,8 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Commands;
-using Noots.Permissions.Impl;
-using Noots.Permissions.Queries;
+using Permissions.Impl;
+using Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Commands;
 

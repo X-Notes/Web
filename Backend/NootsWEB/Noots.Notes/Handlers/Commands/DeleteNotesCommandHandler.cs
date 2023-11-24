@@ -5,8 +5,8 @@ using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Editor.Services;
-using Noots.Permissions.Queries;
 using Notes.Commands;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Commands;
 

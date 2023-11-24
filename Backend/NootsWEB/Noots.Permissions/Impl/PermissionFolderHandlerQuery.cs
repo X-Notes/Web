@@ -4,10 +4,10 @@ using Common.DatabaseModels.Models.Users;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Permissions.Entities;
-using Noots.Permissions.Queries;
+using Permissions.Entities;
+using Permissions.Queries;
 
-namespace Noots.Permissions.Impl;
+namespace Permissions.Impl;
 
 public class PermissionFolderHandlerQuery :
       IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,

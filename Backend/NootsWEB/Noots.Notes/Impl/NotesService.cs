@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Permissions.Impl;
+using Permissions.Impl;
 
 namespace Notes.Impl;
 

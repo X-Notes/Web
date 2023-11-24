@@ -8,7 +8,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.History.Queries;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.History.Handlers.Queries
 {

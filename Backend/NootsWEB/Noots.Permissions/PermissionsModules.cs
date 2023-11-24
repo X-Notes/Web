@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MediatR;
-using Noots.Permissions.Entities;
-using Noots.Permissions.Impl;
-using Noots.Permissions.Queries;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using Permissions.Entities;
+using Permissions.Impl;
+using Permissions.Queries;
 
-namespace Noots.Permissions
+namespace Permissions
 {
     public static class PermissionsModules
     {

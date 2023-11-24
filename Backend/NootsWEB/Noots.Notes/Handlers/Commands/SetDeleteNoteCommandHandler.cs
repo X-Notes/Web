@@ -3,9 +3,9 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Permissions.Impl;
-using Noots.Permissions.Queries;
 using Notes.Commands;
+using Permissions.Impl;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Commands;
 

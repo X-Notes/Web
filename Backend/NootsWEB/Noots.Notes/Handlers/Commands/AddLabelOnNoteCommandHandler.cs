@@ -7,8 +7,8 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
-using Noots.Permissions.Queries;
 using Notes.Commands;
+using Permissions.Queries;
 using SignalrUpdater.Impl;
 
 namespace Notes.Handlers.Commands;

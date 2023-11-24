@@ -2,8 +2,8 @@
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Permissions.Queries;
 using Notes.Commands;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Commands;
 

@@ -1,10 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
 
-namespace Noots.Permissions.Impl;
+namespace Permissions.Impl;
 
 public class UsersOnPrivateFoldersService
 {

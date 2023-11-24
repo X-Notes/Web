@@ -7,7 +7,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Commands.FolderInner;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using SignalrUpdater.Impl;
 
 namespace Noots.Folders.Impl

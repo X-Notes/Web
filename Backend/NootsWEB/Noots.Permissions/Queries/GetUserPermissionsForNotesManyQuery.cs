@@ -1,8 +1,8 @@
 ﻿using Common.CQRS;
 using MediatR;
-using Noots.Permissions.Entities;
+using Permissions.Entities;
 
-namespace Noots.Permissions.Queries
+namespace Permissions.Queries
 {
     public class GetUserPermissionsForNotesManyQuery : BaseQueryEntity, IRequest<List<(Guid noteId, UserPermissionsForNote perm)>>
     {

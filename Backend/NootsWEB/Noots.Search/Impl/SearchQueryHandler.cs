@@ -9,7 +9,7 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.MapperLocked;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using Search.Entities;
 using Search.Queries;
 

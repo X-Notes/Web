@@ -5,7 +5,7 @@ using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Queries;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Queries;
 

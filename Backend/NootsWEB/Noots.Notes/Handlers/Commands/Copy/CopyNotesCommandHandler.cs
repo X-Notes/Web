@@ -21,8 +21,8 @@ using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Editor.Services;
-using Noots.Permissions.Queries;
 using Notes.Commands.Copy;
+using Permissions.Queries;
 using Storage.Commands;
 using Storage.Entities;
 

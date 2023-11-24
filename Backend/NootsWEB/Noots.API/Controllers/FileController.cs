@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace API.Controllers;
 

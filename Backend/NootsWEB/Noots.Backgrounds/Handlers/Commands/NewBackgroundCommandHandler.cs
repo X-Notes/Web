@@ -6,7 +6,7 @@ using Common.DTO.Backgrounds;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using Storage.Commands;
 
 namespace Backgrounds.Handlers.Commands;

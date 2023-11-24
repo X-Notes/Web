@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO.WebSockets.Permissions;
 using MediatR;
-using Noots.Permissions.Impl;
-using Noots.Permissions.Queries;
 using Notifications.Services;
+using Permissions.Impl;
+using Permissions.Queries;
 using Sharing.Commands.Folders;
 using SignalrUpdater.Impl;
 

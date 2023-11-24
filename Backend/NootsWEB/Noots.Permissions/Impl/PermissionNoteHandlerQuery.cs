@@ -7,10 +7,10 @@ using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Permissions.Entities;
-using Noots.Permissions.Queries;
+using Permissions.Entities;
+using Permissions.Queries;
 
-namespace Noots.Permissions.Impl
+namespace Permissions.Impl
 {
     public class PermissionNoteHandlerQuery
         : IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>,

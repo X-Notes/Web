@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Noots.Permissions.Queries
+namespace Permissions.Queries
 {
     public enum PermissionUploadFileEnum
     {

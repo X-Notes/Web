@@ -5,8 +5,8 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Permissions.Queries;
 using Notes.Queries;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Queries;
 

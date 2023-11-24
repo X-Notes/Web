@@ -1,6 +1,6 @@
 ﻿using Common.DTO;
 using MediatR;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using SignalrUpdater.Entities;
 using SignalrUpdater.Impl;
 

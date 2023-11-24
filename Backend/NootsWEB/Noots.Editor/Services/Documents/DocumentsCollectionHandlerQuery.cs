@@ -1,9 +1,9 @@
 ﻿using Common.DTO.Notes.FullNoteContent.Files;
 using Mapper.Mapping;
 using MediatR;
-using Noots.Permissions.Queries;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Queries;
+using Permissions.Queries;
 
 namespace Noots.Editor.Services.Documents
 {

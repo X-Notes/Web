@@ -5,7 +5,7 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Queries;
 using Noots.MapperLocked;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.Folders.Impl
 {

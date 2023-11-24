@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 
-namespace Noots.Permissions.Entities
+namespace Permissions.Entities
 {
     public class UserPermissionsForNote
     {

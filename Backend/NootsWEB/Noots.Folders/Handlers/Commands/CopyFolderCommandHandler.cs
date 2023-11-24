@@ -12,7 +12,6 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Commands;
 using Noots.Folders.Entities;
-using Noots.Permissions.Queries;
 using Common.DatabaseModels.Models.Labels;
 using Azure.Core;
 using Common.Channels;
@@ -20,6 +19,7 @@ using Common.DTO.Notes.Copy;
 using System.Linq;
 using Billing.Impl;
 using Mapper.Mapping;
+using Permissions.Queries;
 
 namespace Noots.Folders.Handlers.Commands;
 

@@ -1,9 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 
-namespace Noots.Permissions.Impl;
+namespace Permissions.Impl;
 
 public class UsersOnPrivateNotesService
 {

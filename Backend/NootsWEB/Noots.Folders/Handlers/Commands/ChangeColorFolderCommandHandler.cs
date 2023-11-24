@@ -4,7 +4,7 @@ using Common.DTO.WebSockets;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Commands;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using SignalrUpdater.Impl;
 
 namespace Noots.Folders.Handlers.Commands;

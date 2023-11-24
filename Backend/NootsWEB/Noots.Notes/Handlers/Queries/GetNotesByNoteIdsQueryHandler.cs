@@ -4,8 +4,8 @@ using Common.DTO.Notes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
-using Noots.Permissions.Queries;
 using Notes.Queries;
+using Permissions.Queries;
 
 namespace Notes.Handlers.Queries;
 

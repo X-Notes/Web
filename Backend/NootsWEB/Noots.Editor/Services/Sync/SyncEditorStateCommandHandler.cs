@@ -5,7 +5,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands.Sync;
 using Noots.Editor.Services.Sync.Entities;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 
 namespace Noots.Editor.Services.Sync;
 

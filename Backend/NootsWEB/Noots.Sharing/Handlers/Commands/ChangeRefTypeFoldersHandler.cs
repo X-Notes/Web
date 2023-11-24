@@ -2,7 +2,7 @@
 using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Permissions.Queries;
+using Permissions.Queries;
 using Sharing.Commands.Folders;
 
 namespace Sharing.Handlers.Commands;
