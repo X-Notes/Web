@@ -2,7 +2,7 @@
 using Common.DTO.Notes.Collection;
 using Noots.DatabaseContext.Repositories.NoteContent;
 
-namespace Noots.Editor.Services;
+namespace Editor.Services;
 
 public class BaseCollectionHandler
 {

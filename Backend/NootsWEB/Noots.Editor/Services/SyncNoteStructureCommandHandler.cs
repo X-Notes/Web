@@ -2,23 +2,21 @@
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
+using Editor.Commands.Structure;
+using Mapper.Mapping;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Noots.History.Impl;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Commands.Structure;
-using Azure;
-using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
-using Mapper.Mapping;
-using Microsoft.VisualBasic.FileIO;
+using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services;
+namespace Editor.Services;
 
 public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
 {

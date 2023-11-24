@@ -1,31 +1,31 @@
 ﻿using Common.DatabaseModels.Models.Files;
-using Common.DTO.Notes.FullNoteContent.Files;
-using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO;
+using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Notes.FullNoteContent.Files;
+using Common.DTO.Notes.FullNoteSyncContents;
+using Editor.Commands.Audios;
+using Editor.Commands.Documents;
+using Editor.Commands.Files;
+using Editor.Commands.Photos;
+using Editor.Commands.Structure;
+using Editor.Commands.Sync;
+using Editor.Commands.Text;
+using Editor.Commands.Title;
+using Editor.Commands.Videos;
+using Editor.Entities;
+using Editor.Queries;
+using Editor.Services;
+using Editor.Services.Audios;
+using Editor.Services.Documents;
+using Editor.Services.Interaction;
+using Editor.Services.Photos;
+using Editor.Services.Sync;
+using Editor.Services.Sync.Entities;
+using Editor.Services.Videos;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Editor.Services.Audios;
-using Noots.Editor.Services.Documents;
-using Noots.Editor.Services.Interaction;
-using Noots.Editor.Services.Photos;
-using Noots.Editor.Services.Videos;
-using Noots.Editor.Services;
-using Noots.Editor.Commands.Sync;
-using Noots.Editor.Services.Sync.Entities;
-using Noots.Editor.Services.Sync;
-using Noots.Editor.Commands.Structure;
-using Noots.Editor.Entities;
-using Noots.Editor.Commands.Videos;
-using Noots.Editor.Commands.Text;
-using Noots.Editor.Commands.Title;
-using Noots.Editor.Commands.Photos;
-using Noots.Editor.Commands.Files;
-using Noots.Editor.Commands.Documents;
-using Noots.Editor.Commands.Audios;
-using Noots.Editor.Queries;
 
-namespace Noots.Editor;
+namespace Editor;
 
 public static class EditorModules
 {

@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 
-namespace Noots.Editor.Services.Sync.Entities;
+namespace Editor.Services.Sync.Entities;
 
 public class SyncStateResult
 {

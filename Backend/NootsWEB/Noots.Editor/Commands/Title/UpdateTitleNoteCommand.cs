@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Editor.Commands.Title
+namespace Editor.Commands.Title
 {
     public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

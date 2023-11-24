@@ -1,11 +1,11 @@
-﻿using Common.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
-namespace Noots.Editor.Commands.Structure;
+namespace Editor.Commands.Structure;
 
 public class SyncNoteStructureCommand : BaseCommandEntity, IRequest<OperationResult<NoteStructureResult>>
 {

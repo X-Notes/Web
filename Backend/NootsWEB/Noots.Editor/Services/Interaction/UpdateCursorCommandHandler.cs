@@ -4,7 +4,7 @@ using Permissions.Queries;
 using SignalrUpdater.Entities;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services.Interaction;
+namespace Editor.Services.Interaction;
 
 public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, OperationResult<Unit>>
 {

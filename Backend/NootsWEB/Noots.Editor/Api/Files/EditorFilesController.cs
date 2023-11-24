@@ -5,15 +5,15 @@ using Common.DatabaseModels.Models.Files;
 using Common.DTO;
 using Common.DTO.Files;
 using Common.Filters;
+using Editor.Commands.Files;
+using Editor.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands.Files;
-using Noots.Editor.Services;
 using Storage.Commands;
 
-namespace Noots.Editor.Api.Files;
+namespace Editor.Api.Files;
 
 [Route("api/editor/files")]
 [ApiController]

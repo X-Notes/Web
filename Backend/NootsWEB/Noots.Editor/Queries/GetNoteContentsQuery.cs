@@ -4,7 +4,7 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
-namespace Noots.Editor.Queries
+namespace Editor.Queries
 {
     public class GetNoteContentsQuery : BaseQueryEntity, IRequest<OperationResult<List<BaseNoteContentDTO>>>
     {

@@ -1,4 +1,4 @@
-﻿namespace Noots.Editor.Services.Sync.Entities;
+﻿namespace Editor.Services.Sync.Entities;
 
 public class SyncItem
 {

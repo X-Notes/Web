@@ -1,10 +1,10 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Editor.Entities;
 using MediatR;
-using Noots.Editor.Entities;
 
-namespace Noots.Editor.Commands
+namespace Editor.Commands
 {
     public class BaseUpdateCollectionInfo : BaseCommandEntity, IRequest<OperationResult<UpdateBaseContentResult>>
     {

@@ -3,13 +3,13 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Common.Filters;
+using Editor.Commands.Documents;
+using Editor.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands.Documents;
-using Noots.Editor.Queries;
 
-namespace Noots.Editor.Api.Collections;
+namespace Editor.Api.Collections;
 
 [Authorize]
 [Route("api/editor/documents")]

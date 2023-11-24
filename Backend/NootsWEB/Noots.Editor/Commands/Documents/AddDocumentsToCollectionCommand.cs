@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Editor.Commands.Documents;
+namespace Editor.Commands.Documents;
 
 public class AddDocumentsToCollectionCommand : BaseAddToCollectionItems
 {

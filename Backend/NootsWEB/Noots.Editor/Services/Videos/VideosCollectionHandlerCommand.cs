@@ -3,16 +3,16 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
+using Editor.Commands.Videos;
+using Editor.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Commands.Videos;
-using Noots.Editor.Entities;
 using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services.Videos
+namespace Editor.Services.Videos
 {
     public class VideosCollectionHandlerCommand :
         BaseCollectionHandler,

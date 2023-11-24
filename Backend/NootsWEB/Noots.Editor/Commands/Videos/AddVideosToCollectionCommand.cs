@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Editor.Commands.Videos;
+namespace Editor.Commands.Videos;
 
 public class AddVideosToCollectionCommand : BaseAddToCollectionItems
 {

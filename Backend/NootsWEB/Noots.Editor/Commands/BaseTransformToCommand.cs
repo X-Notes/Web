@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Editor.Commands
+namespace Editor.Commands
 {
     public class BaseTransformToCommand<T> : BaseCommandEntity, IRequest<OperationResult<T>>
     {

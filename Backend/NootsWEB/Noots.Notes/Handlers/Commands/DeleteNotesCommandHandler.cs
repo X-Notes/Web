@@ -1,10 +1,10 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
+using Editor.Services;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Editor.Services;
 using Notes.Commands;
 using Permissions.Queries;
 

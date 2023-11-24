@@ -4,7 +4,7 @@ using Common.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Noots.Editor.Commands.Files;
+namespace Editor.Commands.Files;
 
 public class UploadNoteFilesToStorageCommand : BaseCommandEntity, IRequest<OperationResult<List<AppFile>>>
 {

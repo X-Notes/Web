@@ -1,15 +1,14 @@
 ﻿using Common;
 using Common.DTO;
 using Common.Filters;
+using Editor.Commands.Text;
+using Editor.Commands.Title;
+using Editor.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands.Text;
-using Noots.Editor.Commands.Title;
-using Noots.Editor.Entities;
 
-
-namespace Noots.Editor.Api.Text;
+namespace Editor.Api.Text;
 
 [Authorize]
 [Route("api/editor/text")]

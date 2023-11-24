@@ -1,19 +1,18 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
+using Editor.Commands.Audios;
+using Editor.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Commands.Audios;
-using Noots.Editor.Entities;
 using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services.Audios
+namespace Editor.Services.Audios
 {
     public class AudiosCollectionHandlerCommand :
                 BaseCollectionHandler,

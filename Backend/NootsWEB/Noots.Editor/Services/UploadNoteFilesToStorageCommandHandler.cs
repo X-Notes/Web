@@ -1,13 +1,13 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO;
+using Editor.Commands.Files;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
-using Noots.Editor.Commands.Files;
 using Permissions.Queries;
 using Storage.Commands;
 
-namespace Noots.Editor.Services
+namespace Editor.Services
 {
     public class UploadNoteFilesToStorageCommandHandler :
         IRequestHandler<UploadNoteFilesToStorageCommand, OperationResult<List<AppFile>>>

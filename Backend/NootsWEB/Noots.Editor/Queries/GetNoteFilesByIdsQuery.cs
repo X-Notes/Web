@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO.Notes.FullNoteContent.Files;
 using MediatR;
 
-namespace Noots.Editor.Queries
+namespace Editor.Queries
 {
     public class GetNoteFilesByIdsQuery<T> : BaseQueryEntity, IRequest<List<T>> where T : BaseFileNoteDTO
     {

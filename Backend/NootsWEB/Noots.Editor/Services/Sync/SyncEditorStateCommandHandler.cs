@@ -1,13 +1,13 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO;
+using Editor.Commands.Sync;
+using Editor.Services.Sync.Entities;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Commands.Sync;
-using Noots.Editor.Services.Sync.Entities;
 using Permissions.Queries;
 
-namespace Noots.Editor.Services.Sync;
+namespace Editor.Services.Sync;
 
 public class SyncEditorStateCommandHandler : IRequestHandler<SyncEditorStateCommand, OperationResult<SyncStateResult>>
 {

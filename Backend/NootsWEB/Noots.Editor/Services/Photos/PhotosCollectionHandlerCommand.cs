@@ -3,16 +3,16 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
+using Editor.Commands.Photos;
+using Editor.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Commands.Photos;
-using Noots.Editor.Entities;
 using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services.Photos
+namespace Editor.Services.Photos
 {
     public class PhotosCollectionHandlerCommand :
         BaseCollectionHandler,

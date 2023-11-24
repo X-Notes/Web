@@ -1,10 +1,10 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Editor.Services.Interaction.Entities;
 using MediatR;
-using Noots.Editor.Services.Interaction.Entities;
 
-namespace Noots.Editor.Services.Interaction;
+namespace Editor.Services.Interaction;
 
 public class UpdateCursorCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
 {

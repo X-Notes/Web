@@ -1,4 +1,4 @@
-﻿namespace Noots.Editor.Services.Interaction.Entities;
+﻿namespace Editor.Services.Interaction.Entities;
 
 public enum CursorType
 {

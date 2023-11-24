@@ -1,5 +1,5 @@
 ﻿
-namespace Noots.Editor.Commands.Audios;
+namespace Editor.Commands.Audios;
 
 public class UpdateAudiosCollectionInfoCommand : BaseUpdateCollectionInfo
 {

@@ -2,13 +2,13 @@
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Common.Filters;
+using Editor.Commands;
+using Editor.Entities;
+using Editor.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands;
-using Noots.Editor.Entities;
-using Noots.Editor.Queries;
 
-namespace Noots.Editor.Api.Collections;
+namespace Editor.Api.Collections;
 
 public class BaseCollectionsController<Y, U, I, O, FileT> : ControllerBase
     where Y : BaseRemoveFromCollectionItems

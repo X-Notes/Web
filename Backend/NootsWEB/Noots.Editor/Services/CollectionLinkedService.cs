@@ -1,14 +1,9 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DTO.Notes.Collection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Common.DTO.Notes.Collection;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.NoteContent;
 
-namespace Noots.Editor.Services
+namespace Editor.Services
 {
     public sealed class CollectionLinkedService
     {

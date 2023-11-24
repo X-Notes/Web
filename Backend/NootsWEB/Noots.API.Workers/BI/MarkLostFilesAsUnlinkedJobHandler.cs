@@ -1,8 +1,8 @@
 ﻿using Common;
+using Editor.Services;
 using Noots.API.Workers.Models.Config;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.Editor.Services;
 
 namespace Noots.API.Workers.BI;
 

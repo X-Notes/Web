@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Editor.Entities;
+namespace Editor.Entities;
 
 public class UpdateCollectionContentResult : UpdateBaseContentResult
 {

@@ -2,10 +2,10 @@
 using Common.CQRS;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
+using Editor.Entities;
 using MediatR;
-using Noots.Editor.Entities;
 
-namespace Noots.Editor.Commands.Text
+namespace Editor.Commands.Text
 {
     public class UpdateTextContentsCommand : BaseCommandEntity, IRequest<OperationResult<List<UpdateBaseContentResult>>>
     {

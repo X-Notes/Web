@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Editor.Commands.Photos;
+namespace Editor.Commands.Photos;
 
 public class AddPhotosToCollectionCommand : BaseAddToCollectionItems
 {

@@ -2,7 +2,7 @@
 using Common.DTO.Users;
 using MediatR;
 
-namespace Noots.Notes.Queries
+namespace Editor.Queries
 {
     public class GetOnlineUsersOnNoteQuery: BaseQueryEntity, IRequest<List<OnlineUserOnNote>>
     {

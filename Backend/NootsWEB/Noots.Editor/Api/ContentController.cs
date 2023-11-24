@@ -3,16 +3,16 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.Filters;
+using Editor.Commands.Structure;
+using Editor.Commands.Sync;
+using Editor.Queries;
+using Editor.Services.Interaction;
+using Editor.Services.Sync.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Editor.Commands.Structure;
-using Noots.Editor.Commands.Sync;
-using Noots.Editor.Queries;
-using Noots.Editor.Services.Interaction;
-using Noots.Editor.Services.Sync.Entities;
 
-namespace Noots.Editor.Api;
+namespace Editor.Api;
 
 [Authorize]
 [Route("api/editor/contents")]

@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 
-namespace Noots.Editor.Commands.Audios;
+namespace Editor.Commands.Audios;
 
 public class TransformToAudiosCollectionCommand : BaseTransformToCommand<AudiosCollectionNoteDTO>
 {

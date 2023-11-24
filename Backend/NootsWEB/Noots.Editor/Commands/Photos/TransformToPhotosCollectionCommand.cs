@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 
-namespace Noots.Editor.Commands.Photos;
+namespace Editor.Commands.Photos;
 
 public class TransformToPhotosCollectionCommand : BaseTransformToCommand<PhotosCollectionNoteDTO>
 {

@@ -1,12 +1,12 @@
 ﻿using Common;
 using Common.DTO.Users;
 using Common.Filters;
+using Editor.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Notes.Queries;
 
-namespace Noots.Editor.Api.Users;
+namespace Editor.Api.Users;
 
 [Authorize]
 [Route("api/editor")]

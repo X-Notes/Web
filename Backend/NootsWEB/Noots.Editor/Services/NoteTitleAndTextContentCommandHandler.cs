@@ -1,23 +1,21 @@
-﻿using Azure.Core;
-using Common;
-using Common.DatabaseModels.Models.NoteContent.TextContent;
+﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
+using Editor.Commands.Text;
+using Editor.Commands.Title;
+using Editor.Entities;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Editor.Commands.Text;
-using Noots.Editor.Commands.Title;
-using Noots.Editor.Entities;
 using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Editor.Services
+namespace Editor.Services
 {
     public class NoteTitleAndTextContentCommandHandler :
         IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,

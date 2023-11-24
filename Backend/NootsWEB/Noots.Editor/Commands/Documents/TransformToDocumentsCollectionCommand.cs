@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 
-namespace Noots.Editor.Commands.Documents;
+namespace Editor.Commands.Documents;
 
 public class TransformToDocumentsCollectionCommand : BaseTransformToCommand<DocumentsCollectionNoteDTO>
 {

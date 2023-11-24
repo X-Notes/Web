@@ -1,10 +1,10 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Editor.Services.Sync.Entities;
 using MediatR;
-using Noots.Editor.Services.Sync.Entities;
 
-namespace Noots.Editor.Commands.Sync;
+namespace Editor.Commands.Sync;
 
 public class SyncEditorStateCommand : BaseCommandEntity, IRequest<OperationResult<SyncStateResult>>
 {

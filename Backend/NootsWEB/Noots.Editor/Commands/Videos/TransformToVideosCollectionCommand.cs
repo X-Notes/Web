@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Notes.FullNoteContent;
 
-namespace Noots.Editor.Commands.Videos;
+namespace Editor.Commands.Videos;
 
 public class TransformToVideosCollectionCommand : BaseTransformToCommand<VideosCollectionNoteDTO>
 {

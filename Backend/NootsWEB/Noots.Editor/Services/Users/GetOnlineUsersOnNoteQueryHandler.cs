@@ -1,12 +1,12 @@
 ﻿using Common.DTO.Users;
+using Editor.Queries;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Notes.Queries;
 using Permissions.Queries;
 using SignalrUpdater.Interfaces;
 
-namespace Noots.Editor.Services.Users;
+namespace Editor.Services.Users;
 
 public class GetOnlineUsersOnNoteQueryHandler : IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>
 {

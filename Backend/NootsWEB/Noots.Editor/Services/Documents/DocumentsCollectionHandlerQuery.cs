@@ -1,11 +1,11 @@
 ﻿using Common.DTO.Notes.FullNoteContent.Files;
+using Editor.Queries;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Editor.Queries;
 using Permissions.Queries;
 
-namespace Noots.Editor.Services.Documents
+namespace Editor.Services.Documents
 {
     public class DocumentsCollectionHandlerQuery :
         IRequestHandler<GetNoteFilesByIdsQuery<DocumentNoteDTO>, List<DocumentNoteDTO>>
