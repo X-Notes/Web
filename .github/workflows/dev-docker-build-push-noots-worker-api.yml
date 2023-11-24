@@ -9,7 +9,7 @@ jobs:
 
   db-worker-migration:
     runs-on: ubuntu-latest
-
+    name: API Database migration
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -32,7 +32,6 @@ jobs:
         run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/NootsWEB/Noots.API.Workers -s Backend/NootsWEB/Noots.API.Workers
         env:
           DatabaseConnection: ${{ secrets.DEV_NOOTS_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
-          NootsDatabaseConnection: ${{ secrets.DEV_NOOTS_API_DB_CONNECTION  }}
 
   # define the job to build and publish the docker image
   build-and-push-docker-image:
