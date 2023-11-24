@@ -1,13 +1,13 @@
-﻿using Common.DTO;
+﻿using Backgrounds.Commands;
+using Backgrounds.Handlers.Commands;
+using Backgrounds.Handlers.Queries;
+using Backgrounds.Queries;
+using Common.DTO;
 using Common.DTO.Backgrounds;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Backgrounds.Commands;
-using Noots.Backgrounds.Handlers.Commands;
-using Noots.Backgrounds.Handlers.Queries;
-using Noots.Backgrounds.Queries;
 
-namespace Noots.Backgrounds;
+namespace Backgrounds;
 
 public static class BackgroundsModules
 {

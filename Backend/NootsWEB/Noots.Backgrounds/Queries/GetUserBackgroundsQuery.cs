@@ -2,7 +2,7 @@
 using Common.DTO.Backgrounds;
 using MediatR;
 
-namespace Noots.Backgrounds.Queries
+namespace Backgrounds.Queries
 {
     public class GetUserBackgroundsQuery : BaseQueryEntity, IRequest<List<BackgroundDTO>>
     {

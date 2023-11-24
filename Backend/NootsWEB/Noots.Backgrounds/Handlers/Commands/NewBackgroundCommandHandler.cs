@@ -1,16 +1,15 @@
-﻿using Common;
+﻿using Backgrounds.Commands;
+using Common;
 using Common.DTO;
 using Common.DTO.Backgrounds;
-using Common.DTO.Notes;
 using MediatR;
-using Noots.Backgrounds.Commands;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 
-namespace Noots.Backgrounds.Handlers.Commands;
+namespace Backgrounds.Handlers.Commands;
 
 public class NewBackgroundCommandHandler : IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>
 {

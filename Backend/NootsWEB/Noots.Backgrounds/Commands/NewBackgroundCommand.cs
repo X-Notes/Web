@@ -5,7 +5,7 @@ using Common.DTO.Backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Noots.Backgrounds.Commands
+namespace Backgrounds.Commands
 {
     public class NewBackgroundCommand : BaseCommandEntity, IRequest<OperationResult<BackgroundDTO>>
     {

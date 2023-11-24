@@ -1,8 +1,8 @@
-﻿using MediatR;
-using Noots.Backgrounds.Commands;
+﻿using Backgrounds.Commands;
+using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
 
-namespace Noots.Backgrounds.Handlers.Commands;
+namespace Backgrounds.Handlers.Commands;
 
 public class DefaultBackgroundCommandHandler : IRequestHandler<DefaultBackgroundCommand, Unit>
 {

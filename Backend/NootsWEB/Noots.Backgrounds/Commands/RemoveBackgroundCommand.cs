@@ -2,7 +2,7 @@
 using Common.CQRS;
 using MediatR;
 
-namespace Noots.Backgrounds.Commands
+namespace Backgrounds.Commands
 {
     public class RemoveBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {

@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Noots.Backgrounds.Commands;
+﻿using Backgrounds.Commands;
+using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Storage.Commands;
 
-namespace Noots.Backgrounds.Handlers.Commands;
+namespace Backgrounds.Handlers.Commands;
 
 public class RemoveBackgroundCommandHandler : IRequestHandler<RemoveBackgroundCommand, Unit>
 {

@@ -1,4 +1,6 @@
-﻿using Common;
+﻿using Backgrounds.Commands;
+using Backgrounds.Queries;
+using Common;
 using Common.ConstraintsUploadFiles;
 using Common.DTO;
 using Common.DTO.Backgrounds;
@@ -7,10 +9,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Backgrounds.Commands;
-using Noots.Backgrounds.Queries;
 
-namespace Noots.Backgrounds.Api;
+namespace Backgrounds.Api;
 
 [Authorize]
 [Route("api/[controller]")]

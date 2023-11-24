@@ -1,10 +1,10 @@
-﻿using Common.DTO.Backgrounds;
+﻿using Backgrounds.Queries;
+using Common.DTO.Backgrounds;
 using MediatR;
-using Noots.Backgrounds.Queries;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Mapper.Mapping;
 
-namespace Noots.Backgrounds.Handlers.Queries;
+namespace Backgrounds.Handlers.Queries;
 
 public class GetUserBackgroundsQueryHandler : IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>
 {
