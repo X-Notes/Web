@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Noots.Mapper;
 using Noots.MapperLocked;
 using Noots.SignalrUpdater;
 using Noots.SignalrUpdater.Impl;
@@ -24,6 +23,7 @@ using Common.Filters;
 using Common.App;
 using Common.SignalR;
 using Common.Google;
+using Mapper;
 using Noots.Editor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

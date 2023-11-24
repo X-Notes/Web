@@ -2,7 +2,7 @@
 using Common.DatabaseModels.Models.Files.Models;
 using Common.DatabaseModels.Models.Users;
 
-namespace Noots.Mapper.Mapping
+namespace Mapper.Mapping
 {
     public abstract class BaseMapper
     {

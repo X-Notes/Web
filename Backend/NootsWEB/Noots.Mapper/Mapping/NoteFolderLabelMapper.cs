@@ -15,7 +15,7 @@ using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Files;
 using Common.DTO.Notes.FullNoteContent.Text;
 
-namespace Noots.Mapper.Mapping
+namespace Mapper.Mapping
 {
     public class NoteFolderLabelMapper : BaseMapper
     {

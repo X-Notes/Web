@@ -1,7 +1,7 @@
 ﻿using Common.DTO.Users;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Mapper.Mapping;
 using Noots.Notes.Queries;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Interfaces;

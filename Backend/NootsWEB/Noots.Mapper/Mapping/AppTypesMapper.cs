@@ -4,8 +4,7 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.App;
 
-
-namespace Noots.Mapper.Mapping
+namespace Mapper.Mapping
 {
     public class AppTypesMapper : BaseMapper
     {

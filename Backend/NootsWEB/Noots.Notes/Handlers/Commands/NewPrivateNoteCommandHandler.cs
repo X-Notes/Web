@@ -4,10 +4,10 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using Common.DTO.Notes;
+using Mapper.Mapping;
 using MediatR;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Mapper.Mapping;
 using Noots.Notes.Commands;
 
 namespace Noots.Notes.Handlers.Commands;

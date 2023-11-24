@@ -1,10 +1,10 @@
 ﻿using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Queries;
-using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 
 namespace Noots.Editor.Services;

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Hangfire;
 using Noots.Storage;
 using Common.Azure;
-using Noots.Mapper;
+using Mapper;
 using Noots.History;
 using MediatR;
 using Noots.DatabaseContext;

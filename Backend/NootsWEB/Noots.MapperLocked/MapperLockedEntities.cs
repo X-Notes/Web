@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
-using Noots.Mapper.Mapping;
+using Mapper.Mapping;
 
 namespace Noots.MapperLocked
 {

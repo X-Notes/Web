@@ -12,10 +12,10 @@ using Noots.History.Impl;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.Mapper.Mapping;
 using Noots.Editor.Commands.Structure;
 using Azure;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Mapper.Mapping;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Noots.Editor.Services;

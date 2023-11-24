@@ -1,10 +1,10 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.Editor.Commands.Sync;
 using Noots.Editor.Services.Sync.Entities;
-using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 
 namespace Noots.Editor.Services.Sync;

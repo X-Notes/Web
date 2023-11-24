@@ -1,8 +1,8 @@
 ﻿using Common.DTO;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Mapper.Mapping;
 using Noots.Notes.Commands.Sync;
 using Noots.Notes.Entities;
 using Noots.Permissions.Queries;

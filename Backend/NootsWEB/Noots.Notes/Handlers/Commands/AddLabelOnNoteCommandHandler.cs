@@ -2,11 +2,11 @@
 using Common.DatabaseModels.Models.Labels;
 using Common.DTO;
 using Common.DTO.WebSockets;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
-using Noots.Mapper.Mapping;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;

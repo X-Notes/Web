@@ -13,7 +13,6 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Commands;
 using Noots.Folders.Entities;
-using Noots.Mapper.Mapping;
 using Noots.Notes.Commands;
 using Noots.Notes.Entities;
 using Noots.Permissions.Queries;
@@ -23,6 +22,7 @@ using Noots.Notes.Commands.Copy;
 using Common.Channels;
 using Common.DTO.Notes.Copy;
 using System.Linq;
+using Mapper.Mapping;
 
 namespace Noots.Folders.Handlers.Commands;
 

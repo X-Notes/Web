@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Common.DTO.Notifications;
 using Noots.DatabaseContext.Repositories.Notifications;
-using Noots.Mapper.Mapping;
 using Common;
 using Common.Filters;
+using Mapper.Mapping;
 
 namespace Noots.Notifications.Api;
 

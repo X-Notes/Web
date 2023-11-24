@@ -2,10 +2,10 @@
 using Common;
 using Common.DTO;
 using Common.DTO.Backgrounds;
+using Mapper.Mapping;
 using MediatR;
 using Noots.Billing.Impl;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.Storage.Commands;
 

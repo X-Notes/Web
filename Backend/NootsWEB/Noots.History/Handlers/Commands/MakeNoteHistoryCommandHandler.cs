@@ -4,11 +4,11 @@ using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Histories;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Commands;
-using Noots.Mapper.Mapping;
 
 namespace Noots.History.Handlers.Commands;
 

@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Labels;
 
-namespace Noots.Mapper.Mapping
+namespace Mapper.Mapping
 {
     public static class LabelHelper
     {

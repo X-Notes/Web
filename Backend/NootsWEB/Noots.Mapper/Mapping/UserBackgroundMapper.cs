@@ -6,7 +6,7 @@ using Common.DatabaseModels.Models.WS;
 using Common.DTO.Backgrounds;
 using Common.DTO.Users;
 
-namespace Noots.Mapper.Mapping
+namespace Mapper.Mapping
 {
     public class UserBackgroundMapper : BaseMapper
     {

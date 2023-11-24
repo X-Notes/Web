@@ -1,8 +1,8 @@
 ﻿using Common.DTO.Labels;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
 using Noots.Labels.Queries;
-using Noots.Mapper.Mapping;
 
 namespace Noots.Labels.Handlers.Queries;
 

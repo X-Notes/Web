@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Folders;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Folders.Queries;
-using Noots.Mapper.Mapping;
 
 namespace Noots.Folders.Handlers.Queries;
 

@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.API.Workers", "Noots.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.History", "Noots.History\Noots.History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Mapper", "Noots.Mapper\Noots.Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Noots.Mapper\Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Permissions", "Noots.Permissions\Noots.Permissions.csproj", "{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}"
 EndProject

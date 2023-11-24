@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Noots.Mapper.Mapping;
+﻿using Mapper.Mapping;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Noots.Mapper
+namespace Mapper
 {
     public static class MapperModules
     {

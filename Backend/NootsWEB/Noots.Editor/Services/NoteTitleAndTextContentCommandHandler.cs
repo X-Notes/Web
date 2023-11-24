@@ -6,6 +6,7 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
+using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
@@ -13,7 +14,6 @@ using Noots.Editor.Commands.Text;
 using Noots.Editor.Commands.Title;
 using Noots.Editor.Entities;
 using Noots.History.Impl;
-using Noots.Mapper.Mapping;
 using Noots.Permissions.Queries;
 using Noots.SignalrUpdater.Impl;
 
