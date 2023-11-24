@@ -12,7 +12,6 @@ using API.ConfigureAPP;
 using API.Hosted;
 using API.Middlewares;
 using Auth.Entities;
-using Noots.DatabaseContext;
 using Common.Redis;
 using Common.ConstraintsUploadFiles;
 using Common.Filters;

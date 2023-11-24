@@ -1,3 +1,0 @@
-docker-compose -f services-compose.yml up -d
-
-docker-compose -f metrics-services-compose.yml up -d

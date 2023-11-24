@@ -1,1 +1,1 @@
-docker build -t davydq/noots-api . -f pipeline-files/api/noots-api.dockerfile
+docker build -t davydq/xnotes-api . -f pipeline-files/api/noots-api.dockerfile
