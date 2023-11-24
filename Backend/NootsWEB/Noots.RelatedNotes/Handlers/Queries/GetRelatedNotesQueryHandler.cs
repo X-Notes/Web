@@ -3,9 +3,9 @@ using Common.DTO.Personalization;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.MapperLocked;
-using Noots.RelatedNotes.Queries;
+using RelatedNotes.Queries;
 
-namespace Noots.RelatedNotes.Handlers.Queries;
+namespace RelatedNotes.Handlers.Queries;
 
 public class GetRelatedNotesQueryHandler : IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>
 {

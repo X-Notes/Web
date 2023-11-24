@@ -3,9 +3,9 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
-using Noots.RelatedNotes.Commands;
+using RelatedNotes.Commands;
 
-namespace Noots.RelatedNotes.Handlers.Commands;
+namespace RelatedNotes.Handlers.Commands;
 
 public class UpdateRelatedNoteStateCommandHandler : IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>
 {

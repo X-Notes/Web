@@ -3,12 +3,12 @@ using Common.DTO.Notes;
 using Common.DTO.WebSockets.ReletedNotes;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.RelatedNotes.Commands;
-using Noots.RelatedNotes.Handlers.Commands;
-using Noots.RelatedNotes.Handlers.Queries;
-using Noots.RelatedNotes.Queries;
+using RelatedNotes.Commands;
+using RelatedNotes.Handlers.Commands;
+using RelatedNotes.Handlers.Queries;
+using RelatedNotes.Queries;
 
-namespace Noots.RelatedNotes;
+namespace RelatedNotes;
 
 public static class RelatedNotesModules
 {

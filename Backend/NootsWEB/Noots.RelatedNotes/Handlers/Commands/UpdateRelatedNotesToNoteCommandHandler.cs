@@ -5,10 +5,10 @@ using Common.DTO.WebSockets.ReletedNotes;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
-using Noots.RelatedNotes.Commands;
+using RelatedNotes.Commands;
 using SignalrUpdater.Impl;
 
-namespace Noots.RelatedNotes.Handlers.Commands;
+namespace RelatedNotes.Handlers.Commands;
 
 public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<UpdateRelatedNotesWS>>
 {

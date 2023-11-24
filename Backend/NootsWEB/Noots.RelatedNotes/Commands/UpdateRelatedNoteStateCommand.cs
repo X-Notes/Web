@@ -4,7 +4,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.RelatedNotes.Commands
+namespace RelatedNotes.Commands
 {
     public class UpdateRelatedNoteStateCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

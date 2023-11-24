@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalrUpdater", "Noots.Sig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backgrounds", "Noots.Backgrounds\Backgrounds.csproj", "{7762D56E-5553-4710-A3FC-6798B9179DE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.RelatedNotes", "Noots.RelatedNotes\Noots.RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelatedNotes", "Noots.RelatedNotes\RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.DatabaseContext", "Noots.DatabaseContext\Noots.DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
 EndProject

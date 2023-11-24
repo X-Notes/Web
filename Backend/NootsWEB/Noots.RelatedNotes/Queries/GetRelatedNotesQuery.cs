@@ -2,7 +2,7 @@
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Noots.RelatedNotes.Queries
+namespace RelatedNotes.Queries
 {
     public class GetRelatedNotesQuery : BaseQueryEntity, IRequest<List<RelatedNote>>
     {

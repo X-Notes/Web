@@ -48,7 +48,7 @@
     <ProjectReference Include="..\Noots.Notes\Noots.Notes.csproj" />
     <ProjectReference Include="..\Noots.Notifications\Notifications.csproj" />
     <ProjectReference Include="..\Noots.Personalization\Noots.Personalization.csproj" />
-    <ProjectReference Include="..\Noots.RelatedNotes\Noots.RelatedNotes.csproj" />
+    <ProjectReference Include="..\Noots.RelatedNotes\RelatedNotes.csproj" />
     <ProjectReference Include="..\Noots.Search\Search.csproj" />
     <ProjectReference Include="..\Noots.Sharing\Sharing.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\SignalrUpdater.csproj" />

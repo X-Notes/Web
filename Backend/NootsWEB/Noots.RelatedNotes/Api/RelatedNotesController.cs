@@ -1,16 +1,16 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Common.DTO.Notes;
-using Microsoft.AspNetCore.Authorization;
+﻿using Common;
 using Common.DTO;
+using Common.DTO.Notes;
 using Common.DTO.WebSockets.ReletedNotes;
-using Noots.RelatedNotes.Commands;
-using Noots.RelatedNotes.Queries;
-using Common;
 using Common.Filters;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RelatedNotes.Commands;
+using RelatedNotes.Queries;
 using Search.Queries;
 
-namespace Noots.RelatedNotes.Api;
+namespace RelatedNotes.Api;
 
 [Authorize]
 [Route("api/[controller]")]
