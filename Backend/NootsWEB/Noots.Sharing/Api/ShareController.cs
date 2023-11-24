@@ -1,15 +1,15 @@
-﻿using MediatR;
+﻿using Common;
+using Common.DTO;
+using Common.DTO.Users;
+using Common.Filters;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Common.DTO.Users;
-using Common.DTO;
-using Noots.Sharing.Commands.Notes;
-using Noots.Sharing.Queries;
-using Noots.Sharing.Commands.Folders;
-using Common;
-using Common.Filters;
+using Sharing.Commands.Folders;
+using Sharing.Commands.Notes;
+using Sharing.Queries;
 
-namespace Noots.Sharing.Api;
+namespace Sharing.Api;
 
 [Authorize]
 [Route("api/[controller]")]

@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DatabaseModels.Models.Systems;
 using MediatR;
 
-namespace Noots.Sharing.Commands.Folders
+namespace Sharing.Commands.Folders
 {
     public class SendInvitesToUsersFolders : BaseCommandEntity, IRequest<Unit>
     {

@@ -3,9 +3,9 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Permissions.Queries;
-using Noots.Sharing.Commands.Folders;
+using Sharing.Commands.Folders;
 
-namespace Noots.Sharing.Handlers.Commands;
+namespace Sharing.Handlers.Commands;
 
 public class ChangeRefTypeFoldersHandler : IRequestHandler<ChangeRefTypeFolders, OperationResult<Unit>>
 {

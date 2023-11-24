@@ -21,10 +21,10 @@ using Noots.Permissions;
 using Noots.Personalization;
 using Noots.RelatedNotes;
 using Noots.Search;
-using Noots.Sharing;
 using Notifications;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using Sharing;
 using Storage;
 using Users;
 

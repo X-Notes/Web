@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Sharing.Commands.Notes
+namespace Sharing.Commands.Notes
 {
     public class RemoveUserFromPrivateNotes : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

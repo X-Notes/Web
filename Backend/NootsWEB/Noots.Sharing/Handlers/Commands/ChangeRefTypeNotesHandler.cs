@@ -3,9 +3,9 @@ using Common.DTO;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
-using Noots.Sharing.Commands.Notes;
+using Sharing.Commands.Notes;
 
-namespace Noots.Sharing.Handlers.Commands;
+namespace Sharing.Handlers.Commands;
 
 public class ChangeRefTypeNotesHandler : IRequestHandler<ChangeRefTypeNotes, OperationResult<Unit>>
 {

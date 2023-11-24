@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Sharing.Commands.Folders
+namespace Sharing.Commands.Folders
 {
     public class ChangeRefTypeFolders : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

@@ -2,7 +2,7 @@
 using Common.DTO.Users;
 using MediatR;
 
-namespace Noots.Sharing.Queries
+namespace Sharing.Queries
 {
     public class GetUsersOnPrivateNoteQuery : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
     {

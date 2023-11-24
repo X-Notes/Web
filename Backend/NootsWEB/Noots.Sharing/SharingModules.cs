@@ -2,13 +2,13 @@
 using Common.DTO.Users;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Sharing.Commands.Folders;
-using Noots.Sharing.Commands.Notes;
-using Noots.Sharing.Handlers.Commands;
-using Noots.Sharing.Handlers.Queries;
-using Noots.Sharing.Queries;
+using Sharing.Commands.Folders;
+using Sharing.Commands.Notes;
+using Sharing.Handlers.Commands;
+using Sharing.Handlers.Queries;
+using Sharing.Queries;
 
-namespace Noots.Sharing
+namespace Sharing
 {
     public static class SharingModules
     {

@@ -2,9 +2,9 @@
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Sharing.Queries;
+using Sharing.Queries;
 
-namespace Noots.Sharing.Handlers.Queries;
+namespace Sharing.Handlers.Queries;
 
 public class GetUsersOnPrivateNoteQueryHandler : IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>
 {

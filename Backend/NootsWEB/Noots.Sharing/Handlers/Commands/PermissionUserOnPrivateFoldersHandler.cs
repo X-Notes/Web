@@ -4,11 +4,11 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.Permissions.Queries;
-using Noots.Sharing.Commands.Folders;
 using Notifications.Services;
+using Sharing.Commands.Folders;
 using SignalrUpdater.Impl;
 
-namespace Noots.Sharing.Handlers.Commands;
+namespace Sharing.Handlers.Commands;
 
 public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionUserOnPrivateFolders, OperationResult<Unit>>
 {

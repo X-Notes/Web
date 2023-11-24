@@ -4,11 +4,11 @@ using Common.DTO.WebSockets.Permissions;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
-using Noots.Sharing.Commands.Notes;
 using Notifications.Services;
+using Sharing.Commands.Notes;
 using SignalrUpdater.Impl;
 
-namespace Noots.Sharing.Handlers.Commands;
+namespace Sharing.Handlers.Commands;
 
 public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUserOnPrivateNotes, OperationResult<Unit>>
 {

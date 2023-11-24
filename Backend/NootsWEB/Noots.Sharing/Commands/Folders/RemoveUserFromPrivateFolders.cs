@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Sharing.Commands.Folders
+namespace Sharing.Commands.Folders
 {
     public class RemoveUserFromPrivateFolders : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
