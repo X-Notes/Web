@@ -1,4 +1,4 @@
-﻿namespace Noots.History.Entities
+﻿namespace History.Entities
 {
     public class NoteHistoryDTOAnswer
     {

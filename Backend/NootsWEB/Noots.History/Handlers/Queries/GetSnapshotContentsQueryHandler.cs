@@ -5,12 +5,12 @@ using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Text;
 using DatabaseContext.Repositories.Files;
 using DatabaseContext.Repositories.Histories;
+using History.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Noots.History.Queries;
 using Permissions.Queries;
 
-namespace Noots.History.Handlers.Queries
+namespace History.Handlers.Queries
 {
     public class GetSnapshotContentsQueryHandler : IRequestHandler<GetSnapshotContentsQuery, OperationResult<List<BaseNoteContentDTO>>>
     {

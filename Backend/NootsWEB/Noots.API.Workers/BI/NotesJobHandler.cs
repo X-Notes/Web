@@ -4,9 +4,9 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 using DatabaseContext.Repositories.Histories;
 using DatabaseContext.Repositories.NoteContent;
 using DatabaseContext.Repositories.Notes;
+using History.Commands;
+using History.Impl;
 using MediatR;
-using Noots.History.Commands;
-using Noots.History.Impl;
 using Notes.Handlers.Commands;
 
 namespace API.Worker.BI;

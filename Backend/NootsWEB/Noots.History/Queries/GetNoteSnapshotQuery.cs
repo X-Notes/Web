@@ -1,10 +1,10 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using History.Entities;
 using MediatR;
-using Noots.History.Entities;
 
-namespace Noots.History.Queries
+namespace History.Queries
 {
     public class GetNoteSnapshotQuery : BaseQueryEntity, IRequest<OperationResult<NoteHistoryDTOAnswer>>
     {

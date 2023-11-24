@@ -1,14 +1,14 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Common.DTO.Notes.FullNoteContent;
+﻿using Common;
 using Common.DTO;
-using Noots.History.Entities;
-using Noots.History.Queries;
-using Common;
+using Common.DTO.Notes.FullNoteContent;
 using Common.Filters;
+using History.Entities;
+using History.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Noots.History.Api;
+namespace History.Api;
 
 [Authorize]
 [Route("api/[controller]")]

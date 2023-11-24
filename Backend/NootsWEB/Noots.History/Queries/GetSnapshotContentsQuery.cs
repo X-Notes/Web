@@ -4,7 +4,7 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
-namespace Noots.History.Queries
+namespace History.Queries
 {
     public class GetSnapshotContentsQuery : BaseQueryEntity, IRequest<OperationResult<List<BaseNoteContentDTO>>>
     {

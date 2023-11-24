@@ -9,10 +9,10 @@ using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
 using DatabaseContext.Repositories.NoteContent;
 using Editor.Commands.Structure;
+using History.Impl;
 using Mapper.Mapping;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 

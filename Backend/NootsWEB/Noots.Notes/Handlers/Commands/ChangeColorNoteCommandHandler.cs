@@ -1,8 +1,8 @@
 ﻿using Common.DTO;
 using Common.DTO.WebSockets;
 using DatabaseContext.Repositories.Notes;
+using History.Impl;
 using MediatR;
-using Noots.History.Impl;
 using Notes.Commands;
 using Permissions.Queries;
 using SignalrUpdater.Impl;

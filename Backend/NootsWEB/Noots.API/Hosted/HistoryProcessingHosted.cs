@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Channels;
+using History.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Noots.History.Impl;
 
 namespace API.Hosted;
 

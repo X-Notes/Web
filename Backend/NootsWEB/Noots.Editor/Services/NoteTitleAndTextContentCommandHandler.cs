@@ -9,9 +9,9 @@ using DatabaseContext.Repositories.Notes;
 using Editor.Commands.Text;
 using Editor.Commands.Title;
 using Editor.Entities;
+using History.Impl;
 using Mapper.Mapping;
 using MediatR;
-using Noots.History.Impl;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 

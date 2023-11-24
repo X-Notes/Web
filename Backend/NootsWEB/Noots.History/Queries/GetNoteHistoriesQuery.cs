@@ -1,9 +1,9 @@
 ﻿using Common.CQRS;
 using Common.DTO;
+using History.Entities;
 using MediatR;
-using Noots.History.Entities;
 
-namespace Noots.History.Queries
+namespace History.Queries
 {
     public class GetNoteHistoriesQuery : BaseQueryEntity, IRequest<OperationResult<List<NoteHistoryDTO>>>
     {

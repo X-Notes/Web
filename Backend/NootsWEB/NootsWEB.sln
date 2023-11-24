@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentProcessing", "Conten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "Noots.API.Workers\API.Worker.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.History", "Noots.History\Noots.History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "History", "Noots.History\History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Noots.Mapper\Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
 EndProject

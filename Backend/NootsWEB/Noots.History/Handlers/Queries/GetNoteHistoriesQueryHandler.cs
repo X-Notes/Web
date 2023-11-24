@@ -5,13 +5,13 @@ using Common.DatabaseModels.Models.Users;
 using Common.DTO;
 using Common.DTO.Users;
 using DatabaseContext.Repositories.Histories;
+using History.Entities;
+using History.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Noots.History.Entities;
-using Noots.History.Queries;
 using Permissions.Queries;
 
-namespace Noots.History.Handlers.Queries;
+namespace History.Handlers.Queries;
 
 public class GetNoteHistoriesQueryHandler : IRequestHandler<GetNoteHistoriesQuery, OperationResult<List<NoteHistoryDTO>>>
 {

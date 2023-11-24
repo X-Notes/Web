@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Users;
 
-namespace Noots.History.Entities
+namespace History.Entities
 {
     public class NoteHistoryDTO
     {

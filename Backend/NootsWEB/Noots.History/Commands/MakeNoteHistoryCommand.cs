@@ -1,8 +1,8 @@
-﻿using MediatR;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
+using MediatR;
 
-namespace Noots.History.Commands
+namespace History.Commands
 {
     public class MakeNoteHistoryCommand : IRequest<Unit>
     {

@@ -2,12 +2,12 @@
 using Common.DTO;
 using Common.DTO.Labels;
 using DatabaseContext.Repositories.Histories;
+using History.Entities;
+using History.Queries;
 using MediatR;
-using Noots.History.Entities;
-using Noots.History.Queries;
 using Permissions.Queries;
 
-namespace Noots.History.Handlers.Queries;
+namespace History.Handlers.Queries;
 
 public class GetNoteSnapshotQueryHandler : IRequestHandler<GetNoteSnapshotQuery, OperationResult<NoteHistoryDTOAnswer>>
 {

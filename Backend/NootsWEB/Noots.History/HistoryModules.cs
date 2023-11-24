@@ -1,15 +1,15 @@
-﻿using Common.DTO.Notes.FullNoteContent;
-using Common.DTO;
+﻿using Common.DTO;
+using Common.DTO.Notes.FullNoteContent;
+using History.Commands;
+using History.Entities;
+using History.Handlers.Commands;
+using History.Handlers.Queries;
+using History.Impl;
+using History.Queries;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.History.Queries;
-using Noots.History.Entities;
-using Noots.History.Impl;
-using Noots.History.Commands;
-using Noots.History.Handlers.Commands;
-using Noots.History.Handlers.Queries;
 
-namespace Noots.History
+namespace History
 {
     public static class HistoryModules
     {

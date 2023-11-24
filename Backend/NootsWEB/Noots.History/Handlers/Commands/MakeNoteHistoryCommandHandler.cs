@@ -6,11 +6,11 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using DatabaseContext.Repositories.Histories;
 using DatabaseContext.Repositories.Notes;
+using History.Commands;
 using Mapper.Mapping;
 using MediatR;
-using Noots.History.Commands;
 
-namespace Noots.History.Handlers.Commands;
+namespace History.Handlers.Commands;
 
 public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryCommand, Unit>
 {

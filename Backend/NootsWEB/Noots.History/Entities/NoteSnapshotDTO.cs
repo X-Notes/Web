@@ -2,7 +2,7 @@
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Labels;
 
-namespace Noots.History.Entities
+namespace History.Entities
 {
     public class NoteSnapshotDTO
     {
