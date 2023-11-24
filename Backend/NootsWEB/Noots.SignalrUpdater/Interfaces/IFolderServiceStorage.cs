@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.WS;
 
-namespace Noots.SignalrUpdater.Interfaces;
+namespace SignalrUpdater.Interfaces;
 
 public interface IFolderServiceStorage
 {

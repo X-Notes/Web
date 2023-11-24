@@ -5,8 +5,8 @@ using Common.DTO.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Noots.SignalrUpdater.Entities;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Entities;
+using SignalrUpdater.Impl;
 
 namespace API.Controllers
 {

@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users", "Noots.Users\Users.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Sharing", "Noots.Sharing\Noots.Sharing.csproj", "{16AD0F22-59F5-4DB3-8245-A49405310EF7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.SignalrUpdater", "Noots.SignalrUpdater\Noots.SignalrUpdater.csproj", "{D28813C7-7D32-4403-8988-940119239E56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalrUpdater", "Noots.SignalrUpdater\SignalrUpdater.csproj", "{D28813C7-7D32-4403-8988-940119239E56}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backgrounds", "Noots.Backgrounds\Backgrounds.csproj", "{7762D56E-5553-4710-A3FC-6798B9179DE3}"
 EndProject

@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.WS;
 using Noots.DatabaseContext.Repositories.WS;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Interfaces;
 
-namespace Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage
+namespace SignalrUpdater.Impl.NoteFolderStates.DBStorage
 {
     public class WSFolderServiceStorage : IFolderServiceStorage
     {

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO;
 using MediatR;
@@ -9,10 +8,10 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Entities;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Entities;
+using SignalrUpdater.Interfaces;
 
-namespace Noots.SignalrUpdater.Impl;
+namespace SignalrUpdater.Impl;
 
 [Authorize]
 public class AppSignalRHub : Hub

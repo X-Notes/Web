@@ -1,10 +1,8 @@
 ﻿using Common.DTO.WebSockets;
 using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Interfaces;
 
-namespace Noots.SignalrUpdater.Impl
+namespace SignalrUpdater.Impl
 {
     public class FolderWSUpdateService
     {

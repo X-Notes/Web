@@ -1,7 +1,7 @@
 ﻿using Common;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Noots.SignalrUpdater.Impl;
+namespace SignalrUpdater.Impl;
 
 public class IdProvider : IUserIdProvider
 {

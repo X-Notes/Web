@@ -7,7 +7,7 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
 using Noots.Notes.Commands;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Impl;
 
 namespace Noots.Notes.Handlers.Commands;
 

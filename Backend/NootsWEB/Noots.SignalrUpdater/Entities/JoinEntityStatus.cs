@@ -1,7 +1,7 @@
 ﻿
 using Common.DTO;
 
-namespace Noots.SignalrUpdater.Entities;
+namespace SignalrUpdater.Entities;
 
 public class JoinEntityStatus
 {

@@ -6,8 +6,8 @@ using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Impl;
 using Noots.Permissions.Queries;
 using Noots.Sharing.Commands.Notes;
-using Noots.SignalrUpdater.Impl;
 using Notifications.Services;
+using SignalrUpdater.Impl;
 
 namespace Noots.Sharing.Handlers.Commands;
 

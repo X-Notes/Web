@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Noots.Notes.Commands.Copy;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Impl;
 
 namespace API.Hosted;
 

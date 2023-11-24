@@ -7,8 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Noots.MapperLocked;
-using Noots.SignalrUpdater;
-using Noots.SignalrUpdater.Impl;
 using Serilog;
 using System;
 using API.ConfigureAPP;
@@ -24,6 +22,8 @@ using Common.SignalR;
 using Common.Google;
 using Mapper;
 using Noots.Editor.Services;
+using SignalrUpdater;
+using SignalrUpdater.Impl;
 using Storage;
 
 var builder = WebApplication.CreateBuilder(args);

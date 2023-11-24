@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Noots.SignalrUpdater.Impl;
-using Noots.SignalrUpdater.Impl.NoteFolderStates.DBStorage;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Impl;
+using SignalrUpdater.Impl.NoteFolderStates.DBStorage;
+using SignalrUpdater.Interfaces;
 
-namespace Noots.SignalrUpdater
+namespace SignalrUpdater
 {
     public static class SignalrUpdaterModules
     {

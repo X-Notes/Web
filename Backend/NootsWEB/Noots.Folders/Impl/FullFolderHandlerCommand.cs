@@ -8,7 +8,7 @@ using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Folders.Commands.FolderInner;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Impl;
 
 namespace Noots.Folders.Impl
 {

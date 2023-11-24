@@ -1,10 +1,9 @@
-﻿using Common.DatabaseModels.Models.Notes;
-using Common.DTO.WebSockets;
+﻿using Common.DTO.WebSockets;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Interfaces;
 
-namespace Noots.SignalrUpdater.Impl
+namespace SignalrUpdater.Impl
 {
     public class NoteWSUpdateService
     {

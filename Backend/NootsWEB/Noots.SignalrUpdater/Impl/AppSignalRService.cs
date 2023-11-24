@@ -9,10 +9,9 @@ using Common.DTO.WebSockets.ReletedNotes;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Noots.DatabaseContext.Repositories.WS;
-using Noots.SignalrUpdater.Entities;
-using Noots.SignalrUpdater.Interfaces;
+using SignalrUpdater.Entities;
 
-namespace Noots.SignalrUpdater.Impl
+namespace SignalrUpdater.Impl
 {
     public class AppSignalRService
     {

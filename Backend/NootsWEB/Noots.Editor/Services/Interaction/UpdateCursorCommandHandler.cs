@@ -1,8 +1,8 @@
 ﻿using Common.DTO;
 using MediatR;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Entities;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Entities;
+using SignalrUpdater.Impl;
 
 namespace Noots.Editor.Services.Interaction;
 

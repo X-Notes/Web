@@ -10,7 +10,7 @@ using Noots.Editor.Commands.Videos;
 using Noots.Editor.Entities;
 using Noots.History.Impl;
 using Noots.Permissions.Queries;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Impl;
 
 namespace Noots.Editor.Services.Videos
 {

@@ -4,7 +4,7 @@ using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.Permissions.Queries;
 using Noots.RelatedNotes.Commands;
-using Noots.SignalrUpdater.Impl;
+using SignalrUpdater.Impl;
 
 namespace Noots.RelatedNotes.Handlers.Commands;
 
