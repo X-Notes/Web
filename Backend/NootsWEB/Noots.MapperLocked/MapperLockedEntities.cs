@@ -2,7 +2,7 @@
 using Common.DTO.Notes;
 using Mapper.Mapping;
 
-namespace Noots.MapperLocked
+namespace MapperLocked
 {
     public class MapperLockedEntities
     {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-
-namespace Noots.MapperLocked
+namespace MapperLocked
 {
     public static class MapperLockedModules
     {

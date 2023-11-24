@@ -15,7 +15,7 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
       <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
-      <ProjectReference Include="..\Noots.MapperLocked\Noots.MapperLocked.csproj" />
+      <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
       <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
       <ProjectReference Include="..\Noots.Notes\Notes.csproj" />
       <ProjectReference Include="..\Noots.Search\Search.csproj" />

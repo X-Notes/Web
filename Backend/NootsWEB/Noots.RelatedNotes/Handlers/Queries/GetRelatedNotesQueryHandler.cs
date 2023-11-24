@@ -1,8 +1,8 @@
 ﻿using Common.DTO.Notes;
 using Common.DTO.Personalization;
+using MapperLocked;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Notes;
-using Noots.MapperLocked;
 using RelatedNotes.Queries;
 
 namespace RelatedNotes.Handlers.Queries;

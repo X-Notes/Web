@@ -2,13 +2,13 @@
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Notes;
 using Mapper.Mapping;
+using MapperLocked;
 using MediatR;
 using Noots.DatabaseContext.Dapper.Reps;
 using Noots.DatabaseContext.Repositories.Folders;
 using Noots.DatabaseContext.Repositories.NoteContent;
 using Noots.DatabaseContext.Repositories.Notes;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.MapperLocked;
 using Permissions.Queries;
 using Search.Entities;
 using Search.Queries;
