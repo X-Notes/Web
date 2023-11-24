@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.WS;
 
 public class FolderConnectionRepository : Repository<FolderConnection, int>
 {
-    public FolderConnectionRepository(NootsDBContext contextDB) : base(contextDB)
+    public FolderConnectionRepository(ApiDbContext contextDB) : base(contextDB)
     {
 
     }

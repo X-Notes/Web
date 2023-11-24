@@ -7,7 +7,7 @@ namespace DatabaseContext.Repositories.Histories
 {
     public class NoteSnapshotRepository : Repository<NoteSnapshot, Guid>
     {
-        public NoteSnapshotRepository(NootsDBContext contextDB)
+        public NoteSnapshotRepository(ApiDbContext contextDB)
         : base(contextDB)
         {
 

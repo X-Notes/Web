@@ -7,7 +7,7 @@ namespace DatabaseContext.Repositories.NoteContent
 {
     public class CollectionNoteRepository : Repository<CollectionNote, Guid>
     {
-        public CollectionNoteRepository(NootsDBContext contextDB)
+        public CollectionNoteRepository(ApiDbContext contextDB)
             : base(contextDB)
         {
         }

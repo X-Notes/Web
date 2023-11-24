@@ -5,7 +5,7 @@ namespace DatabaseContext.Repositories.Users
 {
     public class PersonalizationSettingRepository : Repository<PersonalizationSetting, Guid>
     {
-        public PersonalizationSettingRepository(NootsDBContext contextDB)
+        public PersonalizationSettingRepository(ApiDbContext contextDB)
                 : base(contextDB)
         {
         }

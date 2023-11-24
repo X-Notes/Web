@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Notes
 {
     public class RelatedNoteToInnerNoteRepository : Repository<RelatedNoteToInnerNote, int>
     {
-        public RelatedNoteToInnerNoteRepository(NootsDBContext contextDB)
+        public RelatedNoteToInnerNoteRepository(ApiDbContext contextDB)
                 : base(contextDB)
         {
 

@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.WS;
 
 public class NoteConnectionRepository : Repository<NoteConnection, int>
 {
-    public NoteConnectionRepository(NootsDBContext contextDB) : base(contextDB)
+    public NoteConnectionRepository(ApiDbContext contextDB) : base(contextDB)
     {
 
     }

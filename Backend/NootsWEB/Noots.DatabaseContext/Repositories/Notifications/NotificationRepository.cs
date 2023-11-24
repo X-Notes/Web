@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Notifications
 {
     public class NotificationRepository : Repository<Notification, Guid>
     {
-        public NotificationRepository(NootsDBContext contextDB)
+        public NotificationRepository(ApiDbContext contextDB)
             : base(contextDB)
         {
 

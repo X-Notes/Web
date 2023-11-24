@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Labels
 {
     public class LabelRepository : Repository<Label, Guid>
     {
-        public LabelRepository(NootsDBContext contextDB)
+        public LabelRepository(ApiDbContext contextDB)
             : base(contextDB)
         {
 

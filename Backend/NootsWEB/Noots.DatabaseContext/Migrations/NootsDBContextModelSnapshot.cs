@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Noots.DatabaseContext.Migrations
 {
-    [DbContext(typeof(NootsDBContext))]
+    [DbContext(typeof(ApiDbContext))]
     partial class NootsDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

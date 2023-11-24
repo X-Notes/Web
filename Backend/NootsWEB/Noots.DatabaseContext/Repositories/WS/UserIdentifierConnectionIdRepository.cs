@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.WS;
 
 public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierConnectionId, Guid>
 {
-    public UserIdentifierConnectionIdRepository(NootsDBContext contextDB) : base(contextDB)
+    public UserIdentifierConnectionIdRepository(ApiDbContext contextDB) : base(contextDB)
     {
     }
 

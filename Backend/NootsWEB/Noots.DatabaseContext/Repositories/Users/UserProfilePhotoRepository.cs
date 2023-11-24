@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Users
 {
     public class UserProfilePhotoRepository : Repository<UserProfilePhoto, Guid>
     {
-        public UserProfilePhotoRepository(NootsDBContext contextDB)
+        public UserProfilePhotoRepository(ApiDbContext contextDB)
                 : base(contextDB)
         {
         }

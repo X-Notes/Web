@@ -9,7 +9,7 @@ namespace DatabaseContext.Repositories.Users
     {
         private readonly ILogger<BackgroundRepository> logger;
 
-        public BackgroundRepository(NootsDBContext contextDB, ILogger<BackgroundRepository> logger)
+        public BackgroundRepository(ApiDbContext contextDB, ILogger<BackgroundRepository> logger)
             : base(contextDB)
         {
             this.logger = logger;

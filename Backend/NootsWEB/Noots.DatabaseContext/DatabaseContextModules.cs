@@ -31,7 +31,7 @@ namespace DatabaseContext
 
         public static void ApplyDataBaseDI(this IServiceCollection services, string dbConnection)
         {
-            services.AddDbContext<NootsDBContext>(options => options.UseNpgsql(dbConnection));
+            services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(dbConnection));
 
             // NOTIFICATIONS 
             services.AddScoped<NotificationRepository>();

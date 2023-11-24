@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Noots.DatabaseContext.Migrations
 {
-    [DbContext(typeof(NootsDBContext))]
+    [DbContext(typeof(ApiDbContext))]
     [Migration("20231028190941_Initial")]
     partial class Initial
     {

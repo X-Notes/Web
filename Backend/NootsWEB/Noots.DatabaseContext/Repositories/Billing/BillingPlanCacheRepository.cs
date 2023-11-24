@@ -20,7 +20,7 @@ namespace DatabaseContext.Repositories.Billing
             if (_cache == null)
             {
                 using var scope = scopeFactory.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<NootsDBContext>();
+                var context = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
                 var repo = new Repository<BillingPlan, BillingPlanTypeENUM>(context);
 
                 var ents = await repo.GetAllAsync();

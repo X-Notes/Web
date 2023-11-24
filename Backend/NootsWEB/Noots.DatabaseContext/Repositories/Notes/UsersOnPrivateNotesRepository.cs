@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Notes
 {
     public class UsersOnPrivateNotesRepository : Repository<UserOnPrivateNotes, Guid>
     {
-        public UsersOnPrivateNotesRepository(NootsDBContext contextDB)
+        public UsersOnPrivateNotesRepository(ApiDbContext contextDB)
             :base(contextDB)
         {
         }

@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Files
 {
     public class AppFileUploadInfoRepository : Repository<AppFileUploadInfo, Guid>
     {
-        public AppFileUploadInfoRepository(NootsDBContext contextDB) : base(contextDB)
+        public AppFileUploadInfoRepository(ApiDbContext contextDB) : base(contextDB)
         {
         }
 

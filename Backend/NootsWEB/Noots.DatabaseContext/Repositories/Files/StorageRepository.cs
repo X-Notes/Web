@@ -21,7 +21,7 @@ namespace DatabaseContext.Repositories.Files
             if (_cache == null)
             {
                 using var scope = scopeFactory.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<NootsDBContext>();
+                var context = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
                 var repo = new Repository<Storage, StoragesEnum>(context);
 
                 var ents = await repo.GetAllAsync();

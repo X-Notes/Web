@@ -7,9 +7,9 @@ namespace DatabaseContext.GenericRepositories
 {
     public class Repository<T, IdType> : IRepository<T, IdType> where T : BaseEntity<IdType> where IdType : struct
     {
-        public readonly NootsDBContext context;
+        public readonly ApiDbContext context;
         protected DbSet<T> entities;
-        public Repository(NootsDBContext context)
+        public Repository(ApiDbContext context)
         {
             this.context = context;
             entities = context.Set<T>();

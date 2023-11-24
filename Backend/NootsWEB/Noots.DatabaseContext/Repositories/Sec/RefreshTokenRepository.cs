@@ -8,7 +8,7 @@ public class RefreshTokenRepository : Repository<RefreshToken, int>
 {
     private readonly ILogger<RefreshTokenRepository> logger;
 
-    public RefreshTokenRepository(NootsDBContext context, ILogger<RefreshTokenRepository> logger) : base(context)
+    public RefreshTokenRepository(ApiDbContext context, ILogger<RefreshTokenRepository> logger) : base(context)
     {
         this.logger = logger;
     }

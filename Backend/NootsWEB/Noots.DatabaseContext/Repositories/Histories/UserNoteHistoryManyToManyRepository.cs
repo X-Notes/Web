@@ -5,7 +5,7 @@ namespace DatabaseContext.Repositories.Histories
 {
     public class UserNoteHistoryManyToManyRepository : Repository<UserNoteSnapshotManyToMany, Guid>
     {
-        public UserNoteHistoryManyToManyRepository(NootsDBContext contextDB)
+        public UserNoteHistoryManyToManyRepository(ApiDbContext contextDB)
                 : base(contextDB)
         {
 

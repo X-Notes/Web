@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseContext
 {
-    public class NootsDBContext : DbContext
+    public class ApiDbContext : DbContext
     {
         // USERS & NOTIFICATIONS
         public DbSet<User> Users { get; set; }
@@ -107,7 +107,7 @@ namespace DatabaseContext
         public DbSet<RefreshToken> RefreshTokens { set; get; }
 
 
-        public NootsDBContext(DbContextOptions<NootsDBContext> options) : base(options)
+        public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
             //Database.EnsureCreated();
         }

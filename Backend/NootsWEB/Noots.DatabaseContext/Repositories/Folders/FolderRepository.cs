@@ -7,7 +7,7 @@ namespace DatabaseContext.Repositories.Folders
 {
     public class FolderRepository : Repository<Folder, Guid>
     {
-        public FolderRepository(NootsDBContext contextDB)
+        public FolderRepository(ApiDbContext contextDB)
             : base(contextDB)
         {
         }

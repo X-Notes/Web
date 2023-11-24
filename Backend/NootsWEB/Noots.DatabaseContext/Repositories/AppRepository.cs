@@ -8,8 +8,8 @@ namespace DatabaseContext.Repositories
 {
     public class AppRepository
     {
-        private readonly NootsDBContext contextDB;
-        public AppRepository(NootsDBContext contextDB)
+        private readonly ApiDbContext contextDB;
+        public AppRepository(ApiDbContext contextDB)
         {
             this.contextDB = contextDB;
         }

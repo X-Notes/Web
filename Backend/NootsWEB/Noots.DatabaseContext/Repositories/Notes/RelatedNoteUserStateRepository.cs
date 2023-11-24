@@ -5,7 +5,7 @@ namespace DatabaseContext.Repositories.Notes
 {
     public class RelatedNoteUserStateRepository : Repository<RelatedNoteUserState, int>
     {
-        public RelatedNoteUserStateRepository(NootsDBContext contextDB): base(contextDB)
+        public RelatedNoteUserStateRepository(ApiDbContext contextDB): base(contextDB)
         {
         }
     }

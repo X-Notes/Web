@@ -11,7 +11,7 @@ namespace DatabaseContext.Repositories.Users
     {
         private readonly ILogger<UserRepository> logger;
 
-        public UserRepository(NootsDBContext contextDB, ILogger<UserRepository> logger)
+        public UserRepository(ApiDbContext contextDB, ILogger<UserRepository> logger)
             : base(contextDB)
         {
             this.logger = logger;

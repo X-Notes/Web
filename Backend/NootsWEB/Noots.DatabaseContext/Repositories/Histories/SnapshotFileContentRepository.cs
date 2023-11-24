@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Histories
 {
     public class SnapshotFileContentRepository : Repository<SnapshotFileContent, Guid>
     {
-        public SnapshotFileContentRepository(NootsDBContext contextDB): base(contextDB)
+        public SnapshotFileContentRepository(ApiDbContext contextDB): base(contextDB)
         {
 
         }

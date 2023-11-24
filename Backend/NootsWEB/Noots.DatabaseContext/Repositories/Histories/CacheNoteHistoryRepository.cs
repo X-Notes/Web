@@ -5,7 +5,7 @@ namespace DatabaseContext.Repositories.Histories
 {
     public class CacheNoteHistoryRepository : Repository<CacheNoteHistory, Guid>
     {
-        public CacheNoteHistoryRepository(NootsDBContext contextDB): base(contextDB)
+        public CacheNoteHistoryRepository(ApiDbContext contextDB): base(contextDB)
         {
         }
     }

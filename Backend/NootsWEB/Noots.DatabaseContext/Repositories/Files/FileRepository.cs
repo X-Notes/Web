@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Files
 {
     public class FileRepository : Repository<AppFile, Guid>
     {
-        public FileRepository(NootsDBContext contextDB)
+        public FileRepository(ApiDbContext contextDB)
             : base(contextDB)
         {
         }

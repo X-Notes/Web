@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.NoteContent
 {
     public class CollectionAppFileRepository : Repository<CollectionNoteAppFile, Guid>
     {
-        public CollectionAppFileRepository(NootsDBContext contextDB)
+        public CollectionAppFileRepository(ApiDbContext contextDB)
         : base(contextDB)
         {
         }

@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.Folders;
 
 public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders, Guid>
 {
-    public UsersOnPrivateFoldersRepository(NootsDBContext contextDB)
+    public UsersOnPrivateFoldersRepository(ApiDbContext contextDB)
         :base(contextDB)
     {
     }

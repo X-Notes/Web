@@ -6,7 +6,7 @@ namespace DatabaseContext.Repositories.NoteContent;
 
 public class TextNoteIndexRepository : Repository<TextNoteIndex, Guid>
 {
-    public TextNoteIndexRepository(NootsDBContext contextDB)
+    public TextNoteIndexRepository(ApiDbContext contextDB)
             : base(contextDB)
     {
 
