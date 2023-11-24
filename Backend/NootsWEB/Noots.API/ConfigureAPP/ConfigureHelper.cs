@@ -22,10 +22,10 @@ using Noots.Personalization;
 using Noots.RelatedNotes;
 using Noots.Search;
 using Noots.Sharing;
-using Noots.Storage;
 using Notifications;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using Storage;
 using Users;
 
 namespace API.ConfigureAPP

@@ -3,7 +3,7 @@ using Common.DatabaseModels.Models.Files.Models;
 using Common.DTO.Files;
 using MediatR;
 
-namespace Noots.Storage.Queries
+namespace Storage.Queries
 {
     public class GetFileByPathQuery : BaseQueryEntity, IRequest<FilesBytes>
     {

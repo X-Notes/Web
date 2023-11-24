@@ -1,7 +1,7 @@
 ﻿using Common.DTO;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Storage.Queries;
+using Storage.Queries;
 using Users.Commands;
 using Users.Entities;
 using Users.Impl;

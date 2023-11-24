@@ -7,7 +7,7 @@ using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Permissions.Queries;
-using Noots.Storage.Commands;
+using Storage.Commands;
 
 namespace Backgrounds.Handlers.Commands;
 

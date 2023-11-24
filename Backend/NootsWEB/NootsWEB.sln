@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Noots.Mapper\Mapp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Permissions", "Noots.Permissions\Noots.Permissions.csproj", "{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Storage", "Noots.Storage\Noots.Storage.csproj", "{D58AEE45-071B-4DF5-B0EC-038881E77E25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage", "Noots.Storage\Storage.csproj", "{D58AEE45-071B-4DF5-B0EC-038881E77E25}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.MapperLocked", "Noots.MapperLocked\Noots.MapperLocked.csproj", "{94D7F42E-18FC-43BF-B16D-8F515F593167}"
 EndProject

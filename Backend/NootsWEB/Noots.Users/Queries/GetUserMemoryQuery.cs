@@ -1,6 +1,6 @@
 ﻿using Common.CQRS;
 using MediatR;
-using Noots.Storage.Queries;
+using Storage.Queries;
 
 namespace Users.Queries
 {

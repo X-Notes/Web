@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Files.Models;
-using Noots.Storage.Entities;
+using Storage.Entities;
 
-namespace Noots.Storage.Interfaces
+namespace Storage.Interfaces
 {
     public interface IFilesStorage : IDisposable
     {

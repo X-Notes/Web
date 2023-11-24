@@ -5,7 +5,7 @@ using MediatR;
 using Noots.Permissions.Queries;
 using Noots.DatabaseContext.Repositories.Files;
 using Noots.Editor.Commands.Files;
-using Noots.Storage.Commands;
+using Storage.Commands;
 
 namespace Noots.Editor.Services
 {

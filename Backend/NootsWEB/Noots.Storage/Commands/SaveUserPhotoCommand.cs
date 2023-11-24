@@ -2,7 +2,7 @@
 using Common.DTO.Files;
 using MediatR;
 
-namespace Noots.Storage.Commands
+namespace Storage.Commands
 {
     public class SaveUserPhotoCommand : IRequest<AppFile>
     {

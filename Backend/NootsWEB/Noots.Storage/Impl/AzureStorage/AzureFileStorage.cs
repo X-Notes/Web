@@ -1,15 +1,14 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure.Storage;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Azure;
-using Azure.Storage;
-using Microsoft.Extensions.Logging;
-using Noots.Storage.Entities;
-using Noots.Storage.Interfaces;
-using Common.DatabaseModels.Models.Files.Models;
 using Common.Azure;
+using Common.DatabaseModels.Models.Files.Models;
+using Microsoft.Extensions.Logging;
+using Storage.Entities;
+using Storage.Interfaces;
 
-namespace Noots.Storage.Impl.AzureStorage
+namespace Storage.Impl.AzureStorage
 {
     public class AzureFileStorage : IFilesStorage
     {

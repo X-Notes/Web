@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Storage.Queries;
+using Storage.Queries;
 using Users.Commands;
 using Users.Entities;
 using Users.Queries;

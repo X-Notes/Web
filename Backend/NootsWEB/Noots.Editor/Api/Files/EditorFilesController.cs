@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.Editor.Commands.Files;
 using Noots.Editor.Services;
-using Noots.Storage.Commands;
+using Storage.Commands;
 
 namespace Noots.Editor.Api.Files;
 

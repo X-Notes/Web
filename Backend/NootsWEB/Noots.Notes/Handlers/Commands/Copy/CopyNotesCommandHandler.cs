@@ -23,8 +23,8 @@ using Noots.DatabaseContext.Repositories.Users;
 using Noots.Editor.Services;
 using Noots.Notes.Commands.Copy;
 using Noots.Permissions.Queries;
-using Noots.Storage.Commands;
-using Noots.Storage.Entities;
+using Storage.Commands;
+using Storage.Entities;
 
 namespace Noots.Notes.Handlers.Commands.Copy;
 

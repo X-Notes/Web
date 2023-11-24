@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Files.Models;
 using MediatR;
-using Noots.Storage.Entities;
+using Storage.Entities;
 
-namespace Noots.Storage.Commands
+namespace Storage.Commands
 {
     public class CopyBlobFromContainerToContainerCommand : IRequest<(bool success, AppFile file)>
     {

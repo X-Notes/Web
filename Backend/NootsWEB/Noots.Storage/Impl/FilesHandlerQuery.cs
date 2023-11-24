@@ -1,10 +1,10 @@
 ﻿using Common.DTO.Files;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
-using Noots.Storage.Interfaces;
-using Noots.Storage.Queries;
+using Storage.Interfaces;
+using Storage.Queries;
 
-namespace Noots.Storage.Impl
+namespace Storage.Impl
 {
     public class FilesHandlerQuery :
         IRequestHandler<GetFileByPathQuery, FilesBytes>,

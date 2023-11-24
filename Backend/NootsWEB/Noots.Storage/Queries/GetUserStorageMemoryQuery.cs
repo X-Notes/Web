@@ -1,7 +1,7 @@
 ﻿using Common.CQRS;
 using MediatR;
 
-namespace Noots.Storage.Queries
+namespace Storage.Queries
 {
     public class GetUserMemoryResponse
     {

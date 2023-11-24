@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using MediatR;
 
-namespace Noots.Storage.Commands
+namespace Storage.Commands
 {
     public class RemoveFilesFromStorageCommand : IRequest<Unit>
     {

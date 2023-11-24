@@ -1,6 +1,6 @@
 ﻿
 
-namespace Noots.Storage.Entities
+namespace Storage.Entities
 {
     public class UploadFileResult
     {

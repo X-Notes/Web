@@ -4,8 +4,7 @@ using Common.DTO;
 using Common.DTO.Files;
 using MediatR;
 
-
-namespace Noots.Storage.Commands
+namespace Storage.Commands
 {
     public class UpdateFileMetaDataCommand : BaseCommandEntity, IRequest<OperationResult<FileDTO>>
     {

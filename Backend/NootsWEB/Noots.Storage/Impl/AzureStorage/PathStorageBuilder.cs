@@ -1,7 +1,7 @@
 ﻿
-using Noots.Storage.Entities;
+using Storage.Entities;
 
-namespace Noots.Storage.Impl.AzureStorage
+namespace Storage.Impl.AzureStorage
 {
     public class PathStorageBuilder
     {

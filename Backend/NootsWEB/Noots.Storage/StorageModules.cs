@@ -1,18 +1,17 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DTO.Files;
+﻿using Common.Azure;
+using Common.DatabaseModels.Models.Files;
 using Common.DTO;
+using Common.DTO.Files;
+using ContentProcessing;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Storage.Commands;
-using Noots.Storage.Impl;
-using Noots.Storage.Queries;
-using Common.Azure;
-using Microsoft.Extensions.Azure;
-using ContentProcessing;
-using Noots.Storage.Impl.AzureStorage;
-using Noots.Storage.Interfaces;
+using Storage.Commands;
+using Storage.Impl;
+using Storage.Impl.AzureStorage;
+using Storage.Interfaces;
+using Storage.Queries;
 
-namespace Noots.Storage
+namespace Storage
 {
     public static class StorageModules
     {

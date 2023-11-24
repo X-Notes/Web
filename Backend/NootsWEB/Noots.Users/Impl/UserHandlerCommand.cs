@@ -7,8 +7,8 @@ using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Users;
 using Noots.Permissions.Queries;
-using Noots.Storage.Commands;
-using Noots.Storage.Impl;
+using Storage.Commands;
+using Storage.Impl;
 using Users.Commands;
 using Users.Entities;
 

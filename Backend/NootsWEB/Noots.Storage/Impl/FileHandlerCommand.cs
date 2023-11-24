@@ -6,13 +6,12 @@ using ContentProcessing;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Users;
-using Noots.Storage.Commands;
-using Noots.Storage.Entities;
-using Noots.Storage.Impl.AzureStorage;
-using Noots.Storage.Interfaces;
+using Storage.Commands;
+using Storage.Entities;
+using Storage.Impl.AzureStorage;
+using Storage.Interfaces;
 
-namespace Noots.Storage.Impl
+namespace Storage.Impl
 {
     public class FileHandlerCommand :
         IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,

@@ -1,7 +1,7 @@
 ﻿using Common.Azure;
 using Common.DatabaseModels.Models.Files.Models;
 
-namespace Noots.Storage.Impl
+namespace Storage.Impl
 {
     public class StorageIdProvider
     {
