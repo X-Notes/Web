@@ -2,7 +2,7 @@
 using Common.CQRS;
 using MediatR;
 
-namespace Noots.Labels.Commands
+namespace Labels.Commands
 {
     public class RestoreLabelCommand : BaseCommandEntity, IRequest<Unit>
     {

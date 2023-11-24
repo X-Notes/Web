@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.DatabaseContext", "No
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Noots.Auth\Auth.csproj", "{1D324309-821D-45A0-9562-1FEB869D17EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Labels", "Noots.Labels\Noots.Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Labels", "Noots.Labels\Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
 EndProject

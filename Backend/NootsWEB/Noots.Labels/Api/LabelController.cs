@@ -2,13 +2,13 @@
 using Common.DTO;
 using Common.DTO.Labels;
 using Common.Filters;
+using Labels.Commands;
+using Labels.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Labels.Commands;
-using Noots.Labels.Queries;
 
-namespace Noots.Labels.Api;
+namespace Labels.Api;
 
 [Authorize]
 [Route("api/[controller]")]

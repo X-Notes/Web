@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using Labels.Queries;
+using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.Labels.Queries;
 
-namespace Noots.Labels.Handlers.Queries;
+namespace Labels.Handlers.Queries;
 
 public class GetCountNotesByLabelQueryHandler : IRequestHandler<GetCountNotesByLabelQuery, int>
 {

@@ -2,7 +2,7 @@
 using Common.DTO.Labels;
 using MediatR;
 
-namespace Noots.Labels.Queries
+namespace Labels.Queries
 {
     public class GetLabelsQuery : BaseQueryEntity, IRequest<List<LabelDTO>>
     {

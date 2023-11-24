@@ -2,7 +2,7 @@
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Labels.Commands
+namespace Labels.Commands
 {
     public class NewLabelCommand : BaseCommandEntity, IRequest<OperationResult<Guid>>
     {

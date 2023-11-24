@@ -1,13 +1,13 @@
 ﻿using Common.DTO;
 using Common.DTO.Labels;
+using Labels.Commands;
+using Labels.Handlers.Commands;
+using Labels.Handlers.Queries;
+using Labels.Queries;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Labels.Commands;
-using Noots.Labels.Handlers.Commands;
-using Noots.Labels.Handlers.Queries;
-using Noots.Labels.Queries;
 
-namespace Noots.Labels;
+namespace Labels;
 
 public static class LabelsModule
 {

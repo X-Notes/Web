@@ -1,9 +1,9 @@
 ﻿using Common;
+using Labels.Commands;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.Labels.Commands;
 
-namespace Noots.Labels.Handlers.Commands;
+namespace Labels.Handlers.Commands;
 
 public class UpdateLabelCommandHandler : IRequestHandler<UpdateLabelCommand, Unit>
 {

@@ -1,7 +1,7 @@
 ﻿using Common.CQRS;
 using MediatR;
 
-namespace Noots.Labels.Queries
+namespace Labels.Queries
 {
     public class GetCountNotesByLabelQuery : BaseQueryEntity, IRequest<int>
     {

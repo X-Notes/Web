@@ -3,7 +3,7 @@ using Common.Attributes;
 using Common.CQRS;
 using MediatR;
 
-namespace Noots.Labels.Commands
+namespace Labels.Commands
 {
     public class UpdateLabelCommand : BaseCommandEntity, IRequest<Unit>
     {

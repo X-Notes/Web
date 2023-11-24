@@ -1,10 +1,10 @@
 ﻿using Common.DTO.Labels;
+using Labels.Queries;
 using Mapper.Mapping;
 using MediatR;
 using Noots.DatabaseContext.Repositories.Labels;
-using Noots.Labels.Queries;
 
-namespace Noots.Labels.Handlers.Queries;
+namespace Labels.Handlers.Queries;
 
 public class GetLabelsQueryHandler : IRequestHandler<GetLabelsQuery, List<LabelDTO>>
 {
