@@ -2,8 +2,8 @@
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.WebSockets.ReletedNotes;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Notes;
 using Permissions.Queries;
 using RelatedNotes.Commands;
 using SignalrUpdater.Impl;

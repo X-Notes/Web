@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Notes;
 using Notifications.Services;
 using Permissions.Queries;
 using Sharing.Commands.Notes;

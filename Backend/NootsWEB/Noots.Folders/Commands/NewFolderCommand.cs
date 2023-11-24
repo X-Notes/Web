@@ -3,7 +3,7 @@ using Common.DTO;
 using Common.DTO.Folders;
 using MediatR;
 
-namespace Noots.Folders.Commands
+namespace Folders.Commands
 {
     public class NewFolderCommand : BaseCommandEntity, IRequest<OperationResult<SmallFolder>>
     {

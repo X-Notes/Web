@@ -1,16 +1,15 @@
-﻿using Common;
-using Common.DatabaseModels.Models.Folders;
+﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
 using Common.DTO.WebSockets;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Notes;
+using Folders.Commands.FolderInner;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Folders.Commands.FolderInner;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Folders.Impl
+namespace Folders.Impl
 {
     public class FullFolderHandlerCommand :
         IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>,

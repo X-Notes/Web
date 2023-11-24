@@ -2,10 +2,10 @@
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Notes
+namespace DatabaseContext.Repositories.Notes
 {
     public class NoteRepository : Repository<Note, Guid>
     {

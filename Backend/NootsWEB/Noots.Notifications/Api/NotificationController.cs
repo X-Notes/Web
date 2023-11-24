@@ -1,10 +1,10 @@
 ﻿using Common;
 using Common.DTO.Notifications;
 using Common.Filters;
+using DatabaseContext.Repositories.Notifications;
 using Mapper.Mapping;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.DatabaseContext.Repositories.Notifications;
 
 namespace Notifications.Api;
 

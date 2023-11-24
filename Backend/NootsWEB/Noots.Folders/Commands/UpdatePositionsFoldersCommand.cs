@@ -4,7 +4,7 @@ using Common.DTO;
 using Common.DTO.Notes;
 using MediatR;
 
-namespace Noots.Folders.Commands
+namespace Folders.Commands
 {
     public class UpdatePositionsFoldersCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

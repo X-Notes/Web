@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Folders.Commands
+namespace Folders.Commands
 {
     public class SetDeleteFolderCommand : BaseCommandEntity, IRequest<OperationResult<List<Guid>>>
     {

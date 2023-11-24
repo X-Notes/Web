@@ -1,6 +1,6 @@
 ﻿using Backgrounds.Commands;
+using DatabaseContext.Repositories.Users;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Users;
 
 namespace Backgrounds.Handlers.Commands;
 

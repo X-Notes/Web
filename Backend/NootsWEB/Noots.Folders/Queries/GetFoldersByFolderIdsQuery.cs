@@ -6,7 +6,7 @@ using Common.DTO.Folders;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Noots.Folders.Queries
+namespace Folders.Queries
 {
     public class GetFoldersByFolderIdsQuery : BaseQueryEntity, IRequest<OperationResult<List<SmallFolder>>>
     {

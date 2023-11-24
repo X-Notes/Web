@@ -1,10 +1,10 @@
-﻿using Common.CQRS;
+﻿using System.ComponentModel.DataAnnotations;
+using Common.CQRS;
 using Common.DTO;
+using Folders.Entities;
 using MediatR;
-using Noots.Folders.Entities;
-using System.ComponentModel.DataAnnotations;
 
-namespace Noots.Folders.Commands;
+namespace Folders.Commands;
 
 public class CopyFolderCommand : BaseCommandEntity, IRequest<OperationResult<CopyFoldersResult>>
 {

@@ -1,7 +1,7 @@
 ﻿using Common.DTO.Users;
+using DatabaseContext.Repositories.Folders;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
 using Sharing.Queries;
 
 namespace Sharing.Handlers.Queries;

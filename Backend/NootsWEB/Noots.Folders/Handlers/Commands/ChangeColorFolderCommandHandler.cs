@@ -1,13 +1,12 @@
-﻿using Common;
-using Common.DTO;
+﻿using Common.DTO;
 using Common.DTO.WebSockets;
+using DatabaseContext.Repositories.Folders;
+using Folders.Commands;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Commands;
 using Permissions.Queries;
 using SignalrUpdater.Impl;
 
-namespace Noots.Folders.Handlers.Commands;
+namespace Folders.Handlers.Commands;
 
 public class ChangeColorFolderCommandHandler : IRequestHandler<ChangeColorFolderCommand, OperationResult<Unit>>
 {

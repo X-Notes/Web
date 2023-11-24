@@ -1,10 +1,10 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Users;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Users
+namespace DatabaseContext.Repositories.Users
 {
     // TODO OPTIMIZATION SQL QUERY
     public class UserRepository : Repository<User, Guid>

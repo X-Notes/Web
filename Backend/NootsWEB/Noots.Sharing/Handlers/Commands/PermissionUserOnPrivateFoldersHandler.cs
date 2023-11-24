@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Folders;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
 using Notifications.Services;
 using Permissions.Queries;
 using Sharing.Commands.Folders;

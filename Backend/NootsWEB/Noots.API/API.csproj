@@ -40,7 +40,7 @@
     <ProjectReference Include="..\Noots.Auth\Auth.csproj" />
     <ProjectReference Include="..\Noots.Backgrounds\Backgrounds.csproj" />
     <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
-    <ProjectReference Include="..\Noots.Folders\Noots.Folders.csproj" />
+    <ProjectReference Include="..\Noots.Folders\Folders.csproj" />
     <ProjectReference Include="..\Noots.History\Noots.History.csproj" />
     <ProjectReference Include="..\Noots.Labels\Labels.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />

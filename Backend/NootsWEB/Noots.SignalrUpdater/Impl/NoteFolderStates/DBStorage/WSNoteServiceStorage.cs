@@ -1,5 +1,5 @@
 ﻿using Common.DatabaseModels.Models.WS;
-using Noots.DatabaseContext.Repositories.WS;
+using DatabaseContext.Repositories.WS;
 using SignalrUpdater.Interfaces;
 
 namespace SignalrUpdater.Impl.NoteFolderStates.DBStorage

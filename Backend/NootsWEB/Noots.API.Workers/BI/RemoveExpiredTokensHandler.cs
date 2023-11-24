@@ -1,5 +1,5 @@
 ﻿using Common;
-using Noots.DatabaseContext.Repositories.Sec;
+using DatabaseContext.Repositories.Sec;
 
 namespace API.Worker.BI;
 

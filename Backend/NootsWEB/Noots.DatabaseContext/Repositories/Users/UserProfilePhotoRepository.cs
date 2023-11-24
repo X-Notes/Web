@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Users;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Users
+namespace DatabaseContext.Repositories.Users
 {
     public class UserProfilePhotoRepository : Repository<UserProfilePhoto, Guid>
     {

@@ -4,7 +4,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Folders.Commands
+namespace Folders.Commands
 {
     public class ChangeColorFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

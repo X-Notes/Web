@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Security;
+using DatabaseContext.GenericRepositories;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Sec;
+namespace DatabaseContext.Repositories.Sec;
 
 public class RefreshTokenRepository : Repository<RefreshToken, int>
 {

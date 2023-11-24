@@ -1,8 +1,8 @@
 ﻿using Common.DTO.Users;
+using DatabaseContext.Repositories.Users;
 using Editor.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Users;
 using Permissions.Queries;
 using SignalrUpdater.Interfaces;
 

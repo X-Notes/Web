@@ -1,13 +1,13 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Notes;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Notes;
+using Folders.Queries;
 using MapperLocked;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Folders.Queries;
 using Permissions.Queries;
 
-namespace Noots.Folders.Impl
+namespace Folders.Impl
 {
     public class FullFolderHandlerQuery : IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>
     {

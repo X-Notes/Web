@@ -1,8 +1,8 @@
 ﻿using Backgrounds.Queries;
 using Common.DTO.Backgrounds;
+using DatabaseContext.Repositories.Users;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Users;
 
 namespace Backgrounds.Handlers.Queries;
 

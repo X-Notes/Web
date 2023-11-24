@@ -1,14 +1,11 @@
-﻿using Common.DatabaseModels.Models.Folders;
-using Common.DTO;
+﻿using Common.DTO;
+using DatabaseContext.Repositories.Folders;
+using Folders.Commands.Sync;
+using Folders.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Commands.Sync;
-using Noots.Folders.Entities;
 using Permissions.Queries;
 
-namespace Noots.Folders.Handlers.Commands.Sync;
+namespace Folders.Handlers.Commands.Sync;
 
 public class SyncFolderStateCommandHandler : IRequestHandler<SyncFolderStateCommand, OperationResult<SyncFolderResult>>
 {

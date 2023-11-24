@@ -1,13 +1,13 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
 using Common.DTO.Folders;
+using DatabaseContext.Repositories.Folders;
+using Folders.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Queries;
 using Permissions.Queries;
 
-namespace Noots.Folders.Handlers.Queries;
+namespace Folders.Handlers.Queries;
 
 public class GetFoldersByFolderIdsQueryHandler : IRequestHandler<GetFoldersByFolderIdsQuery, OperationResult<List<SmallFolder>>>
 {

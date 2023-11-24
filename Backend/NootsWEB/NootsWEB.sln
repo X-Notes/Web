@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backgrounds", "Noots.Backgr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelatedNotes", "Noots.RelatedNotes\RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.DatabaseContext", "Noots.DatabaseContext\Noots.DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseContext", "Noots.DatabaseContext\DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Noots.Auth\Auth.csproj", "{1D324309-821D-45A0-9562-1FEB869D17EF}"
 EndProject
@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Bi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes", "Noots.Notes\Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noots.Folders", "Noots.Folders\Noots.Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Folders", "Noots.Folders\Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Noots.Notifications\Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
 EndProject

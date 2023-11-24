@@ -1,6 +1,6 @@
 ﻿using API.Worker.Models.Config;
 using Common;
-using Noots.DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Folders;
 
 namespace API.Worker.BI;
 

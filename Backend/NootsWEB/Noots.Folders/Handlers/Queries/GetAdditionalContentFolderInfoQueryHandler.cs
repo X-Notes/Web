@@ -1,9 +1,9 @@
 ﻿using Common.DTO.Folders.AdditionalContent;
+using DatabaseContext.Repositories.Folders;
+using Folders.Queries;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Queries;
 
-namespace Noots.Folders.Handlers.Queries;
+namespace Folders.Handlers.Queries;
 
 public class GetAdditionalContentFolderInfoQueryHandler : IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>
 {

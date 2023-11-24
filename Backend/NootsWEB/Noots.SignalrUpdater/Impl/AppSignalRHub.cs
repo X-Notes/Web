@@ -1,12 +1,12 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO;
+using DatabaseContext.Repositories.WS;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.Repositories.WS;
 using Permissions.Queries;
 using SignalrUpdater.Entities;
 using SignalrUpdater.Interfaces;

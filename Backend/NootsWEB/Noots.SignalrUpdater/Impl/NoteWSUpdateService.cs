@@ -1,6 +1,6 @@
 ﻿using Common.DTO.WebSockets;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Notes;
 using SignalrUpdater.Interfaces;
 
 namespace SignalrUpdater.Impl

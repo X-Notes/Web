@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Users;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Users;
 using Permissions.Entities;
 using Permissions.Queries;
 

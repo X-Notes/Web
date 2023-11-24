@@ -4,12 +4,12 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using Common.DTO.Folders;
+using DatabaseContext.Repositories.Folders;
+using Folders.Commands;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Commands;
 
-namespace Noots.Folders.Handlers.Commands;
+namespace Folders.Handlers.Commands;
 
 public class NewFolderCommandHandler : IRequestHandler<NewFolderCommand, OperationResult<SmallFolder>>
 {

@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Users;
+using DatabaseContext.GenericRepositories;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Users
+namespace DatabaseContext.Repositories.Users
 {
     public class BackgroundRepository : Repository<Background, Guid>
     {

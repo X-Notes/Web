@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.FileContent;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.NoteContent
+namespace DatabaseContext.Repositories.NoteContent
 {
     public class CollectionAppFileRepository : Repository<CollectionNoteAppFile, Guid>
     {

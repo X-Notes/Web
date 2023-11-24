@@ -1,10 +1,9 @@
-﻿using Common.DatabaseModels;
+﻿using System.Data;
+using Common.DatabaseModels;
 using Common.DatabaseModels.Models.Security;
-using Common.DatabaseModels.Models.Users;
 using Dapper;
-using System.Data;
 
-namespace Noots.DatabaseContext.Dapper.Reps;
+namespace DatabaseContext.Dapper.Reps;
 
 public class DapperRefreshTokenRepository : IDisposable
 {

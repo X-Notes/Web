@@ -1,22 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DatabaseContext.Dapper;
+using DatabaseContext.Dapper.Reps;
+using DatabaseContext.GenericRepositories;
+using DatabaseContext.Repositories;
+using DatabaseContext.Repositories.Billing;
+using DatabaseContext.Repositories.Files;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Histories;
+using DatabaseContext.Repositories.Labels;
+using DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Notes;
+using DatabaseContext.Repositories.Notifications;
+using DatabaseContext.Repositories.Sec;
+using DatabaseContext.Repositories.Users;
+using DatabaseContext.Repositories.WS;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.DatabaseContext.Dapper;
-using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.GenericRepositories;
-using Noots.DatabaseContext.Repositories;
-using Noots.DatabaseContext.Repositories.Billing;
-using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Histories;
-using Noots.DatabaseContext.Repositories.Labels;
-using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.DatabaseContext.Repositories.Notifications;
-using Noots.DatabaseContext.Repositories.Sec;
-using Noots.DatabaseContext.Repositories.Users;
-using Noots.DatabaseContext.Repositories.WS;
 
-namespace Noots.DatabaseContext
+namespace DatabaseContext
 {
     public static class DatabaseContextModules
     {

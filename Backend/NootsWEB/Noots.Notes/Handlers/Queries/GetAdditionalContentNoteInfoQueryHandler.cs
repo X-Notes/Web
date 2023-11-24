@@ -1,10 +1,10 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DTO.Notes.AdditionalContent;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Histories;
+using DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Histories;
-using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.DatabaseContext.Repositories.Notes;
 using Notes.Queries;
 using Permissions.Queries;
 

@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Plan;
+using DatabaseContext.GenericRepositories;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Billing
+namespace DatabaseContext.Repositories.Billing
 {
     public class BillingPlanCacheRepository
     {

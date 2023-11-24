@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
+using DatabaseContext.Repositories.Notes;
 using MapperLocked;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Notes;
 using Notes.Impl;
 using Notes.Queries;
 

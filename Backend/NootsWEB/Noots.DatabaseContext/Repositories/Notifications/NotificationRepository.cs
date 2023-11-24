@@ -1,9 +1,8 @@
-﻿using Common.DatabaseModels.Models.Users;
-using Common.DatabaseModels.Models.Users.Notifications;
+﻿using Common.DatabaseModels.Models.Users.Notifications;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Notifications
+namespace DatabaseContext.Repositories.Notifications
 {
     public class NotificationRepository : Repository<Notification, Guid>
     {

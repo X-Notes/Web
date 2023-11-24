@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Notes;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Notes
+namespace DatabaseContext.Repositories.Notes
 {
     public class UsersOnPrivateNotesRepository : Repository<UserOnPrivateNotes, Guid>
     {

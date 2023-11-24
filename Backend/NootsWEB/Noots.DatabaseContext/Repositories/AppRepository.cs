@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Microsoft.EntityFrameworkCore;
 
-namespace Noots.DatabaseContext.Repositories
+namespace DatabaseContext.Repositories
 {
     public class AppRepository
     {

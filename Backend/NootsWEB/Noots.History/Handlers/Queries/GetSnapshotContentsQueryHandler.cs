@@ -3,10 +3,10 @@ using Common.DatabaseModels.Models.History.Contents;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteContent.Text;
+using DatabaseContext.Repositories.Files;
+using DatabaseContext.Repositories.Histories;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Histories;
 using Noots.History.Queries;
 using Permissions.Queries;
 

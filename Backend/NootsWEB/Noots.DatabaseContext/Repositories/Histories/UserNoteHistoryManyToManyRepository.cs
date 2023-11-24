@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.History;
-using Noots.DatabaseContext.GenericRepositories;
+using DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Histories
+namespace DatabaseContext.Repositories.Histories
 {
     public class UserNoteHistoryManyToManyRepository : Repository<UserNoteSnapshotManyToMany, Guid>
     {

@@ -1,10 +1,9 @@
-﻿using Common.DatabaseModels.Models.Folders;
-using Common.DTO;
+﻿using Common.DTO;
+using DatabaseContext.Repositories.Folders;
+using Folders.Commands;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Commands;
 
-namespace Noots.Folders.Handlers.Commands;
+namespace Folders.Handlers.Commands;
 
 public class UpdatePositionsFoldersCommandHandler : IRequestHandler<UpdatePositionsFoldersCommand, OperationResult<Unit>>
 {

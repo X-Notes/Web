@@ -1,4 +1,4 @@
-﻿namespace Noots.Folders.Entities;
+﻿namespace Folders.Entities;
 
 public class SyncFolderResult
 {

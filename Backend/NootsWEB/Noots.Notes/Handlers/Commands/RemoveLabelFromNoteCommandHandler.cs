@@ -1,8 +1,8 @@
 ﻿using Common.DTO;
 using Common.DTO.WebSockets;
+using DatabaseContext.Repositories.Labels;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Labels;
-using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Impl;
 using Notes.Commands;
 using Permissions.Queries;

@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using Noots.DatabaseContext.Repositories.Notes;
+using DatabaseContext.Repositories.Notes;
 
 namespace Permissions.Impl;
 

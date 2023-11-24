@@ -2,7 +2,7 @@
 using Common.Channels;
 using Common.DatabaseModels.Models.History;
 using Common.DTO.History;
-using Noots.DatabaseContext.Repositories.Histories;
+using DatabaseContext.Repositories.Histories;
 
 namespace Noots.History.Impl;
 

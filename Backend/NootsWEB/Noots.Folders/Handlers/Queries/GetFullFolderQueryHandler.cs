@@ -1,15 +1,13 @@
 ﻿using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Folders;
+using Folders.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Queries;
 using Permissions.Impl;
 using Permissions.Queries;
 
-namespace Noots.Folders.Handlers.Queries;
+namespace Folders.Handlers.Queries;
 
 public class GetFullFolderQueryHandler : IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>
 {

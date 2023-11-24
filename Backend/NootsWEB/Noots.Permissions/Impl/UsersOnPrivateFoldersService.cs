@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
-using Noots.DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Folders;
 
 namespace Permissions.Impl;
 

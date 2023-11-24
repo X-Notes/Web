@@ -1,27 +1,22 @@
-﻿using Common;
+﻿using Billing.Impl;
+using Common;
+using Common.Channels;
 using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
-using Common.DTO.Folders;
-using Common.RegexHelpers;
-using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.Folders.Commands;
-using Noots.Folders.Entities;
-using Common.DatabaseModels.Models.Labels;
-using Azure.Core;
-using Common.Channels;
 using Common.DTO.Notes.Copy;
-using System.Linq;
-using Billing.Impl;
+using Common.RegexHelpers;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Notes;
+using Folders.Commands;
+using Folders.Entities;
 using Mapper.Mapping;
+using MediatR;
 using Permissions.Queries;
 
-namespace Noots.Folders.Handlers.Commands;
+namespace Folders.Handlers.Commands;
 
 public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, OperationResult<CopyFoldersResult>>
 {

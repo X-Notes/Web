@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.WS;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.WS;
+namespace DatabaseContext.Repositories.WS;
 
 public class UserIdentifierConnectionIdRepository : Repository<UserIdentifierConnectionId, Guid>
 {

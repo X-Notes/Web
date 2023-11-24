@@ -2,19 +2,19 @@
 using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
 using Common.DTO.Notes;
+using Folders.Commands;
+using Folders.Commands.FolderInner;
+using Folders.Commands.Sync;
+using Folders.Entities;
+using Folders.Handlers.Commands;
+using Folders.Handlers.Commands.Sync;
+using Folders.Handlers.Queries;
+using Folders.Impl;
+using Folders.Queries;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.Folders.Commands;
-using Noots.Folders.Commands.FolderInner;
-using Noots.Folders.Commands.Sync;
-using Noots.Folders.Entities;
-using Noots.Folders.Handlers.Commands;
-using Noots.Folders.Handlers.Commands.Sync;
-using Noots.Folders.Handlers.Queries;
-using Noots.Folders.Impl;
-using Noots.Folders.Queries;
 
-namespace Noots.Folders;
+namespace Folders;
 
 public static class FoldersModules
 {

@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO;
 using MediatR;
 
-namespace Noots.Folders.Commands.FolderInner;
+namespace Folders.Commands.FolderInner;
 
 public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
 {

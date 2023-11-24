@@ -1,7 +1,7 @@
-﻿using Npgsql;
-using System.Data;
+﻿using System.Data;
+using Npgsql;
 
-namespace Noots.DatabaseContext.Dapper;
+namespace DatabaseContext.Dapper;
 
 public class DapperContext
 {

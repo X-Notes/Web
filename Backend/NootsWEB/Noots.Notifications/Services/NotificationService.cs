@@ -1,8 +1,8 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO.Notifications;
+using DatabaseContext.Repositories.Notifications;
 using Mapper.Mapping;
-using Noots.DatabaseContext.Repositories.Notifications;
 using SignalrUpdater.Impl;
 
 namespace Notifications.Services;

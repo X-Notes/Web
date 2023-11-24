@@ -3,9 +3,9 @@ using Billing.Impl;
 using Common;
 using Common.DTO;
 using Common.DTO.Backgrounds;
+using DatabaseContext.Repositories.Users;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Users;
 using Permissions.Queries;
 using Storage.Commands;
 

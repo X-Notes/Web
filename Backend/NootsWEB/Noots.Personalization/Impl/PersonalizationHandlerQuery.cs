@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO.Personalization;
+using DatabaseContext.Repositories.Users;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Users;
 using Personalization.Queries;
 
 namespace Personalization.Impl

@@ -1,6 +1,6 @@
 ﻿using Common.DTO.Folders;
 
-namespace Noots.Folders.Entities;
+namespace Folders.Entities;
 
 public class CopyFoldersResult
 {

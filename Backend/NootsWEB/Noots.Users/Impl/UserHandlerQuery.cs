@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Users;
 using Common.DTO;
+using DatabaseContext.Repositories.Files;
+using DatabaseContext.Repositories.Users;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Users;
 using Storage.Queries;
 using Users.Entities;
 using Users.Queries;

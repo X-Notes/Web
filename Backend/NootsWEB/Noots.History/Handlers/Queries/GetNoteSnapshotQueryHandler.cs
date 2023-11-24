@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.History;
 using Common.DTO;
 using Common.DTO.Labels;
+using DatabaseContext.Repositories.Histories;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Histories;
 using Noots.History.Entities;
 using Noots.History.Queries;
 using Permissions.Queries;

@@ -5,9 +5,9 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO;
 using Common.DTO.Notes;
+using DatabaseContext.Repositories.Notes;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Notes;
 using Notes.Commands;
 
 namespace Notes.Handlers.Commands;

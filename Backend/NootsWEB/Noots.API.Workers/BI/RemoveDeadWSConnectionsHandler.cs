@@ -3,7 +3,7 @@ using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO.WebSockets;
 using Dapr.Client;
-using Noots.DatabaseContext.Repositories.WS;
+using DatabaseContext.Repositories.WS;
 
 namespace API.Worker.BI;
 

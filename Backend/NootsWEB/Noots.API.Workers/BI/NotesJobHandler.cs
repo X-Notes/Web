@@ -1,10 +1,10 @@
 ﻿using API.Worker.Models.Config;
 using Common;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using DatabaseContext.Repositories.Histories;
+using DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Histories;
-using Noots.DatabaseContext.Repositories.NoteContent;
-using Noots.DatabaseContext.Repositories.Notes;
 using Noots.History.Commands;
 using Noots.History.Impl;
 using Notes.Handlers.Commands;

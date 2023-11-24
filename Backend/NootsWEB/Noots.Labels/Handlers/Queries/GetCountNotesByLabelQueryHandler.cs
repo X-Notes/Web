@@ -1,6 +1,6 @@
-﻿using Labels.Queries;
+﻿using DatabaseContext.Repositories.Labels;
+using Labels.Queries;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Labels;
 
 namespace Labels.Handlers.Queries;
 

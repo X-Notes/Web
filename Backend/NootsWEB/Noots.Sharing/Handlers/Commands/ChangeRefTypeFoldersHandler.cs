@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
+using DatabaseContext.Repositories.Folders;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
 using Permissions.Queries;
 using Sharing.Commands.Folders;
 

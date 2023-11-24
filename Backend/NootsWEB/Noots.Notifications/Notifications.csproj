@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Noots.DatabaseContext\Noots.DatabaseContext.csproj" />
+    <ProjectReference Include="..\Noots.DatabaseContext\DatabaseContext.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\SignalrUpdater.csproj" />
   </ItemGroup>

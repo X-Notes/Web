@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Files
+namespace DatabaseContext.Repositories.Files
 {
     public class AppFileUploadInfoRepository : Repository<AppFileUploadInfo, Guid>
     {

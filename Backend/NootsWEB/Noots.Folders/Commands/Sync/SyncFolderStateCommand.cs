@@ -1,10 +1,10 @@
 ﻿using Common.Attributes;
 using Common.CQRS;
 using Common.DTO;
+using Folders.Entities;
 using MediatR;
-using Noots.Folders.Entities;
 
-namespace Noots.Folders.Commands.Sync;
+namespace Folders.Commands.Sync;
 
 public class SyncFolderStateCommand : BaseCommandEntity, IRequest<OperationResult<SyncFolderResult>>
 {

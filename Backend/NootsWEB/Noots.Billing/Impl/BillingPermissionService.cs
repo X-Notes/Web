@@ -1,10 +1,10 @@
 ﻿using Billing.Entities;
 using Common.DatabaseModels.Models.Plan;
-using Noots.DatabaseContext.Repositories.Billing;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.DatabaseContext.Repositories.Labels;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.DatabaseContext.Repositories.Users;
+using DatabaseContext.Repositories.Billing;
+using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Labels;
+using DatabaseContext.Repositories.Notes;
+using DatabaseContext.Repositories.Users;
 
 namespace Billing.Impl;
 

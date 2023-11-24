@@ -4,13 +4,13 @@ using Auth.Interfaces;
 using Common;
 using Common.DTO;
 using Common.Google;
+using DatabaseContext.Dapper.Reps;
+using DatabaseContext.Repositories.Users;
 using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.Repositories.Users;
 using Users.Commands;
 
 namespace Auth.Api;

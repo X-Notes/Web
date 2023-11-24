@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.History;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Histories
+namespace DatabaseContext.Repositories.Histories
 {
     public class NoteSnapshotRepository : Repository<NoteSnapshot, Guid>
     {

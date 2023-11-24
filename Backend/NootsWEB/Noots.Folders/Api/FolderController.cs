@@ -5,14 +5,15 @@ using Common.DTO.Folders;
 using Common.DTO.Folders.AdditionalContent;
 using Common.DTO.Personalization;
 using Common.Filters;
+using Folders.Commands;
+using Folders.Commands.Sync;
+using Folders.Entities;
+using Folders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Folders.Commands;
-using Noots.Folders.Commands.Sync;
-using Noots.Folders.Entities;
-using Noots.Folders.Queries;
-namespace Noots.Folders.Api;
+
+namespace Folders.Api;
 
 [Authorize]
 [Route("api/[controller]")]

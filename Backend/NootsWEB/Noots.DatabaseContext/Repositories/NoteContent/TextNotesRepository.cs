@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.NoteContent
+namespace DatabaseContext.Repositories.NoteContent
 {
     public class TextNotesRepository : Repository<TextNote, Guid>
     {

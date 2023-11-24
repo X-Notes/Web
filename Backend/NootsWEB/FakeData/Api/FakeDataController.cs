@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Users;
 using Common.Filters;
-using Noots.DatabaseContext.Repositories.Users;
-using Noots.DatabaseContext.Repositories.Notes;
-using Noots.DatabaseContext.Repositories.NoteContent;
 using System;
 using System.Linq;
 using Bogus;
+using DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Notes;
+using DatabaseContext.Repositories.Users;
 
 namespace FakeData.Api;
 

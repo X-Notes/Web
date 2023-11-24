@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels;
 
-namespace Noots.DatabaseContext.Dapper;
+namespace DatabaseContext.Dapper;
 
 public interface IDapperRepository<T, IdType> where T : BaseEntity<IdType>
 {

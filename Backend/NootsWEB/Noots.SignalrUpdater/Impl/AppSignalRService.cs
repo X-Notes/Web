@@ -6,9 +6,9 @@ using Common.DTO.WebSockets;
 using Common.DTO.WebSockets.InnerNote;
 using Common.DTO.WebSockets.Permissions;
 using Common.DTO.WebSockets.ReletedNotes;
+using DatabaseContext.Repositories.WS;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Noots.DatabaseContext.Repositories.WS;
 using SignalrUpdater.Entities;
 
 namespace SignalrUpdater.Impl

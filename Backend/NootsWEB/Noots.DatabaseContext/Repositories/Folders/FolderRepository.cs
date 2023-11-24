@@ -1,9 +1,9 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Personalization;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Folders
+namespace DatabaseContext.Repositories.Folders
 {
     public class FolderRepository : Repository<Folder, Guid>
     {

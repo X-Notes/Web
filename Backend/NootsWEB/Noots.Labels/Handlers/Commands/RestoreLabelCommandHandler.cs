@@ -1,6 +1,6 @@
-﻿using Labels.Commands;
+﻿using DatabaseContext.Repositories.Labels;
+using Labels.Commands;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Labels;
 
 namespace Labels.Handlers.Commands;
 

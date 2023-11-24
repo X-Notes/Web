@@ -1,16 +1,14 @@
-﻿using Common.DatabaseModels;
+﻿using System.Data;
+using Common.DatabaseModels;
 using Common.DatabaseModels.DapperEntities.Search;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DatabaseModels.Models.Notes;
-using Common.DatabaseModels.Models.Users;
 using Dapper;
-using Npgsql.Internal.TypeHandlers;
-using System.Data;
 
-namespace Noots.DatabaseContext.Dapper.Reps;
+namespace DatabaseContext.Dapper.Reps;
 
 public class DapperSearchRepository : IDisposable
 {

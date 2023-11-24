@@ -1,6 +1,6 @@
 ﻿using API.Worker.Models.Config;
 using Common;
-using Noots.DatabaseContext.Repositories.Labels;
+using DatabaseContext.Repositories.Labels;
 
 namespace API.Worker.BI;
 

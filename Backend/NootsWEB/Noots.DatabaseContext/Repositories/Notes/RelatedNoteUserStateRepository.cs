@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Notes;
-using Noots.DatabaseContext.GenericRepositories;
+using DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Notes
+namespace DatabaseContext.Repositories.Notes
 {
     public class RelatedNoteUserStateRepository : Repository<RelatedNoteUserState, int>
     {

@@ -3,7 +3,7 @@ using Common.DTO;
 using Common.DTO.Folders;
 using MediatR;
 
-namespace Noots.Folders.Queries
+namespace Folders.Queries
 {
     public class GetFullFolderQuery : BaseQueryEntity, IRequest<OperationResult<FullFolder>>
     {

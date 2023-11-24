@@ -6,10 +6,10 @@ using Auth.Entities;
 using Auth.Interfaces;
 using Common;
 using Common.DatabaseModels.Models.Security;
+using DatabaseContext.Dapper.Reps;
+using DatabaseContext.Repositories.Sec;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Noots.DatabaseContext.Dapper.Reps;
-using Noots.DatabaseContext.Repositories.Sec;
 
 namespace Auth.Impl;
 

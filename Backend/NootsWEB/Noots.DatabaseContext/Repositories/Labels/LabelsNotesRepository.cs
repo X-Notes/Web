@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Labels;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Labels
+namespace DatabaseContext.Repositories.Labels
 {
     public class LabelsNotesRepository : Repository<LabelsNotes, Guid>
     {

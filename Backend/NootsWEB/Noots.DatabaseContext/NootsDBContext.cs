@@ -15,7 +15,7 @@ using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DatabaseModels.Models.WS;
 using Microsoft.EntityFrameworkCore;
 
-namespace Noots.DatabaseContext
+namespace DatabaseContext
 {
     public class NootsDBContext : DbContext
     {

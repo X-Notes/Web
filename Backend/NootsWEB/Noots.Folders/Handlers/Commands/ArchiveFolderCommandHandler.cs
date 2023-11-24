@@ -1,11 +1,11 @@
 ﻿using Common.DatabaseModels.Models.Folders;
 using Common.DTO;
+using DatabaseContext.Repositories.Folders;
+using Folders.Commands;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Folders;
-using Noots.Folders.Commands;
 using Permissions.Queries;
 
-namespace Noots.Folders.Handlers.Commands;
+namespace Folders.Handlers.Commands;
 
 public class ArchiveFolderCommandHandler : IRequestHandler<ArchiveFolderCommand, OperationResult<Unit>>
 {

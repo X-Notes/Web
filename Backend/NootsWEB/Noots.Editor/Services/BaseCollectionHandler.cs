@@ -1,6 +1,6 @@
 ﻿using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO.Notes.Collection;
-using Noots.DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.NoteContent;
 
 namespace Editor.Services;
 

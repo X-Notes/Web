@@ -3,7 +3,7 @@ using Common.CQRS;
 using Common.DTO.Folders.AdditionalContent;
 using MediatR;
 
-namespace Noots.Folders.Queries
+namespace Folders.Queries
 {
     public class GetAdditionalContentFolderInfoQuery : BaseQueryEntity, IRequest<List<BottomFolderContent>>
     {

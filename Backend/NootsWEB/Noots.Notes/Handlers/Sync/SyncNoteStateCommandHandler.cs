@@ -1,7 +1,7 @@
 ﻿using Common.DTO;
+using DatabaseContext.Repositories.Labels;
 using Mapper.Mapping;
 using MediatR;
-using Noots.DatabaseContext.Repositories.Labels;
 using Notes.Commands.Sync;
 using Notes.Entities;
 using Permissions.Queries;

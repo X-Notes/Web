@@ -1,8 +1,8 @@
-﻿using Common.DatabaseModels;
+﻿using System.Data;
+using Common.DatabaseModels;
 using Dapper;
-using System.Data;
 
-namespace Noots.DatabaseContext.Dapper;
+namespace DatabaseContext.Dapper;
 
 public class DapperRepository<T, IdType> : IDapperRepository<T, IdType> where T : BaseEntity<IdType> where IdType : struct, IDisposable
 {

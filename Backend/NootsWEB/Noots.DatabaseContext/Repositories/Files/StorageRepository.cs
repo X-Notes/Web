@@ -1,10 +1,9 @@
-﻿using Common.Azure;
-using Common.DatabaseModels.Models.Files;
+﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Files.Models;
+using DatabaseContext.GenericRepositories;
 using Microsoft.Extensions.DependencyInjection;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Files
+namespace DatabaseContext.Repositories.Files
 {
     public class StorageRepository
     {

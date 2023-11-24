@@ -1,8 +1,8 @@
 ﻿using Common.DatabaseModels.Models.Folders;
+using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
-using Noots.DatabaseContext.GenericRepositories;
 
-namespace Noots.DatabaseContext.Repositories.Folders;
+namespace DatabaseContext.Repositories.Folders;
 
 public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders, Guid>
 {

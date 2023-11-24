@@ -1,7 +1,7 @@
 ﻿using Common.DTO.Notes.Collection;
-using Noots.DatabaseContext.Repositories.Files;
-using Noots.DatabaseContext.Repositories.Histories;
-using Noots.DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Files;
+using DatabaseContext.Repositories.Histories;
+using DatabaseContext.Repositories.NoteContent;
 
 namespace Editor.Services
 {

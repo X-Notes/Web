@@ -2,14 +2,14 @@
 using Common.DTO;
 using Common.DTO.Notes;
 using Common.Filters;
+using Folders.Commands.FolderInner;
+using Folders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.Folders.Commands.FolderInner;
-using Noots.Folders.Queries;
 using Search.Queries;
 
-namespace Noots.Folders.Api;
+namespace Folders.Api;
 
 [Authorize]
 [Route("api/[controller]")]

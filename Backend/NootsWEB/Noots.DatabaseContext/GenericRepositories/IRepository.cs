@@ -2,7 +2,7 @@
 using Common.DatabaseModels;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Noots.DatabaseContext.GenericRepositories;
+namespace DatabaseContext.GenericRepositories;
 
 public interface IRepository<T, IdType> where T : BaseEntity<IdType>
 {

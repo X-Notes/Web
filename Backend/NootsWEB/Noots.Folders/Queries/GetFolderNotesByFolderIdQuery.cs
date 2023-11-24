@@ -3,7 +3,7 @@ using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using MediatR;
 
-namespace Noots.Folders.Queries
+namespace Folders.Queries
 {
     public class GetFolderNotesByFolderIdQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
