@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.App;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Noots.DatabaseContext.Repositories;
 using Noots.Mapper.Mapping;
 
-namespace Noots.API.Controllers;
+namespace API.Controllers;
 
 [Authorize]
 [Route("api/[controller]")]

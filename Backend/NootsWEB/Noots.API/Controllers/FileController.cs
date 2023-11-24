@@ -1,14 +1,14 @@
-﻿using Common.DTO;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Noots.Permissions.Queries;
-using System.Threading.Tasks;
-using Noots.DatabaseContext.Repositories.Users;
+﻿using System.Threading.Tasks;
 using Common;
 using Common.ConstraintsUploadFiles;
+using Common.DTO;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Noots.DatabaseContext.Repositories.Users;
+using Noots.Permissions.Queries;
 
-namespace Noots.API.Controllers;
+namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

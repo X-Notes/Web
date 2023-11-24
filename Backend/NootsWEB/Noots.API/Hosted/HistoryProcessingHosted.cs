@@ -1,14 +1,13 @@
-﻿using Common.Channels;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Common.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Noots.History.Impl;
-using System;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
-namespace Noots.API.Hosted;
+namespace API.Hosted;
 
 public class HistoryProcessingHosted : BackgroundService
 {

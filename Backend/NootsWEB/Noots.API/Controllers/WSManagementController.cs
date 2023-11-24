@@ -1,14 +1,14 @@
-﻿using Common;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Common;
 using Common.DTO.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Noots.SignalrUpdater.Entities;
 using Noots.SignalrUpdater.Impl;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
-namespace Noots.API.Controllers
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

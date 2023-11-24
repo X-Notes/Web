@@ -1,15 +1,15 @@
-﻿using Common.Channels;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Common.Channels;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Noots.Notes.Commands.Copy;
 using Noots.SignalrUpdater.Impl;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Noots.API.Hosted;
+namespace API.Hosted;
 
 public class CopyNoteHosted : BackgroundService
 {
