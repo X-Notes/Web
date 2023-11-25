@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search", "Noots.Search\Sear
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Personalization", "Noots.Personalization\Personalization.csproj", "{24426311-E6E3-4F31-93C1-C8153180966C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users", "Noots.Users\Users.csproj", "{B6A648ED-7253-458C-9CFC-5B735A6A3B6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users", "Users\Users.csproj", "{B6A648ED-7253-458C-9CFC-5B735A6A3B6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharing", "Noots.Sharing\Sharing.csproj", "{16AD0F22-59F5-4DB3-8245-A49405310EF7}"
 EndProject
@@ -39,9 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelatedNotes", "Noots.Relat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseContext", "Noots.DatabaseContext\DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Noots.Auth\Auth.csproj", "{1D324309-821D-45A0-9562-1FEB869D17EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Auth\Auth.csproj", "{1D324309-821D-45A0-9562-1FEB869D17EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Labels", "Noots.Labels\Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Labels", "Labels\Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
 EndProject

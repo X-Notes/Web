@@ -37,12 +37,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />
-    <ProjectReference Include="..\Noots.Auth\Auth.csproj" />
+    <ProjectReference Include="..\Auth\Auth.csproj" />
     <ProjectReference Include="..\Noots.Backgrounds\Backgrounds.csproj" />
     <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
     <ProjectReference Include="..\Noots.Folders\Folders.csproj" />
     <ProjectReference Include="..\Noots.History\History.csproj" />
-    <ProjectReference Include="..\Noots.Labels\Labels.csproj" />
+    <ProjectReference Include="..\Labels\Labels.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
     <ProjectReference Include="..\Noots.Notes\Notes.csproj" />
@@ -53,7 +53,7 @@
     <ProjectReference Include="..\Noots.Sharing\Sharing.csproj" />
     <ProjectReference Include="..\Noots.SignalrUpdater\SignalrUpdater.csproj" />
     <ProjectReference Include="..\Noots.Storage\Storage.csproj" />
-    <ProjectReference Include="..\Noots.Users\Users.csproj" />
+    <ProjectReference Include="..\Users\Users.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
