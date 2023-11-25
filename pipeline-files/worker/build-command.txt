@@ -1,1 +1,1 @@
-docker build -t davydq/xnotes-worker-api . -f pipeline-files/worker/xnotes-worker-api.dockerfile
+docker build -t davydq/xnotes-worker-api . -f pipeline-files/worker/worker-api.dockerfile

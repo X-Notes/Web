@@ -1,1 +1,1 @@
-docker build -t davydq/xnotes-api . -f pipeline-files/api/xnotes-api.dockerfile
+docker build -t davydq/xnotes-api . -f pipeline-files/api/api.dockerfile
