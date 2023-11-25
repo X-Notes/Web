@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentProcessing", "Conten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "Noots.API.Workers\API.Worker.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "History", "Noots.History\History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "History", "History\History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Noots.Mapper\Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
 EndProject
@@ -33,9 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sharing", "Sharing\Sharing.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalrUpdater", "SignalrUpdater\SignalrUpdater.csproj", "{D28813C7-7D32-4403-8988-940119239E56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backgrounds", "Noots.Backgrounds\Backgrounds.csproj", "{7762D56E-5553-4710-A3FC-6798B9179DE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backgrounds", "Backgrounds\Backgrounds.csproj", "{7762D56E-5553-4710-A3FC-6798B9179DE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelatedNotes", "Noots.RelatedNotes\RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelatedNotes", "RelatedNotes\RelatedNotes.csproj", "{F51B0A18-7767-4B87-A780-F930470B5160}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseContext", "Noots.DatabaseContext\DatabaseContext.csproj", "{C13F957B-4AD8-44F4-871A-6DB22A7755F7}"
 EndProject
@@ -43,15 +43,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Auth\Auth.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Labels", "Labels\Labels.csproj", "{27634643-0924-421E-9E18-491CB4C76841}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Noots.Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billing", "Billing\Billing.csproj", "{0C9008A7-04EB-4D10-8D12-F0A0EAC9591E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes", "Noots.Notes\Notes.csproj", "{EBF121C0-DBBA-450B-83DD-85885EE60D7B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Folders", "Noots.Folders\Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Folders", "Folders\Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Noots.Notifications\Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "Noots.Editor\Editor.csproj", "{B7E325F8-5FE3-4BD7-95DA-4505F048976C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "Editor\Editor.csproj", "{B7E325F8-5FE3-4BD7-95DA-4505F048976C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

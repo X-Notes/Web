@@ -13,10 +13,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
-      <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
+      <ProjectReference Include="..\Billing\Billing.csproj" />
       <ProjectReference Include="..\Noots.DatabaseContext\DatabaseContext.csproj" />
-      <ProjectReference Include="..\Noots.Editor\Editor.csproj" />
-      <ProjectReference Include="..\Noots.History\History.csproj" />
+      <ProjectReference Include="..\Editor\Editor.csproj" />
+      <ProjectReference Include="..\History\History.csproj" />
       <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
       <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
       <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />

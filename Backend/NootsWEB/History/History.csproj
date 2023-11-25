@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Noots.Billing\Billing.csproj" />
+    <ProjectReference Include="..\Billing\Billing.csproj" />
     <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
     <ProjectReference Include="..\Permissions\Permissions.csproj" />
   </ItemGroup>
