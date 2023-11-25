@@ -10,7 +10,7 @@
     <ProjectReference Include="..\Noots.History\History.csproj" />
     <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
     <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />
-    <ProjectReference Include="..\Noots.Storage\Storage.csproj" />
+    <ProjectReference Include="..\Storage\Storage.csproj" />
   </ItemGroup>
 
 </Project>

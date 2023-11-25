@@ -50,9 +50,9 @@
     <ProjectReference Include="..\Personalization\Personalization.csproj" />
     <ProjectReference Include="..\Noots.RelatedNotes\RelatedNotes.csproj" />
     <ProjectReference Include="..\Search\Search.csproj" />
-    <ProjectReference Include="..\Noots.Sharing\Sharing.csproj" />
+    <ProjectReference Include="..\Sharing\Sharing.csproj" />
     <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />
-    <ProjectReference Include="..\Noots.Storage\Storage.csproj" />
+    <ProjectReference Include="..\Storage\Storage.csproj" />
     <ProjectReference Include="..\Users\Users.csproj" />
   </ItemGroup>
 
