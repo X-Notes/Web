@@ -46,7 +46,7 @@
     <ProjectReference Include="..\MapperLocked\MapperLocked.csproj" />
     <ProjectReference Include="..\Mapper\Mapper.csproj" />
     <ProjectReference Include="..\Noots.Notes\Notes.csproj" />
-    <ProjectReference Include="..\Noots.Notifications\Notifications.csproj" />
+    <ProjectReference Include="..\Notifications\Notifications.csproj" />
     <ProjectReference Include="..\Personalization\Personalization.csproj" />
     <ProjectReference Include="..\RelatedNotes\RelatedNotes.csproj" />
     <ProjectReference Include="..\Search\Search.csproj" />

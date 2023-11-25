@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Mapper\Mapper.csproj" />
-    <ProjectReference Include="..\Noots.Notifications\Notifications.csproj" />
+    <ProjectReference Include="..\Notifications\Notifications.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "Noots.API\API.csproj", "{DEAAFA6A-22E9-46AD-B1E4-580D9D6729F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{DEAAFA6A-22E9-46AD-B1E4-580D9D6729F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{F926A132-3078-4E4A-B4F8-635045A2E52D}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakeData", "FakeData\FakeDa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentProcessing", "ContentProcessing\ContentProcessing.csproj", "{E0D26516-BF4C-4887-9189-54F99FEB4791}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "Noots.API.Workers\API.Worker.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "API.Worker\API.Worker.csproj", "{8FE808BD-2948-4385-A427-0146AAAEA2CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "History", "History\History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject
@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes", "Noots.Notes\Notes.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Folders", "Folders\Folders.csproj", "{6267EA65-D7CE-4869-95A2-0051F55F9BC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Noots.Notifications\Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Notifications\Notifications.csproj", "{4F1FDF8D-3F32-435A-B2CB-91F497D35274}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "Editor\Editor.csproj", "{B7E325F8-5FE3-4BD7-95DA-4505F048976C}"
 EndProject
