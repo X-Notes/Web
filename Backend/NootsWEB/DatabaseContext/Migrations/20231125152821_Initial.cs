@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Noots.DatabaseContext.Migrations
+namespace DatabaseContext.Migrations
 {
     public partial class Initial : Migration
     {
@@ -30,7 +30,7 @@ namespace Noots.DatabaseContext.Migrations
                 name: "ws");
 
             migrationBuilder.EnsureSchema(
-                name: "noots_systems");
+                name: "systems");
 
             migrationBuilder.EnsureSchema(
                 name: "label");
@@ -102,7 +102,7 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "FontSize",
-                schema: "noots_systems",
+                schema: "systems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -115,7 +115,7 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Language",
-                schema: "noots_systems",
+                schema: "systems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -154,7 +154,7 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RefType",
-                schema: "noots_systems",
+                schema: "systems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -193,7 +193,7 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Theme",
-                schema: "noots_systems",
+                schema: "systems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -319,14 +319,14 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_User_FontSize_FontSizeId",
                         column: x => x.FontSizeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "FontSize",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_User_Language_LanguageId",
                         column: x => x.LanguageId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "Language",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -340,7 +340,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_User_Theme_ThemeId",
                         column: x => x.ThemeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "Theme",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -376,7 +376,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_Folder_RefType_RefTypeId",
                         column: x => x.RefTypeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "RefType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -446,7 +446,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_Note_RefType_RefTypeId",
                         column: x => x.RefTypeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "RefType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -638,7 +638,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_UsersOnPrivateFolders_RefType_AccessTypeId",
                         column: x => x.AccessTypeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "RefType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -794,7 +794,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_NoteSnapshot_RefType_RefTypeId",
                         column: x => x.RefTypeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "RefType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -852,7 +852,7 @@ namespace Noots.DatabaseContext.Migrations
                     table.ForeignKey(
                         name: "FK_UserOnPrivateNotes_RefType_AccessTypeId",
                         column: x => x.AccessTypeId,
-                        principalSchema: "noots_systems",
+                        principalSchema: "systems",
                         principalTable: "RefType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1161,7 +1161,7 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "noots_systems",
+                schema: "systems",
                 table: "FontSize",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -1171,7 +1171,7 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "noots_systems",
+                schema: "systems",
                 table: "Language",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -1216,7 +1216,7 @@ namespace Noots.DatabaseContext.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "noots_systems",
+                schema: "systems",
                 table: "RefType",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -1243,7 +1243,7 @@ namespace Noots.DatabaseContext.Migrations
                 values: new object[] { 9000, "DEV" });
 
             migrationBuilder.InsertData(
-                schema: "noots_systems",
+                schema: "systems",
                 table: "Theme",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -1731,7 +1731,7 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefType",
-                schema: "noots_systems");
+                schema: "systems");
 
             migrationBuilder.DropTable(
                 name: "FileType",
@@ -1755,15 +1755,15 @@ namespace Noots.DatabaseContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "FontSize",
-                schema: "noots_systems");
+                schema: "systems");
 
             migrationBuilder.DropTable(
                 name: "Language",
-                schema: "noots_systems");
+                schema: "systems");
 
             migrationBuilder.DropTable(
                 name: "Theme",
-                schema: "noots_systems");
+                schema: "systems");
 
             migrationBuilder.DropTable(
                 name: "AppFile",

@@ -25,7 +25,7 @@ builder.Configuration.AddConfiguration(configBuilder.Build());
 
 // INIT IDENTITY DB
 var appDb = builder.Configuration.GetSection("DatabaseConnection").Value;
-var dbConn = builder.Configuration.GetSection("NootsDatabaseConnection").Value;
+var dbConn = builder.Configuration.GetSection("APIDatabaseConnection").Value;
 var storageConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 
 builder.Services.AddDbContext<ApplicationDatabaseContext>(options => options.UseNpgsql(appDb));

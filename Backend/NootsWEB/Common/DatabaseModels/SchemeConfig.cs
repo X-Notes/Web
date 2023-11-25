@@ -13,7 +13,7 @@ namespace Common.DatabaseModels
 
         public const string Label  = "label";
 
-        public const string Systems = "noots_systems";
+        public const string Systems = "systems";
 
         public const string User = "user";
 

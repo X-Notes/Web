@@ -103,7 +103,7 @@ namespace API.ConfigureAPP
             return new ElasticsearchSinkOptions(new Uri(elasticConnString))
             {
                 AutoRegisterTemplate = true,
-                IndexFormat = $"NOOTS-API-{environment?.ToUpper().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM-dd}"
+                IndexFormat = $"XNotes-API-{environment?.ToUpper().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM-dd}"
             };
         }
 
@@ -163,7 +163,7 @@ namespace API.ConfigureAPP
             {
                 signalR.AddStackExchangeRedis(config.Connection, options =>
                     {
-                        options.Configuration.ChannelPrefix = "Noots-";
+                        options.Configuration.ChannelPrefix = "XNotes-";
                     });
             }
         }

@@ -48,7 +48,7 @@ public class RemoveDeadWSConnectionsHandler
 
 	private async Task<bool> SendDeadConnectionsAsync(List<UserIdentifierConnectionId> connections)
 	{
-		var nootsAPI = configuration.GetSection("NootsAPI").Value;
+		var appApiId = configuration.GetSection("NootsAPI").Value;
 
 		var deadConnections = connections
 			.Select(x => new DeadConnectionDTO
@@ -61,7 +61,7 @@ public class RemoveDeadWSConnectionsHandler
 
 		try
 		{
-			await _daprClient.InvokeMethodAsync(HttpMethod.Post, nootsAPI, "api/WSManagement/connections", deadConnections);
+			await _daprClient.InvokeMethodAsync(HttpMethod.Post, appApiId, "api/WSManagement/connections", deadConnections);
 
 			return true;
 		}

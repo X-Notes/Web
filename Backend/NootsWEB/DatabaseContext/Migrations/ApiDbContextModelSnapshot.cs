@@ -5,21 +5,19 @@ using DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Noots.DatabaseContext;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Noots.DatabaseContext.Migrations
+namespace DatabaseContext.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class NootsDBContextModelSnapshot : ModelSnapshot
+    partial class ApiDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("Noots")
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -739,7 +737,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FontSize", "noots_systems");
+                    b.ToTable("FontSize", "systems");
 
                     b.HasData(
                         new
@@ -764,7 +762,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Language", "noots_systems");
+                    b.ToTable("Language", "systems");
 
                     b.HasData(
                         new
@@ -834,7 +832,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RefType", "noots_systems");
+                    b.ToTable("RefType", "systems");
 
                     b.HasData(
                         new
@@ -859,7 +857,7 @@ namespace Noots.DatabaseContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Theme", "noots_systems");
+                    b.ToTable("Theme", "systems");
 
                     b.HasData(
                         new

@@ -114,8 +114,6 @@ namespace DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("Noots");
-
             // CONTENT
 
             modelBuilder.Entity<BaseNoteContent>()
