@@ -9,8 +9,6 @@ using DatabaseContext;
 using Editor.Services;
 using History;
 using Mapper;
-using MediatR;
-using Noots.DatabaseContext;
 using Notes.Handlers.Commands;
 using Storage;
 

@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Noots.DatabaseContext\DatabaseContext.csproj" />
+    <ProjectReference Include="..\DatabaseContext\DatabaseContext.csproj" />
   </ItemGroup>
 
 </Project>

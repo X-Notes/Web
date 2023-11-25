@@ -14,10 +14,10 @@
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Billing\Billing.csproj" />
-      <ProjectReference Include="..\Noots.DatabaseContext\DatabaseContext.csproj" />
+      <ProjectReference Include="..\DatabaseContext\DatabaseContext.csproj" />
       <ProjectReference Include="..\MapperLocked\MapperLocked.csproj" />
       <ProjectReference Include="..\Mapper\Mapper.csproj" />
-      <ProjectReference Include="..\Noots.Notes\Notes.csproj" />
+      <ProjectReference Include="..\Notes\Notes.csproj" />
       <ProjectReference Include="..\Search\Search.csproj" />
       <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />
     </ItemGroup>

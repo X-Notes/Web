@@ -29,7 +29,7 @@
     <ProjectReference Include="..\Editor\Editor.csproj" />
     <ProjectReference Include="..\History\History.csproj" />
     <ProjectReference Include="..\Mapper\Mapper.csproj" />
-    <ProjectReference Include="..\Noots.Notes\Notes.csproj" />
+    <ProjectReference Include="..\Notes\Notes.csproj" />
     <ProjectReference Include="..\Storage\Storage.csproj" />
   </ItemGroup>
 
