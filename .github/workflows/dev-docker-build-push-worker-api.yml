@@ -25,11 +25,11 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        run: dotnet restore Backend/NootsWEB/Noots.API.Workers/Noots.API.Workers.csproj
+        run: dotnet restore Backend/API.Worker/API.Worker.csproj
 
       # Run EF Core migrations
       - name: Run migrations
-        run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/NootsWEB/Noots.API.Workers -s Backend/NootsWEB/Noots.API.Workers
+        run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/API.Worker -s Backend/API.Worker
         env:
           DatabaseConnection: ${{ secrets.DEV_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
 
