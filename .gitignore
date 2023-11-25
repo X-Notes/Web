@@ -48,3 +48,23 @@ Thumbs.db
 __azurite_db_blob__.json
 __azurite_db_blob_extent__.json
 __blobstorage__
+
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+.vscode/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+AppFiles/
+
+.idea/
