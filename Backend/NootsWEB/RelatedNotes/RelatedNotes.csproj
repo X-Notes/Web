@@ -14,7 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Billing\Billing.csproj" />
-      <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
+      <ProjectReference Include="..\MapperLocked\MapperLocked.csproj" />
       <ProjectReference Include="..\Permissions\Permissions.csproj" />
       <ProjectReference Include="..\Search\Search.csproj" />
       <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />

@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\History\History.csproj" />
-    <ProjectReference Include="..\Noots.MapperLocked\MapperLocked.csproj" />
+    <ProjectReference Include="..\MapperLocked\MapperLocked.csproj" />
     <ProjectReference Include="..\SignalrUpdater\SignalrUpdater.csproj" />
     <ProjectReference Include="..\Storage\Storage.csproj" />
   </ItemGroup>

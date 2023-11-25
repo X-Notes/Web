@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Billing\Billing.csproj" />
-    <ProjectReference Include="..\Noots.Mapper\Mapper.csproj" />
+    <ProjectReference Include="..\Mapper\Mapper.csproj" />
     <ProjectReference Include="..\Permissions\Permissions.csproj" />
   </ItemGroup>
 

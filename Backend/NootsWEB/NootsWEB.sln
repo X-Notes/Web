@@ -15,13 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Worker", "Noots.API.Wor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "History", "History\History.csproj", "{CE98FA95-9201-4BFE-B583-DB45442F341F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Noots.Mapper\Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Mapper\Mapper.csproj", "{F3D472F6-876D-4BE2-AF27-7CAEDCDB87FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Permissions", "Permissions\Permissions.csproj", "{DDEE7B98-0B64-44D9-A1B8-AD61593A6482}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage", "Storage\Storage.csproj", "{D58AEE45-071B-4DF5-B0EC-038881E77E25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapperLocked", "Noots.MapperLocked\MapperLocked.csproj", "{94D7F42E-18FC-43BF-B16D-8F515F593167}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapperLocked", "MapperLocked\MapperLocked.csproj", "{94D7F42E-18FC-43BF-B16D-8F515F593167}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search", "Search\Search.csproj", "{CF064099-4616-4A91-8998-7F45D3058189}"
 EndProject
