@@ -50,7 +50,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: nootsstorm/noots-worker-api
+          images: xnotes/worker-api
           tags: type=raw,value={{branch}}-{{sha}}
       -
         name: Set up QEMU
@@ -92,7 +92,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: nootsstorm/noots-worker-api
+          images: xnotes/worker-api
           tags: type=raw,value={{branch}}-{{sha}}
 
       - name: Log in to Azure
