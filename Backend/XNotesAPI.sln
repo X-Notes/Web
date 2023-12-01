@@ -53,6 +53,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications", "Notificati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "Editor\Editor.csproj", "{B7E325F8-5FE3-4BD7-95DA-4505F048976C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{E43B38DF-E04E-4E2F-BC80-CD216C1995C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{B7E325F8-5FE3-4BD7-95DA-4505F048976C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7E325F8-5FE3-4BD7-95DA-4505F048976C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7E325F8-5FE3-4BD7-95DA-4505F048976C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43B38DF-E04E-4E2F-BC80-CD216C1995C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E43B38DF-E04E-4E2F-BC80-CD216C1995C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E43B38DF-E04E-4E2F-BC80-CD216C1995C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E43B38DF-E04E-4E2F-BC80-CD216C1995C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
