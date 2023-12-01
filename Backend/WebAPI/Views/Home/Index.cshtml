@@ -1,8 +1,123 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+﻿<div class="main-block-container">
+    <div class="main-block-content">
+        <div class="main-block-text-container">
+            <div class="main-block-text">
+                <p>@Localizer["first-block-1"]</p>
+            </div>
+            <div class="main-block-text-separator"></div>
+            <div class="main-block-text">
+                <p>@Localizer["first-block-2"]</p>
+            </div>
+            <div class="main-block-text-separator"></div>
+            <div class="main-block-text">
+                <p>@Localizer["first-block-3"]</p>
+            </div>
+            <div class="main-block-text-separator"></div>
+            <div class="main-block-text">
+                <p>@Localizer["first-block-4"]</p>
+            </div>
+        </div>
+        <div class="main-block-blocks-container">
+            <div style="background: #21222D;border: 1px solid #F16AD2" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/notes.svg"/>
+                        </div>
+                        <p>@Localizer["notes-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["notes-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-notes.png"/>
+                </div>
+            </div>
+            <div style="background: #0D0C19;border: 1px solid #3CE2F3" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/share.svg"/>
+                        </div>
+                        <p>@Localizer["sharing-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["sharing-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-sharing.png"/>
+                </div>
+            </div>
+            <div style="background: #0A152A;border: 1px solid #51F3F6" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/folders.svg"/>
+                        </div>
+                        <p>@Localizer["folders-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["folders-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-folders.png"/>
+                </div>
+            </div>
+            <div style="background: #141B2D;border: 1px solid #F88CE6" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/notes.svg"/>
+                            <img src="about/landing-icons/notes.svg"/>
+                        </div>
+                        <p>@Localizer["related-notes-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["related-notes-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-related-notes.png"/>
+                </div>
+            </div>
+            <div style="background: #090C19;border: 1px solid #FCFEFF" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/label.svg"/>
+                        </div>
+                        <p>@Localizer["labels-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["labels-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-labels.png"/>
+                </div>
+            </div>
+            <div style="background: #141B2D;border: 1px solid #F88CE6" class="main-card-container">
+                <div class="main-card-left-container">
+                    <div class="main-card-title-container">
+                        <div class="title-icon">
+                            <img src="about/landing-icons/editing.svg"/>
+                        </div>
+                        <p>@Localizer["customization-title"]</p>
+                    </div>
+                    <div class="main-card-description-container">
+                        <p>@Localizer["customization-description"]</p>
+                    </div>
+                </div>
+                <div class="main-card-right-container">
+                    <img src="about/landing-photos/sticker-customization.png"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="date-container">
+    <div id="footer-date" class="glitch" ></div>
 </div>

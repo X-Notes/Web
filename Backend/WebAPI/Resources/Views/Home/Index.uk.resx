@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="first-block-1" xml:space="preserve">
+        <value>X Notes дозволяє легко впорядковувати нотатки папками та класифікувати їх ярликами.</value>
+    </data>
+    <data name="first-block-2" xml:space="preserve">
+        <value>Відчуйте інтуїтивно зрозумілий інтерфейс користувача, який надихне вас залишатися організованими та продуктивними.</value>
+    </data>
+    <data name="first-block-3" xml:space="preserve">
+        <value>Завдяки функції одночасного редагування нотаток і папок ви можете співпрацювати з іншими в режимі реального часу, роблячи командну роботу безперебійною та ефективною.</value>
+    </data>
+    <data name="first-block-4" xml:space="preserve">
+        <value>Зареєструйтеся зараз і почніть вивчати всі дивовижні функції X Notes.</value>
+    </data>
+    <data name="notes-title" xml:space="preserve">
+        <value>Нотатки</value>
+    </data>
+    <data name="notes-description" xml:space="preserve">
+        <value>Залишайтеся організованими та ефективними з X Notes. Зберігайте всі свої нотатки, будь то текст, фотографії, аудіо, відео чи документи.</value>
+    </data>
+    <data name="labels-title" xml:space="preserve">
+        <value>Ярлики</value>
+    </data>
+    <data name="labels-description" xml:space="preserve">
+        <value>Зберігайте свої нотатки впорядкованими та легкодоступними за допомогою X Notes. Позначайте нотатки ярликами, щоб класифікувати їх і миттєво знаходити те, що вам потрібно.</value>
+    </data>
+    <data name="folders-title" xml:space="preserve">
+        <value>Папки</value>
+    </data>
+    <data name="folders-description" xml:space="preserve">
+        <value>Попрощайтеся з безладом і хаосом. За допомогою X Notes ви можете без особливих зусиль упорядкувати свої нотатки в папки, щоб легко знайти те, що вам потрібно, коли вам це потрібно.</value>
+    </data>
+    <data name="sharing-title" xml:space="preserve">
+        <value>Шерінг</value>
+    </data>
+    <data name="sharing-description" xml:space="preserve">
+        <value>Співпраця є ключем до успіху. За допомогою X Notes ви можете легко ділитися нотатками та папками з друзями чи командою, забезпечуючи безперебійну співпрацю та розробку спільних проектів в реальному часі.</value>
+    </data>
+    <data name="related-notes-title" xml:space="preserve">
+        <value>Зв'язані нотатки</value>
+    </data>
+    <data name="related-notes-description" xml:space="preserve">
+        <value>Втомилися перемикати сторінки, щоб знайти потрібну інформацію? За допомогою X Notes ви можете додавати зв'язані нотатки до будь-якого нотатка, щоб ви могли легко отримати доступ до всієї потрібної інформації, не втрачаючи час.</value>
+    </data>
+    <data name="customization-title" xml:space="preserve">
+        <value>Налаштування користувача</value>
+    </data>
+    <data name="customization-description" xml:space="preserve">
+        <value>Ваш досвід ведення нотаток має бути таким же унікальним, як і ви. За допомогою X Notes налаштуйте інтерфейс на свій смак і створіть робочий простір, який відповідає вашим потребам.</value>
+    </data>
+</root>

@@ -1,0 +1,81 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+blockquote,
+body,
+dd,
+dl,
+dt,
+fieldset,
+figure,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+html,
+iframe,
+legend,
+li,
+ol,
+p,
+pre,
+textarea,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+img,
+video {
+  height: auto;
+  max-width: 100%;
+}
+
+em {
+  margin-right: 0.0625rem;
+}
+
+
+body,
+html {
+  font-family: 'Roboto', sans-serif;
+  color: white;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+body {
+  background-color: #0C0C0C;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button,
+input,
+textarea {
+  font-family: 'Roboto', sans-serif;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+}

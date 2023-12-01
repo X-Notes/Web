@@ -1,49 +1,84 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - WebAPI</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/WebAPI.styles.css" asp-append-version="true"/>
-</head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebAPI</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
+    <head>
+        <meta charset="utf-8"/>
+        <meta
+          name="viewport"
+          content="width=device-width, height=device-height, initial-scale=1, interactive-widget=resizes-content"
+        />
+        <title>X Notes</title>
+        <link rel="stylesheet" href="/about/dist/main.css" asp-append-version="true" />
+        <link rel="icon" type="image/x-icon" href="/about/favicon/favicon.ico" />
+        <script src="https://accounts.google.com/gsi/client" ></script>
+    </head>
+    <body>
+        <header>
+            <div class="left-section">
+              <div id="loginGoogle"></div> 
             </div>
-        </div>
-    </nav>
-</header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
-
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2023 - WebAPI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="middle-section">
+                <img src="./about/logo.svg" />
+            </div>
+            <div class="right-section">
+            </div>
+        </header>
+    <div class="main-container">
+        <main role="main">
+            @RenderBody()
+        </main>
     </div>
-</footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
-</body>
+        <script defer src="~/about/particles/particles.min.js" asp-append-version="true"></script>
+        <script defer type="module" asp-append-version="true">
+            async function postData(url, data) {
+                // Default options are marked with *
+                const response = await fetch(url, {
+                    method: "POST", // *GET, POST, PUT, DELETE, etc.
+                    mode: "cors", // no-cors, *cors, same-origin
+                    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: "include", // include, *same-origin, omit
+                    headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: "follow", // manual, *follow, error
+                    // referrerPolicy: "no-referrer", // no-referrer, *client
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
+                });
+                return await response.json(); // parses JSON response into native JavaScript objects
+            }
+            async function onGoogleSignIn(response) {
+                // Handle the sign-in response
+                if (response.credential) {
+                    // User signed in successfully
+                    const idToken = response.credential;
+                    const authRequest = {
+                        token: idToken,
+                        languageId: @Model.LanguageId,
+                    };
+                    const res = await postData('api/Auth/google/login', authRequest);
+                    if (res.success) {
+                        localStorage.setItem('isLoggedIn', true); 
+                        localStorage.setItem('landing_auth_at', res.data.accessToken);
+                        localStorage.setItem('landing_auth_ft', res.data.refreshToken);
+                        localStorage.setItem('landing_auth_date', new Date().toISOString());
+                        window.location.href = '/';
+                    }
+                } else {
+                    // Sign-in failed
+                    console.error('Sign-in failed.');
+                }
+            }
+            google.accounts.id.initialize({
+                client_id: "@Model.GcClientId",
+                callback: (e) => onGoogleSignIn(e),
+                auto_select: false,
+            });
+            google.accounts.id.renderButton(document.getElementById("loginGoogle"),
+                { theme: "filled_blue", size: "medium" }  // customization attributes
+            );
+        </script>
+        <script defer type="module" src="/about/dist/main.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body> 
+    <div class="particles" id="particles-js"></div>
 </html>
