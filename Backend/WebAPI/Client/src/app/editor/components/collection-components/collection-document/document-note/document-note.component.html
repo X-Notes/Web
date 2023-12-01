@@ -1,0 +1,84 @@
+<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="document-content">
+  <app-drag-drop-handler-container [isShow]="isMouseOver" classes="mt-20"
+    ><ng-content *ngIf="isDragActive && (isSelectModeActive$ | async) === false && isRowsSelected === false"></ng-content
+  ></app-drag-drop-handler-container>
+
+  <div
+    appDrop="drop-active"
+    (fileDropped)="uploadFilesDragDrop($event)"
+    class="playlist main-item"
+    appTheme
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
+    <app-title-collection
+      [isSelectionStart]="(isSelectModeActive$ | async)"
+      [isReadOnlyMode]="isReadOnlyMode"
+      [textContent]="content?.name"
+      [contentId]="content?.id"
+      [cursors$]="cursors$"
+      (changeTitleEvent)="onTitleChangeInput($event)"
+      (clickInputEvent)="scrollAndFocusToTitle()"
+      [menu]="menu"
+      [isDisableButton]="this.content.isLoading"
+      [isShowButton]="isMouseOver"
+    ></app-title-collection>
+    <ng-container *ngIf="!isEmpty">
+      <app-document-item
+        *ngFor="let item of content.orderedItems"
+        [document]="item"
+        [theme]="theme"
+        [uiCursors$]="uiCursors$"
+        [isSelectModeActive]="(isSelectModeActive$ | async)"
+        [isReadOnlyMode]="isReadOnlyMode"
+        (deleteDocument)="deleteContentItemEvent.emit($event)"
+        (exportAudio)="exportDocument($event)"
+        (clickEvent)="clickItemHandler($event)"
+      ></app-document-item>
+    </ng-container>
+    <app-empty-collection-items-placeholder
+      *ngIf="isEmpty"
+      [title]="'innerNote.document.plsUpload' | translate"
+      [isSpinnerActive]="content.isLoading"
+    ></app-empty-collection-items-placeholder>
+  </div>
+</div>
+
+<!-- ADDITIONAL -->
+<input
+  #uploadRef
+  type="file"
+  multiple
+  [accept]="formats"
+  hidden="true"
+  (change)="uploadFiles($event)"
+/>
+
+<mat-menu
+  #menu="matMenu"
+  [class]="theme === themeE.Dark ? 'dark-menu' : null"
+>
+  <button
+    *ngIf="!isReadOnlyMode"
+    mat-menu-item
+    type="button"
+    name="add new audio"
+    (click)="uploadHandler()"
+  >
+    <mat-icon>library_music</mat-icon>
+    <span>{{ 'innerNote.menu.addDocument' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="Download" (click)="exportDocuments(content)">
+    <mat-icon>download</mat-icon>
+    <span> {{ 'innerNote.menu.download' | translate }} </span>
+  </button>
+  <button
+    *ngIf="!isReadOnlyMode"
+    mat-menu-item
+    type="button"
+    name="delete"
+    (click)="deleteContentEvent.emit(content.id)"
+  >
+    <mat-icon>delete</mat-icon>
+    <span>{{ 'innerNote.menu.delete' | translate }}</span>
+  </button>
+</mat-menu>

@@ -1,0 +1,16 @@
+main {
+    height: 100vh;
+    background: #26282d; 
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .content-404 {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }

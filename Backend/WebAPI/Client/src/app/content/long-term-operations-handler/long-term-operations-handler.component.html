@@ -1,0 +1,9 @@
+<div #container class="container" [ngStyle]="positions | async">
+  <app-long-term-operation
+    [@uploader]
+    (cancelAllEvent)="cancelAllHandler()"
+    (cancelSingleEvent)="cancelSingleHandler($event)"
+    *ngFor="let item of longTermOperations.operations"
+    [operation]="item"
+  ></app-long-term-operation>
+</div>

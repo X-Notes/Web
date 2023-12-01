@@ -1,0 +1,32 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: $dark-color;
+}
+
+.note-content {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 50px);
+
+  .full-note {
+    display: flex;
+    flex: 1;
+    width: 100%; // bug overflow documents with long name 
+    max-width: 1024px;
+  }
+}
+
+.player-container {
+  position: fixed;
+  z-index: 500;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}

@@ -1,0 +1,13 @@
+<video
+  #video
+  oncontextmenu="return false"
+  preload="metadata"
+  [controls]="false"
+  [muted]="true"
+  [src]="url"
+  (loadedmetadata)="setLoadingFalse()"
+  (error)="setLoadingFalse()"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+></video>
+<app-spinner *ngIf="isLoaded" [size]="25"></app-spinner>

@@ -1,0 +1,14 @@
+<ng-container [ngSwitch]="contentBase.metadata?.noteTextTypeId">
+  <div *ngSwitchCase="listType.checkList" class="container">
+    <div class="dot" [ngStyle]="{ 'background-color': dotColor }"></div>
+    <div class="text" [innerHTML]="html" [ngClass]="{ 'line-through': contentBase.metadata?.checked }"></div>
+  </div>
+  <div *ngSwitchCase="listType.dotList" class="container">
+    <div class="dot" [ngStyle]="{ 'background-color': dotColor }"></div>
+    <div class="text" [innerHTML]="html"></div>
+  </div>
+  <div *ngSwitchCase="listType.numberList" class="container">
+    <div class="number">{{ listNumber }}.</div>
+    <div class="text" [innerHTML]="html"></div>
+  </div>
+</ng-container>

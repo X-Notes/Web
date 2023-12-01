@@ -1,0 +1,22 @@
+@mixin is-selected {
+  box-shadow: 0 0 0 2px #0887a7;
+}
+
+.is-selected {
+  @include is-selected;
+}
+
+.card {
+  .card-body {
+    app-button-collection {
+      opacity: 0;
+    }
+  }
+  &:hover {
+    .card-body {
+      app-button-collection {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.container{
+    position: absolute;
+    right: 8px;
+    z-index: 500;
+    min-width: 150px;
+
+    display: flex;
+    flex-direction: column;
+}

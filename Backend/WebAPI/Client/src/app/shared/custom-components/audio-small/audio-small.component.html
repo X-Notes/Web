@@ -1,0 +1,15 @@
+<div class="audio-small" appTheme>
+  <div class="preview">
+    <img *ngIf="audio?.pathToImage" [src]="audio?.pathToImage" />
+    <div *ngIf="!audio?.pathToImage" class="no-preview">{{ audio.name[0] }}</div>
+  </div>
+  <div class="audio-info">
+    <p>{{ audio?.name }}</p>
+  </div>
+  <div class="audio-status" *ngIf="audio?.fileId === audioService.currentFile?.fileId">
+    <div class="icon">
+      <mat-icon [inline]="true">play_arrow</mat-icon>
+    </div>
+    <p>{{ 'innerNote.audio.playing' | translate }}</p>
+  </div>
+</div>

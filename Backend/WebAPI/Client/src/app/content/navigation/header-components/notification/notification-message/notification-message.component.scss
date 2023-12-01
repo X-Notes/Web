@@ -1,0 +1,105 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  width: 100%;
+}
+
+.notification-message {
+  display: flex;
+  width: 100%;
+  padding: 1rem 1rem 0.5rem 1rem;
+  transition: 0.2s ease;
+  cursor: pointer;
+
+  .avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    border: 0.8px solid white;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    > .photo-error {
+      height: 1rem;
+      width: 1rem;
+    }
+  }
+
+  .message {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 38px);
+
+    .info-message {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      .info {
+        display: flex;
+        font-size: 0.75rem;
+      }
+
+      .date {
+        color: #606060;
+      }
+
+      .status-new {
+        color: #f87154;
+      }
+
+      .status-read {
+        color: #626262;
+      }
+    }
+
+    .user-message {
+      display: flex;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      font-weight: 300;
+    }
+
+    .entity-title {
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    .entity-title-active {
+      &:hover {
+        color: #00c2ff;
+      }
+    }
+  }
+}
+
+.dark {
+  &:hover {
+    background-color: #34373e;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #5a5a5a;
+  }
+}
+
+.light {
+  &:hover {
+    background-color: #eaeaea;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $light-separator;
+  }
+}

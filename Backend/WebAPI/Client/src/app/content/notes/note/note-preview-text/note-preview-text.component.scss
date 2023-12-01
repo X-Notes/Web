@@ -1,0 +1,14 @@
+@import 'variables';
+
+:host {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  font-weight: 300;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+p {
+  @include text-overflow-webkit;
+}

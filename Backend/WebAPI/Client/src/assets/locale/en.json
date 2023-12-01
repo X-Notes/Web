@@ -1,0 +1,424 @@
+{
+  "notes": {
+    "name": "Notes"
+  },
+  "folders": {
+    "name": "Folders"
+  },
+  "labels": {
+    "name": "Labels"
+  },
+  "people": {
+    "name": "People"
+  },
+  "new": {
+    "note": "New note",
+    "folder": "New folder",
+    "background": "New background",
+    "label": "New label",
+    "inner-folder": "New note"
+  },
+  "subMenu": {
+    "all": "All",
+    "personal": "Personal",
+    "shared": "Shared",
+    "archive": "Archive",
+    "bin": "Bin",
+    "cancel": "Cancel"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Russian",
+    "uk": "Ukrainian",
+    "sv": "Swedish",
+    "pl": "Polish",
+    "es": "Spanish",
+    "it": "Italian",
+    "ja": "Japanese",
+    "zh": "Chinese",
+    "de": "German",
+    "fr": "French"
+  },
+  "header": {
+    "selected": "Selected",
+    "new": "New note",
+    "select": "Select all",
+    "filter": "Filter",
+    "theme": "Theme",
+    "search": "Search...",
+    "questions": "Question",
+    "notification": "Notification",
+    "orientation": "Mode",
+    "back": "Go back",
+    "video": "Video",
+    "countUsers": "Number of users",
+    "menu": "Menu",
+    "defaultColor": "Default color",
+    "emptyTrash": "Empty Trash",
+    "manage": "Add notes",
+    "questionItems": {
+      "faq": "Frequently asked questions",
+      "contact": "Contact with us"
+    },
+    "filterMenu": {
+      "dateAsc": "From old to new",
+      "dateDesc": "From new to old",
+      "order": "Custom draggable order"
+    },
+    "anonymous": "Anonymous",
+    "signIn": "Sign in",
+    "signInEditing": "Log in to edit"
+  },
+  "menu": {
+    "label": "Label",
+    "share": "Share",
+    "copy": "Copy",
+    "color": "Color",
+    "download": "Download",
+    "lock": "Lock",
+    "unlock": "Remove lock",
+    "forceLock": "Force lock",
+    "archive": "Archive",
+    "delete": "Delete",
+    "history": "History",
+    "private": "Personal",
+    "privateFolder": "Personal",
+    "removeFromFolder": "Remove notes from folder",
+    "restore": "Restore",
+    "copyText": "Copy Text"
+  },
+  "profile": {
+    "sectionProfile": "Profile",
+    "sectionGeneral": "General",
+    "sectionAccount": "Account",
+    "sectionPersonalization": "Personalization",
+    "nameUser": "Name",
+    "email": "Email",
+    "descriptionEmail": "Your email address is your identity on X Notes and is used to log in",
+    "logOut": "Log out",
+    "update": "Update",
+    "language": "Language",
+    "personalKey": " Personal key",
+    "changeKey": "Change",
+    "resetKey": "Reset",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "genericTooltip": "See how the notes will look in the",
+    "genericPreview": "preview",
+    "noteSize": "Note size",
+    "noteDefault": "Default",
+    "noteBig": "Big",
+    "isViewAudioOnNote": "Show audio",
+    "isViewDocumentOnNote": "Show documents",
+    "isViewPhotosOnNote": "Show photos",
+    "isViewTextOnNote": "Show text",
+    "isViewVideoOnNote": "Show videos",
+    "contentInNoteCount": "The amount of visible content of the note",
+    "notesInFolderCount": "Number of visible notes on the folder",
+    "countCurrent": "Current: "
+  },
+  "modal": {
+    "notFound": "Not found",
+    "searchingUser": "Find users via search",
+    "close": "Close",
+    "labelModal": {
+      "Labels": "Labels",
+      "search": "Label name..."
+    },
+    "ColorModal": {
+      "Colors": "Colors",
+      "save": "Save"
+    },
+    "contactUs": {
+      "send": "Send",
+      "emailField": "Email",
+      "emailHolder": "Your email adress",
+      "text": "Enter your message",
+      "textHolder": "Message...",
+      "required": "Field is required",
+      "emailValidation": "Email is invalid",
+      "success": "Your message has been successfully sent",
+      "incorrect": "Incorrect input"
+    },
+    "shareModal": {
+      "Share": "Share",
+      "access": "Access",
+      "personal": "Personal",
+      "shared": "Shared",
+      "selectedNotes": "Selected notes",
+      "selectedUsers": "Selected users ",
+      "search": "Search...",
+      "alert": "Send alert",
+      "Editor": "Editor",
+      "Viewer": "Viewer",
+      "send": "Send",
+      "sharedMessage": "Anyone on the internet with this link",
+      "noSharedMessage": "Only people added can open with this link",
+      "noPeopleNote": "The people who have access to the note will be displayed here",
+      "noPeopleFolder": "The people who have access to the folder will be displayed here",
+      "clearAll": "Clear all"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Related notes",
+      "new": "Add new"
+    },
+    "folderManage": {
+      "notes": "Add notes to folder"
+    },
+    "searchModal": {
+      "title": "Search",
+      "trySearch": "Find notes and folders via search"
+    },
+    "lockModal": {
+      "lock": "Lock note",
+      "unLock": "Unlock note",
+      "unDecrypt": "Remove lock",
+      "remove": "Remove",
+      "сomeIn": "Unlock",
+      "save": "Save",
+      "password": "Password",
+      "confirm": "Confirm password",
+      "placeholderPass": "Type password",
+      "placeholderConfirm": "Confirm",
+      "passMatchError": "passwords does not match",
+      "required": "Required field",
+      "minLength": "Password must be at least 6 characters",
+      "incorrect": "Incorrect password",
+      "timeMessage": "After unlocking the note will be available for 5 minutes",
+      "revokeMessage": "All users who can view or edit this note will lose access to it"
+    },
+    "reviewModal": {
+      "review": "Review document"
+    },
+    "deletionModal": {
+      "title": "Deletion",
+      "sureDeleteNotes": "Are you sure you want to delete notes?",
+      "sureDeleteFolders": "Are you sure you want to delete folders?",
+      "sureDeleteLabels": "Are you sure you want to delete labels?",
+      "additionalMessage": "Once delete them, there is no way to get them back."
+    },
+    "genericButtons":{
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "innerNote": {
+    "title": "Title",
+    "openNoteOrFile": "notes",
+    "text": "Text",
+    "textCommand": "Text, '/' for commands",
+    "heading": "Heading",
+    "menu": {
+      "addVideo": "Add new videos",
+      "addAudio": "Add new audios",
+      "addDocument": "Add new documents",
+      "review": "Review",
+      "download": "Download",
+      "copy": "Copy url",
+      "delete": "Delete"
+    },
+    "transformMenu": {
+      "h1": "Heading 1",
+      "h2": "Heading 2",
+      "h3": "Heading 3",
+      "dotList": "Bullet list",
+      "numberList": "Numbered list",
+      "checkList": "Todo list",
+      "addVideos": "Videos",
+      "addAudios": "Audios",
+      "addDocuments": "Documents",
+      "addPhotos": "Photos"
+    },
+    "colors": {
+      "reset": "Reset",
+      "cardinal": "Cardinal",
+      "tiger": "Tiger",
+      "canary": "Canary",
+      "frog": "Frog",
+      "parrot": "Parrot",
+      "bluebird": "Bluebird",
+      "dolphin": "Dolphin",
+      "whale": "Whale",
+      "butterfly": "Butterfly",
+      "flamingo": "Flamingo"
+    },
+    "photoMenu": {
+      "upload": "Upload new photos",
+      "countRow": "Photo in row",
+      "oneRow": "One in row",
+      "twoRow": "Two in row",
+      "threeRow": "Three in row",
+      "fourRow": "Four in row"
+    },
+    "audio": {
+      "previos": "Previous",
+      "next": "Next",
+      "play": "Play",
+      "pause": "Pause",
+      "loop": "loop",
+      "playlist": "Playlist",
+      "close": "Close",
+      "mute": "Mute",
+      "turnOnSound": "Turn on sound",
+      "wideScreen": "Wide screen",
+      "defaultPlayer": "Default player",
+      "fullscreen": "Fullscreen",
+      "miniPlayer": "Mini player",
+      "plsUpload": "Upload audio",
+      "playing": "playing"
+    },
+    "video": {
+      "plsUpload": "Upload video"
+    },
+    "document": {
+      "plsUpload": "Upload document"
+    },
+    "photo": {
+      "plsUpload": "Upload photo"
+    },
+    "text-color-menu" : {
+      "background": "Background"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Personal notes will be displayed here",
+    "sharedNotes": "Shared notes will be displayed here",
+    "archiveNotes": "Archived notes will be displayed here",
+    "deletedNotes": "Deleted notes will be displayed here",
+    "allLabels": "Labels will be displayed here",
+    "deletedLabels": "Deleted labels will be displayed here",
+    "privateFolders": "Personal folders will be displayed here",
+    "sharedFolders": "Shared folders will be displayed here",
+    "archiveFolders": "Archived folders will be displayed here",
+    "deletedFolders": "Deleted folders will be displayed here",
+    "folderNotes": "Notes will be displayed here",
+    "notification": "No unread notifications",
+    "notificationAll": "You have no notifications",
+    "history": "There is no history in the note yet",
+    "noAccessViewNote": "You do not have permission to view the note",
+    "noAccessViewFolder": "You do not have permission to view the folder",
+    "noNotes": "The folder does not contain notes"
+  },
+  "notification": {
+    "title": "Notification",
+    "readAll": "Read all notifications",
+    "seeAll": "See all notifications",
+    "goToNew": "Go to new notifications",
+    "newMessage": "New",
+    "readMessage": "Read message",
+    "changeUserPermissionNote": "Your permissions to the note have been changed",
+    "changeUserPermissionFolder": "Your permissions to the folder have been changed",
+    "sentInvitesToFolder": "Folder was shared with you",
+    "sentInvitesToNote": "Note was shared with you",
+    "removeUserFromFolder": "Your access to the folder has been revoked",
+    "removeUserFromNote": "Your access to the note has been revoked"
+  },
+  "uploader": {
+    "uploading": "Uploading",
+    "uploadingDocumentsNoteLong": "Uploading documents to a note",
+    "uploadingDocumentsNote": "Uploading documents",
+    "uploadingVideosNoteLong": "Uploading videos to a note",
+    "uploadingVideosNote": "Uploading videos",
+    "uploadingAudiosNoteLong": "Uploading audios to a note",
+    "uploadingAudiosNote": "Uploading audios",
+    "uploadingPhotosNoteLong": "Uploading photos to a note",
+    "uploadingPhotosNote": "Uploading photos",
+    "exportShort": "Export",
+    "exportVideos": "Export videos",
+    "exportAudios": "Export audios",
+    "exportDocuments": "Export documents",
+    "exportPhotos": "Export photos",
+    "copyShort": "Copying",
+    "copyNotes": "Copying notes",
+    "copyFolders": "Copying folders",
+    "changingProfilePhoto": "Photo is changing",
+    "changingBackground": "Background is changing",
+    "photoChanging": "Photo changing"
+  },
+  "placeholder": {
+    "folderNote": "Note without title",
+    "folderSmall": "Title of folder",
+    "noteSmall": "Title of note",
+    "playlist": "Name your playlist",
+    "labelPage": "Label name",
+    "unnamedNote": "Unnamed note",
+    "unnamedFolder": "Unnamed folder",
+    "unnamedLabel": "Unnamed label"
+  },
+  "snackBar": {
+    "saved": "Saved",
+    "onlyAuthorCanMoveIt": "Only the creator of the note can move it",
+    "noPermissionsForEdit": "No rights to edit",
+    "archive": "archive",
+    "toBin": "bin",
+    "toShared": "shared",
+    "toPrivate": "private",
+    "undo": "Undo",
+    "all": "all",
+    "notes": "Notes",
+    "note": "Note",
+    "folders": "Folders",
+    "folder": "Folder",
+    "labels": "Labels",
+    "label": "Label",
+    "notePermDeleted": "Note deleted permanently",
+    "notesPermDeleted": "Notes deleted permanently",
+    "folderPermDeleted": "Folder deleted permanently",
+    "foldersPermDeleted": "Folders deleted permanently",
+    "movedToMany": " moved to ",
+    "movedToSingle": " moved to ",
+    "reloadPage": "Unstable connection please refresh the page",
+    "noItemInExport": "Collection is empty",
+    "subscriptionCreationError": "The creation limit for this subscription has been exceeded",
+    "subscriptionMaxNotesError": "maximum of {{count}} notes for this subscription",
+    "copied": "Copied",
+    "reconnection": "Reconnection",
+    "reconnected": "Reconnected",
+    "maxContents": "Exceeded number of elements in note"
+  },
+  "titles": {
+    "labels": "Labels",
+    "notes": "Notes",
+    "folders": "Folders",
+    "profile": "Profile",
+    "history": "History",
+    "note": "Note",
+    "folder": "Folder"
+  },
+  "delete-message":{
+    "folders": "Folders will be automatically deleted after {{days}} days",
+    "notes": "Notes will be automatically deleted after {{days}} days",
+    "labels": "Labels will be automatically deleted after {{days}} days"
+  },
+  "entity-bottom-tooltip":{
+    "deleted": "date of deletion",
+    "hasUsersNote": "Note can be viewed or edited by multiple users",
+    "hasUsersFolder": "Folder can be viewed or edited by multiple users",
+    "unlockTime": "Note will be locked at {{time}}",
+    "owner": "You are the owner of the note",
+    "ownerFolder": "You are the owner of the folder",
+    "editNote": "You can edit note",
+    "editFolder": "You can edit folder",
+    "readNote": "You can only read note",
+    "readFolder": "You can only read folder"
+  },
+  "profile-billing":{
+    "notes": "notes",
+    "folders": "folders",
+    "labels": "labels",
+    "related": "related notes for note",
+    "memory": "memory",
+    "history-100": "Copies of note changes for the last 100 days",
+    "personalization": "Personalization settings",
+    "per-month": "per month",
+    "upgrade": "Upgrade",
+    "backgrounds": "{{count}} backgrounds"
+  },
+  "files": {
+    "noAccessRightsNote" : "No permission to upload files to note",
+    "noEnoughMemory" : "Not enough memory to upload the file",
+    "fileTooLarge" : "File size must not exceed {{sizeMB}} MB",
+    "fileNoSupport" : "File of this format is not supported"
+  }
+}

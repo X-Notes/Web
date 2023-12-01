@@ -1,0 +1,141 @@
+<div #mainSection appTheme appSelection [editorOptions$]="options$" [appCopy]="htmlElements"
+  (changeDrawerCoordsEvent)="selectionHandler($event)" (selectionStartEvent)="selectionStartHandler($event)"
+  (selectionEndEvent)="selectionEndHandler($event)" (onScrollEvent)="onScroll($event)" class="main-content"
+  [ngClass]="{ 'nope-select': facade.selectionService.getSelectionDivActive$ | async }">
+  <div ondragstart="return false;" ondrop="return false;" class="top-section">
+    <div *ngIf="(labels | noDeletedLabels)?.length" class="labels-section">
+      <div class="label" *ngFor="let label of labels | noDeletedLabels" [ngStyle]="{ backgroundColor: label.color }">
+        <p>{{ label.name }}</p>
+      </div>
+    </div>
+    <ng-content></ng-content>
+    <div class="title-section">
+      <div id="title-element" #noteTitle [attr.contenteditable]="
+          !options$.getValue().isReadOnlyMode && (facade.selectionService.getSelectionDivActive$ | async) === false
+        " (paste)="pasteCommandHandler($event)" (selectstart)="startTitleSelection($event)" class="title"
+        (input)="onTitleInput($event)" (keydown.enter)="handlerTitleEnter($event)" (click)="onTitleClick()"
+        [innerText]="viewTitle"></div>
+      <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
+      <div class="left-border"></div>
+      <div *ngFor="let cursor of titleCursors$ | async" class="collaborative-cursor" [ngStyle]="{
+          top: cursor.cursorTop + 'px',
+          left: cursor.cursorLeft + 'px',
+          backgroundColor: cursor.color
+        }"></div>
+    </div>
+  </div>
+  <div #contentSection cdkDropList class="content-section" (cdkDropListDropped)="drop($event)">
+    <div class="content-section-inner">
+      <div cdkDrag (cdkDragStarted)="dragStarted($event)" (cdkDragEnded)="dragEnded($event)" class="item"
+        *ngFor="let item of contents; let i = index">
+        <ng-container [ngSwitch]="item.typeId">
+          <div [appDrop]="'is-placeholder-active'" (fileDropped)="uploadRandomFiles($event, item.id)"
+            *ngSwitchCase="contentType.Text">
+            <app-html-text-part #htmlComp *ngIf="item.metadata.noteTextTypeId === textType.default"
+              [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
+              [theme]="editorTheme" [content]="item" [cursors$]="cursors$"
+              [isReadOnlyMode]="options$.getValue().isReadOnlyMode" [editorSelectionMode]="selectionMode"
+              (enterEvent)="enterHandler($event)" (deleteThis)="deleteRowHandler($event)"
+              (concatThisWithPrev)="concatThisWithPrev($event)" (transformTo)="transformToTypeText($event)"
+              (transformToFile)="transformToFileType($event)" (keyDown)="keyDownEventHandler($event)"
+              (inputHtmlEvent)="updateHtmlHandler($event)" (onFocus)="onFocusHandler($event)"
+              (someChangesEvent)="postAction()">
+              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
+            </app-html-text-part>
+            <app-html-number-list #htmlComp *ngIf="item.metadata.noteTextTypeId === textType.numberList"
+              [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
+              [theme]="editorTheme" [listNumber]="getNumberList(item, i)" [content]="item" [cursors$]="cursors$"
+              [isReadOnlyMode]="options$.getValue().isReadOnlyMode" [editorSelectionMode]="selectionMode"
+              (enterEvent)="enterHandler($event)" (transformTo)="transformToTypeText($event)"
+              (keyDown)="keyDownEventHandler($event)" (deleteThis)="deleteRowHandler($event)"
+              (inputHtmlEvent)="updateHtmlHandler($event)" (concatThisWithPrev)="concatThisWithPrev($event)"
+              (onFocus)="onFocusHandler($event)" (someChangesEvent)="postAction()">
+              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler></app-html-number-list>
+            <app-html-dot-list #htmlComp *ngIf="item.metadata.noteTextTypeId === textType.dotList"
+              [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
+              [theme]="editorTheme" [content]="item" [cursors$]="cursors$"
+              [isReadOnlyMode]="options$.getValue().isReadOnlyMode" [editorSelectionMode]="selectionMode"
+              (enterEvent)="enterHandler($event)" (transformTo)="transformToTypeText($event)"
+              (keyDown)="keyDownEventHandler($event)" (deleteThis)="deleteRowHandler($event)"
+              (concatThisWithPrev)="concatThisWithPrev($event)" (inputHtmlEvent)="updateHtmlHandler($event)"
+              (onFocus)="onFocusHandler($event)" (someChangesEvent)="postAction()">
+              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler></app-html-dot-list>
+            <app-html-check-list #htmlComp *ngIf="item.metadata.noteTextTypeId === textType.checkList"
+              [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
+              [theme]="editorTheme" [content]="item" [cursors$]="cursors$"
+              [isReadOnlyMode]="options$.getValue().isReadOnlyMode" [editorSelectionMode]="selectionMode"
+              (enterEvent)="enterHandler($event)" (transformTo)="transformToTypeText($event)"
+              (keyDown)="keyDownEventHandler($event)" (deleteThis)="deleteRowHandler($event)"
+              (concatThisWithPrev)="concatThisWithPrev($event)" (inputHtmlEvent)="updateHtmlHandler($event)"
+              (onFocus)="onFocusHandler($event)" (someChangesEvent)="postAction()">
+              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler>
+            </app-html-check-list>
+            <app-html-headings #htmlComp *ngIf="item.metadata.noteTextTypeId === textType.heading"
+              [isSelected]="getIsSelected(item.id)" [forceFocus]="emptyFocus && (contents.length - 1) === i"
+              [theme]="editorTheme" [content]="item" [cursors$]="cursors$"
+              [isReadOnlyMode]="options$.getValue().isReadOnlyMode" [editorSelectionMode]="selectionMode"
+              (enterEvent)="enterHandler($event)" (deleteThis)="deleteRowHandler($event)"
+              (keyDown)="keyDownEventHandler($event)" (concatThisWithPrev)="concatThisWithPrev($event)"
+              (inputHtmlEvent)="updateHtmlHandler($event)" (onFocus)="onFocusHandler($event)"
+              (someChangesEvent)="postAction()">
+              <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler></app-html-headings>
+            <div class="custom-placeholder file-insert"></div>
+          </div>
+          <app-photos #htmlComp *ngSwitchCase="contentType.Photos" [isSelected]="getIsSelected(item.id)"
+            [theme]="editorTheme" [content]="item" [cursors$]="cursors$" [noteId]="this.options$.getValue().noteId"
+            [isReadOnlyMode]="options$.getValue().isReadOnlyMode"
+            (uploadEvent)="uploadPhotoToAlbumHandler($event, this.options$.getValue().noteId)"
+            (deleteContentEvent)="deletePhotosCollection($event)"
+            (deleteContentItemEvent)="deletePhotoHandler($event, item)"
+            (someChangesEvent)="postAction()"><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler></app-photos>
+          <app-audio-note #htmlComp *ngSwitchCase="contentType.Audios" [isSelected]="getIsSelected(item.id)"
+            [theme]="editorTheme" [content]="item" [cursors$]="cursors$" [noteId]="this.options$.getValue().noteId"
+            [isReadOnlyMode]="options$.getValue().isReadOnlyMode" (deleteContentEvent)="deleteAudiosCollection($event)"
+            (deleteContentItemEvent)="deleteAudioHandler($event, item)"
+            (uploadEvent)="uploadAudiosToCollectionHandler($event, this.options$.getValue().noteId)"
+            (someChangesEvent)="postAction()"><app-drag-drop-handler
+              cdkDragHandle></app-drag-drop-handler></app-audio-note>
+          <app-video-note #htmlComp *ngSwitchCase="contentType.Videos" [isSelected]="getIsSelected(item.id)"
+            [theme]="editorTheme" [content]="item" [cursors$]="cursors$" [noteId]="this.options$.getValue().noteId"
+            [isReadOnlyMode]="options$.getValue().isReadOnlyMode" (deleteContentEvent)="deleteVideosCollection($event)"
+            (deleteContentItemEvent)="deleteVideoHandler($event, item)"
+            (uploadEvent)="uploadVideosToCollectionHandler($event, this.options$.getValue().noteId)"
+            (someChangesEvent)="postAction()"><app-drag-drop-handler
+              cdkDragHandle></app-drag-drop-handler></app-video-note>
+          <app-document-note #htmlComp *ngSwitchCase="contentType.Documents" [isSelected]="getIsSelected(item.id)"
+            [theme]="editorTheme" [content]="item" [cursors$]="cursors$" [noteId]="this.options$.getValue().noteId"
+            [isReadOnlyMode]="options$.getValue().isReadOnlyMode"
+            (deleteContentEvent)="deleteDocumentsCollection($event)"
+            (deleteContentItemEvent)="deleteDocumentHandler($event, item)"
+            (uploadEvent)="uploadDocumentsToCollectionHandler($event, this.options$.getValue().noteId)"
+            (someChangesEvent)="postAction()"><app-drag-drop-handler
+              cdkDragHandle></app-drag-drop-handler></app-document-note>
+          <div *ngSwitchDefault>Default</div>
+        </ng-container>
+        <div class="custom-placeholder" *cdkDragPlaceholder></div>
+      </div>
+      <div *ngIf="isOverEmpty" class="custom-placeholder"></div>
+      <div class="empty" (mousedown)="placeHolderClick($event)" (mousemove)="mouseEnter($event)"
+        (mouseout)="mouseOut($event)" appDrop (fileDropped)="uploadRandomFiles($event, lastContentId)"
+        (dragOverEvent)="isOverEmpty = true" (dragLeaveEvent)="isOverEmpty = false"></div>
+    </div>
+  </div>
+  <div #selectionDrawer [ngStyle]="{
+    opacity: (isDrawerVisible$ | async) ? '1' : '0',
+    'top.px': coords?.top ?? 0,
+    'left.px': coords?.left ?? 0,
+    'width.px': coords?.width ?? 0,
+    'height.px': coords?.height ?? 0,
+  }" id="note-selector" class="full-note-selection"></div>
+</div>
+<div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
+<app-mobile-transform-menu *ngIf="(isMobileMenuActive$ | async) === true" [style.bottom]="transformMenuBottom"
+  (transformTo)="transformToTypeText($event)"
+  (transformToFile)="transformToFileType($event)"></app-mobile-transform-menu>
+<app-text-edit-menu #textEditMenu [style.top]="textEditMenuTop" [style.bottom]="textEditMenuBottom"
+  [style.left.px]="textEditMenuLeft" [style.visibility]="
+    isTextMenuActive && (isMobileMenuActive$ | async) === false ? 'visible' : 'hidden'
+  " [options]="menuOptions" [theme]="editorTheme" (eventTransform)="transformToTypeText($event)"
+  (updateText)="updateTextStyles($event)">
+</app-text-edit-menu>
+{{ changeDetectionChecker() }}

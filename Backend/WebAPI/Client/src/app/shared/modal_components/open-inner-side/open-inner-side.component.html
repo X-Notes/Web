@@ -1,0 +1,75 @@
+<div class="wrapper" appTheme>
+  <app-dialog-generic-header
+    [message]="'notes.name' | translate"
+    (clickEvent)="dialogRef.close()"
+  ></app-dialog-generic-header>
+  <div class="dialog-content">
+    <div class="tab-content">
+      <div class="filter-row">
+        <app-search (changeOutput)="onSearch($event)" class="search"></app-search>
+        <app-select
+          class="select"
+          [initialValue]="defaultValue"
+          [options]="options"
+          (selectValueChange)="selectItem($event)"
+        >
+        </app-select>
+      </div>
+      <ng-scrollbar
+        #scrollbar
+        class="content-scroll"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
+        <div class="content-inner">
+          <div
+            *ngIf="loaded"
+            class="grid-modal"
+            [ngStyle]="{ opacity: murriService.flagForOpacity ? '1' : '0' }"
+          >
+            <div
+              #item
+              class="grid-modal-item"
+              [id]="item.id"
+              *ngFor="let item of viewNotes"
+              [ngClass]="[
+                pService.orientationMobile ? 'grid-plus' : '',
+                (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
+              ]"
+            >
+              <app-note
+                [note]="item"
+                [isSelected]="item.isSelected"
+                [userId]="(user$ | async)?.id"
+                [highlightCursorActive]="!isMaxNotesSelected"
+                (highlightNote)="highlightNote($event.note)"
+                (clickOnNote)="highlightNote($event)"
+                class="note"
+              ></app-note>
+            </div>
+          </div>
+          <app-empty-search-placeholder
+            *ngIf="isNotFound && !pService.spinnerActive"
+          ></app-empty-search-placeholder>
+        </div>
+      </ng-scrollbar>
+      <div class="fixed-filters" [hidden]="!(selectedNotesChips.length > 0)">
+        <div class="wrapper-chips">
+          <app-chip
+            *ngFor="let item of selectedNotesChips"
+            [color]="item.color"
+            [text]="item.title ? item.title : 'no-title'"
+            [isRemovable]="true"
+            (remove)="unSelectNote(item)"
+          >
+          </app-chip>
+        </div>
+      </div>
+      <app-spinner [size]="25" *ngIf="pService.spinnerActive"></app-spinner>
+    </div>
+  </div>
+  <app-dialog-generic-save
+    (saveOutput)="close()"
+    [buttonText]="'modal.ColorModal.save' | translate"
+  ></app-dialog-generic-save>
+</div>

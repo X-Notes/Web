@@ -1,0 +1,46 @@
+@import 'variables';
+
+:host {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  right: 0;
+  width: calc(100% - 270px);
+}
+
+.delete-message-container {
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  padding: 15px;
+  p {
+    color: #cccccc;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+}
+
+.dark {
+  background-color: $dark-backlight;
+}
+
+.light {
+  background-color: #f2f2f2;
+  color: $text-color;
+}
+
+@media (max-width: 1024px) {
+  :host {
+    width: calc(100%);
+    bottom: 80px;
+  }
+}
+
+@media (max-width: 600px) {
+  :host {
+    width: calc(100%);
+    bottom: $bottom-mobile-menu;
+  }
+}

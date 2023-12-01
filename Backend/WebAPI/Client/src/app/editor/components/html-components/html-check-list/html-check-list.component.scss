@@ -1,0 +1,27 @@
+.checkbox-container {
+  display: flex;
+  mat-checkbox {
+    display: flex;
+  }
+}
+
+.text-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-left: 0.5rem;
+
+  p {
+    transition: 0.2s ease;
+  }
+
+  .check-list {
+    min-height: 26px;
+  }
+
+  .checked-item {
+    text-decoration: line-through;
+    color: #8e8e8e;
+  }
+}

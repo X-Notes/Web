@@ -1,0 +1,69 @@
+<div class="record" appTheme>
+  <div class="date">
+    <p>{{ history.snapshotTime | date : 'd MMM, h:mm' }}</p>
+  </div>
+  <div class="users">
+    <div
+      *ngFor="let user of history.users | slice:0:5"
+      class="user"
+      CustomTooltip="{{user.name}}"
+      position="Bottom"
+    >
+      <img [src]="user.photoPath" />
+    </div>
+    <button
+      type="button"
+      name="expand more"
+      #expand
+      (click)="toggle()"
+      cdk-overlay-origin
+      #origin="cdkOverlayOrigin"
+    >
+      <div class="icon">
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="expand"></div>
+    </button>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayOpen]="seeAllUsers"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="seeAllUsers = false"
+    >
+      <div class="all-users-popup" appTheme [@showDropdown]>
+        <ng-scrollbar
+          #scrollbar
+          class="users-popup"
+          [visibility]="'hover'"
+          [appearance]="'compact'"
+        >
+          <div class="popup-content-inner" #userHeight>
+            <div *ngFor="let user of history.users" class="user">
+              <div class="user-image">
+                <img [src]="user.photoPath" />
+              </div>
+              <div class="user-info">
+                <p class="name">{{user.name}}</p>
+                <b class="email">{{user.email}}</b>
+              </div>
+            </div>
+          </div>
+        </ng-scrollbar>
+      </div>
+    </ng-template>
+  </div>
+  <a
+    class="redirect"
+    [routerLink]="['/notes', noteId, 'history', history.noteVersionId]"
+    target="_blank"
+    #redirect
+  >
+    <div class="icon">
+      <mat-icon fontSet="material-icons-round" [inline]="true">history</mat-icon>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="redirect"></div>
+  </a>
+</div>

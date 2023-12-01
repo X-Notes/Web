@@ -1,0 +1,22 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 475px;
+    width: 450px;
+}
+
+.history-section {
+    height: 100%;
+    position: relative;
+    .history-records{
+        height: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    :host {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  

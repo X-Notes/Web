@@ -1,0 +1,32 @@
+<div
+  *ngIf="loaded"
+  class="grid"
+  [ngStyle]="{'opacity': noteService.murriService.flagForOpacity ? '1' : '0'}"
+>
+  <div
+    #item
+    class="grid-item"
+    [id]="item.id"
+    *ngFor="let item of noteService.entities"
+    [ngStyle]="{'opacity': item.isDisplay ? '1' : '0', 'z-index': item.isDisplay ? '1' : '0'}"
+    [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+  >
+    <app-note
+      [note]="item"
+      [isSelected]="noteService.getIsSelected(item.id)"
+      [userId]="(user$ | async).id"
+      [date]="item.deletedAt | date: 'medium'"
+      [tooltipDateMessage]="'entity-bottom-tooltip.deleted'"
+      (highlightNote)="noteService.highlightNote($event)"
+      (clickOnNote)="noteService.toNote($event)"
+      class="note"
+    ></app-note>
+  </div>
+</div>
+<app-no-results-illustration
+  *ngIf="loaded && ((deletedCount$ | async) ? false : true)"
+  [isShow]="loaded && ((deletedCount$ | async) ? false : true)"
+  [message]="'noResult.deletedNotes' | translate"
+  [illustration]="pService.icon.deletedIllustration"
+  typeClass="type-module"
+></app-no-results-illustration>

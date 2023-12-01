@@ -1,0 +1,424 @@
+{
+  "notes": {
+    "name": "Notera"
+  },
+  "folders": {
+    "name": "Mappar"
+  },
+  "labels": {
+    "name": "Etiketter"
+  },
+  "people": {
+    "name": "Folk"
+  },
+  "new": {
+    "note": "Ny anteckning",
+    "folder": "Ny mapp",
+    "background": "Ny bakgrund",
+    "label": "Ny etikett",
+    "inner-folder": "Ny anteckning"
+  },
+  "subMenu": {
+    "all": "Alla",
+    "personal": "Personlig",
+    "shared": "Delad",
+    "archive": "Arkiv",
+    "bin": "Vara",
+    "cancel": "Annullera"
+  },
+  "languages": {
+    "en": "Engelska",
+    "ru": "Ryska",
+    "uk": "Ukrainska",
+    "sv": "Svenska",
+    "pl":"Polsk",
+    "es": "Spanska",
+    "it": "Italienska",
+    "ja": "Japanska",
+    "zh": "Kinesiska",
+    "de":"Tyska",
+    "fr":"Franska"
+  },
+  "header": {
+    "selected": "Vald",
+    "new": "Ny anteckning",
+    "select": "Markera alla",
+    "filter": "Filter",
+    "theme": "Tema",
+    "search": "Söka...",
+    "questions": "Fråga",
+    "notification": "Anmälan",
+    "orientation": "Läge",
+    "back": "Gå tillbaka",
+    "video": "Video",
+    "countUsers": "Antal användare",
+    "menu": "Meny",
+    "defaultColor": "Standardfärg",
+    "emptyTrash": "Töm papperskorgen",
+    "manage": "Lägga till anteckningar",
+    "questionItems": {
+      "faq": "Vanliga frågor och svar",
+      "contact": "Kontakta oss"
+    },
+    "filterMenu": {
+      "dateAsc": "Från gammalt till nytt",
+      "dateDesc": "Från nytt till gammalt",
+      "order": "Anpassad dragbar ordning"
+    },
+    "anonymous": "Anonymt",
+    "signIn": "Logga in",
+    "signInEditing": "Logga in för att redigera"
+  },
+  "menu": {
+    "label": "Etikett",
+    "share": "Aktie",
+    "copy": "Kopia",
+    "color": "Färg",
+    "download": "Ladda ned",
+    "lock": "Lås",
+    "unlock": "Ta bort låset",
+    "forceLock": "Tvinga lås",
+    "archive": "Arkiv",
+    "delete": "Ta bort",
+    "history": "Historia",
+    "private": "Personlig",
+    "privateFolder": "Personlig",
+    "removeFromFolder": "Ta bort anteckningar från mappen",
+    "restore": "Återställa",
+    "copyText": "Kopiera text"
+  },
+  "profile": {
+    "sectionProfile": "Profil",
+    "sectionGeneral": "Allmänt",
+    "sectionAccount": "Konto",
+    "sectionPersonalization": "Personalisering",
+    "nameUser": "Namn",
+    "email": "E-post",
+    "descriptionEmail": "Din e-postadress är din identitet på X Notes och används för att logga in",
+    "logOut": "Logga ut",
+    "update": "Uppdatera",
+    "language": "Språk",
+    "personalKey": " Personlig nyckel",
+    "changeKey": "Förändring",
+    "resetKey": "Nollställa",
+    "theme": "Tema",
+    "themeLight": "Ljus",
+    "themeDark": "Mörk",
+    "genericTooltip": "Se hur anteckningarna kommer att se ut i",
+    "genericPreview": "förhandsvisning",
+    "noteSize": "Anteckningens storlek",
+    "noteDefault": "Standard",
+    "noteBig": "Stor",
+    "isViewAudioOnNote": "Visa ljud",
+    "isViewDocumentOnNote": "Visa dokument",
+    "isViewPhotosOnNote": "Visa foton",
+    "isViewTextOnNote": "Visa text",
+    "isViewVideoOnNote": "Visa videor",
+    "contentInNoteCount": "Mängden synligt innehåll i anteckningen",
+    "notesInFolderCount": "Antal synliga anteckningar i mappen",
+    "countCurrent": "Ström: "
+  },
+  "modal": {
+    "notFound": "Hittades inte",
+    "searchingUser": "Hitta användare via sökning",
+    "close": "Stänga",
+    "labelModal": {
+      "Labels": "Etiketter",
+      "search": "Etikettens namn..."
+    },
+    "ColorModal": {
+      "Colors": "Färger",
+      "save": "Spara"
+    },
+    "contactUs": {
+      "send": "Sända",
+      "emailField": "E-post",
+      "emailHolder": "Din e-postadress",
+      "text": "Ange ditt meddelande",
+      "textHolder": "Meddelande...",
+      "required": "Fält krävs",
+      "emailValidation": "E-post är ogiltig",
+      "success": "Ditt meddelande har skickats",
+      "incorrect": "Felaktig inmatning"
+    },
+    "shareModal": {
+      "Share": "Aktie",
+      "access": "Tillträde",
+      "personal": "Personlig",
+      "shared": "Delad",
+      "selectedNotes": "Anteckningar i urval",
+      "selectedUsers": "Utvalda användare",
+      "search": "Söka...",
+      "alert": "Skicka avisering",
+      "Editor": "Redaktör",
+      "Viewer": "Åskådare",
+      "send": "Sända",
+      "sharedMessage": "Alla på internet med denna länk",
+      "noSharedMessage": "Endast personer som läggs till kan öppnas med den här länken",
+      "noPeopleNote": "De personer som har tillgång till anteckningen visas här",
+      "noPeopleFolder": "De personer som har tillgång till mappen visas här",
+      "clearAll": "Rensa alla"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Relaterade anteckningar",
+      "new": "Lägg till ny"
+    },
+    "folderManage": {
+      "notes": "Lägga till anteckningar i mappen"
+    },
+    "searchModal": {
+      "title": "Sök",
+      "trySearch": "Hitta anteckningar och mappar via sökning"
+    },
+    "lockModal": {
+      "lock": "Lås anteckning",
+      "unLock": "Lås upp anteckning",
+      "unDecrypt": "Ta bort låset",
+      "remove": "Avlägsna",
+      "сomeIn": "Låsa upp",
+      "save": "Spara",
+      "password": "Lösenord",
+      "confirm": "Bekräfta lösenord",
+      "placeholderPass": "Skriv lösenord",
+      "placeholderConfirm": "Bekräfta",
+      "passMatchError": "lösenord matchar inte",
+      "required": "Obligatoriskt fält",
+      "minLength": "Lösenordet måste bestå av minst 6 tecken",
+      "incorrect": "Felaktigt lösenord",
+      "timeMessage": "Efter upplåsning kommer anteckningen att vara tillgänglig i 5 minuter",
+      "revokeMessage": "Alla användare som kan visa eller redigera den här anteckningen förlorar åtkomsten till den"
+    },
+    "reviewModal": {
+      "review": "Granska dokument"
+    },
+    "deletionModal": {
+      "title": "Borttagning",
+      "sureDeleteNotes": "Är du säker på att du vill ta bort anteckningar?",
+      "sureDeleteFolders": "Är du säker på att du vill ta bort mappar?",
+      "sureDeleteLabels": "Är du säker på att du vill ta bort etiketter?",
+      "additionalMessage": "När du har tagit bort dem finns det inget sätt att få tillbaka dem."
+    },
+    "genericButtons": {
+      "cancel": "Annullera",
+      "delete": "Ta bort"
+    }
+  },
+  "innerNote": {
+    "title": "Titel",
+    "openNoteOrFile": "Anteckningar",
+    "text": "SMS",
+    "textCommand": "Text, '/' för kommandon",
+    "heading": "Överskrift",
+    "menu": {
+      "addVideo": "Lägg till nya videor",
+      "addAudio": "Lägg till nya ljud",
+      "addDocument": "Lägg till nya dokument",
+      "review": "Recension",
+      "download": "Ladda ned",
+      "copy": "Kopiera url",
+      "delete": "Ta bort"
+    },
+    "transformMenu": {
+      "h1": "Rubrik 1",
+      "h2": "Rubrik 2",
+      "h3": "Rubrik 3",
+      "dotList": "Punktlista",
+      "numberList": "Numrerad lista",
+      "checkList": "Att göra-lista",
+      "addVideos": "Videor",
+      "addAudios": "Ljudfiler",
+      "addDocuments": "Dokument",
+      "addPhotos": "Foton"
+    },
+    "colors": {
+      "reset": "Återställ",
+      "cardinal": "Kardinal",
+      "tiger": "Tiger",
+      "canary": "Kanariefågel",
+      "frog": "Groda",
+      "parrot": "Papegoja",
+      "bluebird": "Blåfågel",
+      "dolphin": "Delfin",
+      "whale": "Val",
+      "butterfly": "Fjäril",
+      "flamingo": "Flamingo"
+    },
+    "photoMenu": {
+      "upload": "Ladda upp nya foton",
+      "countRow": "Foto i rad",
+      "oneRow": "En i rad",
+      "twoRow": "Två i rad",
+      "threeRow": "Tre i rad",
+      "fourRow": "Fyra i rad"
+    },
+    "audio": {
+      "previos": "Föregående",
+      "next": "Nästa",
+      "play": "Leka",
+      "pause": "Paus",
+      "loop": "ögla",
+      "playlist": "Spellista",
+      "close": "Stänga",
+      "mute": "Stum",
+      "turnOnSound": "Slå på ljud",
+      "wideScreen": "Bredbildsskärm",
+      "defaultPlayer": "Standardspelare",
+      "fullscreen": "Helskärm",
+      "miniPlayer": "Minispelare",
+      "plsUpload": "Ladda upp ljud",
+      "playing": "spel"
+    },
+    "video": {
+      "plsUpload": "Ladda upp video"
+    },
+    "document": {
+      "plsUpload": "Ladda upp dokument"
+    },
+    "photo": {
+      "plsUpload": "Ladda upp foto"
+    },
+    "text-color-menu" : {
+      "background": "Bakgrund"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Personliga anteckningar visas här",
+    "sharedNotes": "Delade anteckningar visas här",
+    "archiveNotes": "Arkiverade anteckningar visas här",
+    "deletedNotes": "Borttagna anteckningar visas här",
+    "allLabels": "Etiketter visas här",
+    "deletedLabels": "Borttagna etiketter visas här",
+    "privateFolders": "Personliga mappar visas här",
+    "sharedFolders": "Delade mappar visas här",
+    "archiveFolders": "Arkiverade mappar visas här",
+    "deletedFolders": "Borttagna mappar visas här",
+    "folderNotes": "Anteckningar kommer att visas här",
+    "notification": "Inga olästa meddelanden",
+    "notificationAll": "Du har inga aviseringar",
+    "history": "Det finns ingen historik i anteckningen ännu",
+    "noAccessViewNote": "Du har inte behörighet att visa anteckningen",
+    "noAccessViewFolder": "Du har inte behörighet att visa mappen",
+    "noNotes": "Mappen innehåller inga anteckningar"
+  },
+  "notification": {
+    "title": "Anmälan",
+    "readAll": "Läs alla meddelanden",
+    "seeAll": "Se alla notiser",
+    "goToNew": "Gå till nya aviseringar",
+    "newMessage": "Ny",
+    "readMessage": "Läs meddelandet",
+    "changeUserPermissionNote": "Dina behörigheter till anteckningen har ändrats",
+    "changeUserPermissionFolder": "Dina behörigheter till mappen har ändrats",
+    "sentInvitesToFolder": "Mappen har delats med dig",
+    "sentInvitesToNote": "Note was shared with you",
+    "removeUserFromFolder": "Din tillgång till mappen har återkallats",
+    "removeUserFromNote": "Din åtkomst till anteckningen har återkallats"
+  },
+  "uploader": {
+    "uploading": "Uppladdning",
+    "uploadingDocumentsNoteLong": "Ladda upp dokument till en anteckning",
+    "uploadingDocumentsNote": "Ladda upp dokument",
+    "uploadingVideosNoteLong": "Ladda upp videor till en anteckning",
+    "uploadingVideosNote": "Ladda upp videor",
+    "uploadingAudiosNoteLong": "Ladda upp ljud till en anteckning",
+    "uploadingAudiosNote": "Ladda upp ljud",
+    "uploadingPhotosNoteLong": "Ladda upp foton till en anteckning",
+    "uploadingPhotosNote": "Ladda upp foton",
+    "exportShort": "Export",
+    "exportVideos": "Exportera videor",
+    "exportAudios": "Exportera ljud",
+    "exportDocuments": "Exportera dokument",
+    "exportPhotos": "Exportera foton",
+    "copyShort": "Kopiering",
+    "copyNotes": "Kopiera anteckningar",
+    "copyFolders": "Kopiera mappar",
+    "changingProfilePhoto": "Fotot förändras",
+    "changingBackground": "Bakgrunden förändras",
+    "photoChanging": "Fotobyte"
+  },
+  "placeholder": {
+    "folderNote": "Anteckning utan titel",
+    "folderSmall": "Mappens titel",
+    "noteSmall": "Namn på anmärkningen",
+    "playlist": "Namnge din spellista",
+    "labelPage": "Etikettens namn",
+    "unnamedNote": "Namnlös anteckning",
+    "unnamedFolder": "Namnlös mapp",
+    "unnamedLabel": "Namnlös etikett"
+  },
+  "snackBar": {
+    "saved": "Räddad",
+    "onlyAuthorCanMoveIt": "Endast skaparen av anteckningen kan flytta den",
+    "noPermissionsForEdit": "Inga rättigheter att redigera",
+    "archive": "arkiv",
+    "toBin": "vara",
+    "toShared": "delad",
+    "toPrivate": "privat",
+    "undo": "Ångra",
+    "all": "alla",
+    "notes": "Anteckningar",
+    "note": "Not",
+    "folders": "Mappar",
+    "folder": "Mapp",
+    "labels": "Etiketter",
+    "label": "Etikett",
+    "notePermDeleted": "Anteckning raderas permanent",
+    "notesPermDeleted": "Anteckningar har tagits bort permanent",
+    "folderPermDeleted": "Mappen raderas permanent",
+    "foldersPermDeleted": "Mappar raderas permanent",
+    "movedToMany": " flyttad till ",
+    "movedToSingle": " flyttad till ",
+    "reloadPage": "Instabil anslutning uppdatera sidan",
+    "noItemInExport": "Samlingen är tom",
+    "subscriptionCreationError": "Gränsen för skapandet av denna prenumeration har överskridits.",
+    "subscriptionMaxNotesError": "högst {{count}} anteckningar för denna prenumeration",
+    "copied": "Kopierad",
+    "reconnection": "Återanslutning",
+    "reconnected": "Återansluten",
+    "maxContents": "Antalet element i noten har överskridits"
+  },
+  "titles": {
+    "labels": "Etiketter",
+    "notes": "Anteckningar",
+    "folders": "Mappar",
+    "profile": "Profil",
+    "history": "Historia",
+    "note": "Not",
+    "folder": "Mapp"
+  },
+  "delete-message": {
+    "folders": "Mappar raderas automatiskt efter {{days}} dagar",
+    "notes": "Anteckningar raderas automatiskt efter {{days}} dagar",
+    "labels": "Etiketter tas bort automatiskt efter {{days}} dagar"
+  },
+  "entity-bottom-tooltip": {
+    "deleted": "datum för radering",
+    "hasUsersNote": "Anteckning kan visas eller redigeras av flera användare",
+    "hasUsersFolder": "Mappen kan visas eller redigeras av flera användare",
+    "unlockTime": "Anteckningen låses vid {{time}}",
+    "owner": "Du är ägare till anteckningen",
+    "ownerFolder": "Du är ägare till mappen",
+    "editNote": "Du kan redigera anteckningen",
+    "editFolder": "Du kan redigera mapp",
+    "readNote": "Du kan bara läsa anteckningen",
+    "readFolder": "Du kan bara läsa mappen"
+  },
+  "profile-billing": {
+    "notes": "Anteckningar",
+    "folders": "Mappar",
+    "labels": "Etiketter",
+    "related": "relaterade anteckningar för noter",
+    "memory": "minne",
+    "history-100": "Kopior av anteckningsändringar för de senaste 100 dagarna",
+    "personalization": "Inställningar för anpassning",
+    "per-month": "per månad",
+    "upgrade": "Uppgradera",
+    "backgrounds": "{{count}} bakgrunder"
+  },
+  "files": {
+    "noAccessRightsNote": "Ingen behörighet att ladda upp filer att notera",
+    "noEnoughMemory": "Inte tillräckligt med minne för att ladda upp filen",
+    "fileTooLarge": "Filstorleken får inte överstiga {{sizeMB}} MB",
+    "fileNoSupport": "Fil med det här formatet stöds inte"
+  }
+}

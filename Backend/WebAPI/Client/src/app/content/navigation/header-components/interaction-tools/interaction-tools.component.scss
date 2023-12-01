@@ -1,0 +1,87 @@
+@import 'variables';
+
+.interactions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  .auxiliary-icon {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-left: 1.375rem;
+    font-size: 1.375rem;
+    transition: 0.2s ease;
+    cursor: pointer;
+
+    .icon {
+      position: relative;
+      z-index: 5;
+      width: 1.375rem;
+      height: 1.375rem;
+      transition: 0.2s ease;
+    }
+  }
+}
+
+.light {
+  .auxiliary-icon {
+    .icon {
+      color: #868686;
+    }
+    &:hover {
+      background-color: $light-nav-backlight;
+
+      .icon {
+        color: rgb(76, 76, 76);
+      }
+    }
+  }
+}
+
+.dark {
+  .auxiliary-icon {
+    .icon {
+      color: #e3e3e3;
+    }
+    &:hover {
+      background-color: $dark-button;
+      .icon {
+        color: white;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .interactions {
+    .auxiliary-icon {
+      margin-left: 1rem;
+    }
+  }
+  .dark {
+    .auxiliary-icon {
+      .icon {
+        color: white;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 320px) {
+  .interactions {
+    .auxiliary-icon {
+      width: 26px;
+      height: 26px;
+      font-size: 1.25rem;
+      margin-left: 0.875rem;
+    }
+  }
+}

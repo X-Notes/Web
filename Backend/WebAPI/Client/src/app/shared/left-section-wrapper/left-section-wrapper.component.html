@@ -1,0 +1,22 @@
+<div appTheme class="sub-nav nope-select">
+  <div
+    class="sub-nav-section"
+    *ngIf="(pService.sideBarActive$ | async) || (pService.widthMoreThan1024$ | async)"
+    [@sidebarCloseOpen]
+    [@.disabled]="pService.widthMoreThan1024$ | async"
+  >
+    <app-nav-profile-item *ngIf="isProfileActive"></app-nav-profile-item>
+    <div class="left-inner-content">
+      <ng-content></ng-content>
+    </div>
+    <div class="information">
+      <div class="separator"></div>
+      <app-memory-indicator></app-memory-indicator>
+    </div>
+  </div>
+  <div
+    class="overlay"
+    (click)="pService.cancelSideBar()"
+    [ngClass]="(pService.sideBarActive$ | async) ? 'visible' : ''"
+  ></div>
+</div>

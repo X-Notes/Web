@@ -1,0 +1,14 @@
+<app-general-header-button
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-unfixed-150 profile-create generic-hide-text'"
+  [theme]="theme$ | async"
+></app-general-header-button>
+<app-general-header-button
+  (clickEvent)="setDefaultColorProfile()"
+  [message]="('header.defaultColor' | translate)"
+  [styleClasses]="'profile-default'"
+  [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"
+></app-general-header-button>

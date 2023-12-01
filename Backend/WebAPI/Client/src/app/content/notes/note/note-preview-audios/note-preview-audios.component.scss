@@ -1,0 +1,59 @@
+@import 'variables';
+
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.audios {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+
+    .audio {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 0.25rem;
+
+        .preview {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            overflow: hidden;
+            background-color: rgba(black, 0.1);
+
+            .no-preview {
+                display: flex;
+            }
+        }
+
+        .audio-body {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 38px);
+            font-weight: 300;
+
+            .audio-name {
+                display: flex;
+                font-size: 0.875rem;
+
+                p {
+                    @include text-overflow;
+                }
+            }
+
+            .audio-time {
+                display: flex;
+                color: #8e8e8e;
+                font-size: 0.625rem;
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+<div appTheme class="container">
+  <div class="wrap" [ngClass]="[(isNoteInner$ | async) ? 'mobile-menu' : '']">
+    <ng-container *ngFor="let item of items">
+      <button
+        class="button-icon"
+        [ngClass]="item.class"
+        #trigger
+        (click)="item.operation()"
+        [CustomTooltip]="(item.tooltip | async) ?? 'menu.' + item.icon | translate"
+        position="Bottom"
+        [disabled]="item?.isActive | async"
+        *ngIf="(item?.isVisible | async) === (true || undefined || null)"
+        [flagDisable]="(pService.widthMoreThan1024$ | async) === false"
+      >
+        <div class="inner">
+          <div class="icon">
+            <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
+          </div>
+          <p>{{ getItemName(item) | translate }}</p>
+          <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
+        </div>
+      </button>
+    </ng-container>
+  </div>
+</div>

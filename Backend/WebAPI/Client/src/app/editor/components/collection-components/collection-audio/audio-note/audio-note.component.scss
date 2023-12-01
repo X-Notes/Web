@@ -1,0 +1,19 @@
+@import 'variables';
+
+:host {
+  display: flex;
+}
+
+.audio-content {
+  display: flex;
+  width: 100%;
+
+  .playlist {
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .drop-active {
+    outline: 1px solid white;
+  }
+}

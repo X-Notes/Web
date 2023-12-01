@@ -1,0 +1,426 @@
+{
+  "notes": {
+    "name": "Заметки"
+  },
+  "folders": {
+    "name": "Папки"
+  },
+  "labels": {
+    "name": "Ярлыки"
+  },
+  "people": {
+    "name": "Люди"
+  },
+  "new": {
+    "note": "Новая заметка",
+    "folder": "Новая папка",
+    "background": "Новый фон",
+    "label": "Новый ярлык",
+    "inner-folder": "Новая заметка"
+  },
+  "subMenu": {
+    "all": "Все",
+    "personal": "Личные",
+    "shared": "Общие",
+    "archive": "Архив",
+    "bin": "Корзина",
+    "cancel": "Отмена"
+  },
+  "languages": {
+    "en": "Английский",
+    "ru": "Русский",
+    "uk": "Украинский",
+    "sv": "Шведский",
+    "pl":"Польский",
+    "es": "Испанский",
+    "it": "Итальянский",
+    "ja": "Японский",
+    "zh": "Китайский",
+    "de":"Немецкий",
+    "fr":"Французский"
+  },
+  "header": {
+    "selected": "Выбрано",
+    "new": "Новая",
+    "select": "Выбрать все",
+    "filter": "Фильтр",
+    "theme": "Тема",
+    "search": "Поиск...",
+    "questions": "Вопросы",
+    "notification": "Уведомления",
+    "orientation": "Режим просмотра",
+    "back": "Назад",
+    "video": "Видео",
+    "countUsers": "Количество пользователей",
+    "menu": "Меню",
+    "defaultColor": "Обычный",
+    "emptyTrash": "Очистить корзину",
+    "manage": "Добавить заметки",
+    "questionItems": {
+      "faq": "Часто задаваемые вопросы",
+      "contact": "Связаться с нами"
+    },
+    "filterMenu": {
+      "dateAsc": "От старых к новым",
+      "dateDesc": "От новых к старым",
+      "order": "Свой порядок"
+    },
+    "anonymous": "Аноним",
+    "signIn": "Войти",
+    "signInEditing": "Войти для редактирования"
+  },
+  "menu": {
+    "label": "Ярлык",
+    "share": "Общие",
+    "copy": "Скопировать",
+    "color": "Цвет",
+    "download": "Скачать",
+    "lock": "Пароль",
+    "unlock": "Убрать пароль",
+    "forceLock": "Заблокировать",
+    "archive": "Архив",
+    "delete": "Удалить",
+    "history": "История",
+    "private": "Личные",
+    "privateFolder": "Личные",
+    "removeFromFolder": "Удалить заметки с папки",
+    "restore": "Восстановить",
+    "copyText": "Скопировать текст"
+  },
+  "profile": {
+    "sectionProfile": "Профиль",
+    "sectionGeneral": "Общие",
+    "sectionAccount": "Аккаунт",
+    "sectionPersonalization": "Персонализация",
+    "nameUser": "Имя",
+    "email": "Адрес электронной почты",
+    "descriptionEmail": "Ваш адрес электронной почты используется для входа в систему.",
+    "logOut": "Выйти",
+    "update": "Обновить",
+    "language": "Язык",
+    "personalKey": "Секретный ключ",
+    "changeKey": "Изменить",
+    "resetKey": "Сбросить",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Темная",
+    "genericTooltip": "Посмотрите, как будут выглядеть заметки в",
+    "genericPreview": "предварительном просмотре",
+    "noteSize": "Размер заметки",
+    "noteDefault": "Обычный",
+    "noteBig": "Большой",
+    "isViewAudioOnNote": "Отображать аудио",
+    "isViewDocumentOnNote": "Отображать документы",
+    "isViewPhotosOnNote": "Отображать фото",
+    "isViewTextOnNote": "Отображать текст",
+    "isViewVideoOnNote": "Отображать видео",
+    "contentInNoteCount": "Количество отображаемого контента на заметке",
+    "notesInFolderCount": "Количество отображаемых заметок на папке",
+    "countCurrent": "Текущее: "
+  },
+  "modal": {
+    "notFound": "Не найдено",
+    "searchingUser": "Найдите пользователей с помощью поиска",
+    "close": "Закрыть",
+    "labelModal": {
+      "Labels": "Ярлыки",
+      "search": "Название ярлыка..."
+    },
+    "ColorModal": {
+      "Colors": "Цвета",
+      "save": "Сохранить"
+    },
+    "contactUs": {
+      "send": "Отправить",
+      "emailField": "Почта",
+      "emailHolder": "Ваш почтовый адресс",
+      "text": "Введите ваше сообщение",
+      "textHolder": "Сообщение...",
+      "required": "Обязательное поле",
+      "emailValidation": "Почта введена некорректно",
+      "success": "Ваше сообщение было успешно отправлено",
+      "incorrect": "Неверный ввод"
+    },
+    "shareModal": {
+      "Share": "Поделиться",
+      "access": "Доступ",
+      "personal": "Личные",
+      "shared": "Общие",
+      "selectedNotes": "Выбранные заметки",
+      "selectedUsers": "Выбранные пользователи",
+      "search": "Поиск...",
+      "alert": "Прислать уведомление",
+      "Editor": "Редактор ",
+      "Viewer": "Зритель",
+      "send": "Отправить",
+      "sharedMessage": "Любой человек в интернете с этой ссылкой",
+      "noSharedMessage": "Только добавленные люди могут открывать по этой ссылке",
+      "noPeopleNote": "Люди, имеющие доступ к заметке, будут отображаться здесь",
+      "noPeopleFolder": "Люди, имеющие доступ к папке, будут отображаться здесь",
+      "clearAll": "Удалить всех"
+    },
+    "relatedNotesPopup": {
+      "relatedNotes": "Связанные заметки",
+      "new": "Добавить новые"
+    },
+    "folderManage": {
+      "notes": "Добавить заметки в папку"
+    },
+    "searchModal": {
+      "title": "Поиск",
+      "trySearch": "Найдите заметки и папки с помощью поиска"
+    },
+    "lockModal": {
+      "lock": "Заблокировать заметку",
+      "unLock": "Разблокировать заметку",
+      "unDecrypt": "Убрать пароль",
+      "remove": "Убрать",
+      "сomeIn": "Войти",
+      "save": "Сохранить",
+      "password": "Пароль",
+      "confirm": "Подтвердите пароль",
+      "placeholderPass": "Пароль",
+      "placeholderConfirm": "Подтверждение",
+      "passMatchError": "Пароли не совпадают",
+      "required": "Обязательное поле",
+      "minLength": "Пароль должен состоять не менее чем из 6 символов",
+      "incorrect": "Неправильный пароль",
+      "timeMessage": "После разблокировки заметка будет доступна в течение 5 минут",
+      "revokeMessage": "Все пользователи, которые могли просматривать или редактировать эту заметку, потеряют к ней доступ"
+    },
+    "reviewModal": {
+      "review": "Просмотр документа"
+    },
+    "deletionModal": {
+      "title": "Удаление",
+      "sureDeleteNotes": "Вы уверены, что хотите удалить заметки?",
+      "sureDeleteFolders": "Вы уверены, что хотите удалить папки?",
+      "sureDeleteLabels": "Вы уверены, что хотите удалить ярлыки?",
+      "additionalMessage": "После удаления их невозможно вернуть."
+    },
+    "genericButtons":{
+      "cancel": "Отменить",
+      "delete": "Удалить"
+    }
+  },
+  "innerNote": {
+    "title": "Заглавие",
+    "openNoteOrFile": "заметки",
+    "text": "Текст",
+    "textCommand": "Текст, '/' для команд",
+    "heading": "Заголовок",
+    "menu": {
+      "addVideo": "Загрузить новые видео",
+      "addAudio": "Загрузить новые аудио",
+      "addDocument": "Загрузить новые документы",
+      "review": "Просмотреть",
+      "download": "Скачать",
+      "copy": "Скопировать ссылку",
+      "delete": "Удалить"
+    },
+    "transformMenu": {
+      "h1": "Заголовок 1",
+      "h2": "Заголовок 2",
+      "h3": "Заголовок 3",
+      "dotList": "Маркированный список",
+      "numberList": "Нумерованный список",
+      "checkList": "Список задач",
+      "addVideos": "Видео",
+      "addAudios": "Аудио",
+      "addDocuments": "Документы",
+      "addPhotos": "Фотографии"
+    },
+    "colors": {
+      "reset": "Сбросить",
+      "cardinal": "Кардинал",
+      "tiger": "Тигр",
+      "canary": "Канарейка",
+      "frog": "Лягушка",
+      "parrot": "Попугай",
+      "bluebird": "Синяя птица",
+      "dolphin": "Дельфин",
+      "whale": "Кит",
+      "butterfly": "Бабочка",
+      "flamingo": "Фламинго"
+    },
+    "photoMenu": {
+      "download": "Скачать",
+      "delete": "Удалить",
+      "upload": "Загрузить новые фотографии",
+      "countRow": "Фотографий в ряд",
+      "oneRow": "Одна в ряд",
+      "twoRow": "Две в ряд",
+      "threeRow": "Три в ряд",
+      "fourRow": "Четыре в ряд"
+    },
+    "audio": {
+      "previos": "Предыдущий",
+      "next": "Следующий",
+      "play": "Воспроизвести",
+      "pause": "Пауза",
+      "loop": "Повтор",
+      "playlist": "Плейлист",
+      "close": "Закрыть",
+      "mute": "Отключить звук",
+      "turnOnSound": "Включить звук",
+      "wideScreen": "Широкий экран",
+      "defaultPlayer": "Обычный экран",
+      "fullscreen": "Во весь экран",
+      "miniPlayer": "Мини-проигрыватель",
+      "plsUpload": "Загрузите аудио",
+      "playing": "играет"
+    },
+    "video": {
+      "plsUpload": "Загрузите видео"
+    },
+    "document": {
+      "plsUpload": "Загрузите документ"
+    },
+    "photo": {
+      "plsUpload": "Загрузите фото"
+    },
+    "text-color-menu" : {
+      "background": "Фон"
+    }
+  },
+  "noResult": {
+    "privateNotes": "Здесь будут отображаться личные заметки",
+    "sharedNotes": "Здесь будут отображаться общие заметки",
+    "archiveNotes": "Здесь будут отображаться архивированные заметки",
+    "deletedNotes": "Здесь будут отображаться удаленные заметки",
+    "allLabels": "Здесь будут отображаться ярлыки",
+    "deletedLabels": "Здесь будут отображаться удаленные ярлыки",
+    "privateFolders": "Здесь будут отображаться личные папки",
+    "sharedFolders": "Здесь будут отображаться общие папки",
+    "archiveFolders": "Здесь будут отображаться архивированные папки",
+    "deletedFolders": "Здесь будут отображаться удаленные папки",
+    "folderNotes": "Здесь будут отображаться заметки",
+    "notification": "Нету непрочитанных уведомлений",
+    "notificationAll": "У вас нет уведомлений",
+    "history": "В заметке пока нету истории",
+    "noAccessViewNote": "У вас нету прав для просмотра заметки",
+    "noAccessViewFolder": "У вас нету прав для просмотра папки",
+    "noNotes": "Папка не содержит заметок"
+  },
+  "notification": {
+    "title": "Уведомления",
+    "readAll": "Прочитать все уведомления",
+    "seeAll": "Просмотреть все уведомления",
+    "goToNew": "Перейти к новым уведомлениям",
+    "newMessage": "Новое",
+    "readMessage": "Прочитанное",
+    "changeUserPermissionNote": "Доступ к заметке изменен",
+    "changeUserPermissionFolder": "Доступ к папке изменен",
+    "sentInvitesToFolder": "С вами поделились папкой",
+    "sentInvitesToNote": "С вами поделились заметкой",
+    "removeUserFromFolder": "Ваш доступ к папке был отозван",
+    "removeUserFromNote": "Ваш доступ к заметке был отозван"
+  },
+  "uploader": {
+    "uploading": "Загрузка",
+    "uploadingDocumentsNoteLong": "Загрузка документов в заметку",
+    "uploadingDocumentsNote": "Загрузка документов",
+    "uploadingVideosNoteLong": "Загрузка видео в заметку",
+    "uploadingVideosNote": "Загрузка видео",
+    "uploadingAudiosNoteLong": "Загрузка аудио в заметку",
+    "uploadingAudiosNote": "Загрузка аудио",
+    "uploadingPhotosNoteLong": "Загрузка фотографий в заметку",
+    "uploadingPhotosNote": "Загрузка фотографий",
+    "exportShort": "Экспорт",
+    "exportVideos": "Экспорт видео",
+    "exportAudios": "Экспорт аудио",
+    "exportDocuments": "Экспорт документов",
+    "exportPhotos": "Экспорт фотографий",
+    "copyShort": "Копирование",
+    "copyNotes": "Копирование заметок",
+    "copyFolders": "Копирование папок",
+    "changingProfilePhoto": "Смена фотографии",
+    "changingBackground": "Смена заднего фона",
+    "photoChanging": "Изменение фото"
+  },
+  "placeholder": {
+    "folderNote": "Заметка без названия",
+    "folderSmall": "Заглавие папки",
+    "noteSmall": "Заглавие заметки",
+    "playlist": "Название плейлиста",
+    "labelPage": "Название ярлыка",
+    "unnamedNote": "Без названия",
+    "unnamedFolder": "Без названия",
+    "unnamedLabel": "Без названия"
+  },
+  "snackBar": {
+    "saved": "Cохранено",
+    "onlyAuthorCanMoveIt": "Только создатель заметки может ее переместить",
+    "noPermissionsForEdit": "Нет прав для редактирования",
+    "archive": "архив",
+    "toBin": "корзину",
+    "toShared": "общие",
+    "toPrivate": "личные",
+    "undo": "Отменить",
+    "all": "все",
+    "notes": "Заметки",
+    "note": "Заметка",
+    "folders": "Папки",
+    "folder": "Папка",
+    "labels": "Ярлыки",
+    "label": "Ярлык",
+    "notePermDeleted": "Заметка удалена безвозвратно",
+    "notesPermDeleted": "Заметки удалены безвозвратно",
+    "folderPermDeleted": "Папка удалена безвозвратно",
+    "foldersPermDeleted": "Папки удалены безвозвратно",
+    "movedToMany": " перенесены в ",
+    "movedToSingle": " перенесена в ",
+    "reloadPage": "Нестабильное соедение, попробуйте обновить страницу",
+    "noItemInExport": "Колекция пустая",
+    "subscriptionCreationError": "Превышен лимит создания для этой подписки",
+    "subscriptionMaxNotesError": "максимум {{count}} заметок для данной подписки",
+    "copied": "Скопировано",
+    "reconnection": "Переподключение",
+    "reconnected": "Переподключено",
+    "maxContents": "Превышено количество элементов в заметке"
+  },
+  "titles": {
+    "labels": "Ярлыки",
+    "notes": "Заметки",
+    "folders": "Папки",
+    "profile": "Профиль",
+    "history": "История",
+    "note": "Заметка",
+    "folder": "Папка"
+  },
+  "delete-message":{
+    "folders": "Папки будут автоматически удаленны через {{days}} дней",
+    "notes": "Заметки будут автоматически удаленны через {{days}} дней",
+    "labels": "Ярлыки будут автоматически удаленны через {{days}} дней"
+  },
+  "entity-bottom-tooltip":{
+    "deleted": "дата удаления",
+    "hasUsersNote": "Эту заметку могут просматривать или редактировать несколько пользователей",
+    "hasUsersFolder": "Эту папку могут просматривать или редактировать несколько пользователей",
+    "unlockTime": "Заметка будет заблокирована в {{time}}",
+    "owner": "Вы являетесь владельцем заметки",
+    "ownerFolder": "Вы являетесь владельцем папки",
+    "editNote": "Вы можете редактировать заметку",
+    "editFolder": "Вы можете редактировать папку",
+    "readNote": "Вы можете только просматривать заметку",
+    "readFolder": "Вы можете только просматривать папку"
+  },
+  "profile-billing": {
+    "notes": "Заметок",
+    "folders": "Папок",
+    "labels": "Ярлыков",
+    "related": "Связанных заметок",
+    "memory": "хранилища",
+    "history-100": "Копии изменений заметок за последние 100 дней",
+    "personalization": "Параметры персонализации",
+    "per-month": "в месяц",
+    "upgrade": "Обновить",
+    "backgrounds": "{{count}} фонов"
+  },
+  "files": {
+    "noAccessRightsNote": "Нет разрешения на загрузку файлов в заметку",
+    "noEnoughMemory": "Недостаточно памяти для загрузки файла",
+    "fileTooLarge": "Размер файла не должен превышать {{sizeMB}} МБ",
+    "fileNoSupport": "Файл этого формата не поддерживается"
+  }
+}

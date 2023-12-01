@@ -1,0 +1,64 @@
+@import 'variables';
+
+.sub-nav-item {
+  outline: none;
+  position: relative;
+  display: flex;
+  height: 40px;
+  width: 100%;
+  border-bottom: 1px solid $dark-separator;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  .item {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    user-select: none;
+    padding: 0 1.5rem;
+
+    p:last-child {
+      font-size: 0.875rem;
+    }
+  }
+
+  &:nth-last-child(2) {
+    border: none;
+  }
+
+  &:hover:not(.active) {
+    background-color: $dark-backlight;
+  }
+}
+
+.light {
+  .active {
+    background-color: $light-nav-backlight;
+  }
+  .sub-nav-item {
+    border-color: $light-theme-separator;
+    color: $light-text-color;
+
+    &:hover:not(.active) {
+      background-color: #f9f9f9;
+    }
+  }
+}
+
+.dark {
+  .active {
+    background-color: $dark-nav-backlight;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sub-nav-item {
+    .item {
+      padding: 0 1rem;
+    }
+  }
+}

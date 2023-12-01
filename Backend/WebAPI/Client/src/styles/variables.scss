@@ -1,0 +1,115 @@
+//colors
+
+$text-color: #202020;
+
+//main app for dark theme
+
+$dark-color: #26282d;
+$dark-separator: #1f2024;
+$light-separator: #cecece;
+$dark-button: #34373e;
+$dark-backlight: #202125;
+$dark-nav-backlight: #34373e;
+$dark-search-submit: #363942;
+
+//main app for light theme
+
+$light-text-color: #404040;
+$light-button: #959595;
+$light-managment: #e2e2e2;
+$light-color: #fafafa;
+$light-theme-separator: #f5f5f5;
+$light-nav-backlight: #e7e7e7;
+$light-search: #f3f3f3;
+$light-search-submit: #ebebeb;
+$light-managment-hover: #7b7b7b;
+$light-cancel-label: #e7e7e7;
+$light-inner-color: #1f2125;
+
+//labels color
+
+$red-label: #ffcdcd;
+$orange-label: #ffebcd;
+$yellow-label: #fffdcd;
+$light-green-label: #ddffcd;
+$green-label: #cdffd8;
+$light-blue-label: #cdfffc;
+$blue-label: #cdeeff;
+$dark-blue-label: #cdd5ff;
+$purple-label: #efcdff;
+$pink-label: #ffcdf4;
+
+//notes color
+
+$red-note: #ffebeb;
+$orange-note: #fff5eb;
+$yellow-note: #ffffeb;
+$green-note: #ebffec;
+$light-blue-note: #ebfeff;
+$blue-note: #ebf8ff;
+$purple-note: #f7ebff;
+$pink-note: #ffebf9;
+$light-note: #f8f8f8;
+
+//notes help color
+
+$highlighting-note: rgba(101, 226, 113, 0.65);
+$unhighlighting-note: rgba(175, 175, 175, 0.3);
+$note-label-color: #606060;
+
+//inner note
+
+$header-small-note: #2a2d32;
+$header-small-note-icon: #d8d8d8;
+$header-small-note-icon-light: #666666;
+$header-small-note-light: #eaeaea;
+
+//z-index`s
+
+//note-muuri-items
+
+$grid-item: 1;
+$grid-item-dragging: 50;
+$grid-item-realising: 50;
+$grid-item-hidden: 50;
+$drag-helper: 51;
+//navigation
+
+$sidebar: 100;
+$sidebar-section: 101;
+$sidebar-overlay: 100;
+$header-menu: 50;
+$header-inner-overlay: 40;
+$header-visible-elements: 50;
+$header-wrapper-people: 6;
+$header-search: 6;
+$add-mobile: 501;
+
+//full note
+
+$full-main-content: 52;
+$full-main-menu: 53;
+
+$full-note-margin-left-no-content: 0.225rem;
+
+$bottom-mobile-menu: 54px;
+//convert
+
+@function get-color($name) {
+  @return '$name';
+}
+
+//mixin
+
+@mixin text-overflow-webkit {
+  width: 100%;
+  white-space: pre-wrap;
+  text-overflow: ellipsis;
+}
+
+@mixin text-overflow {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

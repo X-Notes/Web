@@ -1,0 +1,14 @@
+<app-dialog-generic-header
+  [message]="'modal.reviewModal.review' | translate"
+  (clickEvent)="dialogRef.close()"
+></app-dialog-generic-header>
+<ngx-doc-viewer
+  class="viewer"
+  [viewerUrl]="googleDriveUrl"
+  [url]="data"
+  viewer="url"
+></ngx-doc-viewer>
+<app-dialog-generic-save
+  (saveOutput)="close()"
+  [buttonText]="'modal.close' | translate"
+></app-dialog-generic-save>

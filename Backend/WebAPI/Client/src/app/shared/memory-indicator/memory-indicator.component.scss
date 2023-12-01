@@ -1,0 +1,68 @@
+@import 'variables';
+
+:host {
+  flex: 1;
+}
+.progress-section {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 1.2rem;
+
+  .billing {
+    display: none;
+  }
+
+  .progress-bar-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 5px;
+
+    .text {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      transition: 0.2s ease;
+    }
+
+    .progress-bar {
+      height: 5px;
+      width: 100%;
+      border-radius: 3px;
+      background-color: #1a1a1a;
+
+      .indicator {
+        height: inherit;
+        border-radius: inherit;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+.light {
+  .progress-bar-section {
+    .text {
+      color: $light-text-color;
+    }
+    .progress-bar{
+      background-color: white;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .progress-section {
+
+    .billing {
+      display: flex;
+      margin-right: 0.5rem;
+    }
+
+    .progress-bar-section {
+      width: calc(100% - 34px);
+    }
+  }
+}

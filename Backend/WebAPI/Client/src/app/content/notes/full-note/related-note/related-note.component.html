@@ -1,0 +1,44 @@
+<div class="small-note text-size" appTheme>
+  <div class="header">
+    <button type="button" (click)="turnUpSmallNote()">
+      <div class="icon" [ngStyle]="{'transform': note.isOpened === true ? '' : 'rotate(180deg)' }">
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
+      </div>
+    </button>
+    <a *ngIf="note.userId === (user$ | async).id" class="redirect" [routerLink]="['/notes', note.id]" target="_blank">
+      <div class="icon">
+        <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+      </div>
+    </a>
+    <button *ngIf="isCanEdit" [ngStyle]="{marginLeft: 'auto'}" type="button" (click)="deleteSmallNote()">
+      <div class="icon">
+        <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
+      </div>
+    </button>
+  </div>
+  <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
+    <div class="note-color" [ngStyle]="{ backgroundColor: note.color }"></div>
+    <div class="labels-section" *ngIf="note.labels?.length">
+      <div class="label" *ngFor="let item of note.labels" [ngStyle]="{ backgroundColor: item.color }">
+        <p>{{item.name}}</p>
+      </div>
+    </div>
+    <div class="title-section">
+      <div class="left-border"></div>
+      <p class="title">{{ note.title }}</p>
+      <div class="placeholder">Title</div>
+    </div>
+    <div class="content-note">
+      <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">
+        <app-note-preview-text *ngSwitchCase="contentType.Text" [content]="content"
+          [activeTheme]="theme$ | async"></app-note-preview-text>
+        <app-note-preview-photos *ngSwitchCase="contentType.Photos" [content]="content"></app-note-preview-photos>
+        <app-note-preview-documents *ngSwitchCase="contentType.Documents"
+          [content]="content"></app-note-preview-documents>
+        <app-note-preview-videos *ngSwitchCase="contentType.Videos" [content]="content"></app-note-preview-videos>
+        <app-note-preview-audios *ngSwitchCase="contentType.Audios" [content]="content">
+        </app-note-preview-audios>
+      </ng-container>
+    </div>
+  </div>
+</div>

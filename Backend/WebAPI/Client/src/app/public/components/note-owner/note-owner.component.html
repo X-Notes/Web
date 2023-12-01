@@ -1,0 +1,13 @@
+<div *ngIf="owner" class="user">
+  <div class="user-image">
+    <div class="image-wrapper">
+      <img [src]="owner.photoPath" [alt]="owner.name" />
+    </div>
+  </div>
+  <div class="user-info">
+    <h2>{{ owner.name}}</h2>
+    <div class="email">
+      <p>{{ owner.email }}</p>
+    </div>
+  </div>
+</div>

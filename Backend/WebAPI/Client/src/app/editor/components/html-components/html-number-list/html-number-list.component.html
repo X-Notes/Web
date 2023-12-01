@@ -1,0 +1,50 @@
+<div
+  appTheme
+  class="main-container"
+  (click)="setFocusText($event)"
+  (mousedown)="mouseDown($event)"
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseLeave($event)"
+>
+  <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"
+    ><ng-content *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content
+  ></app-drag-drop-handler-container>
+  <div
+    ondragstart="return false;" ondrop="return false;"
+    class="main-item"
+    [ngStyle]="{
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
+      paddingLeft: textPadding
+    }"
+  >
+    <div class="number-container">
+      <div class="number">{{ listNumber }}.</div>
+    </div>
+    <div class="text-container">
+      <p
+        class="block-generic default-text-size default-text-id number-list"
+        #contentHtml
+        [attr.contenteditable]="!isReadOnlyMode && (isResizingPhoto$ | async) === false"
+        [attr.content_id]="content.id"
+        [innerHTML]="viewHtml"
+        (input)="onInput()"
+        (click)="textClick($event)"
+        [ngClass]="{
+          'nope-select' : (isResizingPhoto$ | async) === true
+        }"
+      ></p>
+      <div
+        *ngFor="let cursor of uiCursors$ | async"
+        class="collaborative-cursor"
+        [ngStyle]="{
+          top: cursor.cursorTop + 'px',
+          left: cursor.cursorLeft + 'px',
+          backgroundColor: cursor.color
+        }"
+      ></div>
+      <p class="no-content-list" *ngIf="isActiveState && (isSelectModeActive$ | async) === false && isRowsSelected === false">
+        {{ 'innerNote.text' | translate }}
+      </p>
+    </div>
+  </div>
+</div>

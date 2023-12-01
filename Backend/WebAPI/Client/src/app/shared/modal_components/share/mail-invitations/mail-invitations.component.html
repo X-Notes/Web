@@ -1,0 +1,26 @@
+<div appTheme>
+  <div class="mail-notification">
+    <div class="interaction-mail">
+      <div class="interaction-buttons">
+        <app-select
+          class="dropdown-button"
+          [initialValue]="defaultRefType"
+          [options]="options"
+          (selectValueChange)="refTypeNotification($event)"
+        >
+        </app-select>
+        <button
+          class="send-button"
+          type="button"
+          #changeAccessRipple
+          (click)="applyForm.emit(form)"
+        >
+          <div class="content-button">
+            <p>{{ 'modal.shareModal.send' | translate }}</p>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

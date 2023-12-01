@@ -1,0 +1,31 @@
+<app-left-section-wrapper [isProfileActive]="true"> </app-left-section-wrapper>
+<div
+  appTheme
+  class="content-generic-project full-content"
+  [ngStyle]="{
+    'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''
+  }"
+>
+  <div *ngIf="(snapshotState$ | async)?.canView" class="wrapper-note">
+    <app-content-editor
+      [connectToNote]="false"
+      [color]="(snapshotNote$ | async).color"
+      [labels]="(snapshotNote$ | async).labels"
+      [title]="(snapshotNoteTitle$ | async)"
+      [progressiveLoading]="true"
+      [contents]="contents"
+      [isReadOnlyMode]="true"
+      [cursorActive]="false"
+      [editorTheme]="theme$ | async"
+    ></app-content-editor>
+  </div>
+  <div *ngIf="!isLoading && !(snapshotState$ | async)?.canView" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessViewNote' | translate"
+      [illustration]="pService.icon.noAccessViewNote"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
+  <app-spinner *ngIf="isLoading"></app-spinner>
+</div>

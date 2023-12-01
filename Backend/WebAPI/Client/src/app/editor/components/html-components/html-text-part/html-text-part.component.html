@@ -1,0 +1,73 @@
+<div appTheme class="main-container" (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)"
+  (click)="setFocusText($event)">
+  <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"><ng-content
+      *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content></app-drag-drop-handler-container>
+  <div ondragstart="return false;" ondrop="return false;" class="main-item" [ngStyle]="{
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
+    }">
+    <div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu"></div>
+    <p #contentHtml class="block-generic default-text-size default-text-id text-part" (input)="onInput()" [ngStyle]="{paddingLeft: textPadding}"
+      (click)="textClick($event)" [attr.contenteditable]="!isReadOnlyMode && (isResizingPhoto$ | async) === false"
+      [attr.content_id]="content.id" [innerHTML]="viewHtml" [ngClass]="{
+        'nope-select' : (isResizingPhoto$ | async) === true
+      }"></p>
+    <div
+      [ngStyle]="{paddingLeft: textPlaceholderPadding}"
+      *ngIf="isActiveState && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"
+      class="no-content">
+      <p>{{ 'innerNote.textCommand' | translate }}</p>
+    </div>
+    <div *ngFor="let cursor of uiCursors$ | async" class="collaborative-cursor" [ngStyle]="{
+        top: cursor.cursorTop + 'px',
+        left: cursor.cursorLeft + 'px',
+        backgroundColor: cursor.color
+      }"></div>
+  </div>
+</div>
+<input #uploadFile type="file" [multiple]="isMultiply" [accept]="formats" hidden="true"
+  (change)="uploadFiles($event)" />
+<app-html-link [isReadOnlyMode]="isReadOnlyMode" *ngIf="false" [link]="currentTextContent"></app-html-link>
+<mat-menu #menu="matMenu" [class]="theme === themeE.Dark ? 'dark-menu' : 'white-menu'" [yPosition]="'above'">
+  <button mat-menu-item type="button" name="h1" (click)="transformContent($event, textType.heading, headingType.H1)">
+    <mat-icon class="menu-icon-size" svgIcon="h1"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.h1' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="h2" (click)="transformContent($event, textType.heading, headingType.H2)">
+    <mat-icon class="menu-icon-size" svgIcon="h2"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.h2' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="h3" (click)="transformContent($event, textType.heading, headingType.H3)">
+    <mat-icon class="menu-icon-size" svgIcon="h3"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.h3' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="listChecked" (click)="transformContent($event, textType.checkList)">
+    <mat-icon class="menu-icon-size" svgIcon="listChecked"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.checkList' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="listDot" (click)="transformContent($event, textType.dotList)">
+    <mat-icon class="menu-icon-size" svgIcon="listDot"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.dotList' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="list" (click)="transformContent($event, textType.numberList)">
+    <mat-icon class="menu-icon-size" svgIcon="list"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.numberList' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="image" (click)="transformToFileHandler($event, typeUpload.photos, true)">
+    <mat-icon class="menu-icon-size" svgIcon="image"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.addPhotos' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="file" (click)="transformToFileHandler($event, typeUpload.documents, true)">
+    <mat-icon class="menu-icon-size" svgIcon="file"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.addDocuments' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="videoInner"
+    (click)="transformToFileHandler($event, typeUpload.videos, true)">
+    <mat-icon class="menu-icon-size" svgIcon="videoInner"></mat-icon>
+    <span>{{ 'innerNote.transformMenu.addVideos' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" name="library_music"
+    (click)="transformToFileHandler($event, typeUpload.audios, true)">
+    <mat-icon class="menu-icon-size">library_music</mat-icon>
+    <span>{{ 'innerNote.transformMenu.addAudios' | translate }}</span>
+  </button>
+</mat-menu>

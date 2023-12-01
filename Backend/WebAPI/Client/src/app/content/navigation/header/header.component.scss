@@ -1,0 +1,284 @@
+@import 'variables';
+
+:host {
+  position: relative;
+  z-index: 100;
+}
+
+header {
+  display: flex;
+  height: 50px;
+  width: 100%;
+  border-bottom: 1px solid $light-separator;
+  transition: 0.2s ease;
+
+  .profile-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 270px;
+    height: 100%;
+    border-right: 1px solid $light-separator;
+    padding-right: 1rem;
+    padding-left: 1.25rem;
+
+    .profile {
+      position: relative;
+      display: flex;
+      height: 30px;
+      font-weight: 500;
+      border-radius: 5px;
+      transition: 0.2s ease;
+      user-select: none;
+      overflow: hidden;
+      outline: none;
+      cursor: pointer;
+
+      .profile-data {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 0 0.375rem;
+        max-width: 200px;
+
+        .photo {
+          width: 28px;
+          height: 28px;
+          overflow: hidden;
+          border-radius: 50%;
+          border: 1px solid #ffffff;
+          margin-right: 0.9375rem;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .photo-error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            mat-icon {
+              height: 20px;
+            }
+          }
+        }
+
+        p {
+          @include text-overflow;
+          width: calc(100% - 43px);
+        }
+      }
+    }
+
+    .notification {
+      position: relative;
+      display: flex;
+      height: 30px;
+      width: 30px;
+      border-radius: 5px;
+      transition: 0.2s ease;
+      font-size: 1.25rem;
+      border: 0.8px solid transparent;
+      padding: 0;
+      background-color: transparent;
+      user-select: none;
+      overflow: hidden;
+      outline: none;
+      cursor: pointer;
+
+      .notification-data {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+
+        .icon {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+      }
+    }
+  }
+
+  .management-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: calc(100% - 270px);
+    padding: 0 3.125vw;
+
+    .right-tools {
+      position: absolute;
+      right: 0;
+      padding-right: 3.125vw;
+      transition: 0.2s ease;
+    }
+
+    .interactions {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      .hamburger {
+        margin-right: 1rem;
+        cursor: pointer;
+        border-radius: 5px;
+        position: relative;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        overflow: hidden;
+        background-color: transparent;
+
+        .icon {
+          display: flex;
+          font-size: 2rem;
+        }
+      }
+    }
+  }
+
+  .inner-menu {
+    padding: 0;
+
+    .right-tools {
+      width: 30%;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .inner-helper {
+      width: 60%;
+      padding-left: 1.875rem;
+    }
+  }
+}
+
+.light {
+  background-color: white;
+
+  .profile-section {
+    .profile {
+      color: $light-text-color;
+
+      &:hover {
+        background-color: $light-nav-backlight;
+      }
+    }
+
+    .notification {
+      .icon {
+        color: $light-text-color;
+      }
+
+      &:hover {
+        background-color: $light-nav-backlight;
+      }
+    }
+  }
+
+  .management-section {
+    .right-tools {
+      background-color: white;
+    }
+
+    .interactions {
+      .hamburger {
+        border-color: transparent;
+        border: 0.8px solid;
+        mat-icon {
+          color: #404040;
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  background-color: $dark-color;
+
+  .profile-section {
+    .profile:hover {
+      background-color: $dark-button;
+    }
+
+    .notification {
+      .icon {
+        color: white;
+      }
+    }
+
+    .notification:hover {
+      background-color: $dark-button;
+    }
+  }
+
+  .management-section {
+    .right-tools {
+      background-color: $dark-color;
+    }
+  }
+}
+
+@media (max-width: 1320px) {
+  header {
+    .inner-menu {
+      .inner-helper {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  header {
+    .profile-section {
+      display: none;
+    }
+
+    .inner-menu {
+      padding: 0 4vw;
+
+      .right-tools {
+        display: none;
+      }
+      
+      .inner-helper {
+        width: calc(100% - 46px);
+        padding: 0;
+      }
+    }
+
+    .management-section {
+      position: relative;
+      width: 100%;
+      .interactions {
+        .hamburger {
+          display: flex;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  header {
+    height: 45px;
+    .management-section {
+      .interactions {
+        .hamburger {
+          width: 26px;
+        }
+      }
+    }
+  }
+}

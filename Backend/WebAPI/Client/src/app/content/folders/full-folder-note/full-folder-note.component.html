@@ -1,0 +1,33 @@
+<app-left-section-content-notes-list [notesLink]="linkNotes"></app-left-section-content-notes-list>
+<div
+  appTheme
+  class="content-generic-project full-content"
+  [ngStyle]="{'background-image': (userBackground$ | async) ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
+  <div *ngIf="(note$ | async) && loaded" class="wrapper-note">
+    <app-content-editor
+      [noteId]="(note$ | async).id"
+      [userId]="(user$ | async)?.id"
+      [folderId]="folderId"
+      [color]="(note$ | async).color"
+      [labels]="(note$ | async).labels"
+      [progressiveLoading]="true"
+      [isReadOnlyMode]="(canEdit$ | async) === false"
+      [title]="(noteTitle$ | async)"
+      [contents]="contents"
+      [editorTheme]="theme$ | async"
+    ></app-content-editor>
+    <app-right-section-content
+      [noteId]="noteId"
+    ></app-right-section-content>
+  </div>
+  <div *ngIf="(canView$ | async) === false && loaded" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessViewNote' | translate"
+      [illustration]="pService.icon.noAccessViewNote"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
+  <app-spinner [size]="30" *ngIf="!loaded"></app-spinner>
+</div>

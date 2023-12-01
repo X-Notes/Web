@@ -1,0 +1,69 @@
+<div *ngIf="note$ | async" appTheme class="interactions">
+  <app-full-note-active-users class="app-active-users"></app-full-note-active-users>
+
+  <app-menu
+    class="app-menu"
+    [items]="
+      buttonService.getNoteMenuByNoteType(noteType$ | async)
+        | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
+    "
+    *ngIf="(pService.widthMoreThan1024$ | async)"
+    [@showMenuLeftRight]
+  ></app-menu>
+
+  <app-general-header-button
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
+    (clickEvent)="openRelatedNotesPopup()"
+    [tooltipMessage]="'modal.relatedNotesPopup.relatedNotes' | translate"
+    tooltipPosition="Bottom"
+    [styleClasses]="'inner-note-button'"
+    iconClass="notes"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    *ngIf="pService.isActiveFullNoteMobileButtons$ | async"
+    (clickEvent)="buttonService.openShareWithNotes()"
+    [tooltipMessage]="'menu.share' | translate"
+    tooltipPosition="Bottom"
+    [styleClasses]="'inner-note-button'"
+    iconClass="share"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    cdk-overlay-origin
+    #origin="cdkOverlayOrigin"
+    [ngStyle]="{ display: (pService.isActiveFullNoteMobileButtons$ | async) ? 'block' : 'none' }"
+    (clickEvent)="openMenu()"
+    [tooltipMessage]="'header.menu' | translate"
+    tooltipPosition="Bottom"
+    [styleClasses]="'more_vert'"
+    iconClass="more_vert"
+    [isDefault]="true"
+    [styleType]="buttonStyleType.Dark"
+    [theme]="theme$ | async"
+  ></app-general-header-button>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="pService.innerNoteMenuActive"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayPositions]="positions"
+    (backdropClick)="hideMenu()"
+  >
+    <app-menu
+      class="app-menu"
+      [items]="
+        buttonService.getNoteMenuByNoteType(noteType$ | async)
+          | manageMenuButtons: pB.IsCanEditFullNote:pB.IsOwnerFullNote: (noteShared$ | async) === false
+      "
+      [@showMenuLeftRight]
+      [@.disabled]="(pService.widthMoreThan1024$ | async) === false"
+    ></app-menu>
+  </ng-template>
+</div>

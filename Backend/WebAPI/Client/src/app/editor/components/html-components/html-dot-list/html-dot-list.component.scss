@@ -1,0 +1,41 @@
+@import 'variables.scss';
+
+.dot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0.5rem 0 0.25rem;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
+  }
+}
+
+.text-container {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+
+  .dot-list{
+    min-height: 26px;
+  }
+}
+
+.dark {
+  .dot-container {
+    .dot {
+      background-color: white;
+    }
+  }
+}
+
+.light {
+  .dot-container {
+    .dot {
+      background-color: $text-color;
+    }
+  }
+}
