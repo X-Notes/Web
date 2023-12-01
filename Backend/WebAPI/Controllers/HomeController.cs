@@ -23,17 +23,6 @@ public class HomeController : Controller
         _gOptions = gOptions.Value;
     }
 
-
-    public IActionResult Index()
-    {
-        return View(new BaseViewModel
-        {
-            GcClientId = _gOptions.Id,
-            AuthUrl = _authOptions.Url,
-            LanguageId = (int)LanguageHelper.GetLanguageEnumFromCultureInfo(CultureInfo.CurrentCulture),
-            RedirectUrl =  _authOptions.RedirectUrl
-        });
-    }
     
     [Route("About")]
     public IActionResult About()

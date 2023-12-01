@@ -120,6 +120,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 
+var spaPath = "Client/dist/app";
+
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = spaPath;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -142,6 +149,7 @@ var requestLocalizationOptions = app.Services.GetRequiredService<IOptions<Reques
 app.UseRequestLocalization(requestLocalizationOptions.Value);
 
 app.UseStaticFiles();
+app.UseSpaStaticFiles();
 
 app.UseRouting();
 
@@ -163,5 +171,10 @@ app.MapControllerRoute(
 
 app.MapHub<AppSignalRHub>(HubSettings.endPoint);
 app.MapHealthChecks("/health");
+
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = spaPath;
+});
 
 await app.RunAsync();
