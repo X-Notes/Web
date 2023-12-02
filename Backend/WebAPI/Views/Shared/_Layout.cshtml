@@ -55,13 +55,13 @@
                         token: idToken,
                         languageId: @Model.LanguageId,
                     };
-                    const res = await postData('api/Auth/google/login', authRequest);
+                    const res = await postData('@Model.AuthUrl', authRequest);
                     if (res.success) {
                         localStorage.setItem('isLoggedIn', true); 
                         localStorage.setItem('landing_auth_at', res.data.accessToken);
                         localStorage.setItem('landing_auth_ft', res.data.refreshToken);
                         localStorage.setItem('landing_auth_date', new Date().toISOString());
-                        window.location.href = '/';
+                        window.location.href = '@Model.RedirectUrl';
                     }
                 } else {
                     // Sign-in failed
