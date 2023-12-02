@@ -97,7 +97,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
-    console.log('destroy');
     this.moveEventSub?.unsubscribe();
     for (const destroyFunc of this.listeners) {
       destroyFunc();
