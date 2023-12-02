@@ -9,6 +9,3 @@ properties:
       appPort: 5000
       appProtocol: http
       enabled: true
-  template:
-    containers:
-        name: web
