@@ -5,6 +5,10 @@ on:
     branches:
       - 'DEV'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
 
   db-api-migration:
@@ -25,11 +29,11 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        run: dotnet restore Backend/API/API.csproj
+        run: dotnet restore Backend/WebAPI/WebAPI.csproj
 
       # Run EF Core migrations
       - name: Run migrations
-        run: dotnet ef database update -c ApiDbContext -p Backend/DatabaseContext -s Backend/API
+        run: dotnet ef database update -c ApiDbContext -p Backend/DatabaseContext -s Backend/WebAPI
         env:
           DatabaseConnection: ${{ secrets.DEV_API_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
 
@@ -50,7 +54,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: xnotes/api
+          images: xnotes/web
           tags: type=raw,value={{branch}}-{{sha}}
       -
         name: Set up QEMU
@@ -71,7 +75,6 @@ jobs:
         with:
           context: .
           file: ./pipeline-files/api/api.dev.dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -92,19 +95,21 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: xnotes/api
+          images: xnotes/web
           tags: type=raw,value={{branch}}-{{sha}}
 
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: xnotes-api
-          resourceGroup: Noots-DEV
-          containerAppEnvironment: managedEnvironment-NootsDEV-bd5e
+          containerAppName: web
+          resourceGroup: XNotesDev
+          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
           environmentVariables: GoogleAuth__Audience=secretref:google-client-id ElasticConfiguration__Uri=secretref:elastic-uri DatabaseConnection=secretref:noots-api-db Controllers__FakeData=secretref:fake-data-active Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection JWTokenConfig__secret=secretref:jwt-secret JWTokenConfig__issuer=secretref:jwt-issuer JWTokenConfig__audience=secretref:jwt-audience JWTokenConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JWTokenConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JWTokenConfig__https=secretref:jwt-https Azure__Storages__0__Name=secretref:storage-dev-name Azure__Storages__0__Id=secretref:storage-dev-id Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url Origins__0=secretref:origins-0 Origins__1=secretref:origins-1 GoogleClient__Id=secretref:google-client-id AuthRequest__Url=secretref:auth-request-url AuthRequest__RedirectUrl=secretref:auth-request-redirect
