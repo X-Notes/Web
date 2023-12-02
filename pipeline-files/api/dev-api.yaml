@@ -1,0 +1,6 @@
+properties:
+  configuration:
+    ingress:
+      external: true
+      allowInsecure: false
+      targetPort: 5000
