@@ -52,7 +52,7 @@ function initializeAppFactory(store: Store, authService: AuthService): () => Pro
     BrowserAnimationsModule,
     CoreModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
     SharedPublicModule,
     ContentModule,
     NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore, FolderStore, AppStore], {
