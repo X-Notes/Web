@@ -27,6 +27,10 @@
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.25" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.25" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.25" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.25">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Npgsql" Version="6.0.10" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22" />
       <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
