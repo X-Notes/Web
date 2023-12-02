@@ -75,6 +75,7 @@ jobs:
         with:
           context: .
           file: ./pipeline-files/api/api.dev.dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
