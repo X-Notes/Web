@@ -149,7 +149,6 @@ export class AuthService {
     }
     await this.store.dispatch([ResetNotesState, ResetFoldersState, ResetLabelsState]).toPromise();
     this.resetTokens();
-    localStorage.removeItem('isLoggedIn');
     this.ngZone.run(() => this.router.navigate(['login']));
   };
 }
