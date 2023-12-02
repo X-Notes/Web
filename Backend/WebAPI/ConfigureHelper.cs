@@ -83,15 +83,30 @@ namespace WebAPI
         public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)
         {
             var elasticConnString = configuration["ElasticConfiguration:Uri"];
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .Enrich.WithMachineName()
-                .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(elasticConnString, environment))
-                .Enrich.WithProperty("Environment", environment)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
+            if (!string.IsNullOrEmpty(elasticConnString))
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .Enrich.WithMachineName()
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.Elasticsearch(ConfigureElasticSink(elasticConnString, environment))
+                    .Enrich.WithProperty("Environment", environment)
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger(); 
+            }
+            else
+            {
+                Console.WriteLine("ElasticConfiguration:Uri is null");
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .Enrich.WithMachineName()
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+                    .Enrich.WithProperty("Environment", environment)
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
+            }
         }
 
         private static ElasticsearchSinkOptions ConfigureElasticSink(string elasticConnString, string environment)

@@ -75,7 +75,7 @@ builder.Services.AddSingleton(googleConfig);
 var dbConn = builder.Configuration.GetSection("DatabaseConnection").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
-var origins = builder.Configuration.GetSection("Origins").Get<string[]>();
+// var origins = builder.Configuration.GetSection("Origins").Get<string[]>();
 var controllersConfig = builder.Configuration.GetSection("Controllers").Get<ControllersActiveConfig>();
 builder.Services.AddSingleton(x => controllersConfig);
 
@@ -118,7 +118,7 @@ builder.Services.AddHostedService<CopyNoteHosted>();
 builder.Services.AddDaprClient();
 builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen();
-builder.Services.AddCors();
+// builder.Services.AddCors();
 
 var spaPath = "Client/dist/app";
 
@@ -153,12 +153,14 @@ app.UseSpaStaticFiles();
 
 app.UseRouting();
 
+/*
 app.UseCors(builder => builder
     .WithOrigins(origins)
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
     .SetPreflightMaxAge(TimeSpan.FromMinutes(5)));
+*/
 
 app.UseMiddleware<ExceptionMiddleware>();
 
