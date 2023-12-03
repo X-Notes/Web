@@ -98,7 +98,6 @@ export class AuthService {
     this.setAccessToken(accessToken);
     this.setRefreshToken(refreshToken);
     localStorage.setItem('isLoggedIn', 'true'); 
-    localStorage.setItem('landing_auth_date', new Date().toISOString());
   }
 
   setAccessToken(accessToken: string): void {

@@ -105,7 +105,7 @@ export class HtmlTitleService {
       }
 
       case EntityType.About: {
-        this.titleService.setTitle(this.translateService.instant('X Notes'));
+        this.titleService.setTitle('X Notes');
         break;
       }
 
