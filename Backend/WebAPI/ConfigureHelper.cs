@@ -89,9 +89,14 @@ namespace WebAPI
                 .Enrich.WithProperty("Environment", environment)
                 .Enrich.WithClientIp()
                 .Enrich.WithCorrelationId()
-                .WriteTo.Debug()
-                .WriteTo.Console()
                 .ReadFrom.Configuration(configuration);
+
+            if (environment != "Dev" && environment != "Production")
+            {
+                baseLogger
+                    .WriteTo.Debug()
+                    .WriteTo.Console();
+            }
             
             var elasticConnString = configuration["ElasticConfiguration:Uri"];
             if (!string.IsNullOrEmpty(elasticConnString))
@@ -146,8 +151,8 @@ namespace WebAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config.Secret)),
                     ValidAudience = config.Audience,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(5)
+                    ValidateLifetime = true
+                    // ClockSkew = TimeSpan.FromMinutes(5)
                 };
 
                 x.Events = new JwtBearerEvents()
