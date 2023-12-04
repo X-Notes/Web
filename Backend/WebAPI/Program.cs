@@ -1,6 +1,7 @@
 using System.Globalization;
 using API.Hosted;
 using Auth.Entities;
+using Common;
 using Common.App;
 using Common.Azure;
 using Common.ConstraintsUploadFiles;
@@ -68,6 +69,10 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.Configure<GoogleAuthClient>(builder.Configuration.GetSection("GoogleClient"));
 builder.Services.Configure<AuthRequestOptions>(builder.Configuration.GetSection("AuthRequest"));
 
+var seqSection = builder.Configuration.GetSection("Seq");
+var seqConfig = seqSection.Get<SeqConfig>();
+builder.Services.Configure<SeqConfig>(seqSection);
+
 var jwtTokenConfig = builder.Configuration.GetSection("JWTTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
 var googleConfig = builder.Configuration.GetSection("GoogleAuth").Get<GoogleAuth>();
@@ -84,7 +89,7 @@ Console.WriteLine("REDIS STR: "+ redisConfig.Connection);
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-builder.Services.SetupLogger(builder.Configuration, environment);
+builder.Services.SetupLogger(builder.Configuration, environment, seqConfig);
 builder.Services.ApplyAzureConfig(azureConfig);
 builder.Services.JWT(jwtTokenConfig);
 builder.Services.ApplyMapperDI();

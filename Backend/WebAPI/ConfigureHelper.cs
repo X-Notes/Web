@@ -4,6 +4,7 @@ using Auth.Impl;
 using Auth.Interfaces;
 using Backgrounds;
 using Billing;
+using Common;
 using Common.Redis;
 using Common.SignalR;
 using Editor;
@@ -80,32 +81,36 @@ namespace WebAPI
             services.ApplyNotificationsModule();
         }
 
-        public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment)
+        public static void SetupLogger(this IServiceCollection services, IConfiguration configuration, string environment, SeqConfig seqConfig)
         {
+            var baseLogger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithProperty("Environment", environment)
+                .Enrich.WithProperty("ApplicationName", seqConfig.ApplicationName)
+                .Enrich.WithClientIp()
+                .Enrich.WithCorrelationId()
+                .WriteTo.Debug()
+                .WriteTo.Console()
+                .ReadFrom.Configuration(configuration);
+            
             var elasticConnString = configuration["ElasticConfiguration:Uri"];
             if (!string.IsNullOrEmpty(elasticConnString))
             {
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .Enrich.WithMachineName()
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
+                Log.Logger = baseLogger
                     .WriteTo.Elasticsearch(ConfigureElasticSink(elasticConnString, environment))
-                    .Enrich.WithProperty("Environment", environment)
-                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger(); 
+            }
+            else if (seqConfig is { ApiKey: not null, ServerUrl: not null })
+            {
+                Log.Logger = baseLogger
+                    .WriteTo.Seq(seqConfig.ServerUrl, apiKey: seqConfig.ApiKey)
                     .CreateLogger(); 
             }
             else
             {
-                Console.WriteLine("ElasticConfiguration:Uri is null");
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .Enrich.WithMachineName()
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
-                    .Enrich.WithProperty("Environment", environment)
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
+                Console.WriteLine("elastic and seq configs are null");
+                Log.Logger = baseLogger.CreateLogger();
             }
         }
 
