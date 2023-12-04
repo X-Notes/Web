@@ -87,7 +87,6 @@ namespace WebAPI
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
                 .Enrich.WithProperty("Environment", environment)
-                .Enrich.WithProperty("ApplicationName", seqConfig.ApplicationName)
                 .Enrich.WithClientIp()
                 .Enrich.WithCorrelationId()
                 .WriteTo.Debug()
@@ -97,13 +96,16 @@ namespace WebAPI
             var elasticConnString = configuration["ElasticConfiguration:Uri"];
             if (!string.IsNullOrEmpty(elasticConnString))
             {
+                Console.WriteLine("Elastic configured");
                 Log.Logger = baseLogger
                     .WriteTo.Elasticsearch(ConfigureElasticSink(elasticConnString, environment))
                     .CreateLogger(); 
             }
             else if (seqConfig is { ApiKey: not null, ServerUrl: not null })
             {
+                Console.WriteLine($"Seq configured: {seqConfig.ApplicationName}");
                 Log.Logger = baseLogger
+                    .Enrich.WithProperty("ApplicationName", seqConfig.ApplicationName)
                     .WriteTo.Seq(seqConfig.ServerUrl, apiKey: seqConfig.ApiKey)
                     .CreateLogger(); 
             }
