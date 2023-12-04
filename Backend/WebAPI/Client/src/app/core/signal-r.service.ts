@@ -134,7 +134,7 @@ export class SignalRService {
   private ping(): void {
     setInterval(() => {
       try {
-        if (this.isConnected) {
+        if (this.isConnected && this.authService.isLoggedIn) {
           this.store.dispatch(new Ping(this.connectionIdOrError));
         }
       } catch (e) {
