@@ -15,6 +15,7 @@ public static class ControllerExtensions
     {
         return controller.User.Claims.FirstOrDefault(x => x.Type.Contains(ConstClaims.UserId))?.Value;
     }
+    
 
     public static Guid GetUserId(this ControllerBase controller)
     {
