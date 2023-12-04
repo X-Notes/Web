@@ -112,7 +112,7 @@ public class AuthController : ControllerBase
 
         var affectedRows = await dapperRefreshTokenRepository.SoftLockTokenAsync(user.Id, command.RefreshToken);
 
-        if (affectedRows == 0 || DateTimeProvider.Time.UtcDateTime > savedRefreshToken.ExpireAt)
+        if (affectedRows == 0 || DateTimeProvider.Time > savedRefreshToken.ExpireAt)
         {
             await dapperRefreshTokenRepository.RemoveTokenAsync(user.Id, command.RefreshToken);
             return new OperationResult<RefreshResultDto>(false, null!, "Token expired");

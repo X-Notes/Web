@@ -73,7 +73,7 @@ var seqSection = builder.Configuration.GetSection("Seq");
 var seqConfig = seqSection.Get<SeqConfig>();
 builder.Services.Configure<SeqConfig>(seqSection);
 
-var jwtTokenConfig = builder.Configuration.GetSection("JWTTokenConfig").Get<JwtTokenConfig>();
+var jwtTokenConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
 var googleConfig = builder.Configuration.GetSection("GoogleAuth").Get<GoogleAuth>();
 builder.Services.AddSingleton(googleConfig);
