@@ -231,7 +231,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
   private setStartCursor(): void {
     if (this.titleUI.length === 0) {
-      this.noteTitleEl?.nativeElement?.focus();
+      this.facade.apiBrowser.setCursor(this.noteTitleEl?.nativeElement, true);
       return;
     }
     const first = this.first;

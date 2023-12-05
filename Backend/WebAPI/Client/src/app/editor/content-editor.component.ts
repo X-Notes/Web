@@ -190,7 +190,6 @@ export class ContentEditorComponent
   get textEditMenuLeft(): number {
     if (this.pS.isMobile()) {
       const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;
-      console.log('textMenuWidth: ', textMenuWidth);
       return (this.pS.windowWidth$.getValue() - textMenuWidth) / 2;
     }
 

@@ -11,6 +11,7 @@ import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SelectionService } from './selection.service';
 import { EditorSelectionModeEnum } from '../entities-ui/editor-selection-mode.enum';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 
 @Injectable()
 export class ContentEditorElementsListenerService {
@@ -41,7 +42,8 @@ export class ContentEditorElementsListenerService {
     private pS: PersonalizationService,
     private clickableService: ClickableContentService,
     private store: Store,
-    private selectionService: SelectionService) {
+    private selectionService: SelectionService,
+    private apiBrowser: ApiBrowserTextService) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -152,7 +154,7 @@ export class ContentEditorElementsListenerService {
     });
     const upEl = isFocusToNext ? arr[index - 1] : el;
     if (index === 0 && isFocusToNext) {
-      noteTitleEl.nativeElement?.focus();
+      this.apiBrowser.setCursor(noteTitleEl?.nativeElement, true);
       return false;
     }
     if (upEl) {

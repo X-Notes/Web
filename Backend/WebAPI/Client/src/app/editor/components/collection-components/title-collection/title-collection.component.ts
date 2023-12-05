@@ -165,7 +165,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   }
 
   focusOnTitle(): void {
-    this.titleHtml.nativeElement.focus();
+    this.apiBrowser.setCursor(this.titleHtml?.nativeElement, true);
   }
 
   onSelectStart(): void {
