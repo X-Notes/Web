@@ -154,7 +154,7 @@ export class ContentEditorElementsListenerService {
     });
     const upEl = isFocusToNext ? arr[index - 1] : el;
     if (index === 0 && isFocusToNext) {
-      this.apiBrowser.setCursor(noteTitleEl?.nativeElement, true);
+      noteTitleEl.nativeElement?.focus();
       return false;
     }
     if (upEl) {

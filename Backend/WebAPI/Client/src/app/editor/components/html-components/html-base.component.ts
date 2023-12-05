@@ -312,7 +312,7 @@ export abstract class BaseTextElementComponent
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus($event: SetFocus) {
-    this.facade.apiBrowser.setCursor(this.contentHtml.nativeElement, true);
+    this.contentHtml?.nativeElement?.focus();
     this.setFocusedElement();
     this.onFocus.emit(this);
     this.facade.clickableService.cursorChanged$.next(() => this.updateContentEditableCursor());
