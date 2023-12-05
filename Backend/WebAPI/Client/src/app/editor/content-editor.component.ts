@@ -187,14 +187,6 @@ export class ContentEditorComponent
     return this.isDrawerVisible$.getValue() && this.selectionDirective.isSelectionActive;
   }
 
-  get transformMenuBottom(): string {
-    if (this.audioService.currentFile) {
-      return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
-    }
-
-    return this.pS.navMenuHeight + 'px';
-  }
-
   get textEditMenuLeft(): number {
     if (this.pS.isMobile()) {
       const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;

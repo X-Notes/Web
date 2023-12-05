@@ -21,7 +21,6 @@ import { HtmlHeadingsComponent } from "./components/html-components/html-heading
 import { HtmlLinkComponent } from "./components/html-components/html-link/html-link.component";
 import { HtmlNumberListComponent } from "./components/html-components/html-number-list/html-number-list.component";
 import { HtmlTextPartComponent } from "./components/html-components/html-text-part/html-text-part.component";
-import { MobileTransformMenuComponent } from "./components/mobile-transform-menu/mobile-transform-menu.component";
 import { ColorPickItemComponent } from "./components/text-edit-menu/components/color-pick-item/color-pick-item.component";
 import { TextEditMenuComponent } from "./components/text-edit-menu/text-edit-menu.component";
 import { ChangeSizeAlbumHeightDirective } from "./directives/change-size-album-height.directive";
@@ -53,7 +52,6 @@ import { SelectionDirective } from "./directives/selection.directive";
       DragDropHandlerContainerComponent,
       DocumentItemComponent,
       EmptyCollectionItemsPlaceholderComponent,
-      MobileTransformMenuComponent,
       ColorPickItemComponent,
       LazyForDirective,
     ],

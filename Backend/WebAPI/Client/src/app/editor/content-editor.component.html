@@ -129,9 +129,6 @@
   }" id="note-selector" class="full-note-selection"></div>
 </div>
 <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
-<app-mobile-transform-menu *ngIf="false" [style.bottom]="transformMenuBottom"
-  (transformTo)="transformToTypeText($event)"
-  (transformToFile)="transformToFileType($event)"></app-mobile-transform-menu>
 <app-text-edit-menu #textEditMenu [style.top]="textEditMenuTop"
   [style.left.px]="textEditMenuLeft" [style.visibility]="
     isTextMenuActive && (isMobileMenuActive$ | async) === false ? 'visible' : 'hidden'
