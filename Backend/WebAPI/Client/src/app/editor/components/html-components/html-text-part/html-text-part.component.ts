@@ -93,10 +93,8 @@ export class HtmlTextPartComponent
   }
 
   onFirstSlash($event: KeyboardEvent): void {
-    if (!this.facade.pS.isMobile()) {
-      $event.preventDefault();
-      this.menuTrigger.openMenu();
-    }
+    $event.preventDefault();
+    this.menuTrigger.openMenu();
   }
 
   ngOnInit(): void {

@@ -159,11 +159,6 @@ export class ContentEditorComponent
   }
 
   get textEditMenuTop(): string {
-
-    if (this.pS.isMobile()) {
-      return 'auto';
-    }
-
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
       const selection = this.facade.apiBrowser.getSelection();
       const range = selection.getRangeAt(0);
@@ -192,17 +187,6 @@ export class ContentEditorComponent
     return this.isDrawerVisible$.getValue() && this.selectionDirective.isSelectionActive;
   }
 
-  get textEditMenuBottom(): string {
-    if (!this.pS.isMobile()) {
-      return 'auto';
-    }
-    if (this.audioService.currentFile) {
-      return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
-    }
-
-    return this.pS.navMenuHeight + 'px';
-  }
-
   get transformMenuBottom(): string {
     if (this.audioService.currentFile) {
       return (this.pS.navMenuHeight + this.pS.audioControlsHeight) + 'px';
@@ -213,7 +197,9 @@ export class ContentEditorComponent
 
   get textEditMenuLeft(): number {
     if (this.pS.isMobile()) {
-      return 0;
+      const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;
+      console.log('textMenuWidth: ', textMenuWidth);
+      return (this.pS.windowWidth$.getValue() - textMenuWidth) / 2;
     }
 
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
@@ -301,8 +287,10 @@ export class ContentEditorComponent
         }
         this.menuOptions = this.buildMenuOptions();
         this.facade.cdr.detectChanges();
+        setTimeout(() => this.facade.cdr.detectChanges(), 50);
       });
   }
+
 
   buildMenuOptions(): TextEditMenuOptions {
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
