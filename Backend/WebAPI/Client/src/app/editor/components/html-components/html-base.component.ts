@@ -525,20 +525,15 @@ export abstract class BaseTextElementComponent
         this.enter(e);
       }
     });
-    const keydownBackspace = this.facade.renderer.listen(el, 'keydown.backspace', (e: KeyboardEvent) => {
-      // e.stopPropagation();
-      this.checkForDeleteOrConcatWithPrev(e);
-    });
     const keyupBackspace = this.facade.renderer.listen(el, 'keyup.backspace', (e: KeyboardEvent) => {
       // e.stopPropagation();
       this.backUp(e);
     });
-    const keydownDelete = this.facade.renderer.listen(el, 'keydown.delete', (e: KeyboardEvent) => {
-      // e.stopPropagation();
-      this.checkForDeleteOrConcatWithPrev(e);
-    });
     const keydown = this.facade.renderer.listen(el, 'keydown', (e: KeyboardEvent) => {
       const isEmpty = !this.getText() || this.getText.length === 0;
+      if(e.code === 'Backspace' || e.code === 'Delete') {
+        this.checkForDeleteOrConcatWithPrev(e);
+      }
       if (isEmpty && e.code === 'Slash') {
         this.onFirstSlash(e);
       }
@@ -573,10 +568,8 @@ export abstract class BaseTextElementComponent
       blur,
       paste,
       selectStart,
-      keydownBackspace,
       keydownEnter,
       keyupBackspace,
-      keydownDelete,
       copy,
       keydown
     );

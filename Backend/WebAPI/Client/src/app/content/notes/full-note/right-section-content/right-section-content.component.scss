@@ -30,15 +30,18 @@
     }
 
     p {
-      font-weight: 200;
-      letter-spacing: 0.18em;
+      font-weight: 300;
+      letter-spacing: 0.10em;
       margin-left: 1rem;
     }
 
     .icon {
       display: flex;
-      width: 20px;
-      height: 20px;
+      mat-icon {
+        display: flex;
+        width: 14px;
+        width: 14px;
+      }
     }
   }
 
