@@ -742,17 +742,13 @@ export class ContentEditorComponent
     if (this.options$.getValue().isReadOnlyMode) {
       return;
     }
-    alert(5);
     // $event.stopPropagation();
     //$event.preventDefault();
     this.postAction();
     requestAnimationFrame(() => {
       this.last?.setFocus();
       this.preLast?.mouseLeave($event);
-      setTimeout(() => {
-        this.last?.detectChanges();
-        this.preLast?.detectChanges();
-      }, 0);
+      this.preLast?.detectChanges();
     });
   }
 
