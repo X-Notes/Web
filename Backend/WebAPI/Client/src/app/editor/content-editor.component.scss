@@ -41,7 +41,8 @@
         padding-left: 0.625rem;
         outline: none;
         overflow-wrap: anywhere;
-
+        -webkit-user-select: text;
+        user-select: text;
         &:empty {
           padding-left: 0;
         }
