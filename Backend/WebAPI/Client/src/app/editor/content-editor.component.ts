@@ -746,9 +746,7 @@ export class ContentEditorComponent
     //$event.preventDefault();
     this.postAction();
     requestAnimationFrame(() => {
-      setTimeout(() => {
-        this.last?.setFocus();
-      }, 2000);
+      this.last?.setFocus();
       this.preLast?.mouseLeave($event);
       this.preLast?.detectChanges();
     });
