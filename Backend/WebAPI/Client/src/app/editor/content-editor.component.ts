@@ -748,7 +748,7 @@ export class ContentEditorComponent
     requestAnimationFrame(() => {
       setTimeout(() => {
         this.last?.setFocus();
-      }, 50);
+      }, 2000);
       this.preLast?.mouseLeave($event);
       this.preLast?.detectChanges();
     });
