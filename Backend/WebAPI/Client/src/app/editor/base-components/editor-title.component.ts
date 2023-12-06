@@ -131,7 +131,14 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
   }
 
   onTitleInput($event) {
-    this.pushChangesToTitle($event.target.textContent, true);
+    let title = $event.target.textContent as string;
+    if(title?.length > 0) {
+      title = title.replace(/[\n\r]/g, '');
+      if(title === '') {
+        this.viewTitle = '';
+      }
+    }
+    this.pushChangesToTitle(title, true);
   }
 
   onTitleClick(): void {
