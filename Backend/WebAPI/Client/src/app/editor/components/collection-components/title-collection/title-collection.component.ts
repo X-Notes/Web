@@ -147,6 +147,9 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   }
 
   setTitleUI(viewTextContent: string): void {
+    if (viewTextContent.length > 0) {
+      viewTextContent = viewTextContent.replace(/[\n\r]/g, '');
+    }
     this.viewTextContent = viewTextContent;
   }
 

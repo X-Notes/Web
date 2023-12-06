@@ -86,6 +86,13 @@ export class NoteComponent implements OnInit {
     return null;
   }
 
+  get title(): string {
+    if(this.note.title.length > 0) {
+      return this.note.title.replace(/[\n\r]/g, '');
+    }
+    return '';
+  }
+
   ngOnInit(): void {
     this.syncContent();
   }

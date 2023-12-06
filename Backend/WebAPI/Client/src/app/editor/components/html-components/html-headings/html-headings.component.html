@@ -18,8 +18,7 @@
     ondragstart="return false;" ondrop="return false;"
     class="main-item"
     [ngStyle]="{
-      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
-      paddingLeft: textPadding
+      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null
     }"
   >
     <p
@@ -33,8 +32,9 @@
       [ngClass]="{
         'nope-select' : (isResizingPhoto$ | async) === true
       }"
+      [ngStyle]="{ paddingLeft: textPadding }"
     ></p>
-    <p class="no-content" *ngIf="isActiveStateNoHover && (isSelectModeActive$ | async) === false && isRowsSelected === false">
+    <p class="no-content" [ngStyle]="{paddingLeft: textPlaceholderPadding}" *ngIf="isActiveStateNoHover && (isSelectModeActive$ | async) === false && isRowsSelected === false">
       {{ ('innerNote.heading' | translate) }} {{ content.metadata.hTypeId }}
     </p>
     <div

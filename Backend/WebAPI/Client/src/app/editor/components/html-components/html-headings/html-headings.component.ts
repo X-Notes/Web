@@ -50,6 +50,10 @@ export class HtmlHeadingsComponent
     }
   }
 
+  get textPlaceholderPadding(): string {
+    return this.textPaddingNumber + 0 + 'px';
+  }
+
   get cursorShift() {
     switch (this.content.metadata?.hTypeId) {
       case HeadingTypeENUM.H1: {

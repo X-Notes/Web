@@ -47,10 +47,13 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
   }
 
   initStartTitle(title: string): void {
+    if (title.length > 0) {
+      title = title.replace(/[\n\r]/g, '');
+    }
     this.viewTitle = title;
   }
 
-  initTitleSubscription() {
+  initTitleSubscription() { 
     this.subscribeTitleUpdates();
     this.subscribeOnEditUI();
   }
@@ -111,7 +114,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
       return;
     }
 
-    if(this.titleUI === updateTitle) {
+    if (this.titleUI === updateTitle) {
       return;
     }
 
