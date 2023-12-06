@@ -47,8 +47,8 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
   }
 
   initStartTitle(title: string): void {
-    if (title.length > 0) {
-      title = title.replace(/[\n\r]/g, '');
+    if (title?.length > 0) {
+      title = title?.replace(/[\n\r]/g, '');
     }
     this.viewTitle = title;
   }
