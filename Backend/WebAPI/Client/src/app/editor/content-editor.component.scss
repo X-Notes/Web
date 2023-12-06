@@ -43,18 +43,6 @@
         overflow-wrap: anywhere;
         -webkit-user-select: text;
         user-select: text;
-        &:empty {
-          padding-left: 0;
-        }
-      }
-
-      .title:empty + .placeholder {
-        display: block;
-      }
-
-      .title:empty ~ .left-border {
-        width: 0;
-        background-color: #7b7b7b;
       }
 
       .collaborative-cursor {
@@ -65,12 +53,11 @@
       }
 
       .placeholder {
-        display: none;
         position: absolute;
         top: 0;
         pointer-events: none;
         user-select: none;
-        margin-left: 0.25rem;
+        margin-left: 1rem;
         color: #7b7b7b;
       }
     }

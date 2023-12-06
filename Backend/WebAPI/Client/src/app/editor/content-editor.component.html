@@ -15,8 +15,8 @@
         " (paste)="pasteCommandHandler($event)" (selectstart)="startTitleSelection($event)" class="title"
         (input)="onTitleInput($event)" (keydown.enter)="handlerTitleEnter($event)" (click)="onTitleClick()"
         [textContent]="viewTitle"></div>
-      <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
-      <div class="left-border"></div>
+      <div *ngIf="isTitleEmpty" class="placeholder">{{ 'innerNote.title' | translate }}</div>
+      <div *ngIf="!isTitleEmpty" class="left-border"></div>
       <div *ngFor="let cursor of titleCursors$ | async" class="collaborative-cursor" [ngStyle]="{
           top: cursor.cursorTop + 'px',
           left: cursor.cursorLeft + 'px',

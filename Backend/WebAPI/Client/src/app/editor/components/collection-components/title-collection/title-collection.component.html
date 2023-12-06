@@ -19,7 +19,7 @@
         backgroundColor: cursor.color
       }"
     ></div>
-    <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
+    <div *ngIf="isContentEmpty()" class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
   </div>
   <app-button-collection
     *ngIf="!isDisableButton"

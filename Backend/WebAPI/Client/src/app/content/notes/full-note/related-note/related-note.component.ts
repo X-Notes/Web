@@ -40,4 +40,13 @@ export class RelatedNoteComponent {
   deleteSmallNote() {
     this.deleteNote.emit(this.note.id);
   }
+
+  get isTitleEmpty() {
+    let title = this.note?.title ?? '';
+    if (title?.length > 0) {
+      title = title?.replace(/[\n\r]/g, '');
+    }
+   
+    return title.length === 0;
+  }
 }

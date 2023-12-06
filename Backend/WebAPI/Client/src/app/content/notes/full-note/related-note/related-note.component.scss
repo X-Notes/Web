@@ -119,17 +119,7 @@
       }
     }
 
-    .title:empty+.placeholder {
-      display: block;
-    }
-
-    .title:empty~.left-border {
-      width: 0;
-      background-color: #7b7b7b;
-    }
-
     .placeholder {
-      display: none;
       position: absolute;
       top: 2px;
       left: 10px;

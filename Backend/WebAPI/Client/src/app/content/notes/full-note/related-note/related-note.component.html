@@ -24,9 +24,9 @@
       </div>
     </div>
     <div class="title-section">
-      <div class="left-border"></div>
+      <div *ngIf="!isTitleEmpty" class="left-border"></div>
       <p class="title">{{ note.title }}</p>
-      <div class="placeholder">Title</div>
+      <div *ngIf="isTitleEmpty" class="placeholder">{{ 'innerNote.title' | translate }}</div>
     </div>
     <div class="content-note">
       <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">

@@ -46,6 +46,10 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
     return document.activeElement === this.noteTitleEl.nativeElement;
   }
 
+  get isTitleEmpty() {
+    return this.noteTitleEl?.nativeElement?.textContent.length === 0;
+  }
+
   initStartTitle(title: string): void {
     if (title?.length > 0) {
       title = title?.replace(/[\n\r]/g, '');
@@ -82,10 +86,6 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
       .subscribe((updates) => this.updateTitle(updates.title));
     this.facade.actions$.pipe(ofActionDispatched(UpdateNoteTitleState), takeUntil(this.facade.dc.d$), debounceTime(preventResetCursor))
       .subscribe((updates) => this.updateTitle(updates.title));
-  }
-
-  isTitleEmpty() {
-    return this.noteTitleEl?.nativeElement?.textContent.length === 0;
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -228,7 +228,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
       start: cursor.startCursor,
       end: cursor.endCursor,
     };
-    if (this.isTitleEmpty()) {
+    if (this.isTitleEmpty) {
       return new TextCursorUI(this.cursorShift.left, this.cursorShift.top, cursor.color);
     }
     const range = this.facade.apiBrowser.restoreSelection(el, selection, false);
