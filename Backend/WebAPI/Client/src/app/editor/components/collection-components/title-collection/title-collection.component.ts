@@ -151,7 +151,7 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   }
 
   onTitleChangeInput($event: Event) {
-    const text = ($event.target as HTMLInputElement).innerText;
+    const text = ($event.target as HTMLInputElement).textContent;
     this.nameCollectionChanged.next(text);
   }
 

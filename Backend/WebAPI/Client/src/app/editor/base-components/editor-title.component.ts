@@ -57,7 +57,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
   setHtmlTitle(title: string) {
     if (this.noteTitleEl?.nativeElement) {
-      this.noteTitleEl.nativeElement.innerText = title;
+      this.noteTitleEl.nativeElement.textContent = title;
     }
   }
 
@@ -103,7 +103,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
 
   pasteCommandHandler(e) {
     this.facade.apiBrowser.pasteOnlyTextHandler(e);
-    this.pushChangesToTitle(this.noteTitleEl.nativeElement.innerText, true);
+    this.pushChangesToTitle(this.noteTitleEl.nativeElement.textContent, true);
   }
 
   private updateTitle(updateTitle: string) {
@@ -128,7 +128,7 @@ export abstract class EditorTitleComponent extends EditorBaseComponent {
   }
 
   onTitleInput($event) {
-    this.pushChangesToTitle($event.target.innerText, true);
+    this.pushChangesToTitle($event.target.textContent, true);
   }
 
   onTitleClick(): void {

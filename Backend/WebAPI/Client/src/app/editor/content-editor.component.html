@@ -14,7 +14,7 @@
           !options$.getValue().isReadOnlyMode && (facade.selectionService.getSelectionDivActive$ | async) === false
         " (paste)="pasteCommandHandler($event)" (selectstart)="startTitleSelection($event)" class="title"
         (input)="onTitleInput($event)" (keydown.enter)="handlerTitleEnter($event)" (click)="onTitleClick()"
-        [innerText]="viewTitle"></div>
+        [textContent]="viewTitle"></div>
       <div class="placeholder">{{ 'innerNote.title' | translate }}</div>
       <div class="left-border"></div>
       <div *ngFor="let cursor of titleCursors$ | async" class="collaborative-cursor" [ngStyle]="{
