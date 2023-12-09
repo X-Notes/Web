@@ -7,14 +7,10 @@ using Common.Interfaces.Note;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
-    [Table(nameof(CollectionNote), Schema = SchemeConfig.NoteContent)]
     public class CollectionNote : BaseNoteContent, ICollectionNote
     {
         public string Name { set; get; }
-
-        [Column(TypeName = "jsonb")]
-        public string Metadata { set; get; }
-
+        
         public FileTypeEnum FileTypeId { set; get; }
         public FileType FileType { set; get; }
 

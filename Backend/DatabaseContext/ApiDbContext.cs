@@ -121,12 +121,17 @@ namespace DatabaseContext
                 .WithMany(x => x.Contents)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<BaseNoteContent>()
+                .HasDiscriminator(b => b.ContentTypeId)
+                .HasValue<TextNote>(ContentTypeENUM.Text)
+                .HasValue<CollectionNote>(ContentTypeENUM.Collection);
+            
             modelBuilder.Entity<BaseNoteContent>().Property(x => x.Version).HasDefaultValue(1);
 
             modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.TextNoteId);
 
             // USER
-
+            modelBuilder.Entity<User>().Property(x => x.Email).IsRequired();
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
             modelBuilder.Entity<User>().Property(x => x.BillingPlanId).HasDefaultValue(BillingPlanTypeENUM.Standart);
 
@@ -261,6 +266,7 @@ namespace DatabaseContext
                 .WithMany(b => b.ReletatedNoteToInnerNotesTo)
                 .HasForeignKey(bc => bc.RelatedNoteId);
 
+            
 
             modelBuilder.Entity<CollectionNote>()
                 .HasMany(p => p.Files)

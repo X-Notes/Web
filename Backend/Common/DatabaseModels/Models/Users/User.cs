@@ -20,8 +20,7 @@ namespace Common.DatabaseModels.Models.Users
     public class User : BaseEntity<Guid>
     {
         public string Name { set; get; }
-
-        [Required]
+        
         public string Email { set; get; }
 
         public UserProfilePhoto UserProfilePhoto { set; get; }

@@ -6,16 +6,12 @@ using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
-    [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
     public class TextNote : BaseNoteContent, INoteText
     {
         [Column(TypeName = "jsonb")]
         public string Contents { set; get; }
 
         public string PlainContent { set; get; }
-        
-        [Column(TypeName = "jsonb")]
-        public string Metadata { set; get; }
         
         public TextNoteIndex TextNoteIndex { set; get; }
         

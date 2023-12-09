@@ -8,7 +8,7 @@ using Common.Interfaces.Note;
 namespace Common.DatabaseModels.Models.NoteContent
 {
     [Table(nameof(BaseNoteContent), Schema = SchemeConfig.NoteContent)]
-    public class BaseNoteContent : BaseEntity<Guid>, IBaseNoteContent
+    public abstract class BaseNoteContent : BaseEntity<Guid>, IBaseNoteContent
     {
         public int _version;
 
@@ -39,6 +39,9 @@ namespace Common.DatabaseModels.Models.NoteContent
 
         [NotMapped]
         public Guid PrevId { set; get; }
+        
+        [Column(TypeName = "jsonb")]
+        public string Metadata { set; get; }
 
         public virtual IEnumerable<Guid> GetInternalFilesIds()
         {
