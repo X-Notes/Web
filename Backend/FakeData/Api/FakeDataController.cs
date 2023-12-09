@@ -100,9 +100,9 @@ public class FakeDataController : ControllerBase
     }
 
     [HttpGet("notes/{userId}/{typeId}")]
-    public async Task<List<SmallNote>> GetNotesAsync(Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
+    public async Task<List<SmallNote>> GetNotesAsync(Guid userId, NoteTypeENUM typeId)
     {
-        settings ??= new PersonalizationSettingDTO().GetDefault();
+        var settings = new PersonalizationSettingDTO().GetDefault();
         
         var query = new GetNotesByTypeQuery(userId, typeId, settings);
         return await mediator.Send(query);
