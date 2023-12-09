@@ -57,22 +57,22 @@ public class FakeDataController : ControllerBase
         return Ok("ok");
     }
     
-    [HttpPost("users-notes/{count}")]
-    public async Task<IActionResult> SetUsersWithNotes(int count)
+    [HttpPost("users-notes/{usersCount}/{notesCount}")]
+    public async Task<IActionResult> SetUsersWithNotes(int usersCount, int notesCount)
     {
         var userGenerator = new UserGenerator();
-        foreach (var user in userGenerator.GetUsers(count))
+        foreach (var user in userGenerator.GetUsers(usersCount))
         {
             await userRepository.AddAsync(user);
-            await SetContentsAsync(user.Id, count, 10, 200);
+            await SetContentsAsync(user.Id, notesCount, 10, 200);
         }
         return Ok("ok");
     }
     
-    [HttpPost("set/notes/{count}/{userId}")]
-    public async Task<IActionResult> SetNotes(int count, Guid userId)
+    [HttpPost("set/notes/{notesCount}/{userId}")]
+    public async Task<IActionResult> SetNotes(int notesCount, Guid userId)
     {
-        await SetContentsAsync(userId, count, 10, 200);
+        await SetContentsAsync(userId, notesCount, 10, 200);
         return Ok("ok");
     }
     
