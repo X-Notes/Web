@@ -61,11 +61,10 @@ public class FakeDataController : ControllerBase
     public async Task<IActionResult> SetUsersWithNotes(int count)
     {
         var userGenerator = new UserGenerator();
-        var users = userGenerator.GetUsers(count);
-        await userRepository.AddRangeAsync(users);
-        foreach (var user in users)
+        foreach (var user in userGenerator.GetUsers(count))
         {
-            await SetContentsAsync(user.Id, count);
+            await userRepository.AddAsync(user);
+            await SetContentsAsync(user.Id, count, 10, 200);
         }
         return Ok("ok");
     }
@@ -73,7 +72,7 @@ public class FakeDataController : ControllerBase
     [HttpPost("set/notes/{count}/{userId}")]
     public async Task<IActionResult> SetNotes(int count, Guid userId)
     {
-        await SetContentsAsync(userId, count);
+        await SetContentsAsync(userId, count, 10, 200);
         return Ok("ok");
     }
     
@@ -84,18 +83,18 @@ public class FakeDataController : ControllerBase
         return await mediator.Send(command);
     }
 
-    private async Task SetContentsAsync(Guid userId, int count)
+    private async Task SetContentsAsync(Guid userId, int notesCount, int contentFrom, int contentTo)
     {
         var faker = new Faker();
         
         var noteGenerator = new NoteGenerator(userId);
-        var notes = noteGenerator.GetNotes(count);
+        var notes = noteGenerator.GetNotes(notesCount);
         await noteRepository.AddRangeAsync(notes);
 
         var baseContentGenerator = new BaseContentNoteGenerator();
         var contents = notes.SelectMany(x =>
         {
-            return baseContentGenerator.GetContents(faker.Random.Int(10, 1000), x.Id);
+            return baseContentGenerator.GetContents(faker.Random.Int(contentFrom, contentTo), x.Id);
         });
 
         await baseNoteContentRepository.AddRangeAsync(contents);
