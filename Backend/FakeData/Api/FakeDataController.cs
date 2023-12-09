@@ -88,16 +88,15 @@ public class FakeDataController : ControllerBase
         var faker = new Faker();
         
         var noteGenerator = new NoteGenerator(userId);
-        var notes = noteGenerator.GetNotes(notesCount);
-        await noteRepository.AddRangeAsync(notes);
 
         var baseContentGenerator = new BaseContentNoteGenerator();
-        var contents = notes.SelectMany(x =>
+        
+        foreach (var note in noteGenerator.GetNotes(notesCount))
         {
-            return baseContentGenerator.GetContents(faker.Random.Int(contentFrom, contentTo), x.Id);
-        });
-
-        await baseNoteContentRepository.AddRangeAsync(contents);
+            await noteRepository.AddAsync(note);
+            var contents = baseContentGenerator.GetContents(faker.Random.Int(contentFrom, contentTo),note.Id);
+            await baseNoteContentRepository.AddRangeAsync(contents);
+        }
     }
 
     [HttpGet("notes/{userId}/{typeId}")]
