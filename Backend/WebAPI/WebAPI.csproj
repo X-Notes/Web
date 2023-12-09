@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Backgrounds\Backgrounds.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\FakeData\FakeData.csproj" />
       <ProjectReference Include="..\Folders\Folders.csproj" />
       <ProjectReference Include="..\Labels\Labels.csproj" />
       <ProjectReference Include="..\Notes\Notes.csproj" />

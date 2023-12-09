@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\DatabaseContext\DatabaseContext.csproj" />
+    <ProjectReference Include="..\Notes\Notes.csproj" />
   </ItemGroup>
 
 </Project>

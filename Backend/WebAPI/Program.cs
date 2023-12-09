@@ -69,6 +69,9 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.Configure<GoogleAuthClient>(builder.Configuration.GetSection("GoogleClient"));
 builder.Services.Configure<AuthRequestOptions>(builder.Configuration.GetSection("AuthRequest"));
 
+var swaggerSection = builder.Configuration.GetSection("Swagger");
+builder.Services.Configure<SwaggerConfig>(swaggerSection);
+
 var seqSection = builder.Configuration.GetSection("Seq");
 var seqConfig = seqSection.Get<SeqConfig>();
 builder.Services.Configure<SeqConfig>(seqSection);
@@ -83,6 +86,8 @@ var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
 // var origins = builder.Configuration.GetSection("Origins").Get<string[]>();
 var controllersConfig = builder.Configuration.GetSection("Controllers").Get<ControllersActiveConfig>();
 builder.Services.AddSingleton(x => controllersConfig);
+
+var swaggerConfig = swaggerSection.Get<SwaggerConfig>();
 
 Console.WriteLine("REDIS ACTIVE: " + redisConfig.Active);
 Console.WriteLine("REDIS STR: "+ redisConfig.Connection);
@@ -106,7 +111,7 @@ builder.Services.AddScoped<DisableInProductionFilter>();
 builder.Services.AddHealthChecks();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer(); // check
+
 builder.Services.SetupSignalR(redisConfig);
 builder.Services.AddSingleton<IUserIdProvider, IdProvider>();
 builder.Services.Mediatr();
@@ -122,7 +127,11 @@ builder.Services.AddHostedService<CopyNoteHosted>();
 
 builder.Services.AddDaprClient();
 builder.Services.AddHttpClient();
+
+// SWAGGER
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 // builder.Services.AddCors();
 
 var spaPath = "Client/dist/app";
@@ -142,7 +151,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DockerDev"))
+if (swaggerConfig.Active)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
