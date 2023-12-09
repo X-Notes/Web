@@ -103,12 +103,12 @@ export class BaseText extends ContentModelBase {
 
   getConcatedText(): string {
     return this.contents
-      .map((q) => q.text)
+      .map((q) => q.t)
       .filter((x) => x.length > 0)
       .reduce((pv, cv) => pv + cv);
   }
 
   isHaveText(): boolean {
-    return this.contents?.some((q) => q.text.length > 0);
+    return this.contents?.some((q) => q.t.length > 0);
   }
 }

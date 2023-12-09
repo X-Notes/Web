@@ -2,15 +2,15 @@ import { DeltaListEnum } from '../../../converter/entities/delta-list.enum';
 import { TextType } from './text-type';
 
 export class TextBlock {
-  text: string;
+  t: string;
 
-  highlightColor: string;
+  hc: string;
 
-  textColor: string;
+  tc: string;
 
-  link: string;
+  l: string;
 
-  textTypes: TextType[];
+  tt: TextType[];
 
   // not mapped UI fields
 
@@ -19,30 +19,30 @@ export class TextBlock {
   header?: number;
 
   constructor(block: Partial<TextBlock>) {
-    this.text = block.text;
-    this.highlightColor = block.highlightColor;
-    this.textColor = block.textColor;
-    this.link = block.link;
-    this.textTypes = block.textTypes;
+    this.t = block.t;
+    this.hc = block.hc;
+    this.tc = block.tc;
+    this.l = block.l;
+    this.tt = block.tt;
   }
 
   isEqual(block: TextBlock): boolean {
     return (
-      this.text === block.text &&
-      this.highlightColor === block.highlightColor &&
-      this.textColor === block.textColor &&
-      this.link === block.link &&
-      this.isEqualTextTypes(block.textTypes)
+      this.t === block.t &&
+      this.hc === block.hc &&
+      this.tc === block.tc &&
+      this.l === block.l &&
+      this.isEqualTextTypes(block.tt)
     );
   }
 
   isEqualTextTypes(textTypes: TextType[]): boolean {
-    if (this.textTypes === textTypes) return true;
-    if (this.textTypes == null || textTypes == null) return false;
-    if (this.textTypes.length !== textTypes.length) return false;
+    if (this.tt === textTypes) return true;
+    if (this.tt == null || textTypes == null) return false;
+    if (this.tt.length !== textTypes.length) return false;
 
-    for (let i = 0; i < this.textTypes.length; i += 1) {
-      if (this.textTypes[i] !== textTypes[i]) return false;
+    for (let i = 0; i < this.tt.length; i += 1) {
+      if (this.tt[i] !== textTypes[i]) return false;
     }
     return true;
   }

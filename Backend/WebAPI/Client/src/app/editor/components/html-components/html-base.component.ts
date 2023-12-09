@@ -404,8 +404,8 @@ export abstract class BaseTextElementComponent
     if (content?.list) {
       if (content.list === DeltaListEnum.bullet) {
         let type = NoteTextTypeENUM.dotList;
-        if (content.text?.startsWith('[ ]')) {
-          content.text = content.text.slice(3);
+        if (content.t?.startsWith('[ ]')) {
+          content.t = content.t.slice(3);
           type = NoteTextTypeENUM.checkList;
         }
         return { type };

@@ -285,16 +285,19 @@ export class ContentEditorComponent
 
   buildMenuOptions(): TextEditMenuOptions {
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
-      const item = this.getHTMLElementById(this.facade.selectionService.selectionTextItemId).getContent();
+      const itemId = this.facade.selectionService.selectionTextItemId;
+      const item = this.getHTMLElementById(itemId);
+      if(!item) return null;
+      const content = item.getContent();
       const obj: TextEditMenuOptions = {
         isBold: this.htmlPTCollectorService.getIsBoldSelection(),
         isItalic: this.htmlPTCollectorService.getIsItalicSelection(),
-        textType: item?.metadata?.noteTextTypeId,
-        headingType: item?.metadata?.hTypeId,
+        textType: content?.metadata?.noteTextTypeId,
+        headingType: content?.metadata?.hTypeId,
         isOneRowType: true,
         backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
         color: this.htmlPTCollectorService.getPropertySelection('color'),
-        ids: [this.facade.selectionService.selectionTextItemId]
+        ids: [itemId]
       };
       return obj;
     }

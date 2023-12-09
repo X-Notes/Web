@@ -180,7 +180,7 @@ namespace WebAPI
 
         public static void SetupSignalR(this IServiceCollection services, RedisConfig config)
         {
-            var signalR = services.AddSignalR();
+            var signalR = services.AddSignalR().AddNewtonsoftJsonProtocol();;
 
             if (config.Active)
             {

@@ -43,11 +43,11 @@ export class DeltaConverter {
       if (typeof item.insert !== 'string') return; // Todo there are can be paste image
       const clearStr = item.insert?.replace(/[\r\n]+/g, '');
       if (clearStr) {
-        block.text = clearStr;
-        block.textTypes = this.getTextTypes(item.attributes);
-        block.textColor = this.getTextColor(item.attributes);
-        block.link = this.getLink(item.attributes);
-        block.highlightColor = this.getHighlightColorColor(item.attributes);
+        block.t = clearStr;
+        block.tt = this.getTextTypes(item.attributes);
+        block.tc = this.getTextColor(item.attributes);
+        block.l = this.getLink(item.attributes);
+        block.hc = this.getHighlightColorColor(item.attributes);
         // UI fields
         block.list = this.getList(item.attributes);
         block.header = this.getHeader(item.attributes);
@@ -183,18 +183,18 @@ export class DeltaConverter {
     }
     const staticDelta = {} as DeltaStatic;
     const ops = contents.map((item) => {
-      return { insert: item.text ?? '', attributes: this.convertToAttributes(item) };
+      return { insert: item.t ?? '', attributes: this.convertToAttributes(item) };
     });
     staticDelta.ops = ops;
     return staticDelta;
   }
 
   private static convertToAttributes(block: TextBlock): StringAny {
-    if (!block || !block.textTypes) {
+    if (!block || !block.tt) {
       return {};
     }
     const obj: StringAny = {};
-    block.textTypes.forEach((i) => {
+    block.tt.forEach((i) => {
       if (i === TextType.Bold) {
         obj.bold = true;
       }
@@ -202,14 +202,14 @@ export class DeltaConverter {
         obj.italic = true;
       }
     });
-    if (block.textColor) {
-      obj.color = block.textColor;
+    if (block.tc) {
+      obj.color = block.tc;
     }
-    if (block.link) {
-      obj.link = block.link;
+    if (block.l) {
+      obj.link = block.l;
     }
-    if (block.highlightColor) {
-      obj.background = block.highlightColor;
+    if (block.hc) {
+      obj.background = block.hc;
     }
     return obj;
   }

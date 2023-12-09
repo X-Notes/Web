@@ -37,7 +37,6 @@ export class EditorStructureDiffs {
       const text = content as BaseText;
       this.newTextItems.push({
         id: text.id,
-        typeId: text.typeId,
         noteTextTypeId: text.metadata?.noteTextTypeId,
         order: text.order,
         contents: text.contents
