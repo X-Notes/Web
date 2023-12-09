@@ -16,6 +16,8 @@ export class LeftSectionContentNotesListComponent {
   @Input()
   public notesLink?: SmallNote[];
 
+  @Input() loading = false;
+
   constructor(public pService: PersonalizationService, public notesService: NotesService) { }
 
   get notes(): SmallNote[] {

@@ -50,6 +50,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   loaded = false;
 
+  notesLoaded = false;
+
   destroy = new Subject<void>();
 
   contents: ContentModelBase[];
@@ -84,8 +86,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     await this.loadInternalContent();
-    await this.loadLeftMenuWithNotes();
     this.loaded = true;
+    this.loadLeftMenuWithNotes();
   }
 
   async loadInternalContent() {
@@ -131,6 +133,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       }
     }
     this.notesLink = notes.filter((q) => q.id !== this.id);
+    this.notesLoaded = true;
   }
 
   ngOnDestroy() {
