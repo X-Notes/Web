@@ -13,7 +13,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         public Guid AppFileId { get; set; }
         public AppFile AppFile { get; set; }
 
-        public Guid CollectionNoteId { get; set; }
-        public CollectionNote CollectionNote { get; set; }
+        public Guid BaseNoteContentId { get; set; }
+        public BaseNoteContent BaseNoteContent { get; set; }
     }
 }

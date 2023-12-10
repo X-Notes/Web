@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.Models.NoteContent.TextContent;
+﻿using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
@@ -30,7 +31,7 @@ namespace Editor.Services
 
         private readonly AppSignalRService appSignalRService;
 
-        private readonly TextNotesRepository textNotesRepository;
+        private readonly BaseNoteContentRepository textNotesRepository;
 
         private readonly NoteWSUpdateService noteWSUpdateService;
 
@@ -41,7 +42,7 @@ namespace Editor.Services
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
-            TextNotesRepository textNotesRepository,
+            BaseNoteContentRepository textNotesRepository,
             NoteWSUpdateService noteWSUpdateService,
             NoteFolderLabelMapper mapper)
         {
@@ -125,10 +126,10 @@ namespace Editor.Services
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
 
-        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, TextNote textForUpdate, Guid noteId, bool isMultiplyUpdate, string connectionId, List<Guid> userToSendIds)
+        private async Task<UpdateBaseContentResult> UpdateOne(TextDiff text, BaseNoteContent textForUpdate, Guid noteId, bool isMultiplyUpdate, string connectionId, List<Guid> userToSendIds)
         {
             textForUpdate.SetDateAndVersion();
-            textForUpdate.UpdateMetadata(text.ContentMetadata.NoteTextTypeId, text.ContentMetadata.HTypeId, text.ContentMetadata.Checked, text.ContentMetadata.TabCount);
+            textForUpdate.UpdateTextMetadata(text.ContentMetadata.NoteTextTypeId, text.ContentMetadata.HTypeId, text.ContentMetadata.Checked, text.ContentMetadata.TabCount);
             var contents = text.Contents != null ? text.Contents
                 .Select(x => new TextBlock(x.Text, x.HighlightColor, x.TextColor, x.Link, x.TextTypes)).ToList() : null;
             textForUpdate.UpdateContent(contents);

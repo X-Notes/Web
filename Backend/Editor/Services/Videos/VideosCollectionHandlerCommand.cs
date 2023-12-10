@@ -1,5 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.WebSockets.InnerNote;
@@ -25,8 +25,7 @@ namespace Editor.Services.Videos
         private readonly IMediator _mediator;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
-
-
+        
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
@@ -38,13 +37,12 @@ namespace Editor.Services.Videos
         public VideosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            CollectionNoteRepository collectionNoteRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<VideosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<VideosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -106,15 +104,13 @@ namespace Editor.Services.Videos
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var collection = new CollectionNote(FileTypeEnum.Video)
-                    {
-                        NoteId = request.NoteId,
-                        Order = contentForRemove.Order,
-                    };
+                    var collection = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Video);
+                    collection.NoteId = request.NoteId;
+                    collection.Order = contentForRemove.Order;
+                    
+                    await base.baseNoteContentRepository.AddAsync(collection);
 
-                    await collectionNoteRepository.AddAsync(collection);
-
-                    await transaction.CommitAsync();
+                    await transaction.CommitAsync(cancellationToken);
 
                     var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
@@ -152,7 +148,7 @@ namespace Editor.Services.Videos
 
             if (permissions.CanWrite)
             {
-                var videosCollection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var videosCollection = await base.baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if (videosCollection != null)
                 {
@@ -160,7 +156,7 @@ namespace Editor.Services.Videos
                     videosCollection.Name = request.Name;
                     videosCollection.SetDateAndVersion();
 
-                    await collectionNoteRepository.UpdateAsync(videosCollection);
+                    await base.baseNoteContentRepository.UpdateAsync(videosCollection);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 

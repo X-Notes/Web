@@ -47,7 +47,9 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 			SnapshotTime = DateTimeProvider.Time,
 			NoteId = noteForCopy.Id,
 			UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),
-			SnapshotFileContents = noteForCopy.Contents.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
+			SnapshotFileContents = noteForCopy.Contents
+				.Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
+				.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
 		};
 		
 		snapshot.UpdateLabels(labels);
@@ -63,18 +65,19 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 
         foreach (var content in contents)
         {
-            switch (content)
+            switch (content.ContentTypeId)
             {
-                case TextNote tN:
+                case ContentTypeENUM.Text:
                     {
-                        var tNDTO = new TextNoteSnapshot(tN.Contents, tN.Metadata, tN.PlainContent, tN.Order, tN.ContentTypeId, tN.UpdatedAt);
+                        var tNDTO = new TextNoteSnapshot(content.Contents, content.Metadata, content.PlainContent, content.Order, content.ContentTypeId, content.UpdatedAt);
                         result.TextNoteSnapshots.Add(tNDTO);
                         break;
                     }
-                case CollectionNote aN:
+                case ContentTypeENUM.Collection:
                     {
-                        var fileIds = aN.Files.Select(item => item.Id).ToList();
-                        var collectionDTO = new CollectionNoteSnapshot(aN.Name, fileIds, aN.Metadata, aN.FileTypeId, aN.Order, aN.ContentTypeId, aN.UpdatedAt);
+                        var fileIds = content.Files.Select(item => item.Id).ToList();
+                        var collectionDTO = new CollectionNoteSnapshot(content.Name, fileIds, content.Metadata, content.FileTypeId.Value, 
+	                        content.Order, content.ContentTypeId, content.UpdatedAt);
                         result.CollectionNoteSnapshots.Add(collectionDTO);
                         break;
                     }

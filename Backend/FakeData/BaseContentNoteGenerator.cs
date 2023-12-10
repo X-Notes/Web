@@ -11,7 +11,7 @@ namespace FakeData;
 
 public class BaseContentNoteGenerator
 {
-    public List<TextNote> GetContents(int count, Guid noteId)
+    public List<BaseNoteContent> GetContents(int count, Guid noteId)
     {
         var faker = new Faker();
         return Enumerable.Range(0, count).Select(order =>
@@ -25,7 +25,7 @@ public class BaseContentNoteGenerator
                 NoteTextTypeId = type,
             };
             
-            return new TextNote()
+            return new BaseNoteContent()
             {
                 NoteId = noteId,
                 ContentTypeId = ContentTypeENUM.Text,

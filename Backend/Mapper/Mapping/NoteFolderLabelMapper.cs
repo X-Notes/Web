@@ -67,35 +67,35 @@ namespace Mapper.Mapping
 
             foreach (var content in contents)
             {
-                switch (content)
+                switch (content.ContentTypeId)
                 {
-                    case TextNote tN:
+                    case ContentTypeENUM.Text:
                         {
-                            resultList.Add(ToTextDTO(tN));
+                            resultList.Add(ToTextDTO(content));
                             break;
                         }
-                    case CollectionNote aN:
+                    case ContentTypeENUM.Collection:
                         {
-                            switch (aN.FileTypeId)
+                            switch (content.FileTypeId)
                             {
                                 case FileTypeEnum.Audio:
                                     {
-                                        resultList.Add(ToAudiosCollection(aN, ownerId));
+                                        resultList.Add(ToAudiosCollection(content, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Photo:
                                     {
-                                        resultList.Add(ToPhotosCollection(aN, ownerId));
+                                        resultList.Add(ToPhotosCollection(content, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Video:
                                     {
-                                        resultList.Add(ToVideosCollection(aN, ownerId));
+                                        resultList.Add(ToVideosCollection(content, ownerId));
                                         break;
                                     }
                                 case FileTypeEnum.Document:
                                     {
-                                        resultList.Add(ToDocumentsCollection(aN, ownerId));
+                                        resultList.Add(ToDocumentsCollection(content, ownerId));
                                         break;
                                     }
                             }
@@ -110,37 +110,37 @@ namespace Mapper.Mapping
             return resultList;
         }
 
-        public TextNoteDto ToTextDTO(TextNote tN)
+        public TextNoteDto ToTextDTO(BaseNoteContent tN)
         {
-            return new TextNoteDto(tN.GetContents(), tN.Id, tN.Order, tN.GetMetadata(), tN.UpdatedAt, tN.Version, tN.PlainContent);
+            return new TextNoteDto(tN.GetContents(), tN.Id, tN.Order, tN.GetTextMetadata(), tN.UpdatedAt, tN.Version, tN.PlainContent);
         }
 
-        public AudiosCollectionNoteDTO ToAudiosCollection(CollectionNote aN, Guid ownerId)
+        public AudiosCollectionNoteDTO ToAudiosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var audiosDTO = aN.Files != null ? aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList() : null;
             return new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
         }
 
-        public PhotosCollectionNoteDTO ToPhotosCollection(CollectionNote aN, Guid ownerId)
+        public PhotosCollectionNoteDTO ToPhotosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var photosDTO = aN.Files != null ? aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList() : null;
-            var metadata = aN.GetMetadata();
+            var metadata = aN.GetCollectionMetadata();
             return new PhotosCollectionNoteDTO(photosDTO, aN.Name, metadata?.Width, metadata?.Height, aN.Id, aN.Order, metadata?.CountInRow, aN.UpdatedAt, aN.Version);
         }
 
-        public VideosCollectionNoteDTO ToVideosCollection(CollectionNote aN, Guid ownerId)
+        public VideosCollectionNoteDTO ToVideosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var videosDTO = aN.Files != null ? aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList() : null;
             return new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
         }
 
-        public DocumentsCollectionNoteDTO ToDocumentsCollection(CollectionNote aN, Guid ownerId)
+        public DocumentsCollectionNoteDTO ToDocumentsCollection(BaseNoteContent aN, Guid ownerId)
         {
             var documentsDTO = aN.Files != null ? aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList() : null;
             return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
         }
 
-        public BaseNoteContentDTO ToCollectionNoteDTO(CollectionNote aN)
+        public BaseNoteContentDTO ToCollectionNoteDTO(BaseNoteContent aN)
         {
             var fileType = aN.FileTypeId switch
             {

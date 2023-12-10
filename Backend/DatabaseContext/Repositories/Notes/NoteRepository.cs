@@ -68,12 +68,17 @@ namespace DatabaseContext.Repositories.Notes
 
             var notesIds = notes.Select(q => q.Id).ToHashSet();
 
+            // TODO REMOVE
             var query = context.BaseNoteContents
-                .Include(q => (q as CollectionNote).Files)
-                .Where(q => notesIds.Contains(q.NoteId) && q.ContentTypeId == ContentTypeENUM.Collection ? collectionTypes.Contains((q as CollectionNote).FileTypeId) : true)
-                .AsSplitQuery().GroupBy(x => x.NoteId).Select(x => new { noteId = x.Key, contents = x.OrderBy(q => q.Order).Take(settings.ContentInNoteCount).ToList() });
-
- 
+                .Include(q => q.Files)
+                .Where(q => notesIds.Contains(q.NoteId) && types.Contains(q.ContentTypeId))
+                .Where(q => q.ContentTypeId == ContentTypeENUM.Collection ? collectionTypes.Contains(q.FileTypeId.Value) : true)
+                .AsSplitQuery().GroupBy(x => x.NoteId)
+                .Select(x => 
+                    new { noteId = x.Key, contents = x.OrderBy(q => q.Order)
+                    .Take(settings.ContentInNoteCount).ToList() 
+                    });
+            
             var contentsDict = await query.ToDictionaryAsync(x => x.noteId);
 
             notes.ForEach(note =>
@@ -152,25 +157,12 @@ namespace DatabaseContext.Repositories.Notes
                 .Select(x => x.Id)
                 .ToListAsync();
         }
-
-        public Task<List<Note>> GetNotesWithContent(List<Guid> noteIds)
-        { 
-            return entities  // TODO OPTIMIZATION
-                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
-                .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
-                .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).Files)
-                .Where(x => noteIds.Contains(x.Id))
-                .AsSplitQuery()
-                .ToListAsync();
-        }
-
+        
         public Task<List<Note>> GetNotesIncludeCollectionNoteAppFiles(List<Guid> noteIds)
         {
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).Files)
+                    .ThenInclude(q => q.Files)
                 .Where(x => noteIds.Contains(x.Id))
                 .AsSplitQuery()
                 .ToListAsync();
@@ -182,9 +174,9 @@ namespace DatabaseContext.Repositories.Notes
                 .Include(x => x.LabelsNotes)
                     .ThenInclude(q => q.Label)
                 .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
+                    .ThenInclude(q => q.CollectionNoteAppFiles)
                 .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).Files)
+                    .ThenInclude(q => q.Files)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
@@ -195,9 +187,9 @@ namespace DatabaseContext.Repositories.Notes
                 .Include(x => x.LabelsNotes)
                     .ThenInclude(q => q.Label)
                 .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).CollectionNoteAppFiles)
+                    .ThenInclude(q => q.CollectionNoteAppFiles)
                 .Include(x => x.Contents)
-                    .ThenInclude(q => (q as CollectionNote).Files)
+                    .ThenInclude(q => q.Files)
                 .AsSplitQuery()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == noteId);

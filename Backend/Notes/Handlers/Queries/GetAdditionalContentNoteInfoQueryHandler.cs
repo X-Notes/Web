@@ -13,14 +13,14 @@ namespace Notes.Handlers.Queries;
 public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>
 {
     private readonly FoldersNotesRepository foldersNotesRepository;
-    private readonly CollectionNoteRepository collectionNoteRepository;
+    private readonly BaseNoteContentRepository collectionNoteRepository;
     private readonly NoteSnapshotRepository noteSnapshotRepository;
     private readonly RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository;
     private readonly IMediator mediator;
 
     public GetAdditionalContentNoteInfoQueryHandler(
         FoldersNotesRepository foldersNotesRepository,
-        CollectionNoteRepository collectionNoteRepository,
+        BaseNoteContentRepository collectionNoteRepository,
         NoteSnapshotRepository noteSnapshotRepository,
         RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository,
         IMediator mediator)

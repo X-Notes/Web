@@ -12,8 +12,8 @@ public class TextNoteIndex : BaseEntity<Guid>
     [NotMapped]
     public override Guid Id { set; get; }
 
-    public Guid TextNoteId { set; get; }
-    public TextNote TextNote { set; get; }
+    public Guid BaseNoteContentId { set; get; }
+    public BaseNoteContent BaseNoteContent { set; get; }
 
     public Guid NoteId { set; get; }
     public Note Note { set; get;  }

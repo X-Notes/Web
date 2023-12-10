@@ -81,7 +81,6 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
             var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
             var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
                                               .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
-                                              .Cast<CollectionNote>()
                                               .SelectMany(x => x.Files)
                                               .Where(x => x.UserId != request.UserId);
 

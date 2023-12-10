@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -23,11 +24,7 @@ namespace Editor.Services.Audios
     {
 
         private readonly IMediator _mediator;
-
-        private readonly BaseNoteContentRepository baseNoteContentRepository;
-
         private readonly HistoryCacheService historyCacheService;
-
         private readonly AppSignalRService appSignalRService;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<AudiosCollectionHandlerCommand> logger;
@@ -35,16 +32,14 @@ namespace Editor.Services.Audios
         public AudiosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            CollectionNoteRepository collectionNoteRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<AudiosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<AudiosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
-            this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
@@ -90,14 +85,14 @@ namespace Editor.Services.Audios
 
             if (permissions.CanWrite)
             {
-                var audiosCollection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var audiosCollection = await base.baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if (audiosCollection != null)
                 {
                     audiosCollection.Name = request.Name;
                     audiosCollection.SetDateAndVersion();
 
-                    await collectionNoteRepository.UpdateAsync(audiosCollection);
+                    await base.baseNoteContentRepository.UpdateAsync(audiosCollection);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
@@ -143,13 +138,11 @@ namespace Editor.Services.Audios
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var collection = new CollectionNote(FileTypeEnum.Audio)
-                    {
-                        NoteId = request.NoteId,
-                        Order = contentForRemove.Order,
-                    };
-
-                    await collectionNoteRepository.AddAsync(collection);
+                    var collection = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Audio);
+                    collection.NoteId = request.NoteId;
+                    collection.Order = contentForRemove.Order;
+                    
+                    await baseNoteContentRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 

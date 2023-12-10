@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -23,11 +24,7 @@ namespace Editor.Services.Documents
     {
 
         private readonly IMediator _mediator;
-
-        private readonly BaseNoteContentRepository baseNoteContentRepository;
-
         private readonly HistoryCacheService historyCacheService;
-
         private readonly AppSignalRService appSignalRService;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
@@ -35,16 +32,14 @@ namespace Editor.Services.Documents
         public DocumentsCollectionHandlerCommand(
                 IMediator _mediator,
                 BaseNoteContentRepository baseNoteContentRepository,
-                CollectionNoteRepository documentNoteRepository,
                 CollectionAppFileRepository documentNoteAppFileRepository,
                 HistoryCacheService historyCacheService,
                 AppSignalRService appSignalRService,
                 CollectionLinkedService collectionLinkedService,
                 NoteWSUpdateService noteWSUpdateService,
-                ILogger<DocumentsCollectionHandlerCommand> logger) : base(documentNoteRepository, documentNoteAppFileRepository, collectionLinkedService)
+                ILogger<DocumentsCollectionHandlerCommand> logger) : base(baseNoteContentRepository, documentNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
-            this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
@@ -91,14 +86,14 @@ namespace Editor.Services.Documents
 
             if (permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collection = await base.baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if (collection != null)
                 {
                     collection.Name = request.Name;
                     collection.SetDateAndVersion();
 
-                    await collectionNoteRepository.UpdateAsync(collection);
+                    await base.baseNoteContentRepository.UpdateAsync(collection);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 
@@ -142,13 +137,11 @@ namespace Editor.Services.Documents
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var documentNote = new CollectionNote(FileTypeEnum.Document)
-                    {
-                        NoteId = request.NoteId,
-                        Order = contentForRemove.Order,
-                    };
+                    var documentNote = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Document);
+                    documentNote.NoteId = request.NoteId;
+                    documentNote.Order = contentForRemove.Order;
 
-                    await collectionNoteRepository.AddAsync(documentNote);
+                    await base.baseNoteContentRepository.AddAsync(documentNote);
 
                     await transaction.CommitAsync();
 

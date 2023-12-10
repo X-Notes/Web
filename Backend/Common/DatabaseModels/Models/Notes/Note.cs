@@ -61,20 +61,20 @@ namespace Common.DatabaseModels.Models.Notes
 
         public List<NoteConnection> NoteConnections { set; get; }
 
-        public List<TextNoteIndex> TextNoteIndexs { set; get; }
+        public List<TextNoteIndex> TextNoteIndexes { set; get; }
 
         public DateTimeOffset? DeletedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public  DateTimeOffset CreatedAt { get; set; }
 
-        public IEnumerable<TextNote> GetTextContents()
+        public IEnumerable<BaseNoteContent> GetTextContents()
         {
-            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x as TextNote);
+            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Text);
         }
 
-        public IEnumerable<CollectionNote> GetCollectionContents()
+        public IEnumerable<BaseNoteContent> GetCollectionContents()
         {
-            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Select(x => x as CollectionNote);
+            return Contents?.Where(x => x.ContentTypeId == ContentTypeENUM.Collection);
         }
 
         public void SetDateAndVersion()

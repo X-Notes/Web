@@ -72,10 +72,8 @@ namespace DatabaseContext
             services.AddScoped<FoldersNotesRepository>();
 
             // Note Content 
-            services.AddScoped<CollectionNoteRepository>();
             services.AddScoped<CollectionAppFileRepository>();
-
-            services.AddScoped<TextNotesRepository>();
+            
             services.AddScoped<TextNoteIndexRepository>();
             services.AddScoped<BaseNoteContentRepository>();
 

@@ -18,12 +18,12 @@ namespace DatabaseContext.Repositories.NoteContent
 
         public Task<List<CollectionNoteAppFile>> GetAppFilesByContentIds(List<Guid> contentIds)
         {
-            return entities.Include(x => x.AppFile).Where(x => contentIds.Contains(x.CollectionNoteId)).ToListAsync();
+            return entities.Include(x => x.AppFile).Where(x => contentIds.Contains(x.BaseNoteContentId)).ToListAsync();
         }
 
         public Task<List<CollectionNoteAppFile>> GetCollectionItems(List<Guid> fileIds, Guid contentId)
         {
-            return entities.Include(x => x.AppFile).Where(x => fileIds.Contains(x.AppFileId) && x.CollectionNoteId == contentId).ToListAsync();
+            return entities.Include(x => x.AppFile).Where(x => fileIds.Contains(x.AppFileId) && x.BaseNoteContentId == contentId).ToListAsync();
         }
     }
 }

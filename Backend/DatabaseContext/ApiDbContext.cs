@@ -56,21 +56,15 @@ namespace DatabaseContext
         // FILES
 
         public DbSet<Storage> Storages { set; get; }
-
         public DbSet<AppFile> Files { set; get; }
 
         public DbSet<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
-
-        public DbSet<CollectionNote> CollectionNotes { set; get; }
-
-
+        
         public DbSet<FileType> FileTypes { set; get; }
 
         // NOTE CONTENT
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
-
-        public DbSet<TextNote> TextNotes { set; get; }
-
+        
 
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
@@ -120,15 +114,27 @@ namespace DatabaseContext
                 .HasOne(x => x.Note)
                 .WithMany(x => x.Contents)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            
             modelBuilder.Entity<BaseNoteContent>()
-                .HasDiscriminator(b => b.ContentTypeId)
-                .HasValue<TextNote>(ContentTypeENUM.Text)
-                .HasValue<CollectionNote>(ContentTypeENUM.Collection);
+                .HasMany(p => p.Files)
+                .WithMany(p => p.BaseNoteContents)
+                .UsingEntity<CollectionNoteAppFile>(
+                    j => j
+                        .HasOne(pt => pt.AppFile)
+                        .WithMany(t => t.CollectionNoteAppFiles)
+                        .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                        .HasOne(pt => pt.BaseNoteContent)
+                        .WithMany(p => p.CollectionNoteAppFiles)
+                        .HasForeignKey(pt => pt.BaseNoteContentId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { CollectionNoteId = bc.BaseNoteContentId, bc.AppFileId });
+                    });
             
             modelBuilder.Entity<BaseNoteContent>().Property(x => x.Version).HasDefaultValue(1);
 
-            modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.TextNoteId);
+            modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.BaseNoteContentId);
 
             // USER
             modelBuilder.Entity<User>().Property(x => x.Email).IsRequired();
@@ -265,26 +271,7 @@ namespace DatabaseContext
                 .HasOne(bc => bc.RelatedNote)
                 .WithMany(b => b.ReletatedNoteToInnerNotesTo)
                 .HasForeignKey(bc => bc.RelatedNoteId);
-
             
-
-            modelBuilder.Entity<CollectionNote>()
-                .HasMany(p => p.Files)
-                .WithMany(p => p.CollectionNotes)
-                .UsingEntity<CollectionNoteAppFile>(
-                    j => j
-                        .HasOne(pt => pt.AppFile)
-                        .WithMany(t => t.CollectionNoteAppFiles)
-                        .HasForeignKey(pt => pt.AppFileId),
-                    j => j
-                        .HasOne(pt => pt.CollectionNote)
-                        .WithMany(p => p.CollectionNoteAppFiles)
-                        .HasForeignKey(pt => pt.CollectionNoteId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { bc.CollectionNoteId, bc.AppFileId });
-                    });
-
 
             modelBuilder.Entity<NoteSnapshot>()
                 .HasMany(x => x.AppFiles)

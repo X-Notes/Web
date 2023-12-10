@@ -27,11 +27,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     private readonly HistoryCacheService historyCacheService;
 
     private readonly AppSignalRService appSignalRService;
-
-    private readonly TextNotesRepository textNotesRepository;
-
-    private readonly CollectionNoteRepository collectionNoteRepository;
-
+    
     private readonly IMediator _mediator;
 
     private readonly CollectionLinkedService collectionLinkedService;
@@ -46,8 +42,6 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         BaseNoteContentRepository baseNoteContentRepository,
         HistoryCacheService historyCacheService,
         AppSignalRService appSignalRService,
-        TextNotesRepository textNotesRepository,
-        CollectionNoteRepository collectionNoteRepository,
         IMediator _mediator,
         CollectionLinkedService collectionLinkedService,
         ILogger<SyncNoteStructureCommandHandler> logger,
@@ -57,8 +51,6 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
         this.historyCacheService = historyCacheService;
         this.appSignalRService = appSignalRService;
-        this.textNotesRepository = textNotesRepository;
-        this.collectionNoteRepository = collectionNoteRepository;
         this.baseNoteContentRepository = baseNoteContentRepository;
         this._mediator = _mediator;
         this.collectionLinkedService = collectionLinkedService;
@@ -97,7 +89,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
             var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
 
-            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
+            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection);
             if (fileContents.Any())
             {
                 var collectionIds = fileContents.Select(x => x.Id);
@@ -121,7 +113,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             if (newItemsToAdd.Any())
             {
                 var items = newItemsToAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
-                await textNotesRepository.AddRangeAsync(items);
+                await baseNoteContentRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                 result.Updates.TextContentsToAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
@@ -141,7 +133,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             if (newCollectionItemsToAdd.Any())
             {
                 var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, x.TypeId)).ToList();
-                await collectionNoteRepository.AddRangeAsync(items);
+                await baseNoteContentRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
                 result.Updates.CollectionContentsToAdd = items.Select(x => noteFolderLabelMapper.ToCollectionNoteDTO(x)).ToList();
@@ -198,9 +190,9 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     }
 
 
-    private TextNote GetNewTextContent(NewTextContent textDto, Guid noteId)
+    private BaseNoteContent GetNewTextContent(NewTextContent textDto, Guid noteId)
     {
-        var textDb = new TextNote();
+        var textDb = BaseNoteContent.CreateTextNote();
 
         // UPDATE BASE
         textDb.PrevId = textDto.Id;
@@ -219,7 +211,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     }
 
     // FILES
-    private CollectionNote GetCollectionContent(NewCollectionContent baseContent, Guid noteId, ContentTypeEnumDTO fileTypeEnum)
+    private BaseNoteContent GetCollectionContent(NewCollectionContent baseContent, Guid noteId, ContentTypeEnumDTO fileTypeEnum)
     {
         var fileType = fileTypeEnum switch
         {
@@ -233,9 +225,9 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         return GetCollectionContent(baseContent, noteId, fileType);
     }
 
-    private CollectionNote GetCollectionContent(NewCollectionContent baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
+    private BaseNoteContent GetCollectionContent(NewCollectionContent baseContent, Guid noteId, FileTypeEnum fileTypeEnum)
     {
-        var content = new CollectionNote(fileTypeEnum);
+        var content = BaseNoteContent.CreateCollectionNote(fileTypeEnum);
 
         // UPDATE BASE
         content.PrevId = baseContent.Id;

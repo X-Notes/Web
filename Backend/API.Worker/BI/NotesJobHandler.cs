@@ -27,7 +27,7 @@ public class NotesJobHandler
 
     private readonly IServiceScopeFactory serviceScopeFactory;
 
-    private readonly TextNotesRepository textNotesRepository;
+    private readonly BaseNoteContentRepository textNotesRepository;
 
     private readonly TextNoteIndexRepository textNoteIndexRepository;
 
@@ -39,7 +39,7 @@ public class NotesJobHandler
         DeleteNotesCommandHandler deleteNotesCommandHandler,
         HistoryCacheService historyCacheService,
         IServiceScopeFactory serviceScopeFactory,
-        TextNotesRepository textNotesRepository,
+        BaseNoteContentRepository textNotesRepository,
         TextNoteIndexRepository textNoteIndexRepository)
     {
         this.noteRepository = noteRepository;
@@ -159,7 +159,7 @@ public class NotesJobHandler
                 {
                     NoteId = x.NoteId,
                     Content = x.GetContentString(),
-                    TextNoteId = x.Id,
+                    BaseNoteContentId = x.Id,
                     Version = x.Version
                 };
             });

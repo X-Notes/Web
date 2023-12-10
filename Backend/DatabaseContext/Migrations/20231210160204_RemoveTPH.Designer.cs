@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DatabaseContext.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231210160204_RemoveTPH")]
+    partial class RemoveTPH
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -421,7 +423,7 @@ namespace DatabaseContext.Migrations
                     b.Property<string>("Contents")
                         .HasColumnType("jsonb");
 
-                    b.Property<int?>("FileTypeId")
+                    b.Property<int>("FileTypeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Metadata")
@@ -1468,7 +1470,9 @@ namespace DatabaseContext.Migrations
 
                     b.HasOne("Common.DatabaseModels.Models.Files.FileType", "FileType")
                         .WithMany()
-                        .HasForeignKey("FileTypeId");
+                        .HasForeignKey("FileTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
                         .WithMany("Contents")

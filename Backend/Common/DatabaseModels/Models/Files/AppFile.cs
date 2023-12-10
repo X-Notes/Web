@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Common.DatabaseModels.Models.Files.Models;
 using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.Files;
@@ -45,7 +46,7 @@ namespace Common.DatabaseModels.Models.Files
 
         public UserProfilePhoto UserProfilePhoto { set; get; }
 
-        public List<CollectionNote> CollectionNotes { set; get; }
+        public List<BaseNoteContent> BaseNoteContents { set; get; }
 
         public List<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
 

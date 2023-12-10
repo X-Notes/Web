@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
@@ -23,9 +24,7 @@ namespace Editor.Services.Photos
     {
 
         private readonly IMediator _mediator;
-
-        private readonly BaseNoteContentRepository baseNoteContentRepository;
-
+        
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
@@ -37,16 +36,14 @@ namespace Editor.Services.Photos
         public PhotosCollectionHandlerCommand(
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            CollectionNoteRepository collectionNoteRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<PhotosCollectionHandlerCommand> logger) : base(collectionNoteRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<PhotosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
-            this.baseNoteContentRepository = baseNoteContentRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
@@ -93,7 +90,7 @@ namespace Editor.Services.Photos
 
             if (permissions.CanWrite)
             {
-                var collection = await collectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                var collection = await baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
                 if (collection != null)
                 {
@@ -149,17 +146,15 @@ namespace Editor.Services.Photos
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var collection = new CollectionNote(FileTypeEnum.Photo)
-                    {
-                        NoteId = request.NoteId,
-                        Order = contentForRemove.Order,
-                    };
+                    var collection = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Photo);
+                    collection.NoteId = request.NoteId;
+                    collection.Order = contentForRemove.Order;
 
-                    await collectionNoteRepository.AddAsync(collection);
+                    await baseNoteContentRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
-                    var metadata = collection.GetMetadata();
+                    var metadata = collection.GetCollectionMetadata();
                     var result = new PhotosCollectionNoteDTO(null, collection.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
@@ -205,7 +200,7 @@ namespace Editor.Services.Photos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await collectionNoteRepository.UpdateAsync(resp.collection);
+            await baseNoteContentRepository.UpdateAsync(resp.collection);
 
             await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
 

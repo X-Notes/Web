@@ -6,7 +6,6 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO;
@@ -105,7 +104,6 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
         var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
                                           .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
-                                          .Cast<CollectionNote>()
                                           .SelectMany(x => x.Files)
                                           .Where(x => x.UserId != request.UserId);
 
@@ -190,7 +188,11 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
             }
 
             // LINK FILES
-            var fileIdsToLink = contents.contents.SelectMany(x => x.GetInternalFilesIds()).ToHashSet();
+            var fileIdsToLink = contents.contents
+                .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
+                .SelectMany(x => x.GetInternalFilesIds())
+                .ToHashSet();
+            
             await collectionLinkedService.TryLink(fileIdsToLink);
 
             await transaction.CommitAsync();
@@ -215,8 +217,8 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
 
     private async Task<(bool success, List<BaseNoteContent> contents)> CopyContentAsync(List<BaseNoteContent> noteContents, Guid authorId, Guid callerId)
     {
-        var collections = noteContents.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).Cast<CollectionNote>();
-        var texts = noteContents.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Cast<TextNote>();
+        var collections = noteContents.Where(x => x.ContentTypeId == ContentTypeENUM.Collection);
+        var texts = noteContents.Where(x => x.ContentTypeId == ContentTypeENUM.Text);
 
         var copyCollections = await CopyCollectionsAsync(collections, authorId, callerId);
 
@@ -234,9 +236,9 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         return (true, contents);
     }
 
-    private List<TextNote> CopyTexts(IEnumerable<TextNote> texts)
+    private List<BaseNoteContent> CopyTexts(IEnumerable<BaseNoteContent> texts)
     {
-        var res = new List<TextNote>();
+        var res = new List<BaseNoteContent>();
 
         if (texts == null || !texts.Any())
         {
@@ -245,15 +247,15 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
 
         foreach (var text in texts)
         {
-            res.Add(new TextNote(text));
+            res.Add(BaseNoteContent.CreateTextNote(text));
         }
 
         return res;
     }
 
-    private async Task<(bool success, List<CollectionNote> appFiles)> CopyCollectionsAsync(IEnumerable<CollectionNote> collections, Guid authorId, Guid callerId)
+    private async Task<(bool success, List<BaseNoteContent> appFiles)> CopyCollectionsAsync(IEnumerable<BaseNoteContent> collections, Guid authorId, Guid callerId)
     {
-        var res = new List<CollectionNote>();
+        var res = new List<BaseNoteContent>();
 
         if (collections == null || !collections.Any())
         {
@@ -270,7 +272,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 {
                     AppFileId = x.AppFileId
                 }).ToList();
-                res.Add(new CollectionNote(collection, dbFiles, 1));
+                res.Add(BaseNoteContent.CreateCollectionNote(collection, dbFiles, 1));
             }
             return (true, res);
         }
@@ -285,7 +287,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
 
         foreach (var collection in collections)
         {
-            var copyFiles = await CopyFiles(collection.Files!, userFrom, caller, MapToContentTypesFile(collection.FileTypeId));
+            var copyFiles = await CopyFiles(collection.Files!, userFrom, caller, MapToContentTypesFile(collection.FileTypeId.Value));
 
             if (!copyFiles.success)
             {
@@ -296,11 +298,11 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
             {
                 await fileRepository.AddRangeAsync(copyFiles.appFiles);
                 var collectionNoteAppFiles = copyFiles.appFiles.Select(x => new CollectionNoteAppFile { AppFileId = x.Id }).ToList();
-                res.Add(new CollectionNote(collection, collectionNoteAppFiles, 1));
+                res.Add(BaseNoteContent.CreateCollectionNote(collection, collectionNoteAppFiles, 1));
             }
             else
             {
-                res.Add(new CollectionNote(collection, new(), 1));
+                res.Add(BaseNoteContent.CreateCollectionNote(collection, new(), 1));
             }
         }
 

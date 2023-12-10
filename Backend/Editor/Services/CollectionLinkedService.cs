@@ -13,7 +13,7 @@ namespace Editor.Services
 
         private readonly SnapshotFileContentRepository snapshotFileContentRepository;
 
-        private readonly CollectionNoteRepository collectionNoteRepository;
+        private readonly BaseNoteContentRepository collectionNoteRepository;
 
         private readonly FileRepository fileRepository;
 
@@ -21,7 +21,7 @@ namespace Editor.Services
             AppFileUploadInfoRepository appFileUploadInfoRepository,
             CollectionAppFileRepository collectionNoteAppFileRepository,
             SnapshotFileContentRepository snapshotFileContentRepository,
-            CollectionNoteRepository collectionNoteRepository,
+            BaseNoteContentRepository collectionNoteRepository,
             FileRepository fileRepository)
         {
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
@@ -55,18 +55,19 @@ namespace Editor.Services
             return ids.Except(dbIds).Except(histIds).ToList();
         }
 
-        public async Task<bool> TryLink(IEnumerable<Guid> ids)
+        public async Task TryLink(IEnumerable<Guid> ids)
         {
+            if (ids == null)
+            {
+                return;
+            }
+            
             var infos = await appFileUploadInfoRepository.GetWhereAsync(x => ids.Contains(x.AppFileId) && x.UnLinkedDate.HasValue);
             if (infos.Any())
             {
                 infos.ForEach(x => x.SetLinked());
                 await appFileUploadInfoRepository.UpdateRangeAsync(infos);
-
-                return true;
             }
-
-            return false;
         }
 
         public async Task<List<Guid>> RemoveCollectionsAndUnLinkFiles(IEnumerable<Guid> collectionIdsToDelete)

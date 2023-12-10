@@ -16,14 +16,14 @@ public class DeleteNotesCommandHandler : IRequestHandler<DeleteNotesCommand, Ope
     private readonly NoteRepository noteRepository;
     private readonly NoteSnapshotRepository noteSnapshotRepository;
     private readonly CollectionLinkedService collectionLinkedService;
-    private readonly CollectionNoteRepository collectionNoteRepository;
+    private readonly BaseNoteContentRepository collectionNoteRepository;
 
     public DeleteNotesCommandHandler(
         IMediator _mediator, 
         NoteRepository noteRepository,
         NoteSnapshotRepository noteSnapshotRepository,
         CollectionLinkedService collectionLinkedService,
-        CollectionNoteRepository collectionNoteRepository)
+        BaseNoteContentRepository collectionNoteRepository)
     {
         mediator = _mediator;
         this.noteRepository = noteRepository;
