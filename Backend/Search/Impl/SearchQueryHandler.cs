@@ -188,7 +188,7 @@ namespace Search.Impl
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var noteIds = await noteRepository.GetNoteIdsNoDeleted(permissions.Caller.Id, folderNoteIds);
+                var noteIds = await noteRepository.GetNoteIdsNoDeleted(permissions.CallerId, folderNoteIds);
                 if (!noteIds.Any())
                 {
                     return null;
@@ -209,7 +209,7 @@ namespace Search.Impl
                 return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
             }
 
-            var nonFolderNotes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.Caller.Id, folderNoteIds, request.Settings);
+            var nonFolderNotes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.CallerId, folderNoteIds, request.Settings);
             return mapperLockedEntities.MapNotesToSmallNotesDTO(nonFolderNotes, request.UserId);
         }
     }

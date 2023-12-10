@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Folders;
 using MediatR;
 using Notifications.Services;
 using Permissions.Impl;
@@ -16,17 +17,20 @@ public class RemoveAllUsersFromFolderCommandHandler : IRequestHandler<RemoveAllU
     private readonly AppSignalRService appSignalRHub;
     private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
     private readonly NotificationService notificationService;
+    private readonly FolderRepository folderRepository;
 
     public RemoveAllUsersFromFolderCommandHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
         UsersOnPrivateFoldersService usersOnPrivateFoldersService,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        FolderRepository folderRepository)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
         this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
         this.notificationService = notificationService;
+        this.folderRepository = folderRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(RemoveAllUsersFromFolderCommand request, CancellationToken cancellationToken)
@@ -45,8 +49,9 @@ public class RemoveAllUsersFromFolderCommandHandler : IRequestHandler<RemoveAllU
                 await appSignalRHub.UpdatePermissionUserFolder(updateCommand, userId);
             }
 
-            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
+            var folder = await folderRepository.FirstOrDefaultAsync(x => x.Id == request.FolderId);
+            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = folder.Title };
+            await notificationService.AddAndSendNotificationsAsync(permissions.CallerId, userIds, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

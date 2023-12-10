@@ -1,9 +1,9 @@
-﻿using Common.DatabaseModels.Models.Folders;
+﻿using Common;
+using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
-using Common.DatabaseModels.Models.Users;
 using DatabaseContext.Repositories.Folders;
-using DatabaseContext.Repositories.Users;
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using Permissions.Entities;
 using Permissions.Queries;
 
@@ -13,95 +13,131 @@ public class PermissionFolderHandlerQuery :
       IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,
       IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>
 {
-    private readonly UserRepository userRepository;
-    private readonly FolderRepository folderRepository;
+    private readonly FolderRepository _folderRepository;
+    private readonly UsersOnPrivateFoldersRepository _usersOnPrivateFolders;
+    private readonly IMemoryCache _memoryCache;
 
     public PermissionFolderHandlerQuery(
-        UserRepository userRepository,
-        FolderRepository folderRepository)
+        FolderRepository folderRepository,
+        IMemoryCache memoryCache, 
+        UsersOnPrivateFoldersRepository usersOnPrivateFolders)
     {
-        this.userRepository = userRepository;
-        this.folderRepository = folderRepository;
+        _folderRepository = folderRepository;
+        _memoryCache = memoryCache;
+        _usersOnPrivateFolders = usersOnPrivateFolders;
     }
 
     public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolderQuery request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-        var folder = await folderRepository.GetForCheckPermission(request.FolderId);
-        return GetFolderPermission(folder, user);
+        if (GetInOwnerCached(request.FolderId, request.UserId))
+        {
+            return new UserPermissionsForFolder().GetFullAccess(request.UserId, request.UserId, request.FolderId);
+        }
+        
+        var folder = await _folderRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.FolderId);
+        return await GetFolderPermissionAsync(folder, request.UserId);
     }
-
-    private UserPermissionsForFolder GetFolderPermission(Folder folder, User caller)
+    
+    private async Task<UserPermissionsForFolder> GetFolderPermissionAsync(Folder? folder, Guid callerId)
     {
+        var isAnonymous = callerId == Guid.Empty;
+        
         if (folder == null)
         {
             return new UserPermissionsForFolder().SetFolderNotFounded();
         }
-
-        if (folder.UserId == caller?.Id)
+        
+        if (folder.UserId == callerId)
         {
-            return new UserPermissionsForFolder().GetFullAccess(caller, folder);
+            SetFolderOwnerCache(folder.Id, callerId);
+            return new UserPermissionsForFolder().GetFullAccess(folder.UserId, callerId, folder.Id);
         }
-
-        var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == caller?.Id);
-        if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
-        {
-            return new UserPermissionsForFolder().GetFullAccess(caller, folder);
-        }
-
+        
         if (folder.FolderTypeId == FolderTypeENUM.Shared)
         {
-            switch (folder.RefTypeId)
+            if (folder.RefTypeId == RefTypeENUM.Viewer || isAnonymous)
             {
-                case RefTypeENUM.Editor:
-                    {
-                        if (caller == null)
-                        {
-                            return new UserPermissionsForFolder().GetOnlyRead(caller, folder);
-                        }
-                        return new UserPermissionsForFolder().GetFullAccess(caller, folder);
-                    }
-                case RefTypeENUM.Viewer:
-                    {
-                        return new UserPermissionsForFolder().GetOnlyRead(caller, folder);
-                    }
+                return new UserPermissionsForFolder().GetOnlyRead(folder.UserId, callerId, folder.Id);
             }
+            
+            return new UserPermissionsForFolder().GetFullAccess(folder.UserId, callerId, folder.Id);
         }
-
-        if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)
+        
+        if (isAnonymous)
         {
-            return new UserPermissionsForFolder().GetOnlyRead(caller, folder);
+            return new UserPermissionsForFolder().NoAccessRights(folder.UserId, callerId, folder.Id);
         }
 
-        return new UserPermissionsForFolder().NoAccessRights(caller, folder);
+        var folderUser = await _usersOnPrivateFolders.GetUserAsync(folder.Id, callerId);
+        if (folderUser is { AccessTypeId: RefTypeENUM.Editor })
+        {
+            return new UserPermissionsForFolder().GetFullAccess(folder.UserId, callerId, folder.Id);
+        }
+        
+        if (folderUser is { AccessTypeId: RefTypeENUM.Viewer })
+        {
+            return new UserPermissionsForFolder().GetOnlyRead(folder.UserId, callerId, folder.Id);
+        }
 
+        return new UserPermissionsForFolder().NoAccessRights(folder.UserId, callerId, folder.Id);
     }
 
+    private bool GetInOwnerCached(Guid folderId, Guid callerId)
+    {
+        var key = CacheKeys.FolderOwner + folderId + "-" + callerId;
+        return _memoryCache.TryGetValue(key, out bool cacheValue);
+    }
 
+    private void SetFolderOwnerCache(Guid folderId, Guid callerId)
+    {
+        var key = CacheKeys.FolderOwner + folderId + "-" + callerId;
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1));
+        _memoryCache.Set(key, true, cacheEntryOptions);
+    }
+    
     public async Task<List<(Guid, UserPermissionsForFolder)>> Handle(GetUserPermissionsForFoldersManyQuery request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-        if (user != null)
+        if (request.FolderIds == null)
         {
-            var folders = await folderRepository.GetForCheckPermissions(request.FolderIds);
-            var foldersD = folders.ToDictionary(x => x.Id);
-
-            var result = new List<(Guid, UserPermissionsForFolder)>();
-
-            foreach (var id in request.FolderIds)
-            {
-                if (foldersD.ContainsKey(id))
-                {
-                    var folderD = foldersD[id];
-                    result.Add((id, GetFolderPermission(folderD, user)));
-                }
-                else
-                {
-                    result.Add((id, new UserPermissionsForFolder().SetFolderNotFounded()));
-                }
-            }
-            return result;
+            return new List<(Guid, UserPermissionsForFolder)>();
         }
-        return new List<(Guid, UserPermissionsForFolder)>();
+        
+        var results = new List<(Guid, UserPermissionsForFolder)>();
+        var cachedValues = new List<Guid>();
+        
+        foreach (var folderId in request.FolderIds)
+        {
+            if (GetInOwnerCached(folderId, request.UserId))
+            {
+                cachedValues.Add(folderId);
+                var access = new UserPermissionsForFolder().GetFullAccess(request.UserId, request.UserId, folderId);
+                results.Add((folderId, access));
+            }
+        }
+
+        var valuesWhichNeedToProcess = request.FolderIds.Except(cachedValues).ToList();
+
+        if (valuesWhichNeedToProcess.Count == 0)
+        {
+            return results;
+        }
+        
+        var folders = await _folderRepository.GetWhereAsNoTrackingAsync(x => valuesWhichNeedToProcess.Contains(x.Id));
+        var foldersD = folders.ToDictionary(x => x.Id);
+        
+        foreach (var id in valuesWhichNeedToProcess)
+        {
+            if (foldersD.TryGetValue(id, out var folderD))
+            {
+                var permission = await GetFolderPermissionAsync(folderD, request.UserId);
+                results.Add((id, permission));
+            }
+            else
+            {
+                results.Add((id, new UserPermissionsForFolder().SetFolderNotFounded()));
+            }
+        }
+        
+        return results;
     }
 }

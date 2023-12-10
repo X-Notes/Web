@@ -40,41 +40,43 @@ namespace Folders.Impl
         public async Task<OperationResult<Unit>> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.Id, request.UserId);
-            var permissions = await _mediator.Send(command);
-            var folder = permissions.Folder;
+            var permissions = await _mediator.Send(command, cancellationToken);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                async Task UpdateFolderTitle(string title)
-                {
-                    folder.Title = title;
-                    folder.SetDateAndVersion();
-                    await folderRepository.UpdateAsync(folder);
-                }
+                return new OperationResult<Unit>().SetNoPermissions();
+            }
+            
+            async Task UpdateFolderTitle(Folder folder, string title)
+            {
+                folder.Title = title;
+                folder.SetDateAndVersion();
+                await folderRepository.UpdateAsync(folder);
+            }
 
-                if (!folder.IsShared() && folder.UsersOnPrivateFolders.Count == 0)
-                {
-                    await UpdateFolderTitle(request.Title);
-                    return new OperationResult<Unit>(true, Unit.Value);
-                }
-
-                await UpdateFolderTitle(request.Title);
-
-                // WS UPDATES
-                var update = new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id };
-                await folderWSUpdateService.UpdateFolder(update, permissions.GetAllUsers(), request.ConnectionId);
-
+            var folder = await folderRepository.GetFolderWithPermissions(request.Id);
+                
+            if (!folder.IsShared() && folder.UsersOnPrivateFolders.Count == 0)
+            {
+                await UpdateFolderTitle(folder, request.Title);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            await UpdateFolderTitle(folder, request.Title);
+
+            // WS UPDATES
+            var userIds = folder.UsersOnPrivateFolders.Select(x => x.UserId).ToList();
+            userIds.Add(folder.UserId);
+            var update = new UpdateFolderWS { Title = folder.Title, IsUpdateTitle = true, FolderId = folder.Id };
+            await folderWSUpdateService.UpdateFolder(update, userIds, request.ConnectionId);
+
+            return new OperationResult<Unit>(true, Unit.Value);
         }
 
         public async Task<OperationResult<Unit>> Handle(AddNotesToFolderCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
-            var folder = permissions.Folder;
 
             if (!permissions.CanWrite)
             {
@@ -100,6 +102,8 @@ namespace Folders.Impl
 
             if (newFoldersNotes.Any())
             {
+                var folder = await folderRepository.GetFolderWithPermissions(request.FolderId);
+                
                 folder.SetDateAndVersion();
 
                 await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
@@ -109,7 +113,11 @@ namespace Folders.Impl
                 var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
                 var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
                 updates.IdsToAdd.AddRange(idsToAdd);
-                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.ConnectionId);
+                
+                var userIds = folder.UsersOnPrivateFolders.Select(x => x.UserId).ToList();
+                userIds.Add(folder.UserId);
+                
+                await folderWSUpdateService.UpdateFolder(updates, userIds, request.ConnectionId);
             }
 
             return new OperationResult<Unit>(true, Unit.Value);
@@ -119,8 +127,6 @@ namespace Folders.Impl
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
-            var folder = permissions.Folder;
-
 
             if (!permissions.CanWrite)
             {
@@ -136,6 +142,7 @@ namespace Folders.Impl
 
             if (foldersNotesToDelete.Any())
             {
+                var folder = await folderRepository.GetFolderWithPermissions(request.FolderId);
                 folder.SetDateAndVersion();
 
                 await foldersNotesRepository.RemoveRangeAsync(foldersNotesToDelete);
@@ -144,9 +151,14 @@ namespace Folders.Impl
                 // WS UPDATES
                 var noteIdsToDelete = foldersNotesToDelete.Select(x => x.NoteId);
                 var titles = await foldersNotesRepository.GetNotesTitle(folder.Id);
+                
                 var updates = new UpdateFolderWS { PreviewNotes = titles.Select(title => new NotePreviewInFolder { Title = title }).ToList(), FolderId = folder.Id };
                 updates.IdsToRemove.AddRange(noteIdsToDelete);
-                await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.ConnectionId);
+                
+                var userIds = folder.UsersOnPrivateFolders.Select(x => x.UserId).ToList();
+                userIds.Add(folder.UserId);
+                
+                await folderWSUpdateService.UpdateFolder(updates, userIds, request.ConnectionId);
             }
 
             return new OperationResult<Unit>(true, Unit.Value);
@@ -156,7 +168,6 @@ namespace Folders.Impl
         {
             var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
             var permissions = await _mediator.Send(command);
-            var folder = permissions.Folder;
 
             if (permissions.CanWrite && request.Positions != null && request.Positions.Any())
             {
@@ -165,6 +176,7 @@ namespace Folders.Impl
 
                 if (foldersNotesToUpdateOrder.Any())
                 {
+                    var folder = await folderRepository.GetFolderWithPermissions(request.FolderId);
                     folder.SetDateAndVersion();
 
                     var noteLookUp = foldersNotesToUpdateOrder.ToDictionary(x => x.NoteId);
@@ -179,8 +191,11 @@ namespace Folders.Impl
                     await foldersNotesRepository.UpdateRangeAsync(foldersNotesToUpdateOrder);
                     await folderRepository.UpdateAsync(folder);
 
+                    // WS
                     var updates = new UpdateFolderWS { Positions = request.Positions };
-                    await folderWSUpdateService.UpdateFolder(updates, permissions.GetAllUsers(), request.ConnectionId);
+                    var userIds = folder.UsersOnPrivateFolders.Select(x => x.UserId).ToList();
+                    userIds.Add(folder.UserId);
+                    await folderWSUpdateService.UpdateFolder(updates, userIds, request.ConnectionId);
                 }
 
                 return new OperationResult<Unit>(true, Unit.Value);

@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Folders;
 using MediatR;
 using Notifications.Services;
 using Permissions.Impl;
@@ -16,17 +17,20 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
     private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
+    private readonly FolderRepository folderRepository;
 
     public RemoveUserFromPrivateFoldersHandler(
         IMediator mediator, 
         AppSignalRService appSignalRHub,
         NotificationService notificationService,
-        UsersOnPrivateFoldersService usersOnPrivateFoldersService)
+        UsersOnPrivateFoldersService usersOnPrivateFoldersService,
+        FolderRepository folderRepository)
     {
         this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
         this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
+        this.folderRepository = folderRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
@@ -43,8 +47,9 @@ public class RemoveUserFromPrivateFoldersHandler : IRequestHandler<RemoveUserFro
                 updateCommand.RevokeIds.Add(request.FolderId);
                 await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
 
-                var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-                await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
+                var folder = await folderRepository.FirstOrDefaultAsync(x => x.Id == request.FolderId);
+                var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = folder.Title };
+                await notificationService.AddAndSendNotification(permissions.CallerId, request.PermissionUserId, NotificationMessagesEnum.RemoveUserFromFolderV1, metadata);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

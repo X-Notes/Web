@@ -16,17 +16,20 @@ public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionU
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
     private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+    private readonly FolderRepository folderRepository;
 
     public PermissionUserOnPrivateFoldersHandler(
         IMediator _mediator, 
         AppSignalRService appSignalRHub,
         NotificationService notificationService,
-        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
+        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
+        FolderRepository folderRepository)
     {
         mediator = _mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
         this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
+        this.folderRepository = folderRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
@@ -34,29 +37,30 @@ public class PermissionUserOnPrivateFoldersHandler : IRequestHandler<PermissionU
         var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.UserId);
         var permissions = await mediator.Send(command);
 
-        if (permissions.IsOwner)
+        if (!permissions.IsOwner)
         {
-            var access = await usersOnPrivateFoldersRepository
-                .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+        
+        var access = await usersOnPrivateFoldersRepository
+            .FirstOrDefaultAsync(x => x.UserId == request.PermissionUserId && x.FolderId == request.FolderId);
 
-            if (access == null)
-            {
-                return new OperationResult<Unit>().SetNotFound();
-            }
-
-            access.AccessTypeId = request.AccessTypeId;
-            await usersOnPrivateFoldersRepository.UpdateAsync(access);
-
-            var updateCommand = new UpdatePermissionFolderWS();
-            updateCommand.UpdatePermission(new UpdatePermissionEntity(access.FolderId, access.AccessTypeId));
-            await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
-
-            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionFolderV1, metadata);
-
-            return new OperationResult<Unit>(true, Unit.Value);
+        if (access == null)
+        {
+            return new OperationResult<Unit>().SetNotFound();
         }
 
-        return new OperationResult<Unit>().SetNoPermissions();
+        access.AccessTypeId = request.AccessTypeId;
+        await usersOnPrivateFoldersRepository.UpdateAsync(access);
+
+        var updateCommand = new UpdatePermissionFolderWS();
+        updateCommand.UpdatePermission(new UpdatePermissionEntity(access.FolderId, access.AccessTypeId));
+        await appSignalRHub.UpdatePermissionUserFolder(updateCommand, request.PermissionUserId);
+
+        var folder = await folderRepository.FirstOrDefaultAsync(x => x.Id == request.FolderId);
+        var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = folder.Title };
+        await notificationService.AddAndSendNotification(permissions.CallerId, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionFolderV1, metadata);
+
+        return new OperationResult<Unit>(true, Unit.Value);
     }
 }

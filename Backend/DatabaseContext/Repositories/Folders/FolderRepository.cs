@@ -17,21 +17,21 @@ namespace DatabaseContext.Repositories.Folders
             return await entities.Where(x => x.FolderTypeId == FolderTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
         }
 
-
-        public Task<Folder?> GetForCheckPermission(Guid id)
+        public async Task<Folder?> GetFolderWithPermissions(Guid folderId)
         {
-            return context.Folders
+            return await context.Folders
                 .Include(x => x.UsersOnPrivateFolders)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => folderId == x.Id);
         }
-
-        public Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
+        
+        public async Task<List<Folder>?> GetFoldersWithPermissions(IEnumerable<Guid> folderIds)
         {
-            return context.Folders
+            return await context.Folders
                 .Include(x => x.UsersOnPrivateFolders)
-                .Where(x => ids.Contains(x.Id)).ToListAsync();
+                .Where(x => folderIds.Contains(x.Id))
+                .ToListAsync();
         }
-
+        
         public Task<List<Folder>> GetFoldersByIdsIncludeNotes(List<Guid> ids)
         {
             return context.Folders

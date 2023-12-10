@@ -23,15 +23,18 @@ public class MakePrivateFolderCommandHandler : IRequestHandler<MakePrivateFolder
         var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command);
 
-        var folders = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Folder).ToList();
-        if (folders.Any())
+        var folderIds = permissions.Where(x => x.perm.IsOwner).Select(x => x.folderId).ToList();
+        if (folderIds.Any())
         {
+            var folders = await folderRepository.GetWhereAsync(x => folderIds.Contains(x.Id));
+            
             folders.ForEach(x => {
                 x.ToType(FolderTypeENUM.Private);
                 x.SetDateAndVersion();
             });
+            
             await folderRepository.UpdateRangeAsync(folders);
-
+            
             return new OperationResult<Unit>(true, Unit.Value);
         }
 

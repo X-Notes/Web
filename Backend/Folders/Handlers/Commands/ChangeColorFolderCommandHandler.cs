@@ -29,23 +29,33 @@ public class ChangeColorFolderCommandHandler : IRequestHandler<ChangeColorFolder
         var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command);
         var isCanEdit = permissions.All(x => x.perm.CanWrite);
-        if (isCanEdit)
+
+        if (!isCanEdit)
         {
-            var foldersForUpdate = permissions.Select(x => x.perm.Folder);
-            foreach (var folder in foldersForUpdate)
-            {
-                folder.Color = request.Color;
-                folder.SetDateAndVersion();
-            }
-
-            await folderRepository.UpdateRangeAsync(foldersForUpdate);
-
-            // WS UPDATES
-            var updates = permissions.Select(x => (new UpdateFolderWS { Color = request.Color, FolderId = x.folderId }, x.perm.GetAllUsers()));
-            await folderWsUpdateService.UpdateFolders(updates, request.ConnectionId);
-
-            return new OperationResult<Unit>(true, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
-        return new OperationResult<Unit>().SetNoPermissions();
+        
+        var folderIdsForUpdate = permissions.Select(x => x.folderId);
+        var foldersForUpdate = await folderRepository.GetFoldersWithPermissions(folderIdsForUpdate);
+        
+        foreach (var folder in foldersForUpdate)
+        {
+            folder.Color = request.Color;
+            folder.SetDateAndVersion();
+        }
+
+        await folderRepository.UpdateRangeAsync(foldersForUpdate);
+
+        // WS UPDATES
+        var updates = foldersForUpdate.Select(x =>
+        {
+            var wsUpdate = new UpdateFolderWS { Color = x.Color, FolderId = x.Id };
+            var userIds = x.UsersOnPrivateFolders.Select(q => q.UserId).ToList();
+            userIds.Add(x.UserId);
+            return (wsUpdate, userIds);
+        });
+        await folderWsUpdateService.UpdateFolders(updates, request.ConnectionId);
+
+        return new OperationResult<Unit>(true, Unit.Value);
     }
 }

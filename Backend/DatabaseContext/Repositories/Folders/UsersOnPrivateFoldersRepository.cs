@@ -18,6 +18,19 @@ public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders,
             .Where(x => x.FolderId == folderId).ToListAsync();
     }
 
+    public async Task<UsersOnPrivateFolders?> GetUserAsync(Guid folderId, Guid userId)
+    {
+        return await context.UsersOnPrivateFolders.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
+    }
+
+    public async Task<List<Guid>> GetFolderUserIdsAsync(Guid folderId)
+    {
+        return await context.UsersOnPrivateFolders
+            .Where(x => x.FolderId == folderId)
+            .Select(x => x.UserId)
+            .ToListAsync();
+    }
+
     public Task<List<UsersOnPrivateFolders>> GetByFolderIds(List<Guid> folderIds)
     {
         return entities.Where(x => folderIds.Contains(x.FolderId)).ToListAsync();

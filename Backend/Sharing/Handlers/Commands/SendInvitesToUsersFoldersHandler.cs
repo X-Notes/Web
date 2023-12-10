@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Folders;
 using MediatR;
 using Notifications.Services;
 using Permissions.Impl;
@@ -15,17 +16,20 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
     private readonly UsersOnPrivateFoldersService usersOnPrivateFoldersService;
     private readonly NotificationService notificationService;
     private readonly AppSignalRService appSignalRHub;
+    private readonly FolderRepository folderRepository;
 
     public SendInvitesToUsersFoldersHandler(
         IMediator _mediator,
         UsersOnPrivateFoldersService usersOnPrivateFoldersService,
         NotificationService notificationService,
-        AppSignalRService appSignalRHub)
+        AppSignalRService appSignalRHub,
+        FolderRepository folderRepository)
     {
         mediator = _mediator;
         this.usersOnPrivateFoldersService = usersOnPrivateFoldersService;
         this.notificationService = notificationService;
         this.appSignalRHub = appSignalRHub;
+        this.folderRepository = folderRepository;
     }
     
     public async Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
@@ -45,8 +49,9 @@ public class SendInvitesToUsersFoldersHandler: IRequestHandler<SendInvitesToUser
             }
 
             // NOTIFICATIONS
-            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = permissions.Folder.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToFolderV1, metadata);
+            var folder = await folderRepository.FirstOrDefaultAsync(x => x.Id == request.FolderId);
+            var metadata = new NotificationMetadata { FolderId = request.FolderId, Title = folder.Title };
+            await notificationService.AddAndSendNotificationsAsync(permissions.CallerId, request.UserIds, NotificationMessagesEnum.SentInvitesToFolderV1, metadata);
         }
 
         return Unit.Value;

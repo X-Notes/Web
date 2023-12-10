@@ -9,15 +9,18 @@ namespace SignalrUpdater.Impl
         private readonly IFolderServiceStorage WSFolderServiceStorage;
         private readonly AppSignalRService appSignalRService;
         private readonly FolderRepository folderRepository;
+        private readonly UsersOnPrivateFoldersRepository usersOnPrivateFolders;
 
         public FolderWSUpdateService(
             IFolderServiceStorage WSFolderServiceStorage,
             AppSignalRService appSignalRService,
-            FolderRepository folderRepository)
+            FolderRepository folderRepository,
+            UsersOnPrivateFoldersRepository usersOnPrivateFolders)
         {
             this.WSFolderServiceStorage = WSFolderServiceStorage;
             this.appSignalRService = appSignalRService;
             this.folderRepository = folderRepository;
+            this.usersOnPrivateFolders = usersOnPrivateFolders;
         }
 
         public async Task UpdateFolders(IEnumerable<(UpdateFolderWS value, List<Guid> ids)> updates, string exceptConnectionId)
@@ -60,11 +63,12 @@ namespace SignalrUpdater.Impl
             var currentUsersOnFolder = await WSFolderServiceStorage.GetUserIdsByFolderId(folderId);
             userIds.AddRange(currentUsersOnFolder);
 
-            var folder = await folderRepository.GetForCheckPermission(folderId);
+            var folder = await folderRepository.FirstOrDefaultAsync(x => x.Id == folderId);
             if (folder != null)
             {
+                var folderUserIds = await usersOnPrivateFolders.GetFolderUserIdsAsync(folderId);
                 userIds.Add(folder.UserId);
-                userIds.AddRange(folder.UsersOnPrivateFolders.Select(q => q.UserId));
+                userIds.AddRange(folderUserIds);
             }
 
             return userIds.Distinct().ToList();

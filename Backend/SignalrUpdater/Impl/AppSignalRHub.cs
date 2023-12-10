@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.DatabaseModels.Models.WS;
 using Common.DTO;
+using DatabaseContext.Repositories.Folders;
 using DatabaseContext.Repositories.WS;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,19 +22,22 @@ public class AppSignalRHub : Hub
     private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
     private readonly ILogger<AppSignalRHub> logger;
     private readonly IMediator mediator;
+    private readonly UsersOnPrivateFoldersRepository _usersOnPrivateFolders;
 
     public AppSignalRHub(
         IFolderServiceStorage folderServiceStorage,
         INoteServiceStorage noteServiceStorage,
         UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
         ILogger<AppSignalRHub> logger,
-        IMediator _mediator)
+        IMediator _mediator,
+        UsersOnPrivateFoldersRepository usersOnPrivateFolders)
     {
         this.folderServiceStorage = folderServiceStorage;
         this.noteServiceStorage = noteServiceStorage;
         this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
         this.logger = logger;
         mediator = _mediator;
+        _usersOnPrivateFolders = usersOnPrivateFolders;
     }
 
     private Guid GetUserId()
@@ -120,13 +124,7 @@ public class AppSignalRHub : Hub
         var command = new GetUserPermissionsForFolderQuery(folderId, userId);
         var permission = await mediator.Send(command);
         var isCanRead = permission.CanRead;
-
-        if (permission.IsOwner)
-        {
-            await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
-            return;
-        }
-
+        
         if (!isCanRead) 
         {
             var res = new OperationResult<bool>().SetNoPermissions();
@@ -134,7 +132,10 @@ public class AppSignalRHub : Hub
             return;
         }
 
-        await JoinFolderIternalAsync(folderId, ent, permission.GetAllUsers());
+        var userIds = await _usersOnPrivateFolders.GetFolderUserIdsAsync(folderId);
+        userIds.Add(permission.AuthorId);
+        
+        await JoinFolderIternalAsync(folderId, ent, userIds);
     }
 
     private async Task JoinFolderIternalAsync(Guid folderId, UserIdentifierConnectionId ent, List<Guid> userIds)
@@ -161,7 +162,10 @@ public class AppSignalRHub : Hub
 
         if (permission.FolderNotFound) return;
 
-        await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId, permission.GetAllUsers());
+        var userIds = await _usersOnPrivateFolders.GetFolderUserIdsAsync(folderId);
+        userIds.Add(permission.AuthorId);
+        
+        await RemoveOnlineUsersFolderAsync(folderId, ent.Id, userId, userIds);
     }
 
     private async Task RemoveOnlineUsersFolderAsync(Guid folderId, Guid userIdentifier, Guid userId, List<Guid> userIds)

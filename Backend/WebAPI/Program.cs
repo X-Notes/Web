@@ -119,7 +119,6 @@ builder.Services.ApplyDataBaseDI(dbConn);
 builder.Services.DapperDI(dbConn);
 builder.Services.AddScoped<CollectionLinkedService>();
 builder.Services.ApplySignalRDI();
-builder.Services.AddMemoryCache();
 
 builder.Services.AddHostedService<SetupServicesHosted>();
 builder.Services.AddHostedService<HistoryProcessingHosted>();

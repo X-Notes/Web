@@ -68,13 +68,12 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
     public async Task<OperationResult<Unit>> Handle(CopyNotesCommand request, CancellationToken cancellationToken)
     {
         List<Guid> idsForCopy = new();
-        User caller = null;
 
         if (request.FolderId.HasValue)
         {
             var commandFolder = new GetUserPermissionsForFolderQuery(request.FolderId.Value, request.UserId);
             var permissionFolder = await mediator.Send(commandFolder);
-            caller = permissionFolder.Caller;
+
             if (permissionFolder.CanRead)
             {
                 var folderNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId.Value && request.Ids.Contains(x.NoteId));
@@ -90,14 +89,9 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
             var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
             var permissions = await mediator.Send(command);
             idsForCopy = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
-
-            if (permissions.Any())
-            {
-                caller = permissions.First().perm.Caller;
-            }
         }
 
-        if (!idsForCopy.Any() || caller == null)
+        if (!idsForCopy.Any())
         {
             return new OperationResult<Unit>().SetNotFound();
         }

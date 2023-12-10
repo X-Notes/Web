@@ -7,6 +7,7 @@ using DatabaseContext.Repositories.Folders;
 using DatabaseContext.Repositories.Notes;
 using DatabaseContext.Repositories.Users;
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using Permissions.Entities;
 using Permissions.Queries;
 
@@ -21,17 +22,20 @@ namespace Permissions.Impl
         private readonly UserRepository userRepository;
         private readonly FileRepository fileRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly IMemoryCache memoryCache;
 
         public PermissionNoteHandlerQuery(
             UserRepository userRepository,
             NoteRepository noteRepository,
             FileRepository fileRepository,
-            FoldersNotesRepository foldersNotesRepository)
+            FoldersNotesRepository foldersNotesRepository,
+            IMemoryCache memoryCache)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.fileRepository = fileRepository;
             this.foldersNotesRepository = foldersNotesRepository;
+            this.memoryCache = memoryCache;
         }
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)

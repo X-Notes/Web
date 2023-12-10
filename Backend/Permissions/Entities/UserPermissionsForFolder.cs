@@ -3,88 +3,59 @@ using Common.DatabaseModels.Models.Users;
 
 namespace Permissions.Entities
 {
-    public class UserPermissionsForFolder
+    public class UserPermissionsForFolder : BasePermissions
     {
-        public Guid AuthorId
+        public bool FolderNotFound { private set; get; }
+
+        public UserPermissionsForFolder GetFullAccess(
+            Guid authorId, 
+            Guid callerId, 
+            Guid folderId)
         {
-            get
-            {
-                return Folder.UserId;
-            }
-        }
-
-        public User Caller { set; get; }
-
-        public Folder Folder { set; get; }
-
-        public bool CanRead { set; get; }
-
-        public bool CanWrite { set; get; }
-
-        public bool UserNotFound { set; get; }
-
-        public bool FolderNotFound { set; get; }
-
-        public bool IsOwner
-        {
-            get
-            {
-                return Caller?.Id == Folder.UserId;
-            }
-
-        }
-
-        public bool IsMultiplyUpdate
-        {
-            get
-            {
-                return Folder.IsShared() || Folder.UsersOnPrivateFolders.Any();
-            }
-        }
-
-        public UserPermissionsForFolder GetFullAccess(User user, Folder folder)
-        {
-            Caller = user;
-            Folder = folder;
+            AuthorId = authorId;
+            CallerId = callerId;
+            FolderId = folderId;
+            
             CanRead = true;
             CanWrite = true;
+            
             return this;
         }
-        public UserPermissionsForFolder GetOnlyRead(User user, Folder folder)
+        
+        public UserPermissionsForFolder GetOnlyRead(
+            Guid authorId, 
+            Guid callerId, 
+            Guid folderId)
         {
-            Caller = user;
-            Folder = folder;
+            AuthorId = authorId;
+            CallerId = callerId;
+            FolderId = folderId;
+            
             CanRead = true;
             CanWrite = false;
+            
             return this;
         }
 
-        public UserPermissionsForFolder NoAccessRights(User user, Folder folder)
+        public UserPermissionsForFolder NoAccessRights(
+            Guid authorId, 
+            Guid callerId, 
+            Guid folderId)
         {
-            Caller = user;
-            Folder = folder;
+            AuthorId = authorId;
+            CallerId = callerId;
+            FolderId = folderId;
+            
             CanRead = false;
             CanWrite = false;
+            
             return this;
         }
-
-        public UserPermissionsForFolder SetUserNotFounded()
-        {
-            UserNotFound = true;
-            return this;
-        }
-
+        
         public UserPermissionsForFolder SetFolderNotFounded()
         {
             FolderNotFound = true;
             return this;
-        }
-
-        public List<Guid> GetAllUsers()
-        {
-            var userIds = Folder.UsersOnPrivateFolders.Select(q => q.UserId).ToList();
-            userIds.Add(AuthorId);
-            return userIds;
         }
     }
 }
