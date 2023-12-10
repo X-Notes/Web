@@ -230,6 +230,7 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
           this.entities[index].additionalInfo = info;
         }
       }
+      await this.murriService.refreshLayoutAsync();
     }
   }
 
@@ -256,7 +257,6 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
   async initializeEntities(folders: SmallFolder[]) {
     const tempFolders = this.transformSpread(folders);
     this.entities = this.orderBy(tempFolders, this.pageSortType);
-
-    await this.loadAdditionInformation();
+    this.loadAdditionInformation();
   }
 }

@@ -270,7 +270,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
         }
       });
 
-    await super.loadAdditionNoteInformation();
+    super.loadAdditionNoteInformation();
   }
 
   getNotesToRender(): SmallNote[] {

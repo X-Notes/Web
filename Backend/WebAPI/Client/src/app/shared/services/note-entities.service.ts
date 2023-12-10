@@ -91,6 +91,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
           this.entities[noteIndex].additionalInfo = info;
         }
       }
+      await this.murriService.refreshLayoutAsync();
     }
   }
 

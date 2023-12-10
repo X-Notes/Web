@@ -53,7 +53,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
 
   async initializeEntities(notes: SmallNote[], folderId: string) {
     this.initializeEntitiesGeneric(notes, folderId);
-    await this.loadAdditionNoteInformation();
+    this.loadAdditionNoteInformation();
   }
 
   async initializePublicEntities(notes: SmallNote[], folderId: string) {
