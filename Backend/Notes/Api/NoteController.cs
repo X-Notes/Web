@@ -116,9 +116,9 @@ public class NoteController : ControllerBase
     // GET Entities
     [HttpGet("type/{typeId}")]
     [ValidationRequireUserIdFilter]
-    public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM typeId, [FromQuery] PersonalizationSettingDTO settings)
+    public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM typeId, [FromQuery]int takeContents)
     {
-        var query = new GetNotesByTypeQuery(this.GetUserId(), typeId, settings);
+        var query = new GetNotesByTypeQuery(this.GetUserId(), typeId, takeContents);
         return await _mediator.Send(query);
     }
 

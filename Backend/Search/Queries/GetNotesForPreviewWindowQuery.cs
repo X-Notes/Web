@@ -13,8 +13,7 @@ namespace Search.Queries
         public Guid NoteId { set; get; }
 
         public string Search { set; get; }
-
-        [Required]
-        public PersonalizationSettingDTO Settings { set; get; }
+        
+        public int TakeContents { set; get; }
     }
 }

@@ -89,7 +89,7 @@ export class FullFolderNotesService extends NoteEntitiesService {
     if (this.folderId && idsToAdd && idsToAdd.length > 0) {
       const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
       const newNotes = await this.apiFullFolder
-        .getFolderNotes(this.folderId, pr, idsToAdd)
+        .getFolderNotes(this.folderId, pr.contentInNoteCount, idsToAdd)
         .toPromise();
       const isAdded = this.addToDom(newNotes);
       if (isAdded) {

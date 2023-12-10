@@ -733,7 +733,7 @@ export class NoteStore {
   @Action(LoadNotesByIds)
   async loadNotesByIds({ dispatch }: StateContext<NoteState>, { ids }: LoadNotesByIds) {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    const notes = await this.api.getNotesMany(ids, pr).toPromise();
+    const notes = await this.api.getNotesMany(ids, pr.contentInNoteCount).toPromise();
     await dispatch(new AddNotes(notes, NoteTypeENUM.Private)).toPromise();
   }
 
@@ -1125,7 +1125,7 @@ export class NoteStore {
   @Action(LoadNotes)
   async loadNotes({ getState, patchState }: StateContext<NoteState>, { type, pr }: LoadNotes) {
     if (!getState().notes?.find((q) => q.typeNotes === type)) {
-      const notesAPI = await this.api.getNotes(type, pr).toPromise();
+      const notesAPI = await this.api.getNotes(type, pr.contentInNoteCount).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],
       });

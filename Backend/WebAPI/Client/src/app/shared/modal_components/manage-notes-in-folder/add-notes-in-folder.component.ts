@@ -26,6 +26,7 @@ import { BaseSearchNotesTypes } from '../general-components/base-search-notes-ty
 import { EnumConverterService } from '../../services/enum-converter.service';
 import { SelectionOption } from '../../custom-components/select-component/entities/select-option';
 import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 @Component({
   selector: 'app-add-notes-in-folder',
@@ -45,6 +46,9 @@ export class AddNotesInFolderComponent
   @Select(UserStore.getUser)
   public user$?: Observable<ShortUser>;
 
+  @Select(UserStore.getPersonalizationSettings)
+  public personalization$?: Observable<PersonalizationSetting>;
+  
   destroy = new Subject<void>();
 
   fontSize = EntitiesSizeENUM;
@@ -105,7 +109,7 @@ export class AddNotesInFolderComponent
         if(!pr) {
           throw new Error('pr cannot be null');
         }
-        this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
+        this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr.contentInNoteCount).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
@@ -120,7 +124,7 @@ export class AddNotesInFolderComponent
     if(!pr) {
       throw new Error('pr cannot be null');
     }
-    this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, '', pr).toPromise();
+    this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, '', pr.contentInNoteCount).toPromise();
     this.viewNotes = [...this.notes];
 
     await this.pService.waitPreloading();

@@ -230,7 +230,7 @@ export class SignalRService {
     this.hubConnection.on('copyNote', async (result: CopyNoteResult) => {
       const newIds = [result.newId];
       const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-      const newNotes = await this.apiNotes.getNotesMany(newIds, pr).toPromise();
+      const newNotes = await this.apiNotes.getNotesMany(newIds, pr.contentInNoteCount).toPromise();
       const privateNotes = this.store.selectSnapshot(NoteStore.getPrivateNotes);
       const command = new UpdateNotes(new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]), NoteTypeENUM.Private);
       await this.store.dispatch(command).toPromise();
@@ -345,7 +345,7 @@ export class SignalRService {
         const idsToAdd = updatePermissionNote.idsToAdd;
         if (idsToAdd && idsToAdd.length > 0) {
           const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-          const notes = await this.apiNotes.getNotesMany(idsToAdd, pr).toPromise();
+          const notes = await this.apiNotes.getNotesMany(idsToAdd, pr.contentInNoteCount).toPromise();
           await this.store.dispatch(new AddNotes(notes, NoteTypeENUM.Shared)).toPromise();
           const route = this.store.selectSnapshot(AppStore.getRouting);
           if (route === EntityType.NoteShared) {

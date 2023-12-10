@@ -30,7 +30,7 @@ public class GetNotesByNoteIdsQueryHandler: IRequestHandler<GetNotesByNoteIdsQue
         var canReadIds = permissions.Where(x => x.perm.CanRead).Select(x => x.noteId).ToList();
         if (canReadIds.Any())
         {
-            var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(canReadIds, request.Settings);
+            var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(canReadIds, request.TakeContents);
             notes.ForEach(note =>
             {
                 if(note.UserId != request.UserId)

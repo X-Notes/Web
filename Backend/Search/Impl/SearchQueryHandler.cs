@@ -164,13 +164,13 @@ namespace Search.Impl
                     return null;
                 }
 
-                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.Settings);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.TakeContents);
                 return mapperLockedEntities.MapNotesToPreviewNotesDTO(notes, relatedNotesIds);
             }
 
             var userNoteIds = await noteRepository.GetNoteIdsNoDeleted(request.UserId, request.NoteId);
             var allNoteIdsToView = userNoteIds.Concat(relatedNotesIds).ToHashSet();
-            var allNotesToView = await noteRepository.GetNotesByNoteIdsIdWithContent(allNoteIdsToView, request.Settings);
+            var allNotesToView = await noteRepository.GetNotesByNoteIdsIdWithContent(allNoteIdsToView, request.TakeContents);
             return mapperLockedEntities.MapNotesToPreviewNotesDTO(allNotesToView, relatedNotesIds);
         }
 
@@ -205,11 +205,11 @@ namespace Search.Impl
                     return null;
                 }
 
-                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.Settings);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(noteSearchesIds, request.TakeContents);
                 return mapperLockedEntities.MapNotesToSmallNotesDTO(notes, request.UserId);
             }
 
-            var nonFolderNotes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.CallerId, folderNoteIds, request.Settings);
+            var nonFolderNotes = await noteRepository.GetNotesByUserIdNoLockedWithoutDeleted(permissions.CallerId, folderNoteIds, request.TakeContents);
             return mapperLockedEntities.MapNotesToSmallNotesDTO(nonFolderNotes, request.UserId);
         }
     }

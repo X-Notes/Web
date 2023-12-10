@@ -202,7 +202,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     this.updateService.notesIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
       if (ids.length > 0) {
-        const notes = await this.apiService.getNotesMany(ids, pr).toPromise();
+        const notes = await this.apiService.getNotesMany(ids, pr.contentInNoteCount).toPromise();
         const actionsForUpdate = notes.map((note) => new UpdateOneNote(note, note.id));
         this.store.dispatch(actionsForUpdate);
         const transformNotes = this.transformSpread(notes);

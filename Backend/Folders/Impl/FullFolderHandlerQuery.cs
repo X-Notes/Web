@@ -52,7 +52,7 @@ namespace Folders.Impl
                 }
 
                 var notesIds = foldersNotes.Select(x => x.NoteId);
-                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.Settings);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, request.TakeContents);
                 var orders = foldersNotes.ToDictionary(x => x.NoteId, x => x.Order);
                 return mapperLockedEntities.MapFolderNotesToSmallNotesDTO(notes, request.UserId, orders);
             }

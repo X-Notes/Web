@@ -14,7 +14,6 @@ namespace Search.Queries
 
         public string Search { set; get; }
 
-        [Required]
-        public PersonalizationSettingDTO Settings { set; get; }
+        public int TakeContents { set; get; }
     }
 }

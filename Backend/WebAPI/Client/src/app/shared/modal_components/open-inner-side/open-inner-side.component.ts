@@ -29,6 +29,7 @@ import { SelectionOption } from '../../custom-components/select-component/entiti
 import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
 import { EnumConverterService } from '../../services/enum-converter.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 @Component({
   selector: 'app-open-inner-side',
@@ -49,6 +50,9 @@ export class OpenInnerSideComponent
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getPersonalizationSettings)
+  public personalization$?: Observable<PersonalizationSetting>;
+  
   fontSize = EntitiesSizeENUM;
 
   destroy = new Subject<void>();
@@ -134,7 +138,7 @@ export class OpenInnerSideComponent
         await this.murriService.muuriDestroyAsync();
 
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-        this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str, pr).toPromise();
+        this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str, pr.contentInNoteCount).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
@@ -146,7 +150,7 @@ export class OpenInnerSideComponent
   async loadContent() {
     const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, '', pr).toPromise();
+    this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, '', pr.contentInNoteCount).toPromise();
     this.viewNotes = [...this.notes];
 
     await this.pService.waitPreloading();

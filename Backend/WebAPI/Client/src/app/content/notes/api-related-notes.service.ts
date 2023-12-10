@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
-import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { RelatedNote } from './models/related-note.model';
 import { OperationResult } from '../../shared/models/operation-result.model';
 import { PositionEntityModel } from './models/position-note.model';
@@ -37,11 +36,11 @@ export class ApiRelatedNotesService {
       .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
-  getAllPreviewNotes(noteId: string, search: string, settings: PersonalizationSetting) {
+  getAllPreviewNotes(noteId: string, search: string, takeContents: number) {
     const obj = {
       noteId,
       search,
-      settings,
+      takeContents,
     };
     return this.httpClient
       .post<SmallNote[]>(`${environment.api}/api/relatedNotes/preview`, obj)

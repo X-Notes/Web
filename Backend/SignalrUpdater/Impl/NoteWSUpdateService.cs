@@ -74,7 +74,7 @@ namespace SignalrUpdater.Impl
             var currentUsersOnNote = await WSNoteServiceStorage.GetUserIdsByNoteId(noteId);
             userIds.AddRange(currentUsersOnNote);
 
-            var note = await noteRepository.GetForCheckPermission(noteId);
+            var note = await noteRepository.GetNoteIncludeUsersAsync(noteId);
             if (note != null)
             {
                 userIds.Add(note.UserId);

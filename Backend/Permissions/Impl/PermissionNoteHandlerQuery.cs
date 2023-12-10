@@ -41,7 +41,7 @@ namespace Permissions.Impl
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-            var note = await noteRepository.GetForCheckPermission(request.NoteId);
+            var note = await noteRepository.GetNoteIncludeUsersAsync(request.NoteId);
             var folderNotes = await foldersNotesRepository.GetByNoteIdsIncludeFolderAndUsers(request.NoteId);
             return GetNotePermission(note, user, folderNotes);
         }
@@ -117,7 +117,7 @@ namespace Permissions.Impl
             var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user != null)
             {
-                var notes = await noteRepository.GetForCheckPermissions(request.NoteIds);
+                var notes = await noteRepository.GetNotesIncludeUsersAsync(request.NoteIds);
                 var notesD = notes.ToDictionary(x => x.Id);
                 var folderNotes = await foldersNotesRepository.GetByNoteIdsIncludeFolderAndUsers(request.NoteIds.ToArray());
 

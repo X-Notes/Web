@@ -116,6 +116,7 @@
             <app-note
               [note]="item"
               [isSelected]="ffnService.getIsSelected(item.id)"
+              [personalization]="personalization$ | async"
               [isShowWrightRead]="true"
               [currentFolderId]="(folder$ | async).id"
               (highlightNote)="ffnService.highlightNote($event)"

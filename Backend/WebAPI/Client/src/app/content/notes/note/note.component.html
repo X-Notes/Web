@@ -40,7 +40,7 @@
         <h4 class="not-named">{{ 'placeholder.noteSmall' | translate }}</h4>
       </ng-template>
     </div>
-    <ng-container *ngFor="let content of contents ?? []; let i = index" [ngSwitch]="content.typeId">
+    <ng-container *ngFor="let content of getContents; let i = index" [ngSwitch]="content.typeId">
       <app-note-preview-text
         *ngSwitchCase="contentType.Text"
         [content]="content"

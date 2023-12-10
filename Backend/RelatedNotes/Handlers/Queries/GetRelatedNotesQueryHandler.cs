@@ -27,7 +27,8 @@ public class GetRelatedNotesQueryHandler : IRequestHandler<GetRelatedNotesQuery,
     {
         var relatedNotes = await relatedRepository.GetByNoteId(request.NoteId);
         var ids = relatedNotes.Select(x => x.RelatedNoteId);
-        var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, new PersonalizationSettingDTO().GetRelated());
+        var takeContents = new PersonalizationSettingDTO().GetRelated().ContentInNoteCount;
+        var notes = await noteRepository.GetNotesByNoteIdsIdWithContent(ids, takeContents);
         var lookUp = notes.ToDictionary(x => x.Id);
         relatedNotes.ForEach(x => x.RelatedNote = lookUp.ContainsKey(x.RelatedNoteId) ? lookUp[x.RelatedNoteId] : null);
         return mapperLockedEntities.MapNotesToRelatedNotes(relatedNotes, request.UserId);

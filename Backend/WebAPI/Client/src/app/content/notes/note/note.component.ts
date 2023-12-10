@@ -12,6 +12,7 @@ import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 @Component({
   selector: 'app-note',
@@ -34,6 +35,8 @@ export class NoteComponent implements OnInit {
   @Input() currentFolderId?: string;
 
   @Input() userId?: string;
+
+  @Input() personalization?: PersonalizationSetting;
 
   @Input() isSelected?: boolean;
 
@@ -87,7 +90,7 @@ export class NoteComponent implements OnInit {
   }
 
   get title(): string {
-    if(this.note?.title?.length > 0) {
+    if (this.note?.title?.length > 0) {
       return this.note?.title?.replace(/[\n\r]/g, '');
     }
     return '';
@@ -99,6 +102,33 @@ export class NoteComponent implements OnInit {
 
   syncContent(): void {
     this.contents = this.note.contents.map(x => ({ ...x } as ContentModelBase));
+  }
+
+  get getContents(): ContentModelBase[] {
+    if (!this.contents || this.contents.length === 0) {
+      return [];
+    }
+    if(!this.personalization) {
+      return this.contents;
+    }
+    return this.contents.filter(x => {
+      if (x.typeId === ContentTypeENUM.Text && this.personalization.isViewTextOnNote) {
+        return true;
+      }
+      if (x.typeId === ContentTypeENUM.Audios && this.personalization.isViewAudioOnNote) {
+        return true;
+      }
+      if (x.typeId === ContentTypeENUM.Documents && this.personalization.isViewDocumentOnNote) {
+        return true;
+      }
+      if (x.typeId === ContentTypeENUM.Videos && this.personalization.isViewVideoOnNote) {
+        return true;
+      }
+      if (x.typeId === ContentTypeENUM.Photos && this.personalization.isViewPhotosOnNote) {
+        return true;
+      }
+      return false;
+    });
   }
 
   getTextContent(index: number): BaseText {

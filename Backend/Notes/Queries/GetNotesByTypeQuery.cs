@@ -12,13 +12,13 @@ namespace Notes.Queries
         [Required]
         public NoteTypeENUM TypeId { set; get; }
 
-        public PersonalizationSettingDTO Settings { set; get; }
+        public int TakeContents { set; get; }
 
-        public GetNotesByTypeQuery(Guid userId, NoteTypeENUM id, PersonalizationSettingDTO settings)
+        public GetNotesByTypeQuery(Guid userId, NoteTypeENUM id, int takeContents)
             : base(userId)
         {
-            this.TypeId = id;
-            this.Settings = settings;
+            TypeId = id;
+            TakeContents = takeContents;
         }
     }
 }

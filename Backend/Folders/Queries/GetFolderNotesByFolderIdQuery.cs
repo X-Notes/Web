@@ -10,16 +10,16 @@ namespace Folders.Queries
 
         public Guid FolderId { set; get; }
 
-        public PersonalizationSettingDTO? Settings { set; get; }
+        public int TakeContents { set; get; }
 
         public List<Guid>? NoteIds { set; get; }
 
-        public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, PersonalizationSettingDTO settings, List<Guid> noteIds)
+        public GetFolderNotesByFolderIdQuery(Guid folderId, Guid userId, List<Guid> noteIds, int takeContents)
         {
             FolderId = folderId;
             UserId = userId;
-            Settings = settings;
             NoteIds = noteIds;
+            TakeContents = takeContents;
         }
     }
 }

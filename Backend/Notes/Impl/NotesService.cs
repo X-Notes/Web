@@ -16,10 +16,10 @@ public class NotesService
         this.noteRepository = noteRepository;
     }
     
-    public async Task<List<Note>> GetSharedNotes(Guid userId, PersonalizationSettingDTO settings)
+    public async Task<List<Note>> GetSharedNotes(Guid userId, int takeContents)
     {
         var notesIds = await usersOnPrivateNotesService.GetNoteIds(userId);
-        var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, settings);
+        var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContent(notesIds, takeContents);
         sharedNotes.ForEach(x => x.NoteTypeId = NoteTypeENUM.Shared);
         return sharedNotes;
     }

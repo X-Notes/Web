@@ -23,11 +23,11 @@ public class GetNotesByTypeQueryHandler : IRequestHandler<GetNotesByTypeQuery, L
     
     public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
     {
-        var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(request.UserId, request.TypeId, request.Settings);
+        var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(request.UserId, request.TypeId, request.TakeContents);
 
         if (NoteTypeENUM.Shared == request.TypeId)
         {
-            var sharedNotes = await notesService.GetSharedNotes(request.UserId, request.Settings);
+            var sharedNotes = await notesService.GetSharedNotes(request.UserId, request.TakeContents);
             notes.AddRange(sharedNotes);
             notes = notes.DistinctBy(x => x.Id).ToList();
         }

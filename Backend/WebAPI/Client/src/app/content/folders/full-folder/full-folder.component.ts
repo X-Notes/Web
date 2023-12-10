@@ -47,6 +47,7 @@ import { LoadLabels } from '../../labels/state/labels-actions';
 import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 import { Icons } from 'src/app/shared/enums/icons.enum';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -84,6 +85,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
+
+  @Select(UserStore.getPersonalizationSettings)
+  public personalization$?: Observable<PersonalizationSetting>;
 
   fontSize = EntitiesSizeENUM;
 
@@ -199,7 +203,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // INIT FOLDER NOTES
         const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-        const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
+        const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr.contentInNoteCount).toPromise();
         await this.ffnService.initializeEntities(notes, this.folderId);
         this.folderEntitiesLoaded = true;
         this.ffnService.updateState();

@@ -13,14 +13,13 @@ namespace Notes.Queries
         [RequiredListNotEmpty]
         public List<Guid> NoteIds { set; get; }
 
-        [Required]
-        public PersonalizationSettingDTO Settings { set; get; }
+        public int TakeContents { set; get; }
 
-        public GetNotesByNoteIdsQuery(Guid userId, List<Guid> noteIds, PersonalizationSettingDTO settings)
+        public GetNotesByNoteIdsQuery(Guid userId, List<Guid> noteIds, int takeContents)
             : base(userId)
         {
-            this.Settings = settings;
-            this.NoteIds = noteIds;
+            NoteIds = noteIds;
+            TakeContents = takeContents;
         }
     }
 }

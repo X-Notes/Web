@@ -5,7 +5,6 @@ import { finalize, map, takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
@@ -30,12 +29,10 @@ export class ApiServiceNotes {
     private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
   ) {}
 
-  getNotes(type: NoteTypeENUM, settings: PersonalizationSetting) {
+  getNotes(type: NoteTypeENUM, takeContents: number) {
     let params = new HttpParams();
-    if (settings) {
-      Object.keys(settings).forEach((key) => {
-        params = params.append(key, settings[key]);
-      });
+    if (takeContents) {
+      params = params.append('takeContents', takeContents);
     }
     return this.httpClient
       .get<SmallNote[]>(`${environment.api}/api/note/type/${type}`, { params })
@@ -45,10 +42,10 @@ export class ApiServiceNotes {
       );
   }
 
-  getNotesMany(noteIds: string[], settings: PersonalizationSetting) {
+  getNotesMany(noteIds: string[], takeContents: number) {
     const obj = {
       noteIds,
-      settings,
+      takeContents,
     };
 
     return this.httpClient
@@ -206,9 +203,9 @@ export class ApiServiceNotes {
     );
   }
 
-  getAll(settings: PersonalizationSetting) {
+  getAll(takeContents: number) {
     const obj = {
-      settings,
+      takeContents,
     };
     return this.httpClient
       .post<SmallNote[]>(`${environment.api}/api/note/all`, obj)

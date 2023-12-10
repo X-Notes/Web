@@ -5,7 +5,6 @@ import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
-import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { PositionEntityModel } from 'src/app/content/notes/models/position-note.model';
 import { SyncFolderResult } from '../../models/sync-folder-result';
 
@@ -27,10 +26,10 @@ export class ApiFullFolderService {
     );
   }
   
-  getFolderNotes(folderId: string, settings?: PersonalizationSetting, noteIds?: string[]) {
+  getFolderNotes(folderId: string, takeContents: number, noteIds?: string[]) {
     const obj = {
       folderId,
-      settings,
+      takeContents,
       noteIds,
     };
     return this.httpClient
@@ -38,11 +37,11 @@ export class ApiFullFolderService {
       .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
   }
 
-  getAllPreviewNotes(folderId: string, search: string, settings: PersonalizationSetting) {
+  getAllPreviewNotes(folderId: string, search: string, takeContents: number) {
     const obj = {
       folderId,
       search,
-      settings,
+      takeContents,
     };
     return this.httpClient
       .post<SmallNote[]>(`${this.controllerApi}/preview`, obj)

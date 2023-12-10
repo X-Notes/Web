@@ -25,8 +25,8 @@ public class GetAllNotesQueryHandler : IRequestHandler<GetAllNotesQuery, List<Sm
     
     public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
     {
-        var notes = await noteRepository.GetNotesByUserId(request.UserId, request.Settings);
-        var sharedNotes = await notesService.GetSharedNotes(request.UserId, request.Settings);
+        var notes = await noteRepository.GetNotesByUserId(request.UserId, request.TakeContents);
+        var sharedNotes = await notesService.GetSharedNotes(request.UserId, request.TakeContents);
         notes.AddRange(sharedNotes);
         notes = notes.DistinctBy(x => x.Id).ToList();
 

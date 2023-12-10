@@ -14,6 +14,7 @@
     <app-note
       [note]="item"
       [isSelected]="noteService.getIsSelected(item.id)"
+      [personalization]="personalization$ | async"
       [userId]="(user$ | async).id"
       [isShowWrightRead]="true"
       (highlightNote)="noteService.highlightNote($event)"

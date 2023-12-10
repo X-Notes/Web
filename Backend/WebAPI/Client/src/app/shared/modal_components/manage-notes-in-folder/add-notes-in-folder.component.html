@@ -37,6 +37,7 @@
               <app-note
                 [note]="item"
                 [isSelected]="item.isSelected"
+                [personalization]="personalization$ | async"
                 [userId]="(user$ | async).id"
                 (highlightNote)="highlightNote($event.note)"
                 (clickOnNote)="highlightNote($event)"

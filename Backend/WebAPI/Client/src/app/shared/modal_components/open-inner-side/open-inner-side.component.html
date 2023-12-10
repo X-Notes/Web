@@ -40,6 +40,7 @@
               <app-note
                 [note]="item"
                 [isSelected]="item.isSelected"
+                [personalization]="personalization$ | async"
                 [userId]="(user$ | async)?.id"
                 [highlightCursorActive]="!isMaxNotesSelected"
                 (highlightNote)="highlightNote($event.note)"

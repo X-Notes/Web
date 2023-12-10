@@ -104,7 +104,7 @@ public class FakeDataController : ControllerBase
     {
         var settings = new PersonalizationSettingDTO().GetDefault();
         
-        var query = new GetNotesByTypeQuery(userId, typeId, settings);
+        var query = new GetNotesByTypeQuery(userId, typeId, settings.ContentInNoteCount);
         return await mediator.Send(query);
     }
     
