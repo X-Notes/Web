@@ -59,6 +59,10 @@
         color: inherit;
       }
     }
+
+    &::placeholder {
+      color: #5f5f5f;
+    }
   }
 
   .options {
