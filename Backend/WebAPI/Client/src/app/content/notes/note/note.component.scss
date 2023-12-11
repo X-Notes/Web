@@ -15,7 +15,7 @@
   display: flex;
   width: 100%;
   color: $text-color;
-  border-radius: 20px;
+  border-radius: 14px;
   transition: 0.2s ease;
   .highlighting-note {
     position: relative;
@@ -24,7 +24,7 @@
     width: 25px;
     background-color: $unhighlighting-note;
     transition: 0.3s ease;
-    border-radius: 20px 0 0 20px;
+    border-radius: 14px 0 0 14px;
     overflow: hidden;
 
     &:hover {
@@ -50,7 +50,6 @@
         justify-content: center;
         align-items: center;
         height: 20px;
-        max-width: 110px;
         font-size: 0.875rem;
         padding: 0 0.625rem;
         margin-right: 1.25rem;
@@ -137,7 +136,6 @@
         height: 22px;
         font-size: 1.0625rem;
         padding: 0 0.875rem;
-        max-width: 120px;
       }
     }
 
@@ -177,7 +175,6 @@
       .labels {
         .label {
           margin-right: 1rem;
-          max-width: calc(100% / 2 - 0.5rem);
         }
       }
 
@@ -194,19 +191,6 @@
       }
     }
 
-    .small {
-      .labels {
-        .label {
-          max-width: 100%;
-          width: auto;
-          margin-right: 0;
-
-          &:last-child {
-            display: none;
-          }
-        }
-      }
-    }
 
     .big-size {
       width: calc(100% - 25px);
@@ -216,7 +200,6 @@
 
 @media (max-width: 600px) {
   .note-container {
-    border-radius: 14px;
     .note-inner {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
@@ -236,7 +219,7 @@
       }
     }
     .highlighting-note {
-      border-radius: 15px 0 0 15px;
+      border-radius: 14px 0 0 14px;
     }
   }
 }
@@ -262,18 +245,6 @@
 @media (max-width: 320px) {
   .note-container {
     .note-inner {
-      .labels {
-        .label {
-          max-width: initial;
-          width: 100%;
-          margin-right: 0;
-
-          &:last-child {
-            display: none;
-          }
-        }
-      }
-
       .footer {
         overflow: hidden;
       }

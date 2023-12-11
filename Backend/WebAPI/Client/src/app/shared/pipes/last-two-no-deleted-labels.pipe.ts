@@ -7,6 +7,7 @@ import { Label } from 'src/app/content/labels/models/label.model';
 export class LastTwoNoDeletedLabelsPipe implements PipeTransform {
   transform = (labels: Label[]) => {
     const labelsNoDeleted = labels.filter((x) => x.isDeleted === false);
-    return labelsNoDeleted.slice(labelsNoDeleted.length - 2, labelsNoDeleted.length);
+    const count = window.innerWidth > 1024 ? 3 : 2;
+    return labelsNoDeleted.slice(labelsNoDeleted.length - count, labelsNoDeleted.length);
   };
 }

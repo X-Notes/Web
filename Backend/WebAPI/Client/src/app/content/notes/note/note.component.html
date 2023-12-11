@@ -25,8 +25,8 @@
     <div class="labels" *ngIf="note.labels.length">
       <div
         class="label"
-        *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
-        [ngStyle]="{ backgroundColor: label.color }"
+        *ngFor="let label of note.labels | lastTwoNoDeletedLabels; let l = count"
+        [ngStyle]="getLabelMaxWidth(l, label.color)"
         [CustomTooltip]="label.name"
         position="Top"
         [labelColor]="label.color"

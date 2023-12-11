@@ -100,6 +100,13 @@ export class NoteComponent implements OnInit {
     this.syncContent();
   }
 
+  getLabelMaxWidth(count: number, color: string) {
+    return {
+      maxWidth: `calc(100% / ${count} - 0.5rem)`,
+      backgroundColor: color
+    };
+  }
+
   syncContent(): void {
     this.contents = this.note.contents.map(x => ({ ...x } as ContentModelBase));
   }

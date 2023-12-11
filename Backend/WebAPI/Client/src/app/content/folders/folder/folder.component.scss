@@ -176,6 +176,8 @@
 @media (max-width: 1024px) {
   .outer {
     width: calc(100% - 20px);
+    top: 8px;
+    left: 20px;
   }
   .folder {
     .highligt {
