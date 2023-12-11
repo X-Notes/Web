@@ -33,7 +33,7 @@
               [id]="item.id"
               *ngFor="let item of viewNotes"
               [ngClass]="[
-                pService.orientationMobile ? 'grid-plus' : '',
+                (pService.changeNotesViewSubject$ | async) ? 'grid-plus' : '',
                 (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
               ]"
             >

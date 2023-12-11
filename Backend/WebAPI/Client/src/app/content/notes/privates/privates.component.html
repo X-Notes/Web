@@ -9,7 +9,7 @@
     [id]="item.id"
     *ngFor="let item of noteService.entities"
     [ngStyle]="{'opacity': item.isDisplay ? '1' : '0', 'z-index': item.isDisplay ? '1' : '0'}"
-    [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+    [ngClass]="[(pService.changeNotesViewSubject$ | async) === true ? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
   >
     <app-note
       [note]="item"

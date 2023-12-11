@@ -32,7 +32,7 @@
               class="grid-modal-item"
               id="{{item.id}}"
               *ngFor="let item of viewNotes"
-              [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+              [ngClass]="[(pService.changeNotesViewSubject$ | async) ? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
             >
               <app-note
                 [note]="item"

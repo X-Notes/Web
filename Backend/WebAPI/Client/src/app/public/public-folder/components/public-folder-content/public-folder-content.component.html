@@ -12,7 +12,7 @@
           <div class="grid" [ngStyle]="{ opacity: ffnService.murriService.flagForOpacity ? '1' : '0' }">
             <div #item class="grid-item" [id]="item.id" [attr.order]="item.order"
               *ngFor="let item of ffnService.entities" [ngClass]="[
-                pService.orientationMobile ? 'grid-plus' : '',
+                (pService.changeNotesViewSubject$ | async) ? 'grid-plus' : '',
                 (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
               ]">
               <app-note [note]="item" [isShowWrightRead]="false" [highlightCursorActive]="false"

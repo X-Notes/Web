@@ -8,7 +8,7 @@
     class="grid-item"
     [id]="item.id"
     *ngFor="let item of folderService.entities"
-    [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+    [ngClass]="[(fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
   >
     <app-folder
       [userId]="(user$ | async).id"

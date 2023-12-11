@@ -18,7 +18,7 @@
     class="note-inner"
     [ngStyle]="{ cursor: note.lockRedirect ? 'pointer' : '' }"
     [ngClass]="[
-      pService.orientationMobile ? 'small' : '',
+      (pService.changeNotesViewSubject$ | async) ? 'small' : '',
       (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
     ]"
   >

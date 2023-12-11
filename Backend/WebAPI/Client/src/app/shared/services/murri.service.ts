@@ -30,7 +30,7 @@ export class MurriService implements OnDestroy {
   private grid: any;
 
   constructor(private store: Store, private pService: PersonalizationService, private apiBrowser: ApiBrowserTextService) {
-    this.pService.changeOrientationSubject.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.pService.changeNotesViewSubject$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => this.refreshAndLayout());
     });
     this.layoutUpdate$.pipe(takeUntil(this.destroy$), debounceTime(50)).subscribe((x: number) =>

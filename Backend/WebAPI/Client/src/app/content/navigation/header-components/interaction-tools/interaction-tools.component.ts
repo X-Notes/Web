@@ -28,8 +28,8 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.isProfile)
-  public isProfile$: Observable<boolean>;
+  @Select(AppStore.isNote)
+  public isNote$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<ThemeENUM>;
@@ -73,8 +73,8 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     this.isOpenNotification = false;
   }
 
-  toggleOrientation() {
-    this.pService.changeOrientation();
+  changeNotesView() {
+    this.pService.changeNotesView();
   }
 
   toggleTheme() {

@@ -61,7 +61,7 @@
   </div>
 
   <div [CustomTooltip]="'header.orientation' | translate" position="Bottom" class="auxiliary-icon"
-    (click)="toggleOrientation()" *ngIf="(isProfile$ | async) === false && (pService.widthMoreThan1024$ | async) === false"
+    (click)="changeNotesView()" *ngIf="(isNote$ | async) === true && (pService.widthMoreThan1024$ | async) === false"
     #orientationNote>
     <div class="icon">
       <mat-icon svgIcon="viewChange" [inline]="true"></mat-icon>

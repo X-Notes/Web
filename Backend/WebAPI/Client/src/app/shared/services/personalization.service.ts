@@ -157,11 +157,9 @@ export class PersonalizationService {
 
   sideBarActive$ = new BehaviorSubject<boolean>(false);
 
-  orientationMobile = false;
-
   innerNoteMenuActive = false;
 
-  changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+  changeNotesViewSubject$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   isMenuActive$: Observable<boolean> = new Observable<boolean>();
 
@@ -186,6 +184,7 @@ export class PersonalizationService {
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();
     this.subscribeDisableRightsTools();
+    this.initNotesView();
   }
 
   get isActiveFullNoteMobileButtons$() {
@@ -271,8 +270,25 @@ export class PersonalizationService {
     );
   }
 
-  changeOrientation() {
-    this.orientationMobile = !this.orientationMobile;
-    this.changeOrientationSubject.next(true);
+  initNotesView(): void {
+    const key = 'notes-view';
+    const item = localStorage.getItem(key);
+    const isCardView = item === 'card' ? true : false;
+    this.changeNotesViewSubject$.next(isCardView);
+  }
+
+  changeNotesView() {
+    const key = 'notes-view';
+    const card = 'card';
+    const normal = 'normal';
+    const item = localStorage.getItem(key);
+    if (item === card) {
+      localStorage.setItem(key, normal);
+      this.changeNotesViewSubject$.next(false);
+    }
+    if (!item || item === normal) {
+      localStorage.setItem(key, card);
+      this.changeNotesViewSubject$.next(true);
+    }
   }
 }
