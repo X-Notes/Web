@@ -3,7 +3,7 @@
   <app-drag-drop-handler-container [isShow]="isMouseOver || forceFocus"><ng-content
       *ngIf="!isReadOnlyMode && (isSelectModeActive$ | async) === false && isRowsSelected === false && (isResizingPhoto$ | async) === false"></ng-content></app-drag-drop-handler-container>
   <div ondragstart="return false;" ondrop="return false;" class="main-item" [ngStyle]="{
-      backgroundColor: (isSelected && hasText) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
+      backgroundColor: (isSelected) ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null,
     }">
     <div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu"></div>
     <p #contentHtml class="block-generic default-text-size default-text-id text-part" (input)="onInput()" [ngStyle]="{paddingLeft: textPadding}"

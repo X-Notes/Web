@@ -1,7 +1,4 @@
-<div class="loader" [style.width.px]="size" [style.height.px]="size" [ngStyle]="{
-  'border': (theme$ | async) === theme.Dark ? '2px solid #ffffff': '2px solid rgb(134 134 134)',
-  'border-bottom-color': 'transparent'
-  }">
+<div class="loader" [style.width.px]="size" [style.height.px]="size" [ngStyle]="spinnerColor$ | async">
   <div></div>
   <div></div>
   <div></div>
