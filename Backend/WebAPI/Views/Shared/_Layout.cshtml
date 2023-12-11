@@ -14,7 +14,23 @@
     <body>
         <header>
             <div class="left-section">
-              <div id="loginGoogle"></div> 
+                <div id="loginGoogle"></div> 
+                <div id="loader" class="loader-wrapper">
+                    <div class="loader">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                </div>
             </div>
             <div class="middle-section">
                 <img src="./about/logo.svg" />
@@ -55,6 +71,10 @@
                         token: idToken,
                         languageId: @Model.LanguageId,
                     };
+                    const loader = document.getElementById('loader');
+                    const googleButton = document.getElementById('loginGoogle');
+                    loader.style.display = 'flex';
+                    googleButton.style.opacity = '0';
                     const res = await postData('@Model.AuthUrl', authRequest);
                     if (res.success) {
                         localStorage.setItem('isLoggedIn', true); 
@@ -63,6 +83,10 @@
                         localStorage.setItem('landing_auth_date', new Date().toISOString());
                         window.location.href = '@Model.RedirectUrl';
                     }
+                    setTimeout(() => {  
+                        loader.style.display = 'none';
+                        googleButton.style.opacity = '1';
+                        }, 500);
                 } else {
                     // Sign-in failed
                     console.error('Sign-in failed.');

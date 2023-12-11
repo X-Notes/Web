@@ -3,6 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from '../enums/theme.enum';
 
 @Component({
   selector: 'app-spinner',
@@ -12,6 +13,11 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 export class SpinnerComponent {
   @Select(UserStore.getUser)
   public user$?: Observable<ShortUser>;
+
+  @Select(UserStore.getUserTheme)
+  public theme$?: Observable<ThemeENUM>;
+
+  theme = ThemeENUM;
 
   @Input() size?: number;
 

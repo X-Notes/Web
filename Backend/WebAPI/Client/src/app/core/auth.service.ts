@@ -23,7 +23,7 @@ declare let google: any;
 
 @Injectable()
 export class AuthService {
-  authStatus = new BehaviorSubject<AuthStatus>(AuthStatus.NoStarted);
+  authStatus$ = new BehaviorSubject<AuthStatus>(AuthStatus.NoStarted);
 
   navigateToUrl: string;
 
@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   get IsAuthActive(): Observable<boolean> {
-    return this.authStatus.pipe(map((status) => status === AuthStatus.InProgress));
+    return this.authStatus$.pipe(map((status) => status === AuthStatus.InProgress));
   }
 
   initGoogleLogin(buttonIds: string[], isShowPrompt: boolean, navigateToUrl: string): void {
@@ -72,7 +72,7 @@ export class AuthService {
 
   async onGoogleSignIn(response: any) {
     // Handle the sign-in response
-    this.authStatus.next(AuthStatus.InProgress);
+    this.authStatus$.next(AuthStatus.InProgress);
     if (response.credential) {
       // User signed in successfully
       const idToken = response.credential as string;
@@ -84,14 +84,14 @@ export class AuthService {
     } else {
       // Sign-in failed
       console.error('Sign-in failed.');
-      this.authStatus.next(AuthStatus.Failed);
+      this.authStatus$.next(AuthStatus.Failed);
     }
   }
 
   async login(accessToken: string, refreshToken: string) {
     this.setTokens(accessToken, refreshToken);
     await this.store.dispatch(new Auth()).toPromise();
-    this.authStatus.next(AuthStatus.Successful);
+    this.authStatus$.next(AuthStatus.Successful);
   }
 
   setTokens(accessToken: string, refreshToken: string): void {

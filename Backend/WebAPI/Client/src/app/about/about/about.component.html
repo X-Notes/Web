@@ -2,7 +2,8 @@
   <div class="logo-container">
     <img src="assets/landing/logo.svg" />
   </div>
-  <div class="button-container">
+  <div *ngIf="(authService.authStatus$ | async) !== status.InProgress" class="button-container">
     <div id="loginGoogle1"></div>
   </div>
+  <app-spinner [size]="40" *ngIf="(authService.authStatus$ | async) === status.InProgress"></app-spinner>
 </main>

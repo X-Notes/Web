@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/core/auth.service';
+import { AuthService, AuthStatus } from 'src/app/core/auth.service';
 import { TypeAuthEnum } from '../models/type.auth.enum';
 
 @Component({
@@ -9,9 +9,8 @@ import { TypeAuthEnum } from '../models/type.auth.enum';
 })
 export class AboutComponent implements OnInit, AfterViewInit {
   authType = TypeAuthEnum;
-
-  constructor(
-    public authService: AuthService) { }
+  status = AuthStatus;
+  constructor(public authService: AuthService) { }
 
   ngAfterViewInit(): void {
     const ids = ['loginGoogle1'];

@@ -1,19 +1,17 @@
-<div
-  class="wrapper"
-  [ngStyle]="{'background-color':  (isBackground && (user$ | async)?.currentBackground?.photoPath !== null) ? 'rgba(0, 0, 0, 0.10)': ''}"
->
-  <div class="loader" [style.font-size.px]="size">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
+<div class="loader" [style.width.px]="size" [style.height.px]="size" [ngStyle]="{
+  'border': (theme$ | async) === theme.Dark ? '2px solid #ffffff': '2px solid rgb(134 134 134)',
+  'border-bottom-color': 'transparent'
+  }">
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
 </div>
