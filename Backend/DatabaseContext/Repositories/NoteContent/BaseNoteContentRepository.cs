@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
+using Common.DTO.Notes;
 using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,15 @@ namespace DatabaseContext.Repositories.NoteContent
                 .OrderBy(x => x.Order)
                 .AsSplitQuery()
                 .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<List<AppFile>> GetNotesContentsSizesAsync(List<Guid> noteIds)
+        {
+            return await entities
+                .Include(x => x.Files)
+                .Where(x => noteIds.Contains(x.NoteId) && x.ContentTypeId == ContentTypeENUM.Collection && x.Files.Count > 0)
+                .SelectMany(x => x.Files)
                 .ToListAsync();
         }
         

@@ -142,16 +142,6 @@ namespace DatabaseContext.Repositories.Notes
                 .ToListAsync();
         }
         
-        public Task<List<Note>> GetNotesIncludeCollectionNoteAppFiles(List<Guid> noteIds)
-        {
-            return entities  // TODO OPTIMIZATION
-                .Include(x => x.Contents)
-                    .ThenInclude(q => q.Files)
-                .Where(x => noteIds.Contains(x.Id))
-                .AsSplitQuery()
-                .ToListAsync();
-        }
-
         public Task<Note?> GetNoteWithContent(Guid noteId)
         {
             return entities  // TODO OPTIMIZATION

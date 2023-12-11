@@ -100,13 +100,10 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         {
             return new OperationResult<Unit>().SetBillingError();
         }
-
-        var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
-        var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
-                                          .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
-                                          .SelectMany(x => x.Files)
-                                          .Where(x => x.UserId != request.UserId);
-
+        
+        var externalFiles = await baseNoteContentRepository.GetNotesContentsSizesAsync(idsForCopy);
+        externalFiles = externalFiles.Where(x => x.UserId != request.UserId).ToList();
+        
         if (externalFiles.Any())
         {
             var size = externalFiles.Sum(x => x.Size);

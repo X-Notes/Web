@@ -9,6 +9,7 @@ using Common.DTO;
 using Common.DTO.Notes.Copy;
 using Common.RegexHelpers;
 using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.NoteContent;
 using DatabaseContext.Repositories.Notes;
 using Folders.Commands;
 using Folders.Entities;
@@ -26,6 +27,7 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
     private readonly FoldersNotesRepository foldersNotesRepository;
     private readonly NoteFolderLabelMapper appCustomMapper;
     private readonly BillingPermissionService billingPermissionService;
+    private readonly BaseNoteContentRepository baseNoteContentRepository;
 
     public CopyFolderCommandHandler(
         IMediator mediator, 
@@ -33,7 +35,8 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
         NoteRepository noteRepository,
         FoldersNotesRepository foldersNotesRepository,
         NoteFolderLabelMapper appCustomMapper,
-        BillingPermissionService billingPermissionService)
+        BillingPermissionService billingPermissionService,
+        BaseNoteContentRepository baseNoteContentRepository)
     {
         this.mediator = mediator;
         this.folderRepository = folderRepository;
@@ -41,6 +44,7 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
         this.foldersNotesRepository = foldersNotesRepository;
         this.appCustomMapper = appCustomMapper;
         this.billingPermissionService = billingPermissionService;
+        this.baseNoteContentRepository = baseNoteContentRepository;
     }
     
     public async Task<OperationResult<CopyFoldersResult>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
@@ -77,13 +81,10 @@ public class CopyFolderCommandHandler : IRequestHandler<CopyFolderCommand, Opera
             {
                 return new OperationResult<CopyFoldersResult>().SetBillingError();
             }
-
-            var notesWithFiles = await noteRepository.GetNotesIncludeCollectionNoteAppFiles(idsForCopy);
-            var externalFiles = notesWithFiles.SelectMany(x => x.Contents)
-                                              .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
-                                              .SelectMany(x => x.Files)
-                                              .Where(x => x.UserId != request.UserId);
-
+            
+            var externalFiles = await baseNoteContentRepository.GetNotesContentsSizesAsync(idsForCopy);
+            externalFiles = externalFiles.Where(x => x.UserId != request.UserId).ToList();
+            
             if (externalFiles.Any())
             {
                 var size = externalFiles.Sum(x => x.Size);

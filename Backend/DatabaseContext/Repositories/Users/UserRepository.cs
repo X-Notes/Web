@@ -17,14 +17,14 @@ namespace DatabaseContext.Repositories.Users
             this.logger = logger;
         }
 
-        public Task<User> GetUserByIdIncludeBilling(Guid id)
+        public Task<User?> GetUserByIdIncludeBilling(Guid id)
         {
             return context.Users
                 .Include(x => x.BillingPlan)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<User> GetUserByEmailIncludeBackgroundAndPhoto(Guid userId)
+        public Task<User?> GetUserByEmailIncludeBackgroundAndPhoto(Guid userId)
         {
             return context.Users
                 .Include(x => x.CurrentBackground)
@@ -34,7 +34,7 @@ namespace DatabaseContext.Repositories.Users
                 .FirstOrDefaultAsync(x => x.Id == userId);
         }
 
-        public Task<User> GetUserByEmailIncludePhoto(Guid userId)
+        public Task<User?> GetUserByEmailIncludePhoto(Guid userId)
         {
             return context.Users
                 .Include(x => x.UserProfilePhoto)
@@ -42,9 +42,12 @@ namespace DatabaseContext.Repositories.Users
                 .FirstOrDefaultAsync(x => x.Id == userId);
         }
 
-        public Task<User> GetUserWithBackgrounds(Guid userId)
+        public Task<User?> GetUserWithBackgrounds(Guid userId)
         {
-            return context.Users.Include(x => x.Backgrounds).ThenInclude(x => x.File).FirstOrDefaultAsync(x => x.Id == userId);
+            return context.Users
+                .Include(x => x.Backgrounds)
+                .ThenInclude(x => x.File)
+                .FirstOrDefaultAsync(x => x.Id == userId);
         }
 
         public Task<List<User>> SearchByEmailAndName(string search, Guid userId, int? take)
