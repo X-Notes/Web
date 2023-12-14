@@ -12,6 +12,7 @@ using Folders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Notes.Queries;
 
 namespace Folders.Api;
 
@@ -48,6 +49,15 @@ public class FolderController : ControllerBase
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<List<SmallFolder>>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
     {
+        query.UserId = this.GetUserId();
+        return await _mediator.Send(query);
+    }
+    
+    [HttpGet("count")]
+    [ValidationRequireUserIdFilter]
+    public async Task<List<FoldersCount>> GetFoldersCountAsync()
+    {
+        var query = new GetFoldersCountQuery();
         query.UserId = this.GetUserId();
         return await _mediator.Send(query);
     }

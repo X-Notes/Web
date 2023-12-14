@@ -109,7 +109,7 @@ namespace DatabaseContext.Repositories.Notes
             {
                 NoteTypeId = x.Key,
                 Count = x.Count()
-            }).ToListAsync();
+            }).AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Note>> GetNotesByUserId(Guid userId, int takeContents)

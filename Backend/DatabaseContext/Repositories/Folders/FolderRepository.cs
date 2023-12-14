@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Folders;
+using Common.DTO.Folders;
 using Common.DTO.Personalization;
 using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,17 @@ namespace DatabaseContext.Repositories.Folders
             return await context.Folders
                 .Include(x => x.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => folderId == x.Id);
+        }
+        
+        public async Task<List<FoldersCount>> GetFoldersCountAsync(Guid userId)
+        {
+            return await context.Folders
+                .Where(x => x.UserId == userId)
+                .GroupBy(x => x.FolderTypeId).Select(x => new FoldersCount()
+                {
+                    FolderTypeId = x.Key,
+                    Count = x.Count()
+                }).AsNoTracking().ToListAsync();
         }
         
         public async Task<List<Folder>?> GetFoldersWithPermissions(IEnumerable<Guid> folderIds)

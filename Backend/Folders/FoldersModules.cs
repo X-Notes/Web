@@ -34,7 +34,8 @@ public static class FoldersModules
         services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, GetFoldersByTypeQueryHandler>();
         services.AddScoped<IRequestHandler<GetFullFolderQuery, OperationResult<FullFolder>>, GetFullFolderQueryHandler>();
         services.AddScoped<IRequestHandler<GetAdditionalContentFolderInfoQuery, List<BottomFolderContent>>, GetAdditionalContentFolderInfoQueryHandler>();
-
+        services.AddScoped<IRequestHandler<GetFoldersCountQuery, List<FoldersCount>>, GetFoldersCountQueryHandler>();
+        
         services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
         services.AddScoped<IRequestHandler<AddNotesToFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
         services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
