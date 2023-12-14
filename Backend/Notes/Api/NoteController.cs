@@ -146,6 +146,15 @@ public class NoteController : ControllerBase
         query.UserId = this.GetUserId();
         return await _mediator.Send(query);
     }
+    
+    [HttpGet("count")]
+    [ValidationRequireUserIdFilter]
+    public async Task<List<NotesCount>> GetNotesCountAsync()
+    {
+        var query = new GetNotesCountQuery();
+        query.UserId = this.GetUserId();
+        return await _mediator.Send(query);
+    }
 
     [HttpGet("{noteId}")]
     [AllowAnonymous]

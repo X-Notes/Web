@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using DatabaseContext.GenericRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -98,6 +99,17 @@ namespace DatabaseContext.Repositories.Notes
                     .ToListAsync();
 
             return await GetWithFilteredContent(notes, takeContents);
+        }
+
+        public async Task<List<NotesCount>> GetNotesCountAsync(Guid userId)
+        {
+            return await context.Notes
+                .Where(x => x.UserId == userId)
+                .GroupBy(x => x.NoteTypeId).Select(x => new NotesCount()
+            {
+                NoteTypeId = x.Key,
+                Count = x.Count()
+            }).ToListAsync();
         }
 
         public async Task<List<Note>> GetNotesByUserId(Guid userId, int takeContents)

@@ -49,6 +49,7 @@ public static class NotesModules
         services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, GetNotesByTypeQueryHandler>();
         services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, OperationResult<List<SmallNote>>>, GetNotesByNoteIdsQueryHandler>();
         services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, GetAllNotesQueryHandler>();
+        services.AddScoped<IRequestHandler<GetNotesCountQuery, List<NotesCount>>, GetNotesCountQueryHandler>();
 
         services.AddScoped<IRequestHandler<GetFullNoteQuery, OperationResult<FullNote>>, GetFullNoteQueryHandler>();
         services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, GetOnlineUsersOnNoteQueryHandler>();
