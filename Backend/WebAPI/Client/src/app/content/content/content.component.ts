@@ -13,6 +13,8 @@ import {
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { FolderStore } from '../folders/state/folders-state';
 import { DeltaConverter } from 'src/app/editor/converter/delta-converter';
+import { LoadNotesCount } from '../notes/state/notes-actions';
+import { LoadFoldersCount } from '../folders/state/folders-actions';
 
 @Component({
   selector: 'app-content',
@@ -52,8 +54,7 @@ export class ContentComponent implements OnInit, OnDestroy {
   ngOnInit() {
     DeltaConverter.initQuill();
     this.htmlTitleService.init();
-
-    this.store.dispatch([LoadUsedDiskSpace, LoadBillingPlans, LoadPersonalization]);
+    this.store.dispatch([LoadUsedDiskSpace, LoadBillingPlans, LoadPersonalization, LoadNotesCount, LoadFoldersCount]);
   }
 
   getMessage(type: EntityType): string {

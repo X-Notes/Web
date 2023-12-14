@@ -29,7 +29,7 @@
       <div *ngIf="isTitleEmpty" class="placeholder">{{ 'innerNote.title' | translate }}</div>
     </div>
     <div class="content-note">
-      <ng-container *ngFor="let content of note.contents" [ngSwitch]="content.typeId">
+      <ng-container *ngFor="let content of contents" [ngSwitch]="content.typeId">
         <app-note-preview-text *ngSwitchCase="contentType.Text" [content]="content"
           [activeTheme]="theme$ | async"></app-note-preview-text>
         <app-note-preview-photos *ngSwitchCase="contentType.Photos" [content]="content"></app-note-preview-photos>

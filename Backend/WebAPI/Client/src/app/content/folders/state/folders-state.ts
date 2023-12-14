@@ -39,6 +39,8 @@ import {
   AddFolders,
   PatchUpdatesUIFolders,
   ResetFoldersState,
+  UpdateFoldersCount,
+  LoadFoldersCount,
 } from './folders-actions';
 import { Folders } from '../models/folders.model';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
@@ -53,6 +55,7 @@ import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
 import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { FoldersCount } from '../models/folders-count.model';
 
 export interface FullFolderState {
   folder: FullFolder;
@@ -68,6 +71,7 @@ export interface FolderState {
   updateFolderEvent: UpdateFolderUI[];
   foldersAddToDOM: SmallFolder[];
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
+  foldersCount: FoldersCount[];
 }
 
 @State<FolderState>({
@@ -81,6 +85,7 @@ export interface FolderState {
     updateFolderEvent: [],
     foldersAddToDOM: [],
     InvitedUsersToNote: [],
+    foldersCount: []
   },
 })
 @Injectable()
@@ -112,6 +117,11 @@ export class FolderStore {
   @Selector()
   static full(state: FolderState): FullFolder {
     return state.fullFolderState?.folder;
+  }
+
+  @Selector()
+  static getFoldersCount(state: FolderState): FoldersCount[] {
+    return state.foldersCount;
   }
 
   @Selector()
@@ -188,22 +198,26 @@ export class FolderStore {
 
   @Selector()
   static privateCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Private).count;
+    const foldersCount = state.foldersCount.find(x => x.folderTypeId === FolderTypeENUM.Private);
+    return foldersCount?.count ?? 0;
   }
 
   @Selector()
   static archiveCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Archive).count;
+    const foldersCount = state.foldersCount.find(x => x.folderTypeId === FolderTypeENUM.Archive);
+    return foldersCount?.count ?? 0;
   }
 
   @Selector()
   static deletedCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Deleted).count;
+    const foldersCount = state.foldersCount.find(x => x.folderTypeId === FolderTypeENUM.Deleted);
+    return foldersCount?.count ?? 0;
   }
 
   @Selector()
   static sharedCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Shared).count;
+    const foldersCount = state.foldersCount.find(x => x.folderTypeId === FolderTypeENUM.Shared);
+    return foldersCount?.count ?? 0;
   }
 
   @Selector()
@@ -441,6 +455,28 @@ export class FolderStore {
     }
   }
 
+  @Action(UpdateFoldersCount)
+  // eslint-disable-next-line class-methods-use-this
+  updateFoldersCount({ setState }: StateContext<FolderState>, { count, typeFolder }: UpdateFoldersCount) {
+    setState(
+      patch({
+        foldersCount: updateItem<FoldersCount>((folders) => folders.folderTypeId === typeFolder,
+          {
+            folderTypeId: typeFolder,
+            count
+          }),
+      }),
+    );
+  }
+
+  @Action(LoadFoldersCount)
+  async loadFoldersCount({ patchState }: StateContext<FolderState>) {
+    const request = await this.api.getCount().toPromise();
+    patchState({
+      foldersCount: request
+    })
+  }
+
   @Action(TransformTypeFolders)
   async transformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
@@ -576,7 +612,7 @@ export class FolderStore {
   @Action(UpdateFolders)
   // eslint-disable-next-line class-methods-use-this
   async updateFolders(
-    { setState }: StateContext<FolderState>,
+    { setState, dispatch }: StateContext<FolderState>,
     { folders, typeFolder }: UpdateFolders,
   ) {
     setState(
@@ -584,6 +620,7 @@ export class FolderStore {
         folders: updateItem<Folders>((folderss) => folderss.typeFolders === typeFolder, folders),
       }),
     );
+    dispatch(new UpdateFoldersCount(folders.folders?.length ?? 0, typeFolder));
   }
 
   // FUNCTIONS
@@ -787,7 +824,7 @@ export class FolderStore {
   };
 
   getFoldersByType = (getState: () => FolderState, type: FolderTypeENUM) => {
-    return getState().folders.find((q) => q.typeFolders === type).folders;
+    return getState().folders?.find((q) => q.typeFolders === type)?.folders ?? [];
   };
 
   itemNoFromFilterArray = (ids: string[], folder: SmallFolder) => {

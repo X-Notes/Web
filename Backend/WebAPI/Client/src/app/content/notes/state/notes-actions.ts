@@ -59,6 +59,13 @@ export class UpdateNotes {
   constructor(public notes: Notes, public typeNote: NoteTypeENUM) {}
 }
 
+export class UpdateNotesCount {
+  static type = '[Notes] Update notes count';
+
+  constructor(public count: number, public typeNote: NoteTypeENUM) {}
+}
+
+
 export class UpdateFolderNotes {
   static type = '[Notes] Update folder notes';
 
@@ -254,6 +261,12 @@ export class LoadFullNote {
   static type = '[Notes] Load full note';
 
   constructor(public noteId: string, public folderId: string = null) {}
+}
+
+export class LoadNotesCount {
+  static type = '[Notes] Load notes count';
+
+  constructor() {}
 }
 
 export class LoadSnapshotNote {

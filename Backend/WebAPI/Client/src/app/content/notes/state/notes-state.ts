@@ -54,6 +54,8 @@ import {
   LoadNotesByIds,
   UpdateNoteTitleState,
   ResetNotesState,
+  LoadNotesCount,
+  UpdateNotesCount,
 } from './notes-actions';
 import { UpdateNoteUI } from './update-note-ui.model';
 import { SmallNote } from '../models/small-note.model';
@@ -86,6 +88,7 @@ import { NoteUserCursorWS } from 'src/app/editor/entities/ws/note-user-cursor';
 import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { NotesCount } from '../models/notes-count.model';
 
 export interface FullNoteState {
   note: FullNote;
@@ -108,6 +111,7 @@ interface NoteState {
   folderNotes: SmallNote[];
   cursors: NoteUserCursorWS[];
   cursorColor: string | null;
+  notesCount: NotesCount[];
 }
 
 @State<NoteState>({
@@ -128,6 +132,7 @@ interface NoteState {
     folderNotes: [],
     cursors: [],
     cursorColor: null,
+    notesCount: []
   },
 })
 @Injectable()
@@ -171,6 +176,11 @@ export class NoteStore {
   @Selector()
   static getNotes(state: NoteState): Notes[] {
     return state.notes;
+  }
+
+  @Selector()
+  static getNotesCount(state: NoteState): NotesCount[] {
+    return state.notesCount;
   }
 
   @Selector()
@@ -390,7 +400,8 @@ export class NoteStore {
   static privateCount(state: NoteState): number {
     const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Private);
     if (state.selectedLabelsFilter.length === 0) {
-      return notes.count;
+      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Private);
+      return notesCount?.count ?? 0;
     }
     return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
   }
@@ -399,7 +410,8 @@ export class NoteStore {
   static archiveCount(state: NoteState): number {
     const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Archive);
     if (state.selectedLabelsFilter.length === 0) {
-      return notes.count;
+      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Archive);
+      return notesCount?.count ?? 0;
     }
     return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
   }
@@ -408,7 +420,8 @@ export class NoteStore {
   static deletedCount(state: NoteState): number {
     const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Deleted);
     if (state.selectedLabelsFilter.length === 0) {
-      return notes.count;
+      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Deleted);
+      return notesCount?.count ?? 0;
     }
     return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
   }
@@ -417,7 +430,8 @@ export class NoteStore {
   static sharedCount(state: NoteState): number {
     const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Shared);
     if (state.selectedLabelsFilter.length === 0) {
-      return notes.count;
+      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Shared);
+      return notesCount?.count ?? 0;
     }
     return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
   }
@@ -450,7 +464,7 @@ export class NoteStore {
       if (navigateToNote) {
         this.zone.run(() => this.router.navigate([`notes/${note.id}`]));
       }
-      dispatch(new CreateNoteCompleted(note));
+      dispatch([new CreateNoteCompleted(note)]);
       return;
     }
     if (!res.success && res.status === OperationResultAdditionalInfo.BillingError) {
@@ -468,13 +482,29 @@ export class NoteStore {
 
   @Action(UpdateNotes)
   // eslint-disable-next-line class-methods-use-this
-  updateSmallNote({ setState }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
+  updateSmallNote({ setState, dispatch }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
     setState(
       patch({
         notes: updateItem<Notes>((notess) => notess.typeNotes === typeNote, notes),
       }),
     );
+    dispatch(new UpdateNotesCount(notes.notes?.length ?? 0, typeNote));
   }
+
+  @Action(UpdateNotesCount)
+  // eslint-disable-next-line class-methods-use-this
+  updateNotesCount({ setState }: StateContext<NoteState>, { count, typeNote }: UpdateNotesCount) {
+    setState(
+      patch({
+        notesCount: updateItem<NotesCount>((notess) => notess.noteTypeId === typeNote,
+          {
+            noteTypeId: typeNote,
+            count
+          }),
+      }),
+    );
+  }
+
 
   @Action(UpdateFolderNotes)
   // eslint-disable-next-line class-methods-use-this
@@ -715,7 +745,7 @@ export class NoteStore {
     );
 
     const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
-    if (resp.eventBody &&!resp.eventBody.success
+    if (resp.eventBody && !resp.eventBody.success
     ) {
       if (resp.eventBody.status === OperationResultAdditionalInfo.BillingError) {
         const message = this.translate.instant('snackBar.subscriptionCreationError');
@@ -957,6 +987,14 @@ export class NoteStore {
         dispatch(new UpdateNotes(state, noteType));
       }
     }
+  }
+
+  @Action(LoadNotesCount)
+  async loadNotesCount({ patchState }: StateContext<NoteState>) {
+    const request = await this.api.getCount().toPromise();
+    patchState({
+      notesCount: request
+    })
   }
 
   @Action(LoadFullNote)
@@ -1266,7 +1304,7 @@ export class NoteStore {
   };
 
   getNotesByType = (getState: () => NoteState, type: NoteTypeENUM): SmallNote[] => {
-    return getState().notes?.find((q) => q.typeNotes === type)?.notes;
+    return getState().notes?.find((q) => q.typeNotes === type)?.notes ?? [];
   };
 
   itemNoFromFilterArray = (ids: string[], note: SmallNote) => {

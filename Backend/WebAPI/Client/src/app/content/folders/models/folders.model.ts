@@ -6,11 +6,8 @@ export class Folders {
 
   folders: SmallFolder[];
 
-  count: number;
-
   constructor(typeFolders: FolderTypeENUM, folders: SmallFolder[]) {
     this.typeFolders = typeFolders;
     this.folders = folders;
-    this.count = folders.length;
   }
 }

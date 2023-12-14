@@ -17,6 +17,7 @@ import { CopyFoldersResult } from './models/copy-folders-result';
 import { OperationDetailMini, LongTermOperation } from '../long-term-operations-handler/models/long-term-operation';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
+import { FoldersCount } from './models/folders-count.model';
 
 @Injectable()
 export class ApiFoldersService {
@@ -220,6 +221,10 @@ export class ApiFoldersService {
       `${environment.api}/api/fullfolder/title`,
       obj,
     );
+  }
+
+  getCount(): Observable<FoldersCount[]> {
+    return this.httpClient.get<FoldersCount[]>(`${environment.api}/api/folder/count`);
   }
 
   getAdditionalInfos(folderIds: string[]) {

@@ -20,6 +20,7 @@ import {
 import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
 import { SyncNoteResult } from './models/sync-note-result';
+import { NotesCount } from './models/notes-count.model';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -210,6 +211,10 @@ export class ApiServiceNotes {
     return this.httpClient
       .post<SmallNote[]>(`${environment.api}/api/note/all`, obj)
       .pipe(map((q) => TransformNoteUtil.transformNotes(q)));
+  }
+
+  getCount(): Observable<NotesCount[]> {
+    return this.httpClient.get<NotesCount[]>(`${environment.api}/api/note/count`);
   }
 
   new(): Observable<OperationResult<SmallNote>> {

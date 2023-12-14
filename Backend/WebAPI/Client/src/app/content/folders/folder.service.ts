@@ -246,12 +246,6 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
       await this.store.dispatch(LoadPersonalization).toPromise();
     }
     await this.store.dispatch(new LoadFolders(typeENUM, pr)).toPromise();
-
-    const types = Object.values(FolderTypeENUM).filter(
-      (q) => typeof q === 'number' && q !== typeENUM,
-    );
-    const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
-    this.store.dispatch(actions);
   }
 
   async initializeEntities(folders: SmallFolder[]) {

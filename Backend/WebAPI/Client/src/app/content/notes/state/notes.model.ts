@@ -6,11 +6,8 @@ export class Notes {
 
   notes: SmallNote[];
 
-  count: number;
-
   constructor(typeNotes: NoteTypeENUM, notes: SmallNote[]) {
     this.typeNotes = typeNotes;
     this.notes = notes;
-    this.count = notes.length;
   }
 }

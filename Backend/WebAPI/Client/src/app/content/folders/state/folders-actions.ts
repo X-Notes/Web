@@ -18,8 +18,16 @@ export class ResetFolders {
 }
 
 export class ResetFoldersState {
-  static type = '[Notes] Reset folders state';
+  static type = '[Folders] Reset folders state';
 }
+
+
+export class UpdateFoldersCount {
+  static type = '[Folders] Update folders count';
+
+  constructor(public count: number, public typeFolder: FolderTypeENUM) {}
+}
+
 
 // FUNCTIONS
 
@@ -188,6 +196,12 @@ export class LoadFullFolder {
   static type = '[Folders] Load full folder';
 
   constructor(public id: string) {}
+}
+
+export class LoadFoldersCount {
+  static type = '[Folders] Load folders count';
+
+  constructor() {}
 }
 
 export class TransformTypeFolders {

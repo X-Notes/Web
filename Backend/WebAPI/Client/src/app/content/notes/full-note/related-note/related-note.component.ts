@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { ContentTypeENUM } from 'src/app/editor/entities/contents/content-types.enum';
 import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/note-text-type.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
+import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
+import { BaseText } from 'src/app/editor/entities/contents/base-text';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',
@@ -41,12 +43,25 @@ export class RelatedNoteComponent {
     this.deleteNote.emit(this.note.id);
   }
 
+  get contents(): ContentModelBase[] {
+    if (!this.note.contents) {
+      return [];
+    }
+    return this.note.contents.filter(x => {
+      if (x.typeId === ContentTypeENUM.Text) {
+        const text = x as BaseText;
+        return text.isHaveText();
+      }
+      return true;
+    })
+  }
+
   get isTitleEmpty() {
     let title = this.note?.title ?? '';
     if (title?.length > 0) {
       title = title?.replace(/[\n\r]/g, '');
     }
-   
+
     return title.length === 0;
   }
 }
