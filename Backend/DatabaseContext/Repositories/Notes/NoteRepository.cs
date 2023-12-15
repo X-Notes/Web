@@ -37,7 +37,7 @@ namespace DatabaseContext.Repositories.Notes
         public Task<Note?> GetNoteWithLabels(Guid id)
         {
             return context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                .Include(x => x.LabelsNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
         
@@ -81,7 +81,7 @@ namespace DatabaseContext.Repositories.Notes
             Guid userId, NoteTypeENUM typeId, int takeContents)
         {
             var notes = await context.Notes
-                    .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                    .Include(x => x.LabelsNotes)
                     .Where(x => x.UserId == userId && x.NoteTypeId == typeId)
                     .ToListAsync();
 
@@ -92,7 +92,7 @@ namespace DatabaseContext.Repositories.Notes
             IEnumerable<Guid> noteIds, int takeContents)
         {
             var notes = await context.Notes
-                    .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                    .Include(x => x.LabelsNotes)
                     .Include(x => x.UsersOnPrivateNotes)
                     .Where(x => noteIds.Contains(x.Id))
                     .AsSplitQuery()
@@ -115,7 +115,7 @@ namespace DatabaseContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserId(Guid userId, int takeContents)
         {
             var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                .Include(x => x.LabelsNotes)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
@@ -126,7 +126,7 @@ namespace DatabaseContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserIdNoLockedWithoutDeleted(Guid userId, List<Guid> exceptIds, int takeContents)
         {
             var notes = await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(q => q.Label)
+                .Include(x => x.LabelsNotes)
                 .Where(x => x.UserId == userId && !exceptIds.Contains(x.Id) && x.NoteTypeId != NoteTypeENUM.Deleted)
                 .ToListAsync();
 

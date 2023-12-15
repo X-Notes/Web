@@ -20,6 +20,8 @@ import {
 import { NoteStore } from '../../state/notes-state';
 import { SidebarNotesService } from '../services/sidebar-notes.service';
 import { SelectionService } from 'src/app/editor/ui-services/selection.service';
+import { Label } from 'src/app/content/labels/models/label.model';
+import { LabelStore } from 'src/app/content/labels/state/labels-state';
 
 @Component({
   selector: 'app-right-section-content',
@@ -34,6 +36,9 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnCh
   @Select(NoteStore.canEdit)
   public canEdit$: Observable<boolean>;
 
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
+  
   @ViewChildren('relatedItem', { read: ElementRef }) refSideBarElements: QueryList<ElementRef>;
 
   loading = true;

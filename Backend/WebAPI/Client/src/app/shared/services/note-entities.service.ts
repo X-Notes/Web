@@ -2,7 +2,6 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import {
@@ -52,14 +51,14 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
       const note = this.entities.find((x) => x.id === value.id) as SmallNote;
       if (note) {
         if (value?.removeLabelIds && value.removeLabelIds?.length > 0) {
-          note.labels = note.labels?.filter((x) => !value.removeLabelIds?.some((id) => x.id === id));
+          note.labelIds = note.labelIds?.filter((x) => !value.removeLabelIds?.some((id) => x === id));
         }
         if (value.addLabels && value.addLabels.length > 0) {
-          const noteLabels = note.labels ?? [];
-          note.labels = [...noteLabels, ...value.addLabels];
+          const noteLabels = note.labelIds ?? [];
+          note.labelIds = [...noteLabels, ...value.addLabels];
         }
         if (value.allLabels) {
-          note.labels = value.allLabels;
+          note.labelIds = value.allLabels;
         }
         note.color = value.color ?? note.color;
         note.title = value.title ?? note.title;

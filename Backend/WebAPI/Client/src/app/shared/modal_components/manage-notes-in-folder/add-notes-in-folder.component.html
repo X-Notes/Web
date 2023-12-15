@@ -39,6 +39,7 @@
                 [isSelected]="item.isSelected"
                 [personalization]="personalization$ | async"
                 [userId]="(user$ | async).id"
+                [labels]="(labels$ | async)"
                 (highlightNote)="highlightNote($event.note)"
                 (clickOnNote)="highlightNote($event)"
                 class="note"

@@ -27,6 +27,8 @@ import { EnumConverterService } from '../../services/enum-converter.service';
 import { SelectionOption } from '../../custom-components/select-component/entities/select-option';
 import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-types.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { LabelStore } from 'src/app/content/labels/state/labels-state';
+import { Label } from 'src/app/content/labels/models/label.model';
 
 @Component({
   selector: 'app-add-notes-in-folder',
@@ -46,6 +48,9 @@ export class AddNotesInFolderComponent
   @Select(UserStore.getUser)
   public user$?: Observable<ShortUser>;
 
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
+  
   @Select(UserStore.getPersonalizationSettings)
   public personalization$?: Observable<PersonalizationSetting>;
   

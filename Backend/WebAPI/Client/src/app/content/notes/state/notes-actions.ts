@@ -151,19 +151,11 @@ export class ChangeTypeNote {
   }
 }
 
-// Labels
-
-export class UpdateLabelOnNote {
-  static type = '[Notes] Update label';
-
-  constructor(public label: Label) {}
-}
-
 export class AddLabelOnNote {
   static type = '[Notes] Add label';
 
   constructor(
-    public label: Label,
+    public labelId: string,
     public selectedIds: string[],
     public isCallApi = true,
     public errorPermissionMessage?: string,

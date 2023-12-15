@@ -18,8 +18,8 @@
   </div>
   <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
     <div class="note-color" [ngStyle]="{ backgroundColor: note.color }"></div>
-    <div class="labels-section" *ngIf="note.labels?.length">
-      <div class="label" *ngFor="let item of note.labels" [ngStyle]="{ backgroundColor: item.color }">
+    <div class="labels-section" *ngIf="labelsDto?.length">
+      <div class="label" *ngFor="let item of labelsDto" [ngStyle]="{ backgroundColor: item.color }">
         <p>{{item.name}}</p>
       </div>
     </div>

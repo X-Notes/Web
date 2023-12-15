@@ -15,7 +15,7 @@
                 (pService.changeNotesViewSubject$ | async) ? 'grid-plus' : '',
                 (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
               ]">
-              <app-note [note]="item" [isShowWrightRead]="false" [highlightCursorActive]="false"
+              <app-note [note]="item" [isShowWrightRead]="false" [highlightCursorActive]="false" [labels]="(labels$ | async)"
                 [currentFolderId]="(folder$ | async).id" (clickOnNote)="toPublicNote($event)"
                 [ngStyle]="{ backgroundColor: item.color }" class="note"></app-note>
             </div>

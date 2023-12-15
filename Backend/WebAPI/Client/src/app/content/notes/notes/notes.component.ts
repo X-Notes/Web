@@ -52,7 +52,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.store.dispatch(new LoadLabels()).toPromise();
+    this.store.dispatch(new LoadLabels());
 
     this.store
       .select(LabelStore.noDeleted)

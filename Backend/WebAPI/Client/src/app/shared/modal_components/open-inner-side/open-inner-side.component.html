@@ -42,6 +42,7 @@
                 [isSelected]="item.isSelected"
                 [personalization]="personalization$ | async"
                 [userId]="(user$ | async)?.id"
+                [labels]="(labels$ | async)"
                 [highlightCursorActive]="!isMaxNotesSelected"
                 (highlightNote)="highlightNote($event.note)"
                 (clickOnNote)="highlightNote($event)"

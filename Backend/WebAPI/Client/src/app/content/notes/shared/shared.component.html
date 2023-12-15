@@ -17,6 +17,7 @@
       [personalization]="personalization$ | async"
       [userId]="(user$ | async).id"
       [isShowWrightRead]="true"
+      [labels]="(labels$ | async)"
       (highlightNote)="noteService.highlightNote($event)"
       (clickOnNote)="noteService.toNote($event)"
       class="note"

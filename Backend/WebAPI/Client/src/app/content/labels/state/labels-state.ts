@@ -18,7 +18,6 @@ import {
 } from './labels-actions';
 import { ApiServiceLabels } from '../api-labels.service';
 import { Label } from '../models/label.model';
-import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
 import { PositionEntityModel } from '../../notes/models/position-note.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -160,7 +159,6 @@ export class LabelStore {
     if (isCallApi) {
       await this.api.update(label).toPromise();
     }
-    this.store.dispatch(new UpdateLabelOnNote(label));
     setState(
       patch({
         labels: updateItem<Label>((label2) => label2.id === label.id, label),

@@ -48,6 +48,8 @@ import { ApiBrowserTextService } from '../../notes/api-browser-text.service';
 import { Icons } from 'src/app/shared/enums/icons.enum';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { LabelStore } from '../../labels/state/labels-state';
+import { Label } from '../../labels/models/label.model';
 
 @Component({
   selector: 'app-full-folder',
@@ -65,6 +67,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
   public fontSize$?: Observable<EntitiesSizeENUM>;
 
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
+  
   @Select(FolderStore.canEdit)
   public canEdit$: Observable<boolean>;
 

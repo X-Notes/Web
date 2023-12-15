@@ -9,6 +9,7 @@
         <app-related-note
           [note]="item"
           [isCanEdit]="data.canEdit"
+          [labels]="labels$ | async"
           (deleteNote)="deleteRelatedNote($event, data.noteId)"
           (changeState)="changeState($event)"
         ></app-related-note>

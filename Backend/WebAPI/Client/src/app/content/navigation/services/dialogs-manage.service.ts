@@ -104,7 +104,7 @@ export class DialogsManageService {
   openChangeLabels() {
     let labelIds: string[] = [];
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      labelIds = this.store.selectSnapshot(NoteStore.oneFull).labels.map((label) => label.id);
+      labelIds = this.store.selectSnapshot(NoteStore.oneFull).labelIds;
     } else {
       labelIds = this.store.selectSnapshot(NoteStore.labelsIds);
     }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Subscription, Observable, Subject, of } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -11,11 +11,13 @@ import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
-import { DialogsManageService } from '../../navigation/services/dialogs-manage.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiNoteEditorService } from 'src/app/editor/api/api-editor-content.service';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
+import { Label } from '../../labels/models/label.model';
+import { LabelStore } from '../../labels/state/labels-state';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-full-note',
@@ -33,7 +35,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUser)
   user$: Observable<ShortUser>;
-  
+
   @Select(UserStore.getUserTheme)
   theme$: Observable<ThemeENUM>;
 
@@ -58,6 +60,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   id: string;
 
+  labels$: Observable<Label[]>;
+
   private routeSubscription: Subscription;
 
   constructor(
@@ -77,6 +81,14 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.labels$ = this.store.select(LabelStore.noDeleted);
+  }
+
+  getLabels(labelIds: string[]): Observable<Label[]> {
+    if (!labelIds) return of([]);
+    return this.labels$.pipe(map(labels => {
+      return labels.filter(label => labelIds.some(f => f === label.id));
+    }));
   }
 
   async loadContent() {

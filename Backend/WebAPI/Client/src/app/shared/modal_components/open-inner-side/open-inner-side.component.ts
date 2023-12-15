@@ -30,6 +30,8 @@ import { SearchNotesTypesEnum } from '../general-components/enums/search-notes-t
 import { EnumConverterService } from '../../services/enum-converter.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { LabelStore } from 'src/app/content/labels/state/labels-state';
+import { Label } from 'src/app/content/labels/models/label.model';
 
 @Component({
   selector: 'app-open-inner-side',
@@ -49,6 +51,9 @@ export class OpenInnerSideComponent
   
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
+
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
 
   @Select(UserStore.getPersonalizationSettings)
   public personalization$?: Observable<PersonalizationSetting>;

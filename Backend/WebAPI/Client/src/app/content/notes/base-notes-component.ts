@@ -5,6 +5,8 @@ import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { Label } from '../labels/models/label.model';
+import { LabelStore } from '../labels/state/labels-state';
 
 @Component({
   template: '',
@@ -23,4 +25,7 @@ export class BaseNotesComponent {
 
   @Select(UserStore.getPersonalizationSettings)
   public personalization$?: Observable<PersonalizationSetting>;
+
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
 }

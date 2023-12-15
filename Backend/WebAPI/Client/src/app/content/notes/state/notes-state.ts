@@ -28,7 +28,6 @@ import {
   UpdateSelectLabel,
   AddLabelOnNote,
   RemoveLabelFromNote,
-  UpdateLabelOnNote,
   UpdateOneNote,
   UpdatePositionsNotes,
   LoadFullNote,
@@ -159,7 +158,7 @@ export class NoteStore {
 
   static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
     return notes.filter((x) =>
-      x.labels.some((label) => selectedLabelsFilter.some((q) => q === label.id)),
+      x.labelIds.some((id) => selectedLabelsFilter.some((q) => q === id)),
     ).length;
   }
 
@@ -264,9 +263,9 @@ export class NoteStore {
   static labelsIds(state: NoteState): string[] {
     const notes = [...this.getSelectedNotes(state), ...this.getSelectedFolderNotes(state)];
     const labelIds = notes
-      .map((x) => x.labels)
+      .map((x) => x.labelIds)
       .flat()
-      .map((x) => x.id);
+      .map((id) => id);
     return [...new Set<string>(labelIds)];
   }
 
@@ -770,14 +769,14 @@ export class NoteStore {
   @Action(AddLabelOnNote)
   async addLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { label, selectedIds, isCallApi, errorPermissionMessage }: AddLabelOnNote,
+    { labelId, selectedIds, isCallApi, errorPermissionMessage }: AddLabelOnNote,
   ) {
     let resp: OperationResult<any> = { success: true, data: null, message: null };
     if (isCallApi) {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
-      resp = await this.api.addLabel(label.id, selectedIds, this.signalR.connectionId).toPromise();
+      resp = await this.api.addLabel(labelId, selectedIds, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
       // UPDATE FULL NOTE
@@ -786,23 +785,23 @@ export class NoteStore {
         patchState({
           fullNoteState: {
             ...getState().fullNoteState,
-            note: { ...note, labels: [...note.labels, label] },
+            note: { ...note, labelIds: [...note.labelIds, labelId] },
           },
         });
       }
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) => {
-        if (!x.labels.some((q) => q.id === label.id)) {
-          x.labels = [...x.labels, label];
+        if (!x.labelIds.some((id) => id === labelId)) {
+          x.labelIds = [...x.labelIds, labelId];
         }
       });
       notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x, x.id)));
-      dispatch([new UpdateLabelCount(label.id)]);
+      dispatch([new UpdateLabelCount(labelId)]);
 
       // UPDATE UI
       const updatesUI = selectedIds.map((id) =>
-        this.toUpdateNoteUI(id, null, null, [label], null, null),
+        this.toUpdateNoteUI(id, null, null, [labelId], null, null),
       );
       patchState({ updateNoteEvent: updatesUI });
     }
@@ -827,14 +826,14 @@ export class NoteStore {
       // UPDATE FULL NOTE
       let note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
-        note = { ...note, labels: note.labels.filter((q) => q.id !== labelId) };
+        note = { ...note, labelIds: note.labelIds.filter((id) => id !== labelId) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
 
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) =>
-        dispatch(new UpdateOneNote({ labels: x.labels.filter((q) => q.id !== labelId) }, x.id)),
+        dispatch(new UpdateOneNote({ labelIds: x.labelIds.filter((id) => id !== labelId) }, x.id)),
       );
       dispatch([new UpdateLabelCount(labelId)]);
 
@@ -847,39 +846,6 @@ export class NoteStore {
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
     }
-  }
-
-  @Action(UpdateLabelOnNote)
-  updateLabelOnNote(
-    { patchState, getState, dispatch }: StateContext<NoteState>,
-    { label }: UpdateLabelOnNote,
-  ) {
-    let updateNoteEvent: UpdateNoteUI[] = [];
-    for (const notes of getState().notes) {
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
-      const notesUpdate = notes.notes.map((x) => {
-        let note = { ...x };
-        if (note.labels.some((q) => q.id === label.id)) {
-          note = this.updateLabel(note, label);
-          updateNoteEvent = [
-            this.toUpdateNoteUI(note.id, null, null, null, note.labels, null),
-            ...updateNoteEvent,
-          ];
-        } else {
-          note = { ...note };
-        }
-        return note;
-      });
-      dispatch(new UpdateNotes(new Notes(notes.typeNotes, notesUpdate), notes.typeNotes));
-
-      // FULL NOTE UPDATE
-      const fullNote = getState().fullNoteState;
-      if (fullNote) {
-        const newNote = this.updateFullNoteLabel(fullNote.note, label);
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-      }
-    }
-    patchState({ updateNoteEvent });
   }
 
   @Action(RemoveFromDomMurri)
@@ -1265,15 +1231,15 @@ export class NoteStore {
     id: string,
     color: string,
     removeLabelIds: string[],
-    addLabels: Label[],
-    labels: Label[],
+    addLabelIds: string[],
+    labels: string[],
     title: string,
   ) => {
     const obj = new UpdateNoteUI(id);
     obj.color = color;
     obj.removeLabelIds = removeLabelIds;
     obj.allLabels = labels;
-    obj.addLabels = addLabels;
+    obj.addLabels = addLabelIds;
     obj.title = title;
     return obj;
   };
@@ -1313,21 +1279,5 @@ export class NoteStore {
 
   itemsFromFilterArray = (ids: string[], note: SmallNote) => {
     return ids.indexOf(note.id) !== -1;
-  };
-
-  updateLabel = (note: SmallNote, label: Label) => {
-    const noteLabels = [...note.labels];
-    const index = noteLabels.findIndex((x) => x.id === label.id);
-    noteLabels[index] = { ...label };
-    const updateNote: SmallNote = { ...note, labels: noteLabels };
-    return updateNote;
-  };
-
-  updateFullNoteLabel = (note: FullNote, label: Label) => {
-    const noteLabels = [...note.labels];
-    const index = noteLabels.findIndex((x) => x.id === label.id);
-    noteLabels[index] = { ...label };
-    const newNote: FullNote = { ...note, labels: noteLabels };
-    return newNote;
   };
 }

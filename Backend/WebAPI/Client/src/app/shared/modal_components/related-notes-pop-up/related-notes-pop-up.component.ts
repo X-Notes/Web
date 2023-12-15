@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/services/dialogs-manage.service';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
@@ -11,6 +11,9 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 import { OperationResultAdditionalInfo } from '../../models/operation-result.model';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
+import { Select } from '@ngxs/store';
+import { Label } from 'src/app/content/labels/models/label.model';
+import { LabelStore } from 'src/app/content/labels/state/labels-state';
 
 @Component({
   selector: 'app-related-notes-pop-up',
@@ -18,6 +21,10 @@ import { SnackbarService } from '../../services/snackbar/snackbar.service';
   styleUrls: ['./related-notes-pop-up.component.scss'],
 })
 export class RelatedNotesPopUpComponent implements OnInit, AfterViewInit, OnDestroy {
+  
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
+
   load = false;
 
   _notes: RelatedNote[];

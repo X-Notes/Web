@@ -104,7 +104,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   async onSelectLabel(isSelected: boolean, label: Label): Promise<void> {
     const lId = label.id;
     if (isSelected) {
-      const command = new AddLabelOnNote(label, [...this.selectedIds], true, this.errorMessage());
+      const command = new AddLabelOnNote(lId, [...this.selectedIds], true, this.errorMessage());
       this.store.dispatch(command);
       this.data.labelIds.add(lId);
     } else {

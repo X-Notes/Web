@@ -26,6 +26,8 @@ import { WebSocketsFolderUpdaterService } from 'src/app/content/folders/full-fol
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
 import { AuthService } from 'src/app/core/auth.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { LabelStore } from 'src/app/content/labels/state/labels-state';
+import { Label } from 'src/app/content/labels/models/label.model';
 
 @Component({
   selector: 'app-public-folder-content',
@@ -44,6 +46,9 @@ export class PublicFolderContentComponent implements OnInit, OnDestroy, AfterVie
 
   @Select(FolderStore.isCanViewFullFolder)
   isCanView$?: Observable<boolean>;
+
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
 
   @Select(PublicStore.owner)
   owner$?: Observable<ShortUserPublic>;

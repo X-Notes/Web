@@ -16,6 +16,7 @@
       [isSelected]="noteService.getIsSelected(item.id)"
       [personalization]="personalization$ | async"
       [userId]="(user$ | async).id"
+      [labels]="(labels$ | async)"
       [date]="item.deletedAt | date: 'medium'"
       [tooltipDateMessage]="'entity-bottom-tooltip.deleted'"
       (highlightNote)="noteService.highlightNote($event)"

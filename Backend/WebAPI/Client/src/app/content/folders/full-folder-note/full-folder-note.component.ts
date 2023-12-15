@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, of } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { LoadLabels } from '../../labels/state/labels-actions';
@@ -17,6 +16,9 @@ import { ContentModelBase } from 'src/app/editor/entities/contents/content-model
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { LoadFullFolder } from '../state/folders-actions';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LabelStore } from '../../labels/state/labels-state';
+import { Label } from '../../labels/models/label.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-full-folder-note',
@@ -44,6 +46,9 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.fullNoteTitle)
   noteTitle$: Observable<string>;
+
+  @Select(LabelStore.noDeleted)
+  public labels$: Observable<Label[]>;
 
   destroy = new Subject<void>();
 
@@ -101,6 +106,13 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     this.contents = await this.api.getContents(this.noteId, this.folderId).toPromise();
+  }
+
+  getLabels(labelIds: string[]): Observable<Label[]> {
+    if (!labelIds) return of([]);
+    return this.labels$.pipe(map(labels => {
+      return labels.filter(label => labelIds.some(f => f === label.id));
+    }));
   }
 
   ngOnDestroy(): void {

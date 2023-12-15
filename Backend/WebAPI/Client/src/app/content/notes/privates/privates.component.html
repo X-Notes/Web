@@ -16,6 +16,7 @@
       [isSelected]="noteService.getIsSelected(item.id)"
       [personalization]="personalization$ | async"
       [userId]="(user$ | async).id"
+      [labels]="(labels$ | async)"
       (highlightNote)="noteService.highlightNote($event)"
       (clickOnNote)="noteService.toNote($event)"
       class="note"

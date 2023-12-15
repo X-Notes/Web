@@ -1,6 +1,5 @@
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { Label } from '../../labels/models/label.model';
 
 export class FullNote {
   id!: string;
@@ -9,7 +8,7 @@ export class FullNote {
 
   color!: string;
 
-  labels?: Label[];
+  labelIds?: string[];
 
   userId!: string;
 

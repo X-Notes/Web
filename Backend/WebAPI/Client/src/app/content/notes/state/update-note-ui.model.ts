@@ -1,4 +1,3 @@
-import { Label } from '../../labels/models/label.model';
 
 export class UpdateNoteUI {
   id: string;
@@ -11,9 +10,9 @@ export class UpdateNoteUI {
 
   isCanEdit?: boolean;
 
-  addLabels?: Label[];
+  addLabels?: string[];
 
-  allLabels?: Label[];
+  allLabels?: string[];
 
   isLocked?: boolean;
 

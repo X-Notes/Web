@@ -361,7 +361,7 @@ export class ContentEditorComponent
         this.facade.cdr.detectChanges();
       });
 
-    this.facade.contentEditorSyncService.onStateSync$.pipe(takeUntil(this.facade.dc.d$))
+    this.facade.contentEditorSyncService.onStateSync$?.pipe(takeUntil(this.facade.dc.d$))
       .subscribe((flag) => {
         if (flag) {
           this.facade.cdr.detectChanges();

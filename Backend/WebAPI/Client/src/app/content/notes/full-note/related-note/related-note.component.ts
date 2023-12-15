@@ -9,6 +9,7 @@ import { NoteTextTypeENUM } from 'src/app/editor/entities/contents/text-models/n
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ContentModelBase } from 'src/app/editor/entities/contents/content-model-base';
 import { BaseText } from 'src/app/editor/entities/contents/base-text';
+import { Label } from 'src/app/content/labels/models/label.model';
 @Component({
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',
@@ -19,6 +20,8 @@ export class RelatedNoteComponent {
   @Input() note: RelatedNote;
 
   @Input() isCanEdit: boolean;
+
+  @Input() labels: Label[];
 
   @Output() deleteNote = new EventEmitter<string>();
 
@@ -38,6 +41,7 @@ export class RelatedNoteComponent {
     this.note.isOpened = !this.note.isOpened;
     this.changeState.emit(this.note);
   }
+  
 
   deleteSmallNote() {
     this.deleteNote.emit(this.note.id);
@@ -54,6 +58,11 @@ export class RelatedNoteComponent {
       }
       return true;
     })
+  }
+
+  get labelsDto(): Label[] {
+    if(!this.labels) return [];
+    return this.labels.filter(x => this.note.labelIds.some(q => q == x.id));
   }
 
   get isTitleEmpty() {

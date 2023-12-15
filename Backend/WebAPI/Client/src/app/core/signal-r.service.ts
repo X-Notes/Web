@@ -268,7 +268,7 @@ export class SignalRService {
       }
       if (updates.addLabels && updates.addLabels.length > 0) {
         updates.addLabels.forEach((label) => {
-          this.store.dispatch(new AddLabelOnNote(label, [updates.noteId], false));
+          this.store.dispatch(new AddLabelOnNote(label.id, [updates.noteId], false));
         });
       }
       if (updates.removeLabelIds && updates.removeLabelIds.length > 0) {

@@ -173,7 +173,12 @@ namespace Mapper.Mapping
             var count = labelsNotes.Count();
             return labelsNotes.Select(x => MapLabelToLabelDTO(x, count)).ToList();
         }
-
+        
+        public List<Guid> MapLabelsToLabelIds(List<LabelsNotes> labelsNotes)
+        {
+            return labelsNotes.Select(x => x.LabelId).ToList();
+        }
+        
         public List<LabelDTO> MapLabelsToLabelsDTO(List<Label> labels)
         {
             return labels.Select(x => MapLabelToLabelDTO(x)).ToList();
@@ -225,7 +230,7 @@ namespace Mapper.Mapping
                 Order = relation.Order,
                 UserId = relation.RelatedNote.UserId,
                 IsOpened = state != null ? state.IsOpened : true,
-                Labels = relation.RelatedNote.LabelsNotes != null ? MapLabelsToLabelsDTO(relation.RelatedNote.LabelsNotes?.GetLabelUnDesc()) : null,
+                LabelIds = relation.RelatedNote.LabelsNotes != null ? MapLabelsToLabelIds(relation.RelatedNote.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = relation.RelatedNote.NoteTypeId,
                 RefTypeId = relation.RelatedNote.RefTypeId,
                 Contents = MapContentsToContentsDTO(relation.RelatedNote.Contents, relation.RelatedNote.UserId).ToList(),
@@ -245,7 +250,7 @@ namespace Mapper.Mapping
                 Title = note.Title,
                 Order = order,
                 UserId = note.UserId,
-                Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
+                LabelIds = note.LabelsNotes != null ? MapLabelsToLabelIds(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Contents = MapContentsToContentsDTO(note.Contents, note.UserId).ToList(),
@@ -266,7 +271,7 @@ namespace Mapper.Mapping
                 Title = note.Title,
                 Order = note.Order,
                 UserId = note.UserId,
-                Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
+                LabelIds = note.LabelsNotes != null ? MapLabelsToLabelIds(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Contents = MapContentsToContentsDTO(note.Contents, note.UserId).ToList(),

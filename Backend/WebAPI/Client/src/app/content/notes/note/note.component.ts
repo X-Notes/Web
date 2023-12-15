@@ -13,6 +13,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { Label } from '../../labels/models/label.model';
 
 @Component({
   selector: 'app-note',
@@ -39,6 +40,8 @@ export class NoteComponent implements OnInit {
   @Input() personalization?: PersonalizationSetting;
 
   @Input() isSelected?: boolean;
+
+  @Input() labels: Label[];
 
   @Input() highlightCursorActive = true;
 

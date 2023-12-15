@@ -10,7 +10,7 @@
       [userId]="(user$ | async)?.id"
       [folderId]="folderId"
       [color]="(note$ | async).color"
-      [labels]="(note$ | async).labels"
+      [labels]="getLabels((note$ | async).labelIds) | async"
       [progressiveLoading]="true"
       [isReadOnlyMode]="(canEdit$ | async) === false"
       [title]="(noteTitle$ | async)"

@@ -44,7 +44,7 @@ public class GetFullFolderQueryHandler : IRequestHandler<GetFullFolderQuery, Ope
         var userIds = folder.UsersOnPrivateFolders.Select(x => x.UserId).ToList();
         userIds.Add(folder.UserId);
         
-        if (!permissions.IsOwner && !userIds.Contains(permissions.CallerId))
+        if (permissions.CallerId != Guid.Empty && !permissions.IsOwner && !userIds.Contains(permissions.CallerId))
         {
             await usersOnPrivateFoldersService.AddPermissionAsync(folder.Id, folder.RefTypeId, permissions.CallerId);
         }

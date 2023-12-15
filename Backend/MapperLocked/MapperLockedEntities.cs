@@ -34,7 +34,7 @@ namespace MapperLocked
                 UserId = note.UserId,
                 Title = note.Title,
                 IsCanEdit = isCanWrite,
-                Labels = note.LabelsNotes != null ? noteMapper.MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
+                LabelIds = note.LabelsNotes != null ? noteMapper.MapLabelsToLabelIds(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt,

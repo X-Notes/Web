@@ -1,6 +1,6 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Actions, Store, ofActionDispatched } from '@ngxs/store';
+import { Actions, Store, ofActionCompleted, ofActionDispatched } from '@ngxs/store';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subscription } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -27,6 +27,7 @@ import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 import { NoteComponent } from './note/note.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadPersonalization } from 'src/app/core/stateUser/user-action';
+import { LoadLabels } from '../labels/state/labels-actions';
 
 /** Injection only in component */
 @Injectable()
@@ -73,6 +74,9 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
       });
+
+    this.actions$.pipe(ofActionCompleted(LoadLabels), takeUntilDestroyed())
+      .subscribe(() => requestAnimationFrame(() => this.murriService.refreshLayoutAsync()));
 
     this.store
       .select(UserStore.getPersonalizationSettings)
@@ -278,7 +282,7 @@ export class NotesService extends NoteEntitiesService implements OnDestroy {
 
     const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
     return tempNotes.filter((x) =>
-      x.labels.some((label) => ids.some((q) => q === label.id)),
+      x.labelIds.some((id) => ids.some((q) => q === id)),
     );
   }
 

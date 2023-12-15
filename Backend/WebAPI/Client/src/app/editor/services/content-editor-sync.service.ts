@@ -133,7 +133,7 @@ export class ContentEditorSyncService {
         this.store.dispatch(new UpdateFullNote({
           color: state.data.color,
           version: state.data.version,
-          labels: state.data.labels.map((x) => new Label(x))
+          labelIds: state.data.labelIds,
         }, state.data.noteId));
         this.store.dispatch(new UpdateNoteTitleState(state.data.title, state.data.noteId));
       }
