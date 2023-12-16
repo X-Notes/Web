@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Permissions.Entities;
 using Permissions.Queries;
 
-namespace Permissions.Impl;
+namespace Permissions.QueryHandlers;
 
 public class PermissionFolderHandlerQuery :
       IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,

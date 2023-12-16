@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Permissions.Entities;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.QueryHandlers;
+using Permissions.Services;
 
 namespace Permissions
 {

@@ -4,8 +4,8 @@ using Common.DTO;
 using DatabaseContext.Repositories.Notes;
 using MediatR;
 using Notes.Commands;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.Services;
 
 namespace Notes.Handlers.Commands;
 

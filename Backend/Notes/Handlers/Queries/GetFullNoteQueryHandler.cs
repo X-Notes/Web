@@ -6,8 +6,8 @@ using DatabaseContext.Repositories.Notes;
 using MapperLocked;
 using MediatR;
 using Notes.Queries;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.Services;
 
 namespace Notes.Handlers.Queries;
 

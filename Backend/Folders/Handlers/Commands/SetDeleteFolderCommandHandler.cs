@@ -4,8 +4,8 @@ using Common.DTO;
 using DatabaseContext.Repositories.Folders;
 using Folders.Commands;
 using MediatR;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.Services;
 
 namespace Folders.Handlers.Commands;
 

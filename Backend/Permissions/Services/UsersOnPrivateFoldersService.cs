@@ -2,7 +2,7 @@
 using Common.DatabaseModels.Models.Systems;
 using DatabaseContext.Repositories.Folders;
 
-namespace Permissions.Impl;
+namespace Permissions.Services;
 
 public class UsersOnPrivateFoldersService
 {

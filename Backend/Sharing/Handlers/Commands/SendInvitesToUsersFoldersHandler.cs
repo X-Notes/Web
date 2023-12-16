@@ -3,8 +3,8 @@ using Common.DTO.WebSockets.Permissions;
 using DatabaseContext.Repositories.Folders;
 using MediatR;
 using Notifications.Services;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.Services;
 using Sharing.Commands.Folders;
 using SignalrUpdater.Impl;
 

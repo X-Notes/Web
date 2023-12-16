@@ -2,7 +2,7 @@
 using Common.DatabaseModels.Models.Systems;
 using DatabaseContext.Repositories.Notes;
 
-namespace Permissions.Impl;
+namespace Permissions.Services;
 
 public class UsersOnPrivateNotesService
 {

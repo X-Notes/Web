@@ -1,7 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Personalization;
 using DatabaseContext.Repositories.Notes;
-using Permissions.Impl;
+using Permissions.Services;
 
 namespace Notes.Impl;
 

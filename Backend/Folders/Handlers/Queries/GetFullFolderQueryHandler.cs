@@ -5,8 +5,8 @@ using DatabaseContext.Repositories.Folders;
 using Folders.Queries;
 using Mapper.Mapping;
 using MediatR;
-using Permissions.Impl;
 using Permissions.Queries;
+using Permissions.Services;
 
 namespace Folders.Handlers.Queries;
 
