@@ -6,8 +6,6 @@ public class BasePermissions
     
     public Guid CallerId { protected   set; get; }
     
-    public Guid FolderId { protected   set; get; }
-    
     public bool CanRead { protected    set; get; }
     
     public bool CanWrite { protected   set; get; }

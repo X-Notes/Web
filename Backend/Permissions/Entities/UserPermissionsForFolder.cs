@@ -6,6 +6,8 @@ namespace Permissions.Entities
     public class UserPermissionsForFolder : BasePermissions
     {
         public bool FolderNotFound { private set; get; }
+        
+        public Guid FolderId { protected   set; get; }
 
         public UserPermissionsForFolder GetFullAccess(
             Guid authorId, 
@@ -37,7 +39,7 @@ namespace Permissions.Entities
             return this;
         }
 
-        public UserPermissionsForFolder NoAccessRights(
+        public UserPermissionsForFolder GetNoAccessRights(
             Guid authorId, 
             Guid callerId, 
             Guid folderId)
@@ -52,7 +54,7 @@ namespace Permissions.Entities
             return this;
         }
         
-        public UserPermissionsForFolder SetFolderNotFounded()
+        public UserPermissionsForFolder GetFolderNotFounded()
         {
             FolderNotFound = true;
             return this;

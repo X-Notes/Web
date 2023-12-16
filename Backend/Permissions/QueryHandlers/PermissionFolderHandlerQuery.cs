@@ -13,18 +13,18 @@ public class PermissionFolderHandlerQuery :
       IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,
       IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>
 {
-    private readonly FolderRepository _folderRepository;
-    private readonly UsersOnPrivateFoldersRepository _usersOnPrivateFolders;
-    private readonly IMemoryCache _memoryCache;
+    private readonly FolderRepository folderRepository;
+    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFolders;
+    private readonly IMemoryCache memoryCache;
 
     public PermissionFolderHandlerQuery(
         FolderRepository folderRepository,
         IMemoryCache memoryCache, 
         UsersOnPrivateFoldersRepository usersOnPrivateFolders)
     {
-        _folderRepository = folderRepository;
-        _memoryCache = memoryCache;
-        _usersOnPrivateFolders = usersOnPrivateFolders;
+        this.folderRepository = folderRepository;
+        this.memoryCache = memoryCache;
+        this.usersOnPrivateFolders = usersOnPrivateFolders;
     }
 
     public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolderQuery request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public class PermissionFolderHandlerQuery :
             return new UserPermissionsForFolder().GetFullAccess(request.UserId, request.UserId, request.FolderId);
         }
         
-        var folder = await _folderRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.FolderId);
+        var folder = await folderRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.FolderId);
         return await GetFolderPermissionAsync(folder, request.UserId);
     }
     
@@ -44,7 +44,7 @@ public class PermissionFolderHandlerQuery :
         
         if (folder == null)
         {
-            return new UserPermissionsForFolder().SetFolderNotFounded();
+            return new UserPermissionsForFolder().GetFolderNotFounded();
         }
         
         if (folder.UserId == callerId)
@@ -65,10 +65,10 @@ public class PermissionFolderHandlerQuery :
         
         if (isAnonymous)
         {
-            return new UserPermissionsForFolder().NoAccessRights(folder.UserId, callerId, folder.Id);
+            return new UserPermissionsForFolder().GetNoAccessRights(folder.UserId, callerId, folder.Id);
         }
 
-        var folderUser = await _usersOnPrivateFolders.GetUserAsync(folder.Id, callerId);
+        var folderUser = await usersOnPrivateFolders.GetUserAsync(folder.Id, callerId);
         if (folderUser is { AccessTypeId: RefTypeENUM.Editor })
         {
             return new UserPermissionsForFolder().GetFullAccess(folder.UserId, callerId, folder.Id);
@@ -79,20 +79,20 @@ public class PermissionFolderHandlerQuery :
             return new UserPermissionsForFolder().GetOnlyRead(folder.UserId, callerId, folder.Id);
         }
 
-        return new UserPermissionsForFolder().NoAccessRights(folder.UserId, callerId, folder.Id);
+        return new UserPermissionsForFolder().GetNoAccessRights(folder.UserId, callerId, folder.Id);
     }
 
     private bool GetInOwnerCached(Guid folderId, Guid callerId)
     {
         var key = CacheKeys.FolderOwner + folderId + "-" + callerId;
-        return _memoryCache.TryGetValue(key, out bool cacheValue);
+        return memoryCache.TryGetValue(key, out bool cacheValue);
     }
 
     private void SetFolderOwnerCache(Guid folderId, Guid callerId)
     {
         var key = CacheKeys.FolderOwner + folderId + "-" + callerId;
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1));
-        _memoryCache.Set(key, true, cacheEntryOptions);
+        memoryCache.Set(key, true, cacheEntryOptions);
     }
     
     public async Task<List<(Guid, UserPermissionsForFolder)>> Handle(GetUserPermissionsForFoldersManyQuery request, CancellationToken cancellationToken)
@@ -122,7 +122,7 @@ public class PermissionFolderHandlerQuery :
             return results;
         }
         
-        var folders = await _folderRepository.GetWhereAsNoTrackingAsync(x => valuesWhichNeedToProcess.Contains(x.Id));
+        var folders = await folderRepository.GetWhereAsNoTrackingAsync(x => valuesWhichNeedToProcess.Contains(x.Id));
         var foldersD = folders.ToDictionary(x => x.Id);
         
         foreach (var id in valuesWhichNeedToProcess)
@@ -134,7 +134,7 @@ public class PermissionFolderHandlerQuery :
             }
             else
             {
-                results.Add((id, new UserPermissionsForFolder().SetFolderNotFounded()));
+                results.Add((id, new UserPermissionsForFolder().GetFolderNotFounded()));
             }
         }
         
