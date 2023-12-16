@@ -20,7 +20,7 @@ public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders,
 
     public async Task<UsersOnPrivateFolders?> GetUserAsync(Guid folderId, Guid userId)
     {
-        return await context.UsersOnPrivateFolders.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
+        return await entities.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
     }
 
     public async Task<List<Guid>> GetFolderUserIdsAsync(Guid folderId)

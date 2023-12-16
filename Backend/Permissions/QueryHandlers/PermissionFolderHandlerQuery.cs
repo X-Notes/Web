@@ -14,17 +14,17 @@ public class PermissionFolderHandlerQuery :
       IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>
 {
     private readonly FolderRepository folderRepository;
-    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFolders;
+    private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
     private readonly IMemoryCache memoryCache;
 
     public PermissionFolderHandlerQuery(
         FolderRepository folderRepository,
         IMemoryCache memoryCache, 
-        UsersOnPrivateFoldersRepository usersOnPrivateFolders)
+        UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
     {
         this.folderRepository = folderRepository;
         this.memoryCache = memoryCache;
-        this.usersOnPrivateFolders = usersOnPrivateFolders;
+        this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
     }
 
     public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolderQuery request, CancellationToken cancellationToken)
@@ -68,7 +68,7 @@ public class PermissionFolderHandlerQuery :
             return new UserPermissionsForFolder().GetNoAccessRights(folder.UserId, callerId, folder.Id);
         }
 
-        var folderUser = await usersOnPrivateFolders.GetUserAsync(folder.Id, callerId);
+        var folderUser = await usersOnPrivateFoldersRepository.GetUserAsync(folder.Id, callerId);
         if (folderUser is { AccessTypeId: RefTypeENUM.Editor })
         {
             return new UserPermissionsForFolder().GetFullAccess(folder.UserId, callerId, folder.Id);

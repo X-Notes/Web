@@ -1,7 +1,4 @@
-﻿using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.Users;
-
-namespace Permissions.Entities
+﻿namespace Permissions.Entities
 {
     public class UserPermissionsForFolder : BasePermissions
     {
