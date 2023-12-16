@@ -22,10 +22,10 @@
       (fontSize$ | async) === fontSize.Big ? 'big-size' : ''
     ]"
   >
-    <div class="labels" *ngIf="note.labels.length">
+    <div class="labels" *ngIf="note.labelIds?.length">
       <div
         class="label"
-        *ngFor="let label of note.labels | lastTwoNoDeletedLabels; let l = count"
+        *ngFor="let label of labels | lastTwoNoDeletedLabels: note.labelIds; let l = count"
         [ngStyle]="getLabelMaxWidth(l, label.color)"
         [CustomTooltip]="label.name"
         position="Top"
@@ -101,6 +101,7 @@
           <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
         </div>
       </div>
+      <app-spinner *ngIf="note.isBottomSectionLoading" [size]="15" [color]="'#404040'"></app-spinner>
     </div>
   </div>
 </div>

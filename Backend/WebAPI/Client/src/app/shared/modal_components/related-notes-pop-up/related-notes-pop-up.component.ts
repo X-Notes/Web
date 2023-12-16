@@ -59,7 +59,7 @@ export class RelatedNotesPopUpComponent implements OnInit, AfterViewInit, OnDest
   ngAfterViewInit(): void {}
 
   async changeState(note: RelatedNote) {
-    await this.apiRelated.updateState(note.id, note.reletionId, note.isOpened).toPromise();
+    await this.apiRelated.updateState(note.id, note.relationId, note.isOpened).toPromise();
   }
 
   async deleteRelatedNote(relatedNoteId: string, noteId: string) {

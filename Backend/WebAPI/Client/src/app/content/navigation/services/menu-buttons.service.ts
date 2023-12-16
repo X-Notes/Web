@@ -19,6 +19,7 @@ import { SmallFolder } from '../../folders/models/folder.model';
 import { CopyNoteText } from '../menu/actions/copy-note-text-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { NavigatorService } from 'src/app/core/navigator.service';
+import { BaseNote } from '../../notes/models/base-note.model';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -246,12 +247,12 @@ export class MenuButtonsService {
   openShareWithNotes() {
     const type = EntityPopupType.Note;
     if (this.store.selectSnapshot(AppStore.isNoteInnerPure)) {
-      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as SmallNote];
+      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as BaseNote];
       return this.dialogsService.openShareEntity(type, notes, false);
     }
     if (this.store.selectSnapshot(AppStore.isFolderInnerNote)) {
       const folderId = this.store.selectSnapshot(FolderStore.full).id;
-      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as SmallNote];
+      const notes = [this.store.selectSnapshot(NoteStore.oneFull) as BaseNote];
       return this.dialogsService.openShareEntity(type, notes, true, folderId);
     }
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {

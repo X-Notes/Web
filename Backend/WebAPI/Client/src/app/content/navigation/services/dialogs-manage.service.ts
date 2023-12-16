@@ -21,6 +21,7 @@ import { SmallNote } from '../../notes/models/small-note.model';
 import { NoteStore } from '../../notes/state/notes-state';
 import { SearchDialogComponent } from 'src/app/shared/modal_components/search-dialog/search-dialog.component';
 import { take } from 'rxjs/operators';
+import { BaseNote } from '../../notes/models/base-note.model';
 
 @Injectable({
   providedIn: 'root',
@@ -183,7 +184,7 @@ export class DialogsManageService {
     return instance;
   }
 
-  openShareEntity(currentWindowType: EntityPopupType, ents: SmallNote[] | SmallFolder[], isInnerFolderNote: boolean, folderId?: string) {
+  openShareEntity(currentWindowType: EntityPopupType, ents: BaseNote[] | SmallFolder[], isInnerFolderNote: boolean, folderId?: string) {
     this.validateIds(ents);
     this.pS.isDialogActive$.next(true);
     const config: MatDialogConfig = {
@@ -213,7 +214,7 @@ export class DialogsManageService {
     return this.store.selectSnapshot(UserStore.getUserTheme);
   }
 
-  private validateIds(ents: SmallNote[] | SmallFolder[] | string[]) {
+  private validateIds(ents: BaseNote[] | SmallFolder[] | string[]) {
     if (!ents || ents.length === 0) {
       throw new Error('Ids missing');
     }

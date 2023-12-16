@@ -115,7 +115,7 @@ export class SidebarNotesService extends MurriEntityService<RelatedNote> impleme
 
   async changeState(note: RelatedNote) {
     const resp = await this.apiRelated
-      .updateState(this.noteId, note.reletionId, note.isOpened)
+      .updateState(this.noteId, note.relationId, note.isOpened)
       .toPromise();
     if (resp.success) {
       requestAnimationFrame(() => this.murriService.refreshAndLayout());

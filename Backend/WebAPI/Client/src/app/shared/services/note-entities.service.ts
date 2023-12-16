@@ -14,6 +14,7 @@ import { UpdateNoteUI } from 'src/app/content/notes/state/update-note-ui.model';
 import { FeaturesEntitiesService } from './features-entities.service';
 import { MurriService } from './murri.service';
 import { SelectNoteEvent } from 'src/app/content/notes/note/entities/select-note.event';
+import { BottomNoteContent } from 'src/app/content/notes/models/bottom-note-content.model';
 
 export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallNote> {
   destroy = new Subject<void>();
@@ -84,13 +85,21 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     noteIds = noteIds ?? this.entities.map((x) => x.id);
     if (noteIds.length > 0) {
       const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
-      for (const info of additionalInfo) {
-        const noteIndex = this.entities.findIndex((x) => x.id === info.noteId);
-        if (noteIndex !== -1) {
-          this.entities[noteIndex].additionalInfo = info;
-        }
-      }
+      this.processAdditionalInfo(additionalInfo);
       await this.murriService.refreshLayoutAsync();
+    }
+  }
+
+  processAdditionalInfo(additionalInfo: BottomNoteContent[]): void {
+    if(!additionalInfo) return;
+    for (const info of additionalInfo) {
+      const noteIndex = this.entities.findIndex((x) => x.id === info.noteId);
+      if (noteIndex !== -1) {
+        const note = this.entities[noteIndex];
+        note.isBottomSectionLoading = true;
+        note.additionalInfo = info;
+        requestAnimationFrame(() => note.isBottomSectionLoading = false);
+      }
     }
   }
 

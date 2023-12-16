@@ -14,6 +14,7 @@ import { SmallNote } from '../../notes/models/small-note.model';
 import { CopyNotes, ChangeTypeNote, DeleteNotesPermanently } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { DialogsManageService } from './dialogs-manage.service';
+import { BaseNote } from '../../notes/models/base-note.model';
 
 @Injectable({
   providedIn: 'root',
@@ -116,9 +117,9 @@ export class MenuButtonsNotesService {
   private permissionsErrorMessage = (): string =>
     this.apiTranslate.instant('snackBar.onlyAuthorCanMoveIt');
 
-  private getSelectedNotes(): SmallNote[] {
+  private getSelectedNotes(): BaseNote[] {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      const note = this.store.selectSnapshot(NoteStore.oneFull) as SmallNote;
+      const note = this.store.selectSnapshot(NoteStore.oneFull) as BaseNote;
       return [note];
     }
     return this.store.selectSnapshot(NoteStore.getSelectedNotes);
@@ -131,14 +132,14 @@ export class MenuButtonsNotesService {
     return this.store.selectSnapshot(AppStore.getTypeNote);
   }
 
-  private successNoteCallback = (notes: SmallNote[], typeFrom: NoteTypeENUM, message: string) => {
+  private successNoteCallback = (notes: BaseNote[], typeFrom: NoteTypeENUM, message: string) => {
     this.sbws.build(() => {
       this.store.dispatch([...this.getRevertActionNotes(typeFrom, notes)]);
     }, message);
   };
 
   // eslint-disable-next-line class-methods-use-this
-  private getRevertActionNotes(type: NoteTypeENUM, notes: SmallNote[]): ChangeTypeNote[] {
+  private getRevertActionNotes(type: NoteTypeENUM, notes: BaseNote[]): ChangeTypeNote[] {
     const types = NoteTypeENUM;
     const ids = notes.map((x) => x.id);
     switch (type) {

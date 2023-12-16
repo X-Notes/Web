@@ -223,7 +223,7 @@ namespace Mapper.Mapping
             var state = relation.RelatedNoteUserStates.FirstOrDefault(x => x.UserId == callerId);
             return new RelatedNote()
             {
-                ReletionId = relation.Id,
+                RelationId = relation.Id,
                 Id = relation.RelatedNote.Id,
                 Color = relation.RelatedNote.Color,
                 Title = relation.RelatedNote.Title,

@@ -2,7 +2,7 @@
 {
     public class RelatedNote : SmallNote
     {
-        public int ReletionId { set; get; }
+        public int RelationId { set; get; }
 
         public bool IsOpened { set; get; }
     }
