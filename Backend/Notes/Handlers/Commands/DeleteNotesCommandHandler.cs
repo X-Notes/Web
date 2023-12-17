@@ -19,13 +19,13 @@ public class DeleteNotesCommandHandler : IRequestHandler<DeleteNotesCommand, Ope
     private readonly BaseNoteContentRepository collectionNoteRepository;
 
     public DeleteNotesCommandHandler(
-        IMediator _mediator, 
+        IMediator mediator, 
         NoteRepository noteRepository,
         NoteSnapshotRepository noteSnapshotRepository,
         CollectionLinkedService collectionLinkedService,
         BaseNoteContentRepository collectionNoteRepository)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.noteRepository = noteRepository;
         this.noteSnapshotRepository = noteSnapshotRepository;
         this.collectionLinkedService = collectionLinkedService;
@@ -37,20 +37,21 @@ public class DeleteNotesCommandHandler : IRequestHandler<DeleteNotesCommand, Ope
         var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command);
 
-        var notes = permissions.Where(x => x.perm.IsOwner);
-
-        if (!notes.Any())
+        var noteIds = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.NoteId).ToList();
+        
+        if (!noteIds.Any())
         {
             return new OperationResult<Unit>().SetNotFound();
         }
 
-        var notesToDelete = notes.Select(x => x.perm.Note);
-        await DeleteNotesAsync(notesToDelete);
+        var notes = await noteRepository.GetWhereAsync(x => noteIds.Contains(x.Id));
+        
+        await DeleteNotesAsync(notes);
 
         return new OperationResult<Unit>(true, Unit.Value);
     }
 
-    public async Task DeleteNotesAsync(IEnumerable<Note> notesToDelete)
+    public async Task DeleteNotesAsync(List<Note> notesToDelete)
     {
         var noteIds = notesToDelete.Select(x => x.Id);
 

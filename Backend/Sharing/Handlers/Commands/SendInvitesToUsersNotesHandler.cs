@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
 using Notifications.Services;
 using Permissions.Queries;
@@ -16,17 +17,20 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
+    private readonly NoteRepository noteRepository;
 
     public SendInvitesToUsersNotesHandler(
         UsersOnPrivateNotesService usersOnPrivateNotesService,
-        IMediator _mediator,
+        IMediator mediator,
         AppSignalRService appSignalRHub,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        NoteRepository noteRepository)
     {
         this.usersOnPrivateNotesService = usersOnPrivateNotesService;
-        mediator = _mediator;
+        this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
+        this.noteRepository = noteRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
@@ -34,24 +38,25 @@ public class SendInvitesToUsersNotesHandler : IRequestHandler<SendInvitesToUsers
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
         var permissions = await mediator.Send(command);
 
-        if (permissions.IsOwner)
+        if (!permissions.IsOwner)
         {
-            await usersOnPrivateNotesService.AddPermissionsAsync(request.NoteId, request.RefTypeId, request.UserIds);
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+        
+        await usersOnPrivateNotesService.AddPermissionsAsync(request.NoteId, request.RefTypeId, request.UserIds);
 
-            var updateCommand = new UpdatePermissionNoteWS();
-            updateCommand.IdsToAdd.Add(request.NoteId);
-            foreach (var userId in request.UserIds)
-            {
-                await appSignalRHub.UpdatePermissionUserNote(updateCommand, userId);
-            }
-
-            // NOTIFICATIONS
-            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, request.UserIds, NotificationMessagesEnum.SentInvitesToNoteV1, metadata);
-
-            return new OperationResult<Unit>(true, Unit.Value);
+        var updateCommand = new UpdatePermissionNoteWS();
+        updateCommand.IdsToAdd.Add(request.NoteId);
+        foreach (var userId in request.UserIds)
+        {
+            await appSignalRHub.UpdatePermissionUserNote(updateCommand, userId);
         }
 
-        return new OperationResult<Unit>().SetNoPermissions();
+        // NOTIFICATIONS
+        var note = await noteRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.NoteId);
+        var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = note.Title };
+        await notificationService.AddAndSendNotificationsAsync(request.UserId, request.UserIds, NotificationMessagesEnum.SentInvitesToNoteV1, metadata);
+
+        return new OperationResult<Unit>(true, Unit.Value);
     }
 }

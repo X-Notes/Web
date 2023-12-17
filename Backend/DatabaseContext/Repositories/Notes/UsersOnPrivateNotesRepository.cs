@@ -10,6 +10,11 @@ namespace DatabaseContext.Repositories.Notes
             :base(contextDB)
         {
         }
+        
+        public async Task<UserOnPrivateNotes?> GetUserAsync(Guid noteId, Guid userId)
+        {
+            return await entities.FirstOrDefaultAsync(x => x.NoteId == noteId && x.UserId == userId);
+        }
 
         public Task<List<UserOnPrivateNotes>> GetByNoteIdUserOnPrivateNote(Guid noteId)
         {
@@ -18,6 +23,14 @@ namespace DatabaseContext.Repositories.Notes
                 .ThenInclude(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)
                 .Where(x => x.NoteId == noteId).ToListAsync();
+        }
+        
+        public async Task<List<Guid>> GetNoteUserIdsAsync(Guid noteId)
+        {
+            return await entities
+                .Where(x => x.NoteId == noteId)
+                .Select(x => x.UserId)
+                .ToListAsync();
         }
 
         public Task<List<Guid>> GetNoteIdsByUserId(Guid userId)

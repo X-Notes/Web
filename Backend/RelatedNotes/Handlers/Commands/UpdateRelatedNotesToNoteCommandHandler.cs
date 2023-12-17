@@ -17,19 +17,22 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
     private readonly AppSignalRService appSignalRService;
     private readonly BillingPermissionService billingPermissionService;
     private readonly NoteWSUpdateService noteWSUpdateService;
+    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
     public UpdateRelatedNotesToNoteCommandHandler(
         IMediator mediator, 
         RelatedNoteToInnerNoteRepository relatedRepository, 
         AppSignalRService appSignalRService,
         BillingPermissionService billingPermissionService,
-        NoteWSUpdateService noteWSUpdateService)
+        NoteWSUpdateService noteWSUpdateService,
+        NotesMultipleUpdateService notesMultipleUpdateService)
     {
         this.mediator = mediator;
         this.relatedRepository = relatedRepository;
         this.appSignalRService = appSignalRService;
         this.billingPermissionService = billingPermissionService;
         this.noteWSUpdateService = noteWSUpdateService;
+        this.notesMultipleUpdateService = notesMultipleUpdateService;
     }
     
     public async Task<OperationResult<UpdateRelatedNotesWS>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
@@ -55,7 +58,7 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
         var dbValues = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
             
         // REMOVE 
-        var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId));
+        var valuesToRemove = dbValues.Where(x => !request.RelatedNoteIds.Contains(x.RelatedNoteId)).ToList();
         if (valuesToRemove.Any())
         {
             await relatedRepository.RemoveRangeAsync(valuesToRemove);
@@ -68,18 +71,21 @@ public class UpdateRelatedNotesToNoteCommandHandler : IRequestHandler<UpdateRela
         {
             NoteId = request.NoteId,
             RelatedNoteId = relatedId,
-        });
+        }).ToList();
+        
         if (valuesToAdd.Any())
         {
             await relatedRepository.AddRangeAsync(valuesToAdd);
         }
             
         // WS
+        var noteShareStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(request.NoteId);
+        
         var relatedToRemoveIds = valuesToRemove.Select(x => x.RelatedNoteId).ToList();
         var updates = new UpdateRelatedNotesWS(request.NoteId) { IdsToRemove = relatedToRemoveIds, IdsToAdd = idsToAdd };
-        if (permissions.IsMultiplyUpdate)
+        if (noteShareStatus.IsShared)
         {
-            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteShareStatus.UserIds, request.ConnectionId);
             await appSignalRService.UpdateRelatedNotes(updates, connections);
         }
 

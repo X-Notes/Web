@@ -29,8 +29,7 @@ namespace Editor.Services
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
             var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
+            
             if (permissions.CanWrite)
             {
                 // PERMISSION MEMORY

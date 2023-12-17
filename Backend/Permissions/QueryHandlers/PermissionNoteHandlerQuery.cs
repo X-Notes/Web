@@ -1,9 +1,7 @@
-﻿using Common.DatabaseModels.Models.Folders;
+﻿using Common;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using Common.DatabaseModels.Models.Users;
 using DatabaseContext.Repositories.Files;
-using DatabaseContext.Repositories.Folders;
 using DatabaseContext.Repositories.Notes;
 using DatabaseContext.Repositories.Users;
 using MediatR;
@@ -21,82 +19,92 @@ namespace Permissions.QueryHandlers
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly FileRepository fileRepository;
-        private readonly FoldersNotesRepository foldersNotesRepository;
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly IMemoryCache memoryCache;
 
         public PermissionNoteHandlerQuery(
             UserRepository userRepository,
             NoteRepository noteRepository,
             FileRepository fileRepository,
-            FoldersNotesRepository foldersNotesRepository,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             IMemoryCache memoryCache)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.fileRepository = fileRepository;
-            this.foldersNotesRepository = foldersNotesRepository;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.memoryCache = memoryCache;
+        }
+        
+        // CACHE FUNCTIONS
+        
+        private bool GetInOwnerCached(Guid noteId, Guid callerId)
+        {
+            var key = CacheKeys.NoteOwner + noteId + "-" + callerId;
+            return memoryCache.TryGetValue(key, out bool cacheValue);
+        }
+
+        private void SetNoteOwnerCache(Guid noteId, Guid callerId)
+        {
+            var key = CacheKeys.NoteOwner + noteId + "-" + callerId;
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1));
+            memoryCache.Set(key, true, cacheEntryOptions);
         }
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-            var note = await noteRepository.GetNoteIncludeUsersAsync(request.NoteId);
-            var folderNotes = await foldersNotesRepository.GetByNoteIdsIncludeFolderAndUsers(request.NoteId);
-            return GetNotePermission(note, user, folderNotes);
+            if (GetInOwnerCached(request.NoteId, request.UserId))
+            {
+                return new UserPermissionsForNote().GetFullAccess(request.UserId, request.UserId, request.NoteId);
+            }
+            
+            var note = await noteRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.NoteId);
+            return await GetNotePermissionAsync(note, request.UserId);
         }
 
-        private bool IsContainsSharedFolder(Note note, List<FoldersNotes> foldersNotes)
+        private async Task<UserPermissionsForNote> GetNotePermissionAsync(Note? note, Guid callerId)
         {
-            if (foldersNotes == null) return false;
-            return foldersNotes.Where(x => x.NoteId == note.Id).Any(x => x.Folder.IsShared() || x.Folder.ContainsPrivateUsers());
-        }
-
-        private UserPermissionsForNote GetNotePermission(Note note, User caller, List<FoldersNotes> foldersNotes)
-        {
+            var isAnonymous = callerId == Guid.Empty;
+            
             if (note == null)
             {
-                return new UserPermissionsForNote().SetNoteNotFounded();
+                return new UserPermissionsForNote().GetNoteNotFounded();
             }
-
-            var containsSharedFolders = IsContainsSharedFolder(note, foldersNotes);
-
-            if (note.UserId == caller?.Id)
+            
+            if (note.UserId == callerId)
             {
-                return new UserPermissionsForNote().SetFullAccess(caller, note, containsSharedFolders);
+                SetNoteOwnerCache(note.Id, callerId);
+                return new UserPermissionsForNote().GetFullAccess(note.UserId, callerId, note.Id);
             }
-
-            var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == caller?.Id);
-            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
-            {
-                return new UserPermissionsForNote().SetFullAccess(caller, note, containsSharedFolders);
-            }
-
+            
+            
             if (note.NoteTypeId == NoteTypeENUM.Shared)
             {
-                switch (note.RefTypeId)
+                if (note.RefTypeId == RefTypeENUM.Viewer || isAnonymous)
                 {
-                    case RefTypeENUM.Editor:
-                        {
-                            if (caller == null)
-                            {
-                                return new UserPermissionsForNote().SetOnlyRead(caller, note, containsSharedFolders);
-                            }
-                            return new UserPermissionsForNote().SetFullAccess(caller, note, containsSharedFolders);
-                        }
-                    case RefTypeENUM.Viewer:
-                        {
-                            return new UserPermissionsForNote().SetOnlyRead(caller, note, containsSharedFolders);
-                        }
+                    return new UserPermissionsForNote().GetOnlyRead(note.UserId, callerId, note.Id);
                 }
+            
+                return new UserPermissionsForNote().GetFullAccess(note.UserId, callerId, note.Id);
             }
-
-            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
+            
+            if (isAnonymous)
             {
-                return new UserPermissionsForNote().SetOnlyRead(caller, note, containsSharedFolders);
+                return new UserPermissionsForNote().GetNoAccessRights(note.UserId, callerId, note.Id);
+            }
+            
+            var folderUser = await usersOnPrivateNotesRepository.GetUserAsync(note.Id, callerId);
+            if (folderUser is { AccessTypeId: RefTypeENUM.Editor })
+            {
+                return new UserPermissionsForNote().GetFullAccess(note.UserId, callerId, note.Id);
+            }
+        
+            if (folderUser is { AccessTypeId: RefTypeENUM.Viewer })
+            {
+                return new UserPermissionsForNote().GetOnlyRead(note.UserId, callerId, note.Id);
             }
 
-            return new UserPermissionsForNote().SetNoAccessRights(caller, note, containsSharedFolders);
+            return new UserPermissionsForNote().GetNoAccessRights(note.UserId, callerId, note.Id);
         }
 
 
@@ -114,30 +122,48 @@ namespace Permissions.QueryHandlers
 
         public async Task<List<(Guid, UserPermissionsForNote)>> Handle(GetUserPermissionsForNotesManyQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
-            if (user != null)
+            if (request.NoteIds == null)
             {
-                var notes = await noteRepository.GetNotesIncludeUsersAsync(request.NoteIds);
-                var notesD = notes.ToDictionary(x => x.Id);
-                var folderNotes = await foldersNotesRepository.GetByNoteIdsIncludeFolderAndUsers(request.NoteIds.ToArray());
-
-                var result = new List<(Guid, UserPermissionsForNote)>();
-
-                foreach (var id in request.NoteIds)
-                {
-                    if (notesD.ContainsKey(id))
-                    {
-                        var noteD = notesD[id];
-                        result.Add((id, GetNotePermission(noteD, user, folderNotes)));
-                    }
-                    else
-                    {
-                        result.Add((id, new UserPermissionsForNote().SetNoteNotFounded()));
-                    }
-                }
-                return result;
+                return new List<(Guid, UserPermissionsForNote)>();
             }
-            return new List<(Guid, UserPermissionsForNote)>();
+        
+            var results = new List<(Guid, UserPermissionsForNote)>();
+            var cachedValues = new List<Guid>();
+        
+            foreach (var folderId in request.NoteIds)
+            {
+                if (GetInOwnerCached(folderId, request.UserId))
+                {
+                    cachedValues.Add(folderId);
+                    var access = new UserPermissionsForNote().GetFullAccess(request.UserId, request.UserId, folderId);
+                    results.Add((folderId, access));
+                }
+            }
+
+            var valuesWhichNeedToProcess = request.NoteIds.Except(cachedValues).ToList();
+
+            if (valuesWhichNeedToProcess.Count == 0)
+            {
+                return results;
+            }
+        
+            var notes = await noteRepository.GetWhereAsNoTrackingAsync(x => valuesWhichNeedToProcess.Contains(x.Id));
+            var notesD = notes.ToDictionary(x => x.Id);
+        
+            foreach (var id in valuesWhichNeedToProcess)
+            {
+                if (notesD.TryGetValue(id, out var noteD))
+                {
+                    var permission = await GetNotePermissionAsync(noteD, request.UserId);
+                    results.Add((id, permission));
+                }
+                else
+                {
+                    results.Add((id, new UserPermissionsForNote().GetNoteNotFounded()));
+                }
+            }
+        
+            return results;
         }
     }
 }

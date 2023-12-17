@@ -2,6 +2,7 @@
 using Common.DatabaseModels.Models.WS;
 using Common.DTO;
 using DatabaseContext.Repositories.Folders;
+using DatabaseContext.Repositories.Notes;
 using DatabaseContext.Repositories.WS;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,7 @@ public class AppSignalRHub : Hub
     private readonly ILogger<AppSignalRHub> logger;
     private readonly IMediator mediator;
     private readonly UsersOnPrivateFoldersRepository _usersOnPrivateFolders;
+    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
     public AppSignalRHub(
         IFolderServiceStorage folderServiceStorage,
@@ -30,7 +32,8 @@ public class AppSignalRHub : Hub
         UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
         ILogger<AppSignalRHub> logger,
         IMediator _mediator,
-        UsersOnPrivateFoldersRepository usersOnPrivateFolders)
+        UsersOnPrivateFoldersRepository usersOnPrivateFolders,
+        NotesMultipleUpdateService notesMultipleUpdateService)
     {
         this.folderServiceStorage = folderServiceStorage;
         this.noteServiceStorage = noteServiceStorage;
@@ -38,6 +41,7 @@ public class AppSignalRHub : Hub
         this.logger = logger;
         mediator = _mediator;
         _usersOnPrivateFolders = usersOnPrivateFolders;
+        this.notesMultipleUpdateService = notesMultipleUpdateService;
     }
 
     private Guid GetUserId()
@@ -62,7 +66,7 @@ public class AppSignalRHub : Hub
      
         if (permission.IsOwner)
         {
-            await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
+            await JoinNoteInternalAsync(noteId, ent);
             return;
         }
 
@@ -72,19 +76,23 @@ public class AppSignalRHub : Hub
             await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, res));
             return;
         }
-
-        await JoinNoteIternalAsync(noteId, ent, permission.GetAllUsers());
+        
+        await JoinNoteInternalAsync(noteId, ent);
     }
 
-    private async Task JoinNoteIternalAsync(Guid noteId, UserIdentifierConnectionId ent, List<Guid> userIds)
+    private async Task JoinNoteInternalAsync(Guid noteId, UserIdentifierConnectionId ent)
     {
         await noteServiceStorage.AddAsync(noteId, ent);
 
         var result = new OperationResult<bool>(true, true);
         await Clients.Caller.SendAsync(ClientMethods.setJoinedToNote, new JoinEntityStatus(noteId, result));
 
-        var ids = userIds.Select(x => x.ToString());
-        await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);
+        var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(noteId);
+        if (noteStatus.IsShared)
+        {
+            var ids = noteStatus.UserIds.Select(x => x.ToString());
+            await Clients.Users(ids).SendAsync(ClientMethods.updateOnlineUsersNote, noteId);   
+        }
     }
 
     public async Task LeaveNote(Guid noteId)
@@ -100,13 +108,18 @@ public class AppSignalRHub : Hub
 
         if (permission.NoteNotFound) return;
 
-        await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId, permission.GetAllUsers());
+        await RemoveOnlineUsersNoteAsync(noteId, ent.Id, userId);
     }
 
-    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId, List<Guid> userIds)
+    private async Task RemoveOnlineUsersNoteAsync(Guid noteId, Guid userIdentifier, Guid userId)
     {
-        var ids = userIds.Select(x => x.ToString());
-        await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));
+        var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(noteId);
+
+        if (noteStatus.IsShared)
+        {
+            var ids = noteStatus.UserIds.Select(x => x.ToString());
+            await Clients.Users(ids).SendAsync(ClientMethods.removeOnlineUsersNote, new LeaveFromEntity(noteId, userIdentifier, userId));   
+        }
     }
 
     // FOLDERS

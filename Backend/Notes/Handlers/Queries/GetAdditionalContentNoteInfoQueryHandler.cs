@@ -1,8 +1,5 @@
-﻿using Common.DatabaseModels.Models.Files;
-using Common.DTO.Notes.AdditionalContent;
+﻿using Common.DTO.Notes.AdditionalContent;
 using DatabaseContext.Repositories.Folders;
-using DatabaseContext.Repositories.Histories;
-using DatabaseContext.Repositories.NoteContent;
 using DatabaseContext.Repositories.Notes;
 using MediatR;
 using Notes.Queries;
@@ -13,36 +10,24 @@ namespace Notes.Handlers.Queries;
 public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAdditionalContentNoteInfoQuery, List<BottomNoteContent>>
 {
     private readonly FoldersNotesRepository foldersNotesRepository;
-    private readonly BaseNoteContentRepository collectionNoteRepository;
-    private readonly NoteSnapshotRepository noteSnapshotRepository;
     private readonly RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository;
     private readonly IMediator mediator;
+    private readonly NoteRepository noteRepository;
 
     public GetAdditionalContentNoteInfoQueryHandler(
         FoldersNotesRepository foldersNotesRepository,
-        BaseNoteContentRepository collectionNoteRepository,
-        NoteSnapshotRepository noteSnapshotRepository,
         RelatedNoteToInnerNoteRepository relatedNoteToInnerNoteRepository,
-        IMediator mediator)
+        IMediator mediator,
+        NoteRepository noteRepository)
     {
         this.foldersNotesRepository = foldersNotesRepository;
-        this.collectionNoteRepository = collectionNoteRepository;
-        this.noteSnapshotRepository = noteSnapshotRepository;
         this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
         this.mediator = mediator;
+        this.noteRepository = noteRepository;
     }
     
     public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentNoteInfoQuery request, CancellationToken cancellationToken)
     {
-        long GetSize(Guid noteId, params Dictionary<Guid, (Guid, IEnumerable<AppFile>)>[] filesDict)
-        {
-            return filesDict
-                .Where(x => x.ContainsKey(noteId))
-                .SelectMany(x => x[noteId].Item2)
-                .DistinctBy(x => x.Id)
-                .Sum(x => x.Size);
-        }
-
         var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
         var permissions = await mediator.Send(command);
 
@@ -53,24 +38,21 @@ public class GetAdditionalContentNoteInfoQueryHandler : IRequestHandler<GetAddit
             return new List<BottomNoteContent>();
         }
 
-        var permissionsDict = permissions.ToDictionary(x => x.noteId);
-
-        var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(readNoteIds);
-        var size = await collectionNoteRepository.GetMemoryOfNotes(readNoteIds);
-        var sizeSnapshots = await noteSnapshotRepository.GetMemoryOfNotesSnapshots(readNoteIds);
-
-        var notesNotes = await relatedNoteToInnerNoteRepository.GeIncludeRootNoteByRelatedNoteIds(readNoteIds);
-        var notesNotesDict = notesNotes.ToLookup(x => x.RelatedNoteId);
-
+        var notes = await noteRepository.GetNotesIncludeUsersNoTrackingAsync(readNoteIds);
+        var notesDict = notes.ToDictionary(x => x.Id);
+        
+        var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolderNoTrackingAsync(readNoteIds);
         var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
-
+        
+        var relatedNotes = await relatedNoteToInnerNoteRepository.GeIncludeRootNoteByRelatedNoteIdsNoTrackingAsync(readNoteIds);
+        var relatedNotesDict = relatedNotes.ToLookup(x => x.RelatedNoteId);
+        
         return readNoteIds.Select(noteId => new BottomNoteContent
         {
-            IsHasUserOnNote = permissionsDict.ContainsKey(noteId) ? permissionsDict[noteId].perm.SecondUsersHasAccess : false,
+            IsHasUserOnNote = notesDict.TryGetValue(noteId, out var value) && value.UsersOnPrivateNotes.Any(),
             NoteId = noteId,
             NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null,
-            NoteRelatedNotes = notesNotesDict.Contains(noteId) ? notesNotesDict[noteId].Select(x => new NoteRelatedNoteInfo(x.NoteId, x.Note.Title)).ToList() : null,
-            TotalSize = GetSize(noteId, size, sizeSnapshots)
+            NoteRelatedNotes = relatedNotesDict.Contains(noteId) ? relatedNotesDict[noteId].Select(x => new NoteRelatedNoteInfo(x.NoteId, x.Note.Title)).ToList() : null,
         }).ToList();
     }
 }

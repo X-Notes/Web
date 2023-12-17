@@ -1,5 +1,6 @@
 ﻿using Common.DTO;
 using DatabaseContext.Repositories.Labels;
+using DatabaseContext.Repositories.Notes;
 using Mapper.Mapping;
 using MediatR;
 using Notes.Commands.Sync;
@@ -13,15 +14,18 @@ public class SyncNoteStateCommandHandler : IRequestHandler<SyncNoteStateCommand,
     private readonly IMediator mediator;
     private readonly LabelsNotesRepository labelsNotesRepository;
     private readonly NoteFolderLabelMapper noteFolderLabelMapper;
+    private readonly NoteRepository noteRepository;
 
     public SyncNoteStateCommandHandler(
         IMediator mediator, 
         LabelsNotesRepository labelsNotesRepository,
-        NoteFolderLabelMapper noteFolderLabelMapper)
+        NoteFolderLabelMapper noteFolderLabelMapper,
+        NoteRepository noteRepository)
     {
         this.mediator = mediator;
         this.labelsNotesRepository = labelsNotesRepository;
         this.noteFolderLabelMapper = noteFolderLabelMapper;
+        this.noteRepository = noteRepository;
     }
 
     public async Task<OperationResult<SyncNoteResult>> Handle(SyncNoteStateCommand request, CancellationToken cancellationToken)
@@ -42,15 +46,17 @@ public class SyncNoteStateCommandHandler : IRequestHandler<SyncNoteStateCommand,
             return new OperationResult<SyncNoteResult>().SetNoPermissions();
         }
 
-        if(permission.Note.Version > request.Version)
+        var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == request.NoteId);
+        
+        if(note.Version > request.Version)
         {
-            var labels = await labelsNotesRepository.GetLabelsAsync(permission.Note.Id);
+            var labels = await labelsNotesRepository.GetLabelsAsync(note.Id);
 
             var res = new SyncNoteResult {
-                Color = permission.Note.Color,
-                Version = permission.Note.Version,
-                NoteId = permission.Note.Id,
-                Title = permission.Note.Title,
+                Color = note.Color,
+                Version = note.Version,
+                NoteId = note.Id,
+                Title = note.Title,
                 Labels = noteFolderLabelMapper.MapLabelsToLabelsDTO(labels)
             };
 

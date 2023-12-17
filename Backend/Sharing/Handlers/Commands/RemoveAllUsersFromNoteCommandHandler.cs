@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DTO;
 using Common.DTO.WebSockets.Permissions;
+using DatabaseContext.Repositories.Notes;
 using MediatR;
 using Notifications.Services;
 using Permissions.Queries;
@@ -16,17 +17,20 @@ public class RemoveAllUsersFromNoteCommandHandler : IRequestHandler<RemoveAllUse
     private readonly UsersOnPrivateNotesService usersOnPrivateNotesService;
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
+    private readonly NoteRepository noteRepository;
 
     public RemoveAllUsersFromNoteCommandHandler(
-        IMediator _mediator,
+        IMediator mediator,
         UsersOnPrivateNotesService usersOnPrivateNotesService,
         AppSignalRService appSignalRHub,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        NoteRepository noteRepository)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
+        this.noteRepository = noteRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(RemoveAllUsersFromNoteCommand request, CancellationToken cancellationToken)
@@ -45,8 +49,9 @@ public class RemoveAllUsersFromNoteCommandHandler : IRequestHandler<RemoveAllUse
                 await appSignalRHub.UpdatePermissionUserNote(updateCommand, userId);
             }
 
-            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddAndSendNotificationsAsync(permissions.Caller.Id, userIds, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata);
+            var note = await noteRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.NoteId);
+            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = note.Title };
+            await notificationService.AddAndSendNotificationsAsync(permissions.CallerId, userIds, NotificationMessagesEnum.RemoveUserFromNoteV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

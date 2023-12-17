@@ -13,7 +13,5 @@ namespace Common.DTO.Notes.AdditionalContent
         public List<NoteFolderInfo> NoteFolderInfos { set; get; }
 
         public List<NoteRelatedNoteInfo> NoteRelatedNotes { set; get; }
-
-        public long TotalSize { set; get; }
     }
 }

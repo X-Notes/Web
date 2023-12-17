@@ -17,11 +17,12 @@ namespace DatabaseContext.Repositories.Notes
             return entities.Include(x => x.RelatedNoteUserStates).Where(x => x.NoteId == noteId).ToListAsync();
         }
 
-        public Task<List<RelatedNoteToInnerNote>> GeIncludeRootNoteByRelatedNoteIds(List<Guid> noteIds)
+        public Task<List<RelatedNoteToInnerNote>> GeIncludeRootNoteByRelatedNoteIdsNoTrackingAsync(List<Guid> noteIds)
         {
             return entities
                 .Include(x => x.Note)
                 .Where(x => noteIds.Contains(x.RelatedNoteId))
+                .AsNoTracking()
                 .ToListAsync();
         }
 

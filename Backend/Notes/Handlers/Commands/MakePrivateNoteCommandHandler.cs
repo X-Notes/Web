@@ -23,7 +23,9 @@ public class MakePrivateNoteCommandHandler : IRequestHandler<MakePrivateNoteComm
         var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command);
 
-        var notes = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.Note).ToList();
+        var noteIds = permissions.Where(x => x.perm.IsOwner).Select(x => x.perm.NoteId).ToList();
+        var notes = await noteRepository.GetWhereAsync(x => noteIds.Contains(x.Id));
+
         if (notes.Any())
         {
             notes.ForEach(x =>

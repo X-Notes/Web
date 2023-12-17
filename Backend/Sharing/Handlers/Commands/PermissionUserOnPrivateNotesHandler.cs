@@ -16,17 +16,20 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
     private readonly AppSignalRService appSignalRHub;
     private readonly NotificationService notificationService;
     private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+    private readonly NoteRepository noteRepository;
 
     public PermissionUserOnPrivateNotesHandler(
-        IMediator _mediator, 
+        IMediator mediator, 
         AppSignalRService appSignalRHub,
         NotificationService notificationService,
-        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
+        UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+        NoteRepository noteRepository)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
         this.notificationService = notificationService;
         this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+        this.noteRepository = noteRepository;
     }
     
     public async Task<OperationResult<Unit>> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
@@ -52,8 +55,10 @@ public class PermissionUserOnPrivateNotesHandler : IRequestHandler<PermissionUse
             updateCommand.UpdatePermission(new UpdatePermissionEntity(access.NoteId, access.AccessTypeId));
             await appSignalRHub.UpdatePermissionUserNote(updateCommand, request.PermissionUserId);
 
-            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = permissions.Note.Title };
-            await notificationService.AddAndSendNotification(permissions.Caller.Id, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionNoteV1, metadata);
+            var note = await noteRepository.FirstOrDefaultNoTrackingAsync(x => x.Id == request.NoteId);
+            
+            var metadata = new NotificationMetadata { NoteId = request.NoteId, Title = note.Title };
+            await notificationService.AddAndSendNotification(permissions.CallerId, request.PermissionUserId, NotificationMessagesEnum.ChangeUserPermissionNoteV1, metadata);
 
             return new OperationResult<Unit>(true, Unit.Value);
         }

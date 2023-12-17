@@ -28,6 +28,7 @@ namespace Editor.Services.Audios
         private readonly AppSignalRService appSignalRService;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<AudiosCollectionHandlerCommand> logger;
+        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public AudiosCollectionHandlerCommand(
             IMediator _mediator,
@@ -37,13 +38,15 @@ namespace Editor.Services.Audios
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<AudiosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<AudiosCollectionHandlerCommand> logger,
+            NotesMultipleUpdateService notesMultipleUpdateService) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
+            this.notesMultipleUpdateService = notesMultipleUpdateService;
         }
 
         public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveAudiosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -62,15 +65,17 @@ namespace Editor.Services.Audios
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
-            if (permissions.IsMultiplyUpdate)
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
             {
                 var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateAudiosCollection(connections, updates);
             }
 
@@ -94,16 +99,18 @@ namespace Editor.Services.Audios
 
                     await base.baseNoteContentRepository.UpdateAsync(audiosCollection);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Update, audiosCollection.UpdatedAt, audiosCollection.Version)
                     {
                         Name = request.Name,
                     };
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    if (permissions.IsMultiplyUpdate)
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateAudiosCollection(connections, updates);
                     }
 
@@ -148,17 +155,19 @@ namespace Editor.Services.Audios
 
                     var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    if (permissions.IsMultiplyUpdate)
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateAudiosCollection(connections, updates);
                     }
 
@@ -190,16 +199,18 @@ namespace Editor.Services.Audios
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
                 CollectionItemIds = resp.deleteFileIds
             };
+            
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-            if (permissions.IsMultiplyUpdate)
+            if (noteStatus.IsShared)
             {
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateAudiosCollection(connections, updates);
             }
 

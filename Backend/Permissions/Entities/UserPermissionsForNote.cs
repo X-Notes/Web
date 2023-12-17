@@ -1,112 +1,52 @@
-﻿using Common.DatabaseModels.Models.Notes;
-using Common.DatabaseModels.Models.Users;
-
-namespace Permissions.Entities
+﻿namespace Permissions.Entities
 {
-    public class UserPermissionsForNote
+    public class UserPermissionsForNote : BasePermissions
     {
-        public Guid AuthorId
+        public bool NoteNotFound { private set; get; }
+        
+        public Guid NoteId { set; get; }
+        
+        
+        public UserPermissionsForNote GetFullAccess(Guid authorId, Guid callerId, Guid noteId)
         {
-            get
-            {
-                return Note.UserId;
-            }
-        }
-
-        public User Caller { set; get; }
-
-        public Note Note { set; get; }
-
-        public bool CanRead { set; get; }
-
-        public bool CanWrite { set; get; }
-
-        public bool ContainsPublicFolders { set; get; }
-
-        public bool NoteNotFound => Note == null;
-
-        public bool IsOwner
-        {
-            get
-            {
-                return Caller?.Id == Note.UserId;
-            }
-
-        }
-
-        public bool SecondUsersHasAccess
-        {
-            get
-            {
-                return Note.UsersOnPrivateNotes.Any();
-            }
-
-        }
-
-        public bool IsMultiplyUpdate
-        {
-            get
-            {
-                return Note.IsShared() || Note.UsersOnPrivateNotes.Any() || ContainsPublicFolders;
-            }
-        }
-
-        public bool IsSingleUpdate
-        {
-            get
-            {
-                return !IsMultiplyUpdate;
-            }
-        }
-
-        public UserPermissionsForNote SetFullAccess(User user, Note note, bool containsPublicFolders)
-        {
-            Caller = user;
-            Note = note;
+            AuthorId = authorId;
+            CallerId = callerId;
+            NoteId = noteId;
+            
             CanRead = true;
             CanWrite = true;
-            ContainsPublicFolders = containsPublicFolders;
+            
             return this;
         }
 
-        public UserPermissionsForNote SetOnlyRead(User user, Note note, bool containsPublicFolders)
+        public UserPermissionsForNote GetOnlyRead(Guid authorId, Guid callerId, Guid noteId)
         {
-            Caller = user;
-            Note = note;
+            AuthorId = authorId;
+            CallerId = callerId;
+            NoteId = noteId;
+            
             CanRead = true;
             CanWrite = false;
-            ContainsPublicFolders = containsPublicFolders;
+            
             return this;
         }
 
-        public UserPermissionsForNote SetNoAccessRights(User user, Note note, bool containsPublicFolders)
+        public UserPermissionsForNote GetNoAccessRights(Guid authorId, Guid callerId, Guid noteId)
         {
-            Caller = user;
-            Note = note;
+            AuthorId = authorId;
+            CallerId = callerId;
+            NoteId = noteId;
+            
             CanRead = false;
             CanWrite = false;
-            ContainsPublicFolders = containsPublicFolders;
+            
             return this;
         }
-
-
-        public UserPermissionsForNote SetNoteNotFounded()
+        
+        public UserPermissionsForNote GetNoteNotFounded()
         {
+            NoteNotFound = true;
             return this;
-        }
-
-
-        public List<Guid> GetAllUsers()
-        {
-            var userIds = new List<Guid> { AuthorId };
-
-            if(Note.UsersOnPrivateNotes != null)
-            {
-                var userNoteIds = Note.UsersOnPrivateNotes.Select(q => q.UserId).ToList();
-                userIds.AddRange(userNoteIds);
-            }
-
-            return userIds;
         }
     }
 }

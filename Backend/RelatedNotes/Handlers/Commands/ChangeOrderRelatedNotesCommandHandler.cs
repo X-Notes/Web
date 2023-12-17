@@ -10,64 +10,67 @@ namespace RelatedNotes.Handlers.Commands;
 
 public class ChangeOrderRelatedNotesCommandHandler : IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>
 {
-    private readonly IMediator _mediator;
+    private readonly IMediator mediator;
     
     private readonly RelatedNoteToInnerNoteRepository relatedRepository;
     
     private readonly AppSignalRService appSignalRService;
 
-    private readonly NoteWSUpdateService noteWSUpdateService;
+    private readonly NoteWSUpdateService noteWsUpdateService;
+    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
     public ChangeOrderRelatedNotesCommandHandler(
         IMediator mediator, 
         RelatedNoteToInnerNoteRepository relatedRepository, 
         AppSignalRService appSignalRService,
-        NoteWSUpdateService noteWSUpdateService)
+        NoteWSUpdateService noteWsUpdateService,
+        NotesMultipleUpdateService notesMultipleUpdateService)
     {
-        _mediator = mediator;
+        this.mediator = mediator;
         this.relatedRepository = relatedRepository;
         this.appSignalRService = appSignalRService;
-        this.noteWSUpdateService = noteWSUpdateService;
+        this.noteWsUpdateService = noteWsUpdateService;
+        this.notesMultipleUpdateService = notesMultipleUpdateService;
     }
     
     public async Task<OperationResult<Unit>> Handle(ChangeOrderRelatedNotesCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-        var permissions = await _mediator.Send(command);
-        var note = permissions.Note;
+        var permissions = await mediator.Send(command, cancellationToken);
 
-        if (permissions.CanWrite)
+        if (!permissions.CanWrite)
         {
-            var idsToChange = request.Positions.Select(x => x.EntityId).ToHashSet();
-            var currentRelateds = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId && idsToChange.Contains(x.RelatedNoteId));
-
-            if (currentRelateds.Any())
-            {
-                request.Positions.ForEach(x =>
-                {
-                    var note = currentRelateds.FirstOrDefault(z => z.RelatedNoteId == x.EntityId);
-                    if (note != null)
-                    {
-                        note.Order = x.Position;
-                    }
-                });
-
-                await relatedRepository.UpdateRangeAsync(currentRelateds);
-
-                if (permissions.IsMultiplyUpdate)
-                {
-                    var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
-                    var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
-                    await appSignalRService.UpdateRelatedNotes(updates, connections);
-                }
-
-                return new OperationResult<Unit>(true, Unit.Value);
-            }
-
-            return new OperationResult<Unit>().SetNotFound();
+            return new OperationResult<Unit>(false, Unit.Value);
         }
 
-        return new OperationResult<Unit>(false, Unit.Value);
+        var idsToChange = request.Positions.Select(x => x.EntityId).ToHashSet();
+        var currentRelateds = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId && idsToChange.Contains(x.RelatedNoteId));
 
+        if (currentRelateds.Any())
+        {
+            request.Positions.ForEach(x =>
+            {
+                var note = currentRelateds.FirstOrDefault(z => z.RelatedNoteId == x.EntityId);
+                if (note != null)
+                {
+                    note.Order = x.Position;
+                }
+            });
+
+            await relatedRepository.UpdateRangeAsync(currentRelateds);
+
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
+            {
+                var updates = new UpdateRelatedNotesWS(request.NoteId) { Positions = request.Positions };
+                var connections = await noteWsUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
+                await appSignalRService.UpdateRelatedNotes(updates, connections);
+            }
+
+            return new OperationResult<Unit>(true, Unit.Value);
+        }
+
+        return new OperationResult<Unit>().SetNotFound();
     }
 }

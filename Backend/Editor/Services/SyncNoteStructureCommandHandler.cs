@@ -28,7 +28,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
     private readonly AppSignalRService appSignalRService;
     
-    private readonly IMediator _mediator;
+    private readonly IMediator mediator;
 
     private readonly CollectionLinkedService collectionLinkedService;
 
@@ -36,36 +36,39 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
     private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
-    private readonly NoteWSUpdateService noteWSUpdateService;
+    private readonly NoteWSUpdateService noteWsUpdateService;
+    
+    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
     public SyncNoteStructureCommandHandler(
         BaseNoteContentRepository baseNoteContentRepository,
         HistoryCacheService historyCacheService,
         AppSignalRService appSignalRService,
-        IMediator _mediator,
+        IMediator mediator,
         CollectionLinkedService collectionLinkedService,
         ILogger<SyncNoteStructureCommandHandler> logger,
         NoteFolderLabelMapper noteFolderLabelMapper,
-        NoteWSUpdateService noteWSUpdateService)
+        NoteWSUpdateService noteWsUpdateService,
+        NotesMultipleUpdateService notesMultipleUpdateService)
     {
 
         this.historyCacheService = historyCacheService;
         this.appSignalRService = appSignalRService;
         this.baseNoteContentRepository = baseNoteContentRepository;
-        this._mediator = _mediator;
+        this.mediator = mediator;
         this.collectionLinkedService = collectionLinkedService;
         this.logger = logger;
         this.noteFolderLabelMapper = noteFolderLabelMapper;
-        this.noteWSUpdateService = noteWSUpdateService;
+        this.noteWsUpdateService = noteWsUpdateService;
+        this.notesMultipleUpdateService = notesMultipleUpdateService;
     }
 
 
     public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-        var permissions = await _mediator.Send(command);
-        var note = permissions.Note;
-
+        var permissions = await mediator.Send(command);
+        
         NoteStructureResult result = new();
 
         if (!permissions.CanWrite)
@@ -73,7 +76,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
-        var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+        var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == permissions.NoteId);
 
         var removeContentsCount = request.Diffs.RemovedItems == null ? 0 : request.Diffs.RemovedItems.Count;
         var totalCount = contents.Count - removeContentsCount + request.Diffs.GetNewItemsCount();
@@ -87,16 +90,17 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         if (request.Diffs.RemovedItems != null && request.Diffs.RemovedItems.Any())
         {
             var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
-            var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
+            var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id)).ToList();
 
-            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection);
+            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).ToList();
             if (fileContents.Any())
             {
                 var collectionIds = fileContents.Select(x => x.Id);
                 result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
             }
 
-            var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text).Select(x => x.Id);
+            var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text)
+                .Select(x => x.Id).ToList();
             if (textIds.Any())
             {
                 result.Updates.ContentIdsToDelete ??= new List<Guid>();
@@ -112,7 +116,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
             if (newItemsToAdd.Any())
             {
-                var items = newItemsToAdd.Select(content => GetNewTextContent(content, note.Id)).ToList();
+                var items = newItemsToAdd.Select(content => GetNewTextContent(content, permissions.NoteId)).ToList();
                 await baseNoteContentRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
@@ -132,7 +136,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
             if (newCollectionItemsToAdd.Any())
             {
-                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, note.Id, x.TypeId)).ToList();
+                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, permissions.NoteId, x.TypeId)).ToList();
                 await baseNoteContentRepository.AddRangeAsync(items);
 
                 result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
@@ -165,11 +169,13 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             }
         }
 
-        await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+        await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
-        if (permissions.IsMultiplyUpdate)
+        var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+        
+        if (noteStatus.IsShared)
         {
-            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            var connections = await noteWsUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
             await appSignalRService.UpdateNoteStructure(result.Updates, connections);
         }
 

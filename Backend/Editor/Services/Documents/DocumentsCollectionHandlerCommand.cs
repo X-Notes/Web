@@ -28,6 +28,7 @@ namespace Editor.Services.Documents
         private readonly AppSignalRService appSignalRService;
         private readonly NoteWSUpdateService noteWSUpdateService;
         private readonly ILogger<DocumentsCollectionHandlerCommand> logger;
+        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public DocumentsCollectionHandlerCommand(
                 IMediator _mediator,
@@ -37,13 +38,15 @@ namespace Editor.Services.Documents
                 AppSignalRService appSignalRService,
                 CollectionLinkedService collectionLinkedService,
                 NoteWSUpdateService noteWSUpdateService,
-                ILogger<DocumentsCollectionHandlerCommand> logger) : base(baseNoteContentRepository, documentNoteAppFileRepository, collectionLinkedService)
+                ILogger<DocumentsCollectionHandlerCommand> logger,
+                NotesMultipleUpdateService notesMultipleUpdateService) : base(baseNoteContentRepository, documentNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
+            this.notesMultipleUpdateService = notesMultipleUpdateService;
         }
 
 
@@ -63,15 +66,17 @@ namespace Editor.Services.Documents
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
-            if (permissions.IsMultiplyUpdate)
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
             {
                 var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateDocumentsCollection(connections, updates);
             }
 
@@ -95,16 +100,18 @@ namespace Editor.Services.Documents
 
                     await base.baseNoteContentRepository.UpdateAsync(collection);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
                     {
                         Name = request.Name,
                     };
 
-                    if (permissions.IsMultiplyUpdate)
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+                    
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateDocumentsCollection(connections, updates);
                     }
 
@@ -147,7 +154,7 @@ namespace Editor.Services.Documents
 
                     var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null, 1);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.Transform, documentNote.UpdatedAt, documentNote.Version)
                     {
@@ -155,9 +162,11 @@ namespace Editor.Services.Documents
                         Collection = result
                     };
 
-                    if (permissions.IsMultiplyUpdate)
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+                    
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateDocumentsCollection(connections, updates);
                     }
 
@@ -189,16 +198,18 @@ namespace Editor.Services.Documents
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
                 CollectionItemIds = resp.deleteFileIds
             };
+            
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-            if (permissions.IsMultiplyUpdate)
+            if (noteStatus.IsShared)
             {
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateDocumentsCollection(connections, updates);
             }
 

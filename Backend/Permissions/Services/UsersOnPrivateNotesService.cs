@@ -17,7 +17,7 @@ public class UsersOnPrivateNotesService
         this.relatedNoteToInnerNoteRepository = relatedNoteToInnerNoteRepository;
     }
 
-    public async Task<IEnumerable<Guid>> RevokeAllPermissionsNote(Guid noteId)
+    public async Task<List<Guid>> RevokeAllPermissionsNote(Guid noteId)
     {
         var usersOnPrivate = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.NoteId == noteId);
 
@@ -26,7 +26,7 @@ public class UsersOnPrivateNotesService
             return new List<Guid>();
         }
 
-        var userIds = usersOnPrivate.Select(x => x.UserId);
+        var userIds = usersOnPrivate.Select(x => x.UserId).ToList();
 
         await RemoveUserRelatedNotesAsync(userIds, new List<Guid> { noteId });
 

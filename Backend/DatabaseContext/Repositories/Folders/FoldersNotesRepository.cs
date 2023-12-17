@@ -33,14 +33,17 @@ namespace DatabaseContext.Repositories.Folders
             return entities.Where(x => x.FolderId == folderId && noteIds.Contains(x.NoteId)).ToListAsync();
         }
 
-        public Task<List<FoldersNotes>> GetByNoteIdsIncludeFolder(List<Guid> noteIds)
-        {
-            return entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
-        }
-
-        public Task<List<FoldersNotes>> GetByNoteIdsIncludeFolderAndUsers(params Guid[] noteIds)
+        public Task<List<FoldersNotes>> GetByNoteIdsIncludeFolderNoTrackingAsync(List<Guid> noteIds)
         {
             return entities.Where(ent => noteIds.Contains(ent.NoteId))
+                .Include(x => x.Folder)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public Task<List<FoldersNotes>> GetByNoteIdIncludeFolderAndUsersAsync(Guid noteId)
+        {
+            return entities.Where(ent => ent.NoteId == noteId)
                     .Include(x => x.Folder)
                     .ThenInclude(x => x.UsersOnPrivateFolders)
                     .ToListAsync();

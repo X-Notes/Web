@@ -33,6 +33,8 @@ namespace Editor.Services.Videos
         private readonly NoteWSUpdateService noteWSUpdateService;
 
         private readonly ILogger<VideosCollectionHandlerCommand> logger;
+        
+        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public VideosCollectionHandlerCommand(
             IMediator _mediator,
@@ -42,7 +44,8 @@ namespace Editor.Services.Videos
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<VideosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<VideosCollectionHandlerCommand> logger,
+            NotesMultipleUpdateService notesMultipleUpdateService) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
@@ -50,6 +53,7 @@ namespace Editor.Services.Videos
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
+            this.notesMultipleUpdateService = notesMultipleUpdateService;
         }
 
         public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemoveVideosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -68,15 +72,17 @@ namespace Editor.Services.Videos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
-            if (permissions.IsMultiplyUpdate)
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
             {
                 var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateVideosCollection(connections, updates);
             }
 
@@ -114,17 +120,19 @@ namespace Editor.Services.Videos
 
                     var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    if (permissions.IsMultiplyUpdate)
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateVideosCollection(connections, updates);
                     }
 
@@ -158,16 +166,18 @@ namespace Editor.Services.Videos
 
                     await base.baseNoteContentRepository.UpdateAsync(videosCollection);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.Update, videosCollection.UpdatedAt, videosCollection.Version)
                     {
                         Name = request.Name,
                     };
-
-                    if (permissions.IsMultiplyUpdate)
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+                    
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdateVideosCollection(connections, updates);
                     }
 
@@ -197,16 +207,18 @@ namespace Editor.Services.Videos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
                 CollectionItemIds = resp.deleteFileIds
             };
+            
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-            if (permissions.IsMultiplyUpdate)
+            if (noteStatus.IsShared)
             {
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdateVideosCollection(connections, updates);
             }
 

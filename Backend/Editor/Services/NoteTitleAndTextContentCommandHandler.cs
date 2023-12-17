@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent.TextBlockElements;
+using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets;
@@ -23,7 +24,7 @@ namespace Editor.Services
         IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>
     {
 
-        private readonly IMediator _mediator;
+        private readonly IMediator mediator;
 
         private readonly NoteRepository noteRepository;
 
@@ -33,68 +34,71 @@ namespace Editor.Services
 
         private readonly BaseNoteContentRepository textNotesRepository;
 
-        private readonly NoteWSUpdateService noteWSUpdateService;
+        private readonly NoteWSUpdateService noteWsUpdateService;
 
         private readonly NoteFolderLabelMapper mapper;
+        
+        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public NoteTitleAndTextContentCommandHandler(
-            IMediator _mediator,
+            IMediator mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
             BaseNoteContentRepository textNotesRepository,
-            NoteWSUpdateService noteWSUpdateService,
-            NoteFolderLabelMapper mapper)
+            NoteWSUpdateService noteWsUpdateService,
+            NoteFolderLabelMapper mapper,
+            NotesMultipleUpdateService notesMultipleUpdateService)
         {
-            this._mediator = _mediator;
+            this.mediator = mediator;
             this.noteRepository = noteRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.textNotesRepository = textNotesRepository;
-            this.noteWSUpdateService = noteWSUpdateService;
+            this.noteWsUpdateService = noteWsUpdateService;
             this.mapper = mapper;
+            this.notesMultipleUpdateService = notesMultipleUpdateService;
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
-            var permissions = await _mediator.Send(command);
+            var permissions = await mediator.Send(command);
 
-            if (permissions.CanWrite)
+            if (!permissions.CanWrite)
             {
-                var note = permissions.Note;
+                return new OperationResult<Unit>().SetNoPermissions();
+            }
+            
+            async Task UpdateNoteTitleAsync(Note note, string title)
+            {
+                note.Title = title;
+                note.SetDateAndVersion();
+                await noteRepository.UpdateAsync(note);
 
-                async Task UpdateNoteTitle(string title)
-                {
-                    note.Title = title;
-                    note.SetDateAndVersion();
-                    await noteRepository.UpdateAsync(note);
+                await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
+            }
+            
+            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == permissions.NoteId);
+            
+            await UpdateNoteTitleAsync(note, request.Title);
+            
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
-                }
-
-                if (permissions.IsSingleUpdate)
-                {
-                    await UpdateNoteTitle(request.Title);
-                    return new OperationResult<Unit>(true, Unit.Value);
-                }
-
-                await UpdateNoteTitle(request.Title);
-
+            if (noteStatus.IsShared)
+            {
                 // WS UPDATES
                 var update = new UpdateNoteWS { Title = note.Title, NoteId = note.Id, IsUpdateTitle = true };
-                await noteWSUpdateService.UpdateNoteWithConnections(update, permissions.GetAllUsers(), request.ConnectionId);
-
-                return new OperationResult<Unit>(true, Unit.Value);
+                await noteWsUpdateService.UpdateNoteWithConnections(update, noteStatus.UserIds, request.ConnectionId);   
             }
 
-            return new OperationResult<Unit>().SetNoPermissions();
+            return new OperationResult<Unit>(true, Unit.Value);
         }
 
         public async Task<OperationResult<List<UpdateBaseContentResult>>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-            var permissions = await _mediator.Send(command);
+            var permissions = await mediator.Send(command);
 
             if (!permissions.CanWrite)
             {
@@ -111,17 +115,20 @@ namespace Editor.Services
             
             var textsForUpdate = await textNotesRepository.GetWhereAsync(x => textIds.Contains(x.Id));
             
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
             foreach (var text in request.Texts)
             {
                 var textToUpdate = textsForUpdate.FirstOrDefault(x => text.Id == x.Id);
                 if (textToUpdate != null)
                 {
-                    var res = await UpdateOne(text, textToUpdate, request.NoteId, permissions.IsMultiplyUpdate, request.ConnectionId, permissions.GetAllUsers());
+                    var res = await UpdateOne(text, textToUpdate, request.NoteId, noteStatus.IsShared,
+                        request.ConnectionId, noteStatus.UserIds);
                     results.Add(res);   
                 }
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             return new OperationResult<List<UpdateBaseContentResult>>(success: true, results);
         }
@@ -139,7 +146,7 @@ namespace Editor.Services
             if (isMultiplyUpdate)
             {
                 var updates = new UpdateTextWS(mapper.ToTextDTO(textForUpdate));
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(noteId, userToSendIds, connectionId);
+                var connections = await noteWsUpdateService.GetConnectionsToUpdate(noteId, userToSendIds, connectionId);
                 await appSignalRService.UpdateTextContent(updates, connections);
             }
 

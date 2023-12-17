@@ -10,13 +10,19 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 {
     private readonly IMediator mediator;
     private readonly AppSignalRService appSignalRHub;
-    private readonly NoteWSUpdateService noteWSUpdateService;
+    private readonly NoteWSUpdateService noteWsUpdateService;
+    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
-    public UpdateCursorCommandHandler(IMediator _mediator, AppSignalRService appSignalRHub, NoteWSUpdateService noteWSUpdateService)
+    public UpdateCursorCommandHandler(
+        IMediator mediator, 
+        AppSignalRService appSignalRHub, 
+        NoteWSUpdateService noteWsUpdateService,
+        NotesMultipleUpdateService notesMultipleUpdateService)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.appSignalRHub = appSignalRHub;
-        this.noteWSUpdateService = noteWSUpdateService;
+        this.noteWsUpdateService = noteWsUpdateService;
+        this.notesMultipleUpdateService = notesMultipleUpdateService;
     }
 
     public async Task<OperationResult<Unit>> Handle(UpdateCursorCommand request, CancellationToken cancellationToken)
@@ -28,7 +34,9 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
 
         if (!permissions.CanRead) return new OperationResult<Unit>().SetNoPermissions();
 
-        if (permissions.IsMultiplyUpdate)
+        var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+        
+        if (noteStatus.IsShared)
         {
             var cursor = request.Cursor;
             var updates = new UpdateCursorWS(
@@ -39,9 +47,9 @@ public class UpdateCursorCommandHandler : IRequestHandler<UpdateCursorCommand, O
                 cursor.Color,
                 cursor.ItemId,
                 request.NoteId,
-                permissions.Caller.Id);
+                permissions.CallerId);
 
-            var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+            var connections = await noteWsUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
             await appSignalRHub.UpdateUserNoteCursor(updates, connections);
         }
 

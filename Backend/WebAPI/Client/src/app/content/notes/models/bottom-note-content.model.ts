@@ -13,5 +13,4 @@ export interface BottomNoteContent {
   isHasUserOnNote: boolean;
   noteFolderInfos: NoteFolderInfo[];
   noteRelatedNotes: RelatedNotesInfo[];
-  totalSize: number;
 }

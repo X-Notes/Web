@@ -20,13 +20,13 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
     private readonly FoldersNotesRepository foldersNotesRepository;
 
     public GetFullNoteQueryHandler(
-        IMediator _mediator,
+        IMediator mediator,
         NoteRepository noteRepository,
         UsersOnPrivateNotesService usersOnPrivateNotesService,
         MapperLockedEntities mapperLockedEntities,
         FoldersNotesRepository foldersNotesRepository)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.noteRepository = noteRepository;
         this.usersOnPrivateNotesService = usersOnPrivateNotesService;
         this.mapperLockedEntities = mapperLockedEntities;
@@ -52,25 +52,33 @@ public class GetFullNoteQueryHandler : IRequestHandler<GetFullNoteQuery, Operati
             }
         }
 
-        if (isCanRead)
+        if (!isCanRead)
         {
-            var note = await noteRepository.GetNoteWithLabels(request.NoteId);
+            return new OperationResult<FullNote>(false, null).SetNoPermissions();
+        }
+        
+        var note = await noteRepository.GetNoteWithLabelsAndUsers(request.NoteId);
 
-            if(!isFolderPermissions && permissions.Caller != null && !permissions.IsOwner && !permissions.GetAllUsers().Contains(permissions.Caller.Id))
-            {
-                await usersOnPrivateNotesService.AddPermissionAsync(note.Id, note.RefTypeId, permissions.Caller.Id);
-            }
-
-            if(!permissions.IsOwner)
-            {
-                note.NoteTypeId = NoteTypeENUM.Shared;
-            }
-
-            note.LabelsNotes = note.LabelsNotes.OrderBy(x => x.AddedAt).ToList();
-            var ent = mapperLockedEntities.MapNoteToFullNote(note, permissions.CanWrite);
-            return new OperationResult<FullNote>(true, ent);
+        if (note == null)
+        {
+            return  new OperationResult<FullNote>(false, null!).SetNotFound();
         }
 
-        return new OperationResult<FullNote>(false, null).SetNoPermissions();
+        var userIds = note.UsersOnPrivateNotes.Select(x => x.UserId).ToList();
+        userIds.Add(note.UserId);
+        
+        if(!isFolderPermissions && permissions.CallerId != Guid.Empty && !permissions.IsOwner && !userIds.Contains(permissions.CallerId))
+        {
+            await usersOnPrivateNotesService.AddPermissionAsync(note.Id, note.RefTypeId, permissions.CallerId);
+        }
+
+        if(!permissions.IsOwner)
+        {
+            note.NoteTypeId = NoteTypeENUM.Shared;
+        }
+
+        note.LabelsNotes = note.LabelsNotes.OrderBy(x => x.AddedAt).ToList();
+        var ent = mapperLockedEntities.MapNoteToFullNote(note, permissions.CanWrite);
+        return new OperationResult<FullNote>(true, ent);
     }
 }

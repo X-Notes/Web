@@ -81,17 +81,6 @@ export class NoteComponent implements OnInit {
     return this.userId === this.note?.userId;
   }
 
-  get size() {
-    if (this.note?.additionalInfo) {
-      const size = this.note.additionalInfo.totalSize;
-      const mb = Math.ceil(size / Math.pow(1024, 2));
-      if (mb) {
-        return `, ${mb}mb`;
-      }
-    }
-    return null;
-  }
-
   get title(): string {
     if (this.note?.title?.length > 0) {
       return this.note?.title?.replace(/[\n\r]/g, '');

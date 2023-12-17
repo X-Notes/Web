@@ -33,10 +33,18 @@ namespace DatabaseContext.Repositories.Notes
                 .Include(x => x.UsersOnPrivateNotes)
                 .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
-
-        public Task<Note?> GetNoteWithLabels(Guid id)
+        
+        public Task<List<Note>> GetNotesIncludeUsersNoTrackingAsync(List<Guid> ids)
         {
             return context.Notes
+                .Include(x => x.UsersOnPrivateNotes)
+                .Where(x => ids.Contains(x.Id)).AsNoTracking().ToListAsync();
+        }
+
+        public Task<Note?> GetNoteWithLabelsAndUsers(Guid id)
+        {
+            return context.Notes
+                .Include(x => x.UsersOnPrivateNotes)
                 .Include(x => x.LabelsNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }

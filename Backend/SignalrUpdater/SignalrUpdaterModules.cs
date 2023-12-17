@@ -12,7 +12,8 @@ namespace SignalrUpdater
             services.AddScoped<AppSignalRService>();
             services.AddScoped<FolderWSUpdateService>();
             services.AddScoped<NoteWSUpdateService>();
-
+            services.AddScoped<NotesMultipleUpdateService>();
+            
             services.AddScoped<INoteServiceStorage, WSNoteServiceStorage>();
             services.AddScoped<IFolderServiceStorage, WSFolderServiceStorage>();
         }

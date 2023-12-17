@@ -32,6 +32,7 @@ namespace Editor.Services.Photos
         private readonly NoteWSUpdateService noteWSUpdateService;
 
         private readonly ILogger<PhotosCollectionHandlerCommand> logger;
+        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public PhotosCollectionHandlerCommand(
             IMediator _mediator,
@@ -41,13 +42,15 @@ namespace Editor.Services.Photos
             AppSignalRService appSignalRService,
             CollectionLinkedService collectionLinkedService,
             NoteWSUpdateService noteWSUpdateService,
-            ILogger<PhotosCollectionHandlerCommand> logger) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
+            ILogger<PhotosCollectionHandlerCommand> logger,
+            NotesMultipleUpdateService notesMultipleUpdateService) : base(baseNoteContentRepository, collectionNoteAppFileRepository, collectionLinkedService)
         {
             this._mediator = _mediator;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
             this.noteWSUpdateService = noteWSUpdateService;
             this.logger = logger;
+            this.notesMultipleUpdateService = notesMultipleUpdateService;
         }
 
         public async Task<OperationResult<UpdateCollectionContentResult>> Handle(RemovePhotosFromCollectionCommand request, CancellationToken cancellationToken)
@@ -66,15 +69,17 @@ namespace Editor.Services.Photos
                 return new OperationResult<UpdateCollectionContentResult>().SetNotFound();
             }
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
-            if (permissions.IsMultiplyUpdate)
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
             {
                 var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
                 {
                     CollectionItemIds = resp.deleteFileIds
                 };
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdatePhotosCollection(connections, updates);
             }
 
@@ -100,7 +105,7 @@ namespace Editor.Services.Photos
                     collection.SetDateAndVersion();
                     await baseNoteContentRepository.UpdateAsync(collection);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Update, collection.UpdatedAt, collection.Version)
                     {
@@ -109,10 +114,12 @@ namespace Editor.Services.Photos
                         Height = request.Height,
                         Width = request.Width
                     };
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    if (permissions.IsMultiplyUpdate)
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdatePhotosCollection(connections, updates);
                     }
 
@@ -157,17 +164,19 @@ namespace Editor.Services.Photos
                     var metadata = collection.GetCollectionMetadata();
                     var result = new PhotosCollectionNoteDTO(null, collection.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
 
-                    await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+                    await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
                     var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.Transform, collection.UpdatedAt, collection.Version)
                     {
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
+                    
+                    var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
-                    if (permissions.IsMultiplyUpdate)
+                    if (noteStatus.IsShared)
                     {
-                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                        var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                         await appSignalRService.UpdatePhotosCollection(connections, updates);
                     }
 
@@ -202,16 +211,18 @@ namespace Editor.Services.Photos
 
             await baseNoteContentRepository.UpdateAsync(resp.collection);
 
-            await historyCacheService.UpdateNoteAsync(permissions.Note.Id, permissions.Caller.Id);
+            await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.AddCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
             {
                 CollectionItemIds = resp.deleteFileIds
             };
 
-            if (permissions.IsMultiplyUpdate)
+            var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
+            
+            if (noteStatus.IsShared)
             {
-                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.Note.Id, permissions.GetAllUsers(), request.ConnectionId);
+                var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
                 await appSignalRService.UpdatePhotosCollection(connections, updates);
             }
 

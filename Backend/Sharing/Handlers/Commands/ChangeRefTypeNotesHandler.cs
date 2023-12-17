@@ -12,9 +12,9 @@ public class ChangeRefTypeNotesHandler : IRequestHandler<ChangeRefTypeNotes, Ope
     private readonly IMediator mediator;
     private readonly NoteRepository noteRepository;
 
-    public ChangeRefTypeNotesHandler(IMediator _mediator, NoteRepository noteRepository)
+    public ChangeRefTypeNotesHandler(IMediator mediator, NoteRepository noteRepository)
     {
-        mediator = _mediator;
+        this.mediator = mediator;
         this.noteRepository = noteRepository;
     }
     
@@ -23,20 +23,25 @@ public class ChangeRefTypeNotesHandler : IRequestHandler<ChangeRefTypeNotes, Ope
         var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command);
         var isCanEdit = permissions.All(x => x.perm.IsOwner);
-        if (isCanEdit)
+        
+        if (!isCanEdit)
         {
-            foreach (var perm in permissions)
-            {
-                var note = perm.perm.Note;
-
-                note.RefTypeId = request.RefTypeId;
-                note.ToType(NoteTypeENUM.Shared);
-                note.SetDateAndVersion();
-
-                await noteRepository.UpdateAsync(note);
-            }
-            return new OperationResult<Unit>(true, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
-        return new OperationResult<Unit>().SetNoPermissions();
+
+        var noteIds = permissions.Select(x => x.noteId);
+
+        var notes = await noteRepository.GetWhereAsync(x => noteIds.Contains(x.Id));
+        
+        foreach (var note in notes)
+        {
+            note.RefTypeId = request.RefTypeId;
+            note.ToType(NoteTypeENUM.Shared);
+            note.SetDateAndVersion();
+        }
+        
+        await noteRepository.UpdateRangeAsync(notes);
+        
+        return new OperationResult<Unit>(true, Unit.Value);
     }
 }
