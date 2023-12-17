@@ -34,6 +34,7 @@ export abstract class FeaturesEntitiesService<
   };
 
   transformSpread = <T extends SmallNote | SmallFolder>(items: T[]): T[] => {
+    if(!items) return [];
     const ents = [...items];
     return ents.map((ent) => {
       return { ...ent, isSelected: false, lockRedirect: false };

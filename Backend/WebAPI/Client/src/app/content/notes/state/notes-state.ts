@@ -157,9 +157,10 @@ export class NoteStore {
   }
 
   static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
-    return notes.filter((x) =>
-      x.labelIds.some((id) => selectedLabelsFilter.some((q) => q === id)),
-    ).length;
+    if(!notes) return 0;
+    return notes?.filter((x) =>
+      x.labelIds?.some((id) => selectedLabelsFilter.some((q) => q === id)),
+    ).length ?? 0;
   }
 
   @Selector([AppStore.isNoteInner])
@@ -397,42 +398,50 @@ export class NoteStore {
 
   @Selector()
   static privateCount(state: NoteState): number {
-    const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Private);
-    if (state.selectedLabelsFilter.length === 0) {
-      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Private);
-      return notesCount?.count ?? 0;
+    const type = NoteTypeENUM.Private;
+    if (state.selectedLabelsFilter.length !== 0) {
+      const notes = this.getNotesByTypeStatic(state, type);
+      if(!notes) return 0;
+      return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
     }
-    return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+    const notesCount = state.notesCount.find(x => x.noteTypeId === type);
+    return notesCount?.count ?? 0;
   }
 
   @Selector()
   static archiveCount(state: NoteState): number {
-    const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Archive);
-    if (state.selectedLabelsFilter.length === 0) {
-      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Archive);
-      return notesCount?.count ?? 0;
+    const type = NoteTypeENUM.Archive;
+    if (state.selectedLabelsFilter.length !== 0) {
+      const notes = this.getNotesByTypeStatic(state, type);
+      if(!notes) return 0;
+      return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
     }
-    return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+    const notesCount = state.notesCount.find(x => x.noteTypeId === type);
+    return notesCount?.count ?? 0;
   }
 
   @Selector()
   static deletedCount(state: NoteState): number {
-    const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Deleted);
-    if (state.selectedLabelsFilter.length === 0) {
-      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Deleted);
-      return notesCount?.count ?? 0;
+    const type = NoteTypeENUM.Deleted;
+    if (state.selectedLabelsFilter.length !== 0) {
+      const notes = this.getNotesByTypeStatic(state, type);
+      if(!notes) return 0;
+      return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
     }
-    return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+    const notesCount = state.notesCount.find(x => x.noteTypeId === type);
+    return notesCount?.count ?? 0;
   }
 
   @Selector()
   static sharedCount(state: NoteState): number {
-    const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Shared);
-    if (state.selectedLabelsFilter.length === 0) {
-      const notesCount = state.notesCount.find(x => x.noteTypeId === NoteTypeENUM.Shared);
-      return notesCount?.count ?? 0;
+    const type = NoteTypeENUM.Shared;
+    if (state.selectedLabelsFilter.length !== 0) {
+      const notes = this.getNotesByTypeStatic(state, type);
+      if(!notes) return 0;
+      return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
     }
-    return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+    const notesCount = state.notesCount.find(x => x.noteTypeId === type);
+    return notesCount?.count ?? 0;
   }
 
   @Selector()
