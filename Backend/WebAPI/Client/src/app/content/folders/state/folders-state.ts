@@ -3,7 +3,7 @@
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable, NgZone } from '@angular/core';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { patch, updateItem } from '@ngxs/store/operators';
+import { append, patch, updateItem } from '@ngxs/store/operators';
 import {
   OperationResult,
   OperationResultAdditionalInfo,
@@ -457,16 +457,27 @@ export class FolderStore {
 
   @Action(UpdateFoldersCount)
   // eslint-disable-next-line class-methods-use-this
-  updateFoldersCount({ setState }: StateContext<FolderState>, { count, typeFolder }: UpdateFoldersCount) {
-    setState(
-      patch({
-        foldersCount: updateItem<FoldersCount>((folders) => folders.folderTypeId === typeFolder,
-          {
-            folderTypeId: typeFolder,
-            count
-          }),
-      }),
-    );
+  updateFoldersCount({ setState, getState }: StateContext<FolderState>, { count, typeFolder }: UpdateFoldersCount) {
+    const state = getState().foldersCount;
+    const typeCount = state.find(x => x.folderTypeId == typeFolder);
+    if (typeCount) {
+      setState(
+        patch({
+          foldersCount: updateItem<FoldersCount>((folders) => folders.folderTypeId === typeFolder,
+            {
+              folderTypeId: typeFolder,
+              count
+            }),
+        }),
+      );
+    } else {
+      const foldersCount = { folderTypeId: typeFolder, count } as FoldersCount;
+      setState(
+        patch({
+          foldersCount: append<FoldersCount>([foldersCount])
+        })
+      );
+    }
   }
 
   @Action(LoadFoldersCount)
@@ -660,7 +671,7 @@ export class FolderStore {
     if (resp.success) {
       const fullFolder = getState().fullFolderState?.folder;
       if (fullFolder && selectedIds.some((id) => id === fullFolder.id)) {
-        patchState({ fullFolderState: {  ... getState().fullFolderState, folder: { ...fullFolder, color } } });
+        patchState({ fullFolderState: { ...getState().fullFolderState, folder: { ...fullFolder, color } } });
       }
       const foldersForUpdate = this.getFoldersByIds(getState, selectedIds);
       foldersForUpdate.forEach((folder) => (folder.color = color));
@@ -721,7 +732,7 @@ export class FolderStore {
       if (isUpdateFullNote) {
         const folder = getState().fullFolderState?.folder;
         if (folder && folder.id === folderId) {
-          patchState({ fullFolderState: {  ... getState().fullFolderState, folder: { ...folder, title: str } } });
+          patchState({ fullFolderState: { ...getState().fullFolderState, folder: { ...folder, title: str } } });
         }
       }
 
@@ -747,7 +758,7 @@ export class FolderStore {
   @Action(LoadFullFolder)
   async loadFull({ patchState }: StateContext<FolderState>, { id }: LoadFullFolder) {
     const request = await this.api.get(id).toPromise();
-    if(request.success) {
+    if (request.success) {
       patchState({
         fullFolderState: {
           folder: request.data,
@@ -775,7 +786,7 @@ export class FolderStore {
     const folderState = getState().fullFolderState?.folder;
     if (folder && folderId === folderState?.id) {
       const newFolder: FullFolder = { ...folderState, ...folder };
-      patchState({ fullFolderState: {  ... getState().fullFolderState, folder: newFolder } });
+      patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
     }
   }
 

@@ -35,4 +35,9 @@ public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders,
     {
         return entities.Where(x => folderIds.Contains(x.FolderId)).ToListAsync();
     }
+    
+    public Task<List<Guid>> GetFolderIdsByUserId(Guid userId)
+    {
+        return entities.Where(x => x.UserId == userId).Select(x => x.FolderId).ToListAsync();
+    }
 }

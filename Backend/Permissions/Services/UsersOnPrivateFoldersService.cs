@@ -67,6 +67,11 @@ public class UsersOnPrivateFoldersService
     {
         await usersOnPrivateFoldersRepository.AddAsync(new UsersOnPrivateFolders { FolderId = folderId, AccessTypeId = refType, UserId = userId });
     }
+    
+    public Task<List<Guid>> GetFolderIdsAsync(Guid userId)
+    {
+        return usersOnPrivateFoldersRepository.GetFolderIdsByUserId(userId);
+    }
 
     private async Task RemoveUserRelatedNotesAsync(IEnumerable<Guid> userIds, IEnumerable<Guid> folderIds)
     {

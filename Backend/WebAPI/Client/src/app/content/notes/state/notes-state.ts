@@ -3,7 +3,7 @@
 /* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action, Store } from '@ngxs/store';
 import { Injectable, NgZone } from '@angular/core';
-import { patch, updateItem } from '@ngxs/store/operators';
+import { append, patch, updateItem } from '@ngxs/store/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import {
   OperationResult,
@@ -487,21 +487,33 @@ export class NoteStore {
         notes: updateItem<Notes>((notess) => notess.typeNotes === typeNote, notes),
       }),
     );
-    dispatch(new UpdateNotesCount(notes.notes?.length ?? 0, typeNote));
+    const newCount = notes.notes?.length ?? 0;
+    dispatch(new UpdateNotesCount(newCount, typeNote));
   }
 
   @Action(UpdateNotesCount)
   // eslint-disable-next-line class-methods-use-this
-  updateNotesCount({ setState }: StateContext<NoteState>, { count, typeNote }: UpdateNotesCount) {
-    setState(
-      patch({
-        notesCount: updateItem<NotesCount>((notess) => notess.noteTypeId === typeNote,
-          {
-            noteTypeId: typeNote,
-            count
-          }),
-      }),
-    );
+  updateNotesCount({ setState, getState }: StateContext<NoteState>, { count, typeNote }: UpdateNotesCount) {
+    const state = getState().notesCount;
+    const typeCount = state.find(x => x.noteTypeId == typeNote);
+    if (typeCount) {
+      setState(
+        patch({
+          notesCount: updateItem<NotesCount>((notess) => notess.noteTypeId === typeNote,
+            {
+              noteTypeId: typeNote,
+              count
+            }),
+        }),
+      );
+    } else {
+      const notesCount = { noteTypeId: typeNote, count } as NotesCount;
+      setState(
+        patch({
+          notesCount: append<NotesCount>([notesCount])
+        })
+      );
+    }
   }
 
 
