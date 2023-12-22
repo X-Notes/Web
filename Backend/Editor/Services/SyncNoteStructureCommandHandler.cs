@@ -20,7 +20,7 @@ namespace Editor.Services;
 
 public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
 {
-    private readonly int maxContents = 300;
+    private readonly int maxContents = 150;
 
     private readonly BaseNoteContentRepository baseNoteContentRepository;
 

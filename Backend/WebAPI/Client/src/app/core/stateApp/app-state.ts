@@ -42,8 +42,8 @@ interface AppState {
 @Injectable()
 export class AppStore {
   constructor(
-    public notificationService: NotificationServiceAPI, 
-    private userAPIService: UserAPIService) {}
+    public notificationService: NotificationServiceAPI,
+    private userAPIService: UserAPIService) { }
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {
@@ -342,14 +342,20 @@ export class AppStore {
   }
 
   @Action(UpdateEditorElementsCount)
-  updateEditorElementsCount({ patchState }: StateContext<AppState>, { editorElements }: UpdateEditorElementsCount){
+  updateEditorElementsCount({ patchState }: StateContext<AppState>, { editorElements }: UpdateEditorElementsCount) {
     patchState({ editorElementCount: editorElements });
   }
 
-  
+
   @Action(UpdateEditorSyncStatus)
-  updateEditorSyncStatus({ patchState }: StateContext<AppState>, { status }: UpdateEditorSyncStatus){
-    patchState({ editorSyncing: status });
+  updateEditorSyncStatus({ patchState }: StateContext<AppState>, { status }: UpdateEditorSyncStatus) {
+    if (!status) {
+      setTimeout(() => {
+        patchState({ editorSyncing: status });
+      }, 80);
+    } else {
+      patchState({ editorSyncing: status });
+    }
   }
 
   @Action(ReadAllNotifications)

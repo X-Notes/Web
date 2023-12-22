@@ -9,7 +9,7 @@ import {
   OperationResult,
   OperationResultAdditionalInfo,
 } from 'src/app/shared/models/operation-result.model';
-import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
+import { ShowSnackNotification, UpdateEditorSyncStatus } from 'src/app/core/stateApp/app-action';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
@@ -1047,6 +1047,7 @@ export class NoteStore {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
       }
+      dispatch(new UpdateEditorSyncStatus(true));
       resp = await this.apiNoteEditor.updateTitle(newTitle, noteId, this.signalR.connectionId).toPromise();
     }
     if (resp.success) {
@@ -1067,6 +1068,7 @@ export class NoteStore {
       const uiChanges = this.toUpdateNoteUI(noteId, null, null, null, null, newTitle);
       patchState({ updateNoteEvent: [uiChanges] });
     }
+    dispatch(new UpdateEditorSyncStatus(false));
     if (resp.status === OperationResultAdditionalInfo.NoAccessRights && errorPermissionMessage) {
       dispatch(new ShowSnackNotification(errorPermissionMessage));
     }

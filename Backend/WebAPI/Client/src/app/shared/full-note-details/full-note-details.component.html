@@ -1,0 +1,8 @@
+<div class="full-note-details">
+    <div class="spinner-container">
+        <app-spinner *ngIf="(editorSyncing$ | async)" [size]="8" [color]="'#777777'"></app-spinner>
+    </div>
+    <div *ngIf="(editorElementsCount$ | async)" class="note-elements-container">
+        <p>{{ (editorElementsCount$ | async).currentNumber }} / {{ (editorElementsCount$ | async).maxElements }}</p>
+    </div>
+</div>

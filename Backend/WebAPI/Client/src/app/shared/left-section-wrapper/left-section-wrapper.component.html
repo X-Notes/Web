@@ -11,7 +11,8 @@
     </div>
     <div class="information">
       <div class="separator"></div>
-      <app-memory-indicator></app-memory-indicator>
+      <app-memory-indicator *ngIf="(isNoteInner$ | async) === false"></app-memory-indicator>
+      <app-full-note-details *ngIf="(isNoteInner$ | async) === true"></app-full-note-details>
     </div>
   </div>
   <div

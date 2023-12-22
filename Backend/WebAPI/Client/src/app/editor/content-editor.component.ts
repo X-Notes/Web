@@ -65,6 +65,9 @@ import { DrawerCoordsConfig } from './entities-ui/selection/drawer-coords';
 import { EditorSelectionModeEnum } from './entities-ui/editor-selection-mode.enum';
 import { KeyDownHtmlComponent } from './entities-ui/keydown-event';
 import { KeyboardKeyEnum } from './entities-ui/keyboard-keys.enum';
+import { Store } from '@ngxs/store';
+import { UpdateEditorElementsCount } from '../core/stateApp/app-action';
+import { EditorElementsCount } from '../core/models/editor/editor-elements.count';
 
 @Component({
   selector: 'app-content-editor',
@@ -139,7 +142,8 @@ export class ContentEditorComponent
     private htmlPTCollectorService: HtmlPropertyTagCollectorService,
     editorApiFacadeService: EditorFacadeService,
     public audioService: AudioService,
-    private muuriService: MurriService
+    private muuriService: MurriService,
+    private store: Store,
   ) {
     super(editorApiFacadeService);
   }
@@ -247,6 +251,14 @@ export class ContentEditorComponent
     if (contents.length === 0) {
       this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
     }
+  
+    this.updateEditorElements();
+  }
+
+  updateEditorElements(): void {
+    const elementsCount = new EditorElementsCount(this.facade.contentsService.maxContents, this.facade.contentsService.getContents?.length ?? 0);
+    const command = new UpdateEditorElementsCount(elementsCount);
+    this.store.dispatch(command);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

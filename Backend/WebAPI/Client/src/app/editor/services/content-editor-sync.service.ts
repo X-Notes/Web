@@ -39,9 +39,8 @@ import { EditorOptions } from '../entities-ui/editor-options';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { UpdateFullNote, UpdateNoteTitleState } from 'src/app/content/notes/state/notes-actions';
-import { Label } from 'src/app/content/labels/models/label.model';
 import { OperationResultAdditionalInfo } from 'src/app/shared/models/operation-result.model';
-import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
+import { ShowSnackNotification, UpdateEditorSyncStatus } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
 
 export interface SyncResult {
@@ -277,6 +276,7 @@ export class ContentEditorSyncService {
   private async processStructureChanges(): Promise<void> {
     const [structureDiffs, res] = this.contentService.getStructureDiffsNew();
     if (!structureDiffs.isAnyChanges()) { return; }
+    this.store.dispatch(new UpdateEditorSyncStatus(true));
     const resp = await this.apiNoteEditor
       .syncContentsStructure(this.noteId, structureDiffs, this.signalRService.connectionIdOrError)
       .toPromise();
@@ -292,6 +292,7 @@ export class ContentEditorSyncService {
       const message = this.translateService.instant('snackBar.maxContents');
       this.store.dispatch(new ShowSnackNotification(message, 10000));
     }
+    this.store.dispatch(new UpdateEditorSyncStatus(false));
   }
 
   private updateIds(updateIds: EditorUpdateIds[]): void {
@@ -315,6 +316,9 @@ export class ContentEditorSyncService {
     const result: SyncResult = { isNeedLoadMemory: false };
     const type = ContentTypeENUM.Photos;
     const collectionsToUpdate = this.getCollectionsInfoDiffs<PhotosCollection>(type);
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const collection of collectionsToUpdate) {
       const command = new UpdatePhotosCollectionInfoCommand(
         this.noteId,
@@ -331,8 +335,14 @@ export class ContentEditorSyncService {
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
     }
+    if(collectionsToUpdate.length > 0){
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -357,6 +367,9 @@ export class ContentEditorSyncService {
         }
       }
     }
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     return result;
   }
 
@@ -365,6 +378,9 @@ export class ContentEditorSyncService {
     const type = ContentTypeENUM.Audios;
     // UPDATE MAIN INFO
     const collectionsToUpdate = this.getCollectionsInfoDiffs<AudiosCollection>(type);
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -378,8 +394,14 @@ export class ContentEditorSyncService {
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
     }
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -404,6 +426,9 @@ export class ContentEditorSyncService {
         }
       }
     }
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     return result;
   }
 
@@ -412,6 +437,9 @@ export class ContentEditorSyncService {
     const type = ContentTypeENUM.Documents;
     // UPDATE MAIN INFO
     const collectionsToUpdate = this.getCollectionsInfoDiffs<DocumentsCollection>(type);
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -425,8 +453,14 @@ export class ContentEditorSyncService {
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
     }
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -451,6 +485,9 @@ export class ContentEditorSyncService {
         }
       }
     }
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     return result;
   }
 
@@ -458,6 +495,9 @@ export class ContentEditorSyncService {
     const result: SyncResult = { isNeedLoadMemory: false };
     const type = ContentTypeENUM.Videos;
     const collectionsToUpdate = this.getCollectionsInfoDiffs<VideosCollection>(type);
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const collection of collectionsToUpdate) {
       const command = new BaseUpdateCollectionInfoCommand(
         this.noteId,
@@ -471,8 +511,14 @@ export class ContentEditorSyncService {
         item?.updateInfo(collection, resp.data.version, resp.data.updatedDate);
       }
     }
+    if(collectionsToUpdate.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     // UPDATES ITEMS
     const diffs = this.getCollectionItemsDiffs(type);
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
+    }
     for (const diff of diffs) {
       if (diff.itemsToAdd && diff.itemsToAdd.length > 0) {
         const ids = diff.itemsToAdd.map((x) => x.fileId);
@@ -497,6 +543,9 @@ export class ContentEditorSyncService {
         }
       }
     }
+    if(diffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
+    }
     return result;
   }
 
@@ -508,6 +557,7 @@ export class ContentEditorSyncService {
   private async processTextsChanges() {
     const textDiffs = this.getTextDiffs();
     if (textDiffs.length > 0) {
+      this.store.dispatch(new UpdateEditorSyncStatus(true));
       const results = await this.apiNoteEditor.syncContents(this.noteId, textDiffs, this.signalRService.connectionIdOrError).toPromise();
       for (const text of textDiffs) {
         const item = this.contentService.getSyncContentById<BaseText>(text.id);
@@ -515,6 +565,7 @@ export class ContentEditorSyncService {
         item.patch(text.contents, text.contentMetadata, v.version, v.updatedDate);
         item.updateDateAndVersion(v.version, v.updatedDate);
       }
+      this.store.dispatch(new UpdateEditorSyncStatus(false));
     }
   }
 

@@ -88,6 +88,7 @@ import { CustomSnackbarComponent } from './snackbars/custom-snackbar/custom-snac
 import { SnackBarHandlerStatusService } from './services/snackbar/snack-bar-handler-status.service';
 import { SnackBarWrapperService } from './services/snackbar/snack-bar-wrapper.service';
 import { SnackbarService } from './services/snackbar/snackbar.service';
+import { FullNoteDetailsComponent } from './full-note-details/full-note-details.component';
 
 @NgModule({
   declarations: [
@@ -159,6 +160,7 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
     SearchDialogComponent,
     HighlightSearchPipe,
     CustomSnackbarComponent,
+    FullNoteDetailsComponent,
   ],
   imports: [
     CommonModule,
@@ -245,7 +247,8 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
     LongTermOperationsHandlerComponent,
     LongTermOperationComponent,
     HighlightSearchPipe,
-    CustomSnackbarComponent
+    CustomSnackbarComponent,
+    FullNoteDetailsComponent
   ],
   providers: [DialogService, BackgroundService, SnackbarService, SnackBarWrapperService, SnackBarHandlerStatusService],
 })

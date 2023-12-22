@@ -21,6 +21,8 @@ import { UpdateEditorStructureWS } from '../../entities/ws/update-note-structure
 import { SyncResult } from '../../services/content-editor-sync.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { ContentState } from '../../entities/state/content-state';
+import { EditorElementsCount } from 'src/app/core/models/editor/editor-elements.count';
+import { UpdateEditorElementsCount } from 'src/app/core/stateApp/app-action';
 
 export interface ContentAndIndex<T extends ContentModelBase> {
   index: number;
@@ -33,7 +35,7 @@ export class ContentEditorContentsService {
 
   private contents: ContentModelBase[]; // TODO MAKE DICTIONARY
 
-  readonly maxContents = 300;
+  readonly maxContents = 150;
 
   private progressiveLoadOptions = {
     firstLoadCount: 30,
@@ -191,6 +193,7 @@ export class ContentEditorContentsService {
   deleteContent(contentId: string): number {
     const index = this.getIndexByContentId(contentId);
     this.deleteById(contentId, false);
+    this.updateEditorElements();
     return index;
   }
 
@@ -373,10 +376,12 @@ export class ContentEditorContentsService {
         this.contentsSync.splice(index, 1);
       }
     }
+    this.updateEditorElements();
   }
 
   deleteByIds(contentIds: string[], isDeleteInContentSync: boolean): void {
     contentIds.forEach((id) => this.deleteById(id, isDeleteInContentSync));
+    this.updateEditorElements();
   }
 
   deleteByIdsMutate(contentIds: string[], isDeleteInContentSync: boolean): void {
@@ -384,6 +389,7 @@ export class ContentEditorContentsService {
     if (isDeleteInContentSync) {
       this.contentsSync = this.contentsSync.filter((x) => !contentIds.some((q) => q === x.id));
     }
+    this.updateEditorElements();
   }
 
   // UPDATE
@@ -405,6 +411,7 @@ export class ContentEditorContentsService {
     if (isSync) {
       this.contentsSync.splice(index, 0, data.copy());
     }
+    this.updateEditorElements();
   }
 
   insertToEnd(data: ContentModelBase, isSync = false) {
@@ -412,6 +419,7 @@ export class ContentEditorContentsService {
     if (isSync) {
       this.contentsSync.push(data);
     }
+    this.updateEditorElements();
   }
 
   insertToStart(data: ContentModelBase, isSync = false) {
@@ -419,6 +427,13 @@ export class ContentEditorContentsService {
     if (isSync) {
       this.contentsSync.unshift(data);
     }
+    this.updateEditorElements();
+  }
+
+  updateEditorElements(): void {
+    const elementsCount = new EditorElementsCount(this.maxContents, this.getContents?.length ?? 0);
+    const command = new UpdateEditorElementsCount(elementsCount);
+    this.store.dispatch(command);
   }
 
   // UPDATE & PATCH
