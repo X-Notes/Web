@@ -13,15 +13,20 @@ import {
   NewNotification,
   UpdateDragMuuriState,
   Ping,
+  UpdateEditorElementsCount,
+  UpdateEditorSyncStatus,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/notifications/app-notification.model';
 import { UserAPIService } from '../user-api.service';
+import { EditorElementsCount } from '../models/editor/editor-elements.count';
 
 interface AppState {
   routing: EntityType | null;
   notifications: AppNotification[];
   isMuuriDragging: boolean;
+  editorElementCount: EditorElementsCount;
+  editorSyncing: boolean;
 }
 
 @State<AppState>({
@@ -29,7 +34,9 @@ interface AppState {
   defaults: {
     routing: null,
     notifications: [],
-    isMuuriDragging: false
+    isMuuriDragging: false,
+    editorElementCount: null,
+    editorSyncing: false,
   },
 })
 @Injectable()
@@ -44,6 +51,16 @@ export class AppStore {
       .filter((notif) => !notif.isRead)
       .sort((a, b) => b.date.getTime() - a.date.getTime());
     return notifications;
+  }
+
+  @Selector()
+  static getEditorElementCount(state: AppState): EditorElementsCount {
+    return state.editorElementCount;
+  }
+
+  @Selector()
+  static getEditorSyncing(state: AppState): boolean {
+    return state.editorSyncing;
   }
 
   @Selector()
@@ -322,6 +339,17 @@ export class AppStore {
   async loadNotifications({ patchState }: StateContext<AppState>) {
     const notifications = await this.notificationService.getNotifications().toPromise();
     patchState({ notifications });
+  }
+
+  @Action(UpdateEditorElementsCount)
+  updateEditorElementsCount({ patchState }: StateContext<AppState>, { editorElements }: UpdateEditorElementsCount){
+    patchState({ editorElementCount: editorElements });
+  }
+
+  
+  @Action(UpdateEditorSyncStatus)
+  updateEditorSyncStatus({ patchState }: StateContext<AppState>, { status }: UpdateEditorSyncStatus){
+    patchState({ editorSyncing: status });
   }
 
   @Action(ReadAllNotifications)

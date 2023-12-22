@@ -1,5 +1,6 @@
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppNotification } from '../models/notifications/app-notification.model';
+import { EditorElementsCount } from '../models/editor/editor-elements.count';
 
 export class UpdateDragMuuriState {
   static type = '[App] Drag Muuri State';
@@ -44,3 +45,16 @@ export class ShowSnackNotification {
 
   constructor(public notification: string, public duration?: number) {}
 }
+
+export class UpdateEditorElementsCount {
+  static type = '[App] Update editor elements count';
+
+  constructor(public editorElements: EditorElementsCount) {}
+}
+
+export class UpdateEditorSyncStatus {
+  static type = '[App] Update editor sync status';
+
+  constructor(public status: boolean) {}
+}
+

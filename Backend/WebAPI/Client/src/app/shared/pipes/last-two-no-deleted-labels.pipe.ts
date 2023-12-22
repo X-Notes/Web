@@ -9,6 +9,8 @@ export class LastTwoNoDeletedLabelsPipe implements PipeTransform {
     if(!labelsIds || !labels) return [];
     const labelsNoDeleted = labels.filter((x) => labelsIds.some(q => q === x.id) && x.isDeleted === false);
     const count = window.innerWidth > 1024 ? 3 : 2;
-    return labelsNoDeleted.slice(labelsNoDeleted.length - count, labelsNoDeleted.length);
+    let start = labelsNoDeleted.length - count;
+    start = start < 0 ? 0 : start; 
+    return labelsNoDeleted.slice(start, labelsNoDeleted.length);
   };
 }
