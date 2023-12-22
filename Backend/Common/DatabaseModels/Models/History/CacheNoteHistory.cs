@@ -16,8 +16,23 @@ namespace Common.DatabaseModels.Models.History
         public Note Note { set; get; }
 
         [Column(TypeName = "jsonb")]
-        public HashSet<Guid> UsersThatEditIds { set; get; }
+        public string UsersThatEditIds { set; get; }
 
         public DateTimeOffset? UpdatedAt { set; get; }
+        
+        public void UpdateUsersThatEditIds(HashSet<Guid> usersThatEditIds)
+        {
+            UsersThatEditIds = usersThatEditIds != null ? DbJsonConverter.Serialize(usersThatEditIds) : null;
+        }
+        
+        public HashSet<Guid> GetUsersThatEditIds()
+        {
+            if (!string.IsNullOrEmpty(UsersThatEditIds))
+            {
+                return DbJsonConverter.DeserializeObject<HashSet<Guid>>(UsersThatEditIds);
+            }
+
+            return null;
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace History.Commands
         public MakeNoteHistoryCommand(Guid id, HashSet<Guid> userIds)
         {
             Id = id;
-            UserIds = userIds.ToList();
+            UserIds = userIds?.ToList();
         }
     }
 }

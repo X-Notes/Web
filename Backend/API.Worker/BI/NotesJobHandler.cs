@@ -122,7 +122,7 @@ public class NotesJobHandler
                     var _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                     foreach (var history in histories)
                     {
-                        var command = new MakeNoteHistoryCommand(history.NoteId, history.UsersThatEditIds);
+                        var command = new MakeNoteHistoryCommand(history.NoteId, history.GetUsersThatEditIds());
                         var results = await _mediator.Send(command);
                     }
                 }

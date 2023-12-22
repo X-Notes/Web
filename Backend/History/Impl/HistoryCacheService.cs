@@ -25,15 +25,16 @@ public class HistoryCacheService
             {
                 NoteId = ent.NoteId,
                 UpdatedAt = DateTimeProvider.Time,
-                UsersThatEditIds = new HashSet<Guid> { ent.UserId }
             };
+            entity.UpdateUsersThatEditIds(new HashSet<Guid> { ent.UserId });
             await cacheNoteHistoryRepository.AddAsync(entity);
         }
         else
         {
             dbEntity.UpdatedAt = DateTimeProvider.Time;
-            dbEntity.UsersThatEditIds = dbEntity.UsersThatEditIds ?? new HashSet<Guid>();
-            dbEntity.UsersThatEditIds.Add(ent.UserId);
+            var usersThatEditIds = dbEntity.GetUsersThatEditIds() ?? new HashSet<Guid>();
+            usersThatEditIds.Add(ent.UserId);
+            dbEntity.UpdateUsersThatEditIds(usersThatEditIds);
             await cacheNoteHistoryRepository.UpdateAsync(dbEntity);
         }
     }
@@ -53,7 +54,7 @@ public class HistoryCacheService
         histories.ForEach(x =>
         {
             x.UpdatedAt = null;
-            x.UsersThatEditIds = new HashSet<Guid>();
+            x.UsersThatEditIds = null;
         });
         await cacheNoteHistoryRepository.UpdateRangeAsync(histories);
     }
