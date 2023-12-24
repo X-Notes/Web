@@ -201,7 +201,7 @@ export abstract class BaseTextElementComponent
     this.transformTo.emit({
       textType: contentType,
       headingType: heading,
-      contentId: this.content.id,
+      content: this,
       setFocusToEnd: true,
     });
   }

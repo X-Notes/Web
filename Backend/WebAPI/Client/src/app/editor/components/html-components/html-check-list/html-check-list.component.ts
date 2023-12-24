@@ -101,7 +101,7 @@ export class HtmlCheckListComponent
     $event.stopPropagation();
     if (this.isContentEmpty()) {
       this.transformTo.emit({
-        contentId: this.content.id,
+        content: this,
         textType: NoteTextTypeENUM.default,
         setFocusToEnd: true,
       });
