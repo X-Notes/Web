@@ -40,7 +40,7 @@ export class ContentEditorTextService {
   }
 
   transformTextContentTo(value: TransformContent): ContentAndIndex<BaseText> {
-    const item = this.contentsService.getContentAndIndexById<BaseText>(value.contentId);
+    const item = this.contentsService.getContentAndIndexById<BaseText>(value.content.getContentId());
     item.content.updateNoteTextTypeId(value.textType);
     if (value.headingType) {
       item.content.updateHeadingTypeId(value.headingType);

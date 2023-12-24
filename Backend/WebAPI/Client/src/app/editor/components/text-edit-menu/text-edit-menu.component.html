@@ -90,6 +90,11 @@
         <mat-icon svgIcon="textBackgroundColor" [inline]="true"></mat-icon>
       </div>
     </div>
+    <div class="button" [matMenuTriggerFor]="linkMenu">
+      <div class="icon">
+        <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+      </div>
+    </div>
   </div>
 </div>
 <mat-menu
@@ -133,6 +138,18 @@
         [theme]="theme"
         (pickColor)="setBackground(value[1])"
       ></app-color-pick-item>
+    </div>
+  </div>
+</mat-menu>
+<mat-menu
+  [class]="theme === themeE.Dark ? 'dark-text-color-menu' : null"
+  class="color-pallete-container"
+  #linkMenu="matMenu"
+>
+  <div appTheme (click)="preventUnSelection($event)" class="text-color-menu-container">
+    <input [(ngModel)]="link" type="text" id="name" name="name" size="10" />
+    <div (click)="saveLink($event)" class="save-link-container">
+      <span>Save</span>
     </div>
   </div>
 </mat-menu>

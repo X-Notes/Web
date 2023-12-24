@@ -16,7 +16,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { InputHtmlEvent } from './entities-ui/input-html-event';
-import { UpdateTextStyles } from './entities-ui/update-text-styles';
+import { UpdateTextStyles } from './entities-ui/text-edit-menu/update-text-styles';
 import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from './services/web-sockets-note-updater.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -153,13 +153,7 @@ export class ContentEditorComponent
   }
 
   get isTextMenuActive(): boolean {
-    return this.menuOptions && this.menuOptions.ids.length > 0 && this.getHTMLElementsById(this.menuOptions.ids).some(x => x.getText()?.length > 0);
-  }
-
-  get isMobileMenuActive$(): Observable<boolean> {
-    return this.pS.isTransformMenuMobile$.pipe(
-      map((x) => x === true && this.facade.clickableContentService.isEmptyTextItemFocus),
-    );
+    return this.menuOptions && this.menuOptions.elements.length > 0 && this.menuOptions.elements?.some(x => x.getText()?.length > 0);
   }
 
   get textEditMenuTop(): string {
@@ -224,8 +218,8 @@ export class ContentEditorComponent
   }
 
   get selectedElementsRects(): DOMRect[] {
-    if (!this.menuOptions?.ids || this.menuOptions.ids.length === 0) return [];
-    return this.getHTMLElementsById(this.menuOptions.ids).filter(x => x.getText()?.length > 0)?.map((x) =>
+    if (!this.menuOptions?.elements || this.menuOptions.elements.length === 0) return [];
+    return this.menuOptions.elements?.filter(x => x.getText()?.length > 0)?.map((x) =>
       x.getHost().nativeElement.getBoundingClientRect(),
     );
   }
@@ -309,7 +303,8 @@ export class ContentEditorComponent
         isOneRowType: true,
         backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
         color: this.htmlPTCollectorService.getPropertySelection('color'),
-        ids: [itemId]
+        elements: [item],
+        selection: this.facade.apiBrowser.getSelectionInfo(item.getEditableNative()),
       };
       return obj;
     }
@@ -326,7 +321,8 @@ export class ContentEditorComponent
         isOneRowType: htmlElements.length === 1,
         backgroundColor: this.htmlPTCollectorService.getProperty('backgroundColor', htmlElements),
         color: this.htmlPTCollectorService.getProperty('color', htmlElements),
-        ids: htmlElements.map(x => x.getContentId())
+        elements: htmlElements,
+        selection: null,
       };
       return obj;
     }
@@ -608,7 +604,7 @@ export class ContentEditorComponent
   }
 
   transformToTypeText(value: TransformContent): void {
-    const content = this.getHTMLElementById(value.contentId);
+    const content = value.content;
     if (!content) return;
     const c = content.getContent();
     const action = new UpdateTextTypeAction(c.id, c.metadata);
@@ -661,7 +657,7 @@ export class ContentEditorComponent
 
   updateTextStyles = (updates: UpdateTextStyles) => {
     const selectionMode = this.selectionMode;
-    const elements = this.getHTMLElementsById(updates.ids);
+    const elements = updates.contents;
     for (const el of elements) {
       if (!el) {
         this.unSelectItems();

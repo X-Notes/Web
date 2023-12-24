@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-  ComponentType,
   ParentInteraction,
-  ParentInteractionHTML,
 } from '../components/parent-interaction.interface';
 import { ClickableSelectableEntities } from '../entities-ui/clickable-selectable-entities.enum';
 import { Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { updateCursorDelay } from 'src/app/core/defaults/bounceDelay';
 import { DestroyComponentService } from 'src/app/shared/services/destroy-component.service';
-import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ContentModelBase } from '../entities/contents/content-model-base';
 import { SelectionService } from './selection.service';
 
@@ -49,15 +46,6 @@ export class ClickableContentService {
           console.error(e);
         }
       });
-  }
-
-  get isEmptyTextItemFocus(): boolean {
-    if (!this.currentItem) return false;
-    const isText = this.currentItem.type === ComponentType.HTML;
-    if (isText) {
-      return (this.currentItem as ParentInteractionHTML).isActiveState;
-    }
-    return false;
   }
 
   get isPhoto(): boolean {

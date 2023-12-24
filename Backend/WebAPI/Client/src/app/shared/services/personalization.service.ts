@@ -195,10 +195,6 @@ export class PersonalizationService {
     return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
   }
 
-  get isTransformMenuMobile$() {
-    return this.windowWidth$.pipe(map((value) => value < this.startMobileWidth));
-  }
-
   get isHideTextOnSmall$() {
     return this.windowWidth$.pipe(map((value) => value < 1380));
   }

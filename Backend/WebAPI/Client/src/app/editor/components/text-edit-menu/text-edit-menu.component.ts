@@ -4,7 +4,7 @@ import { TextColorsDark, TextColorsDarkAnimals } from 'src/app/shared/enums/text
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { TextEditMenuOptions } from './models/text-edit-menu-options';
 import { TransformContent } from '../../entities-ui/transform-content.model';
-import { UpdateTextStyles, TextStyles, TextUpdateValue } from '../../entities-ui/update-text-styles';
+import { UpdateTextStyles, TextStyles, TextUpdateValue } from '../../entities-ui/text-edit-menu/update-text-styles';
 import { HeadingTypeENUM } from '../../entities/contents/text-models/heading-type.enum';
 import { NoteTextTypeENUM } from '../../entities/contents/text-models/note-text-type.enum';
 
@@ -41,17 +41,27 @@ export class TextEditMenuComponent {
 
   textsAnimals = TextColorsDarkAnimals;
 
+  link: string;
+
   preventUnSelection = (e) => {
     e.preventDefault();
     e.stopPropagation();
     return false;
   };
 
+  saveLink($event: MouseEvent): void {
+    $event.preventDefault();
+    $event.stopPropagation();
+    console.log('options: ', this.options);
+    console.log('link: ', this.link);
+    // this.updateStyles('link', this.link);
+  }
+
   transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM): void {
     if (!this.options) return;
     if (this.options.textType === type && this.options.headingType === heading) {
       this.eventTransform.emit({
-        contentId: this.options.ids[0],
+        content: this.options.elements[0],
         textType: NoteTextTypeENUM.default,
         setFocusToEnd: true,
       });
@@ -61,7 +71,7 @@ export class TextEditMenuComponent {
           ? NoteTextTypeENUM.default
           : type;
       this.eventTransform.emit({
-        contentId: this.options.ids[0],
+        content: this.options.elements[0],
         textType,
         headingType: heading,
         setFocusToEnd: true,
@@ -94,10 +104,11 @@ export class TextEditMenuComponent {
       isRemoveStyles = true;
     }
     this.updateText.emit({
-      ids: this.options.ids,
+      contents: this.options.elements,
       textStyle,
       value,
       isRemoveStyles,
     });
   }
+
 }
