@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable enable
+using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
 using Common.CQRS;
 using MediatR;
@@ -10,6 +11,7 @@ namespace Labels.Commands
         [ValidationGuid]
         public Guid Id { set; get; }
 
+        [MaxLength(500)]
         public string? Name { set; get; }
 
         [Required]

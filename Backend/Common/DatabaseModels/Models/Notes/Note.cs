@@ -32,7 +32,6 @@ namespace Common.DatabaseModels.Models.Notes
         public string Color { set; get; }
         public int Order { set; get; }
 
-        [Range(1, int.MaxValue)]
         public int Version
         {
             get
@@ -41,7 +40,7 @@ namespace Common.DatabaseModels.Models.Notes
             }
             set
             {
-                if (value <= 0) throw new Exception("Value cannot be 0");
+                if (value <= 0) throw new Exception("Value cannot be less equal 0");
                 this._version = value;
             }
         }

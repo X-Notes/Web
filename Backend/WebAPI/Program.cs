@@ -9,8 +9,10 @@ using Common.Filters;
 using Common.Google;
 using Common.Redis;
 using Common.SignalR;
+using Common.Validators;
 using DatabaseContext;
 using Editor.Services;
+using FluentValidation;
 using Mapper;
 using MapperLocked;
 using Microsoft.AspNetCore.Http.Features;
@@ -105,6 +107,8 @@ builder.Services.ApplyMapperLockedDI();
 builder.Services.AddControllersWithViews(opt => opt.Filters.Add(new ValidationFilter()))
                 .AddViewLocalization()
                 .AddNewtonsoftJson();
+
+builder.Services.AddValidatorsFromAssemblyContaining<TextDiffValidator>();
 
 builder.Services.AddScoped<DisableInProductionFilter>();
 

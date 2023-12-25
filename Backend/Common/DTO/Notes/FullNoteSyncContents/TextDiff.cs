@@ -10,9 +10,9 @@ public class TextDiff
 {
     [ValidationGuid]
     public Guid Id { set; get; }
-    
+
     [Required]
     public TextContentMetadataDto ContentMetadata { set; get; }
-    
+
     public List<TextBlockDto> Contents { set; get; }
 }

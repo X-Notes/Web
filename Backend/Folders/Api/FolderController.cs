@@ -12,28 +12,20 @@ using Folders.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notes.Queries;
 
 namespace Folders.Api;
 
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class FolderController : ControllerBase
+public class FolderController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    public FolderController(IMediator _mediator)
-    {
-        this._mediator = _mediator;
-    }
-
-
     [HttpGet("new")]
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<SmallFolder>> Add()
     {
         var command = new NewFolderCommand(this.GetUserId());
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [HttpGet("type/{id}")]
@@ -41,7 +33,7 @@ public class FolderController : ControllerBase
     public async Task<List<SmallFolder>> GetFolders(FolderTypeENUM id, [FromQuery] PersonalizationSettingDTO settings)
     {
         var query = new GetFoldersByTypeQuery(this.GetUserId(), id, settings);
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
 
 
@@ -50,16 +42,16 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<List<SmallFolder>>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
     {
         query.UserId = this.GetUserId();
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
-    
+
     [HttpGet("count")]
     [ValidationRequireUserIdFilter]
     public async Task<List<FoldersCount>> GetFoldersCountAsync()
     {
         var query = new GetFoldersCountQuery();
         query.UserId = this.GetUserId();
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
 
     [HttpGet("{id}")]
@@ -67,7 +59,7 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<FullFolder>> Get(Guid id)
     {
         var query = new GetFullFolderQuery(this.GetUserIdUnStrict(), id);
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
 
     [HttpPatch("sync/state")]
@@ -75,17 +67,17 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<SyncFolderResult>> SyncFolderState(SyncFolderStateCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
-    // Commands 
+    // Commands
 
     [HttpPatch("archive")]
     [ValidationRequireUserIdFilter]
     public async Task<OperationResult<Unit>> ArchiveFolder([FromBody] ArchiveFolderCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [HttpPatch("delete")]
@@ -93,7 +85,7 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<List<Guid>>> SetDeleteNotes([FromBody] SetDeleteFolderCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [HttpPatch("ref/private")]
@@ -101,7 +93,7 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<Unit>> MakePrivate([FromBody] MakePrivateFolderCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
 
@@ -110,7 +102,7 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<Unit>> ChangeColor([FromBody] ChangeColorFolderCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [HttpPatch("copy")]
@@ -118,7 +110,7 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<CopyFoldersResult>> CopyFolder([FromBody] CopyFolderCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 
     [HttpPatch("delete/permanently")]
@@ -126,7 +118,7 @@ public class FolderController : ControllerBase
     public async Task DeleteNotes([FromBody] DeleteFoldersCommand command)
     {
         command.UserId = this.GetUserId();
-        await _mediator.Send(command);
+        await mediator.Send(command);
     }
 
     [HttpPost("additional")]
@@ -134,7 +126,7 @@ public class FolderController : ControllerBase
     public async Task<List<BottomFolderContent>> GetAdditionalInfo(GetAdditionalContentFolderInfoQuery query)
     {
         query.UserId = this.GetUserId();
-        return await _mediator.Send(query);
+        return await mediator.Send(query);
     }
 
     [HttpPatch("order")]
@@ -142,6 +134,6 @@ public class FolderController : ControllerBase
     public async Task<OperationResult<Unit>> UpdateOrder(UpdatePositionsFoldersCommand command)
     {
         command.UserId = this.GetUserId();
-        return await _mediator.Send(command);
+        return await mediator.Send(command);
     }
 }

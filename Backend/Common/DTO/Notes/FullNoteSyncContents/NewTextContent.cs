@@ -17,6 +17,6 @@ public class NewTextContent
 
     [Required]
     public int Order { set; get; }
-    
+
     public List<TextBlockDto> Contents { set; get; }
 }

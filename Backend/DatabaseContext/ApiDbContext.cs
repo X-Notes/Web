@@ -13,6 +13,7 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.DatabaseModels.Models.Users.Notifications;
 using Common.DatabaseModels.Models.WS;
+using DatabaseContext.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseContext
@@ -59,12 +60,12 @@ namespace DatabaseContext
         public DbSet<AppFile> Files { set; get; }
 
         public DbSet<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
-        
+
         public DbSet<FileType> FileTypes { set; get; }
 
         // NOTE CONTENT
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
-        
+
 
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
@@ -100,7 +101,6 @@ namespace DatabaseContext
         // SEC
         public DbSet<RefreshToken> RefreshTokens { set; get; }
 
-
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
             //Database.EnsureCreated();
@@ -108,81 +108,19 @@ namespace DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // CONTENT
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(NoteConfiguration).Assembly);
 
-            modelBuilder.Entity<BaseNoteContent>()
-                .HasOne(x => x.Note)
-                .WithMany(x => x.Contents)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            modelBuilder.Entity<BaseNoteContent>()
-                .HasMany(p => p.Files)
-                .WithMany(p => p.BaseNoteContents)
-                .UsingEntity<CollectionNoteAppFile>(
-                    j => j
-                        .HasOne(pt => pt.AppFile)
-                        .WithMany(t => t.CollectionNoteAppFiles)
-                        .HasForeignKey(pt => pt.AppFileId),
-                    j => j
-                        .HasOne(pt => pt.BaseNoteContent)
-                        .WithMany(p => p.CollectionNoteAppFiles)
-                        .HasForeignKey(pt => pt.BaseNoteContentId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { CollectionNoteId = bc.BaseNoteContentId, bc.AppFileId });
-                    });
-            
-            modelBuilder.Entity<BaseNoteContent>().Property(x => x.Version).HasDefaultValue(1);
-
+            // TextNoteIndex
             modelBuilder.Entity<TextNoteIndex>().HasKey(x => x.BaseNoteContentId);
 
-            // USER
-            modelBuilder.Entity<User>().Property(x => x.Email).IsRequired();
-            modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
-            modelBuilder.Entity<User>().Property(x => x.BillingPlanId).HasDefaultValue(BillingPlanTypeENUM.Standart);
+            // USER PROFILE
+            modelBuilder.Entity<UserProfilePhoto>().HasKey(x => x.UserId);
 
-            modelBuilder.Entity<User>()
-                .HasOne(x => x.CurrentBackground)
-                .WithOne(q => q.CurrentUserBackground)
-                .HasForeignKey<User>(h => h.CurrentBackgroundId);
-
-            modelBuilder.Entity<User>()
-                .HasOne(x => x.UserProfilePhoto)
-                .WithOne(q => q.User)
-                .HasForeignKey<UserProfilePhoto>(h => h.UserId);
-
-            modelBuilder.Entity<UserProfilePhoto>()
-                .HasKey(x => x.UserId);
-
-            // SEC
-
-            modelBuilder.Entity<RefreshToken>()
-                .HasKey(bc => new { bc.UserId, bc.TokenString });
-
-            // NOTIFICATIONS
-            modelBuilder.Entity<Notification>().Property(x => x.NotificationMessagesId).HasDefaultValue(NotificationMessagesEnum.SentInvitesToNoteV1);
+            // RefreshToken
+            modelBuilder.Entity<RefreshToken>().HasKey(bc => new { bc.UserId, bc.TokenString });
 
             // WS
             modelBuilder.Entity<UserIdentifierConnectionId>().HasKey(x => new { x.Id });
-
-            // PersonalizationSetting
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.NotesInFolderCount)
-                .HasDefaultValue(5);
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .HasOne(x => x.SortedFolderByType)
-                .WithMany(x => x.PersonalizationSettingsFolders)
-                .HasForeignKey(x => x.SortedFolderByTypeId);
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .HasOne(x => x.SortedNoteByType)
-                .WithMany(x => x.PersonalizationSettingsNotes)
-                .HasForeignKey(x => x.SortedNoteByTypeId);
-
-            // ----------------------------------------
-
 
             modelBuilder.Entity<FileType>()
                 .HasMany(x => x.AppFiles)
@@ -192,70 +130,13 @@ namespace DatabaseContext
             modelBuilder.Entity<AppFileUploadInfo>()
                 .HasKey(x => x.AppFileId);
 
-
             modelBuilder.Entity<AppFile>()
                 .HasOne(x => x.User)
                 .WithMany(z => z.Files)
                 .HasForeignKey(h => h.UserId);
 
-            modelBuilder.Entity<Note>()
-                .HasKey(x => new { x.Id });
-
-            modelBuilder.Entity<LabelsNotes>()
-                .HasKey(bc => new { bc.NoteId, bc.LabelId });
-
-            modelBuilder.Entity<LabelsNotes>()
-                .HasOne(bc => bc.Label)
-                .WithMany(b => b.LabelsNotes)
-                .HasForeignKey(bc => bc.LabelId);
-
-            modelBuilder.Entity<LabelsNotes>()
-                .HasOne(bc => bc.Note)
-                .WithMany(c => c.LabelsNotes)
-                .HasForeignKey(bc => bc.NoteId);
-
             modelBuilder.Entity<CacheNoteHistory>()
                 .HasKey(bc => new { bc.NoteId });
-
-
-            modelBuilder.Entity<FoldersNotes>()
-                .HasKey(bc => new { bc.NoteId, bc.FolderId });
-
-            modelBuilder.Entity<FoldersNotes>()
-                .HasOne(bc => bc.Folder)
-                .WithMany(b => b.FoldersNotes)
-                .HasForeignKey(bc => bc.FolderId);
-
-            modelBuilder.Entity<FoldersNotes>()
-                .HasOne(bc => bc.Note)
-                .WithMany(c => c.FoldersNotes)
-                .HasForeignKey(bc => bc.NoteId);
-
-            modelBuilder.Entity<UserOnPrivateNotes>()
-                .HasKey(bc => new { bc.NoteId, bc.UserId });
-
-            modelBuilder.Entity<UserOnPrivateNotes>()
-                .HasOne(bc => bc.Note)
-                .WithMany(b => b.UsersOnPrivateNotes)
-                .HasForeignKey(bc => bc.NoteId);
-
-            modelBuilder.Entity<UserOnPrivateNotes>()
-                .HasOne(bc => bc.User)
-                .WithMany(b => b.UserOnPrivateNotes)
-                .HasForeignKey(bc => bc.UserId);
-
-            modelBuilder.Entity<UsersOnPrivateFolders>()
-                .HasKey(bc => new { bc.FolderId, bc.UserId });
-
-            modelBuilder.Entity<UsersOnPrivateFolders>()
-                .HasOne(bc => bc.Folder)
-                .WithMany(b => b.UsersOnPrivateFolders)
-                .HasForeignKey(bc => bc.FolderId);
-
-            modelBuilder.Entity<UsersOnPrivateFolders>()
-                .HasOne(bc => bc.User)
-                .WithMany(b => b.UsersOnPrivateFolders)
-                .HasForeignKey(bc => bc.UserId);
 
             // RELATION NOTES
 
@@ -271,7 +152,6 @@ namespace DatabaseContext
                 .HasOne(bc => bc.RelatedNote)
                 .WithMany(b => b.ReletatedNoteToInnerNotesTo)
                 .HasForeignKey(bc => bc.RelatedNoteId);
-            
 
             modelBuilder.Entity<NoteSnapshot>()
                 .HasMany(x => x.AppFiles)
@@ -289,37 +169,6 @@ namespace DatabaseContext
                     {
                         j.HasKey(bc => new { bc.NoteSnapshotId, bc.AppFileId });
                     });
-
-            modelBuilder.Entity<User>()
-                .HasMany(p => p.NoteHistories)
-                .WithMany(p => p.Users)
-                .UsingEntity<UserNoteSnapshotManyToMany>(
-                    j => j
-                        .HasOne(pt => pt.NoteSnapshot)
-                        .WithMany(t => t.UserHistories)
-                        .HasForeignKey(pt => pt.NoteSnapshotId),
-                    j => j
-                        .HasOne(pt => pt.User)
-                        .WithMany(p => p.UserHistories)
-                        .HasForeignKey(pt => pt.UserId),
-                    j =>
-                    {
-                        j.HasKey(bc => new { bc.UserId, bc.NoteSnapshotId });
-                    });
-
-
-
-            modelBuilder.Entity<Notification>()
-                .HasOne(m => m.UserFrom)
-                .WithMany(t => t.NotificationsFrom)
-                .HasForeignKey(m => m.UserFromId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Notification>()
-                .HasOne(m => m.UserTo)
-                .WithMany(t => t.NotificationsTo)
-                .HasForeignKey(m => m.UserToId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<FileType>().HasData(
                 new FileType { Id = FileTypeEnum.Audio, Name = nameof(FileTypeEnum.Audio) },
@@ -349,8 +198,6 @@ namespace DatabaseContext
             modelBuilder.Entity<FontSize>().HasData(
                 new FontSize { Id = FontSizeENUM.Medium, Name = nameof(FontSizeENUM.Medium) },
                 new FontSize { Id = FontSizeENUM.Big, Name = nameof(FontSizeENUM.Big) });
-
-
 
             modelBuilder.Entity<FolderType>().HasData(
                 new FolderType { Id = FolderTypeENUM.Private, Name = nameof(FolderTypeENUM.Private) },
@@ -397,13 +244,13 @@ namespace DatabaseContext
                     // memory
 
                 });
-            
+
             modelBuilder.Entity<SortedByType>().HasData(
                 new SortedByType { Id = SortedByENUM.AscDate, Name = nameof(SortedByENUM.AscDate) },
                 new SortedByType { Id = SortedByENUM.DescDate, Name = nameof(SortedByENUM.DescDate) },
                 new SortedByType { Id = SortedByENUM.CustomOrder, Name = nameof(SortedByENUM.CustomOrder) }
             );
-            
+
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Collection, Name = nameof(ContentTypeENUM.Collection) }
@@ -412,7 +259,6 @@ namespace DatabaseContext
             modelBuilder.Entity<Storage>().HasData(
                 new Storage { Id = StoragesEnum.DEV, Name = "DEV" }
              );
-
 
             modelBuilder.Entity<NotificationMessages>().HasData(
                 new NotificationMessages { Id = NotificationMessagesEnum.ChangeUserPermissionFolderV1, MessageKey = NotificationConstants.ChangeUserPermissionFolder },

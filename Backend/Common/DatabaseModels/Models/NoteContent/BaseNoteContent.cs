@@ -32,7 +32,7 @@ namespace Common.DatabaseModels.Models.NoteContent
             }
             set
             {
-                if (value <= 0) throw new Exception("Value cannot be 0");
+                if (value <= 0) throw new Exception("Value cannot be less equal 0");
                 this._version = value;
             }
         }
