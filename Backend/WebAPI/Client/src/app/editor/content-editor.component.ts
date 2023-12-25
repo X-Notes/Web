@@ -16,7 +16,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { InputHtmlEvent } from './entities-ui/input-html-event';
-import { UpdateTextStyles } from './entities-ui/text-edit-menu/update-text-styles';
+import { UpdateTextStyles } from './entities-ui/text-edit-menu/update-texts-styles';
 import { DeltaConverter } from './converter/delta-converter';
 import { WebSocketsNoteUpdaterService } from './services/web-sockets-note-updater.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -68,6 +68,7 @@ import { KeyboardKeyEnum } from './entities-ui/keyboard-keys.enum';
 import { Store } from '@ngxs/store';
 import { UpdateEditorElementsCount } from '../core/stateApp/app-action';
 import { EditorElementsCount } from '../core/models/editor/editor-elements.count';
+import { UpdateTextStyle } from './entities-ui/text-edit-menu/update-text-style';
 
 @Component({
   selector: 'app-content-editor',
@@ -127,6 +128,8 @@ export class ContentEditorComponent
 
   emptyFocus = false;
 
+  linkMenuOpened = false;
+
   ngForSubject = new Subject<void>(); // for lazy loading
 
   // selection
@@ -148,37 +151,19 @@ export class ContentEditorComponent
     super(editorApiFacadeService);
   }
 
-  get selectionMode(): EditorSelectionModeEnum {
-    return this.facade.selectionService.selectionMode;
-  }
-
   get isTextMenuActive(): boolean {
     return this.menuOptions && this.menuOptions.elements.length > 0 && this.menuOptions.elements?.some(x => x.getText()?.length > 0);
   }
 
-  get textEditMenuTop(): string {
-    if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
-      const selection = this.facade.apiBrowser.getSelection();
-      const range = selection.getRangeAt(0);
-      const coords = range.getBoundingClientRect();
-      const getCursorTop = coords.top + this.mainSection.nativeElement?.scrollTop - 5;
+  get textEditMenuTop(): number {
 
-      const res = (
-        getCursorTop -
-        this.textEditMenu.nativeElement.offsetHeight -
-        this.mainSection.nativeElement.scrollTop
-      );
-
-      return res + 'px';
-    }
-
-    if (this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows) {
+    if (this.selectedElementsRects.length > 0) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
       const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
-      return resTop < 52 ? '52px' : (resTop + 'px'); // to stick menu while select couple of elements and scroll down
+      return resTop < 52 ? 52 : resTop; // to stick menu while select couple of elements and scroll down
     }
 
-    return '0';
+    return 0;
   }
 
   get isDrawing(): boolean {
@@ -186,23 +171,25 @@ export class ContentEditorComponent
   }
 
   get textEditMenuLeft(): number {
+    const sMode = this.menuOptions?.selectionMode;
     if (this.pS.isMobile()) {
       const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;
       return (this.pS.windowWidth$.getValue() - textMenuWidth) / 2;
     }
 
-    if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
-      const selection = this.facade.apiBrowser.getSelection();
-      const range = selection.getRangeAt(0);
-      const coords = range.getBoundingClientRect();
-      return (coords.left + coords.right) / 2;
+    if (sMode === EditorSelectionModeEnum.DefaultSelection) {
+      return (this.menuOptions.selection.rect.left + this.menuOptions.selection.rect.right) / 2;
     }
 
-    if (this.selectionMode === EditorSelectionModeEnum.EntireRow || this.selectionMode === EditorSelectionModeEnum.MultiplyRows) {
+    if (sMode === EditorSelectionModeEnum.EntireRow || sMode === EditorSelectionModeEnum.MultiplyRows) {
       return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
     }
 
     return 0;
+  }
+
+  get selectionMode(): EditorSelectionModeEnum {
+    return this.facade.selectionService.selectionMode;
   }
 
   get lastContentId(): string {
@@ -276,7 +263,7 @@ export class ContentEditorComponent
     this.facade.selectionService.onSelectChanges$
       .pipe(takeUntil(this.facade.dc.d$))
       .subscribe(() => {
-        if (this.options$.getValue().isReadOnlyMode) {
+        if (this.options$.getValue().isReadOnlyMode || this.linkMenuOpened) {
           return;
         }
         if (this.selectionMode === EditorSelectionModeEnum.MultiplyRows || this.isDrawing) {
@@ -286,6 +273,10 @@ export class ContentEditorComponent
         this.facade.cdr.detectChanges();
         setTimeout(() => this.facade.cdr.detectChanges(), 50);
       });
+  }
+
+  onChangeLinkMenuState(state: boolean): void {
+    this.linkMenuOpened = state;
   }
 
 
@@ -303,8 +294,10 @@ export class ContentEditorComponent
         isOneRowType: true,
         backgroundColor: this.htmlPTCollectorService.getPropertySelection('backgroundColor'),
         color: this.htmlPTCollectorService.getPropertySelection('color'),
+        link: this.htmlPTCollectorService.getLink(),
         elements: [item],
         selection: this.facade.apiBrowser.getSelectionInfo(item.getEditableNative()),
+        selectionMode: this.selectionMode
       };
       return obj;
     }
@@ -321,8 +314,10 @@ export class ContentEditorComponent
         isOneRowType: htmlElements.length === 1,
         backgroundColor: this.htmlPTCollectorService.getProperty('backgroundColor', htmlElements),
         color: this.htmlPTCollectorService.getProperty('color', htmlElements),
+        link: null,
         elements: htmlElements,
         selection: null,
+        selectionMode: this.selectionMode
       };
       return obj;
     }
@@ -693,6 +688,37 @@ export class ContentEditorComponent
     }
     this.unSelectItems();
   };
+
+  updateSelectedText(content: UpdateTextStyle): void {
+    const el = content.content;
+    const blocks = el.getTextBlocks();
+    const html = DeltaConverter.convertTextBlocksToHTML(blocks);
+    if (!html) return;
+    let resultDelta: DeltaStatic;
+    // { index: selection.start, length: selection.end - selection.start, selection };
+    if (content.isRemoveStyles) {
+      resultDelta = DeltaConverter.removeStyles(html, content.selection.start, content.selection.end - content.selection.start);
+    } else {
+      resultDelta = DeltaConverter.setStyles(
+        html,
+        content.selection.start,
+        content.selection.end - content.selection.start,
+        content.textStyle,
+        content.value,
+      );
+    }
+    if (el) {
+      setTimeout(() => { // need when to many elements updating at the same time and page is freezing
+        const elLock = el;
+        let actionRestore: () => void = null;
+        if (content.selection) {
+          content.selection.start = content.selection.end;
+          actionRestore = () => elLock.restoreSelection(content.selection);
+        }
+        elLock.updateContentsAndSync(DeltaConverter.convertDeltaToTextBlocks(resultDelta), actionRestore);
+      }, 5);
+    }
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHtmlHandler(model: InputHtmlEvent): void {

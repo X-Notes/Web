@@ -1,7 +1,7 @@
 import Quill, { DeltaStatic } from 'quill';
 import { TextBlock } from '../entities/contents/text-models/text-block';
 import { TextType } from '../entities/contents/text-models/text-type';
-import { TextUpdateValue } from '../entities-ui/text-edit-menu/update-text-styles';
+import { TextUpdateValue } from '../entities-ui/text-edit-menu/update-texts-styles';
 import { DeltaListEnum } from './entities/delta-list.enum';
 
 export interface StringAny {

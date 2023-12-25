@@ -2,6 +2,7 @@ import { HeadingTypeENUM } from "src/app/editor/entities/contents/text-models/he
 import { NoteTextTypeENUM } from "src/app/editor/entities/contents/text-models/note-text-type.enum";
 import { ParentInteractionHTML } from "../../parent-interaction.interface";
 import { SaveSelection } from "src/app/editor/entities-ui/save-selection";
+import { EditorSelectionModeEnum } from "src/app/editor/entities-ui/editor-selection-mode.enum";
 
 
 export interface TextEditMenuOptions {
@@ -12,6 +13,8 @@ export interface TextEditMenuOptions {
   isOneRowType: boolean;
   backgroundColor: string;
   color: string;
+  link: string;
   elements: ParentInteractionHTML[];
   selection: SaveSelection;
+  selectionMode: EditorSelectionModeEnum;
 }

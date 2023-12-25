@@ -33,7 +33,7 @@ export class ContentEditorElementsListenerService {
 
   private ctrlAExceptValuesIds = ['title-element', 'search-element'];
 
-  private ctrlAExceptValuesClasses = ['default-text-id', 'collection-title-text-id'];
+  private ctrlAExceptValuesClasses = ['default-text-id', 'collection-title-text-id', 'cdk-overlay-pane'];
 
   private renderer: Renderer2;
 
@@ -50,7 +50,8 @@ export class ContentEditorElementsListenerService {
   setHandlers(elements: QueryList<ParentInteraction<ContentModelBase>>, noteTitleEl: ElementRef, options$: BehaviorSubject<EditorOptions>) {
 
     const keydown = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
-      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode) {
+      const metMenuOpened = document.getElementById("mat-menu-panel-3");
+      if (this.pS.isDialogActive$.getValue() || options$.getValue().isReadOnlyMode || metMenuOpened) {
         return true;
       }
       if (e.code === 'Backspace' || e.code === 'Delete') {

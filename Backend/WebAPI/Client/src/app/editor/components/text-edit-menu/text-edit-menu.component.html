@@ -1,11 +1,11 @@
 <div appTheme class="root-menu-buttons-container">
   <div (mousedown)="preventUnSelection($event)" class="menu-buttons-container">
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H1)"
       [ngClass]="{
-        active: options?.textType === textType.heading && options?.headingType === headingType.H1
+        active: _options?.textType === textType.heading && _options?.headingType === headingType.H1
       }"
     >
       <div class="icon">
@@ -13,11 +13,11 @@
       </div>
     </div>
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H2)"
       [ngClass]="{
-        active: options?.textType === textType.heading && options?.headingType === headingType.H2
+        active: _options?.textType === textType.heading && _options?.headingType === headingType.H2
       }"
     >
       <div class="icon">
@@ -25,18 +25,18 @@
       </div>
     </div>
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.heading, headingType.H3)"
       [ngClass]="{
-        active: options?.textType === textType.heading && options?.headingType === headingType.H3
+        active: _options?.textType === textType.heading && _options?.headingType === headingType.H3
       }"
     >
       <div class="icon">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
     </div>
-    <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{ active: options?.isBold }">
+    <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="{ active: _options?.isBold }">
       <div class="icon">
         <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
       </div>
@@ -44,55 +44,56 @@
     <div
       class="button"
       (mousedown)="setItalicStyle($event)"
-      [ngClass]="{ active: options?.isItalic }"
+      [ngClass]="{ active: _options?.isItalic }"
     >
       <div class="icon">
         <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.checkList)"
-      [ngClass]="{ active: options?.textType === textType.checkList }"
+      [ngClass]="{ active: _options?.textType === textType.checkList }"
     >
       <div class="icon">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.dotList)"
-      [ngClass]="{ active: options?.textType === textType.dotList }"
+      [ngClass]="{ active: _options?.textType === textType.dotList }"
     >
       <div class="icon">
         <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
       </div>
     </div>
     <div
-      *ngIf="options?.isOneRowType"
+      *ngIf="_options?.isOneRowType"
       class="button"
       (mousedown)="transformContent($event, textType.numberList)"
-      [ngClass]="{ active: options.textType === textType.numberList }"
+      [ngClass]="{ active: _options.textType === textType.numberList }"
     >
       <div class="icon">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
     </div>
     <div class="button" [matMenuTriggerFor]="textColorMenu">
-      <div class="icon" [ngStyle]="{ color: options?.color }">
+      <div class="icon" [ngStyle]="{ color: _options?.color }">
         <mat-icon svgIcon="textColor" [inline]="true"></mat-icon>
       </div>
     </div>
     <div class="button" [matMenuTriggerFor]="backgroundColorMenu">
-      <div class="icon" [ngStyle]="{ color: options?.backgroundColor }">
+      <div class="icon" [ngStyle]="{ color: _options?.backgroundColor }">
         <mat-icon svgIcon="textBackgroundColor" [inline]="true"></mat-icon>
       </div>
     </div>
-    <div class="button" [matMenuTriggerFor]="linkMenu">
+    <div #linkMenuTrigger *ngIf="_options?.isOneRowType" class="button" (menuOpened)="menuOpened()" 
+    (menuClosed)="menuClosed()" [matMenuTriggerFor]="linkMenu">
       <div class="icon">
-        <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+        <mat-icon fontIcon="link" [inline]="true"></mat-icon>
       </div>
     </div>
   </div>
@@ -146,10 +147,19 @@
   class="color-pallete-container"
   #linkMenu="matMenu"
 >
-  <div appTheme (click)="preventUnSelection($event)" class="text-color-menu-container">
-    <input [(ngModel)]="link" type="text" id="name" name="name" size="10" />
-    <div (click)="saveLink($event)" class="save-link-container">
-      <span>Save</span>
+  <div appTheme (click)="preventUnSelection($event)" class="link-menu-container">
+    <div class="link-input-container">
+      <input [(ngModel)]="link" [placeholder]="'placeholder.emptyLink' | translate" type="text" size="10" />
+    </div>
+    <div class="link-buttons-container" [ngStyle]="{ justifyContent: hasInitialLink ? 'space-between' : 'center' }">
+      <div *ngIf="link?.length > 0" (click)="updateLink($event)" class="text-link-button">
+        <span #updateLinkButton>{{ 'modal.ColorModal.save' | translate }}</span>
+        <div class="ripple-container" matRipple [matRippleTrigger]="updateLinkButton"></div>
+      </div>
+      <div *ngIf="hasInitialLink" (click)="deleteLink($event)" class="text-link-button">
+        <span #removeLinkButton>{{ 'innerNote.menu.delete' | translate }}</span>
+        <div class="ripple-container" matRipple [matRippleTrigger]="removeLinkButton"></div>
+      </div>
     </div>
   </div>
 </mat-menu>

@@ -27,7 +27,6 @@ function initializeAppFactory(store: Store, authService: AuthService): () => Pro
       const end = new Date(new Date().toISOString());      
       const diff = end.getTime() - new Date(landingAuthDate).getTime();
       const seconds = Math.ceil(diff / 1000);
-      console.log('seconds: ', seconds);
       if(seconds <= 5) {
         const landing_auth_at = localStorage.getItem('landing_auth_at');
         const landing_auth_ft = localStorage.getItem('landing_auth_ft');

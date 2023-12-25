@@ -129,9 +129,11 @@
   }" id="note-selector" class="full-note-selection"></div>
 </div>
 <div class="note-color" [ngStyle]="{ backgroundColor: color }"></div>
-<app-text-edit-menu #textEditMenu [style.top]="textEditMenuTop" [style.left.px]="textEditMenuLeft" [style.visibility]="
+<app-text-edit-menu #textEditMenu [style.top.px]="textEditMenuTop" [style.left.px]="textEditMenuLeft" [style.visibility]="
     isTextMenuActive ? 'visible' : 'hidden'
   " [options]="menuOptions" [theme]="editorTheme" (eventTransform)="transformToTypeText($event)"
-  (updateText)="updateTextStyles($event)">
+  (changeLinkMenuState)="onChangeLinkMenuState($event)"
+  (updateText)="updateTextStyles($event)"
+  (updateSelectedText)="updateSelectedText($event)">
 </app-text-edit-menu>
 {{ changeDetectionChecker() }}

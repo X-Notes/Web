@@ -92,6 +92,15 @@ export class HtmlPropertyTagCollectorService {
     return res;
   }
 
+  getLink(): string {
+    const sel = this.apiBrowserService.getSelection();
+    if (!sel) return null;
+    const tempDiv = this.getOneRowSelectedHTML(sel);
+    if (!tempDiv) return null;
+    if (tempDiv.innerHTML === '') return null;
+    return this.getLinkOfNode(sel, tempDiv);
+  }
+
   getProperty(propertySelector: string, htmlItems: ParentInteractionHTML[],
   ): string {
     const rootEl = this.getMultiRowSelectedHTML(htmlItems);
@@ -121,13 +130,14 @@ export class HtmlPropertyTagCollectorService {
     }
   }
 
-  getNodeProperty(sel: Selection, el: HTMLElement, propertySelector: string): string {
+  getNodeProperty(sel: Selection, el: HTMLElement, stylePropertySelector: string): string {
     const children = el.childNodes as any as HTMLElement[];
     for (const child of children) {
-      if (child.style && child.style[propertySelector]) {
-        return child.style[propertySelector];
+      if (child.style && child.style[stylePropertySelector]) {
+        return child.style[stylePropertySelector];
       }
       let tags = [child.nodeName.toLowerCase()];
+
       while (tags.includes('#text')) {
         const startParent = sel.anchorNode.parentNode as HTMLElement;
         const endParent = sel.focusNode.parentNode as HTMLElement;
@@ -140,20 +150,64 @@ export class HtmlPropertyTagCollectorService {
 
         tags = [startTag, endTag];
 
-        if (endParent?.style && endParent?.style[propertySelector]) {
-          return endParent?.style[propertySelector];
+        if (endParent?.style && endParent?.style[stylePropertySelector]) {
+          return endParent?.style[stylePropertySelector];
         }
-        if (startParent?.style && startParent?.style[propertySelector]) {
-          return startParent?.style[propertySelector];
+        if (startParent?.style && startParent?.style[stylePropertySelector]) {
+          return startParent?.style[stylePropertySelector];
         }
-        if (startTagParent?.style && startTagParent?.style[propertySelector]) {
-          return startTagParent?.style[propertySelector];
+        if (startTagParent?.style && startTagParent?.style[stylePropertySelector]) {
+          return startTagParent?.style[stylePropertySelector];
         }
-        if (endTagParent?.style && endTagParent?.style[propertySelector]) {
-          return endTagParent?.style[propertySelector];
+        if (endTagParent?.style && endTagParent?.style[stylePropertySelector]) {
+          return endTagParent?.style[stylePropertySelector];
         }
       }
-      this.getNodeProperty(sel, child, propertySelector);
+      this.getNodeProperty(sel, child, stylePropertySelector);
+    }
+
+    return null;
+  }
+
+  private getLinkOfNode(sel: Selection, el: HTMLElement): string {
+    const children = el.childNodes as any as HTMLElement[];
+    for (const child of children) {
+      if (child.tagName === 'A' && child.attributes.getNamedItem('href')) {
+        const link = child.attributes.getNamedItem('href');
+        return link.value;
+      }
+      let tags = [child.nodeName.toLowerCase()];
+
+      while (tags.includes('#text')) {
+        const startParent = sel.anchorNode.parentNode as HTMLElement;
+        const endParent = sel.focusNode.parentNode as HTMLElement;
+
+        const startTag = startParent.nodeName.toLowerCase();
+        const endTag = endParent.nodeName.toLowerCase();
+
+        const startTagParent = startParent.parentElement as HTMLElement;
+        const endTagParent = endParent.parentElement as HTMLElement;
+
+        tags = [startTag, endTag];
+
+        if (endParent.tagName === 'A' && endParent.attributes.getNamedItem('href')) {
+          const link = endParent.attributes.getNamedItem('href');
+          return link.value;
+        }
+        if (startParent.tagName === 'A' && startParent.attributes.getNamedItem('href')) {
+          const link = startParent.attributes.getNamedItem('href');
+          return link.value;
+        }
+        if (startTagParent.tagName === 'A' && startTagParent.attributes.getNamedItem('href')) {
+          const link = startTagParent.attributes.getNamedItem('href');
+          return link.value;
+        }
+        if (endTagParent.tagName === 'A' && endTagParent.attributes.getNamedItem('href')) {
+          const link = endTagParent.attributes.getNamedItem('href');
+          return link.value;
+        }
+      }
+      this.getLinkOfNode(sel, child);
     }
 
     return null;
