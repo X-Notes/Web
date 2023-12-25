@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Common.DatabaseModels;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DatabaseContext.GenericRepositories;
 
@@ -15,9 +16,12 @@ public interface IRepository<T, IdType> where T : BaseEntity<IdType>
 
     Task UpdateAsync(T entity);
     Task UpdateRangeAsync(IEnumerable<T> entities);
+    Task<int> ExecuteUpdateAsync(Expression<Func<T, bool>> predicate,
+        Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls);
 
     Task RemoveAsync(T entity);
     Task RemoveRangeAsync(IEnumerable<T> entities);
+    Task<int> ExecuteDeleteAsync(Expression<Func<T, bool>> predicate);
 
     Task<List<T>> GetAllAsync();
     Task<List<T>> GetAllNoTrackAsync();

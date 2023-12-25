@@ -14,6 +14,15 @@ namespace DatabaseContext.Repositories.NoteContent
 
         }
 
+        public Task<List<Guid>> GetContentIdsByNoteIdAsync(Guid noteId)
+        {
+            return entities
+                .Where(x => x.NoteId == noteId)
+                .AsNoTracking()
+                .Select(x => x.Id)
+                .ToListAsync();
+        }
+
         public Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid noteId)
         {
             return entities
@@ -44,14 +53,14 @@ namespace DatabaseContext.Repositories.NoteContent
                 .SelectMany(x => x.Files)
                 .ToListAsync();
         }
-        
+
         public Task<List<BaseNoteContent>> GetUnsyncedTexts(int take)
         {
             return entities.Include(x => x.TextNoteIndex)
                 .Where(x => x.TextNoteIndex == null || x.TextNoteIndex.Version != x.Version)
                 .Take(take).ToListAsync();
         }
-        
+
         public Task<List<BaseNoteContent>> GetManyIncludeNoteAppFiles(IEnumerable<Guid> noteIds)
         {
             return entities.Include(x => x.CollectionNoteAppFiles).Where(x => noteIds.Contains(x.NoteId)).ToListAsync();

@@ -2,6 +2,7 @@
 using Common.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DatabaseContext.GenericRepositories
 {
@@ -93,6 +94,17 @@ namespace DatabaseContext.GenericRepositories
         {
             this.entities.RemoveRange(ents);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<int> ExecuteDeleteAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await entities.Where(predicate).ExecuteDeleteAsync();
+        }
+
+        public async Task<int> ExecuteUpdateAsync(Expression<Func<T, bool>> predicate,
+            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls)
+        {
+            return await entities.Where(predicate).ExecuteUpdateAsync(setPropertyCalls);
         }
 
         public async Task AddRangeAsync(IEnumerable<T> ents)

@@ -27,7 +27,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     private readonly HistoryCacheService historyCacheService;
 
     private readonly AppSignalRService appSignalRService;
-    
+
     private readonly IMediator mediator;
 
     private readonly CollectionLinkedService collectionLinkedService;
@@ -37,7 +37,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     private readonly NoteFolderLabelMapper noteFolderLabelMapper;
 
     private readonly NoteWSUpdateService noteWsUpdateService;
-    
+
     private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
     public SyncNoteStructureCommandHandler(
@@ -67,91 +67,36 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
     public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
-        var permissions = await mediator.Send(command);
-        
-        NoteStructureResult result = new();
+        var permissions = await mediator.Send(command, cancellationToken);
 
         if (!permissions.CanWrite)
         {
             return new OperationResult<NoteStructureResult>().SetNoPermissions();
         }
 
-        var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == permissions.NoteId);
-
-        var removeContentsCount = request.Diffs.RemovedItems == null ? 0 : request.Diffs.RemovedItems.Count;
-        var totalCount = contents.Count - removeContentsCount + request.Diffs.GetNewItemsCount();
+        var count = await baseNoteContentRepository.GetCountAsync(x => x.NoteId == permissions.NoteId);
+        var removeContentsCount = request.Diffs.RemovedItems?.Count ?? 0;
+        var totalCount = count - removeContentsCount + request.Diffs.GetNewItemsCount();
         if (totalCount > maxContents)
         {
             return new OperationResult<NoteStructureResult>().SetBillingError();
         }
 
-        var contentIds = contents.Select(x => x.Id).ToList();
+        NoteStructureResult result = new();
 
-        if (request.Diffs.RemovedItems != null && request.Diffs.RemovedItems.Any())
-        {
-            var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
-            var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id)).ToList();
-
-            var fileContents = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Collection).ToList();
-            if (fileContents.Any())
-            {
-                var collectionIds = fileContents.Select(x => x.Id);
-                result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(collectionIds);
-            }
-
-            var textIds = contentsToDelete.Where(x => x.ContentTypeId == ContentTypeENUM.Text)
-                .Select(x => x.Id).ToList();
-            if (textIds.Any())
-            {
-                result.Updates.ContentIdsToDelete ??= new List<Guid>();
-                result.Updates.ContentIdsToDelete.AddRange(textIds);
-                var textContentsToDelete = contents.Where(x => textIds.Contains(x.Id));
-                await baseNoteContentRepository.RemoveRangeAsync(textContentsToDelete);
-            }
-        }
-        if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
-        {
-            var newItemsToAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-            if (newItemsToAdd.Any())
-            {
-                var items = newItemsToAdd.Select(content => GetNewTextContent(content, permissions.NoteId)).ToList();
-                await baseNoteContentRepository.AddRangeAsync(items);
-
-                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.TextContentsToAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.TextContentsToAdd);
-            }
-            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-            {
-                logger.LogError("ITEMS TEXTS EXIST");
-            }
-        }
-
-        if (request.Diffs.CollectionItems != null && request.Diffs.CollectionItems.Any())
-        {
-            var newCollectionItemsToAdd = request.Diffs.CollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
-            var itemsThatAlreadyAdded = request.Diffs.CollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
-
-            if (newCollectionItemsToAdd.Any())
-            {
-                var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, permissions.NoteId, x.TypeId)).ToList();
-                await baseNoteContentRepository.AddRangeAsync(items);
-
-                result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
-                result.Updates.CollectionContentsToAdd = items.Select(x => noteFolderLabelMapper.ToCollectionNoteDTO(x)).ToList();
-                SetNewIds(result.UpdateIds, result.Updates.CollectionContentsToAdd);
-            }
-            if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
-            {
-                logger.LogError("ITEMS EXIST");
-            }
-        }
+        await DeleteContentEditorItemsAsync(request.Diffs.RemovedItems, result);
+        await NewTextEditorItemsAsync(request.Diffs.NewTextItems, permissions.NoteId, result);
+        await NewCollectionEditorItemsAsync(request.Diffs.CollectionItems, permissions.NoteId, result);
 
         if (request.Diffs.Positions != null && request.Diffs.Positions.Any())
         {
+            var positionIds = request.Diffs.Positions.Select(x => x.Id).ToList();
+
+            var contents = await baseNoteContentRepository.GetWhereAsync(x =>
+                x.NoteId == permissions.NoteId && positionIds.Contains(x.Id));
+
             var updateItems = new List<BaseNoteContent>();
+
             foreach (var item in request.Diffs.Positions)
             {
                 var content = contents.FirstOrDefault(x => x.Id == item.Id);
@@ -162,6 +107,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
                     updateItems.Add(content);
                 }
             }
+
             if (updateItems.Any())
             {
                 result.Updates.Positions = updateItems.Select(x => new UpdateContentPositionWS(x.Id, x.Order, x.Version)).ToList();
@@ -172,7 +118,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
         var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-        
+
         if (noteStatus.IsShared)
         {
             var connections = await noteWsUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
@@ -182,6 +128,77 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         return new OperationResult<NoteStructureResult>(true, result);
     }
 
+    private async Task NewCollectionEditorItemsAsync(List<NewCollectionContent> newCollectionItems , Guid noteId, NoteStructureResult result)
+    {
+        if (newCollectionItems == null || !newCollectionItems.Any())
+        {
+            return;
+        }
+
+        var contentIds = await baseNoteContentRepository.GetContentIdsByNoteIdAsync(noteId);
+
+        var newCollectionItemsToAdd = newCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+        var itemsThatAlreadyAdded = newCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+        if (newCollectionItemsToAdd.Any())
+        {
+            var items = newCollectionItemsToAdd.Select(x => GetCollectionContent(x, noteId, x.TypeId)).ToList();
+            await baseNoteContentRepository.AddRangeAsync(items);
+
+            result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+            result.Updates.CollectionContentsToAdd = items.Select(x => noteFolderLabelMapper.ToCollectionNoteDTO(x)).ToList();
+            SetNewIds(result.UpdateIds, result.Updates.CollectionContentsToAdd);
+        }
+
+        if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+        {
+            logger.LogError("ITEMS EXIST");
+        }
+    }
+
+    private async Task NewTextEditorItemsAsync(List<NewTextContent> newTextItems, Guid noteId, NoteStructureResult result)
+    {
+        if (newTextItems == null || !newTextItems.Any())
+        {
+            return;
+        }
+
+        var contentIds = await baseNoteContentRepository.GetContentIdsByNoteIdAsync(noteId);
+
+        var newItemsToAdd = newTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+        var itemsThatAlreadyAdded = newTextItems.Where(x => contentIds.Contains(x.Id)).ToList(); // TODO REMOVE AFTER TESTING
+
+        if (newItemsToAdd.Any())
+        {
+            var items = newItemsToAdd.Select(content => GetNewTextContent(content, noteId)).ToList();
+            await baseNoteContentRepository.AddRangeAsync(items);
+
+            result.UpdateIds.AddRange(items.Select(x => new UpdateIds { PrevId = x.PrevId, Id = x.Id }));
+            result.Updates.TextContentsToAdd = items.Select(x => noteFolderLabelMapper.ToTextDTO(x)).ToList();
+
+            SetNewIds(result.UpdateIds, result.Updates.TextContentsToAdd);
+        }
+
+        if (itemsThatAlreadyAdded.Any()) // TODO REMOVE AFTER TESTING
+        {
+            logger.LogError("ITEMS TEXTS EXIST");
+        }
+    }
+
+    private async Task DeleteContentEditorItemsAsync(List<ItemForRemove> removedItems, NoteStructureResult result)
+    {
+        if (removedItems == null || !removedItems.Any())
+        {
+            return;
+        }
+
+        var removeIds = removedItems.Select(x => x.Id).ToList();
+        result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(removeIds);
+
+        await baseNoteContentRepository.ExecuteDeleteAsync(x => removeIds.Contains(x.Id));
+
+        result.Updates.ContentIdsToDelete = removeIds;
+    }
 
     private void SetNewIds<T>(List<UpdateIds> updateIds, List<T> contents) where T : BaseNoteContentDTO
     {

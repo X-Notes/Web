@@ -150,7 +150,7 @@ namespace Editor.Services.Photos
                     return new OperationResult<PhotosCollectionNoteDTO>().SetNotFound();
                 }
 
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+                await using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
@@ -162,7 +162,7 @@ namespace Editor.Services.Photos
 
                     await baseNoteContentRepository.AddAsync(collection);
 
-                    await transaction.CommitAsync();
+                    await transaction.CommitAsync(cancellationToken);
 
                     var metadata = collection.GetCollectionMetadata();
                     var result = new PhotosCollectionNoteDTO(null, metadata?.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
