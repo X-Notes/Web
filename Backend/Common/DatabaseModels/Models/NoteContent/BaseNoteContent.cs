@@ -44,7 +44,7 @@ namespace Common.DatabaseModels.Models.NoteContent
 
         [NotMapped]
         public Guid PrevId { set; get; }
-        
+
         [Column(TypeName = "jsonb")]
         public string Metadata { set; get; }
 
@@ -53,42 +53,37 @@ namespace Common.DatabaseModels.Models.NoteContent
         public string Contents { set; get; }
 
         public string PlainContent { set; get; }
-        
-        public TextNoteIndex TextNoteIndex { set; get; }
-        
-        // COLLECTION
-        public string Name { set; get; }
-        
-        public FileTypeEnum? FileTypeId { set; get; }
-        public FileType FileType { set; get; }
 
+        public TextNoteIndex TextNoteIndex { set; get; }
+
+        // COLLECTION
         public List<AppFile> Files { set; get; } // TODO MAKE THIS IN OTHER MANTY TO MANY
         public List<CollectionNoteAppFile> CollectionNoteAppFiles { set; get; }
-        
+
         public void SetDateAndVersion()
         {
             UpdatedAt = DateTimeProvider.Time;
             Version++;
         }
-        
+
         public static BaseNoteContent CreateTextNote(BaseNoteContent text)
         {
             var content = new BaseNoteContent();
-            
+
             content.Order = text.Order;
 
             content.Contents = text.Contents;
             content.Metadata = text.Metadata;
-            
+
             content.ContentTypeId = ContentTypeENUM.Text;
 
             return content;
         }
-        
+
         public static BaseNoteContent CreateTextNote()
         {
             var content = new BaseNoteContent();
-            
+
             content.ContentTypeId = ContentTypeENUM.Text;
             var metadata = new TextContentMetadata()
             {
@@ -98,7 +93,7 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             return content;
         }
-        
+
         public void UpdateMetadataNoteTextType(NoteTextTypeENUM noteTextTypeId)
         {
             var metadata = GetTextMetadata();
@@ -109,39 +104,37 @@ namespace Common.DatabaseModels.Models.NoteContent
         public static BaseNoteContent CreateCollectionNote(FileTypeEnum fileTypeId)
         {
             var content = new BaseNoteContent();
-            
+
             content.UpdatedAt = DateTimeProvider.Time;
             content.Version = 1;
             content.ContentTypeId = ContentTypeENUM.Collection;
-            content.FileTypeId = fileTypeId;
-            
+            content.UpdateCollectionMetadata(new CollectionMetadata() { FileTypeId = fileTypeId });
+
             return content;
         }
-        
+
         public static BaseNoteContent CreateCollectionNote(BaseNoteContent entity, List<CollectionNoteAppFile> collectionNoteAppFiles, int version)
         {
             var content = new BaseNoteContent();
-            
+
             content.UpdatedAt = DateTimeProvider.Time;
             content.ContentTypeId = ContentTypeENUM.Collection;
 
             content.Version = version;
 
-            content.Name = entity.Name;
             content.Order = entity.Order;
-            content.FileTypeId = entity.FileTypeId;
             content.Metadata = entity.Metadata;
 
             content.CollectionNoteAppFiles = collectionNoteAppFiles;
-            
+
             return content;
         }
-        
+
         public void UpdateContent(List<TextBlock> contents)
         {
             Contents = contents != null ? DbJsonConverter.Serialize(contents) : null;
         }
-        
+
         public List<TextBlock> GetContents()
         {
             if (!string.IsNullOrEmpty(Contents))
@@ -151,17 +144,17 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             return null;
         }
-        
+
         public TextContentMetadata GetTextMetadata()
         {
             if (!string.IsNullOrEmpty(Metadata))
             {
                 return DbJsonConverter.DeserializeObject<TextContentMetadata>(Metadata);
             }
-            
+
             return null;
         }
-        
+
         public CollectionMetadata GetCollectionMetadata()
         {
             if (!string.IsNullOrEmpty(Metadata))
@@ -171,12 +164,12 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             return null;
         }
-        
+
         public void UpdateCollectionMetadata(CollectionMetadata metadata)
         {
             Metadata = metadata != null ? DbJsonConverter.Serialize(metadata) : null;
         }
-        
+
         public void SetMetaDataPhotos(string width, string height, int countInRow)
         {
             var metadata = string.IsNullOrEmpty(Metadata) ? new CollectionMetadata() : GetCollectionMetadata();
@@ -185,17 +178,17 @@ namespace Common.DatabaseModels.Models.NoteContent
             metadata.Height = height;
             UpdateCollectionMetadata(metadata);
         }
-        
+
         public IEnumerable<Guid> GetInternalFilesIds()
         {
             if (CollectionNoteAppFiles == null)
             {
                 return Enumerable.Empty<Guid>();
             }
-            
+
             return CollectionNoteAppFiles?.Select(x => x.AppFileId);
         }
-        
+
         public void UpdateTextMetadata(NoteTextTypeENUM noteTextTypeId, HTypeENUM? hTypeId, bool? @checked, int? tabCount)
         {
             var metadata = new TextContentMetadata
@@ -207,7 +200,7 @@ namespace Common.DatabaseModels.Models.NoteContent
             };
             Metadata = DbJsonConverter.Serialize(metadata);
         }
-        
+
         public string GetContentString()
         {
             if (Contents == null) return null;

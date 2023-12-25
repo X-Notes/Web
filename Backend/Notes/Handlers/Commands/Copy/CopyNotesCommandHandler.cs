@@ -100,10 +100,10 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         {
             return new OperationResult<Unit>().SetBillingError();
         }
-        
+
         var externalFiles = await baseNoteContentRepository.GetNotesContentsSizesAsync(idsForCopy);
         externalFiles = externalFiles.Where(x => x.UserId != request.UserId).ToList();
-        
+
         if (externalFiles.Any())
         {
             var size = externalFiles.Sum(x => x.Size);
@@ -122,7 +122,7 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
         return new OperationResult<Unit>(true, Unit.Value);
     }
 
- 
+
     public async Task<OperationResult<CopyNoteResult>> Handle(CopyNoteInternalCommand request, CancellationToken cancellationToken)
     {
         var noteForCopy = await noteRepository.GetNoteWithContentAsNoTracking(request.NoteId);
@@ -189,15 +189,15 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
                 .Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
                 .SelectMany(x => x.GetInternalFilesIds())
                 .ToHashSet();
-            
+
             await collectionLinkedService.TryLink(fileIdsToLink);
 
             await transaction.CommitAsync();
 
-            res = new CopyNoteResult 
-            { 
+            res = new CopyNoteResult
+            {
                 NewId = dbNote.Entity.Id,
-                PreviousId = request.NoteId, 
+                PreviousId = request.NoteId,
                 UserId = request.UserId,
                 FolderId = request.FolderId
             };
@@ -284,7 +284,9 @@ public class CopyNotesCommandHandler : IRequestHandler<CopyNotesCommand, Operati
 
         foreach (var collection in collections)
         {
-            var copyFiles = await CopyFiles(collection.Files!, userFrom, caller, MapToContentTypesFile(collection.FileTypeId.Value));
+            var metadata = collection.GetCollectionMetadata();
+            var copyFiles = await CopyFiles(collection.Files!, userFrom, caller,
+                MapToContentTypesFile(metadata.FileTypeId));
 
             if (!copyFiles.success)
             {

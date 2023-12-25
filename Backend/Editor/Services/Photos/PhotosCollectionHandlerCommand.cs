@@ -24,7 +24,7 @@ namespace Editor.Services.Photos
     {
 
         private readonly IMediator _mediator;
-        
+
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
@@ -72,7 +72,7 @@ namespace Editor.Services.Photos
             await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-            
+
             if (noteStatus.IsShared)
             {
                 var updates = new UpdatePhotosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
@@ -99,8 +99,11 @@ namespace Editor.Services.Photos
 
                 if (collection != null)
                 {
+                    var metadata = collection.GetCollectionMetadata();
+                    metadata.Name = request.Name;
+                    collection.UpdateCollectionMetadata(metadata);
+
                     collection.SetMetaDataPhotos(request.Width, request.Height, request.Count);
-                    collection.Name = request.Name;
 
                     collection.SetDateAndVersion();
                     await baseNoteContentRepository.UpdateAsync(collection);
@@ -114,7 +117,7 @@ namespace Editor.Services.Photos
                         Height = request.Height,
                         Width = request.Width
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
                     if (noteStatus.IsShared)
@@ -162,7 +165,7 @@ namespace Editor.Services.Photos
                     await transaction.CommitAsync();
 
                     var metadata = collection.GetCollectionMetadata();
-                    var result = new PhotosCollectionNoteDTO(null, collection.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
+                    var result = new PhotosCollectionNoteDTO(null, metadata?.Name, metadata?.Width, metadata?.Height, collection.Id, collection.Order, metadata?.CountInRow, collection.UpdatedAt, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
@@ -171,7 +174,7 @@ namespace Editor.Services.Photos
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
                     if (noteStatus.IsShared)
@@ -219,7 +222,7 @@ namespace Editor.Services.Photos
             };
 
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-            
+
             if (noteStatus.IsShared)
             {
                 var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);

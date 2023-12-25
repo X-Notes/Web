@@ -68,7 +68,7 @@ namespace Editor.Services.Audios
             await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-            
+
             if (noteStatus.IsShared)
             {
                 var updates = new UpdateAudiosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
@@ -94,7 +94,10 @@ namespace Editor.Services.Audios
 
                 if (audiosCollection != null)
                 {
-                    audiosCollection.Name = request.Name;
+                    var metadata = audiosCollection.GetCollectionMetadata();
+                    metadata.Name = request.Name;
+                    audiosCollection.UpdateCollectionMetadata(metadata);
+
                     audiosCollection.SetDateAndVersion();
 
                     await base.baseNoteContentRepository.UpdateAsync(audiosCollection);
@@ -105,7 +108,7 @@ namespace Editor.Services.Audios
                     {
                         Name = request.Name,
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
                     if (noteStatus.IsShared)
@@ -148,12 +151,14 @@ namespace Editor.Services.Audios
                     var collection = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Audio);
                     collection.NoteId = request.NoteId;
                     collection.Order = contentForRemove.Order;
-                    
+
                     await baseNoteContentRepository.AddAsync(collection);
 
                     await transaction.CommitAsync();
 
-                    var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
+                    var metadata = collection.GetCollectionMetadata();
+                    var result = new AudiosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt,
+                        metadata?.Name, null, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
@@ -162,7 +167,7 @@ namespace Editor.Services.Audios
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
                     if (noteStatus.IsShared)
@@ -205,7 +210,7 @@ namespace Editor.Services.Audios
             {
                 CollectionItemIds = resp.deleteFileIds
             };
-            
+
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
             if (noteStatus.IsShared)

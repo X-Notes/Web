@@ -69,7 +69,7 @@ namespace Editor.Services.Documents
             await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-            
+
             if (noteStatus.IsShared)
             {
                 var updates = new UpdateDocumentsCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
@@ -95,7 +95,10 @@ namespace Editor.Services.Documents
 
                 if (collection != null)
                 {
-                    collection.Name = request.Name;
+                    var metadata = collection.GetCollectionMetadata();
+                    metadata.Name = request.Name;
+                    collection.UpdateCollectionMetadata(metadata);
+
                     collection.SetDateAndVersion();
 
                     await base.baseNoteContentRepository.UpdateAsync(collection);
@@ -108,7 +111,7 @@ namespace Editor.Services.Documents
                     };
 
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-                    
+
                     if (noteStatus.IsShared)
                     {
                         var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
@@ -152,7 +155,9 @@ namespace Editor.Services.Documents
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null, 1);
+                    var metadata = documentNote.GetCollectionMetadata();
+                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt,
+                        metadata?.Name, null, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
@@ -163,7 +168,7 @@ namespace Editor.Services.Documents
                     };
 
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-                    
+
                     if (noteStatus.IsShared)
                     {
                         var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
@@ -204,7 +209,7 @@ namespace Editor.Services.Documents
             {
                 CollectionItemIds = resp.deleteFileIds
             };
-            
+
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
             if (noteStatus.IsShared)

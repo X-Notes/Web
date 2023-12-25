@@ -27,31 +27,31 @@ namespace Mapper.Mapping
         public AudioNoteDTO MapToAudioDTO(AppFile file, Guid ownerId)
         {
             var metadata = file.GetMetadata();
-            return new AudioNoteDTO(file.Name, file.Id, 
-                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+            return new AudioNoteDTO(file.Name, file.Id,
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath),
                 file.UserId, metadata?.SecondsDuration, metadata?.ImagePath, file.CreatedAt);
         }
 
         public VideoNoteDTO MapToVideoDTO(AppFile file, Guid ownerId)
         {
-            return new VideoNoteDTO(file.Name, file.Id, 
-                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+            return new VideoNoteDTO(file.Name, file.Id,
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath),
                 file.UserId, file.CreatedAt);
         }
 
         public DocumentNoteDTO MapToDocumentDTO(AppFile file, Guid ownerId)
         {
-            return new DocumentNoteDTO(file.Name, 
-                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath), 
+            return new DocumentNoteDTO(file.Name,
+                BuildFilePath(file.StorageId, ownerId, file.GetDefaultPath),
                 file.Id, file.UserId, file.CreatedAt);
         }
 
         public PhotoNoteDTO MapToPhotoDTO(AppFile file, Guid ownerId)
         {
-            return new PhotoNoteDTO(file.Id, file.Name, 
-                BuildFilePath(file.StorageId, ownerId, file.GetSmallPath), 
-                BuildFilePath(file.StorageId, ownerId, file.GetMediumPath), 
-                BuildFilePath(file.StorageId, ownerId, file.GetBigPath ?? file.GetDefaultPath), 
+            return new PhotoNoteDTO(file.Id, file.Name,
+                BuildFilePath(file.StorageId, ownerId, file.GetSmallPath),
+                BuildFilePath(file.StorageId, ownerId, file.GetMediumPath),
+                BuildFilePath(file.StorageId, ownerId, file.GetBigPath ?? file.GetDefaultPath),
                 file.UserId, file.CreatedAt);
         }
 
@@ -75,31 +75,32 @@ namespace Mapper.Mapping
                             break;
                         }
                     case ContentTypeENUM.Collection:
+                    {
+                        var metadata = content.GetCollectionMetadata();
+                        switch (metadata.FileTypeId)
                         {
-                            switch (content.FileTypeId)
-                            {
-                                case FileTypeEnum.Audio:
-                                    {
-                                        resultList.Add(ToAudiosCollection(content, ownerId));
-                                        break;
-                                    }
-                                case FileTypeEnum.Photo:
-                                    {
-                                        resultList.Add(ToPhotosCollection(content, ownerId));
-                                        break;
-                                    }
-                                case FileTypeEnum.Video:
-                                    {
-                                        resultList.Add(ToVideosCollection(content, ownerId));
-                                        break;
-                                    }
-                                case FileTypeEnum.Document:
-                                    {
-                                        resultList.Add(ToDocumentsCollection(content, ownerId));
-                                        break;
-                                    }
-                            }
-                            break;
+                            case FileTypeEnum.Audio:
+                                {
+                                    resultList.Add(ToAudiosCollection(content, ownerId));
+                                    break;
+                                }
+                            case FileTypeEnum.Photo:
+                                {
+                                    resultList.Add(ToPhotosCollection(content, ownerId));
+                                    break;
+                                }
+                            case FileTypeEnum.Video:
+                                {
+                                    resultList.Add(ToVideosCollection(content, ownerId));
+                                    break;
+                                }
+                            case FileTypeEnum.Document:
+                                {
+                                    resultList.Add(ToDocumentsCollection(content, ownerId));
+                                    break;
+                                }
+                        }
+                        break;
                         }
                     default:
                         {
@@ -118,31 +119,36 @@ namespace Mapper.Mapping
         public AudiosCollectionNoteDTO ToAudiosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var audiosDTO = aN.Files != null ? aN.Files.Select(item => MapToAudioDTO(item, ownerId)).ToList() : null;
-            return new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, audiosDTO, aN.Version);
+            var metadata = aN.GetCollectionMetadata();
+            return new AudiosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, metadata?.Name, audiosDTO, aN.Version);
         }
 
         public PhotosCollectionNoteDTO ToPhotosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var photosDTO = aN.Files != null ? aN.Files.Select(item => MapToPhotoDTO(item, ownerId)).ToList() : null;
             var metadata = aN.GetCollectionMetadata();
-            return new PhotosCollectionNoteDTO(photosDTO, aN.Name, metadata?.Width, metadata?.Height, aN.Id, aN.Order, metadata?.CountInRow, aN.UpdatedAt, aN.Version);
+            return new PhotosCollectionNoteDTO(photosDTO, metadata?.Name, metadata?.Width, metadata?.Height, aN.Id, aN.Order, metadata?.CountInRow, aN.UpdatedAt, aN.Version);
         }
 
         public VideosCollectionNoteDTO ToVideosCollection(BaseNoteContent aN, Guid ownerId)
         {
             var videosDTO = aN.Files != null ? aN.Files.Select(item => MapToVideoDTO(item, ownerId)).ToList() : null;
-            return new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, videosDTO, aN.Version);
+            var metadata = aN.GetCollectionMetadata();
+            return new VideosCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, metadata?.Name, videosDTO, aN.Version);
         }
 
         public DocumentsCollectionNoteDTO ToDocumentsCollection(BaseNoteContent aN, Guid ownerId)
         {
             var documentsDTO = aN.Files != null ? aN.Files.Select(item => MapToDocumentDTO(item, ownerId)).ToList() : null;
-            return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, aN.Name, documentsDTO, aN.Version);
+            var metadata = aN.GetCollectionMetadata();
+            return new DocumentsCollectionNoteDTO(aN.Id, aN.Order, aN.UpdatedAt, metadata?.Name, documentsDTO, aN.Version);
         }
 
         public BaseNoteContentDTO ToCollectionNoteDTO(BaseNoteContent aN)
         {
-            var fileType = aN.FileTypeId switch
+            var metadata = aN.GetCollectionMetadata();
+
+            var fileType = metadata.FileTypeId switch
             {
                 FileTypeEnum.Photo => ContentTypeEnumDTO.Photos,
                 FileTypeEnum.Document => ContentTypeEnumDTO.Documents,
@@ -173,12 +179,12 @@ namespace Mapper.Mapping
             var count = labelsNotes.Count();
             return labelsNotes.Select(x => MapLabelToLabelDTO(x, count)).ToList();
         }
-        
+
         public List<Guid> MapLabelsToLabelIds(List<LabelsNotes> labelsNotes)
         {
             return labelsNotes.Select(x => x.LabelId).ToList();
         }
-        
+
         public List<LabelDTO> MapLabelsToLabelsDTO(List<Label> labels)
         {
             return labels.Select(x => MapLabelToLabelDTO(x)).ToList();

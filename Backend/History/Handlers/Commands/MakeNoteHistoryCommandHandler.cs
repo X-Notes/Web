@@ -51,7 +51,7 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 				.Where(x => x.ContentTypeId == ContentTypeENUM.Collection)
 				.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
 		};
-		
+
 		snapshot.UpdateLabels(labels);
 		snapshot.UpdateContentSnapshot(Convert(noteForCopy.Contents));
 
@@ -76,7 +76,7 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
                 case ContentTypeENUM.Collection:
                     {
                         var fileIds = content.Files.Select(item => item.Id).ToList();
-                        var collectionDTO = new CollectionNoteSnapshot(content.Name, fileIds, content.Metadata, content.FileTypeId.Value, 
+                        var collectionDTO = new CollectionNoteSnapshot(fileIds, content.Metadata,
 	                        content.Order, content.ContentTypeId, content.UpdatedAt);
                         result.CollectionNoteSnapshots.Add(collectionDTO);
                         break;

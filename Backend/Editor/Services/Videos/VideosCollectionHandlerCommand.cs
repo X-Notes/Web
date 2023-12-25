@@ -25,7 +25,7 @@ namespace Editor.Services.Videos
         private readonly IMediator _mediator;
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
-        
+
         private readonly HistoryCacheService historyCacheService;
 
         private readonly AppSignalRService appSignalRService;
@@ -33,7 +33,7 @@ namespace Editor.Services.Videos
         private readonly NoteWSUpdateService noteWSUpdateService;
 
         private readonly ILogger<VideosCollectionHandlerCommand> logger;
-        
+
         private readonly NotesMultipleUpdateService notesMultipleUpdateService;
 
         public VideosCollectionHandlerCommand(
@@ -75,7 +75,7 @@ namespace Editor.Services.Videos
             await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-            
+
             if (noteStatus.IsShared)
             {
                 var updates = new UpdateVideosCollectionWS(request.ContentId, UpdateOperationEnum.DeleteCollectionItems, resp.collection.UpdatedAt, resp.collection.Version)
@@ -113,12 +113,13 @@ namespace Editor.Services.Videos
                     var collection = BaseNoteContent.CreateCollectionNote(FileTypeEnum.Video);
                     collection.NoteId = request.NoteId;
                     collection.Order = contentForRemove.Order;
-                    
+
                     await base.baseNoteContentRepository.AddAsync(collection);
 
                     await transaction.CommitAsync(cancellationToken);
 
-                    var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, collection.Name, null, 1);
+                    var metadata = collection.GetCollectionMetadata();
+                    var result = new VideosCollectionNoteDTO(collection.Id, collection.Order, collection.UpdatedAt, metadata?.Name, null, 1);
 
                     await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
@@ -127,7 +128,7 @@ namespace Editor.Services.Videos
                         CollectionItemIds = new List<Guid> { contentForRemove.Id },
                         Collection = result
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
                     if (noteStatus.IsShared)
@@ -160,8 +161,10 @@ namespace Editor.Services.Videos
 
                 if (videosCollection != null)
                 {
+                    var metadata = videosCollection.GetCollectionMetadata();
+                    metadata.Name = request.Name;
+                    videosCollection.UpdateCollectionMetadata(metadata);
 
-                    videosCollection.Name = request.Name;
                     videosCollection.SetDateAndVersion();
 
                     await base.baseNoteContentRepository.UpdateAsync(videosCollection);
@@ -172,9 +175,9 @@ namespace Editor.Services.Videos
                     {
                         Name = request.Name,
                     };
-                    
+
                     var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
-                    
+
                     if (noteStatus.IsShared)
                     {
                         var connections = await noteWSUpdateService.GetConnectionsToUpdate(permissions.NoteId, noteStatus.UserIds, request.ConnectionId);
@@ -213,7 +216,7 @@ namespace Editor.Services.Videos
             {
                 CollectionItemIds = resp.deleteFileIds
             };
-            
+
             var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);
 
             if (noteStatus.IsShared)

@@ -35,7 +35,7 @@ namespace History.Handlers.Queries
             this.noteCustomMapper = noteCustomMapper;
             this.fileRepository = fileRepository;
         }
-        
+
         public async Task<OperationResult<List<BaseNoteContentDTO>>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.UserId);
@@ -64,7 +64,8 @@ namespace History.Handlers.Queries
                 var files = await fileRepository.GetWhereAsync(x => ids.Contains(x.Id));
                 foreach (var x in contents.CollectionNoteSnapshots)
                 {
-                    switch (x.FileTypeId)
+                    var metadata = x.GetMetadata();
+                    switch (metadata.FileTypeId)
                     {
                         case FileTypeEnum.Photo:
                             {
@@ -93,30 +94,34 @@ namespace History.Handlers.Queries
             return resultList;
         }
 
-        
+
         private PhotosCollectionNoteDTO ConvertPhotosCollection(CollectionNoteSnapshot photos, List<AppFile> files)
         {
             var filePhotos = files.Where(x => photos.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToPhotoDTO(x, x.UserId)).ToList();
             var metadata = photos.GetMetadata();
-            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, metadata?.Width, metadata?.Height, Guid.Empty, photos.Order, metadata?.CountInRow, photos.UpdatedAt, 1);
+            return new PhotosCollectionNoteDTO(filePhotos, metadata?.Name, metadata?.Width, metadata?.Height, Guid.Empty,
+                photos.Order, metadata?.CountInRow, photos.UpdatedAt, 1);
         }
 
         private VideosCollectionNoteDTO ConvertVideosCollection(CollectionNoteSnapshot videos, List<AppFile> files)
         {
             var fileVideos = files.Where(x => videos.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToVideoDTO(x, x.UserId)).ToList();
-            return new VideosCollectionNoteDTO(Guid.Empty, videos.Order, videos.UpdatedAt, videos.Name, fileVideos, 1);
+            var metadata = videos.GetMetadata();
+            return new VideosCollectionNoteDTO(Guid.Empty, videos.Order, videos.UpdatedAt, metadata?.Name, fileVideos, 1);
         }
 
         private DocumentsCollectionNoteDTO ConvertDocumentsCollection(CollectionNoteSnapshot documents, List<AppFile> files)
         {
             var fileDocuments = files.Where(x => documents.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToDocumentDTO(x, x.UserId)).ToList();
-            return new DocumentsCollectionNoteDTO(Guid.Empty, documents.Order, documents.UpdatedAt, documents.Name, fileDocuments, 1);
+            var metadata = documents.GetMetadata();
+            return new DocumentsCollectionNoteDTO(Guid.Empty, documents.Order, documents.UpdatedAt, metadata?.Name, fileDocuments, 1);
         }
 
         private AudiosCollectionNoteDTO ConvertAudiosCollection(CollectionNoteSnapshot audios, List<AppFile> files)
         {
             var fileAudios = files.Where(x => audios.FilesIds.Contains(x.Id)).Select(x => noteCustomMapper.MapToAudioDTO(x, x.UserId)).ToList();
-            return new AudiosCollectionNoteDTO(Guid.Empty, audios.Order, audios.UpdatedAt, audios.Name, fileAudios, 1);
+            var metadata = audios.GetMetadata();
+            return new AudiosCollectionNoteDTO(Guid.Empty, audios.Order, audios.UpdatedAt, metadata?.Name, fileAudios, 1);
         }
     }
 }
