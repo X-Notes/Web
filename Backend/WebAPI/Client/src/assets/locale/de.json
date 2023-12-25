@@ -344,7 +344,8 @@
     "labelPage": "Kennsatzname",
     "unnamedNote": "Unbenannte Notiz",
     "unnamedFolder": "Unbenannter Ordner",
-    "unnamedLabel": "Unbenanntes Label"
+    "unnamedLabel": "Unbenanntes Label",
+    "emptyLink": "Link einfügen"
   },
   "snackBar": {
     "saved": "Gespeichert",

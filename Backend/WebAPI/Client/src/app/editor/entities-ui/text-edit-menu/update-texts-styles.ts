@@ -6,7 +6,6 @@ export type TextUpdateValue = boolean | string;
 
 export interface UpdateTextStyles {
   contents: ParentInteractionHTML[];
-  isRemoveStyles: boolean;
   textStyle: TextStyles;
   value: TextUpdateValue;
 }

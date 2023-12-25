@@ -344,7 +344,8 @@
     "labelPage": "Nazwa etykiety",
     "unnamedNote": "Nienazwana notatka",
     "unnamedFolder": "Folder bez nazwy",
-    "unnamedLabel": "Nienazwana etykieta"
+    "unnamedLabel": "Nienazwana etykieta",
+    "emptyLink": "Wklej link"
   },
   "snackBar": {
     "saved": "Zapisano",

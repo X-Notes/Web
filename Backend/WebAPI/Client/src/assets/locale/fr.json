@@ -344,7 +344,8 @@
     "labelPage": "Nom de l’étiquette",
     "unnamedNote": "Note sans nom",
     "unnamedFolder": "Dossier sans nom",
-    "unnamedLabel": "Étiquette sans nom"
+    "unnamedLabel": "Étiquette sans nom",
+    "emptyLink": "Coller le lien"
   },
   "snackBar": {
     "saved": "Sauvé",

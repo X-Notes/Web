@@ -346,7 +346,8 @@
     "labelPage": "Назва ярлика",
     "unnamedNote": "Без назви",
     "unnamedFolder": "Без назви",
-    "unnamedLabel": "Без назви"
+    "unnamedLabel": "Без назви",
+    "emptyLink": "Вставити посилання"
   },
   "snackBar": {
     "saved": "Збережено",

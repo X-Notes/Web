@@ -344,7 +344,8 @@
     "labelPage": "Label name",
     "unnamedNote": "Unnamed note",
     "unnamedFolder": "Unnamed folder",
-    "unnamedLabel": "Unnamed label"
+    "unnamedLabel": "Unnamed label",
+    "emptyLink": "Paste link"
   },
   "snackBar": {
     "saved": "Saved",

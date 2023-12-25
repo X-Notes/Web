@@ -139,16 +139,13 @@ export class TextEditMenuComponent implements OnInit {
   }
 
   updateStyles(textStyle: TextStyles, value: TextUpdateValue): void {
-    let isRemoveStyles = false;
     if (value === TextColorsDark.Default || value === TextBackgroundColorsDark.Default) {
-      value = null;
-      isRemoveStyles = true;
+      value = false;
     }
     this.updateText.emit({
       contents: this._options.elements,
       textStyle,
       value,
-      isRemoveStyles,
     });
   }
 

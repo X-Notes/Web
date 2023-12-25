@@ -344,7 +344,8 @@
     "labelPage": "Etikettens namn",
     "unnamedNote": "Namnlös anteckning",
     "unnamedFolder": "Namnlös mapp",
-    "unnamedLabel": "Namnlös etikett"
+    "unnamedLabel": "Namnlös etikett",
+    "emptyLink": "Klistra in länk"
   },
   "snackBar": {
     "saved": "Räddad",

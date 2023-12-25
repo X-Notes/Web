@@ -344,7 +344,8 @@
     "labelPage": "ラベル名",
     "unnamedNote": "名前のないメモ",
     "unnamedFolder": "名前のないフォルダ",
-    "unnamedLabel": "名前のないラベル"
+    "unnamedLabel": "名前のないラベル",
+    "emptyLink": "リンクを貼り付け"
   },
   "snackBar": {
     "saved": "保存",

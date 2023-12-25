@@ -344,7 +344,8 @@
     "labelPage": "标签名称",
     "unnamedNote": "未命名的笔记",
     "unnamedFolder": "未命名文件夹",
-    "unnamedLabel": "未命名标签"
+    "unnamedLabel": "未命名标签",
+    "emptyLink": "粘贴链接"
   },
   "snackBar": {
     "saved": "保存",

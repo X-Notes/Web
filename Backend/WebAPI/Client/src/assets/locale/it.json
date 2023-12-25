@@ -344,7 +344,8 @@
     "labelPage": "Nome etichetta",
     "unnamedNote": "Nota senza nome",
     "unnamedFolder": "Cartella senza nome",
-    "unnamedLabel": "Etichetta senza nome"
+    "unnamedLabel": "Etichetta senza nome",
+    "emptyLink": "Incolla link"
   },
   "snackBar": {
     "saved": "Salvato",

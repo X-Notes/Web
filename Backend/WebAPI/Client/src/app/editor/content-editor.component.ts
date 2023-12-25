@@ -662,18 +662,13 @@ export class ContentEditorComponent
       const html = DeltaConverter.convertTextBlocksToHTML(blocks);
       if (!html) continue;
       const pos = this.getIndexAndLengthForUpdateStyle(selectionMode, el.getEditableNative());
-      let resultDelta: DeltaStatic;
-      if (updates.isRemoveStyles) {
-        resultDelta = DeltaConverter.removeStyles(html, pos.index, pos.length);
-      } else {
-        resultDelta = DeltaConverter.setStyles(
-          html,
-          pos.index,
-          pos.length,
-          updates.textStyle,
-          updates.value,
-        );
-      }
+      const resultDelta = DeltaConverter.setStyles(
+        html,
+        pos.index,
+        pos.length,
+        updates.textStyle,
+        updates.value,
+      );
       if (el) {
         setTimeout(() => { // need when to many elements updating at the same time and page is freezing
           const elLock = el;
@@ -694,19 +689,13 @@ export class ContentEditorComponent
     const blocks = el.getTextBlocks();
     const html = DeltaConverter.convertTextBlocksToHTML(blocks);
     if (!html) return;
-    let resultDelta: DeltaStatic;
-    // { index: selection.start, length: selection.end - selection.start, selection };
-    if (content.isRemoveStyles) {
-      resultDelta = DeltaConverter.removeStyles(html, content.selection.start, content.selection.end - content.selection.start);
-    } else {
-      resultDelta = DeltaConverter.setStyles(
-        html,
-        content.selection.start,
-        content.selection.end - content.selection.start,
-        content.textStyle,
-        content.value,
-      );
-    }
+    const resultDelta = DeltaConverter.setStyles(
+      html,
+      content.selection.start,
+      content.selection.end - content.selection.start,
+      content.textStyle,
+      content.value,
+    );
     if (el) {
       setTimeout(() => { // need when to many elements updating at the same time and page is freezing
         const elLock = el;
