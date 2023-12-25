@@ -6,8 +6,8 @@ namespace DatabaseContext.Repositories.Notifications
 {
     public class NotificationRepository : Repository<Notification, Guid>
     {
-        public NotificationRepository(ApiDbContext contextDB)
-            : base(contextDB)
+        public NotificationRepository(ApiDbContext contextDb)
+            : base(contextDb)
         {
 
         }
@@ -16,18 +16,18 @@ namespace DatabaseContext.Repositories.Notifications
         {
             return entities
                 .Include(x => x.UserFrom)
-                .ThenInclude(x => x.UserProfilePhoto)
-                .ThenInclude(x => x.AppFile)
+                    .ThenInclude(x => x.UserProfilePhoto)
+                    .ThenInclude(x => x.AppFile)
                 .Where(x => x.UserToId == userId)
                 .OrderByDescending(x => x.Date).AsSplitQuery().ToListAsync();
         }
 
-        public Task<Notification?> GetByIdIncludeUser(Guid id)
+        public Task<Notification> GetByIdIncludeUser(Guid id)
         {
             return entities
                 .Include(x => x.UserFrom)
-                .ThenInclude(x => x.UserProfilePhoto)
-                .ThenInclude(x => x.AppFile)
+                    .ThenInclude(x => x.UserProfilePhoto)
+                    .ThenInclude(x => x.AppFile)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -35,8 +35,8 @@ namespace DatabaseContext.Repositories.Notifications
         {
             return entities
                 .Include(x => x.UserFrom)
-                .ThenInclude(x => x.UserProfilePhoto)
-                .ThenInclude(x => x.AppFile)
+                    .ThenInclude(x => x.UserProfilePhoto)
+                    .ThenInclude(x => x.AppFile)
                 .Where(x => ids.Contains(x.Id))
                 .AsSplitQuery().ToListAsync();
         }

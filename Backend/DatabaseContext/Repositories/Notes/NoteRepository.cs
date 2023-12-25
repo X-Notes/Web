@@ -1,6 +1,4 @@
-﻿using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.Notes;
+﻿using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
 using Common.DTO.Personalization;
 using DatabaseContext.GenericRepositories;
@@ -10,8 +8,8 @@ namespace DatabaseContext.Repositories.Notes
 {
     public class NoteRepository : Repository<Note, Guid>
     {
-        public NoteRepository(ApiDbContext contextDB)
-            : base(contextDB)
+        public NoteRepository(ApiDbContext contextDb)
+            : base(contextDb)
         {
         }
 
@@ -20,20 +18,14 @@ namespace DatabaseContext.Repositories.Notes
             return entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
         }
 
-        public Task<Note?> GetNoteIncludeUsersAsync(Guid id)
+        public Task<Note> GetNoteIncludeUsersAsync(Guid id)
         {
             return context.Notes
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<Note>> GetNotesIncludeUsersAsync(List<Guid> ids)
-        {
-            return context.Notes
-                .Include(x => x.UsersOnPrivateNotes)
-                .Where(x => ids.Contains(x.Id)).ToListAsync();
-        }
-        
+
         public Task<List<Note>> GetNotesIncludeUsersNoTrackingAsync(List<Guid> ids)
         {
             return context.Notes
@@ -41,21 +33,21 @@ namespace DatabaseContext.Repositories.Notes
                 .Where(x => ids.Contains(x.Id)).AsNoTracking().ToListAsync();
         }
 
-        public Task<Note?> GetNoteWithLabelsAndUsers(Guid id)
+        public Task<Note> GetNoteWithLabelsAndUsers(Guid id)
         {
             return context.Notes
                 .Include(x => x.UsersOnPrivateNotes)
                 .Include(x => x.LabelsNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
-        
+
         private async Task<List<Note>> GetWithFilteredContent(List<Note> notes, int takeContents)
         {
             if (takeContents == 0)
             {
                 return notes;
             }
-            
+
             var notesIds = notes.Select(q => q.Id).ToHashSet();
 
             if (notesIds.Count == 0)
@@ -67,13 +59,13 @@ namespace DatabaseContext.Repositories.Notes
             {
                 takeContents = PersonalizationConstants.maxContentInNoteCount;
             }
-            
+
             var query = context.BaseNoteContents
                 .Include(q => q.Files)
                 .Where(q => notesIds.Contains(q.NoteId) && q.Order <= takeContents)
-                .GroupBy(x => x.NoteId)                
+                .GroupBy(x => x.NoteId)
                 .Select(x => new { noteId = x.Key, contents = x.OrderBy(q => q.Order).ToList() });
-                
+
             var contentsDict = await query.ToDictionaryAsync(x => x.noteId);
             notes.ForEach(note =>
             {
@@ -84,7 +76,7 @@ namespace DatabaseContext.Repositories.Notes
 
             return notes;
         }
-        
+
         public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(
             Guid userId, NoteTypeENUM typeId, int takeContents)
         {
@@ -161,21 +153,8 @@ namespace DatabaseContext.Repositories.Notes
                 .Select(x => x.Id)
                 .ToListAsync();
         }
-        
-        public Task<Note?> GetNoteWithContent(Guid noteId)
-        {
-            return entities  // TODO OPTIMIZATION
-                .Include(x => x.LabelsNotes)
-                    .ThenInclude(q => q.Label)
-                .Include(x => x.Contents)
-                    .ThenInclude(q => q.CollectionNoteAppFiles)
-                .Include(x => x.Contents)
-                    .ThenInclude(q => q.Files)
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(x => x.Id == noteId);
-        }
 
-        public Task<Note?> GetNoteWithContentAsNoTracking(Guid noteId)
+        public Task<Note> GetNoteWithContentAsNoTracking(Guid noteId)
         {
             return entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes)

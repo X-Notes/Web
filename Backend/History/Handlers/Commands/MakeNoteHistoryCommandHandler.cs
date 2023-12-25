@@ -28,7 +28,7 @@ public class MakeNoteHistoryCommandHandler: IRequestHandler<MakeNoteHistoryComma
 
 	public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
 	{
-		var noteForCopy = await noteRepository.GetNoteWithContent(request.Id);
+		var noteForCopy = await noteRepository.GetNoteWithContentAsNoTracking(request.Id);
 		var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(q => new SnapshotNoteLabel { Name = q.Name, Color = q.Color }).ToList();
 
         var noteText = string.Join("", noteForCopy.GetTextContents().Select(x => x.GetContentString()));
