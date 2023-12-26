@@ -46,8 +46,8 @@ namespace Common.DatabaseModels.Models.Users
             IsViewTextOnNote = true;
             IsViewDocumentOnNote = true;
 
-            SortedNoteByTypeId = SortedByENUM.CustomOrder;
-            SortedFolderByTypeId = SortedByENUM.CustomOrder;
+            SortedNoteByTypeId = SortedByENUM.DescDate;
+            SortedFolderByTypeId = SortedByENUM.DescDate;
 
             UserId = userId;
 

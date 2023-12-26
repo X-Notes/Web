@@ -269,8 +269,8 @@ export class UserStore {
       .getPersonalizationSettings()
       .toPromise();
     pr ??= {
-      sortedFolderByTypeId: SortedByENUM.AscDate,
-      sortedNoteByTypeId: SortedByENUM.AscDate,
+      sortedFolderByTypeId: SortedByENUM.DescDate,
+      sortedNoteByTypeId: SortedByENUM.DescDate,
       notesInFolderCount: 5,
       contentInNoteCount: 5,
       isViewAudioOnNote: true,

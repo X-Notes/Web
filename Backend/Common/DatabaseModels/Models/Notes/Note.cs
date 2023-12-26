@@ -28,6 +28,8 @@ namespace Common.DatabaseModels.Models.Notes
         public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
+        public int SequenceId { set; get; }
+        
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }

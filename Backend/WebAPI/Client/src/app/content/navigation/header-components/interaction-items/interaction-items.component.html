@@ -1,80 +1,43 @@
-<app-general-header-button
-  *ngIf="(pService.isMenuActive$ | async) === (false)"
-  (clickEvent)="newButton()"
-  [message]="'new.' + (route$ | async ) | translate"
-  [iconClass]="'plus'"
+<app-general-header-button *ngIf="(pService.isMenuActive$ | async) === (false)" (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate" [iconClass]="'plus'"
   [styleClasses]="'generic-unfixed-150 generic-create generic-hide-text'"
-  [theme]="theme$ | async"
-></app-general-header-button>
+  [theme]="theme$ | async"></app-general-header-button>
 
-<app-general-header-button
-  *ngIf="(pService.isMenuActive$ | async) === (true)"
+<app-general-header-button *ngIf="(pService.isMenuActive$ | async) === (true)"
   [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
-  [classOnSize]="'hide-tag-text'"
-  (clickEvent)="unselectAll()"
-  [message]="('header.selected' | translate) + ' ' + countSelected"
-  [iconClass]="'plus'"
-  [styleClasses]="'generic-unfixed-150 rotate'"
-  [styleType]="buttonStyleType.Dark"
-  [theme]="theme$ | async"
-></app-general-header-button>
+  [classOnSize]="'hide-tag-text'" (clickEvent)="unselectAll()"
+  [message]="('header.selected' | translate) + ' ' + countSelected" [iconClass]="'plus'"
+  [styleClasses]="'generic-unfixed-150 rotate'" [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"></app-general-header-button>
 
-<app-general-header-button
-  *ngIf="isAnyItemOnPage"
-  (clickEvent)="selectAll()"
+<app-general-header-button *ngIf="isAnyItemOnPage" (clickEvent)="selectAll()"
   [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
-  [classOnSize]="'hide-tag-text'"
-  [message]="('header.select' | translate)"
-  [iconClass]="'select'"
-  [styleClasses]="'generic-unfixed-150 generic-hide-text'"
-  [styleType]="buttonStyleType.Dark"
-  [theme]="theme$ | async"
-></app-general-header-button>
+  [classOnSize]="'hide-tag-text'" [message]="('header.select' | translate)" [iconClass]="'select'"
+  [styleClasses]="'generic-unfixed-150 generic-hide-text'" [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"></app-general-header-button>
 
-<app-general-header-button
-  *ngIf="(isActionFilterButton$ | async) && isAnyItemOnPage"
-  [matMenuTriggerFor]="menu"
-  [stateIconClass]="sortStateIcon"
-  [tooltipMessage]="('header.filter' | translate)"
-  [tooltipPosition]="'Bottom'"
-  [iconClass]="'filter'"
-  [styleClasses]="'filter'"
-  [styleType]="buttonStyleType.Dark"
-  [theme]="theme$ | async"
-></app-general-header-button>
+<app-general-header-button *ngIf="(isActionFilterButton$ | async) && isAnyItemOnPage" [matMenuTriggerFor]="menu"
+  [stateIconClass]="sortStateIcon" [tooltipMessage]="('header.filter' | translate)" [tooltipPosition]="'Bottom'"
+  [iconClass]="'filter'" [styleClasses]="'filter'" [styleType]="buttonStyleType.Dark"
+  [theme]="theme$ | async"></app-general-header-button>
 
-<mat-menu
-  #menu="matMenu"
-  [class]="(theme$ | async) === theme.Dark ? 'dark-menu' : null"
->
-  <button
-    (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"
-    [ngStyle]="prMenuStyle(sortedTypes.CustomOrder, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
-    mat-menu-item
-    type="button"
-    [name]="'header.filterMenu.order' | translate"
-  >
-    <mat-icon>reorder</mat-icon>
-    <span> {{ 'header.filterMenu.order' | translate }} </span>
+<mat-menu #menu="matMenu" [class]="(theme$ | async) === theme.Dark ? 'dark-menu' : null">
+  <button (click)="updatePrMenuHandler(sortedTypes.DescDate)"
+    [ngStyle]="prMenuStyle(sortedTypes.DescDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item type="button" [name]="'header.filterMenu.dateDesc' | translate">
+    <mat-icon>south</mat-icon>
+    <span> {{ 'header.filterMenu.dateDesc' | translate }} </span>
   </button>
-  <button
-    (click)="updatePrMenuHandler(sortedTypes.AscDate)"
+  <button (click)="updatePrMenuHandler(sortedTypes.AscDate)"
     [ngStyle]="prMenuStyle(sortedTypes.AscDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
-    mat-menu-item
-    type="button"
-    [name]="'header.filterMenu.dateAsc' | translate"
-  >
+    mat-menu-item type="button" [name]="'header.filterMenu.dateAsc' | translate">
     <mat-icon>north</mat-icon>
     <span> {{ 'header.filterMenu.dateAsc' | translate }} </span>
   </button>
-  <button
-    (click)="updatePrMenuHandler(sortedTypes.DescDate)"
-    [ngStyle]="prMenuStyle(sortedTypes.DescDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
-    mat-menu-item
-    type="button"
-    [name]="'header.filterMenu.dateDesc' | translate"
-  >
-    <mat-icon>south</mat-icon>
-    <span> {{ 'header.filterMenu.dateDesc' | translate }} </span>
+  <button (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"
+    [ngStyle]="prMenuStyle(sortedTypes.CustomOrder, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item type="button" [name]="'header.filterMenu.order' | translate">
+    <mat-icon>reorder</mat-icon>
+    <span> {{ 'header.filterMenu.order' | translate }} </span>
   </button>
 </mat-menu>
