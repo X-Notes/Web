@@ -17,6 +17,7 @@ import { PositionEntityModel } from './models/position-note.model';
 import { FullNote } from './models/full-note.model';
 import { SyncNoteResult } from './models/sync-note-result';
 import { NotesCount } from './models/notes-count.model';
+import { VersionUpdateResult } from 'src/app/core/models/entity/version-update-result';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -84,7 +85,7 @@ export class ApiServiceNotes {
       noteIds,
       connectionId
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<VersionUpdateResult[]>>(
       `${environment.api}/api/note/label/add`,
       obj,
     );
@@ -106,7 +107,7 @@ export class ApiServiceNotes {
       noteIds,
       connectionId
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<VersionUpdateResult[]>>(
       `${environment.api}/api/note/label/remove`,
       obj,
     );
@@ -118,7 +119,7 @@ export class ApiServiceNotes {
       color,
       connectionId
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<VersionUpdateResult[]>>(
       `${environment.api}/api/note/color`,
       obj,
     );

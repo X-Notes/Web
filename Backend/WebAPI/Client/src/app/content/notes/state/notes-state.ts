@@ -88,6 +88,7 @@ import { ApiEditorUsersService } from 'src/app/editor/api/api-editor-users.servi
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { NotesCount } from '../models/notes-count.model';
+import { VersionUpdateResult } from 'src/app/core/models/entity/version-update-result';
 
 export interface FullNoteState {
   note: FullNote;
@@ -717,7 +718,7 @@ export class NoteStore {
     { patchState, getState, dispatch }: StateContext<NoteState>,
     { color, selectedIds, isCallApi, errorPermissionMessage }: ChangeColorNote,
   ) {
-    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    let resp: OperationResult<VersionUpdateResult[]> = { success: true, data: null, message: null };
     if (isCallApi) {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
@@ -728,14 +729,18 @@ export class NoteStore {
       // UPDATE FULL NOTE
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && selectedIds.some((id) => id === fullNote.id)) {
+        const version = resp.data.find(x => fullNote.id == x.entityId).version;
         patchState({
-          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color } },
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, color, version } },
         });
       }
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
-        notesForUpdate.forEach((note) => dispatch(new UpdateOneNote({ ...note, color }, note.id)));
+        notesForUpdate.forEach((note) => {
+          const version = resp.data.find(x => note.id == x.entityId).version;
+          dispatch(new UpdateOneNote({ ...note, color, version }, note.id));
+        });
       }
 
       // UPDATE UI
@@ -784,7 +789,7 @@ export class NoteStore {
     { getState, dispatch, patchState }: StateContext<NoteState>,
     { labelId, selectedIds, isCallApi, errorPermissionMessage }: AddLabelOnNote,
   ) {
-    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    let resp: OperationResult<VersionUpdateResult[]> = { success: true, data: null, message: null };
     if (isCallApi) {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
@@ -795,16 +800,18 @@ export class NoteStore {
       // UPDATE FULL NOTE
       const note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
+        const version = resp.data.find(x => note.id == x.entityId).version;
         patchState({
           fullNoteState: {
             ...getState().fullNoteState,
-            note: { ...note, labelIds: [...note.labelIds, labelId] },
+            note: { ...note, labelIds: [...note.labelIds, labelId], version },
           },
         });
       }
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) => {
+        x.version = resp.data.find(x => note.id == x.entityId).version; 
         if (!x.labelIds.some((id) => id === labelId)) {
           x.labelIds = [...x.labelIds, labelId];
         }
@@ -828,7 +835,7 @@ export class NoteStore {
     { getState, dispatch, patchState }: StateContext<NoteState>,
     { labelId, selectedIds, isCallApi, errorPermissionMessage }: RemoveLabelFromNote,
   ) {
-    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    let resp: OperationResult<VersionUpdateResult[]> = { success: true, data: null, message: null };
     if (isCallApi) {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
@@ -839,15 +846,17 @@ export class NoteStore {
       // UPDATE FULL NOTE
       let note = getState().fullNoteState?.note;
       if (note && selectedIds.some((id) => id === note.id)) {
-        note = { ...note, labelIds: note.labelIds.filter((id) => id !== labelId) };
+        const version = resp.data.find(x => note.id == x.entityId).version;
+        note = { ...note, labelIds: note.labelIds.filter((id) => id !== labelId, version) };
         patchState({ fullNoteState: { ...getState().fullNoteState, note } });
       }
 
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      notesForUpdate.forEach((x) =>
-        dispatch(new UpdateOneNote({ labelIds: x.labelIds.filter((id) => id !== labelId) }, x.id)),
-      );
+      notesForUpdate.forEach((x) => {
+        const version = resp.data.find(x => note.id == x.entityId).version; 
+        dispatch(new UpdateOneNote({ labelIds: x.labelIds.filter((id) => id !== labelId), version }, x.id))
+      });
       dispatch([new UpdateLabelCount(labelId)]);
 
       // UPDATE UI
@@ -1034,7 +1043,7 @@ export class NoteStore {
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { newTitle, isCallApi, noteId, errorPermissionMessage }: UpdateNoteTitle,
   ) {
-    let resp: OperationResult<any> = { success: true, data: null, message: null };
+    let resp: OperationResult<VersionUpdateResult> = { success: true, data: null, message: null };
     if (isCallApi) {
       if (!this.signalR.connectionId) {
         throw new Error('connectionId null');
@@ -1047,13 +1056,13 @@ export class NoteStore {
       const fullNote = getState().fullNoteState?.note;
       if (fullNote && fullNote.id === noteId) {
         patchState({
-          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle } },
+          fullNoteState: { ...getState().fullNoteState, note: { ...fullNote, title: newTitle, version: resp.data.version  } },
         });
       }
       // UPDATE SMALL NOTE
       const noteUpdate = this.getNoteById(getState, noteId);
       if (noteUpdate) {
-        dispatch(new UpdateOneNote({ ...noteUpdate, title: newTitle }, noteUpdate.id));
+        dispatch(new UpdateOneNote({ ...noteUpdate, title: newTitle, version: resp.data.version }, noteUpdate.id));
       }
 
       // UPDATE UI

@@ -19,29 +19,7 @@ using SignalrUpdater.Impl;
 
 namespace Editor.Services
 {
-    public class NoteTitleAndTextContentCommandHandler :
-        IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>
-    {
-
-        private readonly IMediator mediator;
-
-        private readonly NoteRepository noteRepository;
-
-        private readonly HistoryCacheService historyCacheService;
-
-        private readonly AppSignalRService appSignalRService;
-
-        private readonly BaseNoteContentRepository textNotesRepository;
-
-        private readonly NoteWSUpdateService noteWsUpdateService;
-
-        private readonly NoteFolderLabelMapper mapper;
-        
-        private readonly NotesMultipleUpdateService notesMultipleUpdateService;
-
-        public NoteTitleAndTextContentCommandHandler(
-            IMediator mediator,
+    public class NoteTitleAndTextContentCommandHandler(IMediator mediator,
             NoteRepository noteRepository,
             HistoryCacheService historyCacheService,
             AppSignalRService appSignalRService,
@@ -49,25 +27,18 @@ namespace Editor.Services
             NoteWSUpdateService noteWsUpdateService,
             NoteFolderLabelMapper mapper,
             NotesMultipleUpdateService notesMultipleUpdateService)
-        {
-            this.mediator = mediator;
-            this.noteRepository = noteRepository;
-            this.historyCacheService = historyCacheService;
-            this.appSignalRService = appSignalRService;
-            this.textNotesRepository = textNotesRepository;
-            this.noteWsUpdateService = noteWsUpdateService;
-            this.mapper = mapper;
-            this.notesMultipleUpdateService = notesMultipleUpdateService;
-        }
-
-        public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
+        :
+            IRequestHandler<UpdateTitleNoteCommand, OperationResult<VersionUpdateResult>>,
+            IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>
+    {
+        public async Task<OperationResult<VersionUpdateResult>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.UserId);
             var permissions = await mediator.Send(command);
 
             if (!permissions.CanWrite)
             {
-                return new OperationResult<Unit>().SetNoPermissions();
+                return new OperationResult<VersionUpdateResult>().SetNoPermissions();
             }
             
             async Task UpdateNoteTitleAsync(Note note, string title)
@@ -92,7 +63,7 @@ namespace Editor.Services
                 await noteWsUpdateService.UpdateNoteWithConnections(update, noteStatus.UserIds, request.ConnectionId);   
             }
 
-            return new OperationResult<Unit>(true, Unit.Value);
+            return new OperationResult<VersionUpdateResult>(true, new VersionUpdateResult(note.Id, note.Version));
         }
 
         public async Task<OperationResult<List<UpdateBaseContentResult>>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)

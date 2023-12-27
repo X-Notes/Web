@@ -8,26 +8,13 @@ using Permissions.Queries;
 
 namespace Notes.Handlers.Commands;
 
-public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<Unit>>
-{
-    private readonly IMediator mediator;
-    private readonly LabelsNotesRepository labelsNotesRepository;
-    private readonly NoteRepository noteRepository;
-    private readonly HistoryCacheService historyCacheService;
-
-    public RemoveLabelFromNoteCommandHandler(
-        IMediator mediator, 
+public class RemoveLabelFromNoteCommandHandler(IMediator mediator,
         LabelsNotesRepository labelsNotesRepository,
         NoteRepository noteRepository,
         HistoryCacheService historyCacheService)
-    {
-        this.mediator = mediator;
-        this.labelsNotesRepository = labelsNotesRepository;
-        this.noteRepository = noteRepository;
-        this.historyCacheService = historyCacheService;
-    }
-    
-    public async Task<OperationResult<Unit>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
+    : IRequestHandler<RemoveLabelFromNoteCommand, OperationResult<List<VersionUpdateResult>>>
+{
+    public async Task<OperationResult<List<VersionUpdateResult>>> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNotesManyQuery(request.NoteIds, request.UserId);
         var permissions = await mediator.Send(command, cancellationToken);
@@ -35,7 +22,7 @@ public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFrom
         var isAuthor = permissions.All(x => x.perm.IsOwner);
         if (!isAuthor)
         {
-            return new OperationResult<Unit>().SetNoPermissions();
+            return new OperationResult<List<VersionUpdateResult>>().SetNoPermissions();
         }
         
         var noteIds = permissions.Select(x => x.noteId);
@@ -55,7 +42,8 @@ public class RemoveLabelFromNoteCommandHandler : IRequestHandler<RemoveLabelFrom
                 await historyCacheService.UpdateNoteAsync(perm.perm.NoteId, perm.perm.CallerId);
             }
         }
-        
-        return new OperationResult<Unit>(true, Unit.Value);
+
+        var results = notes.Select(x => new VersionUpdateResult(x.Id, x.Version)).ToList();
+        return new OperationResult<List<VersionUpdateResult>>(true, results);
     }
 }

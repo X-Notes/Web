@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Notes.Commands
 {
-    public class AddLabelOnNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class AddLabelOnNoteCommand : BaseCommandEntity, IRequest<OperationResult<List<VersionUpdateResult>>>
     {
         [ValidationGuid]
         public Guid LabelId { set; get; }

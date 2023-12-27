@@ -1,5 +1,4 @@
 ﻿using Common.DTO;
-using Common.DTO.WebSockets;
 using DatabaseContext.Repositories.Notes;
 using History.Impl;
 using MediatR;
@@ -9,26 +8,15 @@ using SignalrUpdater.Impl;
 
 namespace Notes.Handlers.Commands;
 
-public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteCommand, OperationResult<Unit>>
-{
-    private readonly IMediator mediator;
-    private readonly NoteRepository noteRepository;
-    private readonly NoteWSUpdateService noteWsUpdateService;
-    private readonly HistoryCacheService historyCacheService;
-
-    public ChangeColorNoteCommandHandler(
-        IMediator mediator, 
+public class ChangeColorNoteCommandHandler(IMediator mediator,
         NoteRepository noteRepository,
         NoteWSUpdateService noteWsUpdateService,
         HistoryCacheService historyCacheService)
-    {
-        this.mediator = mediator;
-        this.noteRepository = noteRepository;
-        this.noteWsUpdateService = noteWsUpdateService;
-        this.historyCacheService = historyCacheService;
-    }
-    
-    public async Task<OperationResult<Unit>> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
+    : IRequestHandler<ChangeColorNoteCommand, OperationResult<List<VersionUpdateResult>>>
+{
+    private readonly NoteWSUpdateService noteWsUpdateService = noteWsUpdateService;
+
+    public async Task<OperationResult<List<VersionUpdateResult>>> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
     {
         var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.UserId);
         var permissions = await mediator.Send(command, cancellationToken);
@@ -36,7 +24,7 @@ public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteComm
         var isCanEdit = permissions.All(x => x.perm.CanWrite);
         if (!isCanEdit)
         {
-            return new OperationResult<Unit>().SetNoPermissions();
+            return new OperationResult<List<VersionUpdateResult>>().SetNoPermissions();
         }
         
         var noteIds = permissions.Select(x => x.perm.NoteId);
@@ -70,6 +58,7 @@ public class ChangeColorNoteCommandHandler : IRequestHandler<ChangeColorNoteComm
             }
         */
         
-        return new OperationResult<Unit>(true, Unit.Value);
+        var results = notesForUpdate.Select(x => new VersionUpdateResult(x.Id, x.Version)).ToList();
+        return new OperationResult<List<VersionUpdateResult>>(true, results);
     }
 }

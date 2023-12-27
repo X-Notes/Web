@@ -20,7 +20,7 @@ public class TextController(IMediator mediator, IValidator<TextDiff> validator) 
 {
     [HttpPatch("title")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<Unit>> UpdateTitle([FromBody] UpdateTitleNoteCommand command)
+    public async Task<OperationResult<VersionUpdateResult>> UpdateTitle([FromBody] UpdateTitleNoteCommand command)
     {
         command.UserId = this.GetUserId();
         return await mediator.Send(command);

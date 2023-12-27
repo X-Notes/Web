@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Notes.Commands
 {
-    public class RemoveLabelFromNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class RemoveLabelFromNoteCommand : BaseCommandEntity, IRequest<OperationResult<List<VersionUpdateResult>>>
     {
         [ValidationGuid]
         public Guid LabelId { set; get; }

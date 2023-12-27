@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Notes.Commands
 {
-    public class ChangeColorNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class ChangeColorNoteCommand : BaseCommandEntity, IRequest<OperationResult<List<VersionUpdateResult>>>
     {
         [Required]
         public string Color { set; get; }

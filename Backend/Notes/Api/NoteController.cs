@@ -47,7 +47,7 @@ public class NoteController : ControllerBase
 
     [HttpPatch("color")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<Unit>> ChangeColor([FromBody] ChangeColorNoteCommand command)
+    public async Task<OperationResult<List<VersionUpdateResult>>> ChangeColor([FromBody] ChangeColorNoteCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
@@ -97,7 +97,7 @@ public class NoteController : ControllerBase
 
     [HttpPatch("label/add")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<Unit>> AddLabel([FromBody] AddLabelOnNoteCommand command)
+    public async Task<OperationResult<List<VersionUpdateResult>>> AddLabel([FromBody] AddLabelOnNoteCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);
@@ -106,7 +106,7 @@ public class NoteController : ControllerBase
 
     [HttpPatch("label/remove")]
     [ValidationRequireUserIdFilter]
-    public async Task<OperationResult<Unit>> RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
+    public async Task<OperationResult<List<VersionUpdateResult>>> RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
     {
         command.UserId = this.GetUserId();
         return await _mediator.Send(command);

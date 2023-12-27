@@ -14,6 +14,7 @@ import { ContentState } from '../entities/state/content-state';
 import { EditorStateResult } from '../entities/state/editor-state-result';
 import { TextDiff } from '../entities/text/text-diff';
 import { TextUpdateResult } from '../entities/text/text-update-result';
+import { VersionUpdateResult } from 'src/app/core/models/entity/version-update-result';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class ApiNoteEditorService {
       id,
       connectionId
     };
-    return this.httpClient.patch<OperationResult<any>>(
+    return this.httpClient.patch<OperationResult<VersionUpdateResult>>(
       `${environment.api}/api/editor/text/title`,
       obj,
     );

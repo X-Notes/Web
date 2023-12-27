@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Editor.Commands.Title
 {
-    public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<VersionUpdateResult>>
     {
         [MaxLength(500)]
         public string Title { set; get; }

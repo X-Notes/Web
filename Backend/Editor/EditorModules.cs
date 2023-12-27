@@ -32,7 +32,7 @@ public static class EditorModules
     public static void ApplyEditorModulesDI(this IServiceCollection services)
     {
         // FULL NOTE TEXT
-        services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, NoteTitleAndTextContentCommandHandler>();
+        services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<VersionUpdateResult>>, NoteTitleAndTextContentCommandHandler>();
         services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<List<UpdateBaseContentResult>>>, NoteTitleAndTextContentCommandHandler>();
 
         // FULL NOTE CONTENT
