@@ -144,6 +144,7 @@ export class CollectionBaseComponent<
   syncLayoutWithContent(): void {
     const el = this.titleComponent.titleHtml.nativeElement;
     const data = this.facade.apiBrowser.saveRangePositionTextOnly(el);
+    this.titleComponent.setTitleUI(this.content.name);
     this.updateInternal();
     this.detectChanges();
     this.facade.apiBrowser.setCaretFirstChild(el, data);
