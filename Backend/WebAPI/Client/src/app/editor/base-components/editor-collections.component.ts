@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { take, filter } from 'rxjs/operators';
+import { take, filter, takeUntil, tap } from 'rxjs/operators';
 import { EditorTitleComponent } from './editor-title.component';
 import { TypeUploadFile } from '../entities-ui/files-enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../entities-ui/files-enums/type-upload-formats.enum';
@@ -17,6 +17,9 @@ import { DocumentsCollection } from '../entities/contents/documents-collection';
 import { PhotosCollection } from '../entities/contents/photos-collection';
 import { VideosCollection } from '../entities/contents/videos-collection';
 import { EditorFacadeService } from '../services/editor-facade.service';
+import { ofActionDispatched } from '@ngxs/store';
+import { ItemToCollectionUploaded } from '../store/editor-actions';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -27,6 +30,8 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(facade: EditorFacadeService) {
     super(facade);
+    facade.actions$.pipe(ofActionDispatched(ItemToCollectionUploaded), takeUntilDestroyed())
+      .subscribe(x => this.onItemToCollectionUploaded(x))
   }
 
   // VIDEOS
@@ -44,12 +49,7 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    const videos = await this.facade.videosService.uploadVideosToCollectionHandler($event, noteId);
-    const ids = videos.map((x) => x.fileId);
-    const action = new RemoveCollectionItemsAction(ids, $event.contentId);
-    this.facade.momentoStateService.saveToStack(action);
-    this.syncCollectionItems($event.contentId);
-    this.postAction();
+    await this.facade.videosService.uploadVideoToCollectionHandler($event.contentId, $event.files, noteId);
   };
 
   // DOCUMENTS
@@ -67,15 +67,7 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   }
 
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    const docs = await this.facade.documentsService.uploadDocumentsToCollectionHandler(
-      $event,
-      noteId,
-    );
-    const ids = docs.map((x) => x.fileId);
-    const action = new RemoveCollectionItemsAction(ids, $event.contentId);
-    this.facade.momentoStateService.saveToStack(action);
-    this.syncCollectionItems($event.contentId);
-    this.postAction();
+    await this.facade.documentsService.uploadDocumentToCollectionHandler($event.contentId, $event.files, noteId);
   };
 
   // AUDIOS
@@ -93,13 +85,18 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   }
 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    const audios = await this.facade.audiosService.uploadAudiosToCollectionHandler($event, noteId);
-    const ids = audios.map((x) => x.fileId);
-    const action = new RemoveCollectionItemsAction(ids, $event.contentId);
-    this.facade.momentoStateService.saveToStack(action);
-    this.syncCollectionItems($event.contentId);
-    this.postAction();
+    await this.facade.audiosService.uploadAudioToCollectionHandler($event.contentId, $event.files, noteId);
   };
+
+  onItemToCollectionUploaded(event: ItemToCollectionUploaded): void {
+    if (this.options$.getValue().noteId !== event.noteId) {
+      return;
+    }
+    const action = new RemoveCollectionItemsAction([event.itemId], event.contentId);
+    this.facade.momentoStateService.saveToStack(action);
+    this.syncCollectionItems(event.contentId);
+    this.postAction();
+  }
 
   // PHOTOS
   deletePhotosCollection(contentId: string) {
@@ -116,12 +113,7 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
   }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
-    const photos = await this.facade.photosService.uploadPhotosToCollectionHandler($event, noteId);
-    const ids = photos.map((x) => x.fileId);
-    const action = new RemoveCollectionItemsAction(ids, $event.contentId);
-    this.facade.momentoStateService.saveToStack(action);
-    this.syncCollectionItems($event.contentId);
-    this.postAction();
+    await this.facade.photosService.uploadPhotoToCollectionHandler($event.contentId, $event.files, noteId);
   };
 
   syncCollectionItems(contentId: string): void {
@@ -169,12 +161,8 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
         take(1),
       )
       .subscribe(async () => {
-        await this.facade.photosService.uploadPhotosToCollectionHandler(
-          { contentId: cont.content.id, files },
-          this.options$.getValue().noteId,
-        );
-        this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
+        await this.facade.photosService.uploadPhotoToCollectionHandler(cont.content.id, files, this.options$.getValue().noteId);
         this.postAction();
       });
   }
@@ -192,12 +180,8 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
         take(1),
       )
       .subscribe(async () => {
-        await this.facade.audiosService.uploadAudiosToCollectionHandler(
-          { contentId: cont.content.id, files },
-          this.options$.getValue().noteId,
-        );
-        this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
+        await this.facade.audiosService.uploadAudioToCollectionHandler(cont.content.id, files, this.options$.getValue().noteId);
         this.postAction();
       });
   }
@@ -215,12 +199,8 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
         take(1),
       )
       .subscribe(async () => {
-        await this.facade.videosService.uploadVideosToCollectionHandler(
-          { contentId: cont.content.id, files },
-          this.options$.getValue().noteId,
-        );
-        this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
+        await this.facade.videosService.uploadVideoToCollectionHandler(cont.content.id, files, this.options$.getValue().noteId);
         this.postAction();
       });
   }
@@ -238,12 +218,8 @@ export abstract class EditorCollectionsComponent extends EditorTitleComponent {
         take(1),
       )
       .subscribe(async () => {
-        await this.facade.documentsService.uploadDocumentsToCollectionHandler(
-          { contentId: cont.content.id, files },
-          this.options$.getValue().noteId,
-        );
-        this.syncCollectionItems(cont.content.id);
         this.handleDeleteCollection(cont.content.id);
+        await this.facade.documentsService.uploadDocumentToCollectionHandler(cont.content.id, files, this.options$.getValue().noteId);
         this.postAction();
       });
   }

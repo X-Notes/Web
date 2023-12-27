@@ -13,8 +13,7 @@ export class ApiNoteFilesService {
   uploadFilesToNote(data: FormData, noteId: string, fileType: FileNoteTypes) {
     return this.httpClient.post<OperationResult<FileNote[]>>(
       `${environment.api}/api/editor/files/upload/${noteId}/${fileType}`,
-      data,
-      { reportProgress: true, observe: 'events' },
+      data
     );
   }
 

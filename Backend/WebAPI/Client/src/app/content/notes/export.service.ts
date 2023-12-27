@@ -2,18 +2,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
-import { finalize, map, takeUntil } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
-import {
-  FileProcessTracker,
-  SnackBarFileProcessHandlerService,
-} from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
-import { LongTermsIcons } from '../long-term-operations-handler/models/long-terms.icons';
-import {
-  LongTermOperation,
-  OperationDetailMini,
-} from '../long-term-operations-handler/models/long-term-operation';
+import { LongTermOperation } from '../long-term-operations-handler/models/long-term-operation';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs';
@@ -30,33 +22,26 @@ export class ExportService {
   constructor(
     private httpClient: HttpClient,
     private longTermOperationsHandler: LongTermOperationsHandlerService,
-    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private snackbarService: SnackbarService,
     private translateService: TranslateService,
   ) {}
 
-  zipFiles = async (tasks: Observable<{ blob: FileProcessTracker<Blob>; name: string }>[]) => {
+  zipFiles = async (tasks: Observable<{ blob: Blob; name: string }>[]) => {
     const resp = await forkJoin(tasks).toPromise();
     const zip = new JSZip();
-    resp.forEach((x) => zip.file(x.name, x.blob.eventBody));
+    resp.forEach((x) => zip.file(x.name, x.blob));
     const zipFile = await zip.generateAsync({ type: 'blob' });
     saveAs(zipFile, `x-notes-export ${dayjs().format('LLL')}`);
   };
 
-  getBlobFile(url: string, mini: OperationDetailMini, operation: LongTermOperation) {
+  getBlobFile(url: string, operation: LongTermOperation) {
     const headers = new HttpHeaders().set(InterceptorSkipToken, '');
     return this.httpClient
       .get(url, {
         headers,
-        responseType: 'blob',
-        reportProgress: true,
-        observe: 'events',
+        responseType: 'blob'
       })
-      .pipe(
-        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
-        takeUntil(mini.obs),
-        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
-      );
+      .pipe(finalize(() => this.longTermOperationsHandler.finalize(operation)));
   }
 
   // PHOTOS
@@ -69,13 +54,7 @@ export class ExportService {
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportPhotos');
     const tasks = collection.items.map((photo) => {
       const path = photo.photoFromBig;
-      const mini = this.longTermOperationsHandler.getNewMini(
-        operation,
-        LongTermsIcons.Image,
-        photo.name,
-        false,
-      );
-      return this.getBlobFile(path, mini, operation).pipe(
+      return this.getBlobFile(path, operation).pipe(
         map((blob) => {
           return {
             blob,
@@ -85,29 +64,15 @@ export class ExportService {
       );
     });
 
-    const miniFinal = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'uploader.exportShort',
-      false,
-      false,
-      true,
-    );
     await this.zipFiles(tasks);
-    this.longTermOperationsHandler.finalize(operation, miniFinal);
+    this.longTermOperationsHandler.finalize(operation);
   }
 
   async exportPhoto(photo: Photo) {
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportPhotos');
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Image,
-      photo.name,
-      false,
-    );
     const path = photo.photoFromBig;
-    const blob = await this.getBlobFile(path, mini, operation).toPromise();
-    saveAs(blob.eventBody, photo.name);
+    const blob = await this.getBlobFile(path, operation).toPromise();
+    saveAs(blob, photo.name);
   }
 
   // AUDIOS
@@ -119,14 +84,8 @@ export class ExportService {
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportAudios');
     const tasks = collection.items.map((audio) => {
-      const mini = this.longTermOperationsHandler.getNewMini(
-        operation,
-        LongTermsIcons.Audio,
-        audio.name,
-        false,
-      );
       const path = audio.audioPath;
-      return this.getBlobFile(path, mini, operation).pipe(
+      return this.getBlobFile(path, operation).pipe(
         map((blob) => {
           return {
             blob,
@@ -136,29 +95,15 @@ export class ExportService {
       );
     });
 
-    const miniFinal = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'uploader.exportShort',
-      false,
-      false,
-      true,
-    );
     await this.zipFiles(tasks);
-    this.longTermOperationsHandler.finalize(operation, miniFinal);
+    this.longTermOperationsHandler.finalize(operation);
   }
 
   async exportAudio(audio: AudioModel) {
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportAudios');
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Audio,
-      audio.name,
-      false,
-    );
     const path = audio.audioPath;
-    const blob = await this.getBlobFile(path, mini, operation).toPromise();
-    saveAs(blob.eventBody, audio.name);
+    const blob = await this.getBlobFile(path, operation).toPromise();
+    saveAs(blob, audio.name);
   }
 
   // DOCUMENT
@@ -172,14 +117,8 @@ export class ExportService {
       'uploader.exportDocuments',
     );
     const tasks = collection.items.map((document) => {
-      const mini = this.longTermOperationsHandler.getNewMini(
-        operation,
-        LongTermsIcons.Document,
-        document.name,
-        false,
-      );
       const path = document.documentPath;
-      return this.getBlobFile(path, mini, operation).pipe(
+      return this.getBlobFile(path, operation).pipe(
         map((blob) => {
           return {
             blob,
@@ -189,31 +128,17 @@ export class ExportService {
       );
     });
 
-    const miniFinal = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'uploader.exportShort',
-      false,
-      false,
-      true,
-    );
     await this.zipFiles(tasks);
-    this.longTermOperationsHandler.finalize(operation, miniFinal);
+    this.longTermOperationsHandler.finalize(operation);
   }
 
   async exportDocument(document: DocumentModel) {
     const operation = this.longTermOperationsHandler.addNewExportOperation(
       'uploader.exportDocuments',
     );
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Document,
-      document.name,
-      false,
-    );
     const path = document.documentPath;
-    const blob = await this.getBlobFile(path, mini, operation).toPromise();
-    saveAs(blob.eventBody, document.name);
+    const blob = await this.getBlobFile(path, operation).toPromise();
+    saveAs(blob, document.name);
   }
 
   // VIDEOS
@@ -225,14 +150,8 @@ export class ExportService {
     }
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportVideos');
     const tasks = collection.items.map((video) => {
-      const mini = this.longTermOperationsHandler.getNewMini(
-        operation,
-        LongTermsIcons.Video,
-        video.name,
-        false,
-      );
       const path = video.videoPath;
-      return this.getBlobFile(path, mini, operation).pipe(
+      return this.getBlobFile(path, operation).pipe(
         map((blob) => {
           return {
             blob,
@@ -242,28 +161,14 @@ export class ExportService {
       );
     });
 
-    const miniFinal = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'uploader.exportShort',
-      false,
-      false,
-      true,
-    );
     await this.zipFiles(tasks);
-    this.longTermOperationsHandler.finalize(operation, miniFinal);
+    this.longTermOperationsHandler.finalize(operation);
   }
 
   async exportVideo(video: VideoModel) {
     const operation = this.longTermOperationsHandler.addNewExportOperation('uploader.exportVideos');
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Video,
-      video.name,
-      false,
-    );
     const path = video.videoPath;
-    const blob = await this.getBlobFile(path, mini, operation).toPromise();
-    saveAs(blob.eventBody, video.name);
+    const blob = await this.getBlobFile(path, operation).toPromise();
+    saveAs(blob, video.name);
   }
 }

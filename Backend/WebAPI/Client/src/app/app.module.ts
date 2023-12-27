@@ -19,6 +19,7 @@ import { BackgroundStore } from './core/backgrounds/background-state';
 import { SharedPublicModule } from './public/shared-public/shared-public/shared-public.module';
 import { PersonalizationService } from './shared/services/personalization.service';
 import { AuthService } from './core/auth.service';
+import { EditorStore } from './editor/store/editor-state';
 
 function initializeAppFactory(store: Store, authService: AuthService): () => Promise<any> {
   return async () => {
@@ -54,7 +55,7 @@ function initializeAppFactory(store: Store, authService: AuthService): () => Pro
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
     SharedPublicModule,
     ContentModule,
-    NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore, FolderStore, AppStore], {
+    NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore, FolderStore, AppStore, EditorStore], {
       developmentMode: !environment.production,
     }),
     NgxsStoragePluginModule.forRoot({

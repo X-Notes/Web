@@ -5,10 +5,6 @@ import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import {
-  FileProcessTracker,
-  SnackBarFileProcessHandlerService,
-} from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { BaseCollection } from '../../entities/contents/base-collection';
@@ -23,9 +19,8 @@ export class ContentEditorFilesBase {
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     protected uploadFilesService: UploadFilesService,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
-    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     protected contentsService: ContentEditorContentsService,
-  ) {}
+  ) { }
 
   deleteContentHandler = (contentId: string) => {
     this.deleteHandler(contentId);
@@ -70,6 +65,13 @@ export class ContentEditorFilesBase {
     }
   }
 
+  protected afterUploadFilesToCollectionSingle<T>(results: OperationResult<T[]>) {
+    if (!results.success) {
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      this.snackBarStatusTranslateService.validateStatus(lname, results, byteToMB(maxRequestFileSize));
+    }
+  }
+
   protected deleteHandler(contentId: string) {
     this.contentsService.deleteById(contentId, false);
   }
@@ -82,12 +84,17 @@ export class ContentEditorFilesBase {
       .map((x) => new FileNote(x));
   }
 
-  protected async uploadFilesParallel(
-    uploadsRequests: Observable<FileProcessTracker<OperationResult<FileNote[]>>>[],
+  protected mapFilesSingle(res: OperationResult<FileNote[]>): FileNote[] {
+    if (res.success) {
+      return res.data?.map((x) => new FileNote(x));
+    }
+    return null;
+  }
+
+  protected async uploadFilesParallel(uploadsRequests: Observable<OperationResult<FileNote[]>>[],
   ) {
     try {
-      const resp = await forkJoin(uploadsRequests).toPromise();
-      return resp.map((x) => x.eventBody);
+      return await forkJoin(uploadsRequests).toPromise();
     } catch (e) { /* empty */ }
     return null;
   }
