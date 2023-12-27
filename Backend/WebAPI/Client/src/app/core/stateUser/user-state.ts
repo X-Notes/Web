@@ -9,7 +9,6 @@ import { EntitiesSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import {
   Logout,
   ChangeTheme,
@@ -226,15 +225,7 @@ export class UserStore {
     { photo }: UpdateUserPhoto,
   ) {
     const operation = this.longTermOperationsHandler.addNewProfilePhotoChangingOperation();
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Image,
-      'uploader.photoChanging',
-      true,
-      true,
-    );
-    const resp = await this.userApi.updateUserPhoto(photo, mini, operation).toPromise();
-    const result = resp.eventBody;
+    const result = await this.userApi.updateUserPhoto(photo, operation).toPromise();
     const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
       getState().user.languageId,
       result,

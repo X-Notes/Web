@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { ShortUser } from './models/user/short-user.model';
 import { AnswerChangePhoto } from './models/answer-change-photo.model';
 import { UserUsedDiskSpace } from './models/search/user-disk-space';
@@ -10,10 +10,8 @@ import { EntitiesSizeENUM } from '../shared/enums/font-size.enum';
 import { LanguagesENUM } from '../shared/enums/languages.enum';
 import { OperationResult } from '../shared/models/operation-result.model';
 import { LongTermOperationsHandlerService } from '../content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { SnackBarFileProcessHandlerService } from '../shared/services/snackbar/snack-bar-file-process-handler.service';
 import {
   LongTermOperation,
-  OperationDetailMini,
 } from '../content/long-term-operations-handler/models/long-term-operation';
 import { RefreshCommand } from './models/auth/refresh-command';
 import { RefreshResult } from './models/auth/refresh-result';
@@ -25,7 +23,6 @@ export class UserAPIService {
   constructor(
     private httpClient: HttpClient,
     protected longTermOperationsHandler: LongTermOperationsHandlerService,
-    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
   ) { }
 
   logout(refreshToken: string) {
@@ -92,16 +89,9 @@ export class UserAPIService {
     return this.httpClient.put(`${environment.api}/api/user/info`, obj);
   }
 
-  updateUserPhoto(photo: FormData, mini: OperationDetailMini, operation: LongTermOperation) {
+  updateUserPhoto(photo: FormData, operation: LongTermOperation) {
     return this.httpClient
-      .post<OperationResult<AnswerChangePhoto>>(`${environment.api}/api/user/photo`, photo, {
-        reportProgress: true,
-        observe: 'events',
-      })
-      .pipe(
-        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
-        takeUntil(mini.obs),
-        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
-      );
+      .post<OperationResult<AnswerChangePhoto>>(`${environment.api}/api/user/photo`, photo)
+      .pipe(finalize(() => this.longTermOperationsHandler.finalize(operation)));
   }
 }

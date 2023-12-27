@@ -29,7 +29,8 @@ export class PhotosCollection extends BaseCollection<Photo> {
   }
 
   get countRowOrDefault(): number {
-    return this.countInRow ?? 2;
+    if(this.countInRow == 0 || !this.countInRow) return 2;
+    return this.countInRow;
   }
 
   updateInfo(entity: PhotosCollection, version: number, updateDate: Date) {

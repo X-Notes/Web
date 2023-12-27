@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LongTermOperation, OperationDetailMini } from '../models/long-term-operation';
+import { LongTermOperation } from '../models/long-term-operation';
 
 @Component({
   selector: 'app-long-term-operation',
@@ -8,26 +8,11 @@ import { LongTermOperation, OperationDetailMini } from '../models/long-term-oper
   styleUrls: ['./long-term-operation.component.scss'],
 })
 export class LongTermOperationComponent {
-  @Output()
-  cancelAllEvent = new EventEmitter();
-
-  @Output()
-  cancelSingleEvent = new EventEmitter<OperationDetailMini>();
-
+ 
   @Input()
   operation: LongTermOperation;
 
   constructor(private prService: PersonalizationService) {}
-
-  get firstItem(): OperationDetailMini {
-    return this.operation.details[0];
-  }
-
-  get isShortActive(): boolean {
-    return (
-      (!this.operation.isDetailViewActive || !this.operation.isDetailViewOpened) && !!this.firstItem
-    );
-  }
 
   get title() {
     const width = this.prService.windowWidth$.getValue();
@@ -38,13 +23,5 @@ export class LongTermOperationComponent {
       return this.operation?.titleMedium;
     }
     return this.operation?.titleShort;
-  }
-
-  get isOpened() {
-    return this.operation.isDetailViewOpened && this.operation.isDetailViewActive;
-  }
-
-  toogleIsDetailViewActive() {
-    this.operation.isDetailViewOpened = !this.operation.isDetailViewOpened;
   }
 }

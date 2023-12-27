@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { LongTermOperation, OperationDetailMini } from '../models/long-term-operation';
-import { LongTermsIcons } from '../models/long-terms.icons';
+import { LongTermOperation } from '../models/long-term-operation';
 
 @Injectable({
   providedIn: 'root',
@@ -20,11 +18,11 @@ export class LongTermOperationsHandlerService {
       'uploader.uploading',
       'uploader.uploadingPhotosNote',
     );
-    this.getNewMini(op, LongTermsIcons.Audio, 'Audio', false, false);
-    this.getNewMini(op, LongTermsIcons.Video, 'Video');
-    this.getNewMini(op, LongTermsIcons.Document, 'Document');
-    this.getNewMini(op, LongTermsIcons.Image, 'Image');
-    this.getNewMini(op, LongTermsIcons.Export, 'Export');
+    // this.getNewMini(op, LongTermsIcons.Audio, 'Audio', false, false);
+    // this.getNewMini(op, LongTermsIcons.Video, 'Video');
+    // this.getNewMini(op, LongTermsIcons.Document, 'Document');
+    // this.getNewMini(op, LongTermsIcons.Image, 'Image');
+    // this.getNewMini(op, LongTermsIcons.Export, 'Export');
 
     this.addNewExportOperation('uploader.exportVideos');
     this.addNewCopingOperation('uploader.copyNotes');
@@ -37,51 +35,20 @@ export class LongTermOperationsHandlerService {
     this.operations = this.operations.filter((x) => x !== operation);
   }
 
-  removeOperationDetail = (operation: LongTermOperation, operationMini: OperationDetailMini) => {
-    // eslint-disable-next-line no-param-reassign
-    operation.details = operation.details.filter((x) => x !== operationMini);
-  };
-
-  finalize = (operation: LongTermOperation, operationMini: OperationDetailMini) => {
+  finalize = (operation: LongTermOperation) => {
     const start = operation.startAt.getTime();
     const end = new Date().getTime();
     const diff = end - start;
     const seconds = Math.floor((diff / 1000) % 60);
     if (seconds < 2) {
       setTimeout(() => {
-        this.removeOperationDetail(operation, operationMini);
-        if (operation.details.length === 0) {
-          this.removeOperation(operation);
-        }
+        this.removeOperation(operation);
       }, 500);
     } else {
-      this.removeOperationDetail(operation, operationMini);
-      if (operation.details.length === 0) {
-        this.removeOperation(operation);
-      }
+      this.removeOperation(operation);
     }
   };
 
-  getNewMini = (
-    operation: LongTermOperation,
-    icon: LongTermsIcons,
-    name: string,
-    isCancelable = true,
-    isShowProcents = true,
-    isStatic = false,
-  ) => {
-    const mini: OperationDetailMini = {
-      icon,
-      name,
-      isCancelable,
-      isShowProcents,
-      isStatic,
-      procent: 0,
-      obs: new Subject<any>(),
-    };
-    operation.details.push(mini);
-    return mini;
-  };
 
   // UPLOAD FILES TO NOTE
   addNewUploadToNoteOperation(
@@ -94,11 +61,7 @@ export class LongTermOperationsHandlerService {
       title,
       startAt: new Date(),
       titleMedium,
-      isGeneralCancelButtonActive: true,
-      isDetailViewActive: true,
-      isDetailViewOpened: true,
-      isHeaderSpinnerActive: false,
-      details: [],
+      isHeaderSpinnerActive: true
     };
     this.operations.push(item);
     return item;
@@ -111,11 +74,7 @@ export class LongTermOperationsHandlerService {
       title,
       startAt: new Date(),
       titleMedium: 'uploader.exportShort',
-      isGeneralCancelButtonActive: true,
-      isDetailViewActive: true,
-      isDetailViewOpened: true,
-      isHeaderSpinnerActive: false,
-      details: [],
+      isHeaderSpinnerActive: true
     };
     this.operations.push(operation);
     return operation;
@@ -128,11 +87,7 @@ export class LongTermOperationsHandlerService {
       title,
       startAt: new Date(),
       titleMedium: 'uploader.copyShort',
-      isGeneralCancelButtonActive: false,
-      isDetailViewActive: false,
-      isDetailViewOpened: true,
-      isHeaderSpinnerActive: true,
-      details: [],
+      isHeaderSpinnerActive: true
     };
     this.operations.push(operation);
     return operation;
@@ -145,11 +100,7 @@ export class LongTermOperationsHandlerService {
       title,
       titleMedium: title,
       startAt: new Date(),
-      isGeneralCancelButtonActive: false,
-      isDetailViewActive: false,
-      isDetailViewOpened: true,
-      isHeaderSpinnerActive: true,
-      details: [],
+      isHeaderSpinnerActive: true
     };
     this.operations.push(operation);
     return operation;
@@ -162,11 +113,7 @@ export class LongTermOperationsHandlerService {
       title,
       titleMedium: title,
       startAt: new Date(),
-      isGeneralCancelButtonActive: false,
-      isDetailViewActive: false,
-      isDetailViewOpened: true,
-      isHeaderSpinnerActive: true,
-      details: [],
+      isHeaderSpinnerActive: true
     };
     this.operations.push(operation);
     return operation;

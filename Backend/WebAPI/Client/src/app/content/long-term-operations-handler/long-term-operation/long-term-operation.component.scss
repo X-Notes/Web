@@ -1,3 +1,7 @@
+:host {
+  margin-top: 5px;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -14,96 +18,20 @@
     align-items: center;
     background-color: #2a2d32;
     height: 38px;
-    padding: 0 0.875rem;
+    padding: 0 0 0 0.875rem;
 
     .buttons {
       display: flex;
       justify-content: space-between;
 
-      .detail-view {
-        margin-right: 10px;
-      }
-
       .mini-spinner {
-        width: 48px;
+        width: 44px;
         position: relative;
       }
 
       .icon {
         transition: 0.2s ease;
         cursor: pointer;
-      }
-    }
-  }
-
-  .operations-container {
-    padding: 0 0.875rem;
-
-    .progress-item {
-      height: 50px;
-      display: flex;
-      justify-content: space-between;
-
-      .left-section {
-        display: flex;
-        align-items: center;
-        width: 50%;
-
-        .nowrap {
-          clear: both;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          display: inherit;
-        }
-
-        .name {
-          font-size: 0.875rem;
-          margin-left: 16px;
-        }
-      }
-
-      .middle-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        .procent-info {
-          display: flex;
-          align-items: center;
-          .procent {
-            font-size: 0.875rem;
-            margin-right: 0.25rem;
-          }
-
-          .spinner-container {
-            width: 20px;
-            height: 100%;
-            position: relative;
-          }
-        }
-      }
-
-      .right-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .cancel-button {
-          cursor: pointer;
-          width: 30px;
-          height: 20px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 4px;
-          background-color: #34373e;
-
-          .icon {
-            display: flex;
-            height: 14px;
-            width: 14px;
-          }
-        }
       }
     }
   }
@@ -128,14 +56,5 @@
   color: #404040;
   .message-header {
     background-color: #f2f2f2;
-  }
-  .operations-container {
-    .progress-item {
-      .right-section {
-        .cancel-button {
-          background-color: initial;
-        }
-      }
-    }
   }
 }

@@ -1,51 +1,9 @@
 <div appTheme class="container">
-  <div class="message-header" [ngStyle]="{ 'border-radius': isOpened ? '5px 5px 0 0' : '5px' }">
+  <div class="message-header" [ngStyle]="{ 'border-radius': '5px' }">
     <p>{{ title | translate }}</p>
     <div class="buttons">
       <div class="mini-spinner" *ngIf="operation.isHeaderSpinnerActive">
         <app-spinner [size]="16" [isBackground]="false"></app-spinner>
-      </div>
-      <div
-        *ngIf="operation.isDetailViewActive"
-        (click)="toogleIsDetailViewActive()"
-        [ngStyle]="{ transform: operation.isDetailViewOpened === true ? 'rotate(180deg)' : '' }"
-        class="icon detail-view"
-      >
-        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
-      </div>
-      <div
-        *ngIf="operation.isGeneralCancelButtonActive"
-        (click)="cancelAllEvent.emit()"
-        class="icon"
-        style="transform: rotate(45deg)"
-      >
-        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="isOpened" class="operations-container">
-    <div *ngFor="let item of operation.details" class="progress-item">
-      <div class="left-section">
-        <div class="icon">
-          <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
-        </div>
-        <p *ngIf="item.isStatic" class="name nowrap">{{ item.name | translate }}</p>
-        <p *ngIf="!item.isStatic" class="name nowrap">{{ item.name }}</p>
-      </div>
-      <div class="middle-section">
-        <div class="procent-info">
-          <p *ngIf="item.isShowProcents" class="procent">{{ item.procent }}%</p>
-          <div class="spinner-container">
-            <app-spinner [size]="16" [isBackground]="false"></app-spinner>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="item.isCancelable" class="right-section">
-        <div class="cancel-button" (click)="cancelSingleEvent.emit(item)">
-          <div class="icon" style="transform: rotate(45deg)">
-            <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-          </div>
-        </div>
       </div>
     </div>
   </div>

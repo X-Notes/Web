@@ -3,7 +3,6 @@ import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import {
   NewBackground,
   LoadBackgrounds,
@@ -50,15 +49,7 @@ export class BackgroundStore {
     { photo }: NewBackground,
   ) {
     const operation = this.longTermOperationsHandler.addNewBackgroundChangingOperation();
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Image,
-      'background changing',
-      true,
-      true,
-    );
-    const resp = await this.backgroundAPI.newBackground(photo, mini, operation).toPromise();
-    const result = resp.eventBody;
+    const result = await this.backgroundAPI.newBackground(photo, operation).toPromise();
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
 
     this.snackbarStatusHandler.validateStatus(language, result, byteToMB(maxBackgroundPhotoSize));

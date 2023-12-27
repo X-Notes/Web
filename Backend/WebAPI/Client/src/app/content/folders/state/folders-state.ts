@@ -290,17 +290,9 @@ export class FolderStore {
     { typeFolder, selectedIds }: CopyFolders,
   ) {
     const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyFolders');
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'copying',
-      true,
-      true,
-    );
 
-    const result = await this.api.copyFolders(selectedIds, mini, operation).toPromise();
-    const resp = result.eventBody;
-
+    const resp = await this.api.copyFolders(selectedIds, operation).toPromise();
+   
     const newFolders = resp.data?.folders;
     if (resp.success && newFolders?.length > 0) {
       const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);

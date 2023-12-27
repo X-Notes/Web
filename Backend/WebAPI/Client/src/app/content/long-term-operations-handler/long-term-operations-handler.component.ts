@@ -1,8 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { PersonalizationService, uploader } from 'src/app/shared/services/personalization.service';
-import { OperationDetailMini } from './models/long-term-operation';
 import { LongTermOperationsHandlerService } from './services/long-term-operations-handler.service';
 
 @Component({
@@ -37,21 +36,4 @@ export class LongTermOperationsHandlerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {}
-
-  cancelAllHandler() {
-    // TODO CONFIRMATION POP-UP
-    this.longTermOperations.operations.forEach((op) =>
-      op.details.forEach((d) => {
-        d.obs.next();
-        d.obs.complete();
-      }),
-    );
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  cancelSingleHandler(operation: OperationDetailMini) {
-    // TODO CONFIRMATION POP-UP
-    operation.obs.next();
-    operation.obs.complete();
-  }
 }

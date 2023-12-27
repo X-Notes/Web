@@ -756,22 +756,14 @@ export class NoteStore {
     { selectedIds, folderId }: CopyNotes,
   ) {
     const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
-    const mini = this.longTermOperationsHandler.getNewMini(
-      operation,
-      LongTermsIcons.Export,
-      'copying',
-      true,
-      true,
-    );
-
-    const resp = await this.api.copyNotes(selectedIds, mini, operation, folderId).toPromise();
-    if (resp.eventBody && !resp.eventBody.success
+    const resp = await this.api.copyNotes(selectedIds, operation, folderId).toPromise();
+    if (resp && !resp.success
     ) {
-      if (resp.eventBody.status === OperationResultAdditionalInfo.BillingError) {
+      if (resp.status === OperationResultAdditionalInfo.BillingError) {
         const message = this.translate.instant('snackBar.subscriptionCreationError');
         this.snackbarService.openSnackBar(message, null, null, 5000);
       }
-      if (resp.eventBody.status === OperationResultAdditionalInfo.NotEnoughMemory) {
+      if (resp.status === OperationResultAdditionalInfo.NotEnoughMemory) {
         const message = this.translate.instant('files.noEnoughMemory');
         this.store.dispatch(new ShowSnackNotification(message));
       }
