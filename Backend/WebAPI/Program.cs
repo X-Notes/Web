@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Threading.RateLimiting;
 using API.Hosted;
 using Auth.Entities;
 using Common;
 using Common.App;
 using Common.Azure;
+using Common.Configs;
 using Common.ConstraintsUploadFiles;
 using Common.Filters;
 using Common.Google;
@@ -71,6 +73,9 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.Configure<GoogleAuthClient>(builder.Configuration.GetSection("GoogleClient"));
 builder.Services.Configure<AuthRequestOptions>(builder.Configuration.GetSection("AuthRequest"));
 
+var ipRateLimiting = builder.Configuration.GetSection("IpRateLimiting").Get<IpRateLimitingConfig>();
+builder.Services.Configure<IpRateLimitingConfig>(builder.Configuration.GetSection("IpRateLimiting"));
+
 var swaggerSection = builder.Configuration.GetSection("Swagger");
 builder.Services.Configure<SwaggerConfig>(swaggerSection);
 
@@ -102,6 +107,20 @@ builder.Services.JWT(jwtTokenConfig);
 builder.Services.ApplyMapperDI();
 builder.Services.ApplyMapperLockedDI();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = 429;
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
+            factory => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 150,
+                Window = TimeSpan.FromMinutes(1),
+            });
+    });
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(opt => opt.Filters.Add(new ValidationFilter()))
@@ -146,6 +165,11 @@ builder.Services.AddSpaStaticFiles(configuration =>
 
 var app = builder.Build();
 
+if (ipRateLimiting.Enabled)
+{
+    app.UseRateLimiter();   
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -159,6 +183,7 @@ if (swaggerConfig.Active)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 
