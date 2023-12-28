@@ -31,7 +31,7 @@ jobs:
       - name: Run migrations
         run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/API.Worker -s Backend/API.Worker
         env:
-          DatabaseConnection: ${{ secrets.DEV_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+          Database__WorkerDatabaseConnection: ${{ secrets.DEV_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
 
   # define the job to build and publish the docker image
   build-and-push-docker-image:
