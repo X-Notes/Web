@@ -28,11 +28,14 @@
                                     <input type="submit" value="Выход" />
                                 </form>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                            </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Вход</a>
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Sign in</a>
                             </li>
                         }
                     </ul>
