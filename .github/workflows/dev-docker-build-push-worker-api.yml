@@ -18,10 +18,10 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x' # Change this to your desired .NET version
+          dotnet-version: '8.0.x' # Change this to your desired .NET version
 
       - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef --version 6.0.8
+        run: dotnet tool install --global dotnet-ef --version 8.0.100
 
       # Restore dependencies
       - name: Restore dependencies
@@ -50,7 +50,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: xnotes/worker-api
+          images: xnotes/worker
           tags: type=raw,value={{branch}}-{{sha}}
       -
         name: Set up QEMU
@@ -70,7 +70,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./pipeline-files/worker/worker-api.dockerfile
+          file: ./pipeline-files/worker/worker-api.dev.dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -92,7 +92,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: xnotes/worker-api
+          images: xnotes/worker
           tags: type=raw,value={{branch}}-{{sha}}
 
       - name: Log in to Azure
@@ -104,6 +104,17 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: worker-api
-          resourceGroup: Noots-DEV
-          containerAppEnvironment: managedEnvironment-NootsDEV-bd5e
+          containerAppName: worker
+          resourceGroup: XNotesDev
+          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
+          environmentVariables: Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName:web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2
+
+      - name: Build and deploy Config
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ steps.meta.outputs.tags }}
+          containerAppName: worker
+          yamlConfigPath: pipeline-files/worker/dev-worker.yaml
+          resourceGroup: XNotesDev
+          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
+          environmentVariables: Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName:web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2

@@ -4,34 +4,16 @@ using Common.DatabaseModels.Models.WS;
 using Common.DTO.WebSockets;
 using Dapr.Client;
 using DatabaseContext.Repositories.WS;
+using Microsoft.Extensions.Options;
 
 namespace API.Worker.BI;
 
-public class RemoveDeadWSConnectionsHandler
+public class RemoveDeadWSConnectionsHandler(UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
+	JobsTimerConfig jobsTimerConfig,
+	IOptions<DaprConfig> daprConfig,
+	DaprClient daprClient,
+	ILogger<RemoveDeadWSConnectionsHandler> logger)
 {
-	private readonly UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository;
-	private readonly JobsTimerConfig jobsTimerConfig;
-	private readonly IConfiguration configuration;
-	private readonly HttpClient httpClient;
-	private readonly DaprClient _daprClient;
-	private readonly ILogger<RemoveDeadWSConnectionsHandler> logger;
-
-	public RemoveDeadWSConnectionsHandler(
-		UserIdentifierConnectionIdRepository userIdentifierConnectionIdRepository,
-		JobsTimerConfig jobsTimerConfig,
-		IConfiguration configuration,
-		HttpClient httpClient,
-		DaprClient daprClient,
-		ILogger<RemoveDeadWSConnectionsHandler> logger)
-	{
-		this.userIdentifierConnectionIdRepository = userIdentifierConnectionIdRepository;
-		this.jobsTimerConfig = jobsTimerConfig;
-		this.configuration = configuration;
-		this.httpClient = httpClient;
-		_daprClient = daprClient;
-		this.logger = logger;
-	}
-
 	public async Task HandleAsync()
 	{
 		var earliestTimestamp = DateTimeProvider.Time.AddMinutes(-jobsTimerConfig.DeleteDeadConnectionsMinutes);
@@ -48,8 +30,6 @@ public class RemoveDeadWSConnectionsHandler
 
 	private async Task<bool> SendDeadConnectionsAsync(List<UserIdentifierConnectionId> connections)
 	{
-		var appApiId = configuration.GetSection("NootsAPI").Value;
-
 		var deadConnections = connections
 			.Select(x => new DeadConnectionDTO
 			{
@@ -61,7 +41,7 @@ public class RemoveDeadWSConnectionsHandler
 
 		try
 		{
-			await _daprClient.InvokeMethodAsync(HttpMethod.Post, appApiId, "api/WSManagement/connections", deadConnections);
+			await daprClient.InvokeMethodAsync(HttpMethod.Post, daprConfig.Value.ApiName, "api/WSManagement/connections", deadConnections);
 
 			return true;
 		}

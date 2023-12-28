@@ -1,0 +1,11 @@
+properties:
+  configuration:
+    ingress:
+      external: true
+      allowInsecure: false
+      targetPort: 5600
+    dapr:
+      appId: worker
+      appPort: 5600
+      appProtocol: http
+      enabled: true

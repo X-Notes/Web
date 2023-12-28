@@ -97,7 +97,6 @@ builder.Services.AddSingleton(x => controllersConfig);
 var swaggerConfig = swaggerSection.Get<SwaggerConfig>();
 
 Console.WriteLine("REDIS ACTIVE: " + redisConfig.Active);
-Console.WriteLine("REDIS STR: "+ redisConfig.Connection);
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 

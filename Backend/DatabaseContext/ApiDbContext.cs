@@ -257,7 +257,9 @@ namespace DatabaseContext
              );
 
             modelBuilder.Entity<Storage>().HasData(
-                new Storage { Id = StoragesEnum.DEV, Name = "DEV" }
+                new Storage { Id = StoragesEnum.DEV, Name = "DEV" },
+                new Storage { Id = StoragesEnum.Qa, Name = "Qa" },
+                new Storage { Id = StoragesEnum.Prod, Name = "Prod" }
              );
 
             modelBuilder.Entity<NotificationMessages>().HasData(
