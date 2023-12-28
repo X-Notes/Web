@@ -5,6 +5,10 @@ on:
     branches:
       - 'DEV'
 
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
 
   db-worker-migration:
