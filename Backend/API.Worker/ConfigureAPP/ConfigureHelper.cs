@@ -46,7 +46,7 @@ namespace API.Worker.ConfigureAPP
                     .WriteTo.Console();
             }
             
-            if (seqConfig is { ApiKey: not null, ServerUrl: not null })
+            if (!string.IsNullOrEmpty(seqConfig?.ApiKey) && !string.IsNullOrEmpty(seqConfig?.ServerUrl))
             {
                 Console.WriteLine($"Seq configured: {seqConfig.ApplicationName}");
                 Log.Logger = baseLogger
