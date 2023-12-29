@@ -159,12 +159,17 @@ export class ContentEditorComponent
   
   get textEditMenuTop(): number {
     const sMode = this.menuOptions?.selectionMode;
-    if (sMode === EditorSelectionModeEnum.DefaultSelection) {
+    if(this.linkMenuOpened) {
       const coords = this.menuOptions.selection.rect;
-      const scrollDiffTop = (this.mainSection.nativeElement.scrollTop ?? 0) - (this.menuOptions?.scrollTop ?? 0);
       const getCursorTop = coords.top - 5;
-      const res =  getCursorTop - this.textEditMenu.nativeElement.offsetHeight - scrollDiffTop + (window.visualViewport.offsetTop ?? 0)
-      return res;
+      return getCursorTop - this.textEditMenu.nativeElement.offsetHeight + window.visualViewport.offsetTop;
+    }
+    if (sMode === EditorSelectionModeEnum.DefaultSelection) {
+      const selection = this.facade.apiBrowser.getSelection();
+      const range = selection.getRangeAt(0);
+      const coords = range.getBoundingClientRect();
+      const getCursorTop =  coords.top - 5;
+      return getCursorTop - this.textEditMenu.nativeElement.offsetHeight + window.visualViewport.offsetTop;
     }
 
     if (sMode === EditorSelectionModeEnum.EntireRow || sMode === EditorSelectionModeEnum.MultiplyRows) {
@@ -180,7 +185,6 @@ export class ContentEditorComponent
   get isDrawing(): boolean {
     return this.isDrawerVisible$.getValue() && this.selectionDirective.isSelectionActive;
   }
-
 
   get textEditMenuLeft(): number {
     const sMode = this.menuOptions?.selectionMode;
@@ -309,8 +313,7 @@ export class ContentEditorComponent
         link: this.htmlPTCollectorService.getLink(),
         elements: [item],
         selection: this.facade.apiBrowser.getSelectionInfo(item.getEditableNative()),
-        selectionMode: this.selectionMode,
-        scrollTop: this.mainSection.nativeElement.scrollTop
+        selectionMode: this.selectionMode
       };
       return obj;
     }
@@ -330,8 +333,7 @@ export class ContentEditorComponent
         link: null,
         elements: htmlElements,
         selection: null,
-        selectionMode: this.selectionMode,
-        scrollTop: this.mainSection.nativeElement.scrollTop
+        selectionMode: this.selectionMode
       };
       return obj;
     }
