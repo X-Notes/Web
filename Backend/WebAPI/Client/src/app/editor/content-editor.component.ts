@@ -147,6 +147,7 @@ export class ContentEditorComponent
     public audioService: AudioService,
     private muuriService: MurriService,
     private store: Store,
+    private ref: ElementRef<HTMLElement>
   ) {
     super(editorApiFacadeService);
   }
@@ -159,8 +160,8 @@ export class ContentEditorComponent
 
     if (this.selectedElementsRects.length > 0) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
-      const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
-      return resTop < 52 ? 52 : resTop; // to stick menu while select couple of elements and scroll down
+      const resTop = top - 86;
+      return resTop; // to stick menu while select couple of elements and scroll down
     }
 
     return 0;
@@ -178,11 +179,13 @@ export class ContentEditorComponent
     }
 
     if (sMode === EditorSelectionModeEnum.DefaultSelection) {
-      return (this.menuOptions.selection.rect.left + this.menuOptions.selection.rect.right) / 2;
+      const value = (this.menuOptions.selection.rect.left + this.menuOptions.selection.rect.right) / 2;
+      return value - this.facade.selectionService.sidebarWidth;
     }
 
     if (sMode === EditorSelectionModeEnum.EntireRow || sMode === EditorSelectionModeEnum.MultiplyRows) {
-      return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
+      const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;
+      return ((this.ref.nativeElement?.clientWidth - textMenuWidth) / 2);
     }
 
     return 0;
