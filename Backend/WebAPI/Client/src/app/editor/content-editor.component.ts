@@ -156,20 +156,31 @@ export class ContentEditorComponent
     return this.menuOptions && this.menuOptions.elements.length > 0 && this.menuOptions.elements?.some(x => x.getText()?.length > 0);
   }
 
+  
   get textEditMenuTop(): number {
+    const sMode = this.menuOptions?.selectionMode;
+    if (sMode === EditorSelectionModeEnum.DefaultSelection) {
+      const coords = this.menuOptions.selection.rect;
+      const scrollDiffTop = (this.mainSection.nativeElement.scrollTop ?? 0) - (this.menuOptions?.scrollTop ?? 0);
+      const getCursorTop = coords.top - 5;
+      const res =  getCursorTop - this.textEditMenu.nativeElement.offsetHeight - scrollDiffTop + (window.visualViewport.offsetTop ?? 0)
+      return res;
+    }
 
-    if (this.selectedElementsRects.length > 0) {
+    if (sMode === EditorSelectionModeEnum.EntireRow || sMode === EditorSelectionModeEnum.MultiplyRows) {
       const top = Math.min(...this.selectedElementsRects.map((x) => x.top));
-      const resTop = top - 86;
-      return resTop; // to stick menu while select couple of elements and scroll down
+      const resTop = top - this.textEditMenu.nativeElement.offsetHeight;
+      return resTop < 52 ? 52 : resTop; // to stick menu while select couple of elements and scroll down
     }
 
     return 0;
   }
 
+
   get isDrawing(): boolean {
     return this.isDrawerVisible$.getValue() && this.selectionDirective.isSelectionActive;
   }
+
 
   get textEditMenuLeft(): number {
     const sMode = this.menuOptions?.selectionMode;
@@ -179,13 +190,11 @@ export class ContentEditorComponent
     }
 
     if (sMode === EditorSelectionModeEnum.DefaultSelection) {
-      const value = (this.menuOptions.selection.rect.left + this.menuOptions.selection.rect.right) / 2;
-      return value - this.facade.selectionService.sidebarWidth;
+      return (this.menuOptions.selection.rect.left + this.menuOptions.selection.rect.right) / 2;
     }
 
     if (sMode === EditorSelectionModeEnum.EntireRow || sMode === EditorSelectionModeEnum.MultiplyRows) {
-      const textMenuWidth = this.textEditMenu?.nativeElement?.offsetWidth ?? 0;
-      return ((this.ref.nativeElement?.clientWidth - textMenuWidth) / 2);
+      return Math.min(...this.selectedElementsRects.map((x) => x.left)) + 150;
     }
 
     return 0;
@@ -300,7 +309,8 @@ export class ContentEditorComponent
         link: this.htmlPTCollectorService.getLink(),
         elements: [item],
         selection: this.facade.apiBrowser.getSelectionInfo(item.getEditableNative()),
-        selectionMode: this.selectionMode
+        selectionMode: this.selectionMode,
+        scrollTop: this.mainSection.nativeElement.scrollTop
       };
       return obj;
     }
@@ -320,7 +330,8 @@ export class ContentEditorComponent
         link: null,
         elements: htmlElements,
         selection: null,
-        selectionMode: this.selectionMode
+        selectionMode: this.selectionMode,
+        scrollTop: this.mainSection.nativeElement.scrollTop
       };
       return obj;
     }
@@ -520,7 +531,7 @@ export class ContentEditorComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onScroll($event: Event): void { }
+  onScroll($event: any): void {}
 
   enterHandler(value: EnterEvent) {
     const curEl = this.getElementById(value.contentId);

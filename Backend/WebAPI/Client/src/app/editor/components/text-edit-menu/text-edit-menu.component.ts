@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TextBackgroundColorsDark, TextBackgroundColorsDarkAnimals } from 'src/app/shared/enums/text-background-colors.enum';
 import { TextColorsDark, TextColorsDarkAnimals } from 'src/app/shared/enums/text-colors.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -39,6 +39,8 @@ export class TextEditMenuComponent implements OnInit {
   changeLinkMenuState = new EventEmitter<boolean>();
 
   @ViewChild('linkMenuTrigger' , { read: MatMenuTrigger }) linkMenuTrigger: MatMenuTrigger;
+
+  @ViewChild('linkInput') linkInput: ElementRef<HTMLInputElement>;
 
   @Input()
   theme: ThemeENUM;

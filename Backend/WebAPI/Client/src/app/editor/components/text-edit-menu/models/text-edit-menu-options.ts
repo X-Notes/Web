@@ -17,4 +17,5 @@ export interface TextEditMenuOptions {
   elements: ParentInteractionHTML[];
   selection: SaveSelection;
   selectionMode: EditorSelectionModeEnum;
+  scrollTop?: number
 }

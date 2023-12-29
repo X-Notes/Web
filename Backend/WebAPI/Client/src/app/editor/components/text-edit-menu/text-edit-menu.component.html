@@ -147,19 +147,19 @@
   class="color-pallete-container"
   #linkMenu="matMenu"
 >
-  <div appTheme (click)="preventUnSelection($event)" class="link-menu-container">
-    <div class="link-input-container">
-      <input [(ngModel)]="link" [placeholder]="'placeholder.emptyLink' | translate" type="text" size="10" />
+<div appTheme (click)="preventUnSelection($event)" class="link-menu-container">
+  <div class="link-input-container">
+    <input [(ngModel)]="link" [placeholder]="'placeholder.emptyLink' | translate" type="text" size="10" />
+  </div>
+  <div class="link-buttons-container" [ngStyle]="{ justifyContent: hasInitialLink ? 'space-between' : 'center' }">
+    <div *ngIf="link?.length > 0" (click)="updateLink($event)" class="text-link-button">
+      <span #updateLinkButton>{{ 'modal.ColorModal.save' | translate }}</span>
+      <div class="ripple-container" matRipple [matRippleTrigger]="updateLinkButton"></div>
     </div>
-    <div class="link-buttons-container" [ngStyle]="{ justifyContent: hasInitialLink ? 'space-between' : 'center' }">
-      <div *ngIf="link?.length > 0" (click)="updateLink($event)" class="text-link-button">
-        <span #updateLinkButton>{{ 'modal.ColorModal.save' | translate }}</span>
-        <div class="ripple-container" matRipple [matRippleTrigger]="updateLinkButton"></div>
-      </div>
-      <div *ngIf="hasInitialLink" (click)="deleteLink($event)" class="text-link-button">
-        <span #removeLinkButton>{{ 'innerNote.menu.delete' | translate }}</span>
-        <div class="ripple-container" matRipple [matRippleTrigger]="removeLinkButton"></div>
-      </div>
+    <div *ngIf="hasInitialLink" (click)="deleteLink($event)" class="text-link-button">
+      <span #removeLinkButton>{{ 'innerNote.menu.delete' | translate }}</span>
+      <div class="ripple-container" matRipple [matRippleTrigger]="removeLinkButton"></div>
     </div>
   </div>
+</div>
 </mat-menu>
