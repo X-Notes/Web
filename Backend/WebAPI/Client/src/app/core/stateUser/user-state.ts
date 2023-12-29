@@ -49,7 +49,17 @@ export interface UserState {
   defaults: {
     user: {} as ShortUser,
     memory: 0,
-    personalizationSettings: null,
+    personalizationSettings: {
+      sortedFolderByTypeId: SortedByENUM.DescDate,
+      sortedNoteByTypeId: SortedByENUM.DescDate,
+      notesInFolderCount: 5,
+      contentInNoteCount: 5,
+      isViewAudioOnNote: true,
+      isViewDocumentOnNote: true,
+      isViewPhotosOnNote: true,
+      isViewTextOnNote: true,
+      isViewVideoOnNote: true,
+    },
     billingPlans: [],
   },
 })
