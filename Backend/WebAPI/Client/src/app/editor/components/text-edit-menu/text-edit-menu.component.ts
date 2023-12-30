@@ -70,6 +70,10 @@ export class TextEditMenuComponent implements OnInit {
     e.stopPropagation();
     return false;
   };
+  
+  get maxHeight(): string {
+    return (window.visualViewport.height / 2.5) + 'px';
+  }
 
   updateLink($event: MouseEvent): void {
     this.updateOneText('link', this.link);

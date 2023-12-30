@@ -107,7 +107,7 @@
     <div class="text-color-menu-header">
       <span class="default-text">{{ 'innerNote.text' | translate }}</span>
     </div>
-    <div class="text-color-container">
+    <div class="text-color-container" [ngStyle]="{'maxHeight': maxHeight }">
       <app-color-pick-item
         *ngFor="let value of textColorPalete; let i = index"
         [name]="textsAnimals[value[0]] | translate"
@@ -129,7 +129,7 @@
     <div class="text-color-menu-header">
       <span class="default-text">{{ 'innerNote.text-color-menu.background' | translate }}</span>
     </div>
-    <div class="text-color-container">
+    <div class="text-color-container" [ngStyle]="{'maxHeight': maxHeight }">
       <app-color-pick-item
         *ngFor="let value of textBackgroundPalete; let i = index"
         [name]="backgroundsAnimals[value[0]] | translate"
