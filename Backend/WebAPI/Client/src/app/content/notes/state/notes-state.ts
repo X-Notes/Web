@@ -738,7 +738,7 @@ export class NoteStore {
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       if (notesForUpdate && notesForUpdate.length > 0) {
         notesForUpdate.forEach((note) => {
-          const version = resp.data.find(x => note.id == x.entityId).version;
+          const version = resp.data.find(q => note.id == q.entityId).version; 
           dispatch(new UpdateOneNote({ ...note, color, version }, note.id));
         });
       }
@@ -798,22 +798,22 @@ export class NoteStore {
     }
     if (resp.success) {
       // UPDATE FULL NOTE
-      const note = getState().fullNoteState?.note;
-      if (note && selectedIds.some((id) => id === note.id)) {
-        const version = resp.data.find(x => note.id == x.entityId).version;
+      const fullNote = getState().fullNoteState?.note;
+      if (fullNote && selectedIds.some((id) => id === fullNote.id)) {
+        const version = resp.data.find(x => fullNote.id == x.entityId).version;
         patchState({
           fullNoteState: {
             ...getState().fullNoteState,
-            note: { ...note, labelIds: [...note.labelIds, labelId], version },
+            note: { ...fullNote, labelIds: [...fullNote.labelIds, labelId], version },
           },
         });
       }
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
-      notesForUpdate.forEach((x) => {
-        x.version = resp.data.find(x => note.id == x.entityId).version; 
-        if (!x.labelIds.some((id) => id === labelId)) {
-          x.labelIds = [...x.labelIds, labelId];
+      notesForUpdate.forEach((note) => {
+        note.version = resp.data.find(q => note.id == q.entityId).version; 
+        if (!note.labelIds.some((id) => id === labelId)) {
+          note.labelIds = [...note.labelIds, labelId];
         }
       });
       notesForUpdate.forEach((x) => dispatch(new UpdateOneNote(x, x.id)));
@@ -854,7 +854,7 @@ export class NoteStore {
       // UPDATE SMALL NOTES
       const notesForUpdate = this.getNotesByIds(getState, selectedIds);
       notesForUpdate.forEach((x) => {
-        const version = resp.data.find(x => note.id == x.entityId).version; 
+        const version = resp.data.find(q => x.id == q.entityId).version; 
         dispatch(new UpdateOneNote({ labelIds: x.labelIds.filter((id) => id !== labelId), version }, x.id))
       });
       dispatch([new UpdateLabelCount(labelId)]);
