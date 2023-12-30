@@ -6,27 +6,37 @@
   </div>
   <div class="search-results">
     <div class="results-container">
-      <div *ngFor="let noteItem of notesView" class="note-result-card dialog-container-padding">
-        <div class="result-card-icon">
-          <div class="icon-container" (click)="goToNote(noteItem.noteId)">
-            <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+      <div *ngFor="let noteItem of notesView" class="note-result-card dialog-content-container-padding">
+        <div class="note-result-card-container">
+          <div class="result-card-icon" (click)="goToNote(noteItem.noteId)">
+            <div class="icon-container">
+              <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+            </div>
           </div>
-        </div>
-        <div class="note-result-card-content">
-          <b [innerHTML]="noteItem.noteTitle | highlightSearch: searchChanged$.getValue()"></b>
-          <div *ngFor="let content of noteItem.contents" class="note-result-contents">
-            <p [innerHTML]="content | highlightSearch: searchChanged$.getValue()"></p>
+          <div class="note-result-card-content">
+            <b [innerHTML]="noteItem.noteTitle | highlightSearch: searchChanged$.getValue()"></b>
+            <div *ngFor="let content of noteItem.contents" class="note-result-contents">
+              <p [innerHTML]="content | highlightSearch: searchChanged$.getValue()"></p>
+            </div>
+          </div>
+          <div class="go-entity" (click)="goToNote(noteItem.noteId)">
+            <mat-icon>chevron_left</mat-icon>
           </div>
         </div>
       </div>
-      <div *ngFor="let folderItem of foldersView" class="folder-result-card dialog-container-padding">
-        <div class="result-card-icon">
-          <div class="icon-container" (click)="goToFolder(folderItem.id)">
-            <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
+      <div *ngFor="let folderItem of foldersView" class="folder-result-card dialog-content-container-padding">
+        <div class="folder-result-card-container">
+          <div class="result-card-icon" (click)="goToFolder(folderItem.id)">
+            <div class="icon-container">
+              <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
+            </div>
           </div>
-        </div>
-        <div class="folder-result-card-content">
-          <b [innerHTML]="folderItem.title | highlightSearch: searchChanged$.getValue()"></b>
+          <div class="folder-result-card-content">
+            <b [innerHTML]="folderItem.title | highlightSearch: searchChanged$.getValue()"></b>
+          </div>
+          <div class="go-entity" (click)="goToFolder(folderItem.id)">
+            <mat-icon>chevron_left</mat-icon>
+          </div>
         </div>
       </div>
       <app-spinner [size]="25" *ngIf="isSearching"></app-spinner>
