@@ -5,7 +5,7 @@ WORKDIR /clientApp
 COPY Backend/WebAPI/Client .
 
 RUN yarn && \
-    yarn dev
+    yarn prod
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app

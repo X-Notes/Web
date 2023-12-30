@@ -1,0 +1,126 @@
+name: DEV Worker API CI && CD
+
+on:
+  push:
+    branches:
+      - 'production'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  db-worker-migration:
+    runs-on: ubuntu-latest
+    name: API Database migration
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup .NET SDK
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x' # Change this to your desired .NET version
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef --version 8.0.0
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore Backend/API.Worker/API.Worker.csproj
+
+      # Run EF Core migrations
+      - name: Run migrations
+        run: dotnet ef database update -c ApplicationDatabaseContext -p Backend/API.Worker -s Backend/API.Worker
+        env:
+          Database__WorkerDatabaseConnection: ${{ secrets.PRODUCTION_WORKER_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+
+  # define the job to build and publish the docker image
+  build-and-push-docker-image:
+    needs: [db-worker-migration]
+    name: Build Docker image and push to repositories
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-latest
+
+    # steps to perform in the job
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: xnotes/worker
+          tags: type=raw,value={{branch}}-{{sha}}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./pipeline-files/worker/worker-api.prod.dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+            # define the job to build and publish the docker image
+  deploy-to-aca:
+    needs: [build-and-push-docker-image]
+    name: Deploy Worker API to Azure container apps
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-latest
+
+    # steps to perform in the job
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: xnotes/worker
+          tags: type=raw,value={{branch}}-{{sha}}
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.DEV_WEB_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.DEV_WEB_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.DEV_WEB_AZURE_SUBSCRIPTION_ID }}
+        
+      - name: Build and deploy Container App
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ steps.meta.outputs.tags }}
+          containerAppName: worker
+          resourceGroup: XNotesProd
+          containerAppEnvironment: x-notes-prod
+          environmentVariables: Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName=web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2
+
+      - name: Build and deploy Config
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ steps.meta.outputs.tags }}
+          containerAppName: worker
+          yamlConfigPath: pipeline-files/worker/production-worker.yaml
+          resourceGroup: XNotesProd
+          containerAppEnvironment: x-notes-prod
+          environmentVariables: Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName=web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2

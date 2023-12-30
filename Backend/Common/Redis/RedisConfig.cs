@@ -9,5 +9,7 @@ namespace Common.Redis
         public string Connection { set; get; }
         
         public string Password { set; get; }
+        
+        public string ChannelPrefix { set; get; }
     }
 }

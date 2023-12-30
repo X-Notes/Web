@@ -3,7 +3,7 @@ name: DEV API CI && CD
 on:
   push:
     branches:
-      - 'DEV'
+      - 'production'
 
 permissions:
   id-token: write
@@ -35,7 +35,7 @@ jobs:
       - name: Run migrations
         run: dotnet ef database update -c ApiDbContext -p Backend/DatabaseContext -s Backend/WebAPI
         env:
-          DatabaseConnection: ${{ secrets.DEV_API_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
+          DatabaseConnection: ${{ secrets.PRODUCTION_API_DB_CONNECTION }} # Store your connection string as a secret in your repository settings
 
   # define the job to build and publish the docker image
   build-push-docker-image:
@@ -74,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./pipeline-files/api/api.dev.dockerfile
+          file: ./pipeline-files/api/api.prod.dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -111,16 +111,16 @@ jobs:
         with:
           imageToDeploy: ${{ steps.meta.outputs.tags }}
           containerAppName: web
-          resourceGroup: XNotesDev
-          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
-          environmentVariables: GoogleAuth__Audience=secretref:google-client-id DatabaseConnection=secretref:database-connection Controllers__FakeData=secretref:fake-data-active Redis__ChannelPrefix=XNotes- Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=secretref:jwt-https Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url GoogleClient__Id=secretref:google-client-id AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
+          resourceGroup: XNotesProd
+          containerAppEnvironment: x-notes-prod
+          environmentVariables: GoogleAuth__Audience=613032211191-fk4mhbtouf1s8a9cj8g6r5usj825v84q.apps.googleusercontent.com DatabaseConnection=secretref:database-connection Controllers__FakeData=false Redis__ChannelPrefix=ProdXNotes- Redis__Active=true Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=true Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url GoogleClient__Id=613032211191-fk4mhbtouf1s8a9cj8g6r5usj825v84q.apps.googleusercontent.com AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
       
       - name: Build and deploy Config
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ${{ steps.meta.outputs.tags }}
           containerAppName: web
-          resourceGroup: XNotesDev
-          yamlConfigPath: pipeline-files/api/dev-api.yaml
-          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
-          environmentVariables: GoogleAuth__Audience=secretref:google-client-id DatabaseConnection=secretref:database-connection Controllers__FakeData=secretref:fake-data-active Redis__ChannelPrefix=XNotes- Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=secretref:jwt-https Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url GoogleClient__Id=secretref:google-client-id AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
+          resourceGroup: XNotesProd
+          yamlConfigPath: pipeline-files/api/production-api.yaml
+          containerAppEnvironment: x-notes-prod
+          environmentVariables: GoogleAuth__Audience=613032211191-fk4mhbtouf1s8a9cj8g6r5usj825v84q.apps.googleusercontent.com DatabaseConnection=secretref:database-connection Controllers__FakeData=false Redis__ChannelPrefix=ProdXNotes- Redis__Active=true Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=true Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url GoogleClient__Id=613032211191-fk4mhbtouf1s8a9cj8g6r5usj825v84q.apps.googleusercontent.com AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name

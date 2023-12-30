@@ -186,7 +186,7 @@ namespace WebAPI
             {
                 signalR.AddStackExchangeRedis(config.Connection, options =>
                     {
-                        options.Configuration.ChannelPrefix = "XNotes-";
+                        options.Configuration.ChannelPrefix = config.ChannelPrefix;
                         if (!string.IsNullOrEmpty(config.Password))
                         {
                             options.Configuration.Password = config.Password;
