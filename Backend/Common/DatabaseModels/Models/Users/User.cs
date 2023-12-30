@@ -29,6 +29,8 @@ namespace Common.DatabaseModels.Models.Users
 
         public string DefaultPhotoUrl { set; get; }
 
+        public int SequenceId { set; get; }
+        
         public LanguageENUM LanguageId { set; get; }
         public Language Language { set; get; }
 

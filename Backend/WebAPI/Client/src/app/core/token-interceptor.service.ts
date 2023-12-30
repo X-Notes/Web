@@ -48,7 +48,7 @@ export class TokenInterceptorService implements HttpInterceptor {
 
   private mutateRequest(request: HttpRequest<any>): HttpRequest<any> {
     const isApiUrl = request.url.startsWith(environment.api);
-    if (isApiUrl) {
+    if (isApiUrl && !request.headers.has(InterceptorSkipToken)) {
       const token = this.auth.getAccessToken();
       if(token) {
         return request.clone({

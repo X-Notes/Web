@@ -13,7 +13,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Email).IsRequired();
         builder.HasIndex(x => new { x.Email }).IsUnique();
         builder.Property(x => x.BillingPlanId).HasDefaultValue(BillingPlanTypeENUM.Standart);
-
+        builder.Property(x => x.SequenceId).ValueGeneratedOnAdd();
+        
         builder
             .HasOne(x => x.CurrentBackground)
             .WithOne(q => q.CurrentUserBackground)
