@@ -106,21 +106,24 @@ jobs:
           tenant-id: ${{ secrets.DEV_WEB_AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.DEV_WEB_AZURE_SUBSCRIPTION_ID }}
         
-      - name: Build and deploy Container App
-        uses: azure/container-apps-deploy-action@v1
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        env:
+          CONTAINER_APP_CONTAINER_NAME: worker
+          CONTAINER_APP_NAME: worker
+          CONTAINER_APP_RESOURCE_GROUP_NAME: XNotesProd
         with:
-          imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: worker
-          resourceGroup: XNotesProd
-          containerAppEnvironment: x-notes-prod
-          environmentVariables: Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName=web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2
+          inlineScript: >
+            az config set extension.use_dynamic_install=yes_without_prompt
 
-      - name: Build and deploy Config
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: worker
-          yamlConfigPath: pipeline-files/worker/production-worker.yaml
-          resourceGroup: XNotesProd
-          containerAppEnvironment: x-notes-prod
-          environmentVariables: Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName=web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2
+            az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --image ${{ steps.meta.outputs.tags }} --min-replicas 1 --max-replicas 5 --set-env-vars Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key Seq__ApplicationName=secretref:seq-application-name Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-connection Azure__Storages__0__Url=secretref:storage-url Database__WorkerDatabaseConnection=secretref:app-database-connection Database__ApiDatabaseConnection=secretref:api-database-connection Dapr__ApiName=web JobsTimers__deleteLabelsNDays=30 JobsTimers__deleteFoldersNDays=30 JobsTimers__deleteNotesNDays=30 JobsTimers__deleteHistoriesNDays=100 JobsTimers__makeSnapshotAfterNMinutes=60 JobsTimers__deleteUnlinkedFilesAfterMinutes=100 JobsTimers__deleteDeadConnectionsMinutes=10 JobsTimers__lostFilesCheckedDays=2
+
+            az containerapp ingress update -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} -g ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --target-port 5600 --type external
+                
+            az containerapp ingress sticky-sessions set -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} -g ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --affinity sticky
+            
+            az containerapp dapr enable -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --dapr-app-port 5600 --dapr-app-protocol http --dapr-app-id worker
+      
+      - name: logout
+        run: >
+          az logout
