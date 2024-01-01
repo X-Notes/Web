@@ -1,4 +1,4 @@
-name: DEV Worker API CI && CD
+name: PROD Worker API CI && CD
 
 on:
   push:
