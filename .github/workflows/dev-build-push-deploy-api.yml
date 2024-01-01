@@ -106,21 +106,44 @@ jobs:
           tenant-id: ${{ secrets.DEV_WEB_AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.DEV_WEB_AZURE_SUBSCRIPTION_ID }}
                 
-      - name: Build and deploy Container App
-        uses: azure/container-apps-deploy-action@v1
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        env:
+          CONTAINER_APP_CONTAINER_NAME: web
+          CONTAINER_APP_NAME: web
+          CONTAINER_APP_RESOURCE_GROUP_NAME: XNotesDev
         with:
-          imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: web
-          resourceGroup: XNotesDev
-          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
-          environmentVariables: GoogleAuth__Audience=secretref:google-client-id DatabaseConnection=secretref:database-connection Controllers__FakeData=secretref:fake-data-active Redis__ChannelPrefix=XNotes- Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=secretref:jwt-https Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url GoogleClient__Id=secretref:google-client-id AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
+          inlineScript: >
+            az config set extension.use_dynamic_install=yes_without_prompt
+
+            az containerapp update --name ${{ env.CONTAINER_APP_NAME }} \ 
+                --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} \ 
+                --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} \ 
+                --image ${{ steps.meta.outputs.tags }}
+                --scale-rule-name 50-http-rule \
+                --scale-rule-http-concurrency 50 \
+                --min-replicas 0 \
+                --max-replicas 8 \
+                --set-env-vars GoogleAuth__Audience=secretref:google-client-id DatabaseConnection=secretref:database-connection Controllers__FakeData=secretref:fake-data-active Redis__ChannelPrefix=XNotes- Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=secretref:jwt-https Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url GoogleClient__Id=secretref:google-client-id AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
+
+            az containerapp ingress update \
+                -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} \
+                -g ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} \
+                --target-port 5000
+                --type external
+                
+            az containerapp ingress sticky-sessions set \ 
+              -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} \
+              -g ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} \
+              --affinity sticky
+
+            az containerapp dapr enable \
+                -n ${{ env.CONTAINER_APP_CONTAINER_NAME }} \
+                --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} \
+                --dapr-app-port 5000 \
+                --dapr-app-protocol http \
+                --dapr-app-id web
       
-      - name: Build and deploy Config
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: web
-          resourceGroup: XNotesDev
-          yamlConfigPath: pipeline-files/api/dev-api.yaml
-          containerAppEnvironment: managedEnvironment-XNotesDev-9d7c
-          environmentVariables: GoogleAuth__Audience=secretref:google-client-id DatabaseConnection=secretref:database-connection Controllers__FakeData=secretref:fake-data-active Redis__ChannelPrefix=XNotes- Redis__Active=secretref:redis-active Redis__Connection=secretref:redis-connection Redis__Password=secretref:redis-password JwtConfig__secret=secretref:jwt-secret JwtConfig__issuer=secretref:jwt-issuer JwtConfig__audience=secretref:jwt-audience JwtConfig__accessTokenExpiration=secretref:jwt-access-token-expiration JwtConfig__refreshTokenExpiration=secretref:jwt-refresh-token-expiration JwtConfig__https=secretref:jwt-https Azure__Storages__0__Name=Prod Azure__Storages__0__Id=9020 Azure__Storages__0__Connection=secretref:storage-dev-connection Azure__Storages__0__Url=secretref:storage-dev-url GoogleClient__Id=secretref:google-client-id AuthRequest__Url=api/Auth/google/login AuthRequest__RedirectUrl=/ Seq__ServerUrl=secretref:seq-server-url Seq__ApiKey=secretref:seq-api-key  Seq__ApplicationName=secretref:seq-application-name
+      - name: logout
+        run: >
+          az logout

@@ -4,6 +4,8 @@ properties:
       external: true
       allowInsecure: false
       targetPort: 5000
+      stickySessions:
+        affinity: sticky
     dapr:
       appId: web
       appPort: 5000
