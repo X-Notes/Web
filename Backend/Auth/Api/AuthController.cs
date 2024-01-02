@@ -9,6 +9,7 @@ using DatabaseContext.Repositories.Users;
 using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Users.Commands;
@@ -67,7 +68,15 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim> { new Claim(ConstClaims.UserEmail, user.Email), new Claim(ConstClaims.UserId, user.Id.ToString()) };
         var result = await jwtAuthManager.GenerateTokens(user.Id, claims.ToArray());
-
+        
+        var options = new CookieOptions()
+        {
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.Now.AddDays(30)
+        };
+        Response.Cookies.Append("isLoggedIn", "1", options);
+        
         return new OperationResult<LoginResultDto>(true, new LoginResultDto(result.AccessToken, result.RefreshToken.TokenString));
     }
 
@@ -149,7 +158,9 @@ public class AuthController : ControllerBase
                 await jwtAuthManager.RemoveRefreshToken(user.Id, refreshToken!);
             }
         }
-
+        
+        Response.Cookies.Delete("isLoggedIn");
+        
         return Ok();
     }
 

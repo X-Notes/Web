@@ -85,7 +85,6 @@
                     googleButton.style.opacity = '0';
                     const res = await postData('@Model.AuthUrl', authRequest);
                     if (res.success) {
-                        localStorage.setItem('isLoggedIn', true); 
                         localStorage.setItem('landing_auth_at', res.data.accessToken);
                         localStorage.setItem('landing_auth_ft', res.data.refreshToken);
                         localStorage.setItem('landing_auth_date', new Date().toISOString());

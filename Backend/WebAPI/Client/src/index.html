@@ -24,11 +24,6 @@
     />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client"></script>
-    <script>
-      if(!localStorage.getItem('isLoggedIn') && window.location.pathname !== '/about' && window.location.hostname !== 'localhost' && !window.location.toString().includes('192.168.1')) {
-        window.location.href = '/about';
-      }
-    </script>
   </head>
   <body>
     <app-root></app-root>

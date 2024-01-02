@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Serilog;
 using SignalrUpdater;
 using SignalrUpdater.Impl;
@@ -189,8 +190,44 @@ app.UseHttpsRedirection();
 var requestLocalizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(requestLocalizationOptions.Value);
 
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
+app.Use(async (context, next) =>
+{
+    if (!context.Request.Cookies.TryGetValue("isLoggedIn", out var value) && context.Request.Path.Equals(new PathString("/")))
+    {
+        context.Response.Redirect("/about");
+    }
+    else
+    {
+        await next.Invoke();   
+    }
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var headers = ctx.Context.Response.GetTypedHeaders();
+        headers.CacheControl = new CacheControlHeaderValue
+        {
+            Public = true,
+            MaxAge = TimeSpan.FromMinutes(2)
+        };
+    }
+});
+
+app.UseSpaStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var headers = ctx.Context.Response.GetTypedHeaders();
+        headers.CacheControl = new CacheControlHeaderValue
+        {
+            Public = true,
+            MaxAge = TimeSpan.FromMinutes(3)
+        };
+
+    }
+});
 
 app.UseRouting();
 
@@ -208,9 +245,12 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapHub<AppSignalRHub>(HubSettings.endPoint);
 app.MapHealthChecks("/health");
@@ -218,6 +258,17 @@ app.MapHealthChecks("/health");
 app.UseSpa(spa =>
 {
     spa.Options.SourcePath = spaPath;
+    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions()
+    {
+        OnPrepareResponse = ctx => {
+            var headers = ctx.Context.Response.GetTypedHeaders();
+            headers.CacheControl = new CacheControlHeaderValue
+            {
+                Public = true,
+                MaxAge = TimeSpan.FromMinutes(2)
+            };
+        }
+    };
 });
 
-await app.RunAsync();
+app.Run();

@@ -97,7 +97,6 @@ export class AuthService {
   setTokens(accessToken: string, refreshToken: string): void {
     this.setAccessToken(accessToken);
     this.setRefreshToken(refreshToken);
-    localStorage.setItem('isLoggedIn', 'true'); 
   }
 
   setAccessToken(accessToken: string): void {
