@@ -15,10 +15,12 @@
       background: #0c0c0c;
       border-radius: 15px;
       .main-block-text {
-        font-size: 1.125rem;
-        letter-spacing: 1px;
-        line-height: 1.5;
-        word-spacing: 1px;
+        h1 {
+          font-size: 1.125rem;
+          letter-spacing: 1px;
+          line-height: 1.5;
+          word-spacing: 1px;
+        }
         &:not(:first-child) {
           margin-top: 20px;
         }
@@ -70,9 +72,12 @@
               margin-left: 10px;
             }
           }
-          .main-card-description-container{
+          .main-card-description-container {
             margin-top: 16px;
-            font-size: 0.875rem;
+            h2 {
+              font-size: 0.875rem;
+              font-weight: 500;
+            }
           }
         }
         .main-card-right-container {
