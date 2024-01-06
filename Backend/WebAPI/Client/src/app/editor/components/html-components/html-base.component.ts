@@ -39,6 +39,8 @@ import { preventResetCursor } from 'src/app/core/defaults/bounceDelay';
 import { KeyDownHtmlComponent } from '../../entities-ui/keydown-event';
 import { KeyboardKeyEnum } from '../../entities-ui/keyboard-keys.enum';
 import { tabCount } from 'src/app/core/defaults/constraints';
+import { BaseUndoAction } from '../../entities-ui/undo/base-undo-action';
+import { UndoActionTypeEnum } from '../../entities-ui/undo/undo-action-type.enum';
 
 @Component({
   template: '',
@@ -396,6 +398,8 @@ export abstract class BaseTextElementComponent
         textType.heading,
       );
       contentId = newTextContent.content.id;
+      const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent,contentId);
+      this.facade.momentoStateService.saveToStack(action);
     }
   }
 
@@ -460,6 +464,8 @@ export abstract class BaseTextElementComponent
         blocks,
       );
       contentId = newTextContent.content.id;
+      const action = new BaseUndoAction(UndoActionTypeEnum.deleteContent,contentId);
+      this.facade.momentoStateService.saveToStack(action);
     }
   }
 
