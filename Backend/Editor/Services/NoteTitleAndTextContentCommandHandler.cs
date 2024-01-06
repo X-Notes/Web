@@ -98,6 +98,13 @@ namespace Editor.Services
                     results.Add(res);   
                 }
             }
+            
+            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == permissions.NoteId);
+            if (note != null)
+            {
+                note.SetDate();
+                await noteRepository.UpdateAsync(note);   
+            }
 
             await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
