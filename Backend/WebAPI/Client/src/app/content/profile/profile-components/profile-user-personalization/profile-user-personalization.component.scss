@@ -48,20 +48,6 @@
       }
     }
 
-    .help-info {
-      display: flex;
-      width: 100%;
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
-      span {
-        color: #00a1d9;
-        cursor: pointer;
-      }
-    }
-
-    .help-info-no-margin {
-      margin-top: 0;
-    }
     &:last-child {
       margin-bottom: 0;
     }
@@ -69,10 +55,6 @@
 }
 
 .light {
-  .help-info {
-    color: $text-color;
-  }
-
   .field-name {
     color: $text-color;
   }

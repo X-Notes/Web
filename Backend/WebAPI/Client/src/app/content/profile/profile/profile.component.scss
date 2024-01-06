@@ -84,13 +84,6 @@
         align-items: center;
       }
 
-      .help-info {
-        display: flex;
-        width: 100%;
-        margin-top: 0.5rem;
-        font-size: 0.75rem;
-      }
-
       .managment-buttons {
         button[type='button'] {
           width: 150px;
@@ -154,17 +147,6 @@
                 }
               }
             }
-
-            .help-info {
-              span {
-                color: #00a1d9;
-                cursor: pointer;
-              }
-            }
-
-            .help-info-no-margin {
-              margin-top: 0;
-            }
           }
         }
       }
@@ -206,10 +188,6 @@
       background-color: rgba(255, 255, 255, 0.85);
 
       .sections {
-        .help-info {
-          color: $text-color;
-        }
-
         .field-name {
           color: $text-color;
         }
