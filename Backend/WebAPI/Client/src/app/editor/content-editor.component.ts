@@ -237,11 +237,12 @@ export class ContentEditorComponent
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
+    const renderCallback = () => 0;
     if (!this.options$.getValue().userId) {
-      this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading);
+      this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading, renderCallback);
       this.facade.contentEditorSyncService.initRead(this.options$);
     } else {
-      this.facade.contentsService.initEdit(contents, this.progressiveLoading);
+      this.facade.contentsService.initEdit(contents, this.progressiveLoading, renderCallback);
       this.facade.contentEditorSyncService.initEdit(this.options$);
     }
 

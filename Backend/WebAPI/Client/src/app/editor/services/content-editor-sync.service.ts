@@ -115,10 +115,11 @@ export class ContentEditorSyncService {
     return this.options$.getValue().folderId;
   }
 
+
   initTimers(): void {
     this.intervalSync.pipe(takeUntil(this.dc.d$))
       .subscribe(() => this.change());
-    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && this.userId && !this.contentService.isRendering))
+    this.intervalSyncState.pipe(takeUntil(this.dc.d$), filter(() => !this.isProcessChanges && !!this.userId && !this.contentService.isRendering))
       .subscribe(() => this.processSyncState());
     this.intervalSyncNoteState.pipe(takeUntil(this.dc.d$), filter(() => !!this.userId))
       .subscribe(() => this.processSyncNoteState());

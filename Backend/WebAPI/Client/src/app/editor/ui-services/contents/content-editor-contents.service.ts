@@ -57,25 +57,31 @@ export class ContentEditorContentsService {
   // TODO 2. File Content process change + ctrlx + z
   //
 
-  initEdit(contents: ContentModelBase[], progressiveLoading: boolean): void {
+  initEdit(contents: ContentModelBase[], progressiveLoading: boolean, onRenderCallback: () => void): void {
+    this.contentsSync = [];
     if (progressiveLoading) {
-      this.initContentProgressively(contents);
+      this.initContentProgressively(contents, onRenderCallback);
       return;
     }
     this.contents = contents;
     this.initSyncContent(contents);
+    if (onRenderCallback) {
+      onRenderCallback();
+    }
   }
 
-  initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean) {
+  initOnlyRead(contents: ContentModelBase[], progressiveLoading: boolean, onRenderCallback: () => void) {
     if (progressiveLoading) {
-      this.initContentProgressively(contents);
+      this.initContentProgressively(contents, onRenderCallback);
       return;
     }
     this.contents = contents;
+    if (onRenderCallback) {
+      onRenderCallback();
+    }
   }
 
   private initSyncContent(contents: ContentModelBase[]): void {
-    this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
@@ -83,7 +89,7 @@ export class ContentEditorContentsService {
 
   private initContentProgressively(
     contents: ContentModelBase[],
-    onRenderCallback?: () => void,
+    onRenderCallback: () => void,
   ): void {
     this.isRendering = true;
     let end = this.progressiveLoadOptions.firstLoadCount;

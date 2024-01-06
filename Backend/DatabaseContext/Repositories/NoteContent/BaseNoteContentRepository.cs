@@ -66,9 +66,11 @@ namespace DatabaseContext.Repositories.NoteContent
             return entities.Include(x => x.CollectionNoteAppFiles).Where(x => noteIds.Contains(x.NoteId)).ToListAsync();
         }
 
-        public Task<List<BaseNoteContent>> GetManyIncludeFiles(List<Guid> ids)
+        public Task<List<BaseNoteContent>> GetManyIncludeFilesAsync(List<Guid> ids, Guid noteId)
         {
-            return entities.Include(x => x.Files).Where(x => ids.Contains(x.Id)).ToListAsync();
+            return entities.Include(x => x.Files)
+                .Where(x => ids.Contains(x.Id) && x.NoteId == noteId && x.ContentTypeId == ContentTypeENUM.Collection)
+                .ToListAsync();
         }
 
         public async Task<Dictionary<Guid, (Guid, IEnumerable<AppFile>)>> GetMemoryOfNotes(List<Guid> noteIds)

@@ -5,32 +5,12 @@ using DatabaseContext.Repositories.NoteContent;
 
 namespace Editor.Services
 {
-    public sealed class CollectionLinkedService
+    public sealed class CollectionLinkedService(AppFileUploadInfoRepository appFileUploadInfoRepository,
+        CollectionAppFileRepository collectionNoteAppFileRepository,
+        SnapshotFileContentRepository snapshotFileContentRepository,
+        BaseNoteContentRepository collectionNoteRepository,
+        FileRepository fileRepository)
     {
-        private readonly AppFileUploadInfoRepository appFileUploadInfoRepository;
-
-        private readonly CollectionAppFileRepository collectionNoteAppFileRepository;
-
-        private readonly SnapshotFileContentRepository snapshotFileContentRepository;
-
-        private readonly BaseNoteContentRepository collectionNoteRepository;
-
-        private readonly FileRepository fileRepository;
-
-        public CollectionLinkedService(
-            AppFileUploadInfoRepository appFileUploadInfoRepository,
-            CollectionAppFileRepository collectionNoteAppFileRepository,
-            SnapshotFileContentRepository snapshotFileContentRepository,
-            BaseNoteContentRepository collectionNoteRepository,
-            FileRepository fileRepository)
-        {
-            this.appFileUploadInfoRepository = appFileUploadInfoRepository;
-            this.collectionNoteAppFileRepository = collectionNoteAppFileRepository;
-            this.snapshotFileContentRepository = snapshotFileContentRepository;
-            this.collectionNoteRepository = collectionNoteRepository;
-            this.fileRepository = fileRepository;
-        }
-
         public async Task<List<Guid>> TryToUnlink(IEnumerable<UnlinkMetaData> data)
         {
             var ids = data.Select(x => x.Id).ToHashSet().ToArray();
@@ -70,18 +50,26 @@ namespace Editor.Services
             }
         }
 
-        public async Task<List<Guid>> RemoveCollectionsAndUnLinkFiles(IEnumerable<Guid> collectionIdsToDelete)
+        public async Task<List<Guid>> RemoveCollectionsAndUnLinkFiles(IEnumerable<Guid> collectionIdsToDelete, Guid noteId)
         {
-            if (!collectionIdsToDelete.Any()) return new List<Guid>();
+            if (!collectionIdsToDelete.Any())
+            {
+                return new List<Guid>();
+            }
 
-            var collections = await collectionNoteRepository.GetManyIncludeFiles(collectionIdsToDelete.ToList());
+            var collections = await collectionNoteRepository.GetManyIncludeFilesAsync(collectionIdsToDelete.ToList(), noteId);
 
+            if (!collections.Any())
+            {
+                return new List<Guid>();
+            }
+            
             var filesToProcess = collections.SelectMany(x => x.Files).Select(x => new UnlinkMetaData(x.Id));
 
             await collectionNoteRepository.RemoveRangeAsync(collections);
             await TryToUnlink(filesToProcess);
 
-            return collections.Select(x => x.Id).ToList();
+            return collections.Select(x => x.Id).ToList();   
         }
 
         public async Task UnlinkFiles(IEnumerable<Guid> fileIds)
