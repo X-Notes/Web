@@ -17,12 +17,6 @@
         </mat-slider>
       </div>
     </div>
-    <div class="help-info help-info-no-margin">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
-    </div>
   </div>
   <div class="field">
     <div class="general-row inner-box-list slider-row general-column">
@@ -42,12 +36,6 @@
         </mat-slider>
       </div>
     </div>
-    <div class="help-info help-info-no-margin">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
-    </div>
   </div>
   <div class="field">
     <div class="general-row inner-box-list">
@@ -58,12 +46,6 @@
         [ngModel]="(pSettings$ | async)?.isViewAudioOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewAudioOnNote)"
       ></mat-checkbox>
-    </div>
-    <div class="help-info">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
     </div>
   </div>
   <div class="field">
@@ -76,12 +58,6 @@
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewDocumentOnNote)"
       ></mat-checkbox>
     </div>
-    <div class="help-info">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
-    </div>
   </div>
   <div class="field">
     <div class="general-row inner-box-list">
@@ -92,12 +68,6 @@
         [ngModel]="(pSettings$ | async)?.isViewPhotosOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewPhotosOnNote)"
       ></mat-checkbox>
-    </div>
-    <div class="help-info">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
     </div>
   </div>
   <div class="field">
@@ -110,12 +80,6 @@
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewTextOnNote)"
       ></mat-checkbox>
     </div>
-    <div class="help-info">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
-    </div>
   </div>
   <div class="field">
     <div class="general-row inner-box-list">
@@ -126,12 +90,6 @@
         [ngModel]="(pSettings$ | async)?.isViewVideoOnNote"
         (ngModelChange)="changePersonalizationSettings($event, pSettings.isViewVideoOnNote)"
       ></mat-checkbox>
-    </div>
-    <div class="help-info">
-      <p>
-        {{ 'profile.genericTooltip' | translate
-        }}<span> {{ 'profile.genericPreview' | translate }}</span>
-      </p>
     </div>
   </div>
 </div>

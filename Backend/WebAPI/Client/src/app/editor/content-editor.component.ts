@@ -156,10 +156,10 @@ export class ContentEditorComponent
     return this.menuOptions && this.menuOptions.elements.length > 0 && this.menuOptions.elements?.some(x => x.getText()?.length > 0);
   }
 
-  
+
   get textEditMenuTop(): number {
     const sMode = this.menuOptions?.selectionMode;
-    if(this.linkMenuOpened) {
+    if (this.linkMenuOpened) {
       const coords = this.menuOptions.selection.rect;
       const getCursorTop = coords.top - 5;
       return getCursorTop - this.textEditMenu.nativeElement.offsetHeight + window.visualViewport.offsetTop;
@@ -168,7 +168,7 @@ export class ContentEditorComponent
       const selection = this.facade.apiBrowser.getSelection();
       const range = selection.getRangeAt(0);
       const coords = range.getBoundingClientRect();
-      const getCursorTop =  coords.top - 5;
+      const getCursorTop = coords.top - 5;
       return getCursorTop - this.textEditMenu.nativeElement.offsetHeight + window.visualViewport.offsetTop;
     }
 
@@ -237,18 +237,19 @@ export class ContentEditorComponent
 
   // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   @Input() set contents(contents: ContentModelBase[]) {
+    const renderCallback = () => 0;
     if (!this.options$.getValue().userId) {
-      this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading);
+      this.facade.contentsService.initOnlyRead(contents, this.progressiveLoading, renderCallback);
       this.facade.contentEditorSyncService.initRead(this.options$);
     } else {
-      this.facade.contentsService.initEdit(contents, this.progressiveLoading);
+      this.facade.contentsService.initEdit(contents, this.progressiveLoading, renderCallback);
       this.facade.contentEditorSyncService.initEdit(this.options$);
     }
 
     if (contents.length === 0) {
       this.facade.contentEditorTextService.appendNewEmptyContentToEnd();
     }
-  
+
     this.updateEditorElements();
   }
 
@@ -300,7 +301,7 @@ export class ContentEditorComponent
     if (this.selectionMode === EditorSelectionModeEnum.DefaultSelection) {
       const itemId = this.facade.selectionService.selectionTextItemId;
       const item = this.getHTMLElementById(itemId);
-      if(!item) return null;
+      if (!item) return null;
       const content = item.getContent();
       const obj: TextEditMenuOptions = {
         isBold: this.htmlPTCollectorService.getIsBoldSelection(),
@@ -533,7 +534,7 @@ export class ContentEditorComponent
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onScroll($event: any): void {}
+  onScroll($event: any): void { }
 
   enterHandler(value: EnterEvent) {
     const curEl = this.getElementById(value.contentId);
@@ -563,6 +564,8 @@ export class ContentEditorComponent
     const index = this.facade.contentsService.deleteContent(id);
     if (index !== 0) {
       this.elements[index - 1].setFocusToEnd();
+    } else {
+      this.noteTitleEl.nativeElement?.focus();
     }
     this.postAction();
   }
@@ -579,8 +582,8 @@ export class ContentEditorComponent
     const prevContent = this.facade.contentsService.getContentByIndex<BaseText>(indexPrev);
 
     const prevElement = this.getHTMLElementById(prevContent.id);
-    const textLength =  prevElement.getText().length;
-    const selection = { start: textLength, end: textLength} as SaveSelection
+    const textLength = prevElement.getText().length;
+    const selection = { start: textLength, end: textLength } as SaveSelection
     if (!prevElement) {
       return;
     }

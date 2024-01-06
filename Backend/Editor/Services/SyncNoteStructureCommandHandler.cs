@@ -84,7 +84,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
 
         NoteStructureResult result = new();
 
-        await DeleteContentEditorItemsAsync(request.Diffs.RemovedItems, result);
+        await DeleteContentEditorItemsAsync(request.Diffs.RemovedItems, result, permissions.NoteId);
         await NewTextEditorItemsAsync(request.Diffs.NewTextItems, permissions.NoteId, result);
         await NewCollectionEditorItemsAsync(request.Diffs.CollectionItems, permissions.NoteId, result);
 
@@ -185,7 +185,7 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         }
     }
 
-    private async Task DeleteContentEditorItemsAsync(List<ItemForRemove> removedItems, NoteStructureResult result)
+    private async Task DeleteContentEditorItemsAsync(List<ItemForRemove> removedItems, NoteStructureResult result, Guid noteId)
     {
         if (removedItems == null || !removedItems.Any())
         {
@@ -193,9 +193,9 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         }
 
         var removeIds = removedItems.Select(x => x.Id).ToList();
-        result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(removeIds);
+        result.Updates.ContentIdsToDelete = await collectionLinkedService.RemoveCollectionsAndUnLinkFiles(removeIds, noteId);
 
-        await baseNoteContentRepository.ExecuteDeleteAsync(x => removeIds.Contains(x.Id));
+        await baseNoteContentRepository.ExecuteDeleteAsync(x => removeIds.Contains(x.Id) && x.NoteId == noteId);
 
         result.Updates.ContentIdsToDelete = removeIds;
     }
