@@ -8,6 +8,7 @@ using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Common.DTO.WebSockets.InnerNote;
 using DatabaseContext.Repositories.NoteContent;
+using DatabaseContext.Repositories.Notes;
 using Editor.Commands.Structure;
 using History.Impl;
 using Mapper.Mapping;
@@ -18,30 +19,7 @@ using SignalrUpdater.Impl;
 
 namespace Editor.Services;
 
-public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
-{
-    private readonly int maxContents = 150;
-
-    private readonly BaseNoteContentRepository baseNoteContentRepository;
-
-    private readonly HistoryCacheService historyCacheService;
-
-    private readonly AppSignalRService appSignalRService;
-
-    private readonly IMediator mediator;
-
-    private readonly CollectionLinkedService collectionLinkedService;
-
-    private readonly ILogger<SyncNoteStructureCommandHandler> logger;
-
-    private readonly NoteFolderLabelMapper noteFolderLabelMapper;
-
-    private readonly NoteWSUpdateService noteWsUpdateService;
-
-    private readonly NotesMultipleUpdateService notesMultipleUpdateService;
-
-    public SyncNoteStructureCommandHandler(
-        BaseNoteContentRepository baseNoteContentRepository,
+public class SyncNoteStructureCommandHandler(BaseNoteContentRepository baseNoteContentRepository,
         HistoryCacheService historyCacheService,
         AppSignalRService appSignalRService,
         IMediator mediator,
@@ -49,19 +27,11 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
         ILogger<SyncNoteStructureCommandHandler> logger,
         NoteFolderLabelMapper noteFolderLabelMapper,
         NoteWSUpdateService noteWsUpdateService,
-        NotesMultipleUpdateService notesMultipleUpdateService)
-    {
-
-        this.historyCacheService = historyCacheService;
-        this.appSignalRService = appSignalRService;
-        this.baseNoteContentRepository = baseNoteContentRepository;
-        this.mediator = mediator;
-        this.collectionLinkedService = collectionLinkedService;
-        this.logger = logger;
-        this.noteFolderLabelMapper = noteFolderLabelMapper;
-        this.noteWsUpdateService = noteWsUpdateService;
-        this.notesMultipleUpdateService = notesMultipleUpdateService;
-    }
+        NotesMultipleUpdateService notesMultipleUpdateService,
+        NoteRepository noteRepository)
+    : IRequestHandler<SyncNoteStructureCommand, OperationResult<NoteStructureResult>>
+{
+    private readonly int maxContents = 150;
 
 
     public async Task<OperationResult<NoteStructureResult>> Handle(SyncNoteStructureCommand request, CancellationToken cancellationToken)
@@ -115,6 +85,13 @@ public class SyncNoteStructureCommandHandler : IRequestHandler<SyncNoteStructure
             }
         }
 
+        var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == permissions.NoteId);
+        if (note != null)
+        {
+            note.SetDate();
+            await noteRepository.UpdateAsync(note);   
+        }
+        
         await historyCacheService.UpdateNoteAsync(permissions.NoteId, permissions.CallerId);
 
         var noteStatus = await notesMultipleUpdateService.IsMultipleUpdateAsync(permissions.NoteId);

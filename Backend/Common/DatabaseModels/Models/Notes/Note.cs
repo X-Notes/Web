@@ -83,6 +83,11 @@ namespace Common.DatabaseModels.Models.Notes
             UpdatedAt = DateTimeProvider.Time;
             Version++;
         }
+        
+        public void SetDate()
+        {
+            UpdatedAt = DateTimeProvider.Time;
+        }
 
         public void ToType(NoteTypeENUM noteTypeId, DateTimeOffset? deletedAt = null)
         {
