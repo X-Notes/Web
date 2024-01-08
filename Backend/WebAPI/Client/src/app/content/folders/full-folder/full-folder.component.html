@@ -139,6 +139,7 @@
     ></app-no-results-illustration>
   </ng-scrollbar>
   <app-spinner
+    [size]="30"
     *ngIf="!folderEntitiesLoaded && !ffnService.murriService.flagForOpacity"
   ></app-spinner>
 </div>
