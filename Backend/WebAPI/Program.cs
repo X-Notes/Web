@@ -190,6 +190,7 @@ app.UseHttpsRedirection();
 var requestLocalizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(requestLocalizationOptions.Value);
 
+/*
 app.Use(async (context, next) =>
 {
     if (!context.Request.Cookies.TryGetValue("isLoggedIn", out var value) && context.Request.Path.Equals(new PathString("/")))
@@ -201,6 +202,7 @@ app.Use(async (context, next) =>
         await next.Invoke();   
     }
 });
+*/
 
 app.UseStaticFiles(new StaticFileOptions
 {
