@@ -138,10 +138,7 @@
       typeClass="type-module"
     ></app-no-results-illustration>
   </ng-scrollbar>
-  <app-spinner
-    [size]="30"
-    *ngIf="!folderEntitiesLoaded && !ffnService.murriService.flagForOpacity"
-  ></app-spinner>
+  <app-spinner [size]="30" *ngIf="!folderEntitiesLoaded && !ffnService.murriService.flagForOpacity"></app-spinner>
 </div>
 <div *ngIf="(folder$ | async) === null && folderLoaded" class="wrapper">
   <app-no-results-illustration
