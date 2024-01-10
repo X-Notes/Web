@@ -31,6 +31,6 @@
         [isShow]="loaded && !ffnService.isAnyEntityInLayout" [message]="'noResult.noAccessViewFolder' | translate"
         [illustration]="pService.icon.notesInnerFolder" typeClass="type-module"></app-no-results-illustration>
     </ng-container>
-    <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+    <app-spinner [size]="30" *ngIf="pService.spinnerActive"></app-spinner>
   </div>
 </div>

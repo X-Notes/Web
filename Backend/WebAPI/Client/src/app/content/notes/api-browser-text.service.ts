@@ -227,7 +227,7 @@ export class ApiBrowserTextService {
       const range = selRange.cloneRange();
       range.selectNodeContents(element);
       range.setEnd(selRange.startContainer, selRange.startOffset);
-      const atStart = range.toString().replace(/^\s+|\s+$/g, '') === '';
+      const atStart = range.toString()?.length === 0;
       if (atStart) {
         return true;
       }

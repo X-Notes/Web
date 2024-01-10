@@ -1,6 +1,6 @@
 <app-left-section-wrapper [isProfileActive]="true">
   <div class="spinner-container">
-    <app-spinner *ngIf="loading" [size]="14"></app-spinner>
+    <app-spinner [size]="14" *ngIf="loading"></app-spinner>
   </div>
   <ng-container *ngIf="notes?.length > 0">
     <ng-scrollbar [visibility]="'hover'" [appearance]="'compact'" [autoHeightDisabled]="true">

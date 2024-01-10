@@ -353,13 +353,7 @@ export abstract class BaseTextElementComponent
     }
     const text = e.clipboardData.getData('text/plain');
     const texts = text.split(/(?:\r?\n)+/);
-    if (texts.length > 1) {
-      this.handleTextsInserting(texts);
-      this.textChanged.next();
-    } else {
-      this.facade.apiBrowser.pasteOnlyTextHandler(e);
-      this.textChanged.next();
-    }
+    this.handleTextsInserting(texts);
   }
 
   handleHtmlInserting(html: string): void {
@@ -536,7 +530,7 @@ export abstract class BaseTextElementComponent
       this.backUp(e);
     });
     const keydown = this.facade.renderer.listen(el, 'keydown', (e: KeyboardEvent) => {
-      const isEmpty = !this.getText() || this.getText.length === 0;
+      const isEmpty = !this.getText() || this.getText().length === 0;
       if(e.code === 'Backspace' || e.code === 'Delete') {
         this.checkForDeleteOrConcatWithPrev(e);
       }

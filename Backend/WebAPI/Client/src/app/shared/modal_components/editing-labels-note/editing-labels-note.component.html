@@ -44,7 +44,7 @@
         <app-empty-search-placeholder *ngIf="isNotFound"></app-empty-search-placeholder>
       </div>
     </ng-scrollbar>
-    <app-spinner *ngIf="!loaded"></app-spinner>
+    <app-spinner [size]="25" *ngIf="!loaded"></app-spinner>
     <app-no-results-illustration
       *ngIf="loaded && ((countAll$ | async) ? false : true)"
       [isShow]="loaded && ((countAll$ | async) ? false : true)"
