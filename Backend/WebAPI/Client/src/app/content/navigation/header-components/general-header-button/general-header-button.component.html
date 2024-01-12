@@ -11,7 +11,7 @@
   >
     <div class="inner-content">
       <p *ngIf="isActiveMessage">{{ message }}</p>
-      <div *ngIf="iconClass" class="icon">
+      <div *ngIf="iconClass && !spinnerActive" class="icon">
         <mat-icon *ngIf="!isDefault" [svgIcon]="iconClass" [inline]="true"></mat-icon>
         <mat-icon *ngIf="isDefault" [inline]="true">{{ iconClass }}</mat-icon>
       </div>
@@ -20,5 +20,6 @@
       </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="buttonRipple"></div>
+    <app-spinner *ngIf="spinnerActive" [size]="14" [color]="'#404040'"></app-spinner>
   </button>
 </div>
