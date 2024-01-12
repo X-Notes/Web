@@ -7,9 +7,8 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Select, Store } from '@ngxs/store';
+import { Actions, Select, Store, ofActionCompleted, ofActionDispatched } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { ShortUser } from 'src/app/core/models/user/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
@@ -19,7 +18,8 @@ import { PermissionsButtonsService } from '../services/permissions-buttons.servi
 import { AppInitializerService } from 'src/app/core/app-initializer.service';
 import { GeneralButtonStyleType } from '../header-components/general-header-button/models/general-button-style-type.enum';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { NavigatorService } from 'src/app/core/navigator.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AddLabel } from '../../labels/state/labels-actions';
 
 @Component({
   selector: 'app-header',
@@ -65,6 +65,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   buttonStyleType = GeneralButtonStyleType;
 
+  isNewLocked = false;
+
   public positions = [
     new ConnectionPositionPair(
       {
@@ -83,8 +85,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public menuButtonService: MenuButtonsService,
     public pB: PermissionsButtonsService,
     private appInitializerService: AppInitializerService,
-    private navigationService: NavigatorService,
-  ) { }
+    private actions: Actions
+  ) { 
+    this.actions.pipe(ofActionDispatched(AddLabel), takeUntilDestroyed()).subscribe(() => {
+      this.isNewLocked = true;
+    });
+    this.actions.pipe(ofActionCompleted(AddLabel), takeUntilDestroyed()).subscribe(() => {
+      this.isNewLocked = false;
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();
