@@ -73,6 +73,9 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
+      this.loaded = false;
+      this.notesLoaded = false;
+      this.notesLink = [];
       await this.loadMain();
       this.store.dispatch(new LoadLabels());
       this.destroy.next();
