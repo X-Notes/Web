@@ -11,7 +11,7 @@ export class HtmlPropertyTagCollectorService {
 
   getIsActiveHeader(heading: HeadingTypeENUM, textItems: BaseText[]): boolean {
     return textItems.some(
-      (x) => x && x.metadata.noteTextTypeId === NoteTextTypeENUM.heading && x.metadata?.hTypeId === heading,
+      (x) => x && x.metadata?.noteTextTypeId === NoteTextTypeENUM.heading && x.metadata?.hTypeId === heading,
     );
   }
 
