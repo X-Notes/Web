@@ -56,6 +56,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
 
   loaded = false;
 
+  notesLoaded = false;
+
   contents: ContentModelBase[];
 
   folderId: string;
@@ -74,6 +76,9 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     this.routeSubscription = route.params.pipe(takeUntilDestroyed()).subscribe(async (params) => {
       this.noteId = params.noteId;
       this.folderId = params.folderId;
+      this.loaded = false;
+      this.notesLoaded = false;
+      this.linkNotes = [];
       if (!this.folderId) return;
       await this.store.dispatch(new LoadFullFolder(this.folderId)).toPromise();
       await this.loadMainContent();
@@ -93,6 +98,7 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     const notes = await this.apiFullFolder.getFolderNotes(this.folderId, pr.contentInNoteCount).toPromise();
     this.linkNotes = notes?.length > 0 ? notes.filter(x => x.id !== this.noteId) : [];
+    this.notesLoaded = true;
   }
 
   async loadMain() {

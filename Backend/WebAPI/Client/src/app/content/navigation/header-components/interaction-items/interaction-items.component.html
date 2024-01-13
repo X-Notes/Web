@@ -1,5 +1,6 @@
 <app-general-header-button *ngIf="(pService.isMenuActive$ | async) === (false)" (clickEvent)="newButton()"
   [message]="'new.' + (route$ | async ) | translate" [iconClass]="'plus'"
+  [spinnerActive]="isNewLocked"
   [styleClasses]="'generic-unfixed-150 generic-create generic-hide-text'"
   [theme]="theme$ | async"></app-general-header-button>
 
