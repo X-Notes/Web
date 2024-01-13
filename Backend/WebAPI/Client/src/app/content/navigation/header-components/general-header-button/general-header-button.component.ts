@@ -21,6 +21,9 @@ export class GeneralHeaderButtonComponent {
   styleClasses: string;
 
   @Input()
+  spinnerActive = false;
+
+  @Input()
   message: string;
 
   @Input()
@@ -94,6 +97,9 @@ export class GeneralHeaderButtonComponent {
   }
 
   clickHandler() {
+    if(this.spinnerActive){
+      return;
+    }
     this.clickEvent.emit();
   }
 }

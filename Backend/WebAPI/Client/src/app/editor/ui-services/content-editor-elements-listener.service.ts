@@ -79,19 +79,20 @@ export class ContentEditorElementsListenerService {
         this.moveDown(e, noteTitleEl, elements);
         return false;
       }
-      if (e.ctrlKey && e.code === 'KeyZ') {
+      const metaKey = e.metaKey || e.ctrlKey;
+      if (metaKey && e.code === 'KeyZ') {
         e.preventDefault();
         this.onPressCtrlZSubject.next();
         return false;
       }
-      if (e.ctrlKey && e.code === 'KeyS') {
+      if (metaKey && e.code === 'KeyS') {
         e.preventDefault();
         this.onPressCtrlSSubject.next();
         return false;
       }
       const htmlEl = e.target as HTMLElement;
       const classes = [...(htmlEl.classList as any)];
-      if ((e.metaKey || e.ctrlKey) && e.code === 'KeyA') {
+      if (metaKey && e.code === 'KeyA') {
         if (!htmlEl.textContent || htmlEl.textContent === '') {
           e.preventDefault();
           this.onPressCtrlASubject.next();
