@@ -47,6 +47,26 @@ Here are the steps to set up the backend:
 
 If you find X Notes helpful and would like to support our project, consider [buying us a coffee](https://www.buymeacoffee.com/xnotes). Your support is greatly appreciated!
 
+## Contributing 🤝
+
+We welcome your contributions to make X Notes even better! Here's how you can get involved:
+
+1. **Track Bugs or Propose Features**: Visit our [Issues](https://github.com/X-Notes/Web/issues) page to report bugs or suggest new features. Your feedback is valuable to us!
+
+2. **Code Contributions**:
+
+   - To contribute code, start by creating a branch from the `DEV` branch.
+   
+   - Naming your branch is important to help us understand its purpose:
+   
+     - For Bug Fixes, use: `bugfix/github-issue-number`.
+     
+     - For New Features, use: `feature/github-issue-feature-number`.
+
+   - Submit your pull request when your changes are ready into `DEV` branch, and we'll review it promptly.
+
+Let's collaborate and make X Notes even more awesome together! 🚀👩‍💻👨‍💻
+
 ## Features
 
 ## Discussion 💬
