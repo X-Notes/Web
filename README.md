@@ -5,9 +5,9 @@ Open https://xnotes.io and use
 ### Angular Web
 Prerequisites: Node: v18.18.2+, Angular CLI: 17.0.1+, Package Manager: npm 9.8.1+
 1. Open Web -> Backend -> WebAPI -> [Client](https://github.com/X-Notes/Web/tree/DEV/Backend/WebAPI/Client)
-  1.1 Install packages run: **yarn**
-  1.2 Run project **yarn start**
-  1.3 Open project [localhost:4200](http://localhost:4200/)
+  1. Install packages run: **yarn**
+  2. Run project **yarn start**
+  3. Open project [localhost:4200](http://localhost:4200/)
 ### Backend .NET CORE | POSTGRESQL | Azure Storage | Redis(not necessary)
 Prerequisites: .NET 8.0.100, Postgresql, Azure Storage(Azurite or cloud)
 1. Open [appsettings.development.json](https://github.com/X-Notes/Web/blob/DEV/Backend/WebAPI/appsettings.Development.json)
