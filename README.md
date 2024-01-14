@@ -93,7 +93,8 @@ Let's collaborate and make X Notes even more awesome together! 🚀👩‍💻�
 
 ###  Editor videos
 ![Screenshot 2024-01-14 163722](https://github.com/X-Notes/Web/assets/40700475/9bd358ed-6519-4d93-a47e-8565eb86d812)
-Editor documents
+
+### Editor documents
 ![Screenshot 2024-01-14 163650](https://github.com/X-Notes/Web/assets/40700475/d6b1a571-b485-492d-ab04-138e712cb656)
 
 ###  Notes Sharing
