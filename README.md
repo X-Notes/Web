@@ -99,6 +99,9 @@ Editor documents
 ###  Notes Sharing
 ![Screenshot 2024-01-14 163944](https://github.com/X-Notes/Web/assets/40700475/6ee229fa-6a76-4495-8f6c-aba941b56670)
 
+### Folders sharing
+![image](https://github.com/X-Notes/Web/assets/40700475/07698ad3-21cb-4f85-b9ff-013c41fad785)
+
 ### Mobile Supported
 ![Screenshot 2024-01-14 164351](https://github.com/X-Notes/Web/assets/40700475/63391a21-5bee-46ff-b144-a26ff640b46b)
 ![Screenshot 2024-01-14 164345](https://github.com/X-Notes/Web/assets/40700475/c13000c3-85b5-42f0-b19c-ce790d59ac7a)
