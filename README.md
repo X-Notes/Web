@@ -96,6 +96,9 @@ Let's collaborate and make X Notes even more awesome together! 🚀👩‍💻�
 Editor documents
 ![Screenshot 2024-01-14 163650](https://github.com/X-Notes/Web/assets/40700475/d6b1a571-b485-492d-ab04-138e712cb656)
 
+###  Notes Sharing
+![Screenshot 2024-01-14 163944](https://github.com/X-Notes/Web/assets/40700475/6ee229fa-6a76-4495-8f6c-aba941b56670)
+
 ### Mobile Supported
 ![Screenshot 2024-01-14 164351](https://github.com/X-Notes/Web/assets/40700475/63391a21-5bee-46ff-b144-a26ff640b46b)
 ![Screenshot 2024-01-14 164345](https://github.com/X-Notes/Web/assets/40700475/c13000c3-85b5-42f0-b19c-ce790d59ac7a)
@@ -110,9 +113,6 @@ User profile and feature for background changing
 
 ### Unathorized note view if note shared.
 ![Screenshot 2024-01-14 164029](https://github.com/X-Notes/Web/assets/40700475/325d768c-db0f-4296-bf1d-2ddb81df3b35)
-
-###  Notes Sharing
-![Screenshot 2024-01-14 163944](https://github.com/X-Notes/Web/assets/40700475/6ee229fa-6a76-4495-8f6c-aba941b56670)
 
 ###  Labels
 ![Screenshot 2024-01-14 163813](https://github.com/X-Notes/Web/assets/40700475/6cb5cf0b-bfff-4ba0-86c8-1517dd6f623a)
