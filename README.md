@@ -140,3 +140,4 @@ Join the conversation about X Notes on [GitHub Discussions](https://github.com/X
 X Notes is distributed under the AGPLv3 License. See [LICENSE.md](https://github.com/X-Notes/Web/blob/DEV/LICENSE) for more information.
 
 🎉 Happy Note-Taking with X Notes! 📝
+
