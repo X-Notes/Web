@@ -11,4 +11,6 @@ public class TokenVerifyRequest
     
     [RequiredEnumField(ErrorMessage = "Language Id is required.")]
     public LanguageENUM LanguageId { set; get; }
+    
+    public bool IsIos { set; get; }
 }

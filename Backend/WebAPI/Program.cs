@@ -86,8 +86,9 @@ builder.Services.Configure<SeqConfig>(seqSection);
 
 var jwtTokenConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
-var googleConfig = builder.Configuration.GetSection("GoogleAuth").Get<GoogleAuth>();
-builder.Services.AddSingleton(googleConfig);
+
+builder.Services.Configure<GoogleAuth>(builder.Configuration.GetSection("GoogleAuth"));
+
 var dbConn = builder.Configuration.GetSection("DatabaseConnection").Value;
 var azureConfig = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
 var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisConfig>();
