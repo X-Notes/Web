@@ -12,41 +12,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Users.Commands;
 
 namespace Auth.Api;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
-{
-    private readonly GoogleAuth googleAuth;
-    private readonly ILogger<AuthController> logger;
-    private readonly IJwtAuthManager jwtAuthManager;
-    private readonly UserRepository userRepository;
-    private readonly IMediator mediator;
-    private readonly DapperRefreshTokenRepository dapperRefreshTokenRepository;
-
-    public AuthController(
-        GoogleAuth googleAuth, 
-        ILogger<AuthController> logger, 
+public class AuthController(IOptions<GoogleAuth> googleAuth,
+        ILogger<AuthController> logger,
         IJwtAuthManager jwtAuthManager,
         UserRepository userRepository,
         IMediator mediator,
         DapperRefreshTokenRepository dapperRefreshTokenRepository)
-    {
-        this.googleAuth = googleAuth;
-        this.logger = logger;
-        this.jwtAuthManager = jwtAuthManager;
-        this.userRepository = userRepository;
-        this.mediator = mediator;
-        this.dapperRefreshTokenRepository = dapperRefreshTokenRepository;
-    }
+    : ControllerBase
+{
+    private readonly GoogleAuth googleAuth = googleAuth.Value;
 
     [HttpPost("google/login")]
     public async Task<OperationResult<LoginResultDto>> VerifyToken(TokenVerifyRequest request)
     {
-        var respVerifyToken = await VerifyGoogleTokenId(request.Token);
+        var respVerifyToken = await VerifyGoogleTokenId(request);
 
         if(respVerifyToken == null)
         {
@@ -164,17 +150,17 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-    private async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenId(string token)
+    private async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenId(TokenVerifyRequest request)
     {
         try
         {
             // uncomment these lines if you want to add settings: 
             var validationSettings = new GoogleJsonWebSignature.ValidationSettings
             { 
-                Audience = new string[] { googleAuth.Audience }
+                Audience = new[] { request.IsIos ? googleAuth.IosAudience : googleAuth.Audience }
             };
             // Add your settings and then get the payload
-            GoogleJsonWebSignature.Payload payload =  await GoogleJsonWebSignature.ValidateAsync(token, validationSettings);
+            GoogleJsonWebSignature.Payload payload =  await GoogleJsonWebSignature.ValidateAsync(request.Token, validationSettings);
 
             return payload;
         }
